@@ -163,4 +163,31 @@ describe('Inventory', () => {
     expect(inventory.getItems()[0]?.quantity).toBe(6);
     expect(inventory.getItems()[0]?.reserved).toBe(0);
   });
+
+  it('removes available quantity without affecting reservations', () => {
+    const clock = new ManualClock(100);
+    const inventoryResult = Inventory.create({
+      id: requireInventoryId('inventory_001'),
+      companyId: requireCompanyId('company_001'),
+      clock,
+    });
+
+    expect(inventoryResult.ok).toBe(true);
+
+    if (!inventoryResult.ok) {
+      return;
+    }
+
+    const inventory = inventoryResult.value;
+    inventory.addQuantity('wood', 10, clock);
+    inventory.reserveQuantity('wood', 4, clock);
+    inventory.pullDomainEvents();
+
+    const removeResult = inventory.removeQuantity('wood', 3, clock);
+
+    expect(removeResult.ok).toBe(true);
+    expect(inventory.getItems()[0]?.quantity).toBe(7);
+    expect(inventory.getItems()[0]?.reserved).toBe(4);
+    expect(inventory.getAvailableQuantity(inventory.getItems()[0]!.resourceId)).toBe(3);
+  });
 });

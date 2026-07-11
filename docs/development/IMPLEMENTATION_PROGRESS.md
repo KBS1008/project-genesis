@@ -31,7 +31,7 @@ Update this document whenever a meaningful implementation milestone is completed
 | Application layer | Partial (bootstrap, use cases, queries) |
 | UI | Not started |
 
-**Tests:** 198 (run `pnpm test` for current count)
+**Tests:** 206 (run `pnpm test` for current count)
 
 ---
 
@@ -130,7 +130,7 @@ Business aggregates and domain events.
 **Behaviour:**
 
 - `Inventory.create()` — empty inventory per company.
-- `addQuantity()` / `reserveQuantity()` / `releaseReserved()` / `consumeReserved()` — non-negative validation, `InventoryChanged` events; zero-quantity lines are removed after consumption.
+- `addQuantity()` / `reserveQuantity()` / `removeQuantity()` / `releaseReserved()` / `consumeReserved()` — non-negative validation, `InventoryChanged` events; zero-quantity lines are removed after consumption.
 
 **References:** `docs/schemas/Inventory.Schema.md`
 
@@ -379,8 +379,13 @@ Coordinates use cases between domain, infrastructure and simulation.
 | `PlaceBuildingUseCase` | `use-cases/PlaceBuildingUseCase.ts` |
 | `ProductionInventoryService` | `services/ProductionInventoryService.ts` |
 | `MarketPriceSeeder` | `services/MarketPriceSeeder.ts` |
+| `MarketTradeService` | `services/MarketTradeService.ts` |
 | `StartProductionCommand` | `commands/StartProductionCommand.ts` |
+| `SellResourceCommand` | `commands/SellResourceCommand.ts` |
+| `BuyResourceCommand` | `commands/BuyResourceCommand.ts` |
 | `StartProductionUseCase` | `use-cases/StartProductionUseCase.ts` |
+| `SellResourceUseCase` | `use-cases/SellResourceUseCase.ts` |
+| `BuyResourceUseCase` | `use-cases/BuyResourceUseCase.ts` |
 | `GetCompanyQueryHandler` | `queries/GetCompanyQueryHandler.ts` |
 | `ListBuildingsQueryHandler` | `queries/ListBuildingsQueryHandler.ts` |
 | `GetInventoryQueryHandler` | `queries/GetInventoryQueryHandler.ts` |
@@ -397,6 +402,7 @@ Coordinates use cases between domain, infrastructure and simulation.
 - `StartProductionUseCase` validates recipe/building compatibility against loaded content, reserves recipe inputs via `ProductionInventoryService`, and rolls back reservations if job creation fails.
 - `ProductionInventoryService` reserves inputs on production start; simulation invokes `completeJob()` on completion to consume inputs and deliver outputs.
 - Bootstrap seeds global market prices from resource `basePrice` via `MarketPriceSeeder`.
+- `MarketTradeService` executes instant buy/sell at `lastPrice`, updating inventory, finance and market trade volume.
 - Query handlers (`GetCompany`, `ListBuildings`, `GetInventory`, `GetFinance`, `GetMarketPrices`) read repository state and return immutable read models without mutating aggregates.
 
 ---
@@ -452,7 +458,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 | Common / EventBus | `InMemoryEventBus.test.ts` | Subscribe, publish, order |
 | Domain / Company | `Company.test.ts` | Creation, validation, events |
 | Domain / Building | `Building.test.ts` | Placement, validation, events |
-| Domain / Inventory | `Inventory.test.ts` | Quantities, reservations, events |
+| Domain / Inventory | `Inventory.test.ts` | Quantities, reservations, removal, events |
 | Domain / ProductionJob | `ProductionJob.test.ts` | Start, tick, completion |
 | Domain / FinanceAccount | `FinanceAccount.test.ts` | Credit, debit, reserve, transactions |
 | Domain / Market | `Market.test.ts` | Seed prices, update price, events |
@@ -481,6 +487,8 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 | Application / GetFinance | `GetFinanceQueryHandler.test.ts` | Starting balance, not found |
 | Application / GetMarketPrices | `GetMarketPricesQueryHandler.test.ts` | Seeded prices, not initialized |
 | Application / MarketPriceSeeder | `MarketPriceSeeder.test.ts` | Bootstrap seed, idempotent |
+| Application / MarketTrade | `MarketTradeService.test.ts` | Instant buy/sell, insufficient stock/cash |
+| Application / SellBuyResource | `MarketTradeUseCases.test.ts` | Use case validation, trade flow |
 | Infrastructure / Finance repo | `InMemoryFinanceRepository.test.ts` | Save, find by company |
 
 ---
@@ -488,7 +496,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 # Planned Next Steps
 
 1. Recipe reference validation for `requiredResearch` once research content exists
-2. Instant sell / buy use cases at market prices
+2. Building purchase costs when placing buildings
 3. Save/load game session persistence
 
 ---

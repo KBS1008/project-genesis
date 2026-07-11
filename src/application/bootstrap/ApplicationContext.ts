@@ -12,6 +12,7 @@ import type { FinanceRepository } from '../../domain/finance/FinanceRepository.j
 import type { MarketRepository } from '../../domain/market/MarketRepository.js';
 import type { ProductionJobRepository } from '../../domain/production/ProductionJobRepository.js';
 import type { ProductionInventoryService } from '../services/ProductionInventoryService.js';
+import type { MarketTradeService } from '../services/MarketTradeService.js';
 import type { GameContentLoadResult } from '../../content/validateGameContent.js';
 import type { ManualClock } from '../../common/time/ManualClock.js';
 import type { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
@@ -28,5 +29,6 @@ export type ApplicationContext = {
   readonly marketRepository: MarketRepository;
   readonly productionJobRepository: ProductionJobRepository;
   readonly productionInventoryService: ProductionInventoryService;
+  readonly marketTradeService: MarketTradeService;
   readonly gameContent: GameContentLoadResult;
 };

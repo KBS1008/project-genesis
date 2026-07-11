@@ -23,6 +23,7 @@ import { InMemoryFinanceRepository } from '../../infrastructure/persistence/InMe
 import { InMemoryMarketRepository } from '../../infrastructure/persistence/InMemoryMarketRepository.js';
 import { InMemoryProductionJobRepository } from '../../infrastructure/persistence/InMemoryProductionJobRepository.js';
 import { MarketPriceSeeder } from '../services/MarketPriceSeeder.js';
+import { MarketTradeService } from '../services/MarketTradeService.js';
 import { ProductionInventoryService } from '../services/ProductionInventoryService.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
 import { createDefaultSimulationSystems } from '../../simulation/systems/createDefaultSimulationSystems.js';
@@ -90,6 +91,14 @@ export async function bootstrapApplication(
     );
   }
 
+  const marketTradeService = new MarketTradeService({
+    inventoryRepository,
+    financeRepository,
+    marketRepository,
+    clock,
+    enqueueEvents,
+  });
+
   simulationEngine = new SimulationEngine({
     clock,
     eventBus,
@@ -117,6 +126,7 @@ export async function bootstrapApplication(
     marketRepository,
     productionJobRepository,
     productionInventoryService,
+    marketTradeService,
     gameContent: contentResult.value,
   });
 }

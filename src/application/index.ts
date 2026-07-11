@@ -40,3 +40,11 @@ export { GetMarketPricesQueryHandler } from './queries/GetMarketPricesQueryHandl
 export type { GetMarketPricesQueryHandlerDependencies } from './queries/GetMarketPricesQueryHandler.js';
 export { MarketPriceSeeder } from './services/MarketPriceSeeder.js';
 export type { MarketPriceSeederDependencies } from './services/MarketPriceSeeder.js';
+export { MarketTradeService } from './services/MarketTradeService.js';
+export type { MarketTradeServiceDependencies, MarketTradeResult } from './services/MarketTradeService.js';
+export type { SellResourceCommand } from './commands/SellResourceCommand.js';
+export type { BuyResourceCommand } from './commands/BuyResourceCommand.js';
+export { SellResourceUseCase } from './use-cases/SellResourceUseCase.js';
+export type { SellResourceUseCaseDependencies } from './use-cases/SellResourceUseCase.js';
+export { BuyResourceUseCase } from './use-cases/BuyResourceUseCase.js';
+export type { BuyResourceUseCaseDependencies } from './use-cases/BuyResourceUseCase.js';

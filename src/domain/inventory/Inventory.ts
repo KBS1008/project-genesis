@@ -190,6 +190,62 @@ export class Inventory extends AggregateRoot<'Inventory'> {
   }
 
   /**
+   * Removes available quantity from stock without affecting reservations.
+   */
+  removeQuantity(
+    resourceId: string,
+    amount: number,
+    clock: Clock,
+  ): Result<void, ValidationError> {
+    const amountResult = Guard.againstNegative(
+      amount,
+      'Removed inventory amount must not be negative.',
+    );
+
+    if (!amountResult.ok) {
+      return Result.fail(amountResult.error);
+    }
+
+    if (amountResult.value === 0) {
+      return Result.ok(undefined);
+    }
+
+    const resourceIdResult = createResourceTypeId(resourceId);
+
+    if (!resourceIdResult.ok) {
+      return Result.fail(resourceIdResult.error);
+    }
+
+    const resourceTypeId = resourceIdResult.value;
+    const existing = this.#items.get(resourceTypeId.value);
+
+    if (existing === undefined || getAvailableQuantity(existing) < amountResult.value) {
+      return Result.fail(
+        new ValidationError(
+          `Insufficient available quantity for resource "${resourceTypeId.value}".`,
+        ),
+      );
+    }
+
+    const nextQuantity = existing.quantity - amountResult.value;
+    const nextItem: InventoryItem = Object.freeze({
+      resourceId: resourceTypeId,
+      quantity: nextQuantity,
+      reserved: existing.reserved,
+    });
+
+    if (nextQuantity === 0) {
+      this.#items.delete(resourceTypeId.value);
+    } else {
+      this.#items.set(resourceTypeId.value, nextItem);
+    }
+
+    this.#recordChange(nextItem, clock);
+
+    return Result.ok(undefined);
+  }
+
+  /**
    * Releases previously reserved quantity without changing total stock.
    */
   releaseReserved(
