@@ -1,12 +1,12 @@
-import { InMemoryBuildingRepository } from '../../infrastructure/persistence/InMemoryBuildingRepository.js';
 import { InMemoryCompanyRepository } from '../../infrastructure/persistence/InMemoryCompanyRepository.js';
 import { InMemoryFinanceRepository } from '../../infrastructure/persistence/InMemoryFinanceRepository.js';
 import { InMemoryInventoryRepository } from '../../infrastructure/persistence/InMemoryInventoryRepository.js';
 import { ManualClock } from '../../common/time/ManualClock.js';
 import { InMemoryEventBus } from '../../common/events/InMemoryEventBus.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
+import { STARTING_MONEY } from '../../domain/finance/FinanceConstants.js';
 import { CreateCompanyUseCase } from '../use-cases/CreateCompanyUseCase.js';
-import { GetCompanyQueryHandler } from './GetCompanyQueryHandler.js';
+import { GetFinanceQueryHandler } from './GetFinanceQueryHandler.js';
 
 function createContext(clock = new ManualClock(100)) {
   const companyRepository = new InMemoryCompanyRepository();
@@ -21,14 +21,14 @@ function createContext(clock = new ManualClock(100)) {
     financeRepository,
     simulationEngine,
   });
-  const getCompany = new GetCompanyQueryHandler({ companyRepository });
+  const getFinance = new GetFinanceQueryHandler({ financeRepository });
 
-  return { createCompany, getCompany };
+  return { createCompany, getFinance };
 }
 
-describe('GetCompanyQueryHandler', () => {
-  it('returns a company read model for an existing company', () => {
-    const { createCompany, getCompany } = createContext();
+describe('GetFinanceQueryHandler', () => {
+  it('returns finance balances for an existing company', () => {
+    const { createCompany, getFinance } = createContext();
 
     createCompany.execute({
       companyId: 'company_001',
@@ -36,33 +36,26 @@ describe('GetCompanyQueryHandler', () => {
       ownerId: 'player_001',
     });
 
-    const result = getCompany.execute({ companyId: 'company_001' });
+    const result = getFinance.execute({ companyId: 'company_001' });
 
     expect(result.ok).toBe(true);
 
     if (result.ok) {
       expect(result.value).toEqual({
-        id: 'company_001',
-        name: 'Genesis Industries',
-        ownerId: 'player_001',
-        foundedAt: 100,
-        status: 'ACTIVE',
+        id: 'finance_company_001',
+        companyId: 'company_001',
+        currency: 'GC',
+        cashBalance: STARTING_MONEY,
+        reservedCash: 0,
+        availableCash: STARTING_MONEY,
       });
     }
   });
 
-  it('rejects unknown company ids', () => {
-    const { getCompany } = createContext();
+  it('rejects unknown company finance accounts', () => {
+    const { getFinance } = createContext();
 
-    const result = getCompany.execute({ companyId: 'company_missing' });
-
-    expect(result.ok).toBe(false);
-  });
-
-  it('rejects invalid company id format', () => {
-    const { getCompany } = createContext();
-
-    const result = getCompany.execute({ companyId: 'Invalid Id' });
+    const result = getFinance.execute({ companyId: 'company_missing' });
 
     expect(result.ok).toBe(false);
   });

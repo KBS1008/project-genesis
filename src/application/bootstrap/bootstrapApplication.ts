@@ -13,10 +13,12 @@ import type { ContentLoadError } from '../../content/errors/ContentLoadError.js'
 import type { BuildingRepository } from '../../domain/building/BuildingRepository.js';
 import type { CompanyRepository } from '../../domain/company/CompanyRepository.js';
 import type { InventoryRepository } from '../../domain/inventory/InventoryRepository.js';
+import type { FinanceRepository } from '../../domain/finance/FinanceRepository.js';
 import type { ProductionJobRepository } from '../../domain/production/ProductionJobRepository.js';
 import { InMemoryBuildingRepository } from '../../infrastructure/persistence/InMemoryBuildingRepository.js';
 import { InMemoryCompanyRepository } from '../../infrastructure/persistence/InMemoryCompanyRepository.js';
 import { InMemoryInventoryRepository } from '../../infrastructure/persistence/InMemoryInventoryRepository.js';
+import { InMemoryFinanceRepository } from '../../infrastructure/persistence/InMemoryFinanceRepository.js';
 import { InMemoryProductionJobRepository } from '../../infrastructure/persistence/InMemoryProductionJobRepository.js';
 import { ProductionInventoryService } from '../services/ProductionInventoryService.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
@@ -30,6 +32,7 @@ export type BootstrapOptions = {
   readonly companyRepository?: CompanyRepository;
   readonly buildingRepository?: BuildingRepository;
   readonly inventoryRepository?: InventoryRepository;
+  readonly financeRepository?: FinanceRepository;
   readonly productionJobRepository?: ProductionJobRepository;
 };
 
@@ -50,6 +53,7 @@ export async function bootstrapApplication(
   const companyRepository = options.companyRepository ?? new InMemoryCompanyRepository();
   const buildingRepository = options.buildingRepository ?? new InMemoryBuildingRepository();
   const inventoryRepository = options.inventoryRepository ?? new InMemoryInventoryRepository();
+  const financeRepository = options.financeRepository ?? new InMemoryFinanceRepository();
   const productionJobRepository =
     options.productionJobRepository ?? new InMemoryProductionJobRepository();
   const clock = new ManualClock(0);
@@ -74,6 +78,7 @@ export async function bootstrapApplication(
       companyRepository,
       buildingRepository,
       productionJobRepository,
+      financeRepository,
       enqueueEvents,
       onProductionJobCompleted: (job) => {
         productionInventoryService.completeJob(job);
@@ -88,6 +93,7 @@ export async function bootstrapApplication(
     companyRepository,
     buildingRepository,
     inventoryRepository,
+    financeRepository,
     productionJobRepository,
     productionInventoryService,
     gameContent: contentResult.value,

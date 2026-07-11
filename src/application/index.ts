@@ -30,3 +30,7 @@ export type { ListBuildingsQueryHandlerDependencies } from './queries/ListBuildi
 export type { GetInventoryQuery } from './queries/GetInventoryQuery.js';
 export { GetInventoryQueryHandler } from './queries/GetInventoryQueryHandler.js';
 export type { GetInventoryQueryHandlerDependencies } from './queries/GetInventoryQueryHandler.js';
+export type { FinanceReadModel } from './read-models/FinanceReadModel.js';
+export type { GetFinanceQuery } from './queries/GetFinanceQuery.js';
+export { GetFinanceQueryHandler } from './queries/GetFinanceQueryHandler.js';
+export type { GetFinanceQueryHandlerDependencies } from './queries/GetFinanceQueryHandler.js';

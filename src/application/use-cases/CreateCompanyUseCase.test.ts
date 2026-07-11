@@ -2,28 +2,40 @@ import { InMemoryEventBus } from '../../common/events/InMemoryEventBus.js';
 import { ManualClock } from '../../common/time/ManualClock.js';
 import { CompanyFounded } from '../../domain/company/events/CompanyFounded.js';
 import { InMemoryCompanyRepository } from '../../infrastructure/persistence/InMemoryCompanyRepository.js';
+import { InMemoryFinanceRepository } from '../../infrastructure/persistence/InMemoryFinanceRepository.js';
 import { InMemoryInventoryRepository } from '../../infrastructure/persistence/InMemoryInventoryRepository.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
+import { STARTING_MONEY } from '../../domain/finance/FinanceConstants.js';
 import { CreateCompanyUseCase } from './CreateCompanyUseCase.js';
 
 function createUseCase(clock = new ManualClock(100)) {
   const companyRepository = new InMemoryCompanyRepository();
   const inventoryRepository = new InMemoryInventoryRepository();
+  const financeRepository = new InMemoryFinanceRepository();
   const eventBus = new InMemoryEventBus();
   const simulationEngine = new SimulationEngine({ clock, eventBus });
   const useCase = new CreateCompanyUseCase({
     clock,
     companyRepository,
     inventoryRepository,
+    financeRepository,
     simulationEngine,
   });
 
-  return { clock, companyRepository, inventoryRepository, eventBus, simulationEngine, useCase };
+  return {
+    clock,
+    companyRepository,
+    inventoryRepository,
+    financeRepository,
+    eventBus,
+    simulationEngine,
+    useCase,
+  };
 }
 
 describe('CreateCompanyUseCase', () => {
-  it('creates and persists a company with an inventory', () => {
-    const { companyRepository, inventoryRepository, useCase } = createUseCase();
+  it('creates and persists a company with an inventory and finance account', () => {
+    const { companyRepository, inventoryRepository, financeRepository, useCase } = createUseCase();
 
     const result = useCase.execute({
       companyId: 'company_001',
@@ -37,6 +49,10 @@ describe('CreateCompanyUseCase', () => {
       const company = companyRepository.findById(result.value);
       expect(company?.getName()).toBe('Genesis Industries');
       expect(inventoryRepository.findByCompanyId(result.value)).toBeDefined();
+
+      const finance = financeRepository.findByCompanyId(result.value);
+      expect(finance?.getCashBalance()).toBe(STARTING_MONEY);
+      expect(finance?.getAvailableCash()).toBe(STARTING_MONEY);
     }
   });
 

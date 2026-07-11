@@ -1,6 +1,7 @@
 import { ManualClock } from '../../common/time/ManualClock.js';
 import { InMemoryBuildingRepository } from '../../infrastructure/persistence/InMemoryBuildingRepository.js';
 import { InMemoryCompanyRepository } from '../../infrastructure/persistence/InMemoryCompanyRepository.js';
+import { InMemoryFinanceRepository } from '../../infrastructure/persistence/InMemoryFinanceRepository.js';
 import { InMemoryProductionJobRepository } from '../../infrastructure/persistence/InMemoryProductionJobRepository.js';
 import { Company, createCompanyId, createPlayerId } from '../../domain/company/Company.js';
 import { createDefaultSimulationSystems } from './createDefaultSimulationSystems.js';
@@ -30,6 +31,7 @@ function createDependencies() {
     companyRepository: new InMemoryCompanyRepository(),
     buildingRepository: new InMemoryBuildingRepository(),
     productionJobRepository: new InMemoryProductionJobRepository(),
+    financeRepository: new InMemoryFinanceRepository(),
     enqueueEvents: () => undefined,
   };
 }

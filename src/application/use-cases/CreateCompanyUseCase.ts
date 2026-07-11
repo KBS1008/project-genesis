@@ -13,13 +13,17 @@ import {
 } from '../../domain/company/Company.js';
 import type { CompanyId } from '../../domain/company/CompanyId.js';
 import { Inventory, createInventoryId } from '../../domain/inventory/Inventory.js';
+import {
+  FinanceAccount,
+  createFinanceAccountId,
+} from '../../domain/finance/FinanceAccount.js';
 import type { ApplicationContext } from '../bootstrap/ApplicationContext.js';
 import type { CreateCompanyCommand } from '../commands/CreateCompanyCommand.js';
 
 /** Dependencies required by {@link CreateCompanyUseCase}. */
 export type CreateCompanyUseCaseDependencies = Pick<
   ApplicationContext,
-  'clock' | 'companyRepository' | 'inventoryRepository' | 'simulationEngine'
+  'clock' | 'companyRepository' | 'inventoryRepository' | 'financeRepository' | 'simulationEngine'
 >;
 
 /**
@@ -29,6 +33,7 @@ export class CreateCompanyUseCase {
   readonly #clock: CreateCompanyUseCaseDependencies['clock'];
   readonly #companyRepository: CreateCompanyUseCaseDependencies['companyRepository'];
   readonly #inventoryRepository: CreateCompanyUseCaseDependencies['inventoryRepository'];
+  readonly #financeRepository: CreateCompanyUseCaseDependencies['financeRepository'];
   readonly #simulationEngine: CreateCompanyUseCaseDependencies['simulationEngine'];
 
   /**
@@ -38,6 +43,7 @@ export class CreateCompanyUseCase {
     this.#clock = dependencies.clock;
     this.#companyRepository = dependencies.companyRepository;
     this.#inventoryRepository = dependencies.inventoryRepository;
+    this.#financeRepository = dependencies.financeRepository;
     this.#simulationEngine = dependencies.simulationEngine;
   }
 
@@ -105,6 +111,31 @@ export class CreateCompanyUseCase {
     }
 
     this.#inventoryRepository.save(inventoryResult.value);
+
+    const financeIdResult = createFinanceAccountId(`finance_${companyId.value}`);
+
+    if (!financeIdResult.ok) {
+      return Result.fail(financeIdResult.error);
+    }
+
+    if (this.#financeRepository.findByCompanyId(companyId) !== undefined) {
+      return Result.fail(
+        new ValidationError(`Finance account for company "${companyId.value}" already exists.`),
+      );
+    }
+
+    const financeResult = FinanceAccount.create({
+      id: financeIdResult.value,
+      companyId,
+      clock: this.#clock,
+    });
+
+    if (!financeResult.ok) {
+      return Result.fail(financeResult.error);
+    }
+
+    this.#financeRepository.save(financeResult.value);
+    this.#simulationEngine.enqueueEvents(financeResult.value.pullDomainEvents());
 
     return Result.ok(companyId);
   }

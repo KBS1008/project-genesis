@@ -8,6 +8,7 @@ import type { IEventBus } from '../../common/events/IEventBus.js';
 import type { BuildingRepository } from '../../domain/building/BuildingRepository.js';
 import type { CompanyRepository } from '../../domain/company/CompanyRepository.js';
 import type { InventoryRepository } from '../../domain/inventory/InventoryRepository.js';
+import type { FinanceRepository } from '../../domain/finance/FinanceRepository.js';
 import type { ProductionJobRepository } from '../../domain/production/ProductionJobRepository.js';
 import type { ProductionInventoryService } from '../services/ProductionInventoryService.js';
 import type { GameContentLoadResult } from '../../content/validateGameContent.js';
@@ -22,6 +23,7 @@ export type ApplicationContext = {
   readonly companyRepository: CompanyRepository;
   readonly buildingRepository: BuildingRepository;
   readonly inventoryRepository: InventoryRepository;
+  readonly financeRepository: FinanceRepository;
   readonly productionJobRepository: ProductionJobRepository;
   readonly productionInventoryService: ProductionInventoryService;
   readonly gameContent: GameContentLoadResult;

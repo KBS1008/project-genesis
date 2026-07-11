@@ -23,7 +23,7 @@ Update this document whenever a meaningful implementation milestone is completed
 | Area | Status |
 |---|---|
 | Common foundation | Implemented |
-| Domain aggregates | Partial (Company, Building, Inventory, ProductionJob) |
+| Domain aggregates | Partial (Company, Building, Inventory, ProductionJob, FinanceAccount) |
 | Domain value objects | Partial (Money, Quantity, ResourceAmount, Capacity, Position) |
 | Content loaders | Partial (ResourceType, BuildingType, Recipe) |
 | Simulation | Partial (SimulationEngine, systems pipeline) |
@@ -31,7 +31,7 @@ Update this document whenever a meaningful implementation milestone is completed
 | Application layer | Partial (bootstrap, use cases, queries) |
 | UI | Not started |
 
-**Tests:** 183 (run `pnpm test` for current count)
+**Tests:** 191 (run `pnpm test` for current count)
 
 ---
 
@@ -152,6 +152,26 @@ Business aggregates and domain events.
 
 **References:** DD-011, `docs/schemas/Production.Schema.md`
 
+### FinanceAccount aggregate
+
+| Item | Path |
+|---|---|
+| Aggregate | `finance/FinanceAccount.ts` |
+| Identifiers | `finance/FinanceAccountId.ts`, `finance/FinanceTransactionId.ts` |
+| Transaction snapshot | `finance/FinanceTransaction.ts` |
+| Enums | `finance/FinanceTransactionType.ts`, `finance/FinanceTransactionDirection.ts` |
+| Constants | `finance/FinanceConstants.ts` (`STARTING_MONEY`) |
+| Domain events | `finance/events/FinanceAccountCreated.ts`, `FinanceTransactionRecorded.ts` |
+| Repository | `finance/FinanceRepository.ts` |
+| Tests | `finance/FinanceAccount.test.ts` |
+
+**Behaviour:**
+
+- `FinanceAccount.create()` — account per company with `STARTING_MONEY` (250,000 GC) and initial SYSTEM credit transaction.
+- `credit()` / `debit()` / `reserveCash()` / `releaseReserved()` / `consumeReserved()` — all balance changes recorded as transactions; debits fail when available cash is insufficient.
+
+**References:** `docs/schemas/Finance.Schema.md`, `docs/schemas/FinanceTransaction.Schema.md`
+
 ### Shared value objects
 
 | Item | Path |
@@ -181,6 +201,7 @@ Business aggregates and domain events.
 | `BuildingRepository` | `building/BuildingRepository.ts` |
 | `InventoryRepository` | `inventory/InventoryRepository.ts` |
 | `ProductionJobRepository` | `production/ProductionJobRepository.ts` |
+| `FinanceRepository` | `finance/FinanceRepository.ts` |
 
 Persistence contracts for aggregate roots. Implementations belong in Infrastructure.
 
@@ -315,6 +336,8 @@ Default order: Company → Building → Production → Market → Finance
 
 Production system advances running {@link ProductionJob} aggregates each tick and invokes an optional completion callback for inventory delivery.
 
+Finance system visits all persisted finance accounts each tick (recurring costs deferred).
+
 **References:** DD-009, DD-011, DD-027, `docs/architecture/runtime-view.md`
 
 ---
@@ -337,17 +360,18 @@ Coordinates use cases between domain, infrastructure and simulation.
 | `GetCompanyQueryHandler` | `queries/GetCompanyQueryHandler.ts` |
 | `ListBuildingsQueryHandler` | `queries/ListBuildingsQueryHandler.ts` |
 | `GetInventoryQueryHandler` | `queries/GetInventoryQueryHandler.ts` |
-| Read models | `read-models/CompanyReadModel.ts`, `BuildingReadModel.ts`, `InventoryReadModel.ts` |
+| `GetFinanceQueryHandler` | `queries/GetFinanceQueryHandler.ts` |
+| Read models | `read-models/CompanyReadModel.ts`, `BuildingReadModel.ts`, `InventoryReadModel.ts`, `FinanceReadModel.ts` |
 | Tests | `bootstrap/bootstrapApplication.test.ts`, `services/ProductionInventoryService.test.ts`, `queries/*.test.ts`, `use-cases/*.test.ts` |
 
 **Behaviour:**
 
 - Bootstrap loads validated game content and wires in-memory repos, clock, event bus and simulation engine with default systems.
 - Use cases create domain aggregates, persist via repository interfaces and enqueue domain events for the next tick.
-- `CreateCompanyUseCase` also creates an empty company inventory.
+- `CreateCompanyUseCase` also creates an empty company inventory and finance account with starting capital.
 - `StartProductionUseCase` validates recipe/building compatibility against loaded content, reserves recipe inputs via `ProductionInventoryService`, and rolls back reservations if job creation fails.
 - `ProductionInventoryService` reserves inputs on production start; simulation invokes `completeJob()` on completion to consume inputs and deliver outputs.
-- Query handlers (`GetCompany`, `ListBuildings`, `GetInventory`) read repository state and return immutable read models without mutating aggregates.
+- Query handlers (`GetCompany`, `ListBuildings`, `GetInventory`, `GetFinance`) read repository state and return immutable read models without mutating aggregates.
 
 ---
 
@@ -359,6 +383,7 @@ Coordinates use cases between domain, infrastructure and simulation.
 | `InMemoryBuildingRepository` | `persistence/InMemoryBuildingRepository.ts` |
 | `InMemoryInventoryRepository` | `persistence/InMemoryInventoryRepository.ts` |
 | `InMemoryProductionJobRepository` | `persistence/InMemoryProductionJobRepository.ts` |
+| `InMemoryFinanceRepository` | `persistence/InMemoryFinanceRepository.ts` |
 | Tests | `persistence/InMemory*.test.ts` |
 
 ---
@@ -402,6 +427,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 | Domain / Building | `Building.test.ts` | Placement, validation, events |
 | Domain / Inventory | `Inventory.test.ts` | Quantities, reservations, events |
 | Domain / ProductionJob | `ProductionJob.test.ts` | Start, tick, completion |
+| Domain / FinanceAccount | `FinanceAccount.test.ts` | Credit, debit, reserve, transactions |
 | Domain / Money | `Money.test.ts` | Amount, currency, validation |
 | Domain / Quantity | `Quantity.test.ts` | Non-negative values |
 | Domain / ResourceAmount | `ResourceAmount.test.ts` | Resource id + amount |
@@ -424,13 +450,15 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 | Application / GetCompany | `GetCompanyQueryHandler.test.ts` | Company read model, not found |
 | Application / ListBuildings | `ListBuildingsQueryHandler.test.ts` | Building list, empty company |
 | Application / GetInventory | `GetInventoryQueryHandler.test.ts` | Stock levels, available quantity |
+| Application / GetFinance | `GetFinanceQueryHandler.test.ts` | Starting balance, not found |
+| Infrastructure / Finance repo | `InMemoryFinanceRepository.test.ts` | Save, find by company |
 
 ---
 
 # Planned Next Steps
 
 1. Recipe reference validation for `requiredResearch` once research content exists
-2. Market and finance simulation logic once related aggregates exist
+2. Market price registry seeded from resource `basePrice` content
 3. Save/load game session persistence
 
 ---

@@ -33,6 +33,6 @@ export function createDefaultSimulationSystems(
         : {}),
     }),
     new MarketSimulationSystem(),
-    new FinanceSimulationSystem(),
+    new FinanceSimulationSystem(dependencies.financeRepository),
   ]);
 }

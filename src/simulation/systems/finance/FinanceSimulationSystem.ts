@@ -1,21 +1,32 @@
 /**
  * @module @simulation/systems/finance/FinanceSimulationSystem
  *
- * Placeholder for company finance tick processing.
+ * Processes company finance tick work each tick.
  */
 
+import type { FinanceRepository } from '../../../domain/finance/FinanceRepository.js';
 import type { SimulationSystem } from '../../engine/SimulationSystem.js';
 import type { TickContext } from '../../engine/TickContext.js';
 
 /**
- * Reserved simulation system for finance updates.
+ * Visits all persisted finance accounts during each simulation tick.
  *
- * Will process finance aggregates once the finance domain exists.
+ * Recurring finance rules such as maintenance and salaries will be added later.
  */
 export class FinanceSimulationSystem implements SimulationSystem {
   readonly name = 'Finance';
+  readonly #financeRepository: FinanceRepository;
+
+  /**
+   * @param financeRepository - Repository providing access to finance aggregates.
+   */
+  constructor(financeRepository: FinanceRepository) {
+    this.#financeRepository = financeRepository;
+  }
 
   execute(_context: TickContext): void {
-    // Finance tick processing requires finance domain aggregates.
+    for (const _account of this.#financeRepository.findAll()) {
+      // Finance tick processing will be extended with maintenance and market settlement.
+    }
   }
 }

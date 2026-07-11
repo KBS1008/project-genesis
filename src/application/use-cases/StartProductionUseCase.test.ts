@@ -9,6 +9,7 @@ import { ProductionStarted } from '../../domain/production/events/ProductionStar
 import { createCompanyId } from '../../domain/company/Company.js';
 import { InMemoryBuildingRepository } from '../../infrastructure/persistence/InMemoryBuildingRepository.js';
 import { InMemoryCompanyRepository } from '../../infrastructure/persistence/InMemoryCompanyRepository.js';
+import { InMemoryFinanceRepository } from '../../infrastructure/persistence/InMemoryFinanceRepository.js';
 import { InMemoryInventoryRepository } from '../../infrastructure/persistence/InMemoryInventoryRepository.js';
 import { InMemoryProductionJobRepository } from '../../infrastructure/persistence/InMemoryProductionJobRepository.js';
 import { ProductionInventoryService } from '../services/ProductionInventoryService.js';
@@ -32,6 +33,7 @@ async function createContext() {
   const companyRepository = new InMemoryCompanyRepository();
   const buildingRepository = new InMemoryBuildingRepository();
   const inventoryRepository = new InMemoryInventoryRepository();
+  const financeRepository = new InMemoryFinanceRepository();
   const productionJobRepository = new InMemoryProductionJobRepository();
   const eventBus = new InMemoryEventBus();
 
@@ -54,6 +56,7 @@ async function createContext() {
       companyRepository,
       buildingRepository,
       productionJobRepository,
+      financeRepository,
       enqueueEvents,
       onProductionJobCompleted: (job) => {
         productionInventoryService.completeJob(job);
@@ -67,6 +70,7 @@ async function createContext() {
     companyRepository,
     buildingRepository,
     inventoryRepository,
+    financeRepository,
     productionJobRepository,
     productionInventoryService,
     simulationEngine,
