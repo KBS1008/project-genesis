@@ -26,12 +26,12 @@ Update this document whenever a meaningful implementation milestone is completed
 | Domain aggregates | Partial (Company, Building) |
 | Domain value objects | Partial (Money, Quantity, ResourceAmount, Capacity, Position) |
 | Content loaders | Partial (ResourceType, BuildingType, Recipe) |
-| Simulation | Partial (SimulationEngine, first tick) |
-| Infrastructure | Not started |
+| Simulation | Partial (SimulationEngine, systems pipeline) |
+| Infrastructure | Partial (in-memory repositories) |
 | Application layer | Not started |
 | UI | Not started |
 
-**Tests:** 142 (run `pnpm test` for current count)
+**Tests:** 148 (run `pnpm test` for current count)
 
 ---
 
@@ -261,7 +261,30 @@ Deterministic simulation engine (first increment).
 3. Publish queued domain events via `IEventBus`
 4. Update simulation state
 
+**Simulation systems:**
+
+| Item | Path |
+|---|---|
+| `CompanySimulationSystem` | `systems/company/CompanySimulationSystem.ts` |
+| `BuildingSimulationSystem` | `systems/building/BuildingSimulationSystem.ts` |
+| `ProductionSimulationSystem` | `systems/production/ProductionSimulationSystem.ts` |
+| `MarketSimulationSystem` | `systems/market/MarketSimulationSystem.ts` |
+| `FinanceSimulationSystem` | `systems/finance/FinanceSimulationSystem.ts` |
+| Factory | `systems/createDefaultSimulationSystems.ts` |
+
+Default order: Company → Building → Production → Market → Finance
+
 **References:** DD-009, DD-027, `docs/architecture/runtime-view.md`
+
+---
+
+## Infrastructure Module (`src/infrastructure/`)
+
+| Item | Path |
+|---|---|
+| `InMemoryCompanyRepository` | `persistence/InMemoryCompanyRepository.ts` |
+| `InMemoryBuildingRepository` | `persistence/InMemoryBuildingRepository.ts` |
+| Tests | `persistence/InMemoryCompanyRepository.test.ts`, `persistence/InMemoryBuildingRepository.test.ts` |
 
 ---
 
@@ -313,16 +336,19 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 | Content / All | `validateGameContent.test.ts` | Full content pipeline |
 | Simulation / Engine | `SimulationEngine.test.ts` | Tick, determinism, pause |
 | Simulation / EventQueue | `EventQueue.test.ts` | Enqueue, drain, peek |
+| Simulation / Systems | `createDefaultSimulationSystems.test.ts` | Default pipeline order |
+| Infrastructure / Company repo | `InMemoryCompanyRepository.test.ts` | Save, find, ordering |
+| Infrastructure / Building repo | `InMemoryBuildingRepository.test.ts` | Save, find by company |
 
 ---
 
 # Planned Next Steps
 
 1. Recipe reference validation for `requiredResearch` once research content exists
-2. Simulation systems (production, market, finance) once related domain aggregates exist
-3. In-memory repository implementations in Infrastructure
-4. Application layer bootstrap and first use cases (CreateCompany, PlaceBuilding)
-5. Additional domain aggregates: Inventory, ProductionJob
+2. Application layer bootstrap and first use cases (CreateCompany, PlaceBuilding)
+3. Additional domain aggregates: Inventory, ProductionJob
+4. Implement production, market and finance simulation logic once aggregates exist
+5. Wire default simulation systems into application bootstrap
 
 ---
 

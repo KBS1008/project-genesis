@@ -18,4 +18,7 @@ export interface CompanyRepository {
 
   /** Returns a company by id, or undefined when not found. */
   findById(id: CompanyId): Company | undefined;
+
+  /** Returns all companies in deterministic id order. */
+  findAll(): readonly Company[];
 }
