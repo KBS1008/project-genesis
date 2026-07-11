@@ -1,0 +1,134 @@
+{
+  "compilerOptions": {
+    /* ==========================================================
+     * Language
+     * ========================================================== */
+
+    "target": "ES2024",
+    "lib": ["ES2024"],
+
+    /* ==========================================================
+     * Modules
+     * ========================================================== */
+
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+
+    /* ==========================================================
+     * Project Structure
+     * ========================================================== */
+
+    "rootDir": ".",
+    "outDir": "dist",
+
+    "baseUrl": ".",
+
+    "paths": {
+      "@application/*": [
+        "src/application/*"
+      ],
+
+      "@common/*": [
+        "src/common/*"
+      ],
+
+      "@content/*": [
+        "src/content/*"
+      ],
+
+      "@domain/*": [
+        "src/domain/*"
+      ],
+
+      "@infrastructure/*": [
+        "src/infrastructure/*"
+      ],
+
+      "@simulation/*": [
+        "src/simulation/*"
+      ],
+
+      "@ui/*": [
+        "src/ui/*"
+      ],
+
+      "@tests/*": [
+        "tests/*"
+      ]
+    },
+
+    /* ==========================================================
+     * Strictness
+     * ========================================================== */
+
+    "strict": true,
+
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+
+    "noUncheckedIndexedAccess": true,
+
+    "noImplicitOverride": true,
+
+    "exactOptionalPropertyTypes": true,
+
+    "noFallthroughCasesInSwitch": true,
+
+    "noPropertyAccessFromIndexSignature": true,
+
+    /* ==========================================================
+     * Emit
+     * ========================================================== */
+
+    "declaration": true,
+
+    "sourceMap": true,
+
+    "removeComments": false,
+
+    /* ==========================================================
+     * Interop
+     * ========================================================== */
+
+    "esModuleInterop": true,
+
+    "allowSyntheticDefaultImports": true,
+
+    "resolveJsonModule": true,
+
+    "isolatedModules": true,
+
+    "verbatimModuleSyntax": true,
+
+    /* ==========================================================
+     * Type Checking
+     * ========================================================== */
+
+    "skipLibCheck": true,
+
+    "forceConsistentCasingInFileNames": true,
+
+    /* ==========================================================
+     * Types
+     * ========================================================== */
+
+    "types": [
+      "node",
+      "vitest/globals"
+    ]
+  },
+
+  "include": [
+    "src",
+    "tests",
+    "tools"
+  ],
+
+  "exclude": [
+    "dist",
+    "coverage",
+    "node_modules"
+  ]
+}
