@@ -25,7 +25,10 @@ export function createDefaultSimulationSystems(
   return Object.freeze([
     new CompanySimulationSystem(dependencies.companyRepository),
     new BuildingSimulationSystem(dependencies.companyRepository, dependencies.buildingRepository),
-    new ProductionSimulationSystem(),
+    new ProductionSimulationSystem({
+      productionJobRepository: dependencies.productionJobRepository,
+      enqueueEvents: dependencies.enqueueEvents,
+    }),
     new MarketSimulationSystem(),
     new FinanceSimulationSystem(),
   ]);

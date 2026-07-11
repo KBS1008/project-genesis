@@ -2,25 +2,28 @@ import { InMemoryEventBus } from '../../common/events/InMemoryEventBus.js';
 import { ManualClock } from '../../common/time/ManualClock.js';
 import { CompanyFounded } from '../../domain/company/events/CompanyFounded.js';
 import { InMemoryCompanyRepository } from '../../infrastructure/persistence/InMemoryCompanyRepository.js';
+import { InMemoryInventoryRepository } from '../../infrastructure/persistence/InMemoryInventoryRepository.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
 import { CreateCompanyUseCase } from './CreateCompanyUseCase.js';
 
 function createUseCase(clock = new ManualClock(100)) {
   const companyRepository = new InMemoryCompanyRepository();
+  const inventoryRepository = new InMemoryInventoryRepository();
   const eventBus = new InMemoryEventBus();
   const simulationEngine = new SimulationEngine({ clock, eventBus });
   const useCase = new CreateCompanyUseCase({
     clock,
     companyRepository,
+    inventoryRepository,
     simulationEngine,
   });
 
-  return { clock, companyRepository, eventBus, simulationEngine, useCase };
+  return { clock, companyRepository, inventoryRepository, eventBus, simulationEngine, useCase };
 }
 
 describe('CreateCompanyUseCase', () => {
-  it('creates and persists a company', () => {
-    const { companyRepository, useCase } = createUseCase();
+  it('creates and persists a company with an inventory', () => {
+    const { companyRepository, inventoryRepository, useCase } = createUseCase();
 
     const result = useCase.execute({
       companyId: 'company_001',
@@ -33,6 +36,7 @@ describe('CreateCompanyUseCase', () => {
     if (result.ok) {
       const company = companyRepository.findById(result.value);
       expect(company?.getName()).toBe('Genesis Industries');
+      expect(inventoryRepository.findByCompanyId(result.value)).toBeDefined();
     }
   });
 

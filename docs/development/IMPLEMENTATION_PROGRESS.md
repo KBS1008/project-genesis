@@ -23,15 +23,15 @@ Update this document whenever a meaningful implementation milestone is completed
 | Area | Status |
 |---|---|
 | Common foundation | Implemented |
-| Domain aggregates | Partial (Company, Building) |
+| Domain aggregates | Partial (Company, Building, Inventory, ProductionJob) |
 | Domain value objects | Partial (Money, Quantity, ResourceAmount, Capacity, Position) |
 | Content loaders | Partial (ResourceType, BuildingType, Recipe) |
 | Simulation | Partial (SimulationEngine, systems pipeline) |
 | Infrastructure | Partial (in-memory repositories) |
-| Application layer | Partial (bootstrap, CreateCompany, PlaceBuilding) |
+| Application layer | Partial (bootstrap, CreateCompany, PlaceBuilding, StartProduction) |
 | UI | Not started |
 
-**Tests:** 156 (run `pnpm test` for current count)
+**Tests:** 168 (run `pnpm test` for current count)
 
 ---
 
@@ -115,6 +115,43 @@ Business aggregates and domain events.
 
 **References:** DD-014 (template vs instance), DD-015 (static vs dynamic), `docs/schemas/Building.schema.md`
 
+### Inventory aggregate
+
+| Item | Path |
+|---|---|
+| Aggregate | `inventory/Inventory.ts` |
+| Identifiers | `inventory/InventoryId.ts` |
+| Status enum | `inventory/InventoryStatus.ts` |
+| Item snapshot | `inventory/InventoryItem.ts` |
+| Domain event | `inventory/events/InventoryChanged.ts` |
+| Repository | `inventory/InventoryRepository.ts` |
+| Tests | `inventory/Inventory.test.ts` |
+
+**Behaviour:**
+
+- `Inventory.create()` — empty inventory per company.
+- `addQuantity()` / `reserveQuantity()` — non-negative validation, `InventoryChanged` events.
+
+**References:** `docs/schemas/Inventory.Schema.md`
+
+### ProductionJob aggregate
+
+| Item | Path |
+|---|---|
+| Aggregate | `production/ProductionJob.ts` |
+| Identifiers | `production/ProductionJobId.ts`, `production/RecipeId.ts` |
+| Status enum | `production/ProductionJobStatus.ts` |
+| Domain events | `production/events/ProductionStarted.ts`, `ProductionCompleted.ts` |
+| Repository | `production/ProductionJobRepository.ts` |
+| Tests | `production/ProductionJob.test.ts` |
+
+**Behaviour:**
+
+- `ProductionJob.create()` — waiting job with recipe duration from application layer.
+- `start()` / `tick()` — progress 0–100, completes with `ProductionCompleted`.
+
+**References:** DD-011, `docs/schemas/Production.Schema.md`
+
 ### Shared value objects
 
 | Item | Path |
@@ -142,6 +179,8 @@ Business aggregates and domain events.
 |---|---|
 | `CompanyRepository` | `company/CompanyRepository.ts` |
 | `BuildingRepository` | `building/BuildingRepository.ts` |
+| `InventoryRepository` | `inventory/InventoryRepository.ts` |
+| `ProductionJobRepository` | `production/ProductionJobRepository.ts` |
 
 Persistence contracts for aggregate roots. Implementations belong in Infrastructure.
 
@@ -274,7 +313,9 @@ Deterministic simulation engine (first increment).
 
 Default order: Company → Building → Production → Market → Finance
 
-**References:** DD-009, DD-027, `docs/architecture/runtime-view.md`
+Production system advances running {@link ProductionJob} aggregates each tick.
+
+**References:** DD-009, DD-011, DD-027, `docs/architecture/runtime-view.md`
 
 ---
 
@@ -290,12 +331,15 @@ Coordinates use cases between domain, infrastructure and simulation.
 | `PlaceBuildingCommand` | `commands/PlaceBuildingCommand.ts` |
 | `CreateCompanyUseCase` | `use-cases/CreateCompanyUseCase.ts` |
 | `PlaceBuildingUseCase` | `use-cases/PlaceBuildingUseCase.ts` |
+| `StartProductionUseCase` | `use-cases/StartProductionUseCase.ts` |
 | Tests | `bootstrap/bootstrapApplication.test.ts`, `use-cases/*.test.ts` |
 
 **Behaviour:**
 
 - Bootstrap loads validated game content and wires in-memory repos, clock, event bus and simulation engine with default systems.
 - Use cases create domain aggregates, persist via repository interfaces and enqueue domain events for the next tick.
+- `CreateCompanyUseCase` also creates an empty company inventory.
+- `StartProductionUseCase` validates recipe/building compatibility against loaded content.
 
 ---
 
@@ -305,7 +349,9 @@ Coordinates use cases between domain, infrastructure and simulation.
 |---|---|
 | `InMemoryCompanyRepository` | `persistence/InMemoryCompanyRepository.ts` |
 | `InMemoryBuildingRepository` | `persistence/InMemoryBuildingRepository.ts` |
-| Tests | `persistence/InMemoryCompanyRepository.test.ts`, `persistence/InMemoryBuildingRepository.test.ts` |
+| `InMemoryInventoryRepository` | `persistence/InMemoryInventoryRepository.ts` |
+| `InMemoryProductionJobRepository` | `persistence/InMemoryProductionJobRepository.ts` |
+| Tests | `persistence/InMemory*.test.ts` |
 
 ---
 
@@ -346,6 +392,8 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 | Common / EventBus | `InMemoryEventBus.test.ts` | Subscribe, publish, order |
 | Domain / Company | `Company.test.ts` | Creation, validation, events |
 | Domain / Building | `Building.test.ts` | Placement, validation, events |
+| Domain / Inventory | `Inventory.test.ts` | Quantities, reservations, events |
+| Domain / ProductionJob | `ProductionJob.test.ts` | Start, tick, completion |
 | Domain / Money | `Money.test.ts` | Amount, currency, validation |
 | Domain / Quantity | `Quantity.test.ts` | Non-negative values |
 | Domain / ResourceAmount | `ResourceAmount.test.ts` | Resource id + amount |
@@ -363,15 +411,16 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 | Application / Bootstrap | `bootstrapApplication.test.ts` | Content load, wiring |
 | Application / CreateCompany | `CreateCompanyUseCase.test.ts` | Create, events, duplicates |
 | Application / PlaceBuilding | `PlaceBuildingUseCase.test.ts` | Place, events, validation |
+| Application / StartProduction | `StartProductionUseCase.test.ts` | Recipe validation, tick completion |
 
 ---
 
 # Planned Next Steps
 
 1. Recipe reference validation for `requiredResearch` once research content exists
-2. Additional domain aggregates: Inventory, ProductionJob
-3. Implement production, market and finance simulation logic once aggregates exist
-4. Application queries (GetCompany, ListBuildings)
+2. Inventory input reservation and output delivery during production completion
+3. Application queries (GetCompany, ListBuildings, GetInventory)
+4. Market and finance simulation logic once related aggregates exist
 5. Save/load game session persistence
 
 ---

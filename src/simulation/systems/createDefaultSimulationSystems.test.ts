@@ -1,6 +1,7 @@
 import { ManualClock } from '../../common/time/ManualClock.js';
 import { InMemoryBuildingRepository } from '../../infrastructure/persistence/InMemoryBuildingRepository.js';
 import { InMemoryCompanyRepository } from '../../infrastructure/persistence/InMemoryCompanyRepository.js';
+import { InMemoryProductionJobRepository } from '../../infrastructure/persistence/InMemoryProductionJobRepository.js';
 import { Company, createCompanyId, createPlayerId } from '../../domain/company/Company.js';
 import { createDefaultSimulationSystems } from './createDefaultSimulationSystems.js';
 
@@ -24,12 +25,18 @@ function requirePlayerId(value: string) {
   return result.value;
 }
 
+function createDependencies() {
+  return {
+    companyRepository: new InMemoryCompanyRepository(),
+    buildingRepository: new InMemoryBuildingRepository(),
+    productionJobRepository: new InMemoryProductionJobRepository(),
+    enqueueEvents: () => undefined,
+  };
+}
+
 describe('createDefaultSimulationSystems', () => {
   it('returns systems in deterministic runtime order', () => {
-    const systems = createDefaultSimulationSystems({
-      companyRepository: new InMemoryCompanyRepository(),
-      buildingRepository: new InMemoryBuildingRepository(),
-    });
+    const systems = createDefaultSimulationSystems(createDependencies());
 
     expect(systems.map((system) => system.name)).toEqual([
       'Company',
@@ -41,8 +48,7 @@ describe('createDefaultSimulationSystems', () => {
   });
 
   it('executes company and building systems against persisted aggregates', () => {
-    const companyRepository = new InMemoryCompanyRepository();
-    const buildingRepository = new InMemoryBuildingRepository();
+    const dependencies = createDependencies();
     const clock = new ManualClock(100);
 
     const companyResult = Company.create({
@@ -55,13 +61,10 @@ describe('createDefaultSimulationSystems', () => {
     expect(companyResult.ok).toBe(true);
 
     if (companyResult.ok) {
-      companyRepository.save(companyResult.value);
+      dependencies.companyRepository.save(companyResult.value);
     }
 
-    const systems = createDefaultSimulationSystems({
-      companyRepository,
-      buildingRepository,
-    });
+    const systems = createDefaultSimulationSystems(dependencies);
 
     expect(() => {
       for (const system of systems) {

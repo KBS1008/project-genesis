@@ -5,14 +5,19 @@
  */
 
 import { InMemoryEventBus } from '../../common/events/InMemoryEventBus.js';
+import type { DomainEvent } from '../../common/events/DomainEvent.js';
 import { Result } from '../../common/result/Result.js';
 import { ManualClock } from '../../common/time/ManualClock.js';
 import { validateGameContent } from '../../content/validateGameContent.js';
 import type { ContentLoadError } from '../../content/errors/ContentLoadError.js';
 import type { BuildingRepository } from '../../domain/building/BuildingRepository.js';
 import type { CompanyRepository } from '../../domain/company/CompanyRepository.js';
+import type { InventoryRepository } from '../../domain/inventory/InventoryRepository.js';
+import type { ProductionJobRepository } from '../../domain/production/ProductionJobRepository.js';
 import { InMemoryBuildingRepository } from '../../infrastructure/persistence/InMemoryBuildingRepository.js';
 import { InMemoryCompanyRepository } from '../../infrastructure/persistence/InMemoryCompanyRepository.js';
+import { InMemoryInventoryRepository } from '../../infrastructure/persistence/InMemoryInventoryRepository.js';
+import { InMemoryProductionJobRepository } from '../../infrastructure/persistence/InMemoryProductionJobRepository.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
 import { createDefaultSimulationSystems } from '../../simulation/systems/createDefaultSimulationSystems.js';
 import type { ApplicationContext } from './ApplicationContext.js';
@@ -23,6 +28,8 @@ export type BootstrapOptions = {
   readonly strictContent?: boolean;
   readonly companyRepository?: CompanyRepository;
   readonly buildingRepository?: BuildingRepository;
+  readonly inventoryRepository?: InventoryRepository;
+  readonly productionJobRepository?: ProductionJobRepository;
 };
 
 /**
@@ -41,14 +48,25 @@ export async function bootstrapApplication(
 
   const companyRepository = options.companyRepository ?? new InMemoryCompanyRepository();
   const buildingRepository = options.buildingRepository ?? new InMemoryBuildingRepository();
+  const inventoryRepository = options.inventoryRepository ?? new InMemoryInventoryRepository();
+  const productionJobRepository =
+    options.productionJobRepository ?? new InMemoryProductionJobRepository();
   const clock = new ManualClock(0);
   const eventBus = new InMemoryEventBus();
-  const simulationEngine = new SimulationEngine({
+
+  let simulationEngine: SimulationEngine;
+  const enqueueEvents = (events: readonly DomainEvent[]): void => {
+    simulationEngine.enqueueEvents(events);
+  };
+
+  simulationEngine = new SimulationEngine({
     clock,
     eventBus,
     systems: createDefaultSimulationSystems({
       companyRepository,
       buildingRepository,
+      productionJobRepository,
+      enqueueEvents,
     }),
   });
 
@@ -58,6 +76,8 @@ export async function bootstrapApplication(
     simulationEngine,
     companyRepository,
     buildingRepository,
+    inventoryRepository,
+    productionJobRepository,
     gameContent: contentResult.value,
   });
 }
