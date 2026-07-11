@@ -9,6 +9,7 @@ import type { BuildingRepository } from '../../domain/building/BuildingRepositor
 import type { CompanyRepository } from '../../domain/company/CompanyRepository.js';
 import type { InventoryRepository } from '../../domain/inventory/InventoryRepository.js';
 import type { FinanceRepository } from '../../domain/finance/FinanceRepository.js';
+import type { MarketRepository } from '../../domain/market/MarketRepository.js';
 import type { ProductionJobRepository } from '../../domain/production/ProductionJobRepository.js';
 import type { ProductionInventoryService } from '../services/ProductionInventoryService.js';
 import type { GameContentLoadResult } from '../../content/validateGameContent.js';
@@ -24,6 +25,7 @@ export type ApplicationContext = {
   readonly buildingRepository: BuildingRepository;
   readonly inventoryRepository: InventoryRepository;
   readonly financeRepository: FinanceRepository;
+  readonly marketRepository: MarketRepository;
   readonly productionJobRepository: ProductionJobRepository;
   readonly productionInventoryService: ProductionInventoryService;
   readonly gameContent: GameContentLoadResult;

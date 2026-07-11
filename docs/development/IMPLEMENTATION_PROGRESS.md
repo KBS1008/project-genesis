@@ -23,7 +23,7 @@ Update this document whenever a meaningful implementation milestone is completed
 | Area | Status |
 |---|---|
 | Common foundation | Implemented |
-| Domain aggregates | Partial (Company, Building, Inventory, ProductionJob, FinanceAccount) |
+| Domain aggregates | Partial (Company, Building, Inventory, ProductionJob, FinanceAccount, Market) |
 | Domain value objects | Partial (Money, Quantity, ResourceAmount, Capacity, Position) |
 | Content loaders | Partial (ResourceType, BuildingType, Recipe) |
 | Simulation | Partial (SimulationEngine, systems pipeline) |
@@ -31,7 +31,7 @@ Update this document whenever a meaningful implementation milestone is completed
 | Application layer | Partial (bootstrap, use cases, queries) |
 | UI | Not started |
 
-**Tests:** 191 (run `pnpm test` for current count)
+**Tests:** 198 (run `pnpm test` for current count)
 
 ---
 
@@ -172,6 +172,26 @@ Business aggregates and domain events.
 
 **References:** `docs/schemas/Finance.Schema.md`, `docs/schemas/FinanceTransaction.Schema.md`
 
+### Market aggregate
+
+| Item | Path |
+|---|---|
+| Aggregate | `market/Market.ts` |
+| Identifiers | `market/MarketId.ts` |
+| Price snapshot | `market/ResourceMarketPrice.ts` |
+| Constants | `market/MarketConstants.ts` (`GLOBAL_MARKET_ID`) |
+| Domain event | `market/events/MarketPriceChanged.ts` |
+| Repository | `market/MarketRepository.ts` |
+| Tests | `market/Market.test.ts` |
+
+**Behaviour:**
+
+- `Market.seedFromResources()` — global price book from enabled, market-enabled resource definitions; `lastPrice` starts at `basePrice`.
+- `updateLastPrice()` — records price changes and emits `MarketPriceChanged`.
+- `MarketPriceSeeder` (application) initializes `market_global` during bootstrap.
+
+**References:** `docs/gameplay/market.md`, DD-018
+
 ### Shared value objects
 
 | Item | Path |
@@ -202,6 +222,7 @@ Business aggregates and domain events.
 | `InventoryRepository` | `inventory/InventoryRepository.ts` |
 | `ProductionJobRepository` | `production/ProductionJobRepository.ts` |
 | `FinanceRepository` | `finance/FinanceRepository.ts` |
+| `MarketRepository` | `market/MarketRepository.ts` |
 
 Persistence contracts for aggregate roots. Implementations belong in Infrastructure.
 
@@ -338,6 +359,8 @@ Production system advances running {@link ProductionJob} aggregates each tick an
 
 Finance system visits all persisted finance accounts each tick (recurring costs deferred).
 
+Market system visits the global market each tick (dynamic pricing deferred).
+
 **References:** DD-009, DD-011, DD-027, `docs/architecture/runtime-view.md`
 
 ---
@@ -355,13 +378,15 @@ Coordinates use cases between domain, infrastructure and simulation.
 | `CreateCompanyUseCase` | `use-cases/CreateCompanyUseCase.ts` |
 | `PlaceBuildingUseCase` | `use-cases/PlaceBuildingUseCase.ts` |
 | `ProductionInventoryService` | `services/ProductionInventoryService.ts` |
+| `MarketPriceSeeder` | `services/MarketPriceSeeder.ts` |
 | `StartProductionCommand` | `commands/StartProductionCommand.ts` |
 | `StartProductionUseCase` | `use-cases/StartProductionUseCase.ts` |
 | `GetCompanyQueryHandler` | `queries/GetCompanyQueryHandler.ts` |
 | `ListBuildingsQueryHandler` | `queries/ListBuildingsQueryHandler.ts` |
 | `GetInventoryQueryHandler` | `queries/GetInventoryQueryHandler.ts` |
 | `GetFinanceQueryHandler` | `queries/GetFinanceQueryHandler.ts` |
-| Read models | `read-models/CompanyReadModel.ts`, `BuildingReadModel.ts`, `InventoryReadModel.ts`, `FinanceReadModel.ts` |
+| `GetMarketPricesQueryHandler` | `queries/GetMarketPricesQueryHandler.ts` |
+| Read models | `read-models/CompanyReadModel.ts`, `BuildingReadModel.ts`, `InventoryReadModel.ts`, `FinanceReadModel.ts`, `MarketPriceReadModel.ts` |
 | Tests | `bootstrap/bootstrapApplication.test.ts`, `services/ProductionInventoryService.test.ts`, `queries/*.test.ts`, `use-cases/*.test.ts` |
 
 **Behaviour:**
@@ -371,7 +396,8 @@ Coordinates use cases between domain, infrastructure and simulation.
 - `CreateCompanyUseCase` also creates an empty company inventory and finance account with starting capital.
 - `StartProductionUseCase` validates recipe/building compatibility against loaded content, reserves recipe inputs via `ProductionInventoryService`, and rolls back reservations if job creation fails.
 - `ProductionInventoryService` reserves inputs on production start; simulation invokes `completeJob()` on completion to consume inputs and deliver outputs.
-- Query handlers (`GetCompany`, `ListBuildings`, `GetInventory`, `GetFinance`) read repository state and return immutable read models without mutating aggregates.
+- Bootstrap seeds global market prices from resource `basePrice` via `MarketPriceSeeder`.
+- Query handlers (`GetCompany`, `ListBuildings`, `GetInventory`, `GetFinance`, `GetMarketPrices`) read repository state and return immutable read models without mutating aggregates.
 
 ---
 
@@ -384,6 +410,7 @@ Coordinates use cases between domain, infrastructure and simulation.
 | `InMemoryInventoryRepository` | `persistence/InMemoryInventoryRepository.ts` |
 | `InMemoryProductionJobRepository` | `persistence/InMemoryProductionJobRepository.ts` |
 | `InMemoryFinanceRepository` | `persistence/InMemoryFinanceRepository.ts` |
+| `InMemoryMarketRepository` | `persistence/InMemoryMarketRepository.ts` |
 | Tests | `persistence/InMemory*.test.ts` |
 
 ---
@@ -428,6 +455,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 | Domain / Inventory | `Inventory.test.ts` | Quantities, reservations, events |
 | Domain / ProductionJob | `ProductionJob.test.ts` | Start, tick, completion |
 | Domain / FinanceAccount | `FinanceAccount.test.ts` | Credit, debit, reserve, transactions |
+| Domain / Market | `Market.test.ts` | Seed prices, update price, events |
 | Domain / Money | `Money.test.ts` | Amount, currency, validation |
 | Domain / Quantity | `Quantity.test.ts` | Non-negative values |
 | Domain / ResourceAmount | `ResourceAmount.test.ts` | Resource id + amount |
@@ -451,6 +479,8 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 | Application / ListBuildings | `ListBuildingsQueryHandler.test.ts` | Building list, empty company |
 | Application / GetInventory | `GetInventoryQueryHandler.test.ts` | Stock levels, available quantity |
 | Application / GetFinance | `GetFinanceQueryHandler.test.ts` | Starting balance, not found |
+| Application / GetMarketPrices | `GetMarketPricesQueryHandler.test.ts` | Seeded prices, not initialized |
+| Application / MarketPriceSeeder | `MarketPriceSeeder.test.ts` | Bootstrap seed, idempotent |
 | Infrastructure / Finance repo | `InMemoryFinanceRepository.test.ts` | Save, find by company |
 
 ---
@@ -458,7 +488,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 # Planned Next Steps
 
 1. Recipe reference validation for `requiredResearch` once research content exists
-2. Market price registry seeded from resource `basePrice` content
+2. Instant sell / buy use cases at market prices
 3. Save/load game session persistence
 
 ---

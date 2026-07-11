@@ -32,7 +32,7 @@ export function createDefaultSimulationSystems(
         ? { onJobCompleted: dependencies.onProductionJobCompleted }
         : {}),
     }),
-    new MarketSimulationSystem(),
+    new MarketSimulationSystem(dependencies.marketRepository),
     new FinanceSimulationSystem(dependencies.financeRepository),
   ]);
 }

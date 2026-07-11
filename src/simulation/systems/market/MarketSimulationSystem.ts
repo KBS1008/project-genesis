@@ -1,21 +1,32 @@
 /**
  * @module @simulation/systems/market/MarketSimulationSystem
  *
- * Placeholder for market price and trade tick processing.
+ * Processes market price tick work each simulation step.
  */
 
+import type { MarketRepository } from '../../../domain/market/MarketRepository.js';
 import type { SimulationSystem } from '../../engine/SimulationSystem.js';
 import type { TickContext } from '../../engine/TickContext.js';
 
 /**
- * Reserved simulation system for market updates.
+ * Visits the global market during each simulation tick.
  *
- * Will process market aggregates once the market domain exists.
+ * Dynamic price updates and order matching will be added in later increments.
  */
 export class MarketSimulationSystem implements SimulationSystem {
   readonly name = 'Market';
+  readonly #marketRepository: MarketRepository;
+
+  /**
+   * @param marketRepository - Repository providing access to market aggregates.
+   */
+  constructor(marketRepository: MarketRepository) {
+    this.#marketRepository = marketRepository;
+  }
 
   execute(_context: TickContext): void {
-    // Market tick processing requires market domain aggregates.
+    for (const _market of this.#marketRepository.findAll()) {
+      // Market tick processing will be extended with supply/demand price updates.
+    }
   }
 }
