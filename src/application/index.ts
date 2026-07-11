@@ -16,3 +16,5 @@ export { PlaceBuildingUseCase } from './use-cases/PlaceBuildingUseCase.js';
 export type { PlaceBuildingUseCaseDependencies } from './use-cases/PlaceBuildingUseCase.js';
 export { StartProductionUseCase } from './use-cases/StartProductionUseCase.js';
 export type { StartProductionUseCaseDependencies } from './use-cases/StartProductionUseCase.js';
+export { ProductionInventoryService } from './services/ProductionInventoryService.js';
+export type { ProductionInventoryServiceDependencies } from './services/ProductionInventoryService.js';

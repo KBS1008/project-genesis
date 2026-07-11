@@ -18,6 +18,7 @@ import { InMemoryBuildingRepository } from '../../infrastructure/persistence/InM
 import { InMemoryCompanyRepository } from '../../infrastructure/persistence/InMemoryCompanyRepository.js';
 import { InMemoryInventoryRepository } from '../../infrastructure/persistence/InMemoryInventoryRepository.js';
 import { InMemoryProductionJobRepository } from '../../infrastructure/persistence/InMemoryProductionJobRepository.js';
+import { ProductionInventoryService } from '../services/ProductionInventoryService.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
 import { createDefaultSimulationSystems } from '../../simulation/systems/createDefaultSimulationSystems.js';
 import type { ApplicationContext } from './ApplicationContext.js';
@@ -59,6 +60,13 @@ export async function bootstrapApplication(
     simulationEngine.enqueueEvents(events);
   };
 
+  const productionInventoryService = new ProductionInventoryService({
+    inventoryRepository,
+    recipes: contentResult.value.recipes,
+    clock,
+    enqueueEvents,
+  });
+
   simulationEngine = new SimulationEngine({
     clock,
     eventBus,
@@ -67,6 +75,9 @@ export async function bootstrapApplication(
       buildingRepository,
       productionJobRepository,
       enqueueEvents,
+      onProductionJobCompleted: (job) => {
+        productionInventoryService.completeJob(job);
+      },
     }),
   });
 
@@ -78,6 +89,7 @@ export async function bootstrapApplication(
     buildingRepository,
     inventoryRepository,
     productionJobRepository,
+    productionInventoryService,
     gameContent: contentResult.value,
   });
 }

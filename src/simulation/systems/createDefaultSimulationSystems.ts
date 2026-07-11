@@ -28,6 +28,9 @@ export function createDefaultSimulationSystems(
     new ProductionSimulationSystem({
       productionJobRepository: dependencies.productionJobRepository,
       enqueueEvents: dependencies.enqueueEvents,
+      ...(dependencies.onProductionJobCompleted !== undefined
+        ? { onJobCompleted: dependencies.onProductionJobCompleted }
+        : {}),
     }),
     new MarketSimulationSystem(),
     new FinanceSimulationSystem(),

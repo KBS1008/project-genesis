@@ -112,4 +112,55 @@ describe('Inventory', () => {
 
     expect(reserveResult.ok).toBe(false);
   });
+
+  it('releases reserved quantity', () => {
+    const clock = new ManualClock(100);
+    const inventoryResult = Inventory.create({
+      id: requireInventoryId('inventory_001'),
+      companyId: requireCompanyId('company_001'),
+      clock,
+    });
+
+    expect(inventoryResult.ok).toBe(true);
+
+    if (!inventoryResult.ok) {
+      return;
+    }
+
+    const inventory = inventoryResult.value;
+    inventory.addQuantity('wood', 10, clock);
+    inventory.reserveQuantity('wood', 4, clock);
+    inventory.pullDomainEvents();
+
+    const releaseResult = inventory.releaseReserved('wood', 4, clock);
+
+    expect(releaseResult.ok).toBe(true);
+    expect(inventory.getAvailableQuantity(inventory.getItems()[0]!.resourceId)).toBe(10);
+  });
+
+  it('consumes reserved quantity from stock', () => {
+    const clock = new ManualClock(100);
+    const inventoryResult = Inventory.create({
+      id: requireInventoryId('inventory_001'),
+      companyId: requireCompanyId('company_001'),
+      clock,
+    });
+
+    expect(inventoryResult.ok).toBe(true);
+
+    if (!inventoryResult.ok) {
+      return;
+    }
+
+    const inventory = inventoryResult.value;
+    inventory.addQuantity('wood', 10, clock);
+    inventory.reserveQuantity('wood', 4, clock);
+    inventory.pullDomainEvents();
+
+    const consumeResult = inventory.consumeReserved('wood', 4, clock);
+
+    expect(consumeResult.ok).toBe(true);
+    expect(inventory.getItems()[0]?.quantity).toBe(6);
+    expect(inventory.getItems()[0]?.reserved).toBe(0);
+  });
 });

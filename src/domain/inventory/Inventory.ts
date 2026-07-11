@@ -189,6 +189,114 @@ export class Inventory extends AggregateRoot<'Inventory'> {
     return Result.ok(undefined);
   }
 
+  /**
+   * Releases previously reserved quantity without changing total stock.
+   */
+  releaseReserved(
+    resourceId: string,
+    amount: number,
+    clock: Clock,
+  ): Result<void, ValidationError> {
+    const amountResult = Guard.againstNegative(
+      amount,
+      'Released inventory amount must not be negative.',
+    );
+
+    if (!amountResult.ok) {
+      return Result.fail(amountResult.error);
+    }
+
+    if (amountResult.value === 0) {
+      return Result.ok(undefined);
+    }
+
+    const resourceIdResult = createResourceTypeId(resourceId);
+
+    if (!resourceIdResult.ok) {
+      return Result.fail(resourceIdResult.error);
+    }
+
+    const resourceTypeId = resourceIdResult.value;
+    const existing = this.#items.get(resourceTypeId.value);
+
+    if (existing === undefined || existing.reserved < amountResult.value) {
+      return Result.fail(
+        new ValidationError(
+          `Cannot release more reserved quantity than held for resource "${resourceTypeId.value}".`,
+        ),
+      );
+    }
+
+    const nextItem: InventoryItem = Object.freeze({
+      resourceId: resourceTypeId,
+      quantity: existing.quantity,
+      reserved: existing.reserved - amountResult.value,
+    });
+
+    this.#items.set(resourceTypeId.value, nextItem);
+    this.#recordChange(nextItem, clock);
+
+    return Result.ok(undefined);
+  }
+
+  /**
+   * Consumes previously reserved quantity from stock.
+   */
+  consumeReserved(
+    resourceId: string,
+    amount: number,
+    clock: Clock,
+  ): Result<void, ValidationError> {
+    const amountResult = Guard.againstNegative(
+      amount,
+      'Consumed inventory amount must not be negative.',
+    );
+
+    if (!amountResult.ok) {
+      return Result.fail(amountResult.error);
+    }
+
+    if (amountResult.value === 0) {
+      return Result.ok(undefined);
+    }
+
+    const resourceIdResult = createResourceTypeId(resourceId);
+
+    if (!resourceIdResult.ok) {
+      return Result.fail(resourceIdResult.error);
+    }
+
+    const resourceTypeId = resourceIdResult.value;
+    const existing = this.#items.get(resourceTypeId.value);
+
+    if (
+      existing === undefined ||
+      existing.reserved < amountResult.value ||
+      existing.quantity < amountResult.value
+    ) {
+      return Result.fail(
+        new ValidationError(
+          `Cannot consume reserved quantity for resource "${resourceTypeId.value}".`,
+        ),
+      );
+    }
+
+    const nextItem: InventoryItem = Object.freeze({
+      resourceId: resourceTypeId,
+      quantity: existing.quantity - amountResult.value,
+      reserved: existing.reserved - amountResult.value,
+    });
+
+    this.#items.set(resourceTypeId.value, nextItem);
+    this.#recordChange(nextItem, clock);
+
+    if (nextItem.quantity === 0) {
+      this.#items.delete(resourceTypeId.value);
+    }
+
+    return Result.ok(undefined);
+  }
+
   #recordChange(item: InventoryItem, clock: Clock): void {
     this.addDomainEvent(
       new InventoryChanged(

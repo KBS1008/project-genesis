@@ -31,7 +31,7 @@ Update this document whenever a meaningful implementation milestone is completed
 | Application layer | Partial (bootstrap, CreateCompany, PlaceBuilding, StartProduction) |
 | UI | Not started |
 
-**Tests:** 168 (run `pnpm test` for current count)
+**Tests:** 174 (run `pnpm test` for current count)
 
 ---
 
@@ -130,7 +130,7 @@ Business aggregates and domain events.
 **Behaviour:**
 
 - `Inventory.create()` — empty inventory per company.
-- `addQuantity()` / `reserveQuantity()` — non-negative validation, `InventoryChanged` events.
+- `addQuantity()` / `reserveQuantity()` / `releaseReserved()` / `consumeReserved()` — non-negative validation, `InventoryChanged` events; zero-quantity lines are removed after consumption.
 
 **References:** `docs/schemas/Inventory.Schema.md`
 
@@ -313,7 +313,7 @@ Deterministic simulation engine (first increment).
 
 Default order: Company → Building → Production → Market → Finance
 
-Production system advances running {@link ProductionJob} aggregates each tick.
+Production system advances running {@link ProductionJob} aggregates each tick and invokes an optional completion callback for inventory delivery.
 
 **References:** DD-009, DD-011, DD-027, `docs/architecture/runtime-view.md`
 
@@ -331,15 +331,18 @@ Coordinates use cases between domain, infrastructure and simulation.
 | `PlaceBuildingCommand` | `commands/PlaceBuildingCommand.ts` |
 | `CreateCompanyUseCase` | `use-cases/CreateCompanyUseCase.ts` |
 | `PlaceBuildingUseCase` | `use-cases/PlaceBuildingUseCase.ts` |
+| `ProductionInventoryService` | `services/ProductionInventoryService.ts` |
+| `StartProductionCommand` | `commands/StartProductionCommand.ts` |
 | `StartProductionUseCase` | `use-cases/StartProductionUseCase.ts` |
-| Tests | `bootstrap/bootstrapApplication.test.ts`, `use-cases/*.test.ts` |
+| Tests | `bootstrap/bootstrapApplication.test.ts`, `services/ProductionInventoryService.test.ts`, `use-cases/*.test.ts` |
 
 **Behaviour:**
 
 - Bootstrap loads validated game content and wires in-memory repos, clock, event bus and simulation engine with default systems.
 - Use cases create domain aggregates, persist via repository interfaces and enqueue domain events for the next tick.
 - `CreateCompanyUseCase` also creates an empty company inventory.
-- `StartProductionUseCase` validates recipe/building compatibility against loaded content.
+- `StartProductionUseCase` validates recipe/building compatibility against loaded content, reserves recipe inputs via `ProductionInventoryService`, and rolls back reservations if job creation fails.
+- `ProductionInventoryService` reserves inputs on production start; simulation invokes `completeJob()` on completion to consume inputs and deliver outputs.
 
 ---
 
@@ -372,7 +375,7 @@ Coordinates use cases between domain, infrastructure and simulation.
 |---|---|
 | `ResourceType` | Inventory item (planned) |
 | `BuildingType` | `Building` |
-| `Recipe` | Production job (planned) |
+| `Recipe` | `ProductionJob` |
 
 Content loaders produce immutable definitions. Domain aggregates represent player-specific state.
 
@@ -411,17 +414,17 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 | Application / Bootstrap | `bootstrapApplication.test.ts` | Content load, wiring |
 | Application / CreateCompany | `CreateCompanyUseCase.test.ts` | Create, events, duplicates |
 | Application / PlaceBuilding | `PlaceBuildingUseCase.test.ts` | Place, events, validation |
-| Application / StartProduction | `StartProductionUseCase.test.ts` | Recipe validation, tick completion |
+| Application / StartProduction | `StartProductionUseCase.test.ts` | Input reservation, tick completion, inventory transfer |
+| Application / ProductionInventory | `ProductionInventoryService.test.ts` | Reserve, release, complete job inventory |
 
 ---
 
 # Planned Next Steps
 
 1. Recipe reference validation for `requiredResearch` once research content exists
-2. Inventory input reservation and output delivery during production completion
-3. Application queries (GetCompany, ListBuildings, GetInventory)
-4. Market and finance simulation logic once related aggregates exist
-5. Save/load game session persistence
+2. Application queries (GetCompany, ListBuildings, GetInventory)
+3. Market and finance simulation logic once related aggregates exist
+4. Save/load game session persistence
 
 ---
 

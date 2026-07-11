@@ -19,7 +19,12 @@ import type { StartProductionCommand } from '../commands/StartProductionCommand.
 /** Dependencies required by {@link StartProductionUseCase}. */
 export type StartProductionUseCaseDependencies = Pick<
   ApplicationContext,
-  'clock' | 'buildingRepository' | 'productionJobRepository' | 'simulationEngine' | 'gameContent'
+  | 'clock'
+  | 'buildingRepository'
+  | 'productionJobRepository'
+  | 'simulationEngine'
+  | 'gameContent'
+  | 'productionInventoryService'
 >;
 
 /**
@@ -31,6 +36,7 @@ export class StartProductionUseCase {
   readonly #productionJobRepository: StartProductionUseCaseDependencies['productionJobRepository'];
   readonly #simulationEngine: StartProductionUseCaseDependencies['simulationEngine'];
   readonly #gameContent: StartProductionUseCaseDependencies['gameContent'];
+  readonly #productionInventoryService: StartProductionUseCaseDependencies['productionInventoryService'];
 
   /**
    * @param dependencies - Application services required to start production.
@@ -41,6 +47,7 @@ export class StartProductionUseCase {
     this.#productionJobRepository = dependencies.productionJobRepository;
     this.#simulationEngine = dependencies.simulationEngine;
     this.#gameContent = dependencies.gameContent;
+    this.#productionInventoryService = dependencies.productionInventoryService;
   }
 
   /**
@@ -99,6 +106,15 @@ export class StartProductionUseCase {
       );
     }
 
+    const reserveResult = this.#productionInventoryService.reserveInputs(
+      building.getCompanyId(),
+      recipe,
+    );
+
+    if (!reserveResult.ok) {
+      return Result.fail(reserveResult.error);
+    }
+
     const jobResult = ProductionJob.create({
       id: jobId,
       buildingId,
@@ -109,6 +125,7 @@ export class StartProductionUseCase {
     });
 
     if (!jobResult.ok) {
+      this.#productionInventoryService.releaseInputs(building.getCompanyId(), recipe);
       return Result.fail(jobResult.error);
     }
 
@@ -116,6 +133,7 @@ export class StartProductionUseCase {
     const startResult = job.start(this.#clock);
 
     if (!startResult.ok) {
+      this.#productionInventoryService.releaseInputs(building.getCompanyId(), recipe);
       return Result.fail(startResult.error);
     }
 

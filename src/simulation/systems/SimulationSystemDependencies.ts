@@ -8,6 +8,7 @@ import type { DomainEvent } from '../../common/events/DomainEvent.js';
 import type { BuildingRepository } from '../../domain/building/BuildingRepository.js';
 import type { CompanyRepository } from '../../domain/company/CompanyRepository.js';
 import type { ProductionJobRepository } from '../../domain/production/ProductionJobRepository.js';
+import type { ProductionJobCompletedHandler } from './production/ProductionJobCompletedHandler.js';
 
 /** Repository dependencies for simulation systems. */
 export type SimulationSystemDependencies = {
@@ -15,4 +16,5 @@ export type SimulationSystemDependencies = {
   readonly buildingRepository: BuildingRepository;
   readonly productionJobRepository: ProductionJobRepository;
   readonly enqueueEvents: (events: readonly DomainEvent[]) => void;
+  readonly onProductionJobCompleted?: ProductionJobCompletedHandler;
 };
