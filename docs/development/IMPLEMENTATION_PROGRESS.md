@@ -28,10 +28,10 @@ Update this document whenever a meaningful implementation milestone is completed
 | Content loaders | Partial (ResourceType, BuildingType, Recipe) |
 | Simulation | Partial (SimulationEngine, systems pipeline) |
 | Infrastructure | Partial (in-memory repositories) |
-| Application layer | Not started |
+| Application layer | Partial (bootstrap, CreateCompany, PlaceBuilding) |
 | UI | Not started |
 
-**Tests:** 148 (run `pnpm test` for current count)
+**Tests:** 156 (run `pnpm test` for current count)
 
 ---
 
@@ -278,6 +278,27 @@ Default order: Company → Building → Production → Market → Finance
 
 ---
 
+## Application Module (`src/application/`)
+
+Coordinates use cases between domain, infrastructure and simulation.
+
+| Item | Path |
+|---|---|
+| `ApplicationContext` | `bootstrap/ApplicationContext.ts` |
+| `bootstrapApplication` | `bootstrap/bootstrapApplication.ts` |
+| `CreateCompanyCommand` | `commands/CreateCompanyCommand.ts` |
+| `PlaceBuildingCommand` | `commands/PlaceBuildingCommand.ts` |
+| `CreateCompanyUseCase` | `use-cases/CreateCompanyUseCase.ts` |
+| `PlaceBuildingUseCase` | `use-cases/PlaceBuildingUseCase.ts` |
+| Tests | `bootstrap/bootstrapApplication.test.ts`, `use-cases/*.test.ts` |
+
+**Behaviour:**
+
+- Bootstrap loads validated game content and wires in-memory repos, clock, event bus and simulation engine with default systems.
+- Use cases create domain aggregates, persist via repository interfaces and enqueue domain events for the next tick.
+
+---
+
 ## Infrastructure Module (`src/infrastructure/`)
 
 | Item | Path |
@@ -339,16 +360,19 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 | Simulation / Systems | `createDefaultSimulationSystems.test.ts` | Default pipeline order |
 | Infrastructure / Company repo | `InMemoryCompanyRepository.test.ts` | Save, find, ordering |
 | Infrastructure / Building repo | `InMemoryBuildingRepository.test.ts` | Save, find by company |
+| Application / Bootstrap | `bootstrapApplication.test.ts` | Content load, wiring |
+| Application / CreateCompany | `CreateCompanyUseCase.test.ts` | Create, events, duplicates |
+| Application / PlaceBuilding | `PlaceBuildingUseCase.test.ts` | Place, events, validation |
 
 ---
 
 # Planned Next Steps
 
 1. Recipe reference validation for `requiredResearch` once research content exists
-2. Application layer bootstrap and first use cases (CreateCompany, PlaceBuilding)
-3. Additional domain aggregates: Inventory, ProductionJob
-4. Implement production, market and finance simulation logic once aggregates exist
-5. Wire default simulation systems into application bootstrap
+2. Additional domain aggregates: Inventory, ProductionJob
+3. Implement production, market and finance simulation logic once aggregates exist
+4. Application queries (GetCompany, ListBuildings)
+5. Save/load game session persistence
 
 ---
 

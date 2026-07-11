@@ -19,13 +19,34 @@
  * ============================================================================
  */
 
-function main(): void {
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { bootstrapApplication } from './application/bootstrap/bootstrapApplication.js';
+
+const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const gameContentRoot = path.join(projectRoot, 'game-content');
+
+async function main(): Promise<void> {
   console.log('===========================================');
   console.log(' Project Genesis');
   console.log(' Deterministic Economy Simulation');
   console.log('===========================================');
   console.log('');
-  console.log('Application bootstrap not yet implemented.');
+
+  const result = await bootstrapApplication({ gameContentRoot });
+
+  if (!result.ok) {
+    console.error(`Bootstrap failed: ${result.error.message}`);
+    process.exit(1);
+  }
+
+  const { gameContent, simulationEngine } = result.value;
+
+  console.log('Application bootstrap succeeded.');
+  console.log(`Resources loaded: ${gameContent.resourceTypes.size}`);
+  console.log(`Building types loaded: ${gameContent.buildingTypes.size}`);
+  console.log(`Recipes loaded: ${gameContent.recipes.size}`);
+  console.log(`Simulation tick: ${simulationEngine.state.tickNumber}`);
 }
 
-main();
+await main();
