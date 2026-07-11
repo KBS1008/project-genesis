@@ -30,6 +30,8 @@ If documentation and requested implementation conflict, documentation wins until
 
 Before implementing a feature, Cursor should review the following documents.
 
+**Also review:** `docs/development/IMPLEMENTATION_PROGRESS.md` for current implementation status.
+
 ## Architecture
 
 Read in this order:

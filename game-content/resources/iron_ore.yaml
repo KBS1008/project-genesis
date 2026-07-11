@@ -1,0 +1,27 @@
+id: iron_ore
+name: Eisenerz
+description: Roherz für die Stahlproduktion.
+category: PRIMARY_RESOURCE
+tier: 1
+state: SOLID
+weight: 8
+volume: 4
+basePrice: 40
+marketEnabled: true
+tradable: true
+stackSize: 999999
+storageType: WAREHOUSE
+transportType: TRUCK
+qualityEnabled: false
+decayEnabled: false
+hazardous: false
+flammable: false
+recyclable: false
+energyValue: 0
+requiredResearch: []
+tags:
+  - iron
+  - ore
+  - basic
+enabled: true
+version: 1

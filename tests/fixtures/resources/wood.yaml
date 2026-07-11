@@ -1,0 +1,25 @@
+id: wood
+name: Holz
+description: Test resource fixture.
+category: PRIMARY_RESOURCE
+tier: 1
+state: SOLID
+weight: 5
+volume: 6
+basePrice: 25
+marketEnabled: true
+tradable: true
+stackSize: 999999
+storageType: WAREHOUSE
+transportType: TRUCK
+qualityEnabled: false
+decayEnabled: false
+hazardous: false
+flammable: true
+recyclable: true
+energyValue: 0
+requiredResearch: []
+tags:
+  - wood
+enabled: true
+version: 1

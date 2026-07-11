@@ -1,0 +1,17 @@
+id: warehouse
+name: Lagerhaus
+description: Lagert feste Ressourcen in grosser Menge.
+category: STORAGE
+size:
+  width: 4
+  height: 4
+energyUsage: 2
+maintenanceCost: 3
+constructionCost: 3000
+constructionTime: 90
+allowedRecipes: []
+maxProductionLines: 1
+requiredResearch: []
+requiredMilestones: []
+enabled: true
+version: 1

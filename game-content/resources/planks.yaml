@@ -1,0 +1,26 @@
+id: planks
+name: Bretter
+description: Geschnittene Holzbretter für Bau und Verarbeitung.
+category: PROCESSED_RESOURCE
+tier: 1
+state: SOLID
+weight: 4
+volume: 5
+basePrice: 45
+marketEnabled: true
+tradable: true
+stackSize: 999999
+storageType: WAREHOUSE
+transportType: TRUCK
+qualityEnabled: false
+decayEnabled: false
+hazardous: false
+flammable: true
+recyclable: true
+energyValue: 0
+requiredResearch: []
+tags:
+  - wood
+  - processed
+enabled: true
+version: 1

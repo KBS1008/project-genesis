@@ -1,0 +1,27 @@
+id: recipe_planks
+name: Bretter herstellen
+description: Verarbeitung von Holz zu Brettern.
+version: 1
+category: WOOD
+buildingTypes:
+  - sawmill
+inputs:
+  - resource: wood
+    amount: 10
+outputs:
+  - resource: planks
+    amount: 20
+duration: 60
+energy: 12
+workers: 2
+requiredResearch: []
+requiredBuildings: []
+requiredMilestones: []
+requiredResources: []
+maintenanceCost: 2
+productionCost: 1
+experience: 5
+tags:
+  - basic
+  - wood
+enabled: true

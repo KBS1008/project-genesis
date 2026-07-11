@@ -1,0 +1,18 @@
+id: sawmill
+name: Sägewerk
+description: Verarbeitet Holz zu Brettern und Balken.
+category: PRODUCTION
+size:
+  width: 3
+  height: 3
+energyUsage: 10
+maintenanceCost: 5
+constructionCost: 5000
+constructionTime: 120
+allowedRecipes:
+  - recipe_planks
+maxProductionLines: 1
+requiredResearch: []
+requiredMilestones: []
+enabled: true
+version: 1

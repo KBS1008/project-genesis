@@ -157,16 +157,26 @@ After validation, content is stored inside registries.
 Examples:
 
 ```text
-BuildingRegistry
+BuildingTypeRegistry
 
 RecipeRegistry
 
-ResourceRegistry
+ResourceTypeRegistry
 
 TechnologyRegistry
 ```
 
 Registries provide read-only access.
+
+## Implemented registries
+
+| Registry | Loader | Content path |
+|---|---|---|
+| `ResourceTypeRegistry` | `ResourceTypeLoader` | `game-content/resources/` |
+| `BuildingTypeRegistry` | `BuildingTypeLoader` | `game-content/buildings/` |
+| `RecipeRegistry` | `RecipeLoader` | `game-content/recipes/` |
+
+See `docs/development/IMPLEMENTATION_PROGRESS.md` for full implementation status.
 
 ---
 
