@@ -24,14 +24,14 @@ Update this document whenever a meaningful implementation milestone is completed
 |---|---|
 | Common foundation | Implemented |
 | Domain aggregates | Partial (Company, Building) |
-| Domain value objects | Partial (Money, Quantity, Position) |
+| Domain value objects | Partial (Money, Quantity, ResourceAmount, Capacity, Position) |
 | Content loaders | Partial (ResourceType, BuildingType, Recipe) |
 | Simulation | Partial (SimulationEngine, first tick) |
 | Infrastructure | Not started |
 | Application layer | Not started |
 | UI | Not started |
 
-**Tests:** 130 (run `pnpm test` for current count)
+**Tests:** 142 (run `pnpm test` for current count)
 
 ---
 
@@ -121,15 +121,29 @@ Business aggregates and domain events.
 |---|---|
 | `Money` | `shared/Money.ts` |
 | `Quantity` | `shared/Quantity.ts` |
-| Tests | `shared/Money.test.ts`, `shared/Quantity.test.ts` |
+| `ResourceAmount` | `shared/ResourceAmount.ts` |
+| `ResourceTypeId` | `shared/ResourceTypeId.ts` |
+| `Capacity` | `shared/Capacity.ts` |
+| Tests | `shared/Money.test.ts`, `shared/Quantity.test.ts`, `shared/ResourceAmount.test.ts`, `shared/Capacity.test.ts` |
 
 **Behaviour:**
 
 - `Money.create()` — non-negative amount, non-empty currency (default `GC`).
 - `Quantity.create()` — non-negative count.
-- Both extend `ValueObject` with structural equality and immutability.
+- `ResourceAmount.create()` — resource type id + non-negative amount.
+- `Capacity.create()` — non-negative capacity limit (zero for unused dimensions per DD-021).
+- All types extend `ValueObject` with structural equality and immutability.
 
-**References:** `docs/schemas/Finance.Schema.md`, `docs/architecture/domain-model.md`
+**References:** `docs/schemas/Finance.Schema.md`, `docs/schemas/Inventory.Schema.md`, `docs/decisions/DD-021-Unified-Building-Capacity-Model.md`, `docs/architecture/domain-model.md`
+
+### Repository interfaces
+
+| Item | Path |
+|---|---|
+| `CompanyRepository` | `company/CompanyRepository.ts` |
+| `BuildingRepository` | `building/BuildingRepository.ts` |
+
+Persistence contracts for aggregate roots. Implementations belong in Infrastructure.
 
 ---
 
@@ -236,8 +250,9 @@ Deterministic simulation engine (first increment).
 | `SimulationSystem` | `engine/SimulationSystem.ts` |
 | `TickContext` | `engine/TickContext.ts` |
 | `SimulationState` | `state/SimulationState.ts` |
+| `EventQueue` | `events/EventQueue.ts` |
 | `TickClock` | `time/TickClock.ts` |
-| Tests | `engine/SimulationEngine.test.ts` |
+| Tests | `engine/SimulationEngine.test.ts`, `events/EventQueue.test.ts` |
 
 **Tick sequence:**
 
@@ -289,22 +304,25 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 | Domain / Building | `Building.test.ts` | Placement, validation, events |
 | Domain / Money | `Money.test.ts` | Amount, currency, validation |
 | Domain / Quantity | `Quantity.test.ts` | Non-negative values |
+| Domain / ResourceAmount | `ResourceAmount.test.ts` | Resource id + amount |
+| Domain / Capacity | `Capacity.test.ts` | Non-negative capacity limits |
 | Content / ResourceType | `ResourceTypeLoader.test.ts` | Load, validate, duplicates |
 | Content / BuildingType | `BuildingTypeLoader.test.ts` | Load, validate, duplicates |
 | Content / Recipe | `RecipeLoader.test.ts` | Load, reference validation |
 | Content / Consistency | `validateBuildingRecipeConsistency.test.ts` | Cross-registry checks |
 | Content / All | `validateGameContent.test.ts` | Full content pipeline |
 | Simulation / Engine | `SimulationEngine.test.ts` | Tick, determinism, pause |
+| Simulation / EventQueue | `EventQueue.test.ts` | Enqueue, drain, peek |
 
 ---
 
 # Planned Next Steps
 
 1. Recipe reference validation for `requiredResearch` once research content exists
-2. Additional domain value objects: `ResourceAmount`, `Capacity`
-3. Simulation systems (production, market, finance)
-4. Event queue and persistence integration for domain events
-5. Repository interfaces and first infrastructure adapters
+2. Simulation systems (production, market, finance) once related domain aggregates exist
+3. In-memory repository implementations in Infrastructure
+4. Application layer bootstrap and first use cases (CreateCompany, PlaceBuilding)
+5. Additional domain aggregates: Inventory, ProductionJob
 
 ---
 

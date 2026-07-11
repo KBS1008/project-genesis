@@ -9,6 +9,7 @@ import type { IEventBus } from '../../common/events/IEventBus.js';
 import { ValidationError } from '../../common/errors/ValidationError.js';
 import { Result } from '../../common/result/Result.js';
 import { SimulationState } from '../state/SimulationState.js';
+import { EventQueue } from '../events/EventQueue.js';
 import type { TickClock } from '../time/TickClock.js';
 import type { SimulationSystem } from './SimulationSystem.js';
 import type { TickContext } from './TickContext.js';
@@ -38,7 +39,7 @@ export class SimulationEngine {
   readonly #tickDuration: number;
   readonly #systems: readonly SimulationSystem[];
   #state: SimulationState;
-  readonly #pendingEvents: DomainEvent[] = [];
+  readonly #eventQueue: EventQueue;
 
   /**
    * @param options - Engine dependencies and initial configuration.
@@ -49,6 +50,7 @@ export class SimulationEngine {
     this.#tickDuration = options.tickDuration ?? 1;
     this.#systems = Object.freeze([...(options.systems ?? [])]);
     this.#state = options.initialState ?? new SimulationState();
+    this.#eventQueue = new EventQueue();
   }
 
   /** Returns the current simulation execution state. */
@@ -62,7 +64,7 @@ export class SimulationEngine {
    * @param events - Domain events raised by aggregates during command handling.
    */
   enqueueEvents(events: readonly DomainEvent[]): void {
-    this.#pendingEvents.push(...events);
+    this.#eventQueue.enqueue(events);
   }
 
   /**
@@ -95,8 +97,7 @@ export class SimulationEngine {
       system.execute(context);
     }
 
-    const events = Object.freeze([...this.#pendingEvents]) as readonly DomainEvent[];
-    this.#pendingEvents.length = 0;
+    const events = this.#eventQueue.drain();
     this.#eventBus.publishAll(events);
 
     this.#state = this.#state.withTickNumber(tickNumber);

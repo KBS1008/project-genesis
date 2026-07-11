@@ -6,3 +6,7 @@
 
 export { Money, DEFAULT_CURRENCY } from './Money.js';
 export { Quantity } from './Quantity.js';
+export { Capacity } from './Capacity.js';
+export { ResourceAmount } from './ResourceAmount.js';
+export { createResourceTypeId } from './ResourceTypeId.js';
+export type { ResourceTypeId } from './ResourceTypeId.js';
