@@ -24,13 +24,14 @@ Update this document whenever a meaningful implementation milestone is completed
 |---|---|
 | Common foundation | Implemented |
 | Domain aggregates | Partial (Company, Building) |
+| Domain value objects | Partial (Money, Quantity, Position) |
 | Content loaders | Partial (ResourceType, BuildingType, Recipe) |
-| Simulation | Not started |
+| Simulation | Partial (SimulationEngine, first tick) |
 | Infrastructure | Not started |
 | Application layer | Not started |
 | UI | Not started |
 
-**Tests:** 107 (run `pnpm test` for current count)
+**Tests:** 130 (run `pnpm test` for current count)
 
 ---
 
@@ -48,6 +49,8 @@ Foundation building blocks shared across the project.
 | `AggregateRoot<TBrand>` | `core/AggregateRoot.ts` | Entity with domain event collection |
 | `Result<T>` | `result/Result.ts` | Explicit success/failure handling |
 | `DomainEvent` | `events/DomainEvent.ts` | Immutable domain event base class |
+| `IEventBus` | `events/IEventBus.ts` | Event bus contract for domain event dispatch |
+| `InMemoryEventBus` | `events/InMemoryEventBus.ts` | Deterministic in-process event bus |
 | `DomainError` | `errors/DomainError.ts` | Structured domain error base class |
 | `ValidationError` | `errors/ValidationError.ts` | Validation-specific domain error |
 | `Guard` | `validation/Guard.ts` | Shared validation helpers returning `Result` |
@@ -111,6 +114,22 @@ Business aggregates and domain events.
 - Raises `BuildingPlaced` on creation.
 
 **References:** DD-014 (template vs instance), DD-015 (static vs dynamic), `docs/schemas/Building.schema.md`
+
+### Shared value objects
+
+| Item | Path |
+|---|---|
+| `Money` | `shared/Money.ts` |
+| `Quantity` | `shared/Quantity.ts` |
+| Tests | `shared/Money.test.ts`, `shared/Quantity.test.ts` |
+
+**Behaviour:**
+
+- `Money.create()` — non-negative amount, non-empty currency (default `GC`).
+- `Quantity.create()` — non-negative count.
+- Both extend `ValueObject` with structural equality and immutability.
+
+**References:** `docs/schemas/Finance.Schema.md`, `docs/architecture/domain-model.md`
 
 ---
 
@@ -199,10 +218,35 @@ game-content/recipes/
 | Item | Path |
 |---|---|
 | Orchestrator | `validateGameContent.ts` |
+| Building/recipe consistency | `validateBuildingRecipeConsistency.ts` |
 | CLI tool | `tools/validate-content.ts` |
-| Tests | `validateGameContent.test.ts` |
+| Tests | `validateGameContent.test.ts`, `validateBuildingRecipeConsistency.test.ts` |
 
-Run with: `pnpm validate-content`
+Run with: `pnpm validate-content` (add `--strict` for bidirectional building/recipe checks)
+
+---
+
+## Simulation Module (`src/simulation/`)
+
+Deterministic simulation engine (first increment).
+
+| Item | Path |
+|---|---|
+| `SimulationEngine` | `engine/SimulationEngine.ts` |
+| `SimulationSystem` | `engine/SimulationSystem.ts` |
+| `TickContext` | `engine/TickContext.ts` |
+| `SimulationState` | `state/SimulationState.ts` |
+| `TickClock` | `time/TickClock.ts` |
+| Tests | `engine/SimulationEngine.test.ts` |
+
+**Tick sequence:**
+
+1. Advance clock
+2. Execute registered systems (deterministic order)
+3. Publish queued domain events via `IEventBus`
+4. Update simulation state
+
+**References:** DD-009, DD-027, `docs/architecture/runtime-view.md`
 
 ---
 
@@ -240,22 +284,27 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 | Common / Result | `Result.test.ts` | ok/fail, map, flatMap, unwrap |
 | Common / Guard | `Guard.test.ts` | Null, empty string, negative checks |
 | Common / ManualClock | `ManualClock.test.ts` | Deterministic time control |
+| Common / EventBus | `InMemoryEventBus.test.ts` | Subscribe, publish, order |
 | Domain / Company | `Company.test.ts` | Creation, validation, events |
 | Domain / Building | `Building.test.ts` | Placement, validation, events |
+| Domain / Money | `Money.test.ts` | Amount, currency, validation |
+| Domain / Quantity | `Quantity.test.ts` | Non-negative values |
 | Content / ResourceType | `ResourceTypeLoader.test.ts` | Load, validate, duplicates |
 | Content / BuildingType | `BuildingTypeLoader.test.ts` | Load, validate, duplicates |
 | Content / Recipe | `RecipeLoader.test.ts` | Load, reference validation |
+| Content / Consistency | `validateBuildingRecipeConsistency.test.ts` | Cross-registry checks |
 | Content / All | `validateGameContent.test.ts` | Full content pipeline |
+| Simulation / Engine | `SimulationEngine.test.ts` | Tick, determinism, pause |
 
 ---
 
 # Planned Next Steps
 
 1. Recipe reference validation for `requiredResearch` once research content exists
-2. BuildingType ↔ Recipe bidirectional consistency checks (optional strict mode)
-3. Domain value objects: `Money`, `Quantity`
-4. EventBus for domain event dispatch
-5. First simulation tick processor
+2. Additional domain value objects: `ResourceAmount`, `Capacity`
+3. Simulation systems (production, market, finance)
+4. Event queue and persistence integration for domain events
+5. Repository interfaces and first infrastructure adapters
 
 ---
 

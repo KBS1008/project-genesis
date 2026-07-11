@@ -18,4 +18,10 @@ describe('validateGameContent', () => {
       expect(result.value.recipes.has('recipe_planks')).toBe(true);
     }
   });
+
+  it('passes strict building/recipe consistency checks for official content', async () => {
+    const result = await validateGameContent(gameContentRoot, { strict: true });
+
+    expect(result.ok).toBe(true);
+  });
 });

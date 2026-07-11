@@ -5,3 +5,5 @@
  */
 
 export { DomainEvent } from './DomainEvent.js';
+export type { DomainEventHandler, IEventBus } from './IEventBus.js';
+export { InMemoryEventBus } from './InMemoryEventBus.js';

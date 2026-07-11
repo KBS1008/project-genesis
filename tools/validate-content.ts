@@ -30,7 +30,8 @@ function formatError(error: {
   return parts.join(' | ');
 }
 
-const result = await validateGameContent(gameContentRoot);
+const strict = process.argv.includes('--strict');
+const result = await validateGameContent(gameContentRoot, { strict });
 
 if (!result.ok) {
   console.error(`Content validation failed: ${formatError(result.error)}`);
