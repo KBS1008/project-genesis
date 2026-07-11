@@ -1,15 +1,27 @@
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { InMemoryBuildingRepository } from '../../infrastructure/persistence/InMemoryBuildingRepository.js';
 import { InMemoryCompanyRepository } from '../../infrastructure/persistence/InMemoryCompanyRepository.js';
 import { InMemoryFinanceRepository } from '../../infrastructure/persistence/InMemoryFinanceRepository.js';
 import { InMemoryInventoryRepository } from '../../infrastructure/persistence/InMemoryInventoryRepository.js';
 import { ManualClock } from '../../common/time/ManualClock.js';
 import { InMemoryEventBus } from '../../common/events/InMemoryEventBus.js';
+import { validateGameContent } from '../../content/validateGameContent.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
 import { CreateCompanyUseCase } from '../use-cases/CreateCompanyUseCase.js';
 import { PlaceBuildingUseCase } from '../use-cases/PlaceBuildingUseCase.js';
 import { ListBuildingsQueryHandler } from './ListBuildingsQueryHandler.js';
 
-function createContext(clock = new ManualClock(100)) {
+const testDirectory = path.dirname(fileURLToPath(import.meta.url));
+const gameContentRoot = path.resolve(testDirectory, '../../../game-content');
+
+async function createContext(clock = new ManualClock(100)) {
+  const contentResult = await validateGameContent(gameContentRoot);
+
+  if (!contentResult.ok) {
+    throw new Error(contentResult.error.message);
+  }
+
   const companyRepository = new InMemoryCompanyRepository();
   const buildingRepository = new InMemoryBuildingRepository();
   const inventoryRepository = new InMemoryInventoryRepository();
@@ -27,7 +39,9 @@ function createContext(clock = new ManualClock(100)) {
     clock,
     companyRepository,
     buildingRepository,
+    financeRepository,
     simulationEngine,
+    gameContent: contentResult.value,
   });
   const listBuildings = new ListBuildingsQueryHandler({
     companyRepository,
@@ -38,8 +52,8 @@ function createContext(clock = new ManualClock(100)) {
 }
 
 describe('ListBuildingsQueryHandler', () => {
-  it('returns buildings for an existing company in deterministic order', () => {
-    const { createCompany, placeBuilding, listBuildings } = createContext();
+  it('returns buildings for an existing company in deterministic order', async () => {
+    const { createCompany, placeBuilding, listBuildings } = await createContext();
 
     createCompany.execute({
       companyId: 'company_001',
@@ -78,8 +92,8 @@ describe('ListBuildingsQueryHandler', () => {
     }
   });
 
-  it('returns an empty list when the company has no buildings', () => {
-    const { createCompany, listBuildings } = createContext();
+  it('returns an empty list when the company has no buildings', async () => {
+    const { createCompany, listBuildings } = await createContext();
 
     createCompany.execute({
       companyId: 'company_001',
@@ -96,8 +110,8 @@ describe('ListBuildingsQueryHandler', () => {
     }
   });
 
-  it('rejects unknown company ids', () => {
-    const { listBuildings } = createContext();
+  it('rejects unknown company ids', async () => {
+    const { listBuildings } = await createContext();
 
     const result = listBuildings.execute({ companyId: 'company_missing' });
 

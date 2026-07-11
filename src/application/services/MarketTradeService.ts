@@ -19,6 +19,8 @@ import { createMarketId } from '../../domain/market/Market.js';
 import { GLOBAL_MARKET_ID } from '../../domain/market/MarketConstants.js';
 import type { Market } from '../../domain/market/Market.js';
 import type { MarketRepository } from '../../domain/market/MarketRepository.js';
+import { InstantTradePricingPolicy } from '../../domain/policies/market/InstantTradePricingPolicy.js';
+import { ResourceListedOnMarketSpecification } from '../../domain/specifications/market/ResourceListedOnMarketSpecification.js';
 import { createResourceTypeId } from '../../domain/shared/ResourceTypeId.js';
 
 /** Result of a completed market trade. */
@@ -46,6 +48,8 @@ export class MarketTradeService {
   readonly #marketRepository: MarketTradeServiceDependencies['marketRepository'];
   readonly #clock: MarketTradeServiceDependencies['clock'];
   readonly #enqueueEvents: MarketTradeServiceDependencies['enqueueEvents'];
+  readonly #resourceListedOnMarketSpecification = new ResourceListedOnMarketSpecification();
+  readonly #instantTradePricingPolicy = new InstantTradePricingPolicy();
 
   /**
    * @param dependencies - Repositories and callbacks required for market trades.
@@ -85,12 +89,10 @@ export class MarketTradeService {
     }
 
     const market = marketResult.value;
-    const price = market.getPrice(resourceId);
+    const pricingResult = this.#resolveTradePricing(resourceId, market);
 
-    if (price === undefined) {
-      return Result.fail(
-        new ValidationError(`Resource "${resourceId}" is not listed on the market.`),
-      );
+    if (!pricingResult.ok) {
+      return Result.fail(pricingResult.error);
     }
 
     const inventoryResult = this.#findInventory(companyId);
@@ -108,7 +110,8 @@ export class MarketTradeService {
     const inventory = inventoryResult.value;
     const finance = financeResult.value;
     const tradeAmount = amountResult.value;
-    const totalAmount = price.lastPrice * tradeAmount;
+    const unitPrice = pricingResult.value.unitPrice;
+    const totalAmount = unitPrice * tradeAmount;
 
     const removeResult = inventory.removeQuantity(resourceId, tradeAmount, this.#clock);
 
@@ -125,7 +128,7 @@ export class MarketTradeService {
 
     const volumeResult = market.updateLastPrice(
       resourceId,
-      price.lastPrice,
+      unitPrice,
       tradeAmount,
       this.#clock,
     );
@@ -140,7 +143,7 @@ export class MarketTradeService {
 
     return Result.ok({
       totalAmount,
-      unitPrice: price.lastPrice,
+      unitPrice,
       amount: tradeAmount,
     });
   }
@@ -172,12 +175,10 @@ export class MarketTradeService {
     }
 
     const market = marketResult.value;
-    const price = market.getPrice(resourceId);
+    const pricingResult = this.#resolveTradePricing(resourceId, market);
 
-    if (price === undefined) {
-      return Result.fail(
-        new ValidationError(`Resource "${resourceId}" is not listed on the market.`),
-      );
+    if (!pricingResult.ok) {
+      return Result.fail(pricingResult.error);
     }
 
     const inventoryResult = this.#findInventory(companyId);
@@ -195,7 +196,8 @@ export class MarketTradeService {
     const inventory = inventoryResult.value;
     const finance = financeResult.value;
     const tradeAmount = amountResult.value;
-    const totalAmount = price.lastPrice * tradeAmount;
+    const unitPrice = pricingResult.value.unitPrice;
+    const totalAmount = unitPrice * tradeAmount;
 
     const debitResult = finance.debit(totalAmount, FinanceTransactionType.PURCHASE, this.#clock);
 
@@ -212,7 +214,7 @@ export class MarketTradeService {
 
     const volumeResult = market.updateLastPrice(
       resourceId,
-      price.lastPrice,
+      unitPrice,
       tradeAmount,
       this.#clock,
     );
@@ -227,8 +229,37 @@ export class MarketTradeService {
 
     return Result.ok({
       totalAmount,
-      unitPrice: price.lastPrice,
+      unitPrice,
       amount: tradeAmount,
+    });
+  }
+
+  #resolveTradePricing(
+    resourceId: string,
+    market: Market,
+  ): Result<{ unitPrice: number }, ValidationError> {
+    const marketPrice = market.getPrice(resourceId);
+
+    const listedResult = this.#resourceListedOnMarketSpecification.isSatisfiedBy(
+      { resourceId },
+      { isListed: marketPrice !== undefined },
+    );
+
+    if (!listedResult.ok) {
+      return Result.fail(listedResult.error);
+    }
+
+    const pricingResult = this.#instantTradePricingPolicy.evaluate({
+      resourceId,
+      lastPrice: marketPrice?.lastPrice,
+    });
+
+    if (!pricingResult.ok) {
+      return Result.fail(pricingResult.error);
+    }
+
+    return Result.ok({
+      unitPrice: pricingResult.value.unitPrice,
     });
   }
 

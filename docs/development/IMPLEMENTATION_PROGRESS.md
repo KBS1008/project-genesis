@@ -25,13 +25,14 @@ Update this document whenever a meaningful implementation milestone is completed
 | Common foundation | Implemented |
 | Domain aggregates | Partial (Company, Building, Inventory, ProductionJob, FinanceAccount, Market) |
 | Domain value objects | Partial (Money, Quantity, ResourceAmount, Capacity, Position) |
+| Domain specifications & policies | Partial (foundation + first production/market rules) |
 | Content loaders | Partial (ResourceType, BuildingType, Recipe) |
 | Simulation | Partial (SimulationEngine, systems pipeline) |
 | Infrastructure | Partial (in-memory repositories) |
 | Application layer | Partial (bootstrap, use cases, queries) |
 | UI | Not started |
 
-**Tests:** 206 (run `pnpm test` for current count)
+**Tests:** 219 (run `pnpm test` for current count)
 
 ---
 
@@ -226,6 +227,30 @@ Business aggregates and domain events.
 
 Persistence contracts for aggregate roots. Implementations belong in Infrastructure.
 
+### Specifications and policies
+
+| Item | Path |
+|---|---|
+| `Specification<TCandidate, TContext>` | `specifications/Specification.ts` |
+| `AndSpecification` | `specifications/AndSpecification.ts` |
+| `BuildingSupportsRecipeSpecification` | `specifications/production/BuildingSupportsRecipeSpecification.ts` |
+| `ResourceListedOnMarketSpecification` | `specifications/market/ResourceListedOnMarketSpecification.ts` |
+| `Policy<TContext, TDecision>` | `policies/Policy.ts` |
+| `ConstructionCostPolicy` | `policies/building/ConstructionCostPolicy.ts` |
+| `InstantTradePricingPolicy` | `policies/market/InstantTradePricingPolicy.ts` |
+| Tests | `specifications/**/*.test.ts`, `policies/**/*.test.ts` |
+
+**Behaviour:**
+
+- Specifications return `Result<void, ValidationError>` for composable eligibility checks.
+- Policies return typed decisions (e.g. unit price, construction cost) from context snapshots.
+- Application layer passes content-derived context; domain does not import `src/content/`.
+- `StartProductionUseCase` uses `BuildingSupportsRecipeSpecification`.
+- `MarketTradeService` uses `ResourceListedOnMarketSpecification` and `InstantTradePricingPolicy`.
+- `PlaceBuildingUseCase` debits `constructionCost` via `ConstructionCostPolicy` and `FinanceTransactionType.BUILDING_COST`.
+
+**References:** `src/domain/readme.md`
+
 ---
 
 ## Content Module (`src/content/`)
@@ -399,6 +424,7 @@ Coordinates use cases between domain, infrastructure and simulation.
 - Bootstrap loads validated game content and wires in-memory repos, clock, event bus and simulation engine with default systems.
 - Use cases create domain aggregates, persist via repository interfaces and enqueue domain events for the next tick.
 - `CreateCompanyUseCase` also creates an empty company inventory and finance account with starting capital.
+- `PlaceBuildingUseCase` resolves `constructionCost` via `ConstructionCostPolicy`, debits company finance, and rolls back nothing on debit failure because the building is not persisted yet.
 - `StartProductionUseCase` validates recipe/building compatibility against loaded content, reserves recipe inputs via `ProductionInventoryService`, and rolls back reservations if job creation fails.
 - `ProductionInventoryService` reserves inputs on production start; simulation invokes `completeJob()` on completion to consume inputs and deliver outputs.
 - Bootstrap seeds global market prices from resource `basePrice` via `MarketPriceSeeder`.
@@ -462,6 +488,8 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 | Domain / ProductionJob | `ProductionJob.test.ts` | Start, tick, completion |
 | Domain / FinanceAccount | `FinanceAccount.test.ts` | Credit, debit, reserve, transactions |
 | Domain / Market | `Market.test.ts` | Seed prices, update price, events |
+| Domain / Specifications | `AndSpecification.test.ts`, `BuildingSupportsRecipeSpecification.test.ts`, `ResourceListedOnMarketSpecification.test.ts` | Composable rules, recipe/building eligibility, market listing |
+| Domain / Policies | `ConstructionCostPolicy.test.ts`, `InstantTradePricingPolicy.test.ts` | Construction cost resolution, instant trade pricing |
 | Domain / Money | `Money.test.ts` | Amount, currency, validation |
 | Domain / Quantity | `Quantity.test.ts` | Non-negative values |
 | Domain / ResourceAmount | `ResourceAmount.test.ts` | Resource id + amount |
@@ -478,7 +506,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 | Infrastructure / Building repo | `InMemoryBuildingRepository.test.ts` | Save, find by company |
 | Application / Bootstrap | `bootstrapApplication.test.ts` | Content load, wiring |
 | Application / CreateCompany | `CreateCompanyUseCase.test.ts` | Create, events, duplicates |
-| Application / PlaceBuilding | `PlaceBuildingUseCase.test.ts` | Place, events, validation |
+| Application / PlaceBuilding | `PlaceBuildingUseCase.test.ts` | Place, construction cost debit, events, validation |
 | Application / StartProduction | `StartProductionUseCase.test.ts` | Input reservation, tick completion, inventory transfer |
 | Application / ProductionInventory | `ProductionInventoryService.test.ts` | Reserve, release, complete job inventory |
 | Application / GetCompany | `GetCompanyQueryHandler.test.ts` | Company read model, not found |
@@ -496,8 +524,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 # Planned Next Steps
 
 1. Recipe reference validation for `requiredResearch` once research content exists
-2. Building purchase costs when placing buildings
-3. Save/load game session persistence
+2. Save/load game session persistence
 
 ---
 

@@ -14,13 +14,20 @@ import {
 import type { BuildingId } from '../../domain/building/BuildingId.js';
 import { Position } from '../../domain/building/Position.js';
 import { createCompanyId } from '../../domain/company/Company.js';
+import { FinanceTransactionType } from '../../domain/finance/FinanceTransactionType.js';
+import { ConstructionCostPolicy } from '../../domain/policies/building/ConstructionCostPolicy.js';
 import type { ApplicationContext } from '../bootstrap/ApplicationContext.js';
 import type { PlaceBuildingCommand } from '../commands/PlaceBuildingCommand.js';
 
 /** Dependencies required by {@link PlaceBuildingUseCase}. */
 export type PlaceBuildingUseCaseDependencies = Pick<
   ApplicationContext,
-  'clock' | 'companyRepository' | 'buildingRepository' | 'simulationEngine'
+  | 'clock'
+  | 'companyRepository'
+  | 'buildingRepository'
+  | 'financeRepository'
+  | 'simulationEngine'
+  | 'gameContent'
 >;
 
 /**
@@ -30,7 +37,10 @@ export class PlaceBuildingUseCase {
   readonly #clock: PlaceBuildingUseCaseDependencies['clock'];
   readonly #companyRepository: PlaceBuildingUseCaseDependencies['companyRepository'];
   readonly #buildingRepository: PlaceBuildingUseCaseDependencies['buildingRepository'];
+  readonly #financeRepository: PlaceBuildingUseCaseDependencies['financeRepository'];
   readonly #simulationEngine: PlaceBuildingUseCaseDependencies['simulationEngine'];
+  readonly #gameContent: PlaceBuildingUseCaseDependencies['gameContent'];
+  readonly #constructionCostPolicy = new ConstructionCostPolicy();
 
   /**
    * @param dependencies - Application services required for building placement.
@@ -39,7 +49,9 @@ export class PlaceBuildingUseCase {
     this.#clock = dependencies.clock;
     this.#companyRepository = dependencies.companyRepository;
     this.#buildingRepository = dependencies.buildingRepository;
+    this.#financeRepository = dependencies.financeRepository;
     this.#simulationEngine = dependencies.simulationEngine;
+    this.#gameContent = dependencies.gameContent;
   }
 
   /**
@@ -67,6 +79,7 @@ export class PlaceBuildingUseCase {
     }
 
     const buildingId = buildingIdResult.value;
+    const buildingTypeId = buildingTypeIdResult.value;
     const companyId = companyIdResult.value;
 
     if (this.#companyRepository.findById(companyId) === undefined) {
@@ -81,9 +94,35 @@ export class PlaceBuildingUseCase {
       );
     }
 
+    const buildingType = this.#gameContent.buildingTypes.get(buildingTypeId.value);
+
+    if (buildingType === undefined) {
+      return Result.fail(
+        new ValidationError(`Building type "${buildingTypeId.value}" was not found.`),
+      );
+    }
+
+    const costResult = this.#constructionCostPolicy.evaluate({
+      buildingTypeId: buildingTypeId.value,
+      constructionCost: buildingType.constructionCost,
+      enabled: buildingType.enabled,
+    });
+
+    if (!costResult.ok) {
+      return Result.fail(costResult.error);
+    }
+
+    const finance = this.#financeRepository.findByCompanyId(companyId);
+
+    if (finance === undefined) {
+      return Result.fail(
+        new ValidationError(`Finance account for company "${companyId.value}" was not found.`),
+      );
+    }
+
     const buildingResult = Building.create({
       id: buildingId,
-      buildingTypeId: buildingTypeIdResult.value,
+      buildingTypeId,
       companyId,
       name: command.name,
       position: new Position(command.x, command.y),
@@ -94,9 +133,20 @@ export class PlaceBuildingUseCase {
       return Result.fail(buildingResult.error);
     }
 
+    const constructionCost = costResult.value.cost;
+    const debitResult = finance.debit(constructionCost, FinanceTransactionType.BUILDING_COST, this.#clock);
+
+    if (!debitResult.ok) {
+      return Result.fail(debitResult.error);
+    }
+
     const building = buildingResult.value;
     this.#buildingRepository.save(building);
-    this.#simulationEngine.enqueueEvents(building.pullDomainEvents());
+    this.#financeRepository.save(finance);
+    this.#simulationEngine.enqueueEvents([
+      ...building.pullDomainEvents(),
+      ...finance.pullDomainEvents(),
+    ]);
 
     return Result.ok(buildingId);
   }

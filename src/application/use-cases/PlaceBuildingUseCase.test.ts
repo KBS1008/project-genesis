@@ -1,6 +1,12 @@
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { InMemoryEventBus } from '../../common/events/InMemoryEventBus.js';
 import { ManualClock } from '../../common/time/ManualClock.js';
+import { validateGameContent } from '../../content/validateGameContent.js';
+import { STARTING_MONEY } from '../../domain/finance/FinanceConstants.js';
+import { FinanceTransactionType } from '../../domain/finance/FinanceTransactionType.js';
 import { BuildingPlaced } from '../../domain/building/events/BuildingPlaced.js';
+import { createCompanyId } from '../../domain/company/Company.js';
 import { InMemoryBuildingRepository } from '../../infrastructure/persistence/InMemoryBuildingRepository.js';
 import { InMemoryCompanyRepository } from '../../infrastructure/persistence/InMemoryCompanyRepository.js';
 import { InMemoryFinanceRepository } from '../../infrastructure/persistence/InMemoryFinanceRepository.js';
@@ -9,7 +15,26 @@ import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
 import { CreateCompanyUseCase } from './CreateCompanyUseCase.js';
 import { PlaceBuildingUseCase } from './PlaceBuildingUseCase.js';
 
-function createContext(clock = new ManualClock(100)) {
+const testDirectory = path.dirname(fileURLToPath(import.meta.url));
+const gameContentRoot = path.resolve(testDirectory, '../../../game-content');
+
+function requireCompanyId(value: string) {
+  const result = createCompanyId(value);
+
+  if (!result.ok) {
+    throw new Error(result.error.message);
+  }
+
+  return result.value;
+}
+
+async function createContext(clock = new ManualClock(100)) {
+  const contentResult = await validateGameContent(gameContentRoot);
+
+  if (!contentResult.ok) {
+    throw new Error(contentResult.error.message);
+  }
+
   const companyRepository = new InMemoryCompanyRepository();
   const buildingRepository = new InMemoryBuildingRepository();
   const inventoryRepository = new InMemoryInventoryRepository();
@@ -28,21 +53,24 @@ function createContext(clock = new ManualClock(100)) {
     clock,
     companyRepository,
     buildingRepository,
+    financeRepository,
     simulationEngine,
+    gameContent: contentResult.value,
   });
 
   return {
     buildingRepository,
     createCompany,
     eventBus,
+    financeRepository,
     placeBuilding,
     simulationEngine,
   };
 }
 
 describe('PlaceBuildingUseCase', () => {
-  it('places and persists a building for an existing company', () => {
-    const { buildingRepository, createCompany, placeBuilding } = createContext();
+  it('places and persists a building for an existing company', async () => {
+    const { buildingRepository, createCompany, placeBuilding } = await createContext();
 
     createCompany.execute({
       companyId: 'company_001',
@@ -69,8 +97,36 @@ describe('PlaceBuildingUseCase', () => {
     }
   });
 
-  it('enqueues BuildingPlaced events for the next simulation tick', () => {
-    const { createCompany, eventBus, placeBuilding, simulationEngine } = createContext();
+  it('debits construction cost from the company finance account', async () => {
+    const { createCompany, financeRepository, placeBuilding } = await createContext();
+
+    createCompany.execute({
+      companyId: 'company_001',
+      name: 'Genesis Industries',
+      ownerId: 'player_001',
+    });
+
+    const result = placeBuilding.execute({
+      buildingId: 'building_001',
+      buildingTypeId: 'sawmill',
+      companyId: 'company_001',
+      name: 'Northern Sawmill',
+      x: 0,
+      y: 0,
+    });
+
+    expect(result.ok).toBe(true);
+
+    const finance = financeRepository.findByCompanyId(requireCompanyId('company_001'));
+
+    expect(finance?.getCashBalance()).toBe(STARTING_MONEY - 5000);
+    expect(finance?.getTransactions().at(-1)?.transactionType).toBe(
+      FinanceTransactionType.BUILDING_COST,
+    );
+  });
+
+  it('enqueues BuildingPlaced events for the next simulation tick', async () => {
+    const { createCompany, eventBus, placeBuilding, simulationEngine } = await createContext();
     const received: string[] = [];
 
     eventBus.subscribe('BuildingPlaced', (event) => {
@@ -100,8 +156,8 @@ describe('PlaceBuildingUseCase', () => {
     expect(received).toEqual(['building_001']);
   });
 
-  it('rejects placement when the company does not exist', () => {
-    const { placeBuilding } = createContext();
+  it('rejects placement when the company does not exist', async () => {
+    const { placeBuilding } = await createContext();
 
     const result = placeBuilding.execute({
       buildingId: 'building_001',
@@ -115,8 +171,8 @@ describe('PlaceBuildingUseCase', () => {
     expect(result.ok).toBe(false);
   });
 
-  it('rejects duplicate building ids', () => {
-    const { createCompany, placeBuilding } = createContext();
+  it('rejects duplicate building ids', async () => {
+    const { createCompany, placeBuilding } = await createContext();
 
     createCompany.execute({
       companyId: 'company_001',
@@ -143,5 +199,56 @@ describe('PlaceBuildingUseCase', () => {
     });
 
     expect(secondResult.ok).toBe(false);
+  });
+
+  it('rejects placement when available cash is insufficient for construction cost', async () => {
+    const { createCompany, financeRepository, placeBuilding } = await createContext();
+
+    createCompany.execute({
+      companyId: 'company_001',
+      name: 'Genesis Industries',
+      ownerId: 'player_001',
+    });
+
+    const finance = financeRepository.findByCompanyId(requireCompanyId('company_001'));
+
+    if (finance === undefined) {
+      throw new Error('Expected finance account to exist.');
+    }
+
+    finance.debit(STARTING_MONEY - 1000, FinanceTransactionType.ADMIN, new ManualClock(100));
+    financeRepository.save(finance);
+
+    const result = placeBuilding.execute({
+      buildingId: 'building_001',
+      buildingTypeId: 'sawmill',
+      companyId: 'company_001',
+      name: 'Northern Sawmill',
+      x: 0,
+      y: 0,
+    });
+
+    expect(result.ok).toBe(false);
+  });
+
+  it('rejects unknown building type ids', async () => {
+    const { createCompany, placeBuilding } = await createContext();
+
+    createCompany.execute({
+      companyId: 'company_001',
+      name: 'Genesis Industries',
+      ownerId: 'player_001',
+    });
+
+    const result = placeBuilding.execute({
+      buildingId: 'building_001',
+      buildingTypeId: 'unknown_building',
+      companyId: 'company_001',
+      name: 'Invalid Building',
+      x: 0,
+      y: 0,
+    });
+
+    expect(result.ok).toBe(false);
   });
 });

@@ -33,6 +33,7 @@ The Domain Layer is responsible for:
 - Business Rules
 - Invariants
 - Policies
+- Specifications
 
 ---
 
@@ -70,6 +71,7 @@ world/
 events/
 repositories/
 services/
+specifications/
 policies/
 value-objects/
 ```
@@ -224,6 +226,22 @@ Policies make business behavior easier to evolve without changing Aggregate resp
 
 ---
 
+# Specifications
+
+Specifications encapsulate composable eligibility rules.
+
+Examples:
+
+- Building supports recipe
+- Resource listed on market
+- Sufficient inventory for production
+
+Specifications return `Result<void, ValidationError>` and can be combined (e.g. with `AndSpecification`).
+
+Application code evaluates specifications against domain types and passes content-derived context as snapshots. Domain specifications must not import `src/content/`.
+
+---
+
 # Dependency Rules
 
 The Domain Layer may depend only on:
@@ -287,6 +305,7 @@ Recommended tests:
 - Value Object Tests
 - Domain Service Tests
 - Policy Tests
+- Specification Tests
 - Invariant Tests
 
 Every business rule should be verifiable through automated tests.

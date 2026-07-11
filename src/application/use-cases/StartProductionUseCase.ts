@@ -13,6 +13,7 @@ import {
   createProductionJobId,
 } from '../../domain/production/ProductionJob.js';
 import { createRecipeId } from '../../domain/production/RecipeId.js';
+import { BuildingSupportsRecipeSpecification } from '../../domain/specifications/production/BuildingSupportsRecipeSpecification.js';
 import type { ApplicationContext } from '../bootstrap/ApplicationContext.js';
 import type { StartProductionCommand } from '../commands/StartProductionCommand.js';
 
@@ -37,6 +38,7 @@ export class StartProductionUseCase {
   readonly #simulationEngine: StartProductionUseCaseDependencies['simulationEngine'];
   readonly #gameContent: StartProductionUseCaseDependencies['gameContent'];
   readonly #productionInventoryService: StartProductionUseCaseDependencies['productionInventoryService'];
+  readonly #buildingSupportsRecipeSpecification = new BuildingSupportsRecipeSpecification();
 
   /**
    * @param dependencies - Application services required to start production.
@@ -98,12 +100,18 @@ export class StartProductionUseCase {
       return Result.fail(new ValidationError(`Recipe id "${recipeId.value}" is disabled.`));
     }
 
-    if (!recipe.buildingTypes.includes(building.getBuildingTypeId().value)) {
-      return Result.fail(
-        new ValidationError(
-          `Building type "${building.getBuildingTypeId().value}" cannot execute recipe "${recipeId.value}".`,
-        ),
-      );
+    const supportsRecipeResult = this.#buildingSupportsRecipeSpecification.isSatisfiedBy(
+      {
+        buildingTypeId: building.getBuildingTypeId().value,
+        recipeId: recipeId.value,
+      },
+      {
+        allowedBuildingTypes: recipe.buildingTypes,
+      },
+    );
+
+    if (!supportsRecipeResult.ok) {
+      return Result.fail(supportsRecipeResult.error);
     }
 
     const reserveResult = this.#productionInventoryService.reserveInputs(
