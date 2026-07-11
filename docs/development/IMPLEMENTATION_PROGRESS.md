@@ -28,10 +28,10 @@ Update this document whenever a meaningful implementation milestone is completed
 | Content loaders | Partial (ResourceType, BuildingType, Recipe) |
 | Simulation | Partial (SimulationEngine, systems pipeline) |
 | Infrastructure | Partial (in-memory repositories) |
-| Application layer | Partial (bootstrap, CreateCompany, PlaceBuilding, StartProduction) |
+| Application layer | Partial (bootstrap, use cases, queries) |
 | UI | Not started |
 
-**Tests:** 174 (run `pnpm test` for current count)
+**Tests:** 183 (run `pnpm test` for current count)
 
 ---
 
@@ -334,7 +334,11 @@ Coordinates use cases between domain, infrastructure and simulation.
 | `ProductionInventoryService` | `services/ProductionInventoryService.ts` |
 | `StartProductionCommand` | `commands/StartProductionCommand.ts` |
 | `StartProductionUseCase` | `use-cases/StartProductionUseCase.ts` |
-| Tests | `bootstrap/bootstrapApplication.test.ts`, `services/ProductionInventoryService.test.ts`, `use-cases/*.test.ts` |
+| `GetCompanyQueryHandler` | `queries/GetCompanyQueryHandler.ts` |
+| `ListBuildingsQueryHandler` | `queries/ListBuildingsQueryHandler.ts` |
+| `GetInventoryQueryHandler` | `queries/GetInventoryQueryHandler.ts` |
+| Read models | `read-models/CompanyReadModel.ts`, `BuildingReadModel.ts`, `InventoryReadModel.ts` |
+| Tests | `bootstrap/bootstrapApplication.test.ts`, `services/ProductionInventoryService.test.ts`, `queries/*.test.ts`, `use-cases/*.test.ts` |
 
 **Behaviour:**
 
@@ -343,6 +347,7 @@ Coordinates use cases between domain, infrastructure and simulation.
 - `CreateCompanyUseCase` also creates an empty company inventory.
 - `StartProductionUseCase` validates recipe/building compatibility against loaded content, reserves recipe inputs via `ProductionInventoryService`, and rolls back reservations if job creation fails.
 - `ProductionInventoryService` reserves inputs on production start; simulation invokes `completeJob()` on completion to consume inputs and deliver outputs.
+- Query handlers (`GetCompany`, `ListBuildings`, `GetInventory`) read repository state and return immutable read models without mutating aggregates.
 
 ---
 
@@ -416,15 +421,17 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 | Application / PlaceBuilding | `PlaceBuildingUseCase.test.ts` | Place, events, validation |
 | Application / StartProduction | `StartProductionUseCase.test.ts` | Input reservation, tick completion, inventory transfer |
 | Application / ProductionInventory | `ProductionInventoryService.test.ts` | Reserve, release, complete job inventory |
+| Application / GetCompany | `GetCompanyQueryHandler.test.ts` | Company read model, not found |
+| Application / ListBuildings | `ListBuildingsQueryHandler.test.ts` | Building list, empty company |
+| Application / GetInventory | `GetInventoryQueryHandler.test.ts` | Stock levels, available quantity |
 
 ---
 
 # Planned Next Steps
 
 1. Recipe reference validation for `requiredResearch` once research content exists
-2. Application queries (GetCompany, ListBuildings, GetInventory)
-3. Market and finance simulation logic once related aggregates exist
-4. Save/load game session persistence
+2. Market and finance simulation logic once related aggregates exist
+3. Save/load game session persistence
 
 ---
 
