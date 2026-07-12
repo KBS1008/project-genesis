@@ -64,3 +64,10 @@ export type { SaveGameCommand } from './commands/SaveGameCommand.js';
 export type { LoadGameCommand } from './commands/LoadGameCommand.js';
 export { restoreApplicationFromSnapshot } from './bootstrap/restoreApplicationFromSnapshot.js';
 export type { RestoreApplicationOptions } from './bootstrap/restoreApplicationFromSnapshot.js';
+export { GameSession } from './facade/GameSession.js';
+export type {
+  CreateGameSessionOptions,
+  PlaceBuildingInput,
+  SellResourceInput,
+} from './facade/GameSession.js';
+export type { GameSessionDashboard } from './facade/GameSessionDashboard.js';

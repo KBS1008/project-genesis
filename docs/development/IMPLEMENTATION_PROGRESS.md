@@ -30,9 +30,9 @@ Update this document whenever a meaningful implementation milestone is completed
 | Simulation | Partial (SimulationEngine, systems pipeline) |
 | Infrastructure | Partial (in-memory repositories, JSON savegames) |
 | Application layer | Partial (bootstrap, use cases, queries) |
-| UI | Not started |
+| UI | Partial (browser dev shell) |
 
-**Tests:** 262 (run `pnpm test` for current count)
+**Tests:** 264 (run `pnpm test` for current count)
 
 ---
 
@@ -573,7 +573,24 @@ Coordinates use cases between domain, infrastructure and simulation.
 | `GameSaveSnapshotV1` | `persistence/savegame/GameSaveSnapshotV1.ts` |
 | `GameStateSerializer` | `persistence/savegame/GameStateSerializer.ts` |
 | `FileSavegameStore` | `persistence/savegame/FileSavegameStore.ts` |
+| `DevGameServer` | `http/DevGameServer.ts` |
 | Tests | `persistence/InMemory*.test.ts`, `use-cases/SaveGameUseCase.test.ts` |
+
+---
+
+## UI Module (`src/ui/`)
+
+| Item | Path |
+|---|---|
+| Dev server entry | `devServer.ts` |
+| Static shell | `web/index.html`, `web/styles.css`, `web/main.js` |
+| Application facade | `../application/facade/GameSession.ts` |
+
+**Behaviour:**
+
+- `pnpm dev` starts `DevGameServer` on `http://127.0.0.1:3000`.
+- Browser UI calls JSON routes under `/api/*`; no direct domain access.
+- `GameSession` coordinates bootstrap, use cases and query handlers for the dashboard shell.
 
 ---
 
@@ -640,6 +657,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 | Simulation / Systems | `createDefaultSimulationSystems.test.ts` | Default pipeline order |
 | Infrastructure / Company repo | `InMemoryCompanyRepository.test.ts` | Save, find, ordering |
 | Infrastructure / Building repo | `InMemoryBuildingRepository.test.ts` | Save, find by company, under construction |
+| Application / GameSession | `GameSession.test.ts` | Dashboard facade, building placement |
 | Application / Bootstrap | `bootstrapApplication.test.ts` | Content load, wiring |
 | Application / CreateCompany | `CreateCompanyUseCase.test.ts` | Create, events, duplicates |
 | Application / PlaceBuilding | `PlaceBuildingUseCase.test.ts` | Place, construction time, cost debit, events, validation |
@@ -668,7 +686,8 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Planned Next Steps
 
-1. UI shell / first browser view
+1. NestJS REST API layer (replace dev HTTP adapter)
+2. Next.js frontend (replace static shell)
 
 ---
 

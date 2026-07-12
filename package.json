@@ -11,7 +11,8 @@
     },
     "type": "module",
     "scripts": {
-        "dev": "tsx src/main.ts",
+        "dev": "tsx src/ui/devServer.ts",
+        "dev:console": "tsx src/main.ts",
         "build": "tsc -p tsconfig.json",
         "clean": "rimraf dist coverage",
         "lint": "eslint .",
