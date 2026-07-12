@@ -53,6 +53,7 @@ import {
 import { createTransportOrderId } from '../../../domain/transport/TransportOrderId.js';
 import { TransportOrderStatus } from '../../../domain/transport/TransportOrderStatus.js';
 import type { TransportOrderRepository } from '../../../domain/transport/TransportOrderRepository.js';
+import type { TickHistoryService } from '../../../application/services/TickHistoryService.js';
 import type { SimulationEngine } from '../../../simulation/engine/SimulationEngine.js';
 import { SimulationState } from '../../../simulation/state/SimulationState.js';
 import {
@@ -75,6 +76,7 @@ export type GameStateSource = {
   readonly researchJobRepository: ResearchJobRepository;
   readonly companyResearchRepository: CompanyResearchRepository;
   readonly companyMilestonesRepository: CompanyMilestonesRepository;
+  readonly tickHistoryService: TickHistoryService;
 };
 
 /** Repositories populated during snapshot restore. */
@@ -90,6 +92,7 @@ export type GameStateTarget = {
   readonly researchJobRepository: ResearchJobRepository;
   readonly companyResearchRepository: CompanyResearchRepository;
   readonly companyMilestonesRepository: CompanyMilestonesRepository;
+  readonly tickHistoryService: TickHistoryService;
 };
 export type RestoredSimulationMetadata = {
   readonly clockTime: number;
@@ -315,8 +318,35 @@ export class GameStateSerializer {
               ),
             ),
         ),
+        tickMetricsHistory: this.#serializeTickMetricsHistory(source.tickHistoryService),
       }),
     );
+  }
+
+  #serializeTickMetricsHistory(
+    tickHistoryService: TickHistoryService,
+  ): GameSaveSnapshotV1['tickMetricsHistory'] {
+    const companyId = tickHistoryService.getCompanyId();
+    const points = tickHistoryService.exportForSave();
+
+    if (companyId === undefined || points.length === 0) {
+      return undefined;
+    }
+
+    return Object.freeze({
+      companyId,
+      points: Object.freeze(
+        points.map((point) =>
+          Object.freeze({
+            tickNumber: point.tickNumber,
+            simulationTime: point.simulationTime,
+            availableCash: point.availableCash,
+            energyReserve: point.energyReserve,
+            activeTransportCount: point.activeTransportCount,
+          }),
+        ),
+      ),
+    });
   }
 
   parse(raw: unknown): Result<GameSaveSnapshotV1, ValidationError> {
@@ -345,6 +375,7 @@ export class GameStateSerializer {
       companyMilestones: candidate.companyMilestones ?? [],
       buildingStorages: candidate.buildingStorages ?? [],
       transportOrders: candidate.transportOrders ?? [],
+      tickMetricsHistory: candidate.tickMetricsHistory,
     } as GameSaveSnapshotV1);
   }
 
@@ -462,6 +493,8 @@ export class GameStateSerializer {
       target.transportOrderRepository.save(restoreResult.value);
     }
 
+    this.#restoreTickMetricsHistory(snapshot, target.tickHistoryService);
+
     return Result.ok(
       Object.freeze({
         clockTime: snapshot.simulation.clockTime,
@@ -471,6 +504,31 @@ export class GameStateSerializer {
         ),
         tickDuration: snapshot.simulation.tickDuration,
       }),
+    );
+  }
+
+  #restoreTickMetricsHistory(
+    snapshot: GameSaveSnapshotV1,
+    tickHistoryService: TickHistoryService,
+  ): void {
+    const history = snapshot.tickMetricsHistory;
+
+    if (history === undefined || history.points.length === 0) {
+      tickHistoryService.clear();
+      return;
+    }
+
+    tickHistoryService.replaceHistory(
+      history.companyId,
+      history.points.map((point) =>
+        Object.freeze({
+          tickNumber: point.tickNumber,
+          simulationTime: point.simulationTime,
+          availableCash: point.availableCash,
+          energyReserve: point.energyReserve,
+          activeTransportCount: point.activeTransportCount,
+        }),
+      ),
     );
   }
 

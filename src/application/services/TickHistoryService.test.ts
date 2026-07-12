@@ -65,4 +65,18 @@ describe('TickHistoryService', () => {
 
     expect(history.getHistory().map((point) => point.tickNumber)).toEqual([1, 2, 3]);
   });
+
+  it('exports and restores persisted history for a company', () => {
+    const history = new TickHistoryService();
+
+    history.record(snapshot(0, 250_000), 'company_001');
+    history.record(snapshot(1, 249_000), 'company_001');
+
+    expect(history.getCompanyId()).toBe('company_001');
+    expect(history.exportForSave()).toHaveLength(2);
+
+    history.replaceHistory('company_001', [snapshot(5, 200_000), snapshot(6, 199_000)]);
+
+    expect(history.getHistory()).toEqual([snapshot(5, 200_000), snapshot(6, 199_000)]);
+  });
 });

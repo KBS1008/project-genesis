@@ -70,4 +70,24 @@ export class TickHistoryService {
 
     return Object.freeze([...filtered]);
   }
+
+  /** Returns all stored points for savegame persistence. */
+  exportForSave(): readonly TickMetricsSnapshot[] {
+    return Object.freeze([...this.#points]);
+  }
+
+  /** Returns the company currently bound to this history buffer. */
+  getCompanyId(): string | undefined {
+    return this.#companyId;
+  }
+
+  /** Replaces stored history after loading a save snapshot. */
+  replaceHistory(companyId: string, points: readonly TickMetricsSnapshot[]): void {
+    this.#companyId = companyId;
+    this.#points = [...points];
+
+    if (this.#points.length > this.#maxPoints) {
+      this.#points = this.#points.slice(this.#points.length - this.#maxPoints);
+    }
+  }
 }

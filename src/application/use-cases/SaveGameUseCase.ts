@@ -27,6 +27,7 @@ export type SaveGameUseCaseDependencies = Pick<
   | 'researchJobRepository'
   | 'companyResearchRepository'
   | 'companyMilestonesRepository'
+  | 'tickHistoryService'
 > & {
   readonly savegameStore?: FileSavegameStore;
 };
@@ -48,6 +49,7 @@ export class SaveGameUseCase {
   readonly #researchJobRepository: SaveGameUseCaseDependencies['researchJobRepository'];
   readonly #companyResearchRepository: SaveGameUseCaseDependencies['companyResearchRepository'];
   readonly #companyMilestonesRepository: SaveGameUseCaseDependencies['companyMilestonesRepository'];
+  readonly #tickHistoryService: SaveGameUseCaseDependencies['tickHistoryService'];
   readonly #savegameStore: FileSavegameStore;
   readonly #serializer = new GameStateSerializer();
 
@@ -68,6 +70,7 @@ export class SaveGameUseCase {
     this.#researchJobRepository = dependencies.researchJobRepository;
     this.#companyResearchRepository = dependencies.companyResearchRepository;
     this.#companyMilestonesRepository = dependencies.companyMilestonesRepository;
+    this.#tickHistoryService = dependencies.tickHistoryService;
     this.#savegameStore = dependencies.savegameStore ?? new FileSavegameStore();
   }
 
@@ -89,6 +92,7 @@ export class SaveGameUseCase {
       researchJobRepository: this.#researchJobRepository,
       companyResearchRepository: this.#companyResearchRepository,
       companyMilestonesRepository: this.#companyMilestonesRepository,
+      tickHistoryService: this.#tickHistoryService,
     });
 
     if (!snapshotResult.ok) {

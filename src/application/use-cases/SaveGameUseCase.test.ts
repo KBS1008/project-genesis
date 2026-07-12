@@ -58,9 +58,17 @@ describe('SaveGameUseCase', () => {
         y: 3,
       });
 
-      const tickResult = context.simulationEngine.tick();
-
-      expect(tickResult.ok).toBe(true);
+      context.simulationEngine.tick();
+      context.tickHistoryService.record(
+        Object.freeze({
+          tickNumber: context.simulationEngine.state.tickNumber,
+          simulationTime: context.clock.now(),
+          availableCash: 240_000,
+          energyReserve: 30,
+          activeTransportCount: 0,
+        }),
+        'company_001',
+      );
 
       const saveResult = await saveGame.execute({ filePath: savePath });
 
@@ -96,6 +104,15 @@ describe('SaveGameUseCase', () => {
       expect(building?.getConstructionDuration()).toBe(120);
       expect(building?.getConstructionProgress()).toBeGreaterThan(0);
       expect(restored.marketRepository.findAll()).toHaveLength(1);
+      expect(restored.tickHistoryService.getHistory()).toEqual([
+        Object.freeze({
+          tickNumber: context.simulationEngine.state.tickNumber,
+          simulationTime: context.clock.now(),
+          availableCash: 240_000,
+          energyReserve: 30,
+          activeTransportCount: 0,
+        }),
+      ]);
     } finally {
       await rm(tempDirectory, { recursive: true, force: true });
     }

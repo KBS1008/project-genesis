@@ -229,6 +229,14 @@ describe('GameSession', () => {
 
       session.tick();
 
+      const historyBeforeSave = session.getTickHistory();
+
+      expect(historyBeforeSave.ok).toBe(true);
+
+      if (historyBeforeSave.ok) {
+        expect(historyBeforeSave.value.points.length).toBeGreaterThanOrEqual(2);
+      }
+
       const saveResult = await session.saveGame();
 
       expect(saveResult.ok).toBe(true);
@@ -237,6 +245,14 @@ describe('GameSession', () => {
       const loadResult = await freshSession.loadGame();
 
       expect(loadResult.ok).toBe(true);
+
+      const historyAfterLoad = freshSession.getTickHistory();
+
+      expect(historyAfterLoad.ok).toBe(true);
+
+      if (historyBeforeSave.ok && historyAfterLoad.ok) {
+        expect(historyAfterLoad.value.points).toEqual(historyBeforeSave.value.points);
+      }
 
       const dashboardResult = freshSession.getDashboard();
 

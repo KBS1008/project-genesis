@@ -39,6 +39,7 @@ import { ResearchCompletionService } from '../services/ResearchCompletionService
 import { MilestoneEvaluationService } from '../services/MilestoneEvaluationService.js';
 import { EnergyBalanceService } from '../services/EnergyBalanceService.js';
 import { TransportLogisticsService } from '../services/TransportLogisticsService.js';
+import { TickHistoryService } from '../services/TickHistoryService.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
 import { createDefaultSimulationSystems } from '../../simulation/systems/createDefaultSimulationSystems.js';
 import type { ApplicationContext } from './ApplicationContext.js';
@@ -193,6 +194,8 @@ export async function bootstrapApplication(
     milestones: contentResult.value.milestones,
   });
 
+  const tickHistoryService = new TickHistoryService();
+
   return Result.ok({
     clock,
     eventBus,
@@ -212,6 +215,7 @@ export async function bootstrapApplication(
     marketTradeService,
     energyBalanceService,
     transportLogisticsService,
+    tickHistoryService,
     gameContent: contentResult.value,
   });
 }

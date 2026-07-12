@@ -19,6 +19,7 @@ import type { ProductionInventoryService } from '../services/ProductionInventory
 import type { MarketTradeService } from '../services/MarketTradeService.js';
 import type { EnergyBalanceService } from '../services/EnergyBalanceService.js';
 import type { TransportLogisticsService } from '../services/TransportLogisticsService.js';
+import type { TickHistoryService } from '../services/TickHistoryService.js';
 import type { TransportOrderRepository } from '../../domain/transport/TransportOrderRepository.js';
 import type { GameContentLoadResult } from '../../content/validateGameContent.js';
 import type { ManualClock } from '../../common/time/ManualClock.js';
@@ -44,5 +45,6 @@ export type ApplicationContext = {
   readonly marketTradeService: MarketTradeService;
   readonly energyBalanceService: EnergyBalanceService;
   readonly transportLogisticsService: TransportLogisticsService;
+  readonly tickHistoryService: TickHistoryService;
   readonly gameContent: GameContentLoadResult;
 };

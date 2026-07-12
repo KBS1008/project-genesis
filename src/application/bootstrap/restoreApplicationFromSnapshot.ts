@@ -32,6 +32,7 @@ import { ResearchCompletionService } from '../services/ResearchCompletionService
 import { MilestoneEvaluationService } from '../services/MilestoneEvaluationService.js';
 import { EnergyBalanceService } from '../services/EnergyBalanceService.js';
 import { TransportLogisticsService } from '../services/TransportLogisticsService.js';
+import { TickHistoryService } from '../services/TickHistoryService.js';
 import type { ApplicationContext } from './ApplicationContext.js';
 
 /** Options for restoring an application session. */
@@ -63,6 +64,7 @@ export async function restoreApplicationFromSnapshot(
   const researchJobRepository = new InMemoryResearchJobRepository();
   const companyResearchRepository = new InMemoryCompanyResearchRepository();
   const companyMilestonesRepository = new InMemoryCompanyMilestonesRepository();
+  const tickHistoryService = new TickHistoryService();
   const serializer = new GameStateSerializer();
 
   const hydrateResult = serializer.hydrate(options.snapshot, {
@@ -77,6 +79,7 @@ export async function restoreApplicationFromSnapshot(
     researchJobRepository,
     companyResearchRepository,
     companyMilestonesRepository,
+    tickHistoryService,
   });
 
   if (!hydrateResult.ok) {
@@ -197,6 +200,7 @@ export async function restoreApplicationFromSnapshot(
     marketTradeService,
     energyBalanceService,
     transportLogisticsService,
+    tickHistoryService,
     gameContent: contentResult.value,
   });
 }

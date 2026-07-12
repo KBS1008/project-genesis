@@ -33,7 +33,6 @@ import type {
   TransportOrderSessionReadModel,
 } from './GameSessionDashboard.js';
 import { GameSessionDashboardBuilder } from './GameSessionDashboardBuilder.js';
-import { TickHistoryService } from '../services/TickHistoryService.js';
 import type {
   DashboardTickHistory,
   TickHistoryQuery,
@@ -98,7 +97,6 @@ export class GameSession {
   #getFinance!: GetFinanceQueryHandler;
   #getMarketPrices!: GetMarketPricesQueryHandler;
   #dashboardBuilder!: GameSessionDashboardBuilder;
-  readonly #tickHistory = new TickHistoryService();
   readonly #gameContentRoot: string;
   readonly #savePath: string;
   #activeCompanyId: string | undefined;
@@ -170,7 +168,7 @@ export class GameSession {
     inventory.pullDomainEvents();
 
     this.#activeCompanyId = DEFAULT_COMPANY_ID;
-    this.#tickHistory.clear(DEFAULT_COMPANY_ID);
+    this.#context.tickHistoryService.clear(DEFAULT_COMPANY_ID);
     this.#recordTickSnapshot();
     return Result.ok(undefined);
   }
@@ -287,7 +285,7 @@ export class GameSession {
     return Result.ok(
       Object.freeze({
         companyId: this.#activeCompanyId ?? null,
-        points: this.#tickHistory.getHistory(query),
+        points: this.#context.tickHistoryService.getHistory(query),
       }),
     );
   }
@@ -441,8 +439,15 @@ export class GameSession {
     }
 
     this.#replaceContext(loadResult.value);
-    this.#tickHistory.clear(this.#activeCompanyId);
-    this.#recordTickSnapshot();
+    this.#syncSessionState();
+
+    if (
+      this.#activeCompanyId !== undefined &&
+      this.#context.tickHistoryService.getHistory().length === 0
+    ) {
+      this.#recordTickSnapshot();
+    }
+
     return Result.ok(undefined);
   }
 
@@ -568,7 +573,7 @@ export class GameSession {
       transportOrders,
     });
 
-    this.#tickHistory.record(
+    this.#context.tickHistoryService.record(
       this.#dashboardBuilder.captureTickMetrics({
         tickNumber: this.#context.simulationEngine.state.tickNumber,
         simulationTime: this.#context.clock.now(),

@@ -168,6 +168,21 @@ export type GameSaveTransportOrderSnapshotV1 = {
   readonly progress: number;
 };
 
+/** Persisted dashboard tick metrics for chart history. */
+export type GameSaveTickMetricsSnapshotV1 = {
+  readonly tickNumber: number;
+  readonly simulationTime: number;
+  readonly availableCash: number;
+  readonly energyReserve: number;
+  readonly activeTransportCount: number;
+};
+
+/** Persisted tick metrics history for one company. */
+export type GameSaveTickMetricsHistorySnapshotV1 = {
+  readonly companyId: string;
+  readonly points: readonly GameSaveTickMetricsSnapshotV1[];
+};
+
 /** Full deterministic game session snapshot. */
 export type GameSaveSnapshotV1 = {
   readonly schemaVersion: typeof GAME_SAVE_SCHEMA_VERSION;
@@ -184,4 +199,5 @@ export type GameSaveSnapshotV1 = {
   readonly companyMilestones: readonly GameSaveCompanyMilestonesSnapshotV1[];
   readonly buildingStorages: readonly GameSaveBuildingStorageSnapshotV1[];
   readonly transportOrders: readonly GameSaveTransportOrderSnapshotV1[];
+  readonly tickMetricsHistory?: GameSaveTickMetricsHistorySnapshotV1;
 };
