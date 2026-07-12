@@ -53,6 +53,8 @@ export type ProductionJobSessionReadModel = {
   readonly recipeId: string;
   readonly status: string;
   readonly progress: number;
+  readonly awaitingTransport: boolean;
+  readonly activeTransportCount: number;
 };
 
 export type ResearchJobSessionReadModel = {
@@ -69,8 +71,43 @@ export type TransportOrderSessionReadModel = {
   readonly status: string;
   readonly progress: number;
   readonly sourceBuildingId: string;
+  readonly sourceBuildingName: string;
   readonly destinationBuildingId: string;
+  readonly destinationBuildingName: string;
   readonly productionJobId: string;
+  readonly recipeId: string | null;
+  readonly recipeName: string | null;
+};
+
+export type WarehouseStorageItemReadModel = {
+  readonly resourceId: string;
+  readonly quantity: number;
+  readonly reserved: number;
+  readonly available: number;
+};
+
+export type WarehouseStorageReadModel = {
+  readonly buildingId: string;
+  readonly buildingName: string;
+  readonly items: readonly WarehouseStorageItemReadModel[];
+};
+
+export type LogisticsSummaryReadModel = {
+  readonly hasActiveWarehouse: boolean;
+  readonly activeTransportCount: number;
+  readonly waitingProductionCount: number;
+  readonly warehouseResourceLines: number;
+  readonly warehouseTotalUnits: number;
+  readonly statusMessage: string | null;
+};
+
+export type DashboardKpiReadModel = {
+  readonly availableCash: number;
+  readonly energyReserve: number;
+  readonly energyHasDeficit: boolean;
+  readonly activeTransportCount: number;
+  readonly warehouseTotalUnits: number;
+  readonly onSiteResourceLines: number;
 };
 
 export type ContentNameEntry = {
@@ -140,6 +177,7 @@ export type GameSessionDashboard = {
   readonly company: CompanyReadModel | null;
   readonly finance: FinanceReadModel | null;
   readonly inventory: InventoryReadModel | null;
+  readonly warehouseStorage: readonly WarehouseStorageReadModel[];
   readonly buildings: readonly BuildingReadModel[];
   readonly marketPrices: readonly MarketPriceReadModel[];
   readonly milestones: readonly MilestoneCatalogEntry[];
@@ -150,6 +188,8 @@ export type GameSessionDashboard = {
   readonly researchJobs: readonly ResearchJobSessionReadModel[];
   readonly contentNames: GameSessionContentNames;
   readonly energy: EnergyReadModel | null;
+  readonly logistics: LogisticsSummaryReadModel | null;
+  readonly kpis: DashboardKpiReadModel | null;
   readonly hints: GameSessionDashboardHints;
 };
 

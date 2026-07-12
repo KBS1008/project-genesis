@@ -9,6 +9,7 @@ import type { CompanyReadModel } from '../read-models/CompanyReadModel.js';
 import type { FinanceReadModel } from '../read-models/FinanceReadModel.js';
 import type { InventoryReadModel } from '../read-models/InventoryReadModel.js';
 import type { MarketPriceReadModel } from '../read-models/MarketPriceReadModel.js';
+import type { WarehouseStorageReadModel } from '../read-models/WarehouseStorageReadModel.js';
 
 /** Milestone catalog entry with completion state for the UI shell. */
 export type MilestoneCatalogEntry = {
@@ -24,6 +25,8 @@ export type ProductionJobSessionReadModel = {
   readonly recipeId: string;
   readonly status: string;
   readonly progress: number;
+  readonly awaitingTransport: boolean;
+  readonly activeTransportCount: number;
 };
 
 /** Research job summary for the browser dashboard. */
@@ -42,8 +45,12 @@ export type TransportOrderSessionReadModel = {
   readonly status: string;
   readonly progress: number;
   readonly sourceBuildingId: string;
+  readonly sourceBuildingName: string;
   readonly destinationBuildingId: string;
+  readonly destinationBuildingName: string;
   readonly productionJobId: string;
+  readonly recipeId: string | null;
+  readonly recipeName: string | null;
 };
 
 /** Content id/name pair for UI labels. */
@@ -52,6 +59,25 @@ export type ContentNameEntry = {
   readonly name: string;
 };
 
+/** High-level logistics summary for dashboard KPIs and status banners. */
+export type LogisticsSummaryReadModel = {
+  readonly hasActiveWarehouse: boolean;
+  readonly activeTransportCount: number;
+  readonly waitingProductionCount: number;
+  readonly warehouseResourceLines: number;
+  readonly warehouseTotalUnits: number;
+  readonly statusMessage: string | null;
+};
+
+/** KPI strip shown above the dashboard grid. */
+export type DashboardKpiReadModel = {
+  readonly availableCash: number;
+  readonly energyReserve: number;
+  readonly energyHasDeficit: boolean;
+  readonly activeTransportCount: number;
+  readonly warehouseTotalUnits: number;
+  readonly onSiteResourceLines: number;
+};
 /** Energy balance summary for the dashboard. */
 export type EnergyReadModel = {
   readonly generation: number;
@@ -122,6 +148,7 @@ export type GameSessionDashboard = {
   readonly company: CompanyReadModel | null;
   readonly finance: FinanceReadModel | null;
   readonly inventory: InventoryReadModel | null;
+  readonly warehouseStorage: readonly WarehouseStorageReadModel[];
   readonly buildings: readonly BuildingReadModel[];
   readonly marketPrices: readonly MarketPriceReadModel[];
   readonly milestones: readonly MilestoneCatalogEntry[];
@@ -132,6 +159,8 @@ export type GameSessionDashboard = {
   readonly researchJobs: readonly ResearchJobSessionReadModel[];
   readonly contentNames: GameSessionContentNames;
   readonly energy: EnergyReadModel | null;
+  readonly logistics: LogisticsSummaryReadModel | null;
+  readonly kpis: DashboardKpiReadModel | null;
   readonly hints: GameSessionDashboardHints;
 };
 

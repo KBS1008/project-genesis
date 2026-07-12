@@ -26,6 +26,65 @@ function formatEnergy(value: number): string {
   return `${value.toFixed(1)} MW`;
 }
 
+function formatProductionStatus(status: string, awaitingTransport: boolean): string {
+  if (status === 'WAITING' && awaitingTransport) {
+    return 'Wartet auf Transport';
+  }
+
+  return status;
+}
+
+function KpiStrip({
+  kpis,
+}: {
+  readonly kpis: GameSessionDashboard['kpis'];
+}) {
+  if (kpis === null) {
+    return null;
+  }
+
+  return (
+    <section className="kpi-strip" aria-label="Kennzahlen">
+      <article className="kpi-card">
+        <span className="kpi-label">Verfügbar</span>
+        <strong className="kpi-value">{kpis.availableCash.toLocaleString('de-DE')} GC</strong>
+      </article>
+      <article className={`kpi-card${kpis.energyHasDeficit ? ' kpi-warning' : ''}`}>
+        <span className="kpi-label">Energie-Reserve</span>
+        <strong className="kpi-value">{formatEnergy(kpis.energyReserve)}</strong>
+      </article>
+      <article className={`kpi-card${kpis.activeTransportCount > 0 ? ' kpi-active' : ''}`}>
+        <span className="kpi-label">Transporte</span>
+        <strong className="kpi-value">{kpis.activeTransportCount}</strong>
+      </article>
+      <article className="kpi-card">
+        <span className="kpi-label">Im Lagerhaus</span>
+        <strong className="kpi-value">{kpis.warehouseTotalUnits}</strong>
+      </article>
+      <article className="kpi-card">
+        <span className="kpi-label">Am Standort</span>
+        <strong className="kpi-value">{kpis.onSiteResourceLines} Ressourcen</strong>
+      </article>
+    </section>
+  );
+}
+
+function LogisticsBanner({
+  message,
+}: {
+  readonly message: string | null;
+}) {
+  if (message === null || message.length === 0) {
+    return null;
+  }
+
+  return (
+    <p className="logistics-banner" role="status">
+      {message}
+    </p>
+  );
+}
+
 function HintButton({
   label,
   disabled,
@@ -490,6 +549,9 @@ export function DashboardShell() {
         <Toast message={statusMessage} tone={statusTone} />
       </section>
 
+      {hasGame && dashboard?.kpis ? <KpiStrip kpis={dashboard.kpis} /> : null}
+      <LogisticsBanner message={dashboard?.logistics?.statusMessage ?? null} />
+
       <main className="grid">
         {isInitialLoading ? (
           <>
@@ -566,7 +628,8 @@ export function DashboardShell() {
         </section>
 
         <section className="card">
-          <h2>Inventar</h2>
+          <h2>Inventar (Standort)</h2>
+          <p className="panel-hint">Material direkt an Produktionsgebäuden — bereit für sofortige Nutzung.</p>
           <div className="table-wrap">
             {!dashboard?.inventory ? (
               <p className="empty">Inventar erscheint nach Spielstart.</p>
@@ -584,8 +647,41 @@ export function DashboardShell() {
                   reserved: item.reserved,
                   available: item.available,
                 }))}
-                emptyText="Inventar ist leer."
+                emptyText="Am Standort ist kein Material."
               />
+            )}
+          </div>
+        </section>
+
+        <section className="card">
+          <h2>Lagerhaus</h2>
+          <p className="panel-hint">Marktkäufe landen hier. Transport bringt Material zum Produktionsstandort.</p>
+          <div className="table-wrap">
+            {!dashboard?.company ? (
+              <p className="empty">Kein Lagerhaus aktiv.</p>
+            ) : (dashboard.warehouseStorage ?? []).length === 0 ? (
+              <p className="empty">Kein Lagerhaus aktiv oder Lager leer.</p>
+            ) : (
+              (dashboard.warehouseStorage ?? []).map((storage) => (
+                <div key={storage.buildingId} className="warehouse-block">
+                  <h3 className="warehouse-name">{storage.buildingName}</h3>
+                  <DataTable
+                    columns={[
+                      { key: 'resourceId', label: 'Resource' },
+                      { key: 'quantity', label: 'Qty' },
+                      { key: 'reserved', label: 'Reserved' },
+                      { key: 'available', label: 'Available' },
+                    ]}
+                    rows={storage.items.map((item) => ({
+                      resourceId: labelResource(item.resourceId),
+                      quantity: item.quantity,
+                      reserved: item.reserved,
+                      available: item.available,
+                    }))}
+                    emptyText="Lager ist leer."
+                  />
+                </div>
+              ))
             )}
           </div>
         </section>
@@ -642,7 +738,7 @@ export function DashboardShell() {
                 rows={dashboard.productionJobs.map((job) => ({
                   recipeId: labelRecipe(job.recipeId),
                   buildingId: job.buildingId,
-                  status: job.status,
+                  status: formatProductionStatus(job.status, job.awaitingTransport),
                   progress: formatProgress(job.progress),
                 }))}
                 emptyText="Keine laufende Produktion."
@@ -651,8 +747,12 @@ export function DashboardShell() {
           </div>
         </section>
 
-        <section className="card">
-          <h2>Transport</h2>
+        <section className="card span-2">
+          <h2>Transport & Logistik</h2>
+          <p className="panel-hint">
+            Interner Transport vom Lagerhaus zum Produktionsgebäude (~5 Ticks). Produktion startet nach
+            Ankunft aller Lieferungen.
+          </p>
           <div className="table-wrap">
             {!dashboard?.company ? (
               <p className="empty">Keine aktiven Transporte.</p>
@@ -661,16 +761,20 @@ export function DashboardShell() {
                 columns={[
                   { key: 'resourceId', label: 'Resource' },
                   { key: 'amount', label: 'Menge' },
+                  { key: 'route', label: 'Route' },
+                  { key: 'recipeName', label: 'Produktion' },
                   { key: 'status', label: 'Status' },
                   { key: 'progress', label: 'Progress' },
                 ]}
                 rows={(dashboard.transportOrders ?? []).map((order) => ({
                   resourceId: labelResource(order.resourceId),
                   amount: order.amount,
+                  route: `${order.sourceBuildingName} → ${order.destinationBuildingName}`,
+                  recipeName: order.recipeName ?? '—',
                   status: order.status,
                   progress: formatProgress(order.progress),
                 }))}
-                emptyText="Keine aktiven Transporte."
+                emptyText="Keine aktiven Transporte — Material am Standort oder Lager leer."
               />
             )}
           </div>

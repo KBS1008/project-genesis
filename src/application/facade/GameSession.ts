@@ -22,6 +22,9 @@ import { GetInventoryQueryHandler } from '../queries/GetInventoryQueryHandler.js
 import { GetFinanceQueryHandler } from '../queries/GetFinanceQueryHandler.js';
 import { GetMarketPricesQueryHandler } from '../queries/GetMarketPricesQueryHandler.js';
 import { createCompanyId } from '../../domain/company/Company.js';
+import { ProductionJobStatus } from '../../domain/production/ProductionJobStatus.js';
+import { TransportOrderStatus } from '../../domain/transport/TransportOrderStatus.js';
+import type { BuildingReadModel } from '../read-models/BuildingReadModel.js';
 import type {
   GameSessionDashboard,
   MilestoneCatalogEntry,
@@ -213,19 +216,39 @@ export class GameSession {
     const completedResearch = Object.freeze(companyResearch?.getCompletedTechnologies() ?? []);
 
     const productionJobs = Object.freeze(this.#readProductionJobs(companyId));
-    const transportOrders = Object.freeze(this.#readTransportOrders(companyId));
+    const transportOrders = Object.freeze(
+      this.#readTransportOrders(companyId, buildingsResult.value, productionJobs),
+    );
+    const warehouseStorage = Object.freeze(
+      this.#dashboardBuilder.readWarehouseStorage(companyId, buildingsResult.value),
+    );
     const researchJobs = Object.freeze(this.#readResearchJobs(companyId));
     const marketPrices = this.#readMarketPrices();
+    const energy = this.#dashboardBuilder.readEnergy(companyId);
+    const logistics = this.#dashboardBuilder.readLogisticsSummary({
+      warehouseStorage,
+      productionJobs,
+      transportOrders,
+    });
+    const kpis = this.#dashboardBuilder.readKpis({
+      finance: financeResult.value,
+      energy,
+      inventory: inventoryResult.value,
+      logistics,
+    });
 
     const hintInput = {
       companyId,
       buildings: buildingsResult.value,
       inventory: inventoryResult.value,
+      warehouseStorage,
       finance: financeResult.value,
       marketPrices,
       completedMilestones: completedSet,
       completedResearch: new Set(completedResearch),
       researchJobs,
+      productionJobs,
+      transportOrders,
     };
 
     return Result.ok({
@@ -234,6 +257,7 @@ export class GameSession {
       company: companyResult.value,
       finance: financeResult.value,
       inventory: inventoryResult.value,
+      warehouseStorage,
       buildings: buildingsResult.value,
       marketPrices,
       milestones: this.#readMilestoneCatalog(completedSet),
@@ -243,7 +267,9 @@ export class GameSession {
       transportOrders,
       researchJobs,
       contentNames: this.#dashboardBuilder.readContentNames(),
-      energy: this.#dashboardBuilder.readEnergy(companyId),
+      energy,
+      logistics,
+      kpis,
       hints: this.#dashboardBuilder.readHints(hintInput),
     });
   }
@@ -509,6 +535,8 @@ export class GameSession {
       researchJobs: Object.freeze([]),
       contentNames: this.#dashboardBuilder.readContentNames(),
       energy: null,
+      logistics: null,
+      kpis: null,
       hints: emptyHints,
     };
   }
@@ -536,40 +564,70 @@ export class GameSession {
       this.#context.productionJobRepository
         .findAll()
         .filter((job) => job.getCompanyId().value === companyIdResult.value.value)
-        .map((job) =>
-          Object.freeze({
+        .map((job) => {
+          const activeTransportCount = this.#context.transportOrderRepository
+            .findByProductionJobId(job.getId().value)
+            .filter((order) => order.getStatus() === TransportOrderStatus.IN_PROGRESS).length;
+          const linkedTransportCount = this.#context.transportOrderRepository.findByProductionJobId(
+            job.getId().value,
+          ).length;
+
+          return Object.freeze({
             id: job.getId().value,
             buildingId: job.getBuildingId().value,
             recipeId: job.getRecipeId().value,
             status: job.getStatus(),
             progress: job.getProgress(),
-          }),
-        ),
+            awaitingTransport:
+              job.getStatus() === ProductionJobStatus.WAITING && linkedTransportCount > 0,
+            activeTransportCount,
+          });
+        }),
     );
   }
 
-  #readTransportOrders(companyId: string): readonly TransportOrderSessionReadModel[] {
+  #readTransportOrders(
+    companyId: string,
+    buildings: readonly BuildingReadModel[],
+    productionJobs: readonly ProductionJobSessionReadModel[],
+  ): readonly TransportOrderSessionReadModel[] {
     const companyIdResult = createCompanyId(companyId);
 
     if (!companyIdResult.ok) {
       return Object.freeze([]);
     }
 
+    const buildingNameById = new Map(buildings.map((building) => [building.id, building.name]));
+    const recipeByJobId = new Map(
+      productionJobs.map((job) => [job.id, { recipeId: job.recipeId }]),
+    );
+
     return Object.freeze(
       this.#context.transportOrderRepository
         .findByCompanyId(companyIdResult.value)
-        .map((order) =>
-          Object.freeze({
+        .map((order) => {
+          const recipeId = recipeByJobId.get(order.getProductionJobId())?.recipeId ?? null;
+          const recipe = recipeId === null ? undefined : this.#context.gameContent.recipes.get(recipeId);
+
+          return Object.freeze({
             id: order.getId().value,
             resourceId: order.getResourceId(),
             amount: order.getAmount(),
             status: order.getStatus(),
             progress: order.getProgress(),
             sourceBuildingId: order.getSourceBuildingId().value,
+            sourceBuildingName:
+              buildingNameById.get(order.getSourceBuildingId().value) ??
+              order.getSourceBuildingId().value,
             destinationBuildingId: order.getDestinationBuildingId().value,
+            destinationBuildingName:
+              buildingNameById.get(order.getDestinationBuildingId().value) ??
+              order.getDestinationBuildingId().value,
             productionJobId: order.getProductionJobId(),
-          }),
-        ),
+            recipeId,
+            recipeName: recipe?.name ?? null,
+          });
+        }),
     );
   }
 

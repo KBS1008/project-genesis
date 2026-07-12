@@ -8,18 +8,25 @@ import type { EnergyBalanceService } from '../services/EnergyBalanceService.js';
 import type { ApplicationContext } from '../bootstrap/ApplicationContext.js';
 import { BuildingStatus } from '../../domain/building/BuildingStatus.js';
 import { createCompanyId } from '../../domain/company/Company.js';
+import { ProductionJobStatus } from '../../domain/production/ProductionJobStatus.js';
 import { ResearchJobStatus } from '../../domain/research/ResearchJobStatus.js';
+import { TransportOrderStatus } from '../../domain/transport/TransportOrderStatus.js';
 import type { BuildingReadModel } from '../read-models/BuildingReadModel.js';
 import type { FinanceReadModel } from '../read-models/FinanceReadModel.js';
 import type { InventoryReadModel } from '../read-models/InventoryReadModel.js';
+import type { WarehouseStorageReadModel } from '../read-models/WarehouseStorageReadModel.js';
 import type {
   ContentNameEntry,
+  DashboardKpiReadModel,
   EnergyReadModel,
   GameSessionDashboardHints,
+  LogisticsSummaryReadModel,
   MarketTradeHint,
   PlaceBuildingHint,
   ProductionHint,
+  ProductionJobSessionReadModel,
   ResearchHint,
+  TransportOrderSessionReadModel,
 } from './GameSessionDashboard.js';
 
 const DEFAULT_TRADE_AMOUNT = 5;
@@ -29,11 +36,14 @@ export type DashboardHintInput = {
   readonly companyId: string;
   readonly buildings: readonly BuildingReadModel[];
   readonly inventory: InventoryReadModel;
+  readonly warehouseStorage: readonly WarehouseStorageReadModel[];
   readonly finance: FinanceReadModel;
   readonly marketPrices: readonly { readonly resourceId: string; readonly lastPrice: number }[];
   readonly completedMilestones: ReadonlySet<string>;
   readonly completedResearch: ReadonlySet<string>;
   readonly researchJobs: readonly { readonly technologyId: string; readonly status: string }[];
+  readonly productionJobs: readonly ProductionJobSessionReadModel[];
+  readonly transportOrders: readonly TransportOrderSessionReadModel[];
 };
 
 /**
@@ -99,6 +109,104 @@ export class GameSessionDashboardBuilder {
       reserve: balance.reserve,
       hasDeficit: balance.hasDeficit,
       usesBaselineGrid: balance.usesBaselineGrid,
+    });
+  }
+
+  /** Reads warehouse stock grouped by active storage buildings. */
+  readWarehouseStorage(
+    companyId: string,
+    buildings: readonly BuildingReadModel[],
+  ): readonly WarehouseStorageReadModel[] {
+    const companyIdResult = createCompanyId(companyId);
+
+    if (!companyIdResult.ok) {
+      return Object.freeze([]);
+    }
+
+    const buildingNameById = new Map(buildings.map((building) => [building.id, building.name]));
+
+    return Object.freeze(
+      this.#context.buildingStorageRepository
+        .findByCompanyId(companyIdResult.value)
+        .map((storage) =>
+          Object.freeze({
+            buildingId: storage.getBuildingId().value,
+            buildingName:
+              buildingNameById.get(storage.getBuildingId().value) ?? storage.getBuildingId().value,
+            items: Object.freeze(
+              storage.getLines().map((line) =>
+                Object.freeze({
+                  resourceId: line.resourceId,
+                  quantity: line.quantity,
+                  reserved: line.reserved,
+                  available: Math.max(0, line.quantity - line.reserved),
+                }),
+              ),
+            ),
+          }),
+        ),
+    );
+  }
+
+  /** Builds logistics KPIs and a short player-facing status line. */
+  readLogisticsSummary(input: {
+    readonly warehouseStorage: readonly WarehouseStorageReadModel[];
+    readonly productionJobs: readonly ProductionJobSessionReadModel[];
+    readonly transportOrders: readonly TransportOrderSessionReadModel[];
+  }): LogisticsSummaryReadModel {
+    const warehouseResourceLines = input.warehouseStorage.reduce(
+      (count, storage) => count + storage.items.length,
+      0,
+    );
+    const warehouseTotalUnits = input.warehouseStorage.reduce(
+      (total, storage) =>
+        total + storage.items.reduce((lineTotal, item) => lineTotal + item.quantity, 0),
+      0,
+    );
+    const activeTransportCount = input.transportOrders.filter(
+      (order) => order.status === TransportOrderStatus.IN_PROGRESS,
+    ).length;
+    const waitingProductionCount = input.productionJobs.filter(
+      (job) => job.status === ProductionJobStatus.WAITING && job.awaitingTransport,
+    ).length;
+    const hasActiveWarehouse = input.warehouseStorage.length > 0;
+
+    let statusMessage: string | null = null;
+
+    if (activeTransportCount > 0) {
+      statusMessage = `${activeTransportCount} Transport(e) unterwegs — Produktion startet nach Ankunft.`;
+    } else if (waitingProductionCount > 0) {
+      statusMessage = `${waitingProductionCount} Produktion(en) warten auf Material.`;
+    } else if (hasActiveWarehouse && warehouseTotalUnits > 0) {
+      statusMessage = 'Lagerhaus enthält Material — Marktkäufe landen dort.';
+    } else if (hasActiveWarehouse) {
+      statusMessage = 'Lagerhaus bereit — Marktkäufe werden dort eingelagert.';
+    }
+
+    return Object.freeze({
+      hasActiveWarehouse,
+      activeTransportCount,
+      waitingProductionCount,
+      warehouseResourceLines,
+      warehouseTotalUnits,
+      statusMessage,
+    });
+  }
+
+  /** Builds compact KPI values for the dashboard header strip. */
+  readKpis(input: {
+    readonly finance: FinanceReadModel;
+    readonly energy: EnergyReadModel | null;
+    readonly inventory: InventoryReadModel;
+    readonly logistics: LogisticsSummaryReadModel;
+  }): DashboardKpiReadModel {
+    return Object.freeze({
+      availableCash: input.finance.availableCash,
+      energyReserve: input.energy?.reserve ?? 0,
+      energyHasDeficit: input.energy?.hasDeficit ?? false,
+      activeTransportCount: input.logistics.activeTransportCount,
+      warehouseTotalUnits: input.logistics.warehouseTotalUnits,
+      onSiteResourceLines: input.inventory.items.length,
     });
   }
 
@@ -176,6 +284,9 @@ export class GameSessionDashboardBuilder {
       return Object.freeze([]);
     }
 
+    const inventory = this.#context.inventoryRepository.findByCompanyId(companyIdResult.value);
+    const hasWarehouse = input.warehouseStorage.length > 0;
+
     for (const recipe of this.#context.gameContent.recipes.getAll()) {
       if (!recipe.enabled) {
         continue;
@@ -208,16 +319,54 @@ export class GameSessionDashboardBuilder {
         } else if (missingResearch !== undefined) {
           canStart = false;
           reason = `Forschung „${missingResearch}“ fehlt.`;
-        } else {
-          for (const recipeInput of recipe.inputs) {
+        } else if (inventory !== undefined) {
+          const globalSufficient = recipe.inputs.every((recipeInput) => {
             const available =
               input.inventory.items.find((item) => item.resourceId === recipeInput.resource)
                 ?.available ?? 0;
+            return available >= recipeInput.amount;
+          });
 
-            if (available < recipeInput.amount) {
-              canStart = false;
-              reason = `Benötigt ${recipeInput.amount}× ${recipeInput.resource}.`;
-              break;
+          if (globalSufficient) {
+            canStart = true;
+            reason = null;
+          } else if (
+            this.#context.transportLogisticsService.needsInboundTransport(
+              companyIdResult.value,
+              inventory,
+              recipe,
+            )
+          ) {
+            canStart = true;
+            reason = 'Material im Lagerhaus — Transport startet automatisch (~5 Ticks).';
+          } else if (
+            this.#context.transportLogisticsService.canFulfillFromWarehouse(
+              companyIdResult.value,
+              recipe,
+            )
+          ) {
+            canStart = true;
+            reason = 'Teilweise am Standort — Rest kommt aus dem Lagerhaus per Transport.';
+          } else {
+            canStart = false;
+            const missingInput = recipe.inputs.find((recipeInput) => {
+              const onSite =
+                input.inventory.items.find((item) => item.resourceId === recipeInput.resource)
+                  ?.available ?? 0;
+              const inWarehouse = input.warehouseStorage.reduce(
+                (total, storage) =>
+                  total +
+                  (storage.items.find((item) => item.resourceId === recipeInput.resource)
+                    ?.available ?? 0),
+                0,
+              );
+              return onSite + inWarehouse < recipeInput.amount;
+            });
+
+            if (missingInput !== undefined) {
+              reason = hasWarehouse
+                ? `Benötigt ${missingInput.amount}× ${missingInput.resource} — am Markt kaufen (landet im Lager).`
+                : `Benötigt ${missingInput.amount}× ${missingInput.resource}.`;
             }
           }
         }
@@ -292,6 +441,8 @@ export class GameSessionDashboardBuilder {
   }
 
   #readMarketHints(input: DashboardHintInput): readonly MarketTradeHint[] {
+    const hasWarehouse = input.warehouseStorage.length > 0;
+
     return Object.freeze(
       this.#context.gameContent.resourceTypes
         .getAll()
@@ -299,12 +450,12 @@ export class GameSessionDashboardBuilder {
         .map((resource) => {
           const price =
             input.marketPrices.find((entry) => entry.resourceId === resource.id)?.lastPrice ?? 0;
-          const available =
+          const onSiteAvailable =
             input.inventory.items.find((item) => item.resourceId === resource.id)?.available ?? 0;
           const buyCost = price * DEFAULT_TRADE_AMOUNT;
 
           const canBuy = price > 0 && input.finance.availableCash >= buyCost;
-          const canSell = available >= DEFAULT_TRADE_AMOUNT;
+          const canSell = onSiteAvailable >= DEFAULT_TRADE_AMOUNT;
 
           return Object.freeze({
             resourceId: resource.id,
@@ -312,10 +463,14 @@ export class GameSessionDashboardBuilder {
             tradeAmount: DEFAULT_TRADE_AMOUNT,
             canBuy,
             canSell,
-            buyReason: canBuy ? null : `Benötigt ${buyCost.toLocaleString('de-DE')} GC.`,
+            buyReason: canBuy
+              ? hasWarehouse
+                ? 'Landet im Lagerhaus.'
+                : null
+              : `Benötigt ${buyCost.toLocaleString('de-DE')} GC.`,
             sellReason: canSell
               ? null
-              : `Benötigt ${DEFAULT_TRADE_AMOUNT}× ${resource.name}.`,
+              : `Benötigt ${DEFAULT_TRADE_AMOUNT}× ${resource.name} am Standort (nicht im Lager).`,
           });
         }),
     );

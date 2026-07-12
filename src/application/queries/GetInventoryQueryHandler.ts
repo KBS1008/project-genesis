@@ -13,24 +13,19 @@ import type { InventoryReadModel } from '../read-models/InventoryReadModel.js';
 import type { GetInventoryQuery } from './GetInventoryQuery.js';
 
 /** Dependencies required by {@link GetInventoryQueryHandler}. */
-export type GetInventoryQueryHandlerDependencies = Pick<
-  ApplicationContext,
-  'inventoryRepository' | 'buildingStorageRepository'
->;
+export type GetInventoryQueryHandlerDependencies = Pick<ApplicationContext, 'inventoryRepository'>;
 
 /**
  * Returns a read model for one company inventory.
  */
 export class GetInventoryQueryHandler {
   readonly #inventoryRepository: GetInventoryQueryHandlerDependencies['inventoryRepository'];
-  readonly #buildingStorageRepository: GetInventoryQueryHandlerDependencies['buildingStorageRepository'];
 
   /**
    * @param dependencies - Repository access for inventory lookup.
    */
   constructor(dependencies: GetInventoryQueryHandlerDependencies) {
     this.#inventoryRepository = dependencies.inventoryRepository;
-    this.#buildingStorageRepository = dependencies.buildingStorageRepository;
   }
 
   /**
@@ -55,52 +50,24 @@ export class GetInventoryQueryHandler {
       );
     }
 
-    const warehouseStorages = this.#buildingStorageRepository.findByCompanyId(companyIdResult.value);
-
-    return Result.ok(mapInventory(inventory, warehouseStorages));
+    return Result.ok(mapInventory(inventory));
   }
 }
 
-function mapInventory(
-  inventory: Inventory,
-  warehouseStorages: ReturnType<
-    GetInventoryQueryHandlerDependencies['buildingStorageRepository']['findByCompanyId']
-  >,
-): InventoryReadModel {
-  const merged = new Map<string, { quantity: number; reserved: number }>();
-
-  for (const item of inventory.getItems()) {
-    merged.set(item.resourceId.value, {
-      quantity: item.quantity,
-      reserved: item.reserved,
-    });
-  }
-
-  for (const storage of warehouseStorages) {
-    for (const line of storage.getLines()) {
-      const existing = merged.get(line.resourceId) ?? { quantity: 0, reserved: 0 };
-      merged.set(line.resourceId, {
-        quantity: existing.quantity + line.quantity,
-        reserved: existing.reserved + line.reserved,
-      });
-    }
-  }
-
+function mapInventory(inventory: Inventory): InventoryReadModel {
   return Object.freeze({
     id: inventory.getId().value,
     companyId: inventory.getCompanyId().value,
     status: inventory.getStatus(),
     items: Object.freeze(
-      [...merged.entries()]
-        .sort(([left], [right]) => left.localeCompare(right))
-        .map(([resourceId, line]) =>
-          Object.freeze({
-            resourceId,
-            quantity: line.quantity,
-            reserved: line.reserved,
-            available: Math.max(0, line.quantity - line.reserved),
-          }),
-        ),
+      inventory.getItems().map((item) =>
+        Object.freeze({
+          resourceId: item.resourceId.value,
+          quantity: item.quantity,
+          reserved: item.reserved,
+          available: Math.max(0, item.quantity - item.reserved),
+        }),
+      ),
     ),
   });
 }
