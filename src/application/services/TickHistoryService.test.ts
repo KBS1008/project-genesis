@@ -8,15 +8,21 @@ function snapshot(
   transports = 0,
   warehouseUnits = 0,
   onSiteUnits = 0,
+  energyGeneration = 0,
+  energyConsumption = 0,
+  marketPrices: readonly { resourceId: string; lastPrice: number }[] = [],
 ) {
   return Object.freeze({
     tickNumber,
     simulationTime: tickNumber,
     availableCash: cash,
     energyReserve: energy,
+    energyGeneration,
+    energyConsumption,
     activeTransportCount: transports,
     warehouseTotalUnits: warehouseUnits,
     onSiteTotalUnits: onSiteUnits,
+    marketPrices: Object.freeze(marketPrices.map((entry) => Object.freeze({ ...entry }))),
   });
 }
 

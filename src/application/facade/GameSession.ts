@@ -596,6 +596,7 @@ export class GameSession {
         energy,
         logistics,
         inventory: inventoryResult.value,
+        marketPrices: this.#readMarketPrices(),
       }),
       companyId,
     );

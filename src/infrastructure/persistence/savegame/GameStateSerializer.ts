@@ -345,6 +345,16 @@ export class GameStateSerializer {
             activeTransportCount: point.activeTransportCount,
             warehouseTotalUnits: point.warehouseTotalUnits,
             onSiteTotalUnits: point.onSiteTotalUnits,
+            energyGeneration: point.energyGeneration,
+            energyConsumption: point.energyConsumption,
+            marketPrices: Object.freeze(
+              point.marketPrices.map((entry) =>
+                Object.freeze({
+                  resourceId: entry.resourceId,
+                  lastPrice: entry.lastPrice,
+                }),
+              ),
+            ),
           }),
         ),
       ),
@@ -531,6 +541,16 @@ export class GameStateSerializer {
           activeTransportCount: point.activeTransportCount,
           warehouseTotalUnits: point.warehouseTotalUnits ?? 0,
           onSiteTotalUnits: point.onSiteTotalUnits ?? 0,
+          energyGeneration: point.energyGeneration ?? 0,
+          energyConsumption: point.energyConsumption ?? 0,
+          marketPrices: Object.freeze(
+            (point.marketPrices ?? []).map((entry) =>
+              Object.freeze({
+                resourceId: entry.resourceId,
+                lastPrice: entry.lastPrice,
+              }),
+            ),
+          ),
         }),
       ),
     );

@@ -68,6 +68,9 @@ describe('SaveGameUseCase', () => {
           activeTransportCount: 0,
           warehouseTotalUnits: 0,
           onSiteTotalUnits: 20,
+          energyGeneration: 0,
+          energyConsumption: 0,
+          marketPrices: Object.freeze([]),
         }),
         'company_001',
       );
@@ -115,6 +118,9 @@ describe('SaveGameUseCase', () => {
           activeTransportCount: 0,
           warehouseTotalUnits: 0,
           onSiteTotalUnits: 20,
+          energyGeneration: 0,
+          energyConsumption: 0,
+          marketPrices: Object.freeze([]),
         }),
       ]);
     } finally {

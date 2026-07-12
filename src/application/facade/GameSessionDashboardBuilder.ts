@@ -28,7 +28,11 @@ import type {
   ResearchHint,
   TransportOrderSessionReadModel,
 } from './GameSessionDashboard.js';
-import type { TickMetricsSnapshot } from '../read-models/TickMetricsSnapshot.js';
+import type { MarketPriceReadModel } from '../read-models/MarketPriceReadModel.js';
+import type {
+  TickMarketPriceSnapshot,
+  TickMetricsSnapshot,
+} from '../read-models/TickMetricsSnapshot.js';
 
 const DEFAULT_TRADE_AMOUNT = 5;
 
@@ -219,10 +223,19 @@ export class GameSessionDashboardBuilder {
     readonly energy: EnergyReadModel | null;
     readonly logistics: LogisticsSummaryReadModel;
     readonly inventory: InventoryReadModel;
+    readonly marketPrices: readonly MarketPriceReadModel[];
   }): TickMetricsSnapshot {
     const onSiteTotalUnits = input.inventory.items.reduce(
       (total, item) => total + item.quantity,
       0,
+    );
+    const marketPrices: readonly TickMarketPriceSnapshot[] = Object.freeze(
+      input.marketPrices.map((price) =>
+        Object.freeze({
+          resourceId: price.resourceId,
+          lastPrice: price.lastPrice,
+        }),
+      ),
     );
 
     return Object.freeze({
@@ -230,9 +243,12 @@ export class GameSessionDashboardBuilder {
       simulationTime: input.simulationTime,
       availableCash: input.finance.availableCash,
       energyReserve: input.energy?.reserve ?? 0,
+      energyGeneration: input.energy?.generation ?? 0,
+      energyConsumption: input.energy?.consumption ?? 0,
       activeTransportCount: input.logistics.activeTransportCount,
       warehouseTotalUnits: input.logistics.warehouseTotalUnits,
       onSiteTotalUnits,
+      marketPrices,
     });
   }
 

@@ -638,6 +638,8 @@ Coordinates use cases between domain, infrastructure and simulation.
 | Detail panel | `src/components/DashboardDetailPanel.tsx` |
 | Tick history charts | `src/components/TickHistoryCharts.tsx` |
 | Inventory history chart | `src/components/InventoryHistoryChart.tsx` |
+| Energy history chart | `src/components/EnergyHistoryChart.tsx` |
+| Market price history chart | `src/components/MarketPriceHistoryChart.tsx` |
 | Data table | `src/components/DataTable.tsx` |
 | Dashboard socket client | `src/lib/dashboard-socket.ts` |
 | API client | `src/lib/api.ts` |
@@ -650,6 +652,7 @@ Coordinates use cases between domain, infrastructure and simulation.
 - Dashboard layout per `DASHBOARD_STYLE_GUIDE.md`: sidebar actions, KPI strip, overview strip, sticky detail panel, table area.
 - Dashboard actions: new game, tick / 10× tick, build, produce, research, market buy/sell, save/load.
 - Line charts (Recharts) for cash, energy reserve and active transports; KPI trend arrows from tick history.
+- Inventory, energy (generation/consumption/reserve) and market price history charts from tick metrics.
 - Drill-down: selectable table rows update the detail panel (buildings, production, transport, research).
 - Sortable, searchable tables with sticky headers and numeric alignment.
 - Live dashboard refresh via WebSocket (`dashboard:refresh` → automatic refetch).
@@ -773,9 +776,8 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 1. Session/auth model for multi-user API access
 2. Icon library integration (replace KPI emoji placeholders per `ICON_GUIDELINES.md`)
-3. Additional dashboard charts (market prices over time)
-4. Loading/toasts for dashboard actions
-5. Full tick log / replay per DD-033 (beyond metrics ring buffer)
+3. Loading/toasts for dashboard actions
+4. Full tick log / replay per DD-033 (beyond metrics ring buffer)
 
 ---
 
@@ -791,6 +793,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 - WebSocket live dashboard refresh (`/ws/v1/dashboard`)
 - Finance drill-down with ledger table and transaction detail focus
 - Logistics drill-down (overview, warehouse focus) and inventory history chart
+- Market price and energy generation/consumption history charts
 
 ---
 

@@ -12,6 +12,8 @@ import {
 } from '@/lib/api';
 import { TickHistoryCharts } from '@/components/TickHistoryCharts';
 import { InventoryHistoryChart } from '@/components/InventoryHistoryChart';
+import { MarketPriceHistoryChart } from '@/components/MarketPriceHistoryChart';
+import { EnergyHistoryChart } from '@/components/EnergyHistoryChart';
 import {
   DashboardDetailPanel,
   normalizeDetailSelection,
@@ -849,6 +851,12 @@ export function DashboardShell() {
           {hasGame ? <TickHistoryCharts points={tickHistory} /> : null}
 
           {hasGame ? <InventoryHistoryChart points={tickHistory} /> : null}
+
+          {hasGame ? <EnergyHistoryChart points={tickHistory} /> : null}
+
+          {hasGame ? (
+            <MarketPriceHistoryChart points={tickHistory} labelResource={labelResource} />
+          ) : null}
 
           <div className="dashboard-panels">
             <div className="dashboard-tables">

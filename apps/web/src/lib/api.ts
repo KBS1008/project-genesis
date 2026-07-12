@@ -126,14 +126,22 @@ export type DashboardKpiReadModel = {
   readonly onSiteResourceLines: number;
 };
 
+export type TickMarketPriceSnapshot = {
+  readonly resourceId: string;
+  readonly lastPrice: number;
+};
+
 export type TickMetricsSnapshot = {
   readonly tickNumber: number;
   readonly simulationTime: number;
   readonly availableCash: number;
   readonly energyReserve: number;
+  readonly energyGeneration: number;
+  readonly energyConsumption: number;
   readonly activeTransportCount: number;
   readonly warehouseTotalUnits: number;
   readonly onSiteTotalUnits: number;
+  readonly marketPrices: readonly TickMarketPriceSnapshot[];
 };
 
 export type DashboardTickHistory = {
