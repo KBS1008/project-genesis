@@ -5,6 +5,7 @@ import {
   createBuildingId,
   createBuildingTypeId,
 } from '../../domain/building/Building.js';
+import { BuildingStatus } from '../../domain/building/BuildingStatus.js';
 import { Position } from '../../domain/building/Position.js';
 import { InMemoryBuildingRepository } from './InMemoryBuildingRepository.js';
 
@@ -93,6 +94,46 @@ describe('InMemoryBuildingRepository', () => {
 
     expect(repository.findByCompanyId(companyId).map((building) => building.getId().value)).toEqual(
       ['building_001', 'building_002'],
+    );
+  });
+
+  it('returns buildings under construction in deterministic id order', () => {
+    const repository = new InMemoryBuildingRepository();
+    const clock = new ManualClock(100);
+    const companyId = requireCompanyId('company_001');
+
+    const sawmillResult = Building.create({
+      id: requireBuildingId('building_002'),
+      buildingTypeId: requireBuildingTypeId('sawmill'),
+      companyId,
+      name: 'Sawmill B',
+      position: new Position(1, 1),
+      clock,
+    });
+    const warehouseResult = Building.create({
+      id: requireBuildingId('building_001'),
+      buildingTypeId: requireBuildingTypeId('warehouse'),
+      companyId,
+      name: 'Warehouse A',
+      position: new Position(0, 0),
+      clock,
+    });
+
+    if (!sawmillResult.ok || !warehouseResult.ok) {
+      throw new Error('Expected valid buildings.');
+    }
+
+    sawmillResult.value.beginConstruction(120, clock);
+    warehouseResult.value.beginConstruction(90, clock);
+
+    repository.save(sawmillResult.value);
+    repository.save(warehouseResult.value);
+
+    expect(
+      repository.findUnderConstruction().map((building) => building.getId().value),
+    ).toEqual(['building_001', 'building_002']);
+    expect(repository.findUnderConstruction()[0]?.getStatus()).toBe(
+      BuildingStatus.UNDER_CONSTRUCTION,
     );
   });
 });

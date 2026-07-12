@@ -25,7 +25,10 @@ export function createDefaultSimulationSystems(
 ): readonly SimulationSystem[] {
   return Object.freeze([
     new CompanySimulationSystem(dependencies.companyRepository),
-    new BuildingSimulationSystem(dependencies.companyRepository, dependencies.buildingRepository),
+    new BuildingSimulationSystem({
+      buildingRepository: dependencies.buildingRepository,
+      enqueueEvents: dependencies.enqueueEvents,
+    }),
     new ProductionSimulationSystem({
       productionJobRepository: dependencies.productionJobRepository,
       enqueueEvents: dependencies.enqueueEvents,

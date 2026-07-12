@@ -4,7 +4,7 @@ Version: 1.0.0
 
 Status: Active
 
-Last Updated: 2026-07-11
+Last Updated: 2026-07-12
 
 ---
 
@@ -32,7 +32,7 @@ Update this document whenever a meaningful implementation milestone is completed
 | Application layer | Partial (bootstrap, use cases, queries) |
 | UI | Not started |
 
-**Tests:** 250 (run `pnpm test` for current count)
+**Tests:** 256 (run `pnpm test` for current count)
 
 ---
 
@@ -103,7 +103,7 @@ Business aggregates and domain events.
 | Identifiers | `building/BuildingId.ts` (`BuildingId`, `BuildingTypeId`) |
 | Value object | `building/Position.ts` |
 | Status enum | `building/BuildingStatus.ts` |
-| Domain event | `building/events/BuildingPlaced.ts` |
+| Domain event | `building/events/BuildingPlaced.ts`, `BuildingConstructionStarted.ts`, `BuildingConstructionCompleted.ts` |
 | Tests | `building/Building.test.ts` |
 
 **Behaviour:**
@@ -112,6 +112,8 @@ Business aggregates and domain events.
 - References static type via `buildingTypeId` (content definition).
 - Owned by company via `companyId`.
 - Initial status: `PLANNED`, level `1`.
+- `beginConstruction(duration, clock)` transitions to `UNDER_CONSTRUCTION` or immediately `ACTIVE` when duration is zero.
+- `tickConstruction(clock)` advances progress; completion raises `BuildingConstructionCompleted`.
 - Raises `BuildingPlaced` on creation.
 
 **References:** DD-014 (template vs instance), DD-015 (static vs dynamic), `docs/schemas/Building.schema.md`
@@ -480,6 +482,8 @@ Deterministic simulation engine (first increment).
 
 Default order: Company → Building → Production → Research → Market → Finance
 
+Building system advances {@link Building} construction progress each tick for aggregates in `UNDER_CONSTRUCTION` status.
+
 Production system advances running {@link ProductionJob} aggregates each tick and invokes an optional completion callback for inventory delivery.
 
 Research system advances running {@link ResearchJob} aggregates each tick and invokes an optional completion callback for technology unlock.
@@ -536,8 +540,8 @@ Coordinates use cases between domain, infrastructure and simulation.
 - Bootstrap loads validated game content and wires in-memory repos, clock, event bus and simulation engine with default systems.
 - Use cases create domain aggregates, persist via repository interfaces and enqueue domain events for the next tick.
 - `CreateCompanyUseCase` also creates an empty company inventory and finance account with starting capital.
-- `PlaceBuildingUseCase` resolves `constructionCost` via `ConstructionCostPolicy`, debits company finance, and rolls back nothing on debit failure because the building is not persisted yet.
-- `StartProductionUseCase` validates recipe/building compatibility against loaded content, reserves recipe inputs via `ProductionInventoryService`, and rolls back reservations if job creation fails.
+- `PlaceBuildingUseCase` resolves `constructionCost` via `ConstructionCostPolicy`, debits company finance, calls `beginConstruction()` with content `constructionTime`, and rolls back nothing on debit failure because the building is not persisted yet.
+- `StartProductionUseCase` validates recipe/building compatibility against loaded content, reserves recipe inputs via `ProductionInventoryService`, rejects non-`ACTIVE` buildings, and rolls back reservations if job creation fails.
 - `ProductionInventoryService` reserves inputs on production start; simulation invokes `completeJob()` on completion to consume inputs and deliver outputs.
 - Bootstrap seeds global market prices from resource `basePrice` via `MarketPriceSeeder`.
 - `MarketTradeService` executes instant buy/sell at `lastPrice`, updating inventory, finance and market trade volume.
@@ -605,7 +609,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 | Common / ManualClock | `ManualClock.test.ts` | Deterministic time control |
 | Common / EventBus | `InMemoryEventBus.test.ts` | Subscribe, publish, order |
 | Domain / Company | `Company.test.ts` | Creation, validation, events |
-| Domain / Building | `Building.test.ts` | Placement, validation, events |
+| Domain / Building | `Building.test.ts` | Placement, construction lifecycle, validation, events |
 | Domain / Inventory | `Inventory.test.ts` | Quantities, reservations, removal, events |
 | Domain / ProductionJob | `ProductionJob.test.ts` | Start, tick, completion |
 | Domain / FinanceAccount | `FinanceAccount.test.ts` | Credit, debit, reserve, transactions |
@@ -631,11 +635,11 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 | Simulation / EventQueue | `EventQueue.test.ts` | Enqueue, drain, peek |
 | Simulation / Systems | `createDefaultSimulationSystems.test.ts` | Default pipeline order |
 | Infrastructure / Company repo | `InMemoryCompanyRepository.test.ts` | Save, find, ordering |
-| Infrastructure / Building repo | `InMemoryBuildingRepository.test.ts` | Save, find by company |
+| Infrastructure / Building repo | `InMemoryBuildingRepository.test.ts` | Save, find by company, under construction |
 | Application / Bootstrap | `bootstrapApplication.test.ts` | Content load, wiring |
 | Application / CreateCompany | `CreateCompanyUseCase.test.ts` | Create, events, duplicates |
-| Application / PlaceBuilding | `PlaceBuildingUseCase.test.ts` | Place, construction cost debit, events, validation |
-| Application / StartProduction | `StartProductionUseCase.test.ts` | Input reservation, tick completion, inventory transfer |
+| Application / PlaceBuilding | `PlaceBuildingUseCase.test.ts` | Place, construction time, cost debit, events, validation |
+| Application / StartProduction | `StartProductionUseCase.test.ts` | Active-building guard, input reservation, tick completion, inventory transfer |
 | Application / ProductionInventory | `ProductionInventoryService.test.ts` | Reserve, release, complete job inventory |
 | Application / GetCompany | `GetCompanyQueryHandler.test.ts` | Company read model, not found |
 | Application / ListBuildings | `ListBuildingsQueryHandler.test.ts` | Building list, empty company |
@@ -652,8 +656,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Planned Next Steps
 
-1. Construction time for building placement
-2. Additional milestone trigger types (production volume, profit thresholds)
+1. Additional milestone trigger types (production volume, profit thresholds)
 
 ---
 

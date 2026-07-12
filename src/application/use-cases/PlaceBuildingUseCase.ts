@@ -173,6 +173,16 @@ export class PlaceBuildingUseCase {
       return Result.fail(buildingResult.error);
     }
 
+    const building = buildingResult.value;
+    const beginConstructionResult = building.beginConstruction(
+      buildingType.constructionTime,
+      this.#clock,
+    );
+
+    if (!beginConstructionResult.ok) {
+      return Result.fail(beginConstructionResult.error);
+    }
+
     const constructionCost = costResult.value.cost;
     const debitResult = finance.debit(constructionCost, FinanceTransactionType.BUILDING_COST, this.#clock);
 
@@ -180,7 +190,6 @@ export class PlaceBuildingUseCase {
       return Result.fail(debitResult.error);
     }
 
-    const building = buildingResult.value;
     this.#buildingRepository.save(building);
     this.#financeRepository.save(finance);
     this.#simulationEngine.enqueueEvents([

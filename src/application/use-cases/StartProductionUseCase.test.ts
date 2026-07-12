@@ -21,6 +21,7 @@ import { ProductionInventoryService } from '../services/ProductionInventoryServi
 import { ResearchCompletionService } from '../services/ResearchCompletionService.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
 import { createDefaultSimulationSystems } from '../../simulation/systems/createDefaultSimulationSystems.js';
+import { completeBuildingConstruction } from '../../../tests/helpers/completeBuildingConstruction.js';
 import { CreateCompanyUseCase } from './CreateCompanyUseCase.js';
 import { PlaceBuildingUseCase } from './PlaceBuildingUseCase.js';
 import { StartProductionUseCase } from './StartProductionUseCase.js';
@@ -165,6 +166,18 @@ function grantFirstProfit(
   context.companyMilestonesRepository.save(milestones);
 }
 
+function activateBuilding(
+  context: Awaited<ReturnType<typeof createContext>>,
+  buildingId: string,
+) {
+  completeBuildingConstruction({
+    clock: context.clock,
+    simulationEngine: context.simulationEngine,
+    buildingRepository: context.buildingRepository,
+    buildingId,
+  });
+}
+
 describe('StartProductionUseCase', () => {
   it('starts a production job for a valid building and recipe', async () => {
     const context = await createContext();
@@ -187,6 +200,7 @@ describe('StartProductionUseCase', () => {
       x: 0,
       y: 0,
     });
+    activateBuilding(context, 'building_001');
 
     const result = startProduction.execute({
       jobId: 'job_001',
@@ -222,6 +236,7 @@ describe('StartProductionUseCase', () => {
       x: 0,
       y: 0,
     });
+    activateBuilding(context, 'building_001');
 
     const result = startProduction.execute({
       jobId: 'job_001',
@@ -262,6 +277,7 @@ describe('StartProductionUseCase', () => {
       x: 0,
       y: 0,
     });
+    activateBuilding(context, 'building_001');
 
     startProduction.execute({
       jobId: 'job_001',
@@ -306,6 +322,7 @@ describe('StartProductionUseCase', () => {
       x: 0,
       y: 0,
     });
+    activateBuilding(context, 'building_001');
 
     const result = startProduction.execute({
       jobId: 'job_001',
@@ -337,6 +354,7 @@ describe('StartProductionUseCase', () => {
       x: 0,
       y: 0,
     });
+    activateBuilding(context, 'building_001');
 
     const blockedResult = startProduction.execute({
       jobId: 'job_001',
@@ -365,5 +383,42 @@ describe('StartProductionUseCase', () => {
     });
 
     expect(allowedResult.ok).toBe(true);
+  });
+});
+
+describe('StartProductionUseCase construction guard', () => {
+  it('rejects production when the building is still under construction', async () => {
+    const context = await createContext();
+    const createCompany = new CreateCompanyUseCase(context);
+    const placeBuilding = new PlaceBuildingUseCase(context);
+    const startProduction = new StartProductionUseCase(context);
+
+    createCompany.execute({
+      companyId: 'company_001',
+      name: 'Genesis Industries',
+      ownerId: 'player_001',
+    });
+    addWoodStock(context, 'company_001', 10);
+
+    placeBuilding.execute({
+      buildingId: 'building_001',
+      buildingTypeId: 'sawmill',
+      companyId: 'company_001',
+      name: 'Northern Sawmill',
+      x: 0,
+      y: 0,
+    });
+
+    const result = startProduction.execute({
+      jobId: 'job_001',
+      buildingId: 'building_001',
+      recipeId: 'recipe_planks',
+    });
+
+    expect(result.ok).toBe(false);
+
+    if (!result.ok) {
+      expect(result.error.message).toBe('Building id "building_001" is not active yet.');
+    }
   });
 });

@@ -21,7 +21,15 @@ import type { CompanyId } from '../company/CompanyId.js';
 import type { BuildingId, BuildingTypeId } from './BuildingId.js';
 import { BuildingStatus } from './BuildingStatus.js';
 import { Position } from './Position.js';
+import { BuildingConstructionCompleted } from './events/BuildingConstructionCompleted.js';
+import { BuildingConstructionStarted } from './events/BuildingConstructionStarted.js';
 import { BuildingPlaced } from './events/BuildingPlaced.js';
+
+/** Result of ticking building construction progress. */
+export type BuildingConstructionTickResult = {
+  readonly status: 'constructing' | 'completed';
+  readonly progress: number;
+};
 
 /** Parameters required to place a new building. */
 export type CreateBuildingParams = {
@@ -43,7 +51,11 @@ export class Building extends AggregateRoot<'Building'> {
   readonly #position: Position;
   readonly #level: number;
   readonly #createdAt: number;
-  readonly #status: BuildingStatus;
+  #status: BuildingStatus;
+  #constructionDuration: number;
+  #constructionProgress: number;
+  #constructionStartTime: number | undefined;
+  #constructionEndTime: number | undefined;
 
   private constructor(
     params: {
@@ -55,6 +67,10 @@ export class Building extends AggregateRoot<'Building'> {
       level: number;
       createdAt: number;
       status: BuildingStatus;
+      constructionDuration: number;
+      constructionProgress: number;
+      constructionStartTime: number | undefined;
+      constructionEndTime: number | undefined;
     },
     restoring = false,
   ) {
@@ -66,6 +82,10 @@ export class Building extends AggregateRoot<'Building'> {
     this.#level = params.level;
     this.#createdAt = params.createdAt;
     this.#status = params.status;
+    this.#constructionDuration = params.constructionDuration;
+    this.#constructionProgress = params.constructionProgress;
+    this.#constructionStartTime = params.constructionStartTime;
+    this.#constructionEndTime = params.constructionEndTime;
 
     if (!restoring) {
       this.addDomainEvent(
@@ -83,9 +103,6 @@ export class Building extends AggregateRoot<'Building'> {
 
   /**
    * Places a new building aggregate in planned status.
-   *
-   * @param params - Placement parameters including ids, name, position and clock.
-   * @returns A result containing the building or a validation error.
    */
   static create(params: CreateBuildingParams): Result<Building, ValidationError> {
     const nameResult = Guard.againstEmptyString(params.name, 'Building name must not be empty.');
@@ -135,6 +152,10 @@ export class Building extends AggregateRoot<'Building'> {
           level: 1,
           createdAt,
           status: BuildingStatus.PLANNED,
+          constructionDuration: 0,
+          constructionProgress: 0,
+          constructionStartTime: undefined,
+          constructionEndTime: undefined,
         },
       ),
     );
@@ -152,6 +173,10 @@ export class Building extends AggregateRoot<'Building'> {
     readonly level: number;
     readonly createdAt: number;
     readonly status: BuildingStatus;
+    readonly constructionDuration: number;
+    readonly constructionProgress: number;
+    readonly constructionStartTime: number | undefined;
+    readonly constructionEndTime: number | undefined;
   }): Result<Building, ValidationError> {
     const nameResult = Guard.againstEmptyString(params.name, 'Building name must not be empty.');
 
@@ -165,6 +190,19 @@ export class Building extends AggregateRoot<'Building'> {
       return Result.fail(levelResult.error);
     }
 
+    const durationResult = Guard.againstNegative(
+      params.constructionDuration,
+      'Construction duration must not be negative.',
+    );
+
+    if (!durationResult.ok) {
+      return Result.fail(durationResult.error);
+    }
+
+    if (params.constructionProgress < 0 || params.constructionProgress > 100) {
+      return Result.fail(new ValidationError('Construction progress must be between 0 and 100.'));
+    }
+
     return Result.ok(
       new Building(
         {
@@ -176,6 +214,10 @@ export class Building extends AggregateRoot<'Building'> {
           level: levelResult.value,
           createdAt: params.createdAt,
           status: params.status,
+          constructionDuration: durationResult.value,
+          constructionProgress: params.constructionProgress,
+          constructionStartTime: params.constructionStartTime,
+          constructionEndTime: params.constructionEndTime,
         },
         true,
       ),
@@ -215,6 +257,114 @@ export class Building extends AggregateRoot<'Building'> {
   /** The current building lifecycle status. */
   getStatus(): BuildingStatus {
     return this.#status;
+  }
+
+  /** Total construction duration in simulation time units. */
+  getConstructionDuration(): number {
+    return this.#constructionDuration;
+  }
+
+  /** Display construction progress from 0 to 100. */
+  getConstructionProgress(): number {
+    return this.#constructionProgress;
+  }
+
+  /** Simulation time when construction started, if applicable. */
+  getConstructionStartTime(): number | undefined {
+    return this.#constructionStartTime;
+  }
+
+  /** Simulation time when construction finished, if completed. */
+  getConstructionEndTime(): number | undefined {
+    return this.#constructionEndTime;
+  }
+
+  /**
+   * Starts or immediately completes construction for a planned building.
+   */
+  beginConstruction(duration: number, clock: Clock): Result<void, ValidationError> {
+    if (this.#status !== BuildingStatus.PLANNED) {
+      return Result.fail(new ValidationError('Only planned buildings can begin construction.'));
+    }
+
+    const durationResult = Guard.againstNegative(
+      duration,
+      'Construction duration must not be negative.',
+    );
+
+    if (!durationResult.ok) {
+      return Result.fail(durationResult.error);
+    }
+
+    this.#constructionDuration = durationResult.value;
+
+    if (this.#constructionDuration === 0) {
+      return this.#activate(clock);
+    }
+
+    const startTime = clock.now();
+    this.#status = BuildingStatus.UNDER_CONSTRUCTION;
+    this.#constructionStartTime = startTime;
+    this.#constructionProgress = 0;
+
+    this.addDomainEvent(
+      new BuildingConstructionStarted(
+        startTime,
+        this.getId().value,
+        this.#companyId.value,
+        this.#buildingTypeId.value,
+        this.#constructionDuration,
+      ),
+    );
+
+    return Result.ok(undefined);
+  }
+
+  /**
+   * Advances construction progress for a building under construction.
+   */
+  tickConstruction(clock: Clock): Result<BuildingConstructionTickResult, ValidationError> {
+    if (this.#status !== BuildingStatus.UNDER_CONSTRUCTION) {
+      return Result.fail(
+        new ValidationError('Only buildings under construction can tick construction progress.'),
+      );
+    }
+
+    if (this.#constructionStartTime === undefined) {
+      return Result.fail(new ValidationError('Building under construction is missing a start time.'));
+    }
+
+    const elapsed = clock.now() - this.#constructionStartTime;
+    this.#constructionProgress = Math.min(100, (elapsed / this.#constructionDuration) * 100);
+
+    if (this.#constructionProgress >= 100) {
+      const completeResult = this.#activate(clock);
+
+      if (!completeResult.ok) {
+        return Result.fail(completeResult.error);
+      }
+
+      return Result.ok({ status: 'completed', progress: 100 });
+    }
+
+    return Result.ok({ status: 'constructing', progress: this.#constructionProgress });
+  }
+
+  #activate(clock: Clock): Result<void, ValidationError> {
+    this.#status = BuildingStatus.ACTIVE;
+    this.#constructionProgress = 100;
+    this.#constructionEndTime = clock.now();
+
+    this.addDomainEvent(
+      new BuildingConstructionCompleted(
+        clock.now(),
+        this.getId().value,
+        this.#companyId.value,
+        this.#buildingTypeId.value,
+      ),
+    );
+
+    return Result.ok(undefined);
   }
 }
 

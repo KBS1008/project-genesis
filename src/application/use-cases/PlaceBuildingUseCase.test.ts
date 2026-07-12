@@ -1,11 +1,15 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { InMemoryEventBus } from '../../common/events/InMemoryEventBus.js';
+import type { DomainEvent } from '../../common/events/DomainEvent.js';
 import { ManualClock } from '../../common/time/ManualClock.js';
 import { validateGameContent } from '../../content/validateGameContent.js';
 import { STARTING_MONEY } from '../../domain/finance/FinanceConstants.js';
 import { FinanceTransactionType } from '../../domain/finance/FinanceTransactionType.js';
+import { createBuildingId } from '../../domain/building/Building.js';
+import { BuildingStatus } from '../../domain/building/BuildingStatus.js';
 import { BuildingPlaced } from '../../domain/building/events/BuildingPlaced.js';
+import { BuildingConstructionCompleted } from '../../domain/building/events/BuildingConstructionCompleted.js';
 import { createCompanyId } from '../../domain/company/Company.js';
 import { createMilestoneId } from '../../domain/milestone/MilestoneId.js';
 import { InMemoryBuildingRepository } from '../../infrastructure/persistence/InMemoryBuildingRepository.js';
@@ -14,12 +18,27 @@ import { InMemoryCompanyResearchRepository } from '../../infrastructure/persiste
 import { InMemoryCompanyMilestonesRepository } from '../../infrastructure/persistence/InMemoryCompanyMilestonesRepository.js';
 import { InMemoryFinanceRepository } from '../../infrastructure/persistence/InMemoryFinanceRepository.js';
 import { InMemoryInventoryRepository } from '../../infrastructure/persistence/InMemoryInventoryRepository.js';
+import { InMemoryMarketRepository } from '../../infrastructure/persistence/InMemoryMarketRepository.js';
+import { InMemoryProductionJobRepository } from '../../infrastructure/persistence/InMemoryProductionJobRepository.js';
+import { InMemoryResearchJobRepository } from '../../infrastructure/persistence/InMemoryResearchJobRepository.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
+import { createDefaultSimulationSystems } from '../../simulation/systems/createDefaultSimulationSystems.js';
+import { completeBuildingConstruction } from '../../../tests/helpers/completeBuildingConstruction.js';
 import { CreateCompanyUseCase } from './CreateCompanyUseCase.js';
 import { PlaceBuildingUseCase } from './PlaceBuildingUseCase.js';
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const gameContentRoot = path.resolve(testDirectory, '../../../game-content');
+
+function requireBuildingId(value: string) {
+  const result = createBuildingId(value);
+
+  if (!result.ok) {
+    throw new Error(result.error.message);
+  }
+
+  return result.value;
+}
 
 function requireCompanyId(value: string) {
   const result = createCompanyId(value);
@@ -45,7 +64,28 @@ async function createContext(clock = new ManualClock(100)) {
   const companyResearchRepository = new InMemoryCompanyResearchRepository();
   const companyMilestonesRepository = new InMemoryCompanyMilestonesRepository();
   const eventBus = new InMemoryEventBus();
-  const simulationEngine = new SimulationEngine({ clock, eventBus });
+  const productionJobRepository = new InMemoryProductionJobRepository();
+  const researchJobRepository = new InMemoryResearchJobRepository();
+  const marketRepository = new InMemoryMarketRepository();
+
+  let simulationEngine: SimulationEngine;
+  const enqueueEvents = (events: readonly DomainEvent[]): void => {
+    simulationEngine.enqueueEvents(events);
+  };
+
+  simulationEngine = new SimulationEngine({
+    clock,
+    eventBus,
+    systems: createDefaultSimulationSystems({
+      companyRepository,
+      buildingRepository,
+      productionJobRepository,
+      researchJobRepository,
+      financeRepository,
+      marketRepository,
+      enqueueEvents,
+    }),
+  });
 
   const createCompany = new CreateCompanyUseCase({
     clock,
@@ -133,6 +173,8 @@ describe('PlaceBuildingUseCase', () => {
       expect(building?.getName()).toBe('Northern Sawmill');
       expect(building?.getPosition().x).toBe(2);
       expect(building?.getPosition().y).toBe(3);
+      expect(building?.getStatus()).toBe(BuildingStatus.UNDER_CONSTRUCTION);
+      expect(building?.getConstructionDuration()).toBe(120);
     }
   });
 
@@ -162,6 +204,46 @@ describe('PlaceBuildingUseCase', () => {
     expect(finance?.getTransactions().at(-1)?.transactionType).toBe(
       FinanceTransactionType.BUILDING_COST,
     );
+  });
+
+  it('completes construction via simulation ticks and activates the building', async () => {
+    const { buildingRepository, clock, createCompany, eventBus, placeBuilding, simulationEngine } =
+      await createContext();
+    const completed: string[] = [];
+
+    eventBus.subscribe('BuildingConstructionCompleted', (event) => {
+      completed.push((event as BuildingConstructionCompleted).buildingId);
+    });
+
+    createCompany.execute({
+      companyId: 'company_001',
+      name: 'Genesis Industries',
+      ownerId: 'player_001',
+    });
+
+    const placeResult = placeBuilding.execute({
+      buildingId: 'building_001',
+      buildingTypeId: 'sawmill',
+      companyId: 'company_001',
+      name: 'Northern Sawmill',
+      x: 0,
+      y: 0,
+    });
+
+    expect(placeResult.ok).toBe(true);
+
+    completeBuildingConstruction({
+      clock,
+      simulationEngine,
+      buildingRepository,
+      buildingId: 'building_001',
+    });
+
+    const building = buildingRepository.findById(requireBuildingId('building_001'));
+
+    expect(building?.getStatus()).toBe(BuildingStatus.ACTIVE);
+    expect(building?.getConstructionProgress()).toBe(100);
+    expect(completed).toEqual(['building_001']);
   });
 
   it('enqueues BuildingPlaced events for the next simulation tick', async () => {

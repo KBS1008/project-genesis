@@ -5,9 +5,10 @@
  */
 
 import type { CompanyId } from '../../domain/company/CompanyId.js';
-import type { Building } from '../../domain/building/Building.js';
-import type { BuildingId } from '../../domain/building/BuildingId.js';
 import type { BuildingRepository } from '../../domain/building/BuildingRepository.js';
+import type { Building } from '../../domain/building/Building.js';
+import { BuildingStatus } from '../../domain/building/BuildingStatus.js';
+import type { BuildingId } from '../../domain/building/BuildingId.js';
 
 /**
  * Stores building aggregates in memory.
@@ -27,6 +28,14 @@ export class InMemoryBuildingRepository implements BuildingRepository {
     return Object.freeze(
       [...this.#buildings.values()]
         .filter((building) => building.getCompanyId().value === companyId.value)
+        .sort((left, right) => left.getId().value.localeCompare(right.getId().value)),
+    );
+  }
+
+  findUnderConstruction(): readonly Building[] {
+    return Object.freeze(
+      [...this.#buildings.values()]
+        .filter((building) => building.getStatus() === BuildingStatus.UNDER_CONSTRUCTION)
         .sort((left, right) => left.getId().value.localeCompare(right.getId().value)),
     );
   }

@@ -4,34 +4,40 @@
  * Processes building-level simulation work each tick.
  */
 
+import type { DomainEvent } from '../../../common/events/DomainEvent.js';
 import type { BuildingRepository } from '../../../domain/building/BuildingRepository.js';
-import type { CompanyRepository } from '../../../domain/company/CompanyRepository.js';
 import type { SimulationSystem } from '../../engine/SimulationSystem.js';
 import type { TickContext } from '../../engine/TickContext.js';
 
+/** Dependencies for {@link BuildingSimulationSystem}. */
+export type BuildingSimulationSystemDependencies = {
+  readonly buildingRepository: BuildingRepository;
+  readonly enqueueEvents: (events: readonly DomainEvent[]) => void;
+};
+
 /**
- * Visits all persisted buildings during each simulation tick.
- *
- * Building maintenance and capacity updates will be added with related domain rules.
+ * Advances building construction progress each simulation tick.
  */
 export class BuildingSimulationSystem implements SimulationSystem {
   readonly name = 'Building';
-  readonly #companyRepository: CompanyRepository;
   readonly #buildingRepository: BuildingRepository;
+  readonly #enqueueEvents: (events: readonly DomainEvent[]) => void;
 
   /**
-   * @param companyRepository - Repository used to enumerate companies.
-   * @param buildingRepository - Repository providing access to building aggregates.
+   * @param dependencies - Repository and event enqueue callback.
    */
-  constructor(companyRepository: CompanyRepository, buildingRepository: BuildingRepository) {
-    this.#companyRepository = companyRepository;
-    this.#buildingRepository = buildingRepository;
+  constructor(dependencies: BuildingSimulationSystemDependencies) {
+    this.#buildingRepository = dependencies.buildingRepository;
+    this.#enqueueEvents = dependencies.enqueueEvents;
   }
 
-  execute(_context: TickContext): void {
-    for (const company of this.#companyRepository.findAll()) {
-      for (const _building of this.#buildingRepository.findByCompanyId(company.getId())) {
-        // Building tick processing will be extended with maintenance and capacity rules.
+  execute(context: TickContext): void {
+    for (const building of this.#buildingRepository.findUnderConstruction()) {
+      const tickResult = building.tickConstruction(context.clock);
+
+      if (tickResult.ok) {
+        this.#buildingRepository.save(building);
+        this.#enqueueEvents(building.pullDomainEvents());
       }
     }
   }

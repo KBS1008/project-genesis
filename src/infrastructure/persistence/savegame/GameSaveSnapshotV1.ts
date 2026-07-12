@@ -36,6 +36,10 @@ export type GameSaveBuildingSnapshotV1 = {
   readonly level: number;
   readonly createdAt: number;
   readonly status: string;
+  readonly constructionDuration: number;
+  readonly constructionProgress: number;
+  readonly constructionStartTime: number | undefined;
+  readonly constructionEndTime: number | undefined;
 };
 
 /** Persisted inventory line state. */

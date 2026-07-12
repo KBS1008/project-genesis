@@ -8,6 +8,8 @@ import {
 import { BuildingStatus } from './BuildingStatus.js';
 import { Position } from './Position.js';
 import { BuildingPlaced } from './events/BuildingPlaced.js';
+import { BuildingConstructionCompleted } from './events/BuildingConstructionCompleted.js';
+import { BuildingConstructionStarted } from './events/BuildingConstructionStarted.js';
 
 function requireBuildingId(value: string) {
   const result = createBuildingId(value);
@@ -125,6 +127,121 @@ describe('Building', () => {
         expect(event.x).toBe(12);
         expect(event.y).toBe(7);
       }
+    });
+  });
+
+  describe('construction', () => {
+    it('starts construction with duration and raises BuildingConstructionStarted', () => {
+      const clock = new ManualClock(500);
+      const createResult = Building.create({
+        id: requireBuildingId('building_001'),
+        buildingTypeId: requireBuildingTypeId('sawmill'),
+        companyId: requireCompanyId('company_001'),
+        name: 'Northern Sawmill',
+        position: new Position(0, 0),
+        clock,
+      });
+
+      expect(createResult.ok).toBe(true);
+
+      if (!createResult.ok) {
+        return;
+      }
+
+      const building = createResult.value;
+      const beginResult = building.beginConstruction(120, clock);
+
+      expect(beginResult.ok).toBe(true);
+      expect(building.getStatus()).toBe(BuildingStatus.UNDER_CONSTRUCTION);
+      expect(building.getConstructionDuration()).toBe(120);
+      expect(building.getConstructionStartTime()).toBe(500);
+      expect(building.getConstructionProgress()).toBe(0);
+
+      const events = building.pullDomainEvents();
+      const started = events.find(
+        (event) => event.eventName === 'BuildingConstructionStarted',
+      ) as BuildingConstructionStarted | undefined;
+
+      expect(started?.buildingId).toBe('building_001');
+      expect(started?.duration).toBe(120);
+    });
+
+    it('activates immediately when construction duration is zero', () => {
+      const clock = new ManualClock(500);
+      const createResult = Building.create({
+        id: requireBuildingId('building_001'),
+        buildingTypeId: requireBuildingTypeId('sawmill'),
+        companyId: requireCompanyId('company_001'),
+        name: 'Northern Sawmill',
+        position: new Position(0, 0),
+        clock,
+      });
+
+      expect(createResult.ok).toBe(true);
+
+      if (!createResult.ok) {
+        return;
+      }
+
+      const building = createResult.value;
+      const beginResult = building.beginConstruction(0, clock);
+
+      expect(beginResult.ok).toBe(true);
+      expect(building.getStatus()).toBe(BuildingStatus.ACTIVE);
+      expect(building.getConstructionProgress()).toBe(100);
+      expect(building.getConstructionEndTime()).toBe(500);
+
+      const events = building.pullDomainEvents();
+      expect(events.some((event) => event.eventName === 'BuildingConstructionCompleted')).toBe(true);
+    });
+
+    it('completes construction when elapsed time reaches duration', () => {
+      const clock = new ManualClock(100);
+      const createResult = Building.create({
+        id: requireBuildingId('building_001'),
+        buildingTypeId: requireBuildingTypeId('sawmill'),
+        companyId: requireCompanyId('company_001'),
+        name: 'Northern Sawmill',
+        position: new Position(0, 0),
+        clock,
+      });
+
+      expect(createResult.ok).toBe(true);
+
+      if (!createResult.ok) {
+        return;
+      }
+
+      const building = createResult.value;
+      building.beginConstruction(120, clock);
+      building.pullDomainEvents();
+
+      clock.advance(60);
+      const midTick = building.tickConstruction(clock);
+
+      expect(midTick.ok).toBe(true);
+
+      if (midTick.ok) {
+        expect(midTick.value.status).toBe('constructing');
+        expect(midTick.value.progress).toBe(50);
+      }
+
+      clock.advance(60);
+      const completeTick = building.tickConstruction(clock);
+
+      expect(completeTick.ok).toBe(true);
+
+      if (completeTick.ok) {
+        expect(completeTick.value.status).toBe('completed');
+      }
+
+      expect(building.getStatus()).toBe(BuildingStatus.ACTIVE);
+      expect(building.getConstructionProgress()).toBe(100);
+
+      const events = building.pullDomainEvents();
+      expect(events.some((event) => event.eventName === 'BuildingConstructionCompleted')).toBe(
+        true,
+      );
     });
   });
 });

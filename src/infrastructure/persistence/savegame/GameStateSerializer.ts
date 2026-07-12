@@ -8,6 +8,7 @@ import { ValidationError } from '../../../common/errors/ValidationError.js';
 import { Result } from '../../../common/result/Result.js';
 import type { ManualClock } from '../../../common/time/ManualClock.js';
 import { Building, createBuildingId, createBuildingTypeId } from '../../../domain/building/Building.js';
+import { BuildingStatus } from '../../../domain/building/BuildingStatus.js';
 import { Position } from '../../../domain/building/Position.js';
 import type { BuildingRepository } from '../../../domain/building/BuildingRepository.js';
 import { Company, createCompanyId, createPlayerId } from '../../../domain/company/Company.js';
@@ -132,6 +133,10 @@ export class GameStateSerializer {
               level: building.getLevel(),
               createdAt: building.getCreatedAt(),
               status: building.getStatus(),
+              constructionDuration: building.getConstructionDuration(),
+              constructionProgress: building.getConstructionProgress(),
+              constructionStartTime: building.getConstructionStartTime(),
+              constructionEndTime: building.getConstructionEndTime(),
             }),
           ),
         ),
@@ -440,8 +445,23 @@ export class GameStateSerializer {
       position: new Position(snapshot.position.x, snapshot.position.y),
       level: snapshot.level,
       createdAt: snapshot.createdAt,
-      status: snapshot.status as ReturnType<Building['getStatus']>,
+      status: this.#resolveBuildingStatus(snapshot),
+      constructionDuration: snapshot.constructionDuration ?? 0,
+      constructionProgress: snapshot.constructionProgress ?? 0,
+      constructionStartTime: snapshot.constructionStartTime,
+      constructionEndTime: snapshot.constructionEndTime,
     });
+  }
+
+  #resolveBuildingStatus(snapshot: GameSaveSnapshotV1['buildings'][number]): BuildingStatus {
+    const duration = snapshot.constructionDuration ?? 0;
+    const status = snapshot.status as BuildingStatus;
+
+    if (duration === 0 && status === BuildingStatus.PLANNED) {
+      return BuildingStatus.ACTIVE;
+    }
+
+    return status;
   }
 
   #restoreInventory(snapshot: GameSaveSnapshotV1['inventories'][number]) {

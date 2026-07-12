@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { createBuildingId } from '../../domain/building/Building.js';
+import { BuildingStatus } from '../../domain/building/BuildingStatus.js';
 import { createCompanyId } from '../../domain/company/Company.js';
 import { STARTING_MONEY } from '../../domain/finance/FinanceConstants.js';
 import { bootstrapApplication } from '../bootstrap/bootstrapApplication.js';
@@ -91,6 +92,9 @@ describe('SaveGameUseCase', () => {
       expect(finance?.getCashBalance()).toBe(STARTING_MONEY - 5000);
       expect(building?.getName()).toBe('Northern Sawmill');
       expect(building?.getPosition().x).toBe(2);
+      expect(building?.getStatus()).toBe(BuildingStatus.UNDER_CONSTRUCTION);
+      expect(building?.getConstructionDuration()).toBe(120);
+      expect(building?.getConstructionProgress()).toBeGreaterThan(0);
       expect(restored.marketRepository.findAll()).toHaveLength(1);
     } finally {
       await rm(tempDirectory, { recursive: true, force: true });

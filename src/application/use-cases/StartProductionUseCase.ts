@@ -13,6 +13,7 @@ import {
   createProductionJobId,
 } from '../../domain/production/ProductionJob.js';
 import { createRecipeId } from '../../domain/production/RecipeId.js';
+import { BuildingStatus } from '../../domain/building/BuildingStatus.js';
 import { BuildingSupportsRecipeSpecification } from '../../domain/specifications/production/BuildingSupportsRecipeSpecification.js';
 import { RequiredResearchSpecification } from '../../domain/specifications/research/RequiredResearchSpecification.js';
 import { RequiredMilestonesSpecification } from '../../domain/specifications/research/RequiredMilestonesSpecification.js';
@@ -98,6 +99,12 @@ export class StartProductionUseCase {
 
     if (building === undefined) {
       return Result.fail(new ValidationError(`Building id "${buildingId.value}" was not found.`));
+    }
+
+    if (building.getStatus() !== BuildingStatus.ACTIVE) {
+      return Result.fail(
+        new ValidationError(`Building id "${buildingId.value}" is not active yet.`),
+      );
     }
 
     const recipe = this.#gameContent.recipes.get(recipeId.value);
