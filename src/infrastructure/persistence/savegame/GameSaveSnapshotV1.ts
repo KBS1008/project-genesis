@@ -110,6 +110,20 @@ export type GameSaveProductionJobSnapshotV1 = {
   readonly endTime: number | undefined;
 };
 
+/** Persisted research job aggregate state. */
+export type GameSaveResearchJobSnapshotV1 = {
+  readonly id: string;
+  readonly companyId: string;
+  readonly technologyId: string;
+  readonly duration: number;
+  readonly cost: number;
+  readonly status: string;
+  readonly progress: number;
+  readonly createdAt: number;
+  readonly startTime: number | undefined;
+  readonly endTime: number | undefined;
+};
+
 /** Persisted company research aggregate state. */
 export type GameSaveCompanyResearchSnapshotV1 = {
   readonly id: string;
@@ -129,5 +143,6 @@ export type GameSaveSnapshotV1 = {
   readonly financeAccounts: readonly GameSaveFinanceAccountSnapshotV1[];
   readonly markets: readonly GameSaveMarketSnapshotV1[];
   readonly productionJobs: readonly GameSaveProductionJobSnapshotV1[];
+  readonly researchJobs: readonly GameSaveResearchJobSnapshotV1[];
   readonly companyResearch: readonly GameSaveCompanyResearchSnapshotV1[];
 };

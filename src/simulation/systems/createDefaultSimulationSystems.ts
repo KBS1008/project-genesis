@@ -12,12 +12,13 @@ import { CompanySimulationSystem } from './company/CompanySimulationSystem.js';
 import { FinanceSimulationSystem } from './finance/FinanceSimulationSystem.js';
 import { MarketSimulationSystem } from './market/MarketSimulationSystem.js';
 import { ProductionSimulationSystem } from './production/ProductionSimulationSystem.js';
+import { ResearchSimulationSystem } from './research/ResearchSimulationSystem.js';
 import type { SimulationSystemDependencies } from './SimulationSystemDependencies.js';
 
 /**
  * Creates the default simulation systems in deterministic runtime order.
  *
- * Order: Company → Building → Production → Market → Finance
+ * Order: Company → Building → Production → Research → Market → Finance
  */
 export function createDefaultSimulationSystems(
   dependencies: SimulationSystemDependencies,
@@ -30,6 +31,13 @@ export function createDefaultSimulationSystems(
       enqueueEvents: dependencies.enqueueEvents,
       ...(dependencies.onProductionJobCompleted !== undefined
         ? { onJobCompleted: dependencies.onProductionJobCompleted }
+        : {}),
+    }),
+    new ResearchSimulationSystem({
+      researchJobRepository: dependencies.researchJobRepository,
+      enqueueEvents: dependencies.enqueueEvents,
+      ...(dependencies.onResearchJobCompleted !== undefined
+        ? { onJobCompleted: dependencies.onResearchJobCompleted }
         : {}),
     }),
     new MarketSimulationSystem(dependencies.marketRepository),

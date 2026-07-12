@@ -30,9 +30,15 @@ import {
   createProductionJobId,
 } from '../../../domain/production/ProductionJob.js';
 import type { ProductionJobRepository } from '../../../domain/production/ProductionJobRepository.js';
+import type { ResearchJobRepository } from '../../../domain/research/ResearchJobRepository.js';
 import type { CompanyResearchRepository } from '../../../domain/research/CompanyResearchRepository.js';
 import { CompanyResearch } from '../../../domain/research/CompanyResearch.js';
 import { createCompanyResearchId } from '../../../domain/research/CompanyResearchId.js';
+import {
+  ResearchJob,
+  createResearchJobId,
+} from '../../../domain/research/ResearchJob.js';
+import { createTechnologyId } from '../../../domain/research/TechnologyId.js';
 import { createRecipeId } from '../../../domain/production/RecipeId.js';
 import { createResourceTypeId } from '../../../domain/shared/ResourceTypeId.js';
 import type { SimulationEngine } from '../../../simulation/engine/SimulationEngine.js';
@@ -52,6 +58,7 @@ export type GameStateSource = {
   readonly financeRepository: FinanceRepository;
   readonly marketRepository: MarketRepository;
   readonly productionJobRepository: ProductionJobRepository;
+  readonly researchJobRepository: ResearchJobRepository;
   readonly companyResearchRepository: CompanyResearchRepository;
 };
 
@@ -63,6 +70,7 @@ export type GameStateTarget = {
   readonly financeRepository: FinanceRepository;
   readonly marketRepository: MarketRepository;
   readonly productionJobRepository: ProductionJobRepository;
+  readonly researchJobRepository: ResearchJobRepository;
   readonly companyResearchRepository: CompanyResearchRepository;
 };
 export type RestoredSimulationMetadata = {
@@ -205,6 +213,22 @@ export class GameStateSerializer {
             }),
           ),
         ),
+        researchJobs: Object.freeze(
+          source.researchJobRepository.findAll().map((job) =>
+            Object.freeze({
+              id: job.getId().value,
+              companyId: job.getCompanyId().value,
+              technologyId: job.getTechnologyId().value,
+              duration: job.getDuration(),
+              cost: job.getCost(),
+              status: job.getStatus(),
+              progress: job.getProgress(),
+              createdAt: job.getCreatedAt(),
+              startTime: job.getStartTime(),
+              endTime: job.getEndTime(),
+            }),
+          ),
+        ),
         companyResearch: Object.freeze(
           source.companyResearchRepository.findAll().map((research) =>
             Object.freeze({
@@ -240,6 +264,7 @@ export class GameStateSerializer {
 
     return Result.ok({
       ...candidate,
+      researchJobs: candidate.researchJobs ?? [],
       companyResearch: candidate.companyResearch ?? [],
     } as GameSaveSnapshotV1);
   }
@@ -306,6 +331,16 @@ export class GameStateSerializer {
       }
 
       target.productionJobRepository.save(restoreResult.value);
+    }
+
+    for (const jobSnapshot of snapshot.researchJobs) {
+      const restoreResult = this.#restoreResearchJob(jobSnapshot);
+
+      if (!restoreResult.ok) {
+        return Result.fail(restoreResult.error);
+      }
+
+      target.researchJobRepository.save(restoreResult.value);
     }
 
     for (const researchSnapshot of snapshot.companyResearch) {
@@ -540,6 +575,39 @@ export class GameStateSerializer {
       duration: snapshot.duration,
       createdAt: snapshot.createdAt,
       status: snapshot.status as ReturnType<ProductionJob['getStatus']>,
+      progress: snapshot.progress,
+      startTime: snapshot.startTime,
+      endTime: snapshot.endTime,
+    });
+  }
+
+  #restoreResearchJob(snapshot: GameSaveSnapshotV1['researchJobs'][number]) {
+    const idResult = createResearchJobId(snapshot.id);
+
+    if (!idResult.ok) {
+      return idResult;
+    }
+
+    const companyIdResult = createCompanyId(snapshot.companyId);
+
+    if (!companyIdResult.ok) {
+      return companyIdResult;
+    }
+
+    const technologyIdResult = createTechnologyId(snapshot.technologyId);
+
+    if (!technologyIdResult.ok) {
+      return technologyIdResult;
+    }
+
+    return ResearchJob.restore({
+      id: idResult.value,
+      companyId: companyIdResult.value,
+      technologyId: technologyIdResult.value,
+      duration: snapshot.duration,
+      cost: snapshot.cost,
+      createdAt: snapshot.createdAt,
+      status: snapshot.status as ReturnType<ResearchJob['getStatus']>,
       progress: snapshot.progress,
       startTime: snapshot.startTime,
       endTime: snapshot.endTime,

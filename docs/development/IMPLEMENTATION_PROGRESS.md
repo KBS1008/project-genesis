@@ -32,7 +32,7 @@ Update this document whenever a meaningful implementation milestone is completed
 | Application layer | Partial (bootstrap, use cases, queries) |
 | UI | Not started |
 
-**Tests:** 233 (run `pnpm test` for current count)
+**Tests:** 239 (run `pnpm test` for current count)
 
 ---
 
@@ -271,6 +271,23 @@ Persistence contracts for aggregate roots. Implementations belong in Infrastruct
 - Created alongside company, inventory and finance in `CreateCompanyUseCase`.
 - Persisted in savegame snapshots as `companyResearch`.
 
+### ResearchJob aggregate
+
+| Item | Path |
+|---|---|
+| Aggregate | `research/ResearchJob.ts` |
+| Identifiers | `research/ResearchJobId.ts` |
+| Status | `research/ResearchJobStatus.ts` |
+| Domain events | `research/events/ResearchStarted.ts`, `ResearchCompleted.ts` |
+| Repository | `research/ResearchJobRepository.ts` |
+| Tests | `research/ResearchJob.test.ts` |
+
+**Behaviour:**
+
+- Timed research effort for one technology per company.
+- `StartResearchUseCase` debits `researchCost`, starts job; simulation ticks progress.
+- On completion, `ResearchCompletionService` invokes `CompleteTechnologyUseCase`.
+
 ---
 
 ## Content Module (`src/content/`)
@@ -418,13 +435,16 @@ Deterministic simulation engine (first increment).
 | `CompanySimulationSystem` | `systems/company/CompanySimulationSystem.ts` |
 | `BuildingSimulationSystem` | `systems/building/BuildingSimulationSystem.ts` |
 | `ProductionSimulationSystem` | `systems/production/ProductionSimulationSystem.ts` |
+| `ResearchSimulationSystem` | `systems/research/ResearchSimulationSystem.ts` |
 | `MarketSimulationSystem` | `systems/market/MarketSimulationSystem.ts` |
 | `FinanceSimulationSystem` | `systems/finance/FinanceSimulationSystem.ts` |
 | Factory | `systems/createDefaultSimulationSystems.ts` |
 
-Default order: Company → Building → Production → Market → Finance
+Default order: Company → Building → Production → Research → Market → Finance
 
 Production system advances running {@link ProductionJob} aggregates each tick and invokes an optional completion callback for inventory delivery.
+
+Research system advances running {@link ResearchJob} aggregates each tick and invokes an optional completion callback for technology unlock.
 
 Finance system visits all persisted finance accounts each tick (recurring costs deferred).
 
@@ -456,6 +476,9 @@ Coordinates use cases between domain, infrastructure and simulation.
 | `SellResourceUseCase` | `use-cases/SellResourceUseCase.ts` |
 | `CompleteTechnologyCommand` | `commands/CompleteTechnologyCommand.ts` |
 | `CompleteTechnologyUseCase` | `use-cases/CompleteTechnologyUseCase.ts` |
+| `StartResearchCommand` | `commands/StartResearchCommand.ts` |
+| `StartResearchUseCase` | `use-cases/StartResearchUseCase.ts` |
+| `ResearchCompletionService` | `services/ResearchCompletionService.ts` |
 | `SaveGameCommand` | `commands/SaveGameCommand.ts` |
 | `LoadGameCommand` | `commands/LoadGameCommand.ts` |
 | `SaveGameUseCase` | `use-cases/SaveGameUseCase.ts` |
@@ -482,7 +505,9 @@ Coordinates use cases between domain, infrastructure and simulation.
 - Query handlers (`GetCompany`, `ListBuildings`, `GetInventory`, `GetFinance`, `GetMarketPrices`) read repository state and return immutable read models without mutating aggregates.
 - `SaveGameUseCase` serializes all aggregate repositories and simulation metadata into a versioned JSON snapshot; saves are rejected while domain events remain queued.
 - `LoadGameUseCase` reads a snapshot file and `restoreApplicationFromSnapshot` hydrates fresh in-memory repositories, clock and simulation engine state.
-- `CompleteTechnologyUseCase` marks technologies as completed on the company research aggregate (foundation for future timed/cost research jobs).
+- `CompleteTechnologyUseCase` marks technologies as completed (internal completion path after research jobs finish).
+- `StartResearchUseCase` debits `researchCost`, enforces prerequisites and starts timed research jobs.
+- `ResearchCompletionService` unlocks technologies when research jobs complete via simulation ticks.
 - `PlaceBuildingUseCase` and `StartProductionUseCase` enforce `requiredResearch` / `requiredMilestones` via domain specifications.
 
 ---
@@ -548,6 +573,8 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 | Domain / CompanyResearch | `CompanyResearch.test.ts` | Create, complete technology |
 | Domain / Specifications | `RequiredResearchSpecification.test.ts`, `BuildingPrerequisitesSpecification.test.ts`, ... | Research eligibility, building prerequisites |
 | Application / CompleteTechnology | `CompleteTechnologyUseCase.test.ts` | Complete technology for company |
+| Application / StartResearch | `StartResearchUseCase.test.ts` | Timed research, cost debit, tech unlock |
+| Domain / ResearchJob | `ResearchJob.test.ts` | Create, start, tick completion |
 | Domain / Policies | `ConstructionCostPolicy.test.ts`, `InstantTradePricingPolicy.test.ts` | Construction cost resolution, instant trade pricing |
 | Domain / Money | `Money.test.ts` | Amount, currency, validation |
 | Domain / Quantity | `Quantity.test.ts` | Non-negative values |
@@ -583,9 +610,8 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Planned Next Steps
 
-1. Research job aggregate with timed/cost-based completion flow
-2. Milestone system and `RequiredMilestonesSpecification` context wiring
-3. Construction time for building placement
+1. Milestone system and `RequiredMilestonesSpecification` context wiring
+2. Construction time for building placement
 
 ---
 

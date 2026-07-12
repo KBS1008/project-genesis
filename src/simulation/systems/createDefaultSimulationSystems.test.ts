@@ -4,6 +4,7 @@ import { InMemoryCompanyRepository } from '../../infrastructure/persistence/InMe
 import { InMemoryFinanceRepository } from '../../infrastructure/persistence/InMemoryFinanceRepository.js';
 import { InMemoryMarketRepository } from '../../infrastructure/persistence/InMemoryMarketRepository.js';
 import { InMemoryProductionJobRepository } from '../../infrastructure/persistence/InMemoryProductionJobRepository.js';
+import { InMemoryResearchJobRepository } from '../../infrastructure/persistence/InMemoryResearchJobRepository.js';
 import { Company, createCompanyId, createPlayerId } from '../../domain/company/Company.js';
 import { createDefaultSimulationSystems } from './createDefaultSimulationSystems.js';
 
@@ -32,6 +33,7 @@ function createDependencies() {
     companyRepository: new InMemoryCompanyRepository(),
     buildingRepository: new InMemoryBuildingRepository(),
     productionJobRepository: new InMemoryProductionJobRepository(),
+    researchJobRepository: new InMemoryResearchJobRepository(),
     financeRepository: new InMemoryFinanceRepository(),
     marketRepository: new InMemoryMarketRepository(),
     enqueueEvents: () => undefined,
@@ -46,6 +48,7 @@ describe('createDefaultSimulationSystems', () => {
       'Company',
       'Building',
       'Production',
+      'Research',
       'Market',
       'Finance',
     ]);

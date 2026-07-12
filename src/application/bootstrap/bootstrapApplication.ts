@@ -15,6 +15,7 @@ import type { CompanyRepository } from '../../domain/company/CompanyRepository.j
 import type { InventoryRepository } from '../../domain/inventory/InventoryRepository.js';
 import type { FinanceRepository } from '../../domain/finance/FinanceRepository.js';
 import type { ProductionJobRepository } from '../../domain/production/ProductionJobRepository.js';
+import type { ResearchJobRepository } from '../../domain/research/ResearchJobRepository.js';
 import type { CompanyResearchRepository } from '../../domain/research/CompanyResearchRepository.js';
 import { InMemoryBuildingRepository } from '../../infrastructure/persistence/InMemoryBuildingRepository.js';
 import { InMemoryCompanyRepository } from '../../infrastructure/persistence/InMemoryCompanyRepository.js';
@@ -24,9 +25,11 @@ import type { MarketRepository } from '../../domain/market/MarketRepository.js';
 import { InMemoryFinanceRepository } from '../../infrastructure/persistence/InMemoryFinanceRepository.js';
 import { InMemoryMarketRepository } from '../../infrastructure/persistence/InMemoryMarketRepository.js';
 import { InMemoryProductionJobRepository } from '../../infrastructure/persistence/InMemoryProductionJobRepository.js';
+import { InMemoryResearchJobRepository } from '../../infrastructure/persistence/InMemoryResearchJobRepository.js';
 import { MarketPriceSeeder } from '../services/MarketPriceSeeder.js';
 import { MarketTradeService } from '../services/MarketTradeService.js';
 import { ProductionInventoryService } from '../services/ProductionInventoryService.js';
+import { ResearchCompletionService } from '../services/ResearchCompletionService.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
 import { createDefaultSimulationSystems } from '../../simulation/systems/createDefaultSimulationSystems.js';
 import type { ApplicationContext } from './ApplicationContext.js';
@@ -41,6 +44,7 @@ export type BootstrapOptions = {
   readonly financeRepository?: FinanceRepository;
   readonly marketRepository?: MarketRepository;
   readonly productionJobRepository?: ProductionJobRepository;
+  readonly researchJobRepository?: ResearchJobRepository;
   readonly companyResearchRepository?: CompanyResearchRepository;
 };
 
@@ -65,6 +69,8 @@ export async function bootstrapApplication(
   const marketRepository = options.marketRepository ?? new InMemoryMarketRepository();
   const productionJobRepository =
     options.productionJobRepository ?? new InMemoryProductionJobRepository();
+  const researchJobRepository =
+    options.researchJobRepository ?? new InMemoryResearchJobRepository();
   const companyResearchRepository =
     options.companyResearchRepository ?? new InMemoryCompanyResearchRepository();
   const clock = new ManualClock(0);
@@ -104,6 +110,8 @@ export async function bootstrapApplication(
     enqueueEvents,
   });
 
+  let researchCompletionService: ResearchCompletionService;
+
   simulationEngine = new SimulationEngine({
     clock,
     eventBus,
@@ -111,13 +119,25 @@ export async function bootstrapApplication(
       companyRepository,
       buildingRepository,
       productionJobRepository,
+      researchJobRepository,
       financeRepository,
       marketRepository,
       enqueueEvents,
       onProductionJobCompleted: (job) => {
         productionInventoryService.completeJob(job);
       },
+      onResearchJobCompleted: (job) => {
+        researchCompletionService.completeJob(job);
+      },
     }),
+  });
+
+  researchCompletionService = new ResearchCompletionService({
+    clock,
+    companyRepository,
+    companyResearchRepository,
+    simulationEngine,
+    gameContent: contentResult.value,
   });
 
   return Result.ok({
@@ -130,6 +150,7 @@ export async function bootstrapApplication(
     financeRepository,
     marketRepository,
     productionJobRepository,
+    researchJobRepository,
     companyResearchRepository,
     productionInventoryService,
     marketTradeService,

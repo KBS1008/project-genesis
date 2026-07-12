@@ -8,6 +8,7 @@ export { InMemoryBuildingRepository } from './InMemoryBuildingRepository.js';
 export { InMemoryCompanyRepository } from './InMemoryCompanyRepository.js';
 export { InMemoryInventoryRepository } from './InMemoryInventoryRepository.js';
 export { InMemoryProductionJobRepository } from './InMemoryProductionJobRepository.js';
+export { InMemoryResearchJobRepository } from './InMemoryResearchJobRepository.js';
 export { InMemoryFinanceRepository } from './InMemoryFinanceRepository.js';
 export { InMemoryMarketRepository } from './InMemoryMarketRepository.js';
 export { FileSavegameStore } from './savegame/FileSavegameStore.js';

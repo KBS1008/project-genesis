@@ -17,6 +17,7 @@ import { InMemoryFinanceRepository } from '../../infrastructure/persistence/InMe
 import { InMemoryInventoryRepository } from '../../infrastructure/persistence/InMemoryInventoryRepository.js';
 import { InMemoryMarketRepository } from '../../infrastructure/persistence/InMemoryMarketRepository.js';
 import { InMemoryProductionJobRepository } from '../../infrastructure/persistence/InMemoryProductionJobRepository.js';
+import { InMemoryResearchJobRepository } from '../../infrastructure/persistence/InMemoryResearchJobRepository.js';
 import { InMemoryCompanyResearchRepository } from '../../infrastructure/persistence/InMemoryCompanyResearchRepository.js';
 import { GameStateSerializer } from '../../infrastructure/persistence/savegame/GameStateSerializer.js';
 import type { GameSaveSnapshotV1 } from '../../infrastructure/persistence/savegame/GameSaveSnapshotV1.js';
@@ -24,6 +25,7 @@ import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
 import { createDefaultSimulationSystems } from '../../simulation/systems/createDefaultSimulationSystems.js';
 import { MarketTradeService } from '../services/MarketTradeService.js';
 import { ProductionInventoryService } from '../services/ProductionInventoryService.js';
+import { ResearchCompletionService } from '../services/ResearchCompletionService.js';
 import type { ApplicationContext } from './ApplicationContext.js';
 
 /** Options for restoring an application session. */
@@ -50,6 +52,7 @@ export async function restoreApplicationFromSnapshot(
   const financeRepository = new InMemoryFinanceRepository();
   const marketRepository = new InMemoryMarketRepository();
   const productionJobRepository = new InMemoryProductionJobRepository();
+  const researchJobRepository = new InMemoryResearchJobRepository();
   const companyResearchRepository = new InMemoryCompanyResearchRepository();
   const serializer = new GameStateSerializer();
 
@@ -60,6 +63,7 @@ export async function restoreApplicationFromSnapshot(
     financeRepository,
     marketRepository,
     productionJobRepository,
+    researchJobRepository,
     companyResearchRepository,
   });
 
@@ -95,6 +99,8 @@ export async function restoreApplicationFromSnapshot(
     enqueueEvents,
   });
 
+  let researchCompletionService: ResearchCompletionService;
+
   simulationEngine = new SimulationEngine({
     clock,
     eventBus,
@@ -104,13 +110,25 @@ export async function restoreApplicationFromSnapshot(
       companyRepository,
       buildingRepository,
       productionJobRepository,
+      researchJobRepository,
       financeRepository,
       marketRepository,
       enqueueEvents,
       onProductionJobCompleted: (job) => {
         productionInventoryService.completeJob(job);
       },
+      onResearchJobCompleted: (job) => {
+        researchCompletionService.completeJob(job);
+      },
     }),
+  });
+
+  researchCompletionService = new ResearchCompletionService({
+    clock,
+    companyRepository,
+    companyResearchRepository,
+    simulationEngine,
+    gameContent: contentResult.value,
   });
 
   return Result.ok({
@@ -123,6 +141,7 @@ export async function restoreApplicationFromSnapshot(
     financeRepository,
     marketRepository,
     productionJobRepository,
+    researchJobRepository,
     companyResearchRepository,
     productionInventoryService,
     marketTradeService,

@@ -14,13 +14,15 @@ import { InMemoryMarketRepository } from '../../infrastructure/persistence/InMem
 import { InMemoryInventoryRepository } from '../../infrastructure/persistence/InMemoryInventoryRepository.js';
 import { InMemoryCompanyResearchRepository } from '../../infrastructure/persistence/InMemoryCompanyResearchRepository.js';
 import { InMemoryProductionJobRepository } from '../../infrastructure/persistence/InMemoryProductionJobRepository.js';
+import { InMemoryResearchJobRepository } from '../../infrastructure/persistence/InMemoryResearchJobRepository.js';
 import { ProductionInventoryService } from '../services/ProductionInventoryService.js';
+import { ResearchCompletionService } from '../services/ResearchCompletionService.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
 import { createDefaultSimulationSystems } from '../../simulation/systems/createDefaultSimulationSystems.js';
 import { CreateCompanyUseCase } from './CreateCompanyUseCase.js';
 import { PlaceBuildingUseCase } from './PlaceBuildingUseCase.js';
 import { StartProductionUseCase } from './StartProductionUseCase.js';
-import { CompleteTechnologyUseCase } from './CompleteTechnologyUseCase.js';
+import { StartResearchUseCase } from './StartResearchUseCase.js';
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const gameContentRoot = path.resolve(testDirectory, '../../../game-content');
@@ -39,6 +41,7 @@ async function createContext() {
   const financeRepository = new InMemoryFinanceRepository();
   const marketRepository = new InMemoryMarketRepository();
   const productionJobRepository = new InMemoryProductionJobRepository();
+  const researchJobRepository = new InMemoryResearchJobRepository();
   const companyResearchRepository = new InMemoryCompanyResearchRepository();
   const eventBus = new InMemoryEventBus();
 
@@ -54,6 +57,8 @@ async function createContext() {
     enqueueEvents,
   });
 
+  let researchCompletionService: ResearchCompletionService;
+
   simulationEngine = new SimulationEngine({
     clock,
     eventBus,
@@ -61,13 +66,25 @@ async function createContext() {
       companyRepository,
       buildingRepository,
       productionJobRepository,
+      researchJobRepository,
       financeRepository,
       marketRepository,
       enqueueEvents,
       onProductionJobCompleted: (job) => {
         productionInventoryService.completeJob(job);
       },
+      onResearchJobCompleted: (job) => {
+        researchCompletionService.completeJob(job);
+      },
     }),
+  });
+
+  researchCompletionService = new ResearchCompletionService({
+    clock,
+    companyRepository,
+    companyResearchRepository,
+    simulationEngine,
+    gameContent: contentResult.value,
   });
 
   return {
@@ -78,6 +95,7 @@ async function createContext() {
     inventoryRepository,
     financeRepository,
     productionJobRepository,
+    researchJobRepository,
     companyResearchRepository,
     productionInventoryService,
     simulationEngine,
@@ -297,13 +315,17 @@ describe('StartProductionUseCase', () => {
 
     expect(blockedResult.ok).toBe(false);
 
-    const completeTechnology = new CompleteTechnologyUseCase(context);
+    const completeTechnology = new StartResearchUseCase(context);
     const completeResult = completeTechnology.execute({
+      jobId: 'research_job_001',
       companyId: 'company_001',
       technologyId: 'basic_woodworking',
     });
 
     expect(completeResult.ok).toBe(true);
+
+    context.clock.advance(60);
+    context.simulationEngine.tick();
 
     const allowedResult = startProduction.execute({
       jobId: 'job_001',

@@ -49,6 +49,11 @@ export type { SellResourceUseCaseDependencies } from './use-cases/SellResourceUs
 export { CompleteTechnologyUseCase } from './use-cases/CompleteTechnologyUseCase.js';
 export type { CompleteTechnologyUseCaseDependencies } from './use-cases/CompleteTechnologyUseCase.js';
 export type { CompleteTechnologyCommand } from './commands/CompleteTechnologyCommand.js';
+export type { StartResearchCommand } from './commands/StartResearchCommand.js';
+export { StartResearchUseCase } from './use-cases/StartResearchUseCase.js';
+export type { StartResearchUseCaseDependencies } from './use-cases/StartResearchUseCase.js';
+export { ResearchCompletionService } from './services/ResearchCompletionService.js';
+export type { ResearchCompletionServiceDependencies } from './services/ResearchCompletionService.js';
 export { SaveGameUseCase } from './use-cases/SaveGameUseCase.js';
 export type { SaveGameUseCaseDependencies } from './use-cases/SaveGameUseCase.js';
 export { LoadGameUseCase } from './use-cases/LoadGameUseCase.js';
