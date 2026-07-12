@@ -7,9 +7,11 @@ import { STARTING_MONEY } from '../../domain/finance/FinanceConstants.js';
 import { FinanceTransactionType } from '../../domain/finance/FinanceTransactionType.js';
 import { BuildingPlaced } from '../../domain/building/events/BuildingPlaced.js';
 import { createCompanyId } from '../../domain/company/Company.js';
+import { createMilestoneId } from '../../domain/milestone/MilestoneId.js';
 import { InMemoryBuildingRepository } from '../../infrastructure/persistence/InMemoryBuildingRepository.js';
 import { InMemoryCompanyRepository } from '../../infrastructure/persistence/InMemoryCompanyRepository.js';
 import { InMemoryCompanyResearchRepository } from '../../infrastructure/persistence/InMemoryCompanyResearchRepository.js';
+import { InMemoryCompanyMilestonesRepository } from '../../infrastructure/persistence/InMemoryCompanyMilestonesRepository.js';
 import { InMemoryFinanceRepository } from '../../infrastructure/persistence/InMemoryFinanceRepository.js';
 import { InMemoryInventoryRepository } from '../../infrastructure/persistence/InMemoryInventoryRepository.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
@@ -41,6 +43,7 @@ async function createContext(clock = new ManualClock(100)) {
   const inventoryRepository = new InMemoryInventoryRepository();
   const financeRepository = new InMemoryFinanceRepository();
   const companyResearchRepository = new InMemoryCompanyResearchRepository();
+  const companyMilestonesRepository = new InMemoryCompanyMilestonesRepository();
   const eventBus = new InMemoryEventBus();
   const simulationEngine = new SimulationEngine({ clock, eventBus });
 
@@ -50,6 +53,7 @@ async function createContext(clock = new ManualClock(100)) {
     inventoryRepository,
     financeRepository,
     companyResearchRepository,
+    companyMilestonesRepository,
     simulationEngine,
   });
   const placeBuilding = new PlaceBuildingUseCase({
@@ -58,19 +62,49 @@ async function createContext(clock = new ManualClock(100)) {
     buildingRepository,
     financeRepository,
     companyResearchRepository,
+    companyMilestonesRepository,
     simulationEngine,
     gameContent: contentResult.value,
   });
 
   return {
+    clock,
     buildingRepository,
     createCompany,
+    companyMilestonesRepository,
     companyResearchRepository,
     eventBus,
     financeRepository,
     placeBuilding,
     simulationEngine,
   };
+}
+
+function grantFirstProfit(
+  clock: ManualClock,
+  companyMilestonesRepository: InMemoryCompanyMilestonesRepository,
+  companyId: string,
+) {
+  const companyIdResult = createCompanyId(companyId);
+
+  if (!companyIdResult.ok) {
+    throw new Error(companyIdResult.error.message);
+  }
+
+  const milestones = companyMilestonesRepository.findByCompanyId(companyIdResult.value);
+
+  if (milestones === undefined) {
+    throw new Error(`Milestones for company "${companyId}" were not found.`);
+  }
+
+  const milestoneIdResult = createMilestoneId('first_profit');
+
+  if (!milestoneIdResult.ok) {
+    throw new Error(milestoneIdResult.error.message);
+  }
+
+  milestones.completeMilestone(milestoneIdResult.value, clock);
+  companyMilestonesRepository.save(milestones);
 }
 
 describe('PlaceBuildingUseCase', () => {
@@ -255,5 +289,50 @@ describe('PlaceBuildingUseCase', () => {
     });
 
     expect(result.ok).toBe(false);
+  });
+
+  it('rejects buildings when required milestones are not completed', async () => {
+    const { createCompany, placeBuilding } = await createContext();
+
+    createCompany.execute({
+      companyId: 'company_001',
+      name: 'Genesis Industries',
+      ownerId: 'player_001',
+    });
+
+    const blockedResult = placeBuilding.execute({
+      buildingId: 'building_001',
+      buildingTypeId: 'warehouse',
+      companyId: 'company_001',
+      name: 'Main Warehouse',
+      x: 0,
+      y: 0,
+    });
+
+    expect(blockedResult.ok).toBe(false);
+  });
+
+  it('allows buildings after required milestones are completed', async () => {
+    const { clock, createCompany, placeBuilding, companyMilestonesRepository } =
+      await createContext();
+
+    createCompany.execute({
+      companyId: 'company_001',
+      name: 'Genesis Industries',
+      ownerId: 'player_001',
+    });
+
+    grantFirstProfit(clock, companyMilestonesRepository, 'company_001');
+
+    const allowedResult = placeBuilding.execute({
+      buildingId: 'building_001',
+      buildingTypeId: 'warehouse',
+      companyId: 'company_001',
+      name: 'Main Warehouse',
+      x: 0,
+      y: 0,
+    });
+
+    expect(allowedResult.ok).toBe(true);
   });
 });

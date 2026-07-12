@@ -3,11 +3,14 @@ import { fileURLToPath } from 'node:url';
 import { InMemoryBuildingRepository } from '../../infrastructure/persistence/InMemoryBuildingRepository.js';
 import { InMemoryCompanyRepository } from '../../infrastructure/persistence/InMemoryCompanyRepository.js';
 import { InMemoryCompanyResearchRepository } from '../../infrastructure/persistence/InMemoryCompanyResearchRepository.js';
+import { InMemoryCompanyMilestonesRepository } from '../../infrastructure/persistence/InMemoryCompanyMilestonesRepository.js';
 import { InMemoryFinanceRepository } from '../../infrastructure/persistence/InMemoryFinanceRepository.js';
 import { InMemoryInventoryRepository } from '../../infrastructure/persistence/InMemoryInventoryRepository.js';
 import { ManualClock } from '../../common/time/ManualClock.js';
 import { InMemoryEventBus } from '../../common/events/InMemoryEventBus.js';
 import { validateGameContent } from '../../content/validateGameContent.js';
+import { createCompanyId } from '../../domain/company/Company.js';
+import { createMilestoneId } from '../../domain/milestone/MilestoneId.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
 import { CreateCompanyUseCase } from '../use-cases/CreateCompanyUseCase.js';
 import { PlaceBuildingUseCase } from '../use-cases/PlaceBuildingUseCase.js';
@@ -28,6 +31,7 @@ async function createContext(clock = new ManualClock(100)) {
   const inventoryRepository = new InMemoryInventoryRepository();
   const financeRepository = new InMemoryFinanceRepository();
   const companyResearchRepository = new InMemoryCompanyResearchRepository();
+  const companyMilestonesRepository = new InMemoryCompanyMilestonesRepository();
   const eventBus = new InMemoryEventBus();
   const simulationEngine = new SimulationEngine({ clock, eventBus });
   const createCompany = new CreateCompanyUseCase({
@@ -36,6 +40,7 @@ async function createContext(clock = new ManualClock(100)) {
     inventoryRepository,
     financeRepository,
     companyResearchRepository,
+    companyMilestonesRepository,
     simulationEngine,
   });
   const placeBuilding = new PlaceBuildingUseCase({
@@ -44,6 +49,7 @@ async function createContext(clock = new ManualClock(100)) {
     buildingRepository,
     financeRepository,
     companyResearchRepository,
+    companyMilestonesRepository,
     simulationEngine,
     gameContent: contentResult.value,
   });
@@ -52,18 +58,48 @@ async function createContext(clock = new ManualClock(100)) {
     buildingRepository,
   });
 
-  return { createCompany, placeBuilding, listBuildings };
+  return { clock, createCompany, placeBuilding, listBuildings, companyMilestonesRepository };
+}
+
+function grantFirstProfit(
+  clock: ManualClock,
+  companyMilestonesRepository: InMemoryCompanyMilestonesRepository,
+  companyId: string,
+) {
+  const companyIdResult = createCompanyId(companyId);
+
+  if (!companyIdResult.ok) {
+    throw new Error(companyIdResult.error.message);
+  }
+
+  const milestones = companyMilestonesRepository.findByCompanyId(companyIdResult.value);
+
+  if (milestones === undefined) {
+    throw new Error(`Milestones for company "${companyId}" were not found.`);
+  }
+
+  const milestoneIdResult = createMilestoneId('first_profit');
+
+  if (!milestoneIdResult.ok) {
+    throw new Error(milestoneIdResult.error.message);
+  }
+
+  milestones.completeMilestone(milestoneIdResult.value, clock);
+  companyMilestonesRepository.save(milestones);
 }
 
 describe('ListBuildingsQueryHandler', () => {
   it('returns buildings for an existing company in deterministic order', async () => {
-    const { createCompany, placeBuilding, listBuildings } = await createContext();
+    const { clock, createCompany, placeBuilding, listBuildings, companyMilestonesRepository } =
+      await createContext();
 
     createCompany.execute({
       companyId: 'company_001',
       name: 'Genesis Industries',
       ownerId: 'player_001',
     });
+
+    grantFirstProfit(clock, companyMilestonesRepository, 'company_001');
 
     placeBuilding.execute({
       buildingId: 'building_002',

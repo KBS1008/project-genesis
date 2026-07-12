@@ -13,6 +13,7 @@ describe('validateGameContent', () => {
 
     if (result.ok) {
       expect(result.value.resourceTypes.size).toBeGreaterThanOrEqual(3);
+      expect(result.value.milestones.size).toBeGreaterThanOrEqual(1);
       expect(result.value.technologies.size).toBeGreaterThanOrEqual(1);
       expect(result.value.buildingTypes.size).toBeGreaterThanOrEqual(2);
       expect(result.value.recipes.size).toBeGreaterThanOrEqual(1);

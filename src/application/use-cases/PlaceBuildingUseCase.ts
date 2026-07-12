@@ -28,6 +28,7 @@ export type PlaceBuildingUseCaseDependencies = Pick<
   | 'buildingRepository'
   | 'financeRepository'
   | 'companyResearchRepository'
+  | 'companyMilestonesRepository'
   | 'simulationEngine'
   | 'gameContent'
 >;
@@ -41,6 +42,7 @@ export class PlaceBuildingUseCase {
   readonly #buildingRepository: PlaceBuildingUseCaseDependencies['buildingRepository'];
   readonly #financeRepository: PlaceBuildingUseCaseDependencies['financeRepository'];
   readonly #companyResearchRepository: PlaceBuildingUseCaseDependencies['companyResearchRepository'];
+  readonly #companyMilestonesRepository: PlaceBuildingUseCaseDependencies['companyMilestonesRepository'];
   readonly #simulationEngine: PlaceBuildingUseCaseDependencies['simulationEngine'];
   readonly #gameContent: PlaceBuildingUseCaseDependencies['gameContent'];
   readonly #constructionCostPolicy = new ConstructionCostPolicy();
@@ -55,6 +57,7 @@ export class PlaceBuildingUseCase {
     this.#buildingRepository = dependencies.buildingRepository;
     this.#financeRepository = dependencies.financeRepository;
     this.#companyResearchRepository = dependencies.companyResearchRepository;
+    this.#companyMilestonesRepository = dependencies.companyMilestonesRepository;
     this.#simulationEngine = dependencies.simulationEngine;
     this.#gameContent = dependencies.gameContent;
   }
@@ -125,6 +128,14 @@ export class PlaceBuildingUseCase {
       );
     }
 
+    const companyMilestones = this.#companyMilestonesRepository.findByCompanyId(companyId);
+
+    if (companyMilestones === undefined) {
+      return Result.fail(
+        new ValidationError(`Milestones module for company "${companyId.value}" was not found.`),
+      );
+    }
+
     const prerequisitesResult = this.#buildingPrerequisitesSpecification.isSatisfiedBy(
       {
         buildingTypeId: buildingTypeId.value,
@@ -133,7 +144,7 @@ export class PlaceBuildingUseCase {
       },
       {
         completedResearch: new Set(companyResearch.getCompletedTechnologies()),
-        completedMilestones: new Set<string>(),
+        completedMilestones: new Set(companyMilestones.getCompletedMilestones()),
       },
     );
 

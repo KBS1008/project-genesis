@@ -13,6 +13,7 @@ import type { MarketRepository } from '../../domain/market/MarketRepository.js';
 import type { ProductionJobRepository } from '../../domain/production/ProductionJobRepository.js';
 import type { ResearchJobRepository } from '../../domain/research/ResearchJobRepository.js';
 import type { CompanyResearchRepository } from '../../domain/research/CompanyResearchRepository.js';
+import type { CompanyMilestonesRepository } from '../../domain/milestone/CompanyMilestonesRepository.js';
 import type { ProductionInventoryService } from '../services/ProductionInventoryService.js';
 import type { MarketTradeService } from '../services/MarketTradeService.js';
 import type { GameContentLoadResult } from '../../content/validateGameContent.js';
@@ -32,6 +33,7 @@ export type ApplicationContext = {
   readonly productionJobRepository: ProductionJobRepository;
   readonly researchJobRepository: ResearchJobRepository;
   readonly companyResearchRepository: CompanyResearchRepository;
+  readonly companyMilestonesRepository: CompanyMilestonesRepository;
   readonly productionInventoryService: ProductionInventoryService;
   readonly marketTradeService: MarketTradeService;
   readonly gameContent: GameContentLoadResult;

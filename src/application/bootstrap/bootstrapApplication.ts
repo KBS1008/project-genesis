@@ -17,9 +17,11 @@ import type { FinanceRepository } from '../../domain/finance/FinanceRepository.j
 import type { ProductionJobRepository } from '../../domain/production/ProductionJobRepository.js';
 import type { ResearchJobRepository } from '../../domain/research/ResearchJobRepository.js';
 import type { CompanyResearchRepository } from '../../domain/research/CompanyResearchRepository.js';
+import type { CompanyMilestonesRepository } from '../../domain/milestone/CompanyMilestonesRepository.js';
 import { InMemoryBuildingRepository } from '../../infrastructure/persistence/InMemoryBuildingRepository.js';
 import { InMemoryCompanyRepository } from '../../infrastructure/persistence/InMemoryCompanyRepository.js';
 import { InMemoryCompanyResearchRepository } from '../../infrastructure/persistence/InMemoryCompanyResearchRepository.js';
+import { InMemoryCompanyMilestonesRepository } from '../../infrastructure/persistence/InMemoryCompanyMilestonesRepository.js';
 import { InMemoryInventoryRepository } from '../../infrastructure/persistence/InMemoryInventoryRepository.js';
 import type { MarketRepository } from '../../domain/market/MarketRepository.js';
 import { InMemoryFinanceRepository } from '../../infrastructure/persistence/InMemoryFinanceRepository.js';
@@ -30,6 +32,7 @@ import { MarketPriceSeeder } from '../services/MarketPriceSeeder.js';
 import { MarketTradeService } from '../services/MarketTradeService.js';
 import { ProductionInventoryService } from '../services/ProductionInventoryService.js';
 import { ResearchCompletionService } from '../services/ResearchCompletionService.js';
+import { MilestoneEvaluationService } from '../services/MilestoneEvaluationService.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
 import { createDefaultSimulationSystems } from '../../simulation/systems/createDefaultSimulationSystems.js';
 import type { ApplicationContext } from './ApplicationContext.js';
@@ -46,6 +49,7 @@ export type BootstrapOptions = {
   readonly productionJobRepository?: ProductionJobRepository;
   readonly researchJobRepository?: ResearchJobRepository;
   readonly companyResearchRepository?: CompanyResearchRepository;
+  readonly companyMilestonesRepository?: CompanyMilestonesRepository;
 };
 
 /**
@@ -73,6 +77,8 @@ export async function bootstrapApplication(
     options.researchJobRepository ?? new InMemoryResearchJobRepository();
   const companyResearchRepository =
     options.companyResearchRepository ?? new InMemoryCompanyResearchRepository();
+  const companyMilestonesRepository =
+    options.companyMilestonesRepository ?? new InMemoryCompanyMilestonesRepository();
   const clock = new ManualClock(0);
   const eventBus = new InMemoryEventBus();
 
@@ -140,6 +146,14 @@ export async function bootstrapApplication(
     gameContent: contentResult.value,
   });
 
+  new MilestoneEvaluationService({
+    eventBus,
+    clock,
+    companyMilestonesRepository,
+    simulationEngine,
+    milestones: contentResult.value.milestones,
+  });
+
   return Result.ok({
     clock,
     eventBus,
@@ -152,6 +166,7 @@ export async function bootstrapApplication(
     productionJobRepository,
     researchJobRepository,
     companyResearchRepository,
+    companyMilestonesRepository,
     productionInventoryService,
     marketTradeService,
     gameContent: contentResult.value,

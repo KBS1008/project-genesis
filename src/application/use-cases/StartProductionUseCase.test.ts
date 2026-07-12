@@ -7,12 +7,14 @@ import { validateGameContent } from '../../content/validateGameContent.js';
 import { ProductionCompleted } from '../../domain/production/events/ProductionCompleted.js';
 import { ProductionStarted } from '../../domain/production/events/ProductionStarted.js';
 import { createCompanyId } from '../../domain/company/Company.js';
+import { createMilestoneId } from '../../domain/milestone/MilestoneId.js';
 import { InMemoryBuildingRepository } from '../../infrastructure/persistence/InMemoryBuildingRepository.js';
 import { InMemoryCompanyRepository } from '../../infrastructure/persistence/InMemoryCompanyRepository.js';
 import { InMemoryFinanceRepository } from '../../infrastructure/persistence/InMemoryFinanceRepository.js';
 import { InMemoryMarketRepository } from '../../infrastructure/persistence/InMemoryMarketRepository.js';
 import { InMemoryInventoryRepository } from '../../infrastructure/persistence/InMemoryInventoryRepository.js';
 import { InMemoryCompanyResearchRepository } from '../../infrastructure/persistence/InMemoryCompanyResearchRepository.js';
+import { InMemoryCompanyMilestonesRepository } from '../../infrastructure/persistence/InMemoryCompanyMilestonesRepository.js';
 import { InMemoryProductionJobRepository } from '../../infrastructure/persistence/InMemoryProductionJobRepository.js';
 import { InMemoryResearchJobRepository } from '../../infrastructure/persistence/InMemoryResearchJobRepository.js';
 import { ProductionInventoryService } from '../services/ProductionInventoryService.js';
@@ -43,6 +45,7 @@ async function createContext() {
   const productionJobRepository = new InMemoryProductionJobRepository();
   const researchJobRepository = new InMemoryResearchJobRepository();
   const companyResearchRepository = new InMemoryCompanyResearchRepository();
+  const companyMilestonesRepository = new InMemoryCompanyMilestonesRepository();
   const eventBus = new InMemoryEventBus();
 
   let simulationEngine: SimulationEngine;
@@ -97,6 +100,7 @@ async function createContext() {
     productionJobRepository,
     researchJobRepository,
     companyResearchRepository,
+    companyMilestonesRepository,
     productionInventoryService,
     simulationEngine,
     gameContent: contentResult.value,
@@ -133,6 +137,32 @@ function requireCompanyId(value: string) {
   }
 
   return result.value;
+}
+
+function grantFirstProfit(
+  context: Awaited<ReturnType<typeof createContext>>,
+  companyId: string,
+) {
+  const companyIdResult = createCompanyId(companyId);
+
+  if (!companyIdResult.ok) {
+    throw new Error(companyIdResult.error.message);
+  }
+
+  const milestones = context.companyMilestonesRepository.findByCompanyId(companyIdResult.value);
+
+  if (milestones === undefined) {
+    throw new Error(`Milestones for company "${companyId}" were not found.`);
+  }
+
+  const milestoneIdResult = createMilestoneId('first_profit');
+
+  if (!milestoneIdResult.ok) {
+    throw new Error(milestoneIdResult.error.message);
+  }
+
+  milestones.completeMilestone(milestoneIdResult.value, context.clock);
+  context.companyMilestonesRepository.save(milestones);
 }
 
 describe('StartProductionUseCase', () => {
@@ -266,6 +296,7 @@ describe('StartProductionUseCase', () => {
       ownerId: 'player_001',
     });
     addWoodStock(context, 'company_001', 10);
+    grantFirstProfit(context, 'company_001');
 
     placeBuilding.execute({
       buildingId: 'building_001',

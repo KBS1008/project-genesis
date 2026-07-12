@@ -12,6 +12,7 @@ constructionTime: 90
 allowedRecipes: []
 maxProductionLines: 1
 requiredResearch: []
-requiredMilestones: []
+requiredMilestones:
+  - first_profit
 enabled: true
 version: 1

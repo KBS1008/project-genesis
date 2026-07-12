@@ -4,19 +4,18 @@ import { InMemoryEventBus } from '../../common/events/InMemoryEventBus.js';
 import { ManualClock } from '../../common/time/ManualClock.js';
 import { validateGameContent } from '../../content/validateGameContent.js';
 import { createCompanyId } from '../../domain/company/Company.js';
-import { STARTING_MONEY } from '../../domain/finance/FinanceConstants.js';
+import { CompanyMilestoneReached } from '../../domain/milestone/events/CompanyMilestoneReached.js';
 import { InMemoryCompanyRepository } from '../../infrastructure/persistence/InMemoryCompanyRepository.js';
-import { InMemoryCompanyResearchRepository } from '../../infrastructure/persistence/InMemoryCompanyResearchRepository.js';
 import { InMemoryCompanyMilestonesRepository } from '../../infrastructure/persistence/InMemoryCompanyMilestonesRepository.js';
+import { InMemoryCompanyResearchRepository } from '../../infrastructure/persistence/InMemoryCompanyResearchRepository.js';
 import { InMemoryFinanceRepository } from '../../infrastructure/persistence/InMemoryFinanceRepository.js';
 import { InMemoryInventoryRepository } from '../../infrastructure/persistence/InMemoryInventoryRepository.js';
 import { InMemoryMarketRepository } from '../../infrastructure/persistence/InMemoryMarketRepository.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
-import { MarketPriceSeeder } from '../services/MarketPriceSeeder.js';
-import { MarketTradeService } from '../services/MarketTradeService.js';
-import { CreateCompanyUseCase } from './CreateCompanyUseCase.js';
-import { SellResourceUseCase } from './SellResourceUseCase.js';
-import { BuyResourceUseCase } from './BuyResourceUseCase.js';
+import { CreateCompanyUseCase } from '../use-cases/CreateCompanyUseCase.js';
+import { MarketPriceSeeder } from './MarketPriceSeeder.js';
+import { MarketTradeService } from './MarketTradeService.js';
+import { MilestoneEvaluationService } from './MilestoneEvaluationService.js';
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const gameContentRoot = path.resolve(testDirectory, '../../../game-content');
@@ -50,6 +49,14 @@ async function createContext() {
 
   new MarketPriceSeeder({ marketRepository, clock }).seed(contentResult.value.resourceTypes);
 
+  new MilestoneEvaluationService({
+    eventBus,
+    clock,
+    companyMilestonesRepository,
+    simulationEngine,
+    milestones: contentResult.value.milestones,
+  });
+
   const createCompany = new CreateCompanyUseCase({
     clock,
     companyRepository,
@@ -72,18 +79,23 @@ async function createContext() {
 
   return {
     clock,
-    companyRepository,
+    eventBus,
     inventoryRepository,
-    financeRepository,
+    companyMilestonesRepository,
     createCompany,
-    sellResource: new SellResourceUseCase({ companyRepository, marketTradeService }),
-    buyResource: new BuyResourceUseCase({ companyRepository, marketTradeService }),
+    marketTradeService,
+    simulationEngine,
   };
 }
 
-describe('SellResourceUseCase', () => {
-  it('sells company inventory through the market trade service', async () => {
+describe('MilestoneEvaluationService', () => {
+  it('completes first_profit after the first market sale', async () => {
     const context = await createContext();
+    const reached: string[] = [];
+
+    context.eventBus.subscribe('CompanyMilestoneReached', (event) => {
+      reached.push((event as CompanyMilestoneReached).milestoneId);
+    });
 
     context.createCompany.execute({
       companyId: 'company_001',
@@ -95,56 +107,23 @@ describe('SellResourceUseCase', () => {
     inventory?.addQuantity('wood', 5, context.clock);
     context.inventoryRepository.save(inventory!);
 
-    const result = context.sellResource.execute({
-      companyId: 'company_001',
-      resourceId: 'wood',
-      amount: 2,
-    });
+    const sellResult = context.marketTradeService.sell(
+      requireCompanyId('company_001'),
+      'wood',
+      2,
+    );
 
-    expect(result.ok).toBe(true);
+    expect(sellResult.ok).toBe(true);
 
-    if (result.ok) {
-      expect(result.value.totalAmount).toBe(50);
-    }
+    context.simulationEngine.tick();
 
-    const finance = context.financeRepository.findByCompanyId(requireCompanyId('company_001'));
-    expect(finance?.getCashBalance()).toBe(STARTING_MONEY + 50);
-  });
+    const milestones = context.companyMilestonesRepository.findByCompanyId(
+      requireCompanyId('company_001'),
+    );
 
-  it('rejects sells for unknown companies', async () => {
-    const context = await createContext();
+    expect(milestones?.hasCompletedMilestone('first_profit')).toBe(true);
 
-    const result = context.sellResource.execute({
-      companyId: 'company_missing',
-      resourceId: 'wood',
-      amount: 1,
-    });
-
-    expect(result.ok).toBe(false);
-  });
-});
-
-describe('BuyResourceUseCase', () => {
-  it('buys resources into company inventory', async () => {
-    const context = await createContext();
-
-    context.createCompany.execute({
-      companyId: 'company_001',
-      name: 'Genesis Industries',
-      ownerId: 'player_001',
-    });
-
-    const result = context.buyResource.execute({
-      companyId: 'company_001',
-      resourceId: 'wood',
-      amount: 3,
-    });
-
-    expect(result.ok).toBe(true);
-
-    const inventory = context.inventoryRepository.findByCompanyId(requireCompanyId('company_001'));
-    const wood = inventory?.getItems().find((item) => item.resourceId.value === 'wood');
-
-    expect(wood?.quantity).toBe(3);
+    context.simulationEngine.tick();
+    expect(reached).toEqual(['first_profit']);
   });
 });

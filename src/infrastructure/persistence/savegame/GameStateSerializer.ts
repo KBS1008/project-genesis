@@ -34,6 +34,9 @@ import type { ResearchJobRepository } from '../../../domain/research/ResearchJob
 import type { CompanyResearchRepository } from '../../../domain/research/CompanyResearchRepository.js';
 import { CompanyResearch } from '../../../domain/research/CompanyResearch.js';
 import { createCompanyResearchId } from '../../../domain/research/CompanyResearchId.js';
+import type { CompanyMilestonesRepository } from '../../../domain/milestone/CompanyMilestonesRepository.js';
+import { CompanyMilestones } from '../../../domain/milestone/CompanyMilestones.js';
+import { createCompanyMilestonesId } from '../../../domain/milestone/CompanyMilestonesId.js';
 import {
   ResearchJob,
   createResearchJobId,
@@ -60,6 +63,7 @@ export type GameStateSource = {
   readonly productionJobRepository: ProductionJobRepository;
   readonly researchJobRepository: ResearchJobRepository;
   readonly companyResearchRepository: CompanyResearchRepository;
+  readonly companyMilestonesRepository: CompanyMilestonesRepository;
 };
 
 /** Repositories populated during snapshot restore. */
@@ -72,6 +76,7 @@ export type GameStateTarget = {
   readonly productionJobRepository: ProductionJobRepository;
   readonly researchJobRepository: ResearchJobRepository;
   readonly companyResearchRepository: CompanyResearchRepository;
+  readonly companyMilestonesRepository: CompanyMilestonesRepository;
 };
 export type RestoredSimulationMetadata = {
   readonly clockTime: number;
@@ -239,6 +244,16 @@ export class GameStateSerializer {
             }),
           ),
         ),
+        companyMilestones: Object.freeze(
+          source.companyMilestonesRepository.findAll().map((milestones) =>
+            Object.freeze({
+              id: milestones.getId().value,
+              companyId: milestones.getCompanyId().value,
+              createdAt: milestones.getCreatedAt(),
+              completedMilestones: milestones.getCompletedMilestones(),
+            }),
+          ),
+        ),
       }),
     );
   }
@@ -266,6 +281,7 @@ export class GameStateSerializer {
       ...candidate,
       researchJobs: candidate.researchJobs ?? [],
       companyResearch: candidate.companyResearch ?? [],
+      companyMilestones: candidate.companyMilestones ?? [],
     } as GameSaveSnapshotV1);
   }
 
@@ -351,6 +367,16 @@ export class GameStateSerializer {
       }
 
       target.companyResearchRepository.save(restoreResult.value);
+    }
+
+    for (const milestonesSnapshot of snapshot.companyMilestones) {
+      const restoreResult = this.#restoreCompanyMilestones(milestonesSnapshot);
+
+      if (!restoreResult.ok) {
+        return Result.fail(restoreResult.error);
+      }
+
+      target.companyMilestonesRepository.save(restoreResult.value);
     }
 
     return Result.ok(
@@ -632,6 +658,27 @@ export class GameStateSerializer {
       companyId: companyIdResult.value,
       createdAt: snapshot.createdAt,
       completedTechnologies: snapshot.completedTechnologies,
+    });
+  }
+
+  #restoreCompanyMilestones(snapshot: GameSaveSnapshotV1['companyMilestones'][number]) {
+    const idResult = createCompanyMilestonesId(snapshot.id);
+
+    if (!idResult.ok) {
+      return idResult;
+    }
+
+    const companyIdResult = createCompanyId(snapshot.companyId);
+
+    if (!companyIdResult.ok) {
+      return companyIdResult;
+    }
+
+    return CompanyMilestones.restore({
+      id: idResult.value,
+      companyId: companyIdResult.value,
+      createdAt: snapshot.createdAt,
+      completedMilestones: snapshot.completedMilestones,
     });
   }
 }

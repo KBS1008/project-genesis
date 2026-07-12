@@ -54,6 +54,8 @@ export { StartResearchUseCase } from './use-cases/StartResearchUseCase.js';
 export type { StartResearchUseCaseDependencies } from './use-cases/StartResearchUseCase.js';
 export { ResearchCompletionService } from './services/ResearchCompletionService.js';
 export type { ResearchCompletionServiceDependencies } from './services/ResearchCompletionService.js';
+export { MilestoneEvaluationService } from './services/MilestoneEvaluationService.js';
+export type { MilestoneEvaluationServiceDependencies } from './services/MilestoneEvaluationService.js';
 export { SaveGameUseCase } from './use-cases/SaveGameUseCase.js';
 export type { SaveGameUseCaseDependencies } from './use-cases/SaveGameUseCase.js';
 export { LoadGameUseCase } from './use-cases/LoadGameUseCase.js';

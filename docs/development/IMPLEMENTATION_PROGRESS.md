@@ -23,16 +23,16 @@ Update this document whenever a meaningful implementation milestone is completed
 | Area | Status |
 |---|---|
 | Common foundation | Implemented |
-| Domain aggregates | Partial (Company, Building, Inventory, ProductionJob, FinanceAccount, Market, CompanyResearch) |
+| Domain aggregates | Partial (Company, Building, Inventory, ProductionJob, FinanceAccount, Market, CompanyResearch, ResearchJob, CompanyMilestones) |
 | Domain value objects | Partial (Money, Quantity, ResourceAmount, Capacity, Position) |
 | Domain specifications & policies | Partial (foundation + first production/market rules) |
-| Content loaders | Partial (ResourceType, BuildingType, Recipe, Technology) |
+| Content loaders | Partial (ResourceType, BuildingType, Recipe, Technology, Milestone) |
 | Simulation | Partial (SimulationEngine, systems pipeline) |
 | Infrastructure | Partial (in-memory repositories, JSON savegames) |
 | Application layer | Partial (bootstrap, use cases, queries) |
 | UI | Not started |
 
-**Tests:** 239 (run `pnpm test` for current count)
+**Tests:** 250 (run `pnpm test` for current count)
 
 ---
 
@@ -288,6 +288,22 @@ Persistence contracts for aggregate roots. Implementations belong in Infrastruct
 - `StartResearchUseCase` debits `researchCost`, starts job; simulation ticks progress.
 - On completion, `ResearchCompletionService` invokes `CompleteTechnologyUseCase`.
 
+### CompanyMilestones aggregate
+
+| Item | Path |
+|---|---|
+| Aggregate | `milestone/CompanyMilestones.ts` |
+| Identifiers | `milestone/CompanyMilestonesId.ts`, `milestone/MilestoneId.ts` |
+| Domain event | `milestone/events/CompanyMilestoneReached.ts` |
+| Repository | `milestone/CompanyMilestonesRepository.ts` |
+| Tests | `milestone/CompanyMilestones.test.ts` |
+
+**Behaviour:**
+
+- Tracks permanently completed milestone ids per company.
+- Created alongside company research in `CreateCompanyUseCase`.
+- Persisted in savegame snapshots as `companyMilestones`.
+
 ---
 
 ## Content Module (`src/content/`)
@@ -393,6 +409,27 @@ game-content/research/
 
 **References:** `docs/gameplay/research.md`, DD-031
 
+### Milestone loader
+
+| Item | Path |
+|---|---|
+| Definition | `milestone/MilestoneDefinition.ts` |
+| Validator | `milestone/MilestoneValidator.ts` |
+| Registry | `milestone/MilestoneRegistry.ts` |
+| Loader | `milestone/MilestoneLoader.ts` |
+| Tests | `milestone/MilestoneLoader.test.ts` |
+
+**Content files:**
+
+```text
+game-content/milestones/
+└── first_profit.yaml
+```
+
+**Reference validation:**
+
+- `requiredMilestones` on buildings and recipes → `MilestoneRegistry` via `validateMilestoneReferences.ts`
+
 ### Content validation orchestration
 
 | Item | Path |
@@ -400,6 +437,7 @@ game-content/research/
 | Orchestrator | `validateGameContent.ts` |
 | Building/recipe consistency | `validateBuildingRecipeConsistency.ts` |
 | Research reference validation | `validateResearchReferences.ts` |
+| Milestone reference validation | `validateMilestoneReferences.ts` |
 | CLI tool | `tools/validate-content.ts` |
 | Tests | `validateGameContent.test.ts`, `validateBuildingRecipeConsistency.test.ts` |
 
@@ -479,6 +517,7 @@ Coordinates use cases between domain, infrastructure and simulation.
 | `StartResearchCommand` | `commands/StartResearchCommand.ts` |
 | `StartResearchUseCase` | `use-cases/StartResearchUseCase.ts` |
 | `ResearchCompletionService` | `services/ResearchCompletionService.ts` |
+| `MilestoneEvaluationService` | `services/MilestoneEvaluationService.ts` |
 | `SaveGameCommand` | `commands/SaveGameCommand.ts` |
 | `LoadGameCommand` | `commands/LoadGameCommand.ts` |
 | `SaveGameUseCase` | `use-cases/SaveGameUseCase.ts` |
@@ -508,6 +547,7 @@ Coordinates use cases between domain, infrastructure and simulation.
 - `CompleteTechnologyUseCase` marks technologies as completed (internal completion path after research jobs finish).
 - `StartResearchUseCase` debits `researchCost`, enforces prerequisites and starts timed research jobs.
 - `ResearchCompletionService` unlocks technologies when research jobs complete via simulation ticks.
+- `MilestoneEvaluationService` completes milestones from domain events (e.g. first market sale → `first_profit`).
 - `PlaceBuildingUseCase` and `StartProductionUseCase` enforce `requiredResearch` / `requiredMilestones` via domain specifications.
 
 ---
@@ -575,6 +615,8 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 | Application / CompleteTechnology | `CompleteTechnologyUseCase.test.ts` | Complete technology for company |
 | Application / StartResearch | `StartResearchUseCase.test.ts` | Timed research, cost debit, tech unlock |
 | Domain / ResearchJob | `ResearchJob.test.ts` | Create, start, tick completion |
+| Domain / CompanyMilestones | `CompanyMilestones.test.ts` | Create, complete milestone |
+| Application / MilestoneEvaluation | `MilestoneEvaluationService.test.ts` | First sale unlocks first_profit |
 | Domain / Policies | `ConstructionCostPolicy.test.ts`, `InstantTradePricingPolicy.test.ts` | Construction cost resolution, instant trade pricing |
 | Domain / Money | `Money.test.ts` | Amount, currency, validation |
 | Domain / Quantity | `Quantity.test.ts` | Non-negative values |
@@ -610,8 +652,8 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Planned Next Steps
 
-1. Milestone system and `RequiredMilestonesSpecification` context wiring
-2. Construction time for building placement
+1. Construction time for building placement
+2. Additional milestone trigger types (production volume, profit thresholds)
 
 ---
 

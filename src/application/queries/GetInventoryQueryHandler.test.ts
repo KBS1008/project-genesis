@@ -1,5 +1,6 @@
 import { InMemoryCompanyRepository } from '../../infrastructure/persistence/InMemoryCompanyRepository.js';
 import { InMemoryCompanyResearchRepository } from '../../infrastructure/persistence/InMemoryCompanyResearchRepository.js';
+import { InMemoryCompanyMilestonesRepository } from '../../infrastructure/persistence/InMemoryCompanyMilestonesRepository.js';
 import { InMemoryFinanceRepository } from '../../infrastructure/persistence/InMemoryFinanceRepository.js';
 import { InMemoryInventoryRepository } from '../../infrastructure/persistence/InMemoryInventoryRepository.js';
 import { ManualClock } from '../../common/time/ManualClock.js';
@@ -24,6 +25,7 @@ function createContext(clock = new ManualClock(100)) {
   const inventoryRepository = new InMemoryInventoryRepository();
   const financeRepository = new InMemoryFinanceRepository();
   const companyResearchRepository = new InMemoryCompanyResearchRepository();
+  const companyMilestonesRepository = new InMemoryCompanyMilestonesRepository();
   const eventBus = new InMemoryEventBus();
   const simulationEngine = new SimulationEngine({ clock, eventBus });
   const createCompany = new CreateCompanyUseCase({
@@ -32,6 +34,7 @@ function createContext(clock = new ManualClock(100)) {
     inventoryRepository,
     financeRepository,
     companyResearchRepository,
+    companyMilestonesRepository,
     simulationEngine,
   });
   const getInventory = new GetInventoryQueryHandler({ inventoryRepository });

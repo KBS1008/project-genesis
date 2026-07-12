@@ -19,6 +19,8 @@ import {
 } from '../../domain/finance/FinanceAccount.js';
 import { CompanyResearch } from '../../domain/research/CompanyResearch.js';
 import { createCompanyResearchId } from '../../domain/research/CompanyResearchId.js';
+import { CompanyMilestones } from '../../domain/milestone/CompanyMilestones.js';
+import { createCompanyMilestonesId } from '../../domain/milestone/CompanyMilestonesId.js';
 import type { ApplicationContext } from '../bootstrap/ApplicationContext.js';
 import type { CreateCompanyCommand } from '../commands/CreateCompanyCommand.js';
 
@@ -30,6 +32,7 @@ export type CreateCompanyUseCaseDependencies = Pick<
   | 'inventoryRepository'
   | 'financeRepository'
   | 'companyResearchRepository'
+  | 'companyMilestonesRepository'
   | 'simulationEngine'
 >;
 
@@ -42,6 +45,7 @@ export class CreateCompanyUseCase {
   readonly #inventoryRepository: CreateCompanyUseCaseDependencies['inventoryRepository'];
   readonly #financeRepository: CreateCompanyUseCaseDependencies['financeRepository'];
   readonly #companyResearchRepository: CreateCompanyUseCaseDependencies['companyResearchRepository'];
+  readonly #companyMilestonesRepository: CreateCompanyUseCaseDependencies['companyMilestonesRepository'];
   readonly #simulationEngine: CreateCompanyUseCaseDependencies['simulationEngine'];
 
   /**
@@ -53,6 +57,7 @@ export class CreateCompanyUseCase {
     this.#inventoryRepository = dependencies.inventoryRepository;
     this.#financeRepository = dependencies.financeRepository;
     this.#companyResearchRepository = dependencies.companyResearchRepository;
+    this.#companyMilestonesRepository = dependencies.companyMilestonesRepository;
     this.#simulationEngine = dependencies.simulationEngine;
   }
 
@@ -169,6 +174,30 @@ export class CreateCompanyUseCase {
     }
 
     this.#companyResearchRepository.save(companyResearchResult.value);
+
+    const companyMilestonesIdResult = createCompanyMilestonesId(`milestones_${companyId.value}`);
+
+    if (!companyMilestonesIdResult.ok) {
+      return Result.fail(companyMilestonesIdResult.error);
+    }
+
+    if (this.#companyMilestonesRepository.findByCompanyId(companyId) !== undefined) {
+      return Result.fail(
+        new ValidationError(`Milestones module for company "${companyId.value}" already exists.`),
+      );
+    }
+
+    const companyMilestonesResult = CompanyMilestones.create({
+      id: companyMilestonesIdResult.value,
+      companyId,
+      clock: this.#clock,
+    });
+
+    if (!companyMilestonesResult.ok) {
+      return Result.fail(companyMilestonesResult.error);
+    }
+
+    this.#companyMilestonesRepository.save(companyMilestonesResult.value);
 
     return Result.ok(companyId);
   }

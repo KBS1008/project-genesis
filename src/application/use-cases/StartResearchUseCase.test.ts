@@ -12,6 +12,7 @@ import { TechnologyCompleted } from '../../domain/research/events/TechnologyComp
 import { InMemoryBuildingRepository } from '../../infrastructure/persistence/InMemoryBuildingRepository.js';
 import { InMemoryCompanyRepository } from '../../infrastructure/persistence/InMemoryCompanyRepository.js';
 import { InMemoryCompanyResearchRepository } from '../../infrastructure/persistence/InMemoryCompanyResearchRepository.js';
+import { InMemoryCompanyMilestonesRepository } from '../../infrastructure/persistence/InMemoryCompanyMilestonesRepository.js';
 import { InMemoryFinanceRepository } from '../../infrastructure/persistence/InMemoryFinanceRepository.js';
 import { InMemoryInventoryRepository } from '../../infrastructure/persistence/InMemoryInventoryRepository.js';
 import { InMemoryMarketRepository } from '../../infrastructure/persistence/InMemoryMarketRepository.js';
@@ -43,6 +44,7 @@ async function createContext() {
   const productionJobRepository = new InMemoryProductionJobRepository();
   const researchJobRepository = new InMemoryResearchJobRepository();
   const companyResearchRepository = new InMemoryCompanyResearchRepository();
+  const companyMilestonesRepository = new InMemoryCompanyMilestonesRepository();
   const eventBus = new InMemoryEventBus();
 
   let simulationEngine: SimulationEngine;
@@ -86,6 +88,7 @@ async function createContext() {
     financeRepository,
     researchJobRepository,
     companyResearchRepository,
+    companyMilestonesRepository,
     simulationEngine,
     gameContent: contentResult.value,
   };

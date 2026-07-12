@@ -19,6 +19,7 @@ import { InMemoryMarketRepository } from '../../infrastructure/persistence/InMem
 import { InMemoryProductionJobRepository } from '../../infrastructure/persistence/InMemoryProductionJobRepository.js';
 import { InMemoryResearchJobRepository } from '../../infrastructure/persistence/InMemoryResearchJobRepository.js';
 import { InMemoryCompanyResearchRepository } from '../../infrastructure/persistence/InMemoryCompanyResearchRepository.js';
+import { InMemoryCompanyMilestonesRepository } from '../../infrastructure/persistence/InMemoryCompanyMilestonesRepository.js';
 import { GameStateSerializer } from '../../infrastructure/persistence/savegame/GameStateSerializer.js';
 import type { GameSaveSnapshotV1 } from '../../infrastructure/persistence/savegame/GameSaveSnapshotV1.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
@@ -26,6 +27,7 @@ import { createDefaultSimulationSystems } from '../../simulation/systems/createD
 import { MarketTradeService } from '../services/MarketTradeService.js';
 import { ProductionInventoryService } from '../services/ProductionInventoryService.js';
 import { ResearchCompletionService } from '../services/ResearchCompletionService.js';
+import { MilestoneEvaluationService } from '../services/MilestoneEvaluationService.js';
 import type { ApplicationContext } from './ApplicationContext.js';
 
 /** Options for restoring an application session. */
@@ -54,6 +56,7 @@ export async function restoreApplicationFromSnapshot(
   const productionJobRepository = new InMemoryProductionJobRepository();
   const researchJobRepository = new InMemoryResearchJobRepository();
   const companyResearchRepository = new InMemoryCompanyResearchRepository();
+  const companyMilestonesRepository = new InMemoryCompanyMilestonesRepository();
   const serializer = new GameStateSerializer();
 
   const hydrateResult = serializer.hydrate(options.snapshot, {
@@ -65,6 +68,7 @@ export async function restoreApplicationFromSnapshot(
     productionJobRepository,
     researchJobRepository,
     companyResearchRepository,
+    companyMilestonesRepository,
   });
 
   if (!hydrateResult.ok) {
@@ -131,6 +135,14 @@ export async function restoreApplicationFromSnapshot(
     gameContent: contentResult.value,
   });
 
+  new MilestoneEvaluationService({
+    eventBus,
+    clock,
+    companyMilestonesRepository,
+    simulationEngine,
+    milestones: contentResult.value.milestones,
+  });
+
   return Result.ok({
     clock,
     eventBus,
@@ -143,6 +155,7 @@ export async function restoreApplicationFromSnapshot(
     productionJobRepository,
     researchJobRepository,
     companyResearchRepository,
+    companyMilestonesRepository,
     productionInventoryService,
     marketTradeService,
     gameContent: contentResult.value,

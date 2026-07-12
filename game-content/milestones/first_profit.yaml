@@ -1,0 +1,7 @@
+id: first_profit
+name: First Profit
+description: Complete your first resource sale on the market.
+trigger:
+  type: FIRST_SALE
+enabled: true
+version: 1

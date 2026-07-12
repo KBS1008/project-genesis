@@ -15,6 +15,7 @@ import {
 import { createRecipeId } from '../../domain/production/RecipeId.js';
 import { BuildingSupportsRecipeSpecification } from '../../domain/specifications/production/BuildingSupportsRecipeSpecification.js';
 import { RequiredResearchSpecification } from '../../domain/specifications/research/RequiredResearchSpecification.js';
+import { RequiredMilestonesSpecification } from '../../domain/specifications/research/RequiredMilestonesSpecification.js';
 import type { ApplicationContext } from '../bootstrap/ApplicationContext.js';
 import type { StartProductionCommand } from '../commands/StartProductionCommand.js';
 
@@ -28,6 +29,7 @@ export type StartProductionUseCaseDependencies = Pick<
   | 'gameContent'
   | 'productionInventoryService'
   | 'companyResearchRepository'
+  | 'companyMilestonesRepository'
 >;
 
 /**
@@ -41,8 +43,10 @@ export class StartProductionUseCase {
   readonly #gameContent: StartProductionUseCaseDependencies['gameContent'];
   readonly #productionInventoryService: StartProductionUseCaseDependencies['productionInventoryService'];
   readonly #companyResearchRepository: StartProductionUseCaseDependencies['companyResearchRepository'];
+  readonly #companyMilestonesRepository: StartProductionUseCaseDependencies['companyMilestonesRepository'];
   readonly #buildingSupportsRecipeSpecification = new BuildingSupportsRecipeSpecification();
   readonly #requiredResearchSpecification = new RequiredResearchSpecification();
+  readonly #requiredMilestonesSpecification = new RequiredMilestonesSpecification();
 
   /**
    * @param dependencies - Application services required to start production.
@@ -55,6 +59,7 @@ export class StartProductionUseCase {
     this.#gameContent = dependencies.gameContent;
     this.#productionInventoryService = dependencies.productionInventoryService;
     this.#companyResearchRepository = dependencies.companyResearchRepository;
+    this.#companyMilestonesRepository = dependencies.companyMilestonesRepository;
   }
 
   /**
@@ -141,6 +146,30 @@ export class StartProductionUseCase {
 
     if (!requiredResearchResult.ok) {
       return Result.fail(requiredResearchResult.error);
+    }
+
+    const companyMilestones = this.#companyMilestonesRepository.findByCompanyId(building.getCompanyId());
+
+    if (companyMilestones === undefined) {
+      return Result.fail(
+        new ValidationError(
+          `Milestones module for company "${building.getCompanyId().value}" was not found.`,
+        ),
+      );
+    }
+
+    const requiredMilestonesResult = this.#requiredMilestonesSpecification.isSatisfiedBy(
+      {
+        subjectId: recipeId.value,
+        requiredMilestones: recipe.requiredMilestones,
+      },
+      {
+        completedMilestones: new Set(companyMilestones.getCompletedMilestones()),
+      },
+    );
+
+    if (!requiredMilestonesResult.ok) {
+      return Result.fail(requiredMilestonesResult.error);
     }
 
     const reserveResult = this.#productionInventoryService.reserveInputs(

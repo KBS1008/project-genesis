@@ -132,6 +132,14 @@ export type GameSaveCompanyResearchSnapshotV1 = {
   readonly completedTechnologies: readonly string[];
 };
 
+/** Persisted company milestones aggregate state. */
+export type GameSaveCompanyMilestonesSnapshotV1 = {
+  readonly id: string;
+  readonly companyId: string;
+  readonly createdAt: number;
+  readonly completedMilestones: readonly string[];
+};
+
 /** Full deterministic game session snapshot. */
 export type GameSaveSnapshotV1 = {
   readonly schemaVersion: typeof GAME_SAVE_SCHEMA_VERSION;
@@ -145,4 +153,5 @@ export type GameSaveSnapshotV1 = {
   readonly productionJobs: readonly GameSaveProductionJobSnapshotV1[];
   readonly researchJobs: readonly GameSaveResearchJobSnapshotV1[];
   readonly companyResearch: readonly GameSaveCompanyResearchSnapshotV1[];
+  readonly companyMilestones: readonly GameSaveCompanyMilestonesSnapshotV1[];
 };
