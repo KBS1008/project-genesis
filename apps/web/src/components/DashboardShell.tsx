@@ -9,7 +9,9 @@ import {
   type GameSessionDashboard,
 } from '@/lib/api';
 
-type StatusTone = '' | 'success' | 'error';
+type StatusTone = '' | 'success' | 'error' | 'info';
+
+type KeyValueEntry = readonly [label: string, value: string, valueClass?: string];
 
 type TableColumn<T extends string> = {
   readonly key: T;
@@ -28,31 +30,62 @@ function HintButton({
   label,
   disabled,
   reason,
+  variant = 'primary',
   onClick,
 }: {
   readonly label: string;
   readonly disabled: boolean;
   readonly reason: string | null;
+  readonly variant?: 'primary' | 'secondary';
   readonly onClick: () => void;
 }) {
   return (
-    <button type="button" disabled={disabled} title={reason ?? undefined} onClick={onClick}>
+    <button
+      type="button"
+      className={variant === 'secondary' ? 'btn-secondary' : undefined}
+      disabled={disabled}
+      title={reason ?? undefined}
+      onClick={onClick}
+    >
       {label}
     </button>
+  );
+}
+
+function Toast({
+  message,
+  tone,
+}: {
+  readonly message: string;
+  readonly tone: StatusTone;
+}) {
+  if (message.length === 0) {
+    return null;
+  }
+
+  const icon = tone === 'success' ? '✓' : tone === 'error' ? '!' : tone === 'info' ? '…' : '•';
+
+  return (
+    <p className={`toast ${tone}`.trim()} role="status" aria-live="polite">
+      <span className="toast-icon" aria-hidden="true">
+        {icon}
+      </span>
+      <span>{message}</span>
+    </p>
   );
 }
 
 function KeyValuePanel({
   entries,
 }: {
-  readonly entries: readonly (readonly [string, string])[];
+  readonly entries: readonly KeyValueEntry[];
 }) {
   return (
     <dl className="kv">
-      {entries.map(([label, value]) => (
+      {entries.map(([label, value, valueClass]) => (
         <div key={label} style={{ display: 'contents' }}>
           <dt>{label}</dt>
-          <dd>{value}</dd>
+          <dd className={valueClass}>{value}</dd>
         </div>
       ))}
     </dl>
@@ -120,6 +153,8 @@ function DataTable<T extends string>({
 /** Interactive browser dashboard wired to the NestJS API. */
 export function DashboardShell() {
   const [dashboard, setDashboard] = useState<GameSessionDashboard | null>(null);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [isBusy, setIsBusy] = useState(false);
   const [statusMessage, setStatusMessage] = useState('');
   const [statusTone, setStatusTone] = useState<StatusTone>('');
 
@@ -147,26 +182,33 @@ export function DashboardShell() {
   }, []);
 
   useEffect(() => {
-    void refreshDashboard().catch((error: unknown) => {
-      setStatusMessage(
-        error instanceof Error ? error.message : 'Dashboard konnte nicht geladen werden.',
-      );
-      setStatusTone('error');
-    });
+    void refreshDashboard()
+      .catch((error: unknown) => {
+        setStatusMessage(
+          error instanceof Error ? error.message : 'Dashboard konnte nicht geladen werden.',
+        );
+        setStatusTone('error');
+      })
+      .finally(() => {
+        setIsInitialLoading(false);
+      });
   }, [refreshDashboard]);
 
   const runAction = useCallback(
     async (action: () => Promise<void>, successMessage: string) => {
       try {
-        setStatusMessage('Working…');
-        setStatusTone('');
+        setIsBusy(true);
+        setStatusMessage('Bitte warten…');
+        setStatusTone('info');
         await action();
         await refreshDashboard();
         setStatusMessage(successMessage);
         setStatusTone('success');
       } catch (error: unknown) {
-        setStatusMessage(error instanceof Error ? error.message : 'Unexpected error.');
+        setStatusMessage(error instanceof Error ? error.message : 'Unerwarteter Fehler.');
         setStatusTone('error');
+      } finally {
+        setIsBusy(false);
       }
     },
     [refreshDashboard],
@@ -185,15 +227,29 @@ export function DashboardShell() {
     nameMaps.technologies.get(technologyId) ?? technologyId;
 
   return (
-    <div className="layout">
+    <div className={`layout${isBusy ? ' is-busy' : ''}`}>
+      {isBusy ? (
+        <div className="loading-overlay" aria-hidden="true">
+          <div className="loading-panel">
+            <span className="spinner" />
+            <span>Aktion wird ausgeführt…</span>
+          </div>
+        </div>
+      ) : null}
+
       <header className="header">
         <div>
           <p className="eyebrow">Deterministic Economy Simulation</p>
           <h1>Project Genesis</h1>
         </div>
         <div className="header-meta">
-          <span>{dashboard ? `Tick ${dashboard.tickNumber}` : 'Tick —'}</span>
-          <span>{dashboard ? `Time ${dashboard.simulationTime}` : 'Time —'}</span>
+          <span className="meta-pill">Tick {dashboard?.tickNumber ?? '—'}</span>
+          <span className="meta-pill">Zeit {dashboard?.simulationTime ?? '—'}</span>
+          {dashboard?.energy?.hasDeficit ? (
+            <span className="meta-pill" style={{ color: 'var(--color-warning)', borderColor: 'rgba(245, 158, 11, 0.45)' }}>
+              Energie-Defizit
+            </span>
+          ) : null}
         </div>
       </header>
 
@@ -217,6 +273,7 @@ export function DashboardShell() {
           </button>
           <button
             type="button"
+            className="btn-secondary"
             disabled={!hasGame}
             onClick={() => {
               void runAction(
@@ -229,6 +286,7 @@ export function DashboardShell() {
           </button>
           <button
             type="button"
+            className="btn-secondary"
             disabled={!hasGame}
             onClick={() => {
               void runAction(
@@ -331,6 +389,7 @@ export function DashboardShell() {
             <HintButton
               key={`sell-${hint.resourceId}`}
               label={`${hint.tradeAmount}× ${hint.name} verkaufen`}
+              variant="secondary"
               disabled={!hasGame || !hint.canSell}
               reason={hint.sellReason}
               onClick={() => {
@@ -391,12 +450,25 @@ export function DashboardShell() {
           ))}
         </div>
 
-        <p className={`status-message ${statusTone}`.trim()} aria-live="polite">
-          {statusMessage}
-        </p>
+        <Toast message={statusMessage} tone={statusTone} />
       </section>
 
       <main className="grid">
+        {isInitialLoading ? (
+          <>
+            <section className="card card-loading span-2">
+              <div className="skeleton-block" style={{ width: '40%' }} />
+              <div className="skeleton-block" style={{ width: '70%', marginTop: '0.75rem' }} />
+            </section>
+            <section className="card card-loading">
+              <div className="skeleton-block" style={{ width: '55%' }} />
+            </section>
+            <section className="card card-loading">
+              <div className="skeleton-block" style={{ width: '60%' }} />
+            </section>
+          </>
+        ) : (
+          <>
         <section className="card">
           <h2>Firma</h2>
           {!dashboard?.company ? (
@@ -428,7 +500,7 @@ export function DashboardShell() {
           )}
         </section>
 
-        <section className="card">
+        <section className={`card${dashboard?.energy?.hasDeficit ? ' card-warning' : ''}`}>
           <h2>Energie</h2>
           {!dashboard?.energy ? (
             <KeyValuePanel entries={[['Status', '—']]} />
@@ -437,12 +509,20 @@ export function DashboardShell() {
               entries={[
                 ['Erzeugung', formatEnergy(dashboard.energy.generation)],
                 ['Verbrauch', formatEnergy(dashboard.energy.consumption)],
-                ['Reserve', formatEnergy(dashboard.energy.reserve)],
+                [
+                  'Reserve',
+                  formatEnergy(dashboard.energy.reserve),
+                  dashboard.energy.reserve < 0 ? 'kv-value-error' : 'kv-value-success',
+                ],
                 [
                   'Netz',
                   dashboard.energy.usesBaselineGrid ? 'Öffentliches Netz (30 MW)' : 'Eigenversorgung',
                 ],
-                ['Status', dashboard.energy.hasDeficit ? 'Defizit' : 'Stabil'],
+                [
+                  'Status',
+                  dashboard.energy.hasDeficit ? 'Defizit' : 'Stabil',
+                  dashboard.energy.hasDeficit ? 'kv-value-warning' : 'kv-value-success',
+                ],
               ]}
             />
           )}
@@ -602,6 +682,8 @@ export function DashboardShell() {
             )}
           </ul>
         </section>
+          </>
+        )}
       </main>
     </div>
   );
