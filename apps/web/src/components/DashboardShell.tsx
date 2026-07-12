@@ -16,6 +16,7 @@ type KeyValueEntry = readonly [label: string, value: string, valueClass?: string
 type TableColumn<T extends string> = {
   readonly key: T;
   readonly label: string;
+  readonly numeric?: boolean;
 };
 
 function formatProgress(progress: number): string {
@@ -34,6 +35,11 @@ function formatProductionStatus(status: string, awaitingTransport: boolean): str
   return status;
 }
 
+function trendLabel(direction: 'up' | 'down' | 'stable', text: string): string {
+  const icon = direction === 'up' ? '▲' : direction === 'down' ? '▼' : '→';
+  return `${icon} ${text}`;
+}
+
 function KpiStrip({
   kpis,
 }: {
@@ -46,24 +52,115 @@ function KpiStrip({
   return (
     <section className="kpi-strip" aria-label="Kennzahlen">
       <article className="kpi-card">
-        <span className="kpi-label">Verfügbar</span>
-        <strong className="kpi-value">{kpis.availableCash.toLocaleString('de-DE')} GC</strong>
+        <span className="kpi-icon" aria-hidden="true">
+          💰
+        </span>
+        <div className="kpi-body">
+          <span className="kpi-label">Verfügbar</span>
+          <strong className="kpi-value">{kpis.availableCash.toLocaleString('de-DE')} GC</strong>
+          <span className="kpi-trend">{trendLabel('stable', 'Liquidität')}</span>
+        </div>
       </article>
       <article className={`kpi-card${kpis.energyHasDeficit ? ' kpi-warning' : ''}`}>
-        <span className="kpi-label">Energie-Reserve</span>
-        <strong className="kpi-value">{formatEnergy(kpis.energyReserve)}</strong>
+        <span className="kpi-icon" aria-hidden="true">
+          ⚡
+        </span>
+        <div className="kpi-body">
+          <span className="kpi-label">Energie-Reserve</span>
+          <strong className="kpi-value">{formatEnergy(kpis.energyReserve)}</strong>
+          <span className="kpi-trend">
+            {trendLabel(kpis.energyHasDeficit ? 'down' : 'stable', kpis.energyHasDeficit ? 'Defizit' : 'Stabil')}
+          </span>
+        </div>
       </article>
       <article className={`kpi-card${kpis.activeTransportCount > 0 ? ' kpi-active' : ''}`}>
-        <span className="kpi-label">Transporte</span>
-        <strong className="kpi-value">{kpis.activeTransportCount}</strong>
+        <span className="kpi-icon" aria-hidden="true">
+          🚚
+        </span>
+        <div className="kpi-body">
+          <span className="kpi-label">Transporte</span>
+          <strong className="kpi-value">{kpis.activeTransportCount}</strong>
+          <span className="kpi-trend">
+            {trendLabel(kpis.activeTransportCount > 0 ? 'up' : 'stable', 'Aktiv unterwegs')}
+          </span>
+        </div>
       </article>
       <article className="kpi-card">
-        <span className="kpi-label">Im Lagerhaus</span>
-        <strong className="kpi-value">{kpis.warehouseTotalUnits}</strong>
+        <span className="kpi-icon" aria-hidden="true">
+          📦
+        </span>
+        <div className="kpi-body">
+          <span className="kpi-label">Im Lagerhaus</span>
+          <strong className="kpi-value">{kpis.warehouseTotalUnits}</strong>
+          <span className="kpi-trend">{trendLabel('stable', 'Einheiten gesamt')}</span>
+        </div>
       </article>
       <article className="kpi-card">
-        <span className="kpi-label">Am Standort</span>
-        <strong className="kpi-value">{kpis.onSiteResourceLines} Ressourcen</strong>
+        <span className="kpi-icon" aria-hidden="true">
+          🏭
+        </span>
+        <div className="kpi-body">
+          <span className="kpi-label">Am Standort</span>
+          <strong className="kpi-value">{kpis.onSiteResourceLines}</strong>
+          <span className="kpi-trend">{trendLabel('stable', 'Ressourcenlinien')}</span>
+        </div>
+      </article>
+    </section>
+  );
+}
+
+function OverviewStrip({
+  dashboard,
+}: {
+  readonly dashboard: GameSessionDashboard | null;
+}) {
+  if (dashboard?.company === null || dashboard?.company === undefined) {
+    return null;
+  }
+
+  const runningProduction = dashboard.productionJobs.filter((job) => job.status === 'RUNNING').length;
+  const waitingProduction = dashboard.productionJobs.filter((job) => job.status === 'WAITING').length;
+  const activeResearch = dashboard.researchJobs.filter((job) => job.status === 'IN_PROGRESS').length;
+  const activeTransport = dashboard.transportOrders?.length ?? 0;
+  const completedMilestones = dashboard.completedMilestones.length;
+
+  return (
+    <section className="overview-strip" aria-label="Überblick">
+      <article className="overview-card">
+        <span className="overview-label">Gebäude</span>
+        <strong className="overview-value">{dashboard.buildings.length}</strong>
+        <span className="overview-hint">Standorte &amp; Anlagen</span>
+      </article>
+      <article className="overview-card">
+        <span className="overview-label">Produktion</span>
+        <strong className="overview-value">{runningProduction}</strong>
+        <span className="overview-hint">
+          {waitingProduction > 0 ? `${waitingProduction} wartend` : 'Keine Warteschlange'}
+        </span>
+      </article>
+      <article className="overview-card">
+        <span className="overview-label">Forschung</span>
+        <strong className="overview-value">{activeResearch}</strong>
+        <span className="overview-hint">{dashboard.completedResearch.length} abgeschlossen</span>
+      </article>
+      <article className="overview-card">
+        <span className="overview-label">Transport</span>
+        <strong className="overview-value">{activeTransport}</strong>
+        <span className="overview-hint">
+          {dashboard.logistics?.waitingProductionCount
+            ? `${dashboard.logistics.waitingProductionCount} Jobs warten`
+            : 'Logistik stabil'}
+        </span>
+      </article>
+      <article className="overview-card">
+        <span className="overview-label">Meilensteine</span>
+        <strong className="overview-value">{completedMilestones}</strong>
+        <span className="overview-hint">von {dashboard.milestones.length} erreicht</span>
+      </article>
+      <article className="overview-card">
+        <span className="overview-label">Markt</span>
+        <strong className="overview-value">{dashboard.marketPrices.length}</strong>
+        <span className="overview-hint">Handelbare Ressourcen</span>
       </article>
     </section>
   );
@@ -174,23 +271,32 @@ function DataTable<T extends string>({
   columns,
   rows,
   emptyText,
+  emptyHint,
   renderCell,
 }: {
   readonly columns: readonly TableColumn<T>[];
   readonly rows: ReadonlyArray<Partial<Record<T, string | number>>>;
   readonly emptyText: string;
+  readonly emptyHint?: string;
   readonly renderCell?: (key: T, row: Partial<Record<T, string | number>>) => ReactNode;
 }) {
   if (rows.length === 0) {
-    return <p className="empty">{emptyText}</p>;
+    return (
+      <p className="empty-state">
+        <strong>{emptyText}</strong>
+        {emptyHint ? emptyHint : null}
+      </p>
+    );
   }
 
   return (
-    <table>
+    <table className="table-sticky">
       <thead>
         <tr>
           {columns.map((column) => (
-            <th key={column.key}>{column.label}</th>
+            <th key={column.key} className={column.numeric ? 'numeric' : undefined}>
+              {column.label}
+            </th>
           ))}
         </tr>
       </thead>
@@ -198,7 +304,7 @@ function DataTable<T extends string>({
         {rows.map((row, rowIndex) => (
           <tr key={rowIndex}>
             {columns.map((column) => (
-              <td key={column.key}>
+              <td key={column.key} className={column.numeric ? 'numeric' : undefined}>
                 {renderCell?.(column.key, row) ?? row[column.key] ?? ''}
               </td>
             ))}
@@ -206,6 +312,236 @@ function DataTable<T extends string>({
         ))}
       </tbody>
     </table>
+  );
+}
+
+function SidebarActions({
+  hasGame,
+  hints,
+  buildingCount,
+  runAction,
+}: {
+  readonly hasGame: boolean;
+  readonly hints: GameSessionDashboard['hints'] | undefined;
+  readonly buildingCount: number;
+  readonly runAction: (action: () => Promise<void>, successMessage: string) => Promise<void>;
+}) {
+  return (
+    <>
+      <p className="sidebar-title">Aktionen</p>
+
+      <div className="toolbar-group">
+        <span className="toolbar-label">Session</span>
+        <button
+          type="button"
+          onClick={() => {
+            void runAction(
+              () =>
+                callApi('/api/session/new', {
+                  method: 'POST',
+                  body: JSON.stringify({ name: 'Genesis Industries' }),
+                }),
+              'Neues Spiel gestartet.',
+            );
+          }}
+        >
+          Neues Spiel
+        </button>
+        <button
+          type="button"
+          className="btn-secondary"
+          disabled={!hasGame}
+          onClick={() => {
+            void runAction(
+              () => callApi('/api/session/save', { method: 'POST', body: '{}' }),
+              'Spielstand gespeichert.',
+            );
+          }}
+        >
+          Speichern
+        </button>
+        <button
+          type="button"
+          className="btn-secondary"
+          disabled={!hasGame}
+          onClick={() => {
+            void runAction(
+              () => callApi('/api/session/load', { method: 'POST', body: '{}' }),
+              'Spielstand geladen.',
+            );
+          }}
+        >
+          Laden
+        </button>
+      </div>
+
+      <div className="toolbar-group">
+        <span className="toolbar-label">Simulation</span>
+        <button
+          type="button"
+          disabled={!hasGame}
+          onClick={() => {
+            void runAction(
+              () => callApi('/api/simulation/tick', { method: 'POST', body: '{}' }),
+              'Simulation tick ausgeführt.',
+            );
+          }}
+        >
+          Simulation Tick
+        </button>
+        <button
+          type="button"
+          disabled={!hasGame}
+          onClick={() => {
+            void runAction(
+              () =>
+                callApi('/api/simulation/tick', {
+                  method: 'POST',
+                  body: JSON.stringify({ count: 10 }),
+                }),
+              '10 Simulation ticks ausgeführt.',
+            );
+          }}
+        >
+          10× Tick
+        </button>
+      </div>
+
+      <div className="toolbar-group">
+        <span className="toolbar-label">Bauen</span>
+        {(hints?.placeBuilding ?? []).length === 0 ? (
+          <p className="empty-state">Keine Bauoptionen verfügbar.</p>
+        ) : (
+          (hints?.placeBuilding ?? []).map((hint) => (
+            <HintButton
+              key={hint.buildingTypeId}
+              label={hint.name}
+              disabled={!hasGame || !hint.canPlace}
+              reason={hint.reason}
+              onClick={() => {
+                void runAction(
+                  () =>
+                    callApi('/api/buildings/place', {
+                      method: 'POST',
+                      body: JSON.stringify({
+                        buildingTypeId: hint.buildingTypeId,
+                        name: hint.name,
+                        x: buildingCount * 2,
+                        y: 0,
+                      }),
+                    }),
+                  `${hint.name} in Bau gegeben.`,
+                );
+              }}
+            />
+          ))
+        )}
+      </div>
+
+      <div className="toolbar-group">
+        <span className="toolbar-label">Produktion</span>
+        {(hints?.production ?? []).length === 0 ? (
+          <p className="empty-state">Keine Produktionsaktionen möglich.</p>
+        ) : (
+          (hints?.production ?? []).map((hint) => (
+            <HintButton
+              key={`${hint.buildingId}-${hint.recipeId}`}
+              label={`${hint.recipeName} (${hint.buildingName})`}
+              disabled={!hasGame || !hint.canStart}
+              reason={hint.reason}
+              onClick={() => {
+                void runAction(
+                  () =>
+                    callApi('/api/production/start', {
+                      method: 'POST',
+                      body: JSON.stringify({
+                        buildingId: hint.buildingId,
+                        recipeId: hint.recipeId,
+                      }),
+                    }),
+                  `${hint.recipeName} gestartet.`,
+                );
+              }}
+            />
+          ))
+        )}
+      </div>
+
+      <div className="toolbar-group">
+        <span className="toolbar-label">Markt</span>
+        {(hints?.market ?? []).length === 0 ? (
+          <p className="empty-state">Keine Marktaktionen verfügbar.</p>
+        ) : (
+          (hints?.market ?? []).flatMap((hint) => [
+            <HintButton
+              key={`sell-${hint.resourceId}`}
+              label={`${hint.tradeAmount}× ${hint.name} verkaufen`}
+              variant="secondary"
+              disabled={!hasGame || !hint.canSell}
+              reason={hint.sellReason}
+              onClick={() => {
+                void runAction(
+                  () =>
+                    callApi('/api/market/sell', {
+                      method: 'POST',
+                      body: JSON.stringify({
+                        resourceId: hint.resourceId,
+                        amount: hint.tradeAmount,
+                      }),
+                    }),
+                  `${hint.name} verkauft.`,
+                );
+              }}
+            />,
+            <HintButton
+              key={`buy-${hint.resourceId}`}
+              label={`${hint.tradeAmount}× ${hint.name} kaufen`}
+              disabled={!hasGame || !hint.canBuy}
+              reason={hint.buyReason}
+              onClick={() => {
+                void runAction(
+                  () =>
+                    callApi('/api/market/buy', {
+                      method: 'POST',
+                      body: JSON.stringify({
+                        resourceId: hint.resourceId,
+                        amount: hint.tradeAmount,
+                      }),
+                    }),
+                  `${hint.name} gekauft.`,
+                );
+              }}
+            />,
+          ])
+        )}
+      </div>
+
+      <div className="toolbar-group">
+        <span className="toolbar-label">Forschung</span>
+        {(hints?.research ?? []).length === 0 ? (
+          <p className="empty-state">Keine Forschungsprojekte startbar.</p>
+        ) : (
+          (hints?.research ?? []).map((hint) => (
+            <HintButton
+              key={hint.technologyId}
+              label={hint.name}
+              disabled={!hasGame || !hint.canStart}
+              reason={hint.reason}
+              onClick={() => {
+                void runAction(
+                  () =>
+                    callApi('/api/research/start', {
+                      method: 'POST',
+                      body: JSON.stringify({ technologyId: hint.technologyId }),
+                    }),
+                  `Forschung „${hint.name}“ gestartet.`,
+                );
+              }}
+            />
+          ))
+        )}
+      </div>
+    </>
   );
 }
 
@@ -220,6 +556,7 @@ function applyTheme(theme: ThemeMode): void {
 export function DashboardShell() {
   const [dashboard, setDashboard] = useState<GameSessionDashboard | null>(null);
   const [theme, setTheme] = useState<ThemeMode>('light');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [isBusy, setIsBusy] = useState(false);
   const [statusMessage, setStatusMessage] = useState('');
@@ -292,6 +629,7 @@ export function DashboardShell() {
         await refreshDashboard();
         setStatusMessage(successMessage);
         setStatusTone('success');
+        setSidebarOpen(false);
       } catch (error: unknown) {
         setStatusMessage(error instanceof Error ? error.message : 'Unerwarteter Fehler.');
         setStatusTone('error');
@@ -325,12 +663,38 @@ export function DashboardShell() {
         </div>
       ) : null}
 
+      {sidebarOpen ? (
+        <button
+          type="button"
+          className="sidebar-backdrop"
+          aria-label="Seitenleiste schließen"
+          onClick={() => setSidebarOpen(false)}
+        />
+      ) : null}
+
       <header className="header">
         <div>
           <p className="eyebrow">Deterministic Economy Simulation</p>
-          <h1>Project Genesis</h1>
+          <h1>{dashboard?.company?.name ?? 'Project Genesis'}</h1>
+          {hasGame ? (
+            <p className="header-subtitle">
+              Unternehmens-Dashboard · Tick {dashboard?.tickNumber ?? '—'} · Zeit{' '}
+              {dashboard?.simulationTime ?? '—'}
+            </p>
+          ) : (
+            <p className="header-subtitle">Starten Sie eine neue Session, um das Spiel zu beginnen.</p>
+          )}
         </div>
-        <div className="header-meta">
+        <div className="header-actions">
+          <button
+            type="button"
+            className="btn-secondary mobile-only"
+            aria-expanded={sidebarOpen}
+            aria-controls="dashboard-sidebar"
+            onClick={() => setSidebarOpen((open) => !open)}
+          >
+            Aktionen
+          </button>
           <button
             type="button"
             className="btn-secondary theme-toggle"
@@ -339,518 +703,391 @@ export function DashboardShell() {
           >
             {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
           </button>
-          <span className="meta-pill">Tick {dashboard?.tickNumber ?? '—'}</span>
-          <span className="meta-pill">Zeit {dashboard?.simulationTime ?? '—'}</span>
           {dashboard?.energy?.hasDeficit ? (
-            <span className="meta-pill" style={{ color: 'var(--color-warning)', borderColor: 'rgba(245, 158, 11, 0.45)' }}>
+            <span
+              className="meta-pill"
+              style={{ color: 'var(--color-warning)', borderColor: 'rgba(245, 158, 11, 0.45)' }}
+            >
               Energie-Defizit
             </span>
           ) : null}
         </div>
       </header>
 
-      <section className="toolbar card">
-        <div className="toolbar-group">
-          <span className="toolbar-label">Session</span>
-          <button
-            type="button"
-            onClick={() => {
-              void runAction(
-                () =>
-                  callApi('/api/session/new', {
-                    method: 'POST',
-                    body: JSON.stringify({ name: 'Genesis Industries' }),
-                  }),
-                'Neues Spiel gestartet.',
-              );
-            }}
-          >
-            Neues Spiel
-          </button>
-          <button
-            type="button"
-            className="btn-secondary"
-            disabled={!hasGame}
-            onClick={() => {
-              void runAction(
-                () => callApi('/api/session/save', { method: 'POST', body: '{}' }),
-                'Spielstand gespeichert.',
-              );
-            }}
-          >
-            Speichern
-          </button>
-          <button
-            type="button"
-            className="btn-secondary"
-            disabled={!hasGame}
-            onClick={() => {
-              void runAction(
-                () => callApi('/api/session/load', { method: 'POST', body: '{}' }),
-                'Spielstand geladen.',
-              );
-            }}
-          >
-            Laden
-          </button>
-        </div>
+      <div className="dashboard-body">
+        <aside
+          id="dashboard-sidebar"
+          className={`dashboard-sidebar${sidebarOpen ? ' is-open' : ''}`}
+          aria-label="Dashboard-Aktionen"
+        >
+          <SidebarActions
+            hasGame={hasGame}
+            hints={hints}
+            buildingCount={buildingCount}
+            runAction={runAction}
+          />
+        </aside>
 
-        <div className="toolbar-group">
-          <span className="toolbar-label">Simulation</span>
-          <button
-            type="button"
-            disabled={!hasGame}
-            onClick={() => {
-              void runAction(
-                () => callApi('/api/simulation/tick', { method: 'POST', body: '{}' }),
-                'Simulation tick ausgeführt.',
-              );
-            }}
-          >
-            Simulation Tick
-          </button>
-          <button
-            type="button"
-            disabled={!hasGame}
-            onClick={() => {
-              void runAction(
-                () =>
-                  callApi('/api/simulation/tick', {
-                    method: 'POST',
-                    body: JSON.stringify({ count: 10 }),
-                  }),
-                '10 Simulation ticks ausgeführt.',
-              );
-            }}
-          >
-            10× Tick
-          </button>
-        </div>
+        <div className="dashboard-content">
+          {hasGame && dashboard?.kpis ? <KpiStrip kpis={dashboard.kpis} /> : null}
 
-        <div className="toolbar-group">
-          <span className="toolbar-label">Bauen</span>
-          {(hints?.placeBuilding ?? []).map((hint) => (
-            <HintButton
-              key={hint.buildingTypeId}
-              label={hint.name}
-              disabled={!hasGame || !hint.canPlace}
-              reason={hint.reason}
-              onClick={() => {
-                void runAction(
-                  () =>
-                    callApi('/api/buildings/place', {
-                      method: 'POST',
-                      body: JSON.stringify({
-                        buildingTypeId: hint.buildingTypeId,
-                        name: hint.name,
-                        x: buildingCount * 2,
-                        y: 0,
-                      }),
-                    }),
-                  `${hint.name} in Bau gegeben.`,
-                );
-              }}
-            />
-          ))}
-        </div>
-
-        <div className="toolbar-group">
-          <span className="toolbar-label">Produktion</span>
-          {(hints?.production ?? []).map((hint) => (
-            <HintButton
-              key={`${hint.buildingId}-${hint.recipeId}`}
-              label={`${hint.recipeName} (${hint.buildingName})`}
-              disabled={!hasGame || !hint.canStart}
-              reason={hint.reason}
-              onClick={() => {
-                void runAction(
-                  () =>
-                    callApi('/api/production/start', {
-                      method: 'POST',
-                      body: JSON.stringify({
-                        buildingId: hint.buildingId,
-                        recipeId: hint.recipeId,
-                      }),
-                    }),
-                  `${hint.recipeName} gestartet.`,
-                );
-              }}
-            />
-          ))}
-        </div>
-
-        <div className="toolbar-group">
-          <span className="toolbar-label">Markt</span>
-          {(hints?.market ?? []).flatMap((hint) => [
-            <HintButton
-              key={`sell-${hint.resourceId}`}
-              label={`${hint.tradeAmount}× ${hint.name} verkaufen`}
-              variant="secondary"
-              disabled={!hasGame || !hint.canSell}
-              reason={hint.sellReason}
-              onClick={() => {
-                void runAction(
-                  () =>
-                    callApi('/api/market/sell', {
-                      method: 'POST',
-                      body: JSON.stringify({
-                        resourceId: hint.resourceId,
-                        amount: hint.tradeAmount,
-                      }),
-                    }),
-                  `${hint.name} verkauft.`,
-                );
-              }}
-            />,
-            <HintButton
-              key={`buy-${hint.resourceId}`}
-              label={`${hint.tradeAmount}× ${hint.name} kaufen`}
-              disabled={!hasGame || !hint.canBuy}
-              reason={hint.buyReason}
-              onClick={() => {
-                void runAction(
-                  () =>
-                    callApi('/api/market/buy', {
-                      method: 'POST',
-                      body: JSON.stringify({
-                        resourceId: hint.resourceId,
-                        amount: hint.tradeAmount,
-                      }),
-                    }),
-                  `${hint.name} gekauft.`,
-                );
-              }}
-            />,
-          ])}
-        </div>
-
-        <div className="toolbar-group">
-          <span className="toolbar-label">Forschung</span>
-          {(hints?.research ?? []).map((hint) => (
-            <HintButton
-              key={hint.technologyId}
-              label={hint.name}
-              disabled={!hasGame || !hint.canStart}
-              reason={hint.reason}
-              onClick={() => {
-                void runAction(
-                  () =>
-                    callApi('/api/research/start', {
-                      method: 'POST',
-                      body: JSON.stringify({ technologyId: hint.technologyId }),
-                    }),
-                  `Forschung „${hint.name}“ gestartet.`,
-                );
-              }}
-            />
-          ))}
-        </div>
-
-        <Toast message={statusMessage} tone={statusTone} />
-      </section>
-
-      {hasGame && dashboard?.kpis ? <KpiStrip kpis={dashboard.kpis} /> : null}
-      <LogisticsBanner message={dashboard?.logistics?.statusMessage ?? null} />
-
-      <main className="grid">
-        {isInitialLoading ? (
-          <>
-            <section className="card card-loading span-2">
-              <div className="skeleton-block" style={{ width: '40%' }} />
-              <div className="skeleton-block" style={{ width: '70%', marginTop: '0.75rem' }} />
-            </section>
-            <section className="card card-loading">
-              <div className="skeleton-block" style={{ width: '55%' }} />
-            </section>
-            <section className="card card-loading">
-              <div className="skeleton-block" style={{ width: '60%' }} />
-            </section>
-          </>
-        ) : (
-          <>
-        <section className="card">
-          <h2>Firma</h2>
-          {!dashboard?.company ? (
-            <KeyValuePanel entries={[['Status', 'Kein aktives Spiel']]} />
-          ) : (
-            <KeyValuePanel
-              entries={[
-                ['Name', dashboard.company.name],
-                ['ID', dashboard.company.id],
-                ['Owner', dashboard.company.ownerId],
-                ['Status', dashboard.company.status],
-              ]}
-            />
-          )}
-        </section>
-
-        <section className="card">
-          <h2>Finanzen</h2>
-          {!dashboard?.finance ? (
-            <KeyValuePanel entries={[['Status', '—']]} />
-          ) : (
-            <KeyValuePanel
-              entries={[
-                ['Cash', `${dashboard.finance.cashBalance.toLocaleString('de-DE')} GC`],
-                ['Reserved', `${dashboard.finance.reservedCash.toLocaleString('de-DE')} GC`],
-                ['Available', `${dashboard.finance.availableCash.toLocaleString('de-DE')} GC`],
-              ]}
-            />
-          )}
-        </section>
-
-        <section className={`card${dashboard?.energy?.hasDeficit ? ' card-warning' : ''}`}>
-          <h2>Energie</h2>
-          {!dashboard?.energy ? (
-            <KeyValuePanel entries={[['Status', '—']]} />
-          ) : (
-            <KeyValuePanel
-              entries={[
-                ['Erzeugung', formatEnergy(dashboard.energy.generation)],
-                ['Verbrauch', formatEnergy(dashboard.energy.consumption)],
-                [
-                  'Reserve',
-                  formatEnergy(dashboard.energy.reserve),
-                  dashboard.energy.reserve < 0 ? 'kv-value-error' : 'kv-value-success',
-                ],
-                [
-                  'Netz',
-                  dashboard.energy.usesBaselineGrid ? 'Öffentliches Netz (30 MW)' : 'Eigenversorgung',
-                ],
-                [
-                  'Status',
-                  dashboard.energy.hasDeficit ? 'Defizit' : 'Stabil',
-                  dashboard.energy.hasDeficit ? 'kv-value-warning' : 'kv-value-success',
-                ],
-              ]}
-            />
-          )}
-        </section>
-
-        <section className="card">
-          <h2>Inventar (Standort)</h2>
-          <p className="panel-hint">Material direkt an Produktionsgebäuden — bereit für sofortige Nutzung.</p>
-          <div className="table-wrap">
-            {!dashboard?.inventory ? (
-              <p className="empty">Inventar erscheint nach Spielstart.</p>
-            ) : (
-              <DataTable
-                columns={[
-                  { key: 'resourceId', label: 'Resource' },
-                  { key: 'quantity', label: 'Qty' },
-                  { key: 'reserved', label: 'Reserved' },
-                  { key: 'available', label: 'Available' },
-                ]}
-                rows={dashboard.inventory.items.map((item) => ({
-                  resourceId: labelResource(item.resourceId),
-                  quantity: item.quantity,
-                  reserved: item.reserved,
-                  available: item.available,
-                }))}
-                emptyText="Am Standort ist kein Material."
-              />
-            )}
+          <div className="status-bar">
+            <LogisticsBanner message={dashboard?.logistics?.statusMessage ?? null} />
+            <Toast message={statusMessage} tone={statusTone} />
           </div>
-        </section>
 
-        <section className="card">
-          <h2>Lagerhaus</h2>
-          <p className="panel-hint">Marktkäufe landen hier. Transport bringt Material zum Produktionsstandort.</p>
-          <div className="table-wrap">
-            {!dashboard?.company ? (
-              <p className="empty">Kein Lagerhaus aktiv.</p>
-            ) : (dashboard.warehouseStorage ?? []).length === 0 ? (
-              <p className="empty">Kein Lagerhaus aktiv oder Lager leer.</p>
-            ) : (
-              (dashboard.warehouseStorage ?? []).map((storage) => (
-                <div key={storage.buildingId} className="warehouse-block">
-                  <h3 className="warehouse-name">{storage.buildingName}</h3>
+          {hasGame ? <OverviewStrip dashboard={dashboard} /> : null}
+
+          <div className="dashboard-panels">
+            <div className="dashboard-tables">
+              {isInitialLoading ? (
+                <>
+                  <section className="card card-loading">
+                    <div className="skeleton-block" style={{ width: '40%' }} />
+                    <div className="skeleton-block" style={{ width: '70%', marginTop: '0.75rem' }} />
+                  </section>
+                  <section className="card card-loading">
+                    <div className="skeleton-block" style={{ width: '55%' }} />
+                  </section>
+                </>
+              ) : (
+                <>
+                  <section className="card">
+                    <div className="section-header">
+                      <h2>Gebäude</h2>
+                      <p>Alle Standorte, Baufortschritt und Status.</p>
+                    </div>
+                    <div className="table-wrap">
+                      {!dashboard?.company ? (
+                        <p className="empty-state">
+                          <strong>Noch keine Gebäude.</strong>
+                          Nutzen Sie die Aktionen in der Seitenleiste, um ein Gebäude zu platzieren.
+                        </p>
+                      ) : (
+                        <DataTable
+                          columns={[
+                            { key: 'name', label: 'Name' },
+                            { key: 'buildingTypeId', label: 'Typ' },
+                            { key: 'status', label: 'Status' },
+                            { key: 'position', label: 'Pos' },
+                          ]}
+                          rows={dashboard.buildings.map((building) => ({
+                            name: building.name,
+                            buildingTypeId: labelBuilding(building.buildingTypeId),
+                            status: building.status,
+                            position: `${building.x}, ${building.y}`,
+                          }))}
+                          emptyText="Noch keine Gebäude."
+                          emptyHint="Platzieren Sie über die Seitenleiste Ihr erstes Gebäude."
+                          renderCell={(key, row) => {
+                            if (key !== 'status') {
+                              return row[key];
+                            }
+
+                            const building = dashboard.buildings.find(
+                              (entry) => entry.name === row.name && entry.status === row.status,
+                            );
+
+                            return building ? <ConstructionStatus building={building} /> : row.status;
+                          }}
+                        />
+                      )}
+                    </div>
+                  </section>
+
+                  <div className="table-grid">
+                    <section className="card">
+                      <div className="section-header">
+                        <h2>Produktion</h2>
+                        <p>Laufende und wartende Fertigungsaufträge.</p>
+                      </div>
+                      <div className="table-wrap">
+                        {!dashboard?.company ? (
+                          <p className="empty-state">
+                            <strong>Keine laufende Produktion.</strong>
+                            Starten Sie einen Auftrag über die Seitenleiste.
+                          </p>
+                        ) : (
+                          <DataTable
+                            columns={[
+                              { key: 'recipeId', label: 'Rezept' },
+                              { key: 'buildingId', label: 'Gebäude' },
+                              { key: 'status', label: 'Status' },
+                              { key: 'progress', label: 'Fortschritt', numeric: true },
+                            ]}
+                            rows={dashboard.productionJobs.map((job) => ({
+                              recipeId: labelRecipe(job.recipeId),
+                              buildingId: job.buildingId,
+                              status: formatProductionStatus(job.status, job.awaitingTransport),
+                              progress: formatProgress(job.progress),
+                            }))}
+                            emptyText="Keine laufende Produktion."
+                            emptyHint="Bauen Sie eine Fabrik und starten Sie ein Rezept."
+                          />
+                        )}
+                      </div>
+                    </section>
+
+                    <section className="card">
+                      <div className="section-header">
+                        <h2>Forschung</h2>
+                        <p>Aktive Technologieprojekte und abgeschlossene Forschung.</p>
+                      </div>
+                      <div className="table-wrap">
+                        {!dashboard?.company ? (
+                          <p className="empty-state">
+                            <strong>Keine laufende Forschung.</strong>
+                            Starten Sie ein Projekt in der Seitenleiste.
+                          </p>
+                        ) : (
+                          <>
+                            {dashboard.completedResearch.length > 0 ? (
+                              <p className="research-done">
+                                Abgeschlossen:{' '}
+                                {dashboard.completedResearch.map(labelTechnology).join(', ')}
+                              </p>
+                            ) : null}
+                            <DataTable
+                              columns={[
+                                { key: 'technologyId', label: 'Technologie' },
+                                { key: 'status', label: 'Status' },
+                                { key: 'progress', label: 'Fortschritt', numeric: true },
+                              ]}
+                              rows={dashboard.researchJobs.map((job) => ({
+                                technologyId: labelTechnology(job.technologyId),
+                                status: job.status,
+                                progress: formatProgress(job.progress),
+                              }))}
+                              emptyText="Keine laufende Forschung."
+                              emptyHint="Erforschen Sie neue Technologien für bessere Produktion."
+                            />
+                          </>
+                        )}
+                      </div>
+                    </section>
+                  </div>
+
+                  <section className="card">
+                    <div className="section-header">
+                      <h2>Transport &amp; Logistik</h2>
+                      <p>
+                        Interner Transport vom Lagerhaus zum Produktionsgebäude (~5 Ticks). Produktion
+                        startet nach Ankunft aller Lieferungen.
+                      </p>
+                    </div>
+                    <div className="table-wrap">
+                      {!dashboard?.company ? (
+                        <p className="empty-state">
+                          <strong>Keine aktiven Transporte.</strong>
+                          Kaufen Sie Material am Markt — es landet im Lagerhaus.
+                        </p>
+                      ) : (
+                        <DataTable
+                          columns={[
+                            { key: 'resourceId', label: 'Ressource' },
+                            { key: 'amount', label: 'Menge', numeric: true },
+                            { key: 'route', label: 'Route' },
+                            { key: 'recipeName', label: 'Produktion' },
+                            { key: 'status', label: 'Status' },
+                            { key: 'progress', label: 'Fortschritt', numeric: true },
+                          ]}
+                          rows={(dashboard.transportOrders ?? []).map((order) => ({
+                            resourceId: labelResource(order.resourceId),
+                            amount: order.amount,
+                            route: `${order.sourceBuildingName} → ${order.destinationBuildingName}`,
+                            recipeName: order.recipeName ?? '—',
+                            status: order.status,
+                            progress: formatProgress(order.progress),
+                          }))}
+                          emptyText="Keine aktiven Transporte."
+                          emptyHint="Material am Standort oder Lager leer — Marktkäufe lösen Transport aus."
+                        />
+                      )}
+                    </div>
+                  </section>
+
+                  <div className="table-grid">
+                    <section className="card">
+                      <div className="section-header">
+                        <h2>Inventar (Standort)</h2>
+                        <p>Material direkt an Produktionsgebäuden — bereit für sofortige Nutzung.</p>
+                      </div>
+                      <div className="table-wrap">
+                        {!dashboard?.inventory ? (
+                          <p className="empty-state">
+                            <strong>Inventar erscheint nach Spielstart.</strong>
+                          </p>
+                        ) : (
+                          <DataTable
+                            columns={[
+                              { key: 'resourceId', label: 'Ressource' },
+                              { key: 'quantity', label: 'Menge', numeric: true },
+                              { key: 'reserved', label: 'Reserviert', numeric: true },
+                              { key: 'available', label: 'Verfügbar', numeric: true },
+                            ]}
+                            rows={dashboard.inventory.items.map((item) => ({
+                              resourceId: labelResource(item.resourceId),
+                              quantity: item.quantity,
+                              reserved: item.reserved,
+                              available: item.available,
+                            }))}
+                            emptyText="Am Standort ist kein Material."
+                            emptyHint="Produzieren oder transportieren Sie Ressourcen zum Standort."
+                          />
+                        )}
+                      </div>
+                    </section>
+
+                    <section className="card">
+                      <div className="section-header">
+                        <h2>Lagerhaus</h2>
+                        <p>Marktkäufe landen hier. Transport bringt Material zum Produktionsstandort.</p>
+                      </div>
+                      <div className="table-wrap">
+                        {!dashboard?.company ? (
+                          <p className="empty-state">
+                            <strong>Kein Lagerhaus aktiv.</strong>
+                            Bauen Sie ein Lagerhaus, um Marktkäufe zu lagern.
+                          </p>
+                        ) : (dashboard.warehouseStorage ?? []).length === 0 ? (
+                          <p className="empty-state">
+                            <strong>Kein Lagerhaus aktiv oder Lager leer.</strong>
+                            Kaufen Sie Ressourcen am Markt.
+                          </p>
+                        ) : (
+                          (dashboard.warehouseStorage ?? []).map((storage) => (
+                            <div key={storage.buildingId} className="warehouse-block">
+                              <h3 className="warehouse-name">{storage.buildingName}</h3>
+                              <DataTable
+                                columns={[
+                                  { key: 'resourceId', label: 'Ressource' },
+                                  { key: 'quantity', label: 'Menge', numeric: true },
+                                  { key: 'reserved', label: 'Reserviert', numeric: true },
+                                  { key: 'available', label: 'Verfügbar', numeric: true },
+                                ]}
+                                rows={storage.items.map((item) => ({
+                                  resourceId: labelResource(item.resourceId),
+                                  quantity: item.quantity,
+                                  reserved: item.reserved,
+                                  available: item.available,
+                                }))}
+                                emptyText="Lager ist leer."
+                              />
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </section>
+                  </div>
+                </>
+              )}
+            </div>
+
+            <aside className="dashboard-detail" aria-label="Detailinformationen">
+              <section className="card detail-card">
+                <h2>Firma</h2>
+                {!dashboard?.company ? (
+                  <KeyValuePanel entries={[['Status', 'Kein aktives Spiel']]} />
+                ) : (
+                  <KeyValuePanel
+                    entries={[
+                      ['Name', dashboard.company.name],
+                      ['ID', dashboard.company.id],
+                      ['Owner', dashboard.company.ownerId],
+                      ['Status', dashboard.company.status],
+                    ]}
+                  />
+                )}
+              </section>
+
+              <section className="card detail-card">
+                <h2>Finanzen</h2>
+                {!dashboard?.finance ? (
+                  <KeyValuePanel entries={[['Status', '—']]} />
+                ) : (
+                  <KeyValuePanel
+                    entries={[
+                      ['Cash', `${dashboard.finance.cashBalance.toLocaleString('de-DE')} GC`],
+                      ['Reserviert', `${dashboard.finance.reservedCash.toLocaleString('de-DE')} GC`],
+                      ['Verfügbar', `${dashboard.finance.availableCash.toLocaleString('de-DE')} GC`],
+                    ]}
+                  />
+                )}
+              </section>
+
+              <section
+                className={`card detail-card${dashboard?.energy?.hasDeficit ? ' card-warning' : ''}`}
+              >
+                <h2>Energie</h2>
+                {!dashboard?.energy ? (
+                  <KeyValuePanel entries={[['Status', '—']]} />
+                ) : (
+                  <KeyValuePanel
+                    entries={[
+                      ['Erzeugung', formatEnergy(dashboard.energy.generation)],
+                      ['Verbrauch', formatEnergy(dashboard.energy.consumption)],
+                      [
+                        'Reserve',
+                        formatEnergy(dashboard.energy.reserve),
+                        dashboard.energy.reserve < 0 ? 'kv-value-error' : 'kv-value-success',
+                      ],
+                      [
+                        'Netz',
+                        dashboard.energy.usesBaselineGrid
+                          ? 'Öffentliches Netz (30 MW)'
+                          : 'Eigenversorgung',
+                      ],
+                      [
+                        'Status',
+                        dashboard.energy.hasDeficit ? 'Defizit' : 'Stabil',
+                        dashboard.energy.hasDeficit ? 'kv-value-warning' : 'kv-value-success',
+                      ],
+                    ]}
+                  />
+                )}
+              </section>
+
+              <section className="card detail-card">
+                <h2>Marktpreise</h2>
+                <div className="table-wrap">
                   <DataTable
                     columns={[
-                      { key: 'resourceId', label: 'Resource' },
-                      { key: 'quantity', label: 'Qty' },
-                      { key: 'reserved', label: 'Reserved' },
-                      { key: 'available', label: 'Available' },
+                      { key: 'resourceId', label: 'Ressource' },
+                      { key: 'lastPrice', label: 'Preis', numeric: true },
+                      { key: 'tradeVolume', label: 'Volumen', numeric: true },
                     ]}
-                    rows={storage.items.map((item) => ({
-                      resourceId: labelResource(item.resourceId),
-                      quantity: item.quantity,
-                      reserved: item.reserved,
-                      available: item.available,
+                    rows={(dashboard?.marketPrices ?? []).map((price) => ({
+                      resourceId: labelResource(price.resourceId),
+                      lastPrice: price.lastPrice,
+                      tradeVolume: price.tradeVolume,
                     }))}
-                    emptyText="Lager ist leer."
+                    emptyText="Keine Marktpreise geladen."
                   />
                 </div>
-              ))
-            )}
+              </section>
+
+              <section className="card detail-card">
+                <h2>Meilensteine</h2>
+                <ul className="milestone-list">
+                  {(dashboard?.milestones ?? []).length === 0 ? (
+                    <li className="empty milestone-empty">Noch keine Meilensteine geladen.</li>
+                  ) : (
+                    dashboard?.milestones.map((milestone) => (
+                      <li
+                        key={milestone.id}
+                        className={milestone.completed ? 'milestone-done' : 'milestone-pending'}
+                      >
+                        <span className="milestone-name">{milestone.name}</span>
+                        <span className="milestone-id">{milestone.id}</span>
+                      </li>
+                    ))
+                  )}
+                </ul>
+              </section>
+            </aside>
           </div>
-        </section>
-
-        <section className="card span-2">
-          <h2>Gebäude</h2>
-          <div className="table-wrap">
-            {!dashboard?.company ? (
-              <p className="empty">Noch keine Gebäude.</p>
-            ) : (
-              <DataTable
-                columns={[
-                  { key: 'name', label: 'Name' },
-                  { key: 'buildingTypeId', label: 'Type' },
-                  { key: 'status', label: 'Status' },
-                  { key: 'position', label: 'Pos' },
-                ]}
-                rows={dashboard.buildings.map((building) => ({
-                  name: building.name,
-                  buildingTypeId: labelBuilding(building.buildingTypeId),
-                  status: building.status,
-                  position: `${building.x}, ${building.y}`,
-                }))}
-                emptyText="Noch keine Gebäude."
-                renderCell={(key, row) => {
-                  if (key !== 'status') {
-                    return row[key];
-                  }
-
-                  const building = dashboard.buildings.find(
-                    (entry) => entry.name === row.name && entry.status === row.status,
-                  );
-
-                  return building ? <ConstructionStatus building={building} /> : row.status;
-                }}
-              />
-            )}
-          </div>
-        </section>
-
-        <section className="card">
-          <h2>Produktion</h2>
-          <div className="table-wrap">
-            {!dashboard?.company ? (
-              <p className="empty">Keine laufende Produktion.</p>
-            ) : (
-              <DataTable
-                columns={[
-                  { key: 'recipeId', label: 'Recipe' },
-                  { key: 'buildingId', label: 'Building' },
-                  { key: 'status', label: 'Status' },
-                  { key: 'progress', label: 'Progress' },
-                ]}
-                rows={dashboard.productionJobs.map((job) => ({
-                  recipeId: labelRecipe(job.recipeId),
-                  buildingId: job.buildingId,
-                  status: formatProductionStatus(job.status, job.awaitingTransport),
-                  progress: formatProgress(job.progress),
-                }))}
-                emptyText="Keine laufende Produktion."
-              />
-            )}
-          </div>
-        </section>
-
-        <section className="card span-2">
-          <h2>Transport & Logistik</h2>
-          <p className="panel-hint">
-            Interner Transport vom Lagerhaus zum Produktionsgebäude (~5 Ticks). Produktion startet nach
-            Ankunft aller Lieferungen.
-          </p>
-          <div className="table-wrap">
-            {!dashboard?.company ? (
-              <p className="empty">Keine aktiven Transporte.</p>
-            ) : (
-              <DataTable
-                columns={[
-                  { key: 'resourceId', label: 'Resource' },
-                  { key: 'amount', label: 'Menge' },
-                  { key: 'route', label: 'Route' },
-                  { key: 'recipeName', label: 'Produktion' },
-                  { key: 'status', label: 'Status' },
-                  { key: 'progress', label: 'Progress' },
-                ]}
-                rows={(dashboard.transportOrders ?? []).map((order) => ({
-                  resourceId: labelResource(order.resourceId),
-                  amount: order.amount,
-                  route: `${order.sourceBuildingName} → ${order.destinationBuildingName}`,
-                  recipeName: order.recipeName ?? '—',
-                  status: order.status,
-                  progress: formatProgress(order.progress),
-                }))}
-                emptyText="Keine aktiven Transporte — Material am Standort oder Lager leer."
-              />
-            )}
-          </div>
-        </section>
-
-        <section className="card">
-          <h2>Forschung</h2>
-          <div className="table-wrap">
-            {!dashboard?.company ? (
-              <p className="empty">Keine laufende Forschung.</p>
-            ) : (
-              <>
-                {dashboard.completedResearch.length > 0 ? (
-                  <p className="research-done">
-                    Abgeschlossen:{' '}
-                    {dashboard.completedResearch.map(labelTechnology).join(', ')}
-                  </p>
-                ) : null}
-                <DataTable
-                  columns={[
-                    { key: 'technologyId', label: 'Technology' },
-                    { key: 'status', label: 'Status' },
-                    { key: 'progress', label: 'Progress' },
-                  ]}
-                  rows={dashboard.researchJobs.map((job) => ({
-                    technologyId: labelTechnology(job.technologyId),
-                    status: job.status,
-                    progress: formatProgress(job.progress),
-                  }))}
-                  emptyText="Keine laufende Forschung."
-                />
-              </>
-            )}
-          </div>
-        </section>
-
-        <section className="card">
-          <h2>Marktpreise</h2>
-          <div className="table-wrap">
-            <DataTable
-              columns={[
-                { key: 'resourceId', label: 'Resource' },
-                { key: 'lastPrice', label: 'Price' },
-                { key: 'tradeVolume', label: 'Volume' },
-              ]}
-              rows={(dashboard?.marketPrices ?? []).map((price) => ({
-                resourceId: labelResource(price.resourceId),
-                lastPrice: price.lastPrice,
-                tradeVolume: price.tradeVolume,
-              }))}
-              emptyText="Keine Marktpreise geladen."
-            />
-          </div>
-        </section>
-
-        <section className="card span-2">
-          <h2>Meilensteine</h2>
-          <ul className="milestone-list">
-            {(dashboard?.milestones ?? []).length === 0 ? (
-              <li className="empty milestone-empty">Noch keine Meilensteine geladen.</li>
-            ) : (
-              dashboard?.milestones.map((milestone) => (
-                <li
-                  key={milestone.id}
-                  className={milestone.completed ? 'milestone-done' : 'milestone-pending'}
-                >
-                  <span className="milestone-name">{milestone.name}</span>
-                  <span className="milestone-id">{milestone.id}</span>
-                </li>
-              ))
-            )}
-          </ul>
-        </section>
-          </>
-        )}
-      </main>
+        </div>
+      </div>
     </div>
   );
 }
