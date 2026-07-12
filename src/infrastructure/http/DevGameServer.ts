@@ -147,6 +147,56 @@ export class DevGameServer {
       return;
     }
 
+    if (request.method === 'POST' && pathname === '/api/production/start') {
+      const body = await this.#readJson<{
+        readonly buildingId?: string;
+        readonly recipeId?: string;
+      }>(request);
+
+      if (body?.buildingId === undefined || body.recipeId === undefined) {
+        this.#sendJson(response, 400, { error: 'Missing production start fields.' });
+        return;
+      }
+
+      this.#respondWithResult(
+        response,
+        this.#session.startProduction({
+          buildingId: body.buildingId,
+          recipeId: body.recipeId,
+        }),
+      );
+      return;
+    }
+
+    if (request.method === 'POST' && pathname === '/api/research/start') {
+      const body = await this.#readJson<{
+        readonly technologyId?: string;
+      }>(request);
+
+      if (body?.technologyId === undefined) {
+        this.#sendJson(response, 400, { error: 'Missing research start fields.' });
+        return;
+      }
+
+      this.#respondWithResult(
+        response,
+        this.#session.startResearch({
+          technologyId: body.technologyId,
+        }),
+      );
+      return;
+    }
+
+    if (request.method === 'POST' && pathname === '/api/session/save') {
+      await this.#respondWithAsyncResult(response, this.#session.saveGame());
+      return;
+    }
+
+    if (request.method === 'POST' && pathname === '/api/session/load') {
+      await this.#respondWithAsyncResult(response, this.#session.loadGame());
+      return;
+    }
+
     this.#sendJson(response, 404, { error: 'Route not found.' });
   }
 
@@ -202,6 +252,16 @@ export class DevGameServer {
     }
 
     this.#sendJson(response, 400, { ok: false, error: result.error.message });
+  }
+
+  async #respondWithAsyncResult<T>(
+    response: ServerResponse,
+    resultPromise: Promise<
+      { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: ValidationError }
+    >,
+  ): Promise<void> {
+    const result = await resultPromise;
+    this.#respondWithResult(response, result);
   }
 
   #sendJson(response: ServerResponse, statusCode: number, payload: unknown): void {

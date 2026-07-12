@@ -70,5 +70,7 @@ function mapBuilding(building: Building): BuildingReadModel {
     level: building.getLevel(),
     createdAt: building.getCreatedAt(),
     status: building.getStatus(),
+    constructionProgress: building.getConstructionProgress(),
+    constructionDuration: building.getConstructionDuration(),
   });
 }

@@ -32,7 +32,7 @@ Update this document whenever a meaningful implementation milestone is completed
 | Application layer | Partial (bootstrap, use cases, queries) |
 | UI | Partial (browser dev shell) |
 
-**Tests:** 264 (run `pnpm test` for current count)
+**Tests:** 266 (run `pnpm test` for current count)
 
 ---
 
@@ -591,6 +591,22 @@ Coordinates use cases between domain, infrastructure and simulation.
 - `pnpm dev` starts `DevGameServer` on `http://127.0.0.1:3000`.
 - Browser UI calls JSON routes under `/api/*`; no direct domain access.
 - `GameSession` coordinates bootstrap, use cases and query handlers for the dashboard shell.
+- Shell actions: new game, simulation tick, place sawmill/warehouse, start production, start research, market sell, save/load.
+- Dashboard shows construction progress, milestone catalog, production/research jobs and action availability hints.
+
+**API routes:**
+
+| Method | Path | Action |
+|---|---|---|
+| GET | `/api/dashboard` | Aggregated session snapshot |
+| POST | `/api/session/new` | Start new game |
+| POST | `/api/session/save` | Persist to `saves/browser-session.json` |
+| POST | `/api/session/load` | Restore from save file |
+| POST | `/api/simulation/tick` | Advance one tick |
+| POST | `/api/buildings/place` | Place building |
+| POST | `/api/production/start` | Start recipe on building |
+| POST | `/api/research/start` | Start technology research |
+| POST | `/api/market/sell` | Sell resources |
 
 ---
 
@@ -657,7 +673,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 | Simulation / Systems | `createDefaultSimulationSystems.test.ts` | Default pipeline order |
 | Infrastructure / Company repo | `InMemoryCompanyRepository.test.ts` | Save, find, ordering |
 | Infrastructure / Building repo | `InMemoryBuildingRepository.test.ts` | Save, find by company, under construction |
-| Application / GameSession | `GameSession.test.ts` | Dashboard facade, building placement |
+| Application / GameSession | `GameSession.test.ts` | Dashboard facade, building placement, production, save/load round-trip |
 | Application / Bootstrap | `bootstrapApplication.test.ts` | Content load, wiring |
 | Application / CreateCompany | `CreateCompanyUseCase.test.ts` | Create, events, duplicates |
 | Application / PlaceBuilding | `PlaceBuildingUseCase.test.ts` | Place, construction time, cost debit, events, validation |

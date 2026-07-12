@@ -15,4 +15,6 @@ export type BuildingReadModel = {
   readonly level: number;
   readonly createdAt: number;
   readonly status: string;
+  readonly constructionProgress: number;
+  readonly constructionDuration: number;
 };

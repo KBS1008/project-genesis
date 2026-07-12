@@ -13,9 +13,10 @@ const currentDirectory = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(currentDirectory, '../..');
 const gameContentRoot = path.join(projectRoot, 'game-content');
 const webRoot = path.join(currentDirectory, 'web');
+const savePath = path.join(projectRoot, 'saves', 'browser-session.json');
 
 async function main(): Promise<void> {
-  const sessionResult = await GameSession.create({ gameContentRoot });
+  const sessionResult = await GameSession.create({ gameContentRoot, savePath });
 
   if (!sessionResult.ok) {
     console.error(`Failed to bootstrap game session: ${sessionResult.error.message}`);

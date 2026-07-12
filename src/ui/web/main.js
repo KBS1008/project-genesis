@@ -5,8 +5,25 @@ const companyPanel = document.querySelector('#company-panel');
 const financePanel = document.querySelector('#finance-panel');
 const inventoryPanel = document.querySelector('#inventory-panel');
 const buildingsPanel = document.querySelector('#buildings-panel');
+const productionPanel = document.querySelector('#production-panel');
+const researchPanel = document.querySelector('#research-panel');
 const marketPanel = document.querySelector('#market-panel');
 const milestonesPanel = document.querySelector('#milestones-panel');
+
+const actionButtons = {
+  save: document.querySelector('#save-btn'),
+  load: document.querySelector('#load-btn'),
+  tick: document.querySelector('#tick-btn'),
+  placeSawmill: document.querySelector('#place-sawmill-btn'),
+  placeWarehouse: document.querySelector('#place-warehouse-btn'),
+  startPlanks: document.querySelector('#start-planks-btn'),
+  startAdvancedPlanks: document.querySelector('#start-advanced-planks-btn'),
+  sellWood: document.querySelector('#sell-wood-btn'),
+  startWoodworking: document.querySelector('#start-woodworking-btn'),
+};
+
+/** @type {import('../../application/facade/GameSessionDashboard.js').GameSessionDashboard | null} */
+let latestDashboard = null;
 
 async function api(path, options = undefined) {
   const response = await fetch(path, {
@@ -55,7 +72,7 @@ function renderTable(container, columns, rows, emptyText) {
           .map(
             (row) => `
               <tr>
-                ${columns.map((column) => `<td>${row[column.key]}</td>`).join('')}
+                ${columns.map((column) => `<td>${row[column.key] ?? ''}</td>`).join('')}
               </tr>
             `,
           )
@@ -65,7 +82,48 @@ function renderTable(container, columns, rows, emptyText) {
   `;
 }
 
+function formatProgress(progress) {
+  return `${Math.round(progress)}%`;
+}
+
+function renderConstructionCell(building) {
+  if (building.status !== 'UNDER_CONSTRUCTION') {
+    return building.status;
+  }
+
+  return `
+    <div class="progress-cell">
+      <span>${building.status}</span>
+      <div class="progress-bar" aria-hidden="true">
+        <div class="progress-fill" style="width: ${Math.round(building.constructionProgress)}%"></div>
+      </div>
+      <span class="progress-label">${formatProgress(building.constructionProgress)}</span>
+    </div>
+  `;
+}
+
+function findActiveSawmill(buildings) {
+  return buildings.find(
+    (building) => building.buildingTypeId === 'sawmill' && building.status === 'ACTIVE',
+  );
+}
+
+function updateActionButtons(dashboard) {
+  const hasGame = Boolean(dashboard.company);
+  const actions = dashboard.availableActions ?? {};
+
+  actionButtons.save.disabled = !hasGame;
+  actionButtons.tick.disabled = !hasGame;
+  actionButtons.placeSawmill.disabled = !hasGame;
+  actionButtons.placeWarehouse.disabled = !hasGame || !actions.canPlaceWarehouse;
+  actionButtons.startPlanks.disabled = !hasGame || !actions.canStartPlanksProduction;
+  actionButtons.startAdvancedPlanks.disabled = !hasGame || !actions.canStartAdvancedPlanksProduction;
+  actionButtons.sellWood.disabled = !hasGame;
+  actionButtons.startWoodworking.disabled = !hasGame || !actions.canStartWoodworkingResearch;
+}
+
 function renderDashboard(dashboard) {
+  latestDashboard = dashboard;
   tickLabel.textContent = `Tick ${dashboard.tickNumber}`;
   timeLabel.textContent = `Time ${dashboard.simulationTime}`;
 
@@ -74,6 +132,8 @@ function renderDashboard(dashboard) {
     renderKeyValues(financePanel, [['Status', '—']]);
     inventoryPanel.innerHTML = '<p class="empty">Inventar erscheint nach Spielstart.</p>';
     buildingsPanel.innerHTML = '<p class="empty">Noch keine Gebäude.</p>';
+    productionPanel.innerHTML = '<p class="empty">Keine laufende Produktion.</p>';
+    researchPanel.innerHTML = '<p class="empty">Keine laufende Forschung.</p>';
   } else {
     renderKeyValues(companyPanel, [
       ['Name', dashboard.company.name],
@@ -105,17 +165,56 @@ function renderDashboard(dashboard) {
       [
         { key: 'name', label: 'Name' },
         { key: 'buildingTypeId', label: 'Type' },
-        { key: 'status', label: 'Status' },
+        { key: 'statusCell', label: 'Status' },
         { key: 'position', label: 'Pos' },
       ],
       dashboard.buildings.map((building) => ({
         name: building.name,
         buildingTypeId: building.buildingTypeId,
-        status: building.status,
+        statusCell: renderConstructionCell(building),
         position: `${building.x}, ${building.y}`,
       })),
       'Noch keine Gebäude.',
     );
+
+    renderTable(
+      productionPanel,
+      [
+        { key: 'recipeId', label: 'Recipe' },
+        { key: 'buildingId', label: 'Building' },
+        { key: 'status', label: 'Status' },
+        { key: 'progress', label: 'Progress' },
+      ],
+      dashboard.productionJobs.map((job) => ({
+        recipeId: job.recipeId,
+        buildingId: job.buildingId,
+        status: job.status,
+        progress: formatProgress(job.progress),
+      })),
+      'Keine laufende Produktion.',
+    );
+
+    if (dashboard.researchJobs.length === 0) {
+      researchPanel.innerHTML =
+        dashboard.completedResearch.length > 0
+          ? `<p class="empty">Abgeschlossen: ${dashboard.completedResearch.join(', ')}</p>`
+          : '<p class="empty">Keine laufende Forschung.</p>';
+    } else {
+      renderTable(
+        researchPanel,
+        [
+          { key: 'technologyId', label: 'Technology' },
+          { key: 'status', label: 'Status' },
+          { key: 'progress', label: 'Progress' },
+        ],
+        dashboard.researchJobs.map((job) => ({
+          technologyId: job.technologyId,
+          status: job.status,
+          progress: formatProgress(job.progress),
+        })),
+        'Keine laufende Forschung.',
+      );
+    }
   }
 
   renderTable(
@@ -129,10 +228,23 @@ function renderDashboard(dashboard) {
     'Keine Marktpreise geladen.',
   );
 
+  const milestones = dashboard.milestones ?? [];
+
   milestonesPanel.innerHTML =
-    dashboard.completedMilestones.length === 0
-      ? '<li class="empty" style="list-style:none;border:none;color:var(--muted)">Noch keine Meilensteine.</li>'
-      : dashboard.completedMilestones.map((milestone) => `<li>${milestone}</li>`).join('');
+    milestones.length === 0
+      ? '<li class="empty milestone-empty">Noch keine Meilensteine geladen.</li>'
+      : milestones
+          .map(
+            (milestone) => `
+              <li class="${milestone.completed ? 'milestone-done' : 'milestone-pending'}">
+                <span class="milestone-name">${milestone.name}</span>
+                <span class="milestone-id">${milestone.id}</span>
+              </li>
+            `,
+          )
+          .join('');
+
+  updateActionButtons(dashboard);
 }
 
 async function refreshDashboard() {
@@ -151,11 +263,29 @@ async function runAction(action, successMessage) {
   }
 }
 
+function requireActiveSawmill() {
+  const sawmill = findActiveSawmill(latestDashboard?.buildings ?? []);
+
+  if (sawmill === undefined) {
+    throw new Error('Kein aktives Sägewerk verfügbar. Bau abschließen und Ticks ausführen.');
+  }
+
+  return sawmill.id;
+}
+
 document.querySelector('#new-game-btn').addEventListener('click', () => {
   void runAction(
     () => api('/api/session/new', { method: 'POST', body: JSON.stringify({ name: 'Genesis Industries' }) }),
     'Neues Spiel gestartet.',
   );
+});
+
+document.querySelector('#save-btn').addEventListener('click', () => {
+  void runAction(() => api('/api/session/save', { method: 'POST', body: '{}' }), 'Spielstand gespeichert.');
+});
+
+document.querySelector('#load-btn').addEventListener('click', () => {
+  void runAction(() => api('/api/session/load', { method: 'POST', body: '{}' }), 'Spielstand geladen.');
 });
 
 document.querySelector('#tick-btn').addEventListener('click', () => {
@@ -178,6 +308,42 @@ document.querySelector('#place-sawmill-btn').addEventListener('click', () => {
   );
 });
 
+document.querySelector('#place-warehouse-btn').addEventListener('click', () => {
+  void runAction(
+    () =>
+      api('/api/buildings/place', {
+        method: 'POST',
+        body: JSON.stringify({
+          buildingTypeId: 'warehouse',
+          name: 'Main Warehouse',
+          x: 2,
+          y: 0,
+        }),
+      }),
+    'Lager in Bau gegeben.',
+  );
+});
+
+document.querySelector('#start-planks-btn').addEventListener('click', () => {
+  void runAction(async () => {
+    const buildingId = requireActiveSawmill();
+    await api('/api/production/start', {
+      method: 'POST',
+      body: JSON.stringify({ buildingId, recipeId: 'recipe_planks' }),
+    });
+  }, 'Bretter-Produktion gestartet.');
+});
+
+document.querySelector('#start-advanced-planks-btn').addEventListener('click', () => {
+  void runAction(async () => {
+    const buildingId = requireActiveSawmill();
+    await api('/api/production/start', {
+      method: 'POST',
+      body: JSON.stringify({ buildingId, recipeId: 'recipe_advanced_planks' }),
+    });
+  }, 'Premium-Bretter-Produktion gestartet.');
+});
+
 document.querySelector('#sell-wood-btn').addEventListener('click', () => {
   void runAction(
     () =>
@@ -186,6 +352,17 @@ document.querySelector('#sell-wood-btn').addEventListener('click', () => {
         body: JSON.stringify({ resourceId: 'wood', amount: 5 }),
       }),
     'Holz verkauft.',
+  );
+});
+
+document.querySelector('#start-woodworking-btn').addEventListener('click', () => {
+  void runAction(
+    () =>
+      api('/api/research/start', {
+        method: 'POST',
+        body: JSON.stringify({ technologyId: 'basic_woodworking' }),
+      }),
+    'Forschung „Holzbearbeitung“ gestartet.',
   );
 });
 
