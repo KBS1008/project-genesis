@@ -58,6 +58,11 @@ export class SimulationEngine {
     return this.#state;
   }
 
+  /** Returns whether domain events are still queued for the next tick. */
+  hasPendingEvents(): boolean {
+    return this.#eventQueue.size > 0;
+  }
+
   /**
    * Queues domain events for publication at the end of the next tick.
    *

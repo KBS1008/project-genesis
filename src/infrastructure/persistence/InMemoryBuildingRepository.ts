@@ -30,4 +30,12 @@ export class InMemoryBuildingRepository implements BuildingRepository {
         .sort((left, right) => left.getId().value.localeCompare(right.getId().value)),
     );
   }
+
+  findAll(): readonly Building[] {
+    return Object.freeze(
+      [...this.#buildings.values()].sort((left, right) =>
+        left.getId().value.localeCompare(right.getId().value),
+      ),
+    );
+  }
 }

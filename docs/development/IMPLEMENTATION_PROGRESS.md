@@ -28,11 +28,11 @@ Update this document whenever a meaningful implementation milestone is completed
 | Domain specifications & policies | Partial (foundation + first production/market rules) |
 | Content loaders | Partial (ResourceType, BuildingType, Recipe) |
 | Simulation | Partial (SimulationEngine, systems pipeline) |
-| Infrastructure | Partial (in-memory repositories) |
+| Infrastructure | Partial (in-memory repositories, JSON savegames) |
 | Application layer | Partial (bootstrap, use cases, queries) |
 | UI | Not started |
 
-**Tests:** 219 (run `pnpm test` for current count)
+**Tests:** 221 (run `pnpm test` for current count)
 
 ---
 
@@ -410,7 +410,11 @@ Coordinates use cases between domain, infrastructure and simulation.
 | `BuyResourceCommand` | `commands/BuyResourceCommand.ts` |
 | `StartProductionUseCase` | `use-cases/StartProductionUseCase.ts` |
 | `SellResourceUseCase` | `use-cases/SellResourceUseCase.ts` |
-| `BuyResourceUseCase` | `use-cases/BuyResourceUseCase.ts` |
+| `SaveGameCommand` | `commands/SaveGameCommand.ts` |
+| `LoadGameCommand` | `commands/LoadGameCommand.ts` |
+| `SaveGameUseCase` | `use-cases/SaveGameUseCase.ts` |
+| `LoadGameUseCase` | `use-cases/LoadGameUseCase.ts` |
+| `restoreApplicationFromSnapshot` | `bootstrap/restoreApplicationFromSnapshot.ts` |
 | `GetCompanyQueryHandler` | `queries/GetCompanyQueryHandler.ts` |
 | `ListBuildingsQueryHandler` | `queries/ListBuildingsQueryHandler.ts` |
 | `GetInventoryQueryHandler` | `queries/GetInventoryQueryHandler.ts` |
@@ -430,6 +434,8 @@ Coordinates use cases between domain, infrastructure and simulation.
 - Bootstrap seeds global market prices from resource `basePrice` via `MarketPriceSeeder`.
 - `MarketTradeService` executes instant buy/sell at `lastPrice`, updating inventory, finance and market trade volume.
 - Query handlers (`GetCompany`, `ListBuildings`, `GetInventory`, `GetFinance`, `GetMarketPrices`) read repository state and return immutable read models without mutating aggregates.
+- `SaveGameUseCase` serializes all aggregate repositories and simulation metadata into a versioned JSON snapshot; saves are rejected while domain events remain queued.
+- `LoadGameUseCase` reads a snapshot file and `restoreApplicationFromSnapshot` hydrates fresh in-memory repositories, clock and simulation engine state.
 
 ---
 
@@ -443,7 +449,10 @@ Coordinates use cases between domain, infrastructure and simulation.
 | `InMemoryProductionJobRepository` | `persistence/InMemoryProductionJobRepository.ts` |
 | `InMemoryFinanceRepository` | `persistence/InMemoryFinanceRepository.ts` |
 | `InMemoryMarketRepository` | `persistence/InMemoryMarketRepository.ts` |
-| Tests | `persistence/InMemory*.test.ts` |
+| `GameSaveSnapshotV1` | `persistence/savegame/GameSaveSnapshotV1.ts` |
+| `GameStateSerializer` | `persistence/savegame/GameStateSerializer.ts` |
+| `FileSavegameStore` | `persistence/savegame/FileSavegameStore.ts` |
+| Tests | `persistence/InMemory*.test.ts`, `use-cases/SaveGameUseCase.test.ts` |
 
 ---
 
@@ -516,6 +525,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 | Application / GetMarketPrices | `GetMarketPricesQueryHandler.test.ts` | Seeded prices, not initialized |
 | Application / MarketPriceSeeder | `MarketPriceSeeder.test.ts` | Bootstrap seed, idempotent |
 | Application / MarketTrade | `MarketTradeService.test.ts` | Instant buy/sell, insufficient stock/cash |
+| Application / SaveGame | `SaveGameUseCase.test.ts` | Snapshot round-trip, pending event guard |
 | Application / SellBuyResource | `MarketTradeUseCases.test.ts` | Use case validation, trade flow |
 | Infrastructure / Finance repo | `InMemoryFinanceRepository.test.ts` | Save, find by company |
 
@@ -524,7 +534,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 # Planned Next Steps
 
 1. Recipe reference validation for `requiredResearch` once research content exists
-2. Save/load game session persistence
+2. Research content foundation and eligibility specifications
 
 ---
 

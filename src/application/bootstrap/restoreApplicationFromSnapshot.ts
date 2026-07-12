@@ -1,0 +1,127 @@
+/**
+ * @module @application/bootstrap/restoreApplicationFromSnapshot
+ *
+ * Restores a running application session from a persisted save snapshot.
+ */
+
+import type { DomainEvent } from '../../common/events/DomainEvent.js';
+import { InMemoryEventBus } from '../../common/events/InMemoryEventBus.js';
+import { ValidationError } from '../../common/errors/ValidationError.js';
+import { Result } from '../../common/result/Result.js';
+import { ManualClock } from '../../common/time/ManualClock.js';
+import { ContentLoadError } from '../../content/errors/ContentLoadError.js';
+import { validateGameContent } from '../../content/validateGameContent.js';
+import { InMemoryBuildingRepository } from '../../infrastructure/persistence/InMemoryBuildingRepository.js';
+import { InMemoryCompanyRepository } from '../../infrastructure/persistence/InMemoryCompanyRepository.js';
+import { InMemoryFinanceRepository } from '../../infrastructure/persistence/InMemoryFinanceRepository.js';
+import { InMemoryInventoryRepository } from '../../infrastructure/persistence/InMemoryInventoryRepository.js';
+import { InMemoryMarketRepository } from '../../infrastructure/persistence/InMemoryMarketRepository.js';
+import { InMemoryProductionJobRepository } from '../../infrastructure/persistence/InMemoryProductionJobRepository.js';
+import { GameStateSerializer } from '../../infrastructure/persistence/savegame/GameStateSerializer.js';
+import type { GameSaveSnapshotV1 } from '../../infrastructure/persistence/savegame/GameSaveSnapshotV1.js';
+import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
+import { createDefaultSimulationSystems } from '../../simulation/systems/createDefaultSimulationSystems.js';
+import { MarketTradeService } from '../services/MarketTradeService.js';
+import { ProductionInventoryService } from '../services/ProductionInventoryService.js';
+import type { ApplicationContext } from './ApplicationContext.js';
+
+/** Options for restoring an application session. */
+export type RestoreApplicationOptions = {
+  readonly gameContentRoot: string;
+  readonly snapshot: GameSaveSnapshotV1;
+};
+
+/**
+ * Loads validated game content and hydrates repositories from a save snapshot.
+ */
+export async function restoreApplicationFromSnapshot(
+  options: RestoreApplicationOptions,
+): Promise<Result<ApplicationContext, ContentLoadError | ValidationError>> {
+  const contentResult = await validateGameContent(options.gameContentRoot);
+
+  if (!contentResult.ok) {
+    return Result.fail(contentResult.error);
+  }
+
+  const companyRepository = new InMemoryCompanyRepository();
+  const buildingRepository = new InMemoryBuildingRepository();
+  const inventoryRepository = new InMemoryInventoryRepository();
+  const financeRepository = new InMemoryFinanceRepository();
+  const marketRepository = new InMemoryMarketRepository();
+  const productionJobRepository = new InMemoryProductionJobRepository();
+  const serializer = new GameStateSerializer();
+
+  const hydrateResult = serializer.hydrate(options.snapshot, {
+    companyRepository,
+    buildingRepository,
+    inventoryRepository,
+    financeRepository,
+    marketRepository,
+    productionJobRepository,
+  });
+
+  if (!hydrateResult.ok) {
+    return Result.fail(hydrateResult.error);
+  }
+
+  const clock = new ManualClock(0);
+  const setClockResult = clock.set(hydrateResult.value.clockTime);
+
+  if (!setClockResult.ok) {
+    return Result.fail(setClockResult.error);
+  }
+
+  const eventBus = new InMemoryEventBus();
+  let simulationEngine: SimulationEngine;
+  const enqueueEvents = (events: readonly DomainEvent[]): void => {
+    simulationEngine.enqueueEvents(events);
+  };
+
+  const productionInventoryService = new ProductionInventoryService({
+    inventoryRepository,
+    recipes: contentResult.value.recipes,
+    clock,
+    enqueueEvents,
+  });
+
+  const marketTradeService = new MarketTradeService({
+    inventoryRepository,
+    financeRepository,
+    marketRepository,
+    clock,
+    enqueueEvents,
+  });
+
+  simulationEngine = new SimulationEngine({
+    clock,
+    eventBus,
+    tickDuration: hydrateResult.value.tickDuration,
+    initialState: hydrateResult.value.simulationState,
+    systems: createDefaultSimulationSystems({
+      companyRepository,
+      buildingRepository,
+      productionJobRepository,
+      financeRepository,
+      marketRepository,
+      enqueueEvents,
+      onProductionJobCompleted: (job) => {
+        productionInventoryService.completeJob(job);
+      },
+    }),
+  });
+
+  return Result.ok({
+    clock,
+    eventBus,
+    simulationEngine,
+    companyRepository,
+    buildingRepository,
+    inventoryRepository,
+    financeRepository,
+    marketRepository,
+    productionJobRepository,
+    productionInventoryService,
+    marketTradeService,
+    gameContent: contentResult.value,
+  });
+}

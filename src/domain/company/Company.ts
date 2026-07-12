@@ -36,26 +36,32 @@ export class Company extends AggregateRoot<'Company'> {
   readonly #foundedAt: number;
   readonly #status: CompanyStatus;
 
-  private constructor(params: {
-    id: CompanyId;
-    name: string;
-    ownerId: PlayerId;
-    foundedAt: number;
-  }) {
+  private constructor(
+    params: {
+      id: CompanyId;
+      name: string;
+      ownerId: PlayerId;
+      foundedAt: number;
+      status: CompanyStatus;
+    },
+    restoring = false,
+  ) {
     super(params.id);
     this.#name = params.name;
     this.#ownerId = params.ownerId;
     this.#foundedAt = params.foundedAt;
-    this.#status = CompanyStatus.ACTIVE;
+    this.#status = params.status;
 
-    this.addDomainEvent(
-      new CompanyFounded(
-        params.foundedAt,
-        params.id.value,
-        params.ownerId.value,
-        params.name,
-      ),
-    );
+    if (!restoring) {
+      this.addDomainEvent(
+        new CompanyFounded(
+          params.foundedAt,
+          params.id.value,
+          params.ownerId.value,
+          params.name,
+        ),
+      );
+    }
   }
 
   /**
@@ -84,12 +90,45 @@ export class Company extends AggregateRoot<'Company'> {
     const foundedAt = params.clock.now();
 
     return Result.ok(
-      new Company({
-        id: params.id,
-        name: trimmedNameResult.value,
-        ownerId: params.ownerId,
-        foundedAt,
-      }),
+      new Company(
+        {
+          id: params.id,
+          name: trimmedNameResult.value,
+          ownerId: params.ownerId,
+          foundedAt,
+          status: CompanyStatus.ACTIVE,
+        },
+      ),
+    );
+  }
+
+  /**
+   * Rehydrates a company aggregate from a persisted snapshot without raising events.
+   */
+  static restore(params: {
+    readonly id: CompanyId;
+    readonly name: string;
+    readonly ownerId: PlayerId;
+    readonly foundedAt: number;
+    readonly status: CompanyStatus;
+  }): Result<Company, ValidationError> {
+    const nameResult = Guard.againstEmptyString(params.name, 'Company name must not be empty.');
+
+    if (!nameResult.ok) {
+      return Result.fail(nameResult.error);
+    }
+
+    return Result.ok(
+      new Company(
+        {
+          id: params.id,
+          name: nameResult.value,
+          ownerId: params.ownerId,
+          foundedAt: params.foundedAt,
+          status: params.status,
+        },
+        true,
+      ),
     );
   }
 

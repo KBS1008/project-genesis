@@ -20,4 +20,7 @@ export interface ProductionJobRepository {
 
   /** Returns all running production jobs in deterministic id order. */
   findRunning(): readonly ProductionJob[];
+
+  /** Returns all persisted production jobs in deterministic id order. */
+  findAll(): readonly ProductionJob[];
 }

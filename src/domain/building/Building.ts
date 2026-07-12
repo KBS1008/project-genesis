@@ -45,33 +45,40 @@ export class Building extends AggregateRoot<'Building'> {
   readonly #createdAt: number;
   readonly #status: BuildingStatus;
 
-  private constructor(params: {
-    id: BuildingId;
-    buildingTypeId: BuildingTypeId;
-    companyId: CompanyId;
-    name: string;
-    position: Position;
-    createdAt: number;
-  }) {
+  private constructor(
+    params: {
+      id: BuildingId;
+      buildingTypeId: BuildingTypeId;
+      companyId: CompanyId;
+      name: string;
+      position: Position;
+      level: number;
+      createdAt: number;
+      status: BuildingStatus;
+    },
+    restoring = false,
+  ) {
     super(params.id);
     this.#buildingTypeId = params.buildingTypeId;
     this.#companyId = params.companyId;
     this.#name = params.name;
     this.#position = params.position;
-    this.#level = 1;
+    this.#level = params.level;
     this.#createdAt = params.createdAt;
-    this.#status = BuildingStatus.PLANNED;
+    this.#status = params.status;
 
-    this.addDomainEvent(
-      new BuildingPlaced(
-        params.createdAt,
-        params.id.value,
-        params.companyId.value,
-        params.buildingTypeId.value,
-        params.position.x,
-        params.position.y,
-      ),
-    );
+    if (!restoring) {
+      this.addDomainEvent(
+        new BuildingPlaced(
+          params.createdAt,
+          params.id.value,
+          params.companyId.value,
+          params.buildingTypeId.value,
+          params.position.x,
+          params.position.y,
+        ),
+      );
+    }
   }
 
   /**
@@ -118,14 +125,60 @@ export class Building extends AggregateRoot<'Building'> {
     const createdAt = params.clock.now();
 
     return Result.ok(
-      new Building({
-        id: params.id,
-        buildingTypeId: params.buildingTypeId,
-        companyId: params.companyId,
-        name: trimmedNameResult.value,
-        position: params.position,
-        createdAt,
-      }),
+      new Building(
+        {
+          id: params.id,
+          buildingTypeId: params.buildingTypeId,
+          companyId: params.companyId,
+          name: trimmedNameResult.value,
+          position: params.position,
+          level: 1,
+          createdAt,
+          status: BuildingStatus.PLANNED,
+        },
+      ),
+    );
+  }
+
+  /**
+   * Rehydrates a building aggregate from a persisted snapshot without raising events.
+   */
+  static restore(params: {
+    readonly id: BuildingId;
+    readonly buildingTypeId: BuildingTypeId;
+    readonly companyId: CompanyId;
+    readonly name: string;
+    readonly position: Position;
+    readonly level: number;
+    readonly createdAt: number;
+    readonly status: BuildingStatus;
+  }): Result<Building, ValidationError> {
+    const nameResult = Guard.againstEmptyString(params.name, 'Building name must not be empty.');
+
+    if (!nameResult.ok) {
+      return Result.fail(nameResult.error);
+    }
+
+    const levelResult = Guard.againstNegative(params.level, 'Building level must not be negative.');
+
+    if (!levelResult.ok) {
+      return Result.fail(levelResult.error);
+    }
+
+    return Result.ok(
+      new Building(
+        {
+          id: params.id,
+          buildingTypeId: params.buildingTypeId,
+          companyId: params.companyId,
+          name: nameResult.value,
+          position: params.position,
+          level: levelResult.value,
+          createdAt: params.createdAt,
+          status: params.status,
+        },
+        true,
+      ),
     );
   }
 

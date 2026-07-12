@@ -20,4 +20,7 @@ export interface InventoryRepository {
 
   /** Returns the inventory owned by a company, if one exists. */
   findByCompanyId(companyId: CompanyId): Inventory | undefined;
+
+  /** Returns all persisted inventories in deterministic id order. */
+  findAll(): readonly Inventory[];
 }

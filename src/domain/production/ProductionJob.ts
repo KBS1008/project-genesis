@@ -51,22 +51,33 @@ export class ProductionJob extends AggregateRoot<'ProductionJob'> {
   #endTime: number | undefined;
   #progress: number;
 
-  private constructor(params: {
-    id: ProductionJobId;
-    buildingId: BuildingId;
-    companyId: CompanyId;
-    recipeId: RecipeId;
-    duration: number;
-    createdAt: number;
-  }) {
+  private constructor(
+    params: {
+      id: ProductionJobId;
+      buildingId: BuildingId;
+      companyId: CompanyId;
+      recipeId: RecipeId;
+      duration: number;
+      createdAt: number;
+      status: ProductionJobStatus;
+      progress: number;
+      startTime: number | undefined;
+      endTime: number | undefined;
+    },
+    restoring = false,
+  ) {
     super(params.id);
     this.#buildingId = params.buildingId;
     this.#companyId = params.companyId;
     this.#recipeId = params.recipeId;
     this.#duration = params.duration;
     this.#createdAt = params.createdAt;
-    this.#status = ProductionJobStatus.WAITING;
-    this.#progress = 0;
+    this.#status = params.status;
+    this.#progress = params.progress;
+    this.#startTime = params.startTime;
+    this.#endTime = params.endTime;
+
+    void restoring;
   }
 
   /**
@@ -87,14 +98,67 @@ export class ProductionJob extends AggregateRoot<'ProductionJob'> {
     }
 
     return Result.ok(
-      new ProductionJob({
-        id: params.id,
-        buildingId: params.buildingId,
-        companyId: params.companyId,
-        recipeId: params.recipeId,
-        duration: durationResult.value,
-        createdAt: params.clock.now(),
-      }),
+      new ProductionJob(
+        {
+          id: params.id,
+          buildingId: params.buildingId,
+          companyId: params.companyId,
+          recipeId: params.recipeId,
+          duration: durationResult.value,
+          createdAt: params.clock.now(),
+          status: ProductionJobStatus.WAITING,
+          progress: 0,
+          startTime: undefined,
+          endTime: undefined,
+        },
+      ),
+    );
+  }
+
+  /**
+   * Rehydrates a production job from a persisted snapshot without raising events.
+   */
+  static restore(params: {
+    readonly id: ProductionJobId;
+    readonly buildingId: BuildingId;
+    readonly companyId: CompanyId;
+    readonly recipeId: RecipeId;
+    readonly duration: number;
+    readonly createdAt: number;
+    readonly status: ProductionJobStatus;
+    readonly progress: number;
+    readonly startTime: number | undefined;
+    readonly endTime: number | undefined;
+  }): Result<ProductionJob, ValidationError> {
+    const durationResult = Guard.againstNegative(
+      params.duration,
+      'Production duration must not be negative.',
+    );
+
+    if (!durationResult.ok) {
+      return Result.fail(durationResult.error);
+    }
+
+    if (params.progress < 0 || params.progress > 100) {
+      return Result.fail(new ValidationError('Production progress must be between 0 and 100.'));
+    }
+
+    return Result.ok(
+      new ProductionJob(
+        {
+          id: params.id,
+          buildingId: params.buildingId,
+          companyId: params.companyId,
+          recipeId: params.recipeId,
+          duration: durationResult.value,
+          createdAt: params.createdAt,
+          status: params.status,
+          progress: params.progress,
+          startTime: params.startTime,
+          endTime: params.endTime,
+        },
+        true,
+      ),
     );
   }
 
@@ -111,6 +175,11 @@ export class ProductionJob extends AggregateRoot<'ProductionJob'> {
   /** The recipe being executed. */
   getRecipeId(): RecipeId {
     return this.#recipeId;
+  }
+
+  /** Total recipe duration in simulation time units. */
+  getDuration(): number {
+    return this.#duration;
   }
 
   /** Current job status. */

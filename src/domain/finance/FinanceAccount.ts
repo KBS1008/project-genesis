@@ -45,20 +45,29 @@ export class FinanceAccount extends AggregateRoot<'FinanceAccount'> {
   readonly #transactions: FinanceTransaction[] = [];
   #transactionSequence = 0;
 
-  private constructor(params: {
-    id: FinanceAccountId;
-    companyId: CompanyId;
-    currency: string;
-    createdAt: number;
-    cashBalance: number;
-    reservedCash: number;
-  }) {
+  private constructor(
+    params: {
+      id: FinanceAccountId;
+      companyId: CompanyId;
+      currency: string;
+      createdAt: number;
+      cashBalance: number;
+      reservedCash: number;
+      transactions: readonly FinanceTransaction[];
+      transactionSequence: number;
+    },
+    restoring = false,
+  ) {
     super(params.id);
     this.#companyId = params.companyId;
     this.#currency = params.currency;
     this.#createdAt = params.createdAt;
     this.#cashBalance = params.cashBalance;
     this.#reservedCash = params.reservedCash;
+    this.#transactions.push(...params.transactions);
+    this.#transactionSequence = params.transactionSequence;
+
+    void restoring;
   }
 
   /**
@@ -90,6 +99,8 @@ export class FinanceAccount extends AggregateRoot<'FinanceAccount'> {
       createdAt,
       cashBalance: balanceResult.value,
       reservedCash: 0,
+      transactions: [],
+      transactionSequence: 0,
     });
 
     account.addDomainEvent(
@@ -119,6 +130,76 @@ export class FinanceAccount extends AggregateRoot<'FinanceAccount'> {
     }
 
     return Result.ok(account);
+  }
+
+  /**
+   * Rehydrates a finance account from a persisted snapshot without raising events.
+   */
+  static restore(params: {
+    readonly id: FinanceAccountId;
+    readonly companyId: CompanyId;
+    readonly currency: string;
+    readonly createdAt: number;
+    readonly cashBalance: number;
+    readonly reservedCash: number;
+    readonly transactionSequence: number;
+    readonly transactions: readonly FinanceTransaction[];
+  }): Result<FinanceAccount, ValidationError> {
+    const balanceResult = Guard.againstNegative(
+      params.cashBalance,
+      'Finance cash balance must not be negative.',
+    );
+
+    if (!balanceResult.ok) {
+      return Result.fail(balanceResult.error);
+    }
+
+    const reservedResult = Guard.againstNegative(
+      params.reservedCash,
+      'Reserved cash must not be negative.',
+    );
+
+    if (!reservedResult.ok) {
+      return Result.fail(reservedResult.error);
+    }
+
+    if (params.reservedCash > params.cashBalance) {
+      return Result.fail(new ValidationError('Reserved cash cannot exceed cash balance.'));
+    }
+
+    const sequenceResult = Guard.againstNegative(
+      params.transactionSequence,
+      'Finance transaction sequence must not be negative.',
+    );
+
+    if (!sequenceResult.ok) {
+      return Result.fail(sequenceResult.error);
+    }
+
+    const currencyResult = Guard.againstEmptyString(
+      params.currency,
+      'Finance currency must not be empty.',
+    );
+
+    if (!currencyResult.ok) {
+      return Result.fail(currencyResult.error);
+    }
+
+    return Result.ok(
+      new FinanceAccount(
+        {
+          id: params.id,
+          companyId: params.companyId,
+          currency: currencyResult.value,
+          createdAt: params.createdAt,
+          cashBalance: balanceResult.value,
+          reservedCash: reservedResult.value,
+          transactions: params.transactions,
+          transactionSequence: sequenceResult.value,
+        },
+        true,
+      ),
+    );
   }
 
   /** The owning company identifier. */
@@ -154,6 +235,11 @@ export class FinanceAccount extends AggregateRoot<'FinanceAccount'> {
   /** Returns recorded transactions in creation order. */
   getTransactions(): readonly FinanceTransaction[] {
     return Object.freeze([...this.#transactions]);
+  }
+
+  /** Returns the last assigned finance transaction sequence number. */
+  getTransactionSequence(): number {
+    return this.#transactionSequence;
   }
 
   /**

@@ -35,15 +35,26 @@ export class Inventory extends AggregateRoot<'Inventory'> {
   readonly #status: InventoryStatus;
   readonly #items = new Map<string, InventoryItem>();
 
-  private constructor(params: {
-    id: InventoryId;
-    companyId: CompanyId;
-    createdAt: number;
-  }) {
+  private constructor(
+    params: {
+      id: InventoryId;
+      companyId: CompanyId;
+      createdAt: number;
+      status: InventoryStatus;
+      items: readonly InventoryItem[];
+    },
+    restoring = false,
+  ) {
     super(params.id);
     this.#companyId = params.companyId;
     this.#createdAt = params.createdAt;
-    this.#status = InventoryStatus.ACTIVE;
+    this.#status = params.status;
+
+    for (const item of params.items) {
+      this.#items.set(item.resourceId.value, item);
+    }
+
+    void restoring;
   }
 
   /**
@@ -55,7 +66,61 @@ export class Inventory extends AggregateRoot<'Inventory'> {
         id: params.id,
         companyId: params.companyId,
         createdAt: params.clock.now(),
+        status: InventoryStatus.ACTIVE,
+        items: [],
       }),
+    );
+  }
+
+  /**
+   * Rehydrates an inventory aggregate from a persisted snapshot without raising events.
+   */
+  static restore(params: {
+    readonly id: InventoryId;
+    readonly companyId: CompanyId;
+    readonly createdAt: number;
+    readonly status: InventoryStatus;
+    readonly items: readonly InventoryItem[];
+  }): Result<Inventory, ValidationError> {
+    for (const item of params.items) {
+      const quantityResult = Guard.againstNegative(
+        item.quantity,
+        'Inventory quantity must not be negative.',
+      );
+
+      if (!quantityResult.ok) {
+        return Result.fail(quantityResult.error);
+      }
+
+      const reservedResult = Guard.againstNegative(
+        item.reserved,
+        'Reserved inventory amount must not be negative.',
+      );
+
+      if (!reservedResult.ok) {
+        return Result.fail(reservedResult.error);
+      }
+
+      if (item.reserved > item.quantity) {
+        return Result.fail(
+          new ValidationError(
+            `Reserved quantity exceeds total quantity for resource "${item.resourceId.value}".`,
+          ),
+        );
+      }
+    }
+
+    return Result.ok(
+      new Inventory(
+        {
+          id: params.id,
+          companyId: params.companyId,
+          createdAt: params.createdAt,
+          status: params.status,
+          items: params.items,
+        },
+        true,
+      ),
     );
   }
 

@@ -39,9 +39,22 @@ export class Market extends AggregateRoot<'Market'> {
   readonly #createdAt: number;
   readonly #prices = new Map<string, ResourceMarketPrice>();
 
-  private constructor(params: { id: MarketId; createdAt: number }) {
+  private constructor(
+    params: {
+      id: MarketId;
+      createdAt: number;
+      prices: readonly ResourceMarketPrice[];
+    },
+    restoring = false,
+  ) {
     super(params.id);
     this.#createdAt = params.createdAt;
+
+    for (const price of params.prices) {
+      this.#prices.set(price.resourceId.value, price);
+    }
+
+    void restoring;
   }
 
   /**
@@ -49,7 +62,7 @@ export class Market extends AggregateRoot<'Market'> {
    */
   static seedFromResources(params: SeedMarketParams): Result<Market, ValidationError> {
     const createdAt = params.clock.now();
-    const market = new Market({ id: params.id, createdAt });
+    const market = new Market({ id: params.id, createdAt, prices: [] });
 
     for (const resource of params.resources) {
       if (!resource.enabled || !resource.marketEnabled) {
@@ -74,6 +87,55 @@ export class Market extends AggregateRoot<'Market'> {
     }
 
     return Result.ok(market);
+  }
+
+  /**
+   * Rehydrates a market aggregate from a persisted snapshot without raising events.
+   */
+  static restore(params: {
+    readonly id: MarketId;
+    readonly createdAt: number;
+    readonly prices: readonly ResourceMarketPrice[];
+  }): Result<Market, ValidationError> {
+    for (const price of params.prices) {
+      const basePriceResult = Guard.againstNegative(
+        price.basePrice,
+        'Market base price must not be negative.',
+      );
+
+      if (!basePriceResult.ok) {
+        return Result.fail(basePriceResult.error);
+      }
+
+      const lastPriceResult = Guard.againstNegative(
+        price.lastPrice,
+        'Market price must not be negative.',
+      );
+
+      if (!lastPriceResult.ok) {
+        return Result.fail(lastPriceResult.error);
+      }
+
+      const volumeResult = Guard.againstNegative(
+        price.tradeVolume,
+        'Trade volume must not be negative.',
+      );
+
+      if (!volumeResult.ok) {
+        return Result.fail(volumeResult.error);
+      }
+    }
+
+    return Result.ok(
+      new Market(
+        {
+          id: params.id,
+          createdAt: params.createdAt,
+          prices: params.prices,
+        },
+        true,
+      ),
+    );
   }
 
   /** Simulation time when the market was created. */

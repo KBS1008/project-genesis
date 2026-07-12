@@ -30,4 +30,12 @@ export class InMemoryProductionJobRepository implements ProductionJobRepository 
         .sort((left, right) => left.getId().value.localeCompare(right.getId().value)),
     );
   }
+
+  findAll(): readonly ProductionJob[] {
+    return Object.freeze(
+      [...this.#jobs.values()].sort((left, right) =>
+        left.getId().value.localeCompare(right.getId().value),
+      ),
+    );
+  }
 }

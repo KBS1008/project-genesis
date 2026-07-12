@@ -28,4 +28,12 @@ export class InMemoryInventoryRepository implements InventoryRepository {
       (inventory) => inventory.getCompanyId().value === companyId.value,
     );
   }
+
+  findAll(): readonly Inventory[] {
+    return Object.freeze(
+      [...this.#inventories.values()].sort((left, right) =>
+        left.getId().value.localeCompare(right.getId().value),
+      ),
+    );
+  }
 }

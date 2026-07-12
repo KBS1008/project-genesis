@@ -22,4 +22,7 @@ export interface BuildingRepository {
 
   /** Returns all buildings owned by a company in deterministic id order. */
   findByCompanyId(companyId: CompanyId): readonly Building[];
+
+  /** Returns all persisted buildings in deterministic id order. */
+  findAll(): readonly Building[];
 }
