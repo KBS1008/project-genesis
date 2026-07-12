@@ -11,10 +11,13 @@ import {
   type TickMetricsSnapshot,
 } from '@/lib/api';
 import { TickHistoryCharts } from '@/components/TickHistoryCharts';
+import {
+  DashboardDetailPanel,
+  normalizeDetailSelection,
+  type DetailSelection,
+} from '@/components/DashboardDetailPanel';
 
 type StatusTone = '' | 'success' | 'error' | 'info';
-
-type KeyValueEntry = readonly [label: string, value: string, valueClass?: string];
 
 type TableColumn<T extends string> = {
   readonly key: T;
@@ -263,23 +266,6 @@ function Toast({
   );
 }
 
-function KeyValuePanel({
-  entries,
-}: {
-  readonly entries: readonly KeyValueEntry[];
-}) {
-  return (
-    <dl className="kv">
-      {entries.map(([label, value, valueClass]) => (
-        <div key={label} style={{ display: 'contents' }}>
-          <dt>{label}</dt>
-          <dd className={valueClass}>{value}</dd>
-        </div>
-      ))}
-    </dl>
-  );
-}
-
 function ConstructionStatus({ building }: { readonly building: BuildingReadModel }) {
   if (building.status !== 'UNDER_CONSTRUCTION') {
     return <>{building.status}</>;
@@ -302,16 +288,24 @@ function ConstructionStatus({ building }: { readonly building: BuildingReadModel
 function DataTable<T extends string>({
   columns,
   rows,
+  rowKeys,
+  selectedRowKey,
+  onRowSelect,
   emptyText,
   emptyHint,
   renderCell,
 }: {
   readonly columns: readonly TableColumn<T>[];
   readonly rows: ReadonlyArray<Partial<Record<T, string | number>>>;
+  readonly rowKeys?: readonly string[];
+  readonly selectedRowKey?: string | null;
+  readonly onRowSelect?: (rowKey: string) => void;
   readonly emptyText: string;
   readonly emptyHint?: string;
   readonly renderCell?: (key: T, row: Partial<Record<T, string | number>>) => ReactNode;
 }) {
+  const isSelectable = rowKeys !== undefined && onRowSelect !== undefined;
+
   if (rows.length === 0) {
     return (
       <p className="empty-state">
@@ -333,15 +327,42 @@ function DataTable<T extends string>({
         </tr>
       </thead>
       <tbody>
-        {rows.map((row, rowIndex) => (
-          <tr key={rowIndex}>
-            {columns.map((column) => (
-              <td key={column.key} className={column.numeric ? 'numeric' : undefined}>
-                {renderCell?.(column.key, row) ?? row[column.key] ?? ''}
-              </td>
-            ))}
-          </tr>
-        ))}
+        {rows.map((row, rowIndex) => {
+          const rowKey = rowKeys?.[rowIndex] ?? String(rowIndex);
+          const isSelected = selectedRowKey === rowKey;
+
+          return (
+            <tr
+              key={rowKey}
+              className={`${isSelectable ? 'table-row-selectable' : ''}${isSelected ? ' table-row-selected' : ''}`.trim()}
+              tabIndex={isSelectable ? 0 : undefined}
+              aria-selected={isSelectable ? isSelected : undefined}
+              onClick={
+                isSelectable
+                  ? () => {
+                      onRowSelect(rowKey);
+                    }
+                  : undefined
+              }
+              onKeyDown={
+                isSelectable
+                  ? (event) => {
+                      if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        onRowSelect(rowKey);
+                      }
+                    }
+                  : undefined
+              }
+            >
+              {columns.map((column) => (
+                <td key={column.key} className={column.numeric ? 'numeric' : undefined}>
+                  {renderCell?.(column.key, row) ?? row[column.key] ?? ''}
+                </td>
+              ))}
+            </tr>
+          );
+        })}
       </tbody>
     </table>
   );
@@ -594,6 +615,7 @@ export function DashboardShell() {
   const [isBusy, setIsBusy] = useState(false);
   const [statusMessage, setStatusMessage] = useState('');
   const [statusTone, setStatusTone] = useState<StatusTone>('');
+  const [detailSelection, setDetailSelection] = useState<DetailSelection>({ kind: 'overview' });
 
   const nameMaps = useMemo(() => {
     if (dashboard === null) {
@@ -656,6 +678,10 @@ export function DashboardShell() {
       });
   }, [refreshDashboard]);
 
+  useEffect(() => {
+    setDetailSelection((current) => normalizeDetailSelection(dashboard, current));
+  }, [dashboard]);
+
   const runAction = useCallback(
     async (action: () => Promise<void>, successMessage: string) => {
       try {
@@ -688,6 +714,22 @@ export function DashboardShell() {
   const labelRecipe = (recipeId: string) => nameMaps.recipes.get(recipeId) ?? recipeId;
   const labelTechnology = (technologyId: string) =>
     nameMaps.technologies.get(technologyId) ?? technologyId;
+
+  const selectedRowKey =
+    detailSelection.kind === 'overview'
+      ? null
+      : `${detailSelection.kind}:${detailSelection.id}`;
+
+  const selectDetail = useCallback(
+    (kind: 'building' | 'production' | 'transport' | 'research', id: string) => {
+      setDetailSelection({ kind, id });
+    },
+    [],
+  );
+
+  const clearDetailSelection = useCallback(() => {
+    setDetailSelection({ kind: 'overview' });
+  }, []);
 
   return (
     <div className={`layout${isBusy ? ' is-busy' : ''}`}>
@@ -818,6 +860,11 @@ export function DashboardShell() {
                             status: building.status,
                             position: `${building.x}, ${building.y}`,
                           }))}
+                          rowKeys={dashboard.buildings.map((building) => `building:${building.id}`)}
+                          selectedRowKey={selectedRowKey}
+                          onRowSelect={(rowKey) => {
+                            selectDetail('building', rowKey.slice('building:'.length));
+                          }}
                           emptyText="Noch keine Gebäude."
                           emptyHint="Platzieren Sie über die Seitenleiste Ihr erstes Gebäude."
                           renderCell={(key, row) => {
@@ -862,6 +909,11 @@ export function DashboardShell() {
                               status: formatProductionStatus(job.status, job.awaitingTransport),
                               progress: formatProgress(job.progress),
                             }))}
+                            rowKeys={dashboard.productionJobs.map((job) => `production:${job.id}`)}
+                            selectedRowKey={selectedRowKey}
+                            onRowSelect={(rowKey) => {
+                              selectDetail('production', rowKey.slice('production:'.length));
+                            }}
                             emptyText="Keine laufende Produktion."
                             emptyHint="Bauen Sie eine Fabrik und starten Sie ein Rezept."
                           />
@@ -899,6 +951,11 @@ export function DashboardShell() {
                                 status: job.status,
                                 progress: formatProgress(job.progress),
                               }))}
+                              rowKeys={dashboard.researchJobs.map((job) => `research:${job.id}`)}
+                              selectedRowKey={selectedRowKey}
+                              onRowSelect={(rowKey) => {
+                                selectDetail('research', rowKey.slice('research:'.length));
+                              }}
                               emptyText="Keine laufende Forschung."
                               emptyHint="Erforschen Sie neue Technologien für bessere Produktion."
                             />
@@ -940,6 +997,13 @@ export function DashboardShell() {
                             status: order.status,
                             progress: formatProgress(order.progress),
                           }))}
+                          rowKeys={(dashboard.transportOrders ?? []).map(
+                            (order) => `transport:${order.id}`,
+                          )}
+                          selectedRowKey={selectedRowKey}
+                          onRowSelect={(rowKey) => {
+                            selectDetail('transport', rowKey.slice('transport:'.length));
+                          }}
                           emptyText="Keine aktiven Transporte."
                           emptyHint="Material am Standort oder Lager leer — Marktkäufe lösen Transport aus."
                         />
@@ -1024,108 +1088,30 @@ export function DashboardShell() {
               )}
             </div>
 
-            <aside className="dashboard-detail" aria-label="Detailinformationen">
-              <section className="card detail-card">
-                <h2>Firma</h2>
-                {!dashboard?.company ? (
-                  <KeyValuePanel entries={[['Status', 'Kein aktives Spiel']]} />
-                ) : (
-                  <KeyValuePanel
-                    entries={[
-                      ['Name', dashboard.company.name],
-                      ['ID', dashboard.company.id],
-                      ['Owner', dashboard.company.ownerId],
-                      ['Status', dashboard.company.status],
-                    ]}
-                  />
-                )}
-              </section>
-
-              <section className="card detail-card">
-                <h2>Finanzen</h2>
-                {!dashboard?.finance ? (
-                  <KeyValuePanel entries={[['Status', '—']]} />
-                ) : (
-                  <KeyValuePanel
-                    entries={[
-                      ['Cash', `${dashboard.finance.cashBalance.toLocaleString('de-DE')} GC`],
-                      ['Reserviert', `${dashboard.finance.reservedCash.toLocaleString('de-DE')} GC`],
-                      ['Verfügbar', `${dashboard.finance.availableCash.toLocaleString('de-DE')} GC`],
-                    ]}
-                  />
-                )}
-              </section>
-
-              <section
-                className={`card detail-card${dashboard?.energy?.hasDeficit ? ' card-warning' : ''}`}
-              >
-                <h2>Energie</h2>
-                {!dashboard?.energy ? (
-                  <KeyValuePanel entries={[['Status', '—']]} />
-                ) : (
-                  <KeyValuePanel
-                    entries={[
-                      ['Erzeugung', formatEnergy(dashboard.energy.generation)],
-                      ['Verbrauch', formatEnergy(dashboard.energy.consumption)],
-                      [
-                        'Reserve',
-                        formatEnergy(dashboard.energy.reserve),
-                        dashboard.energy.reserve < 0 ? 'kv-value-error' : 'kv-value-success',
-                      ],
-                      [
-                        'Netz',
-                        dashboard.energy.usesBaselineGrid
-                          ? 'Öffentliches Netz (30 MW)'
-                          : 'Eigenversorgung',
-                      ],
-                      [
-                        'Status',
-                        dashboard.energy.hasDeficit ? 'Defizit' : 'Stabil',
-                        dashboard.energy.hasDeficit ? 'kv-value-warning' : 'kv-value-success',
-                      ],
-                    ]}
-                  />
-                )}
-              </section>
-
-              <section className="card detail-card">
-                <h2>Marktpreise</h2>
-                <div className="table-wrap">
-                  <DataTable
-                    columns={[
-                      { key: 'resourceId', label: 'Ressource' },
-                      { key: 'lastPrice', label: 'Preis', numeric: true },
-                      { key: 'tradeVolume', label: 'Volumen', numeric: true },
-                    ]}
-                    rows={(dashboard?.marketPrices ?? []).map((price) => ({
-                      resourceId: labelResource(price.resourceId),
-                      lastPrice: price.lastPrice,
-                      tradeVolume: price.tradeVolume,
-                    }))}
-                    emptyText="Keine Marktpreise geladen."
-                  />
-                </div>
-              </section>
-
-              <section className="card detail-card">
-                <h2>Meilensteine</h2>
-                <ul className="milestone-list">
-                  {(dashboard?.milestones ?? []).length === 0 ? (
-                    <li className="empty milestone-empty">Noch keine Meilensteine geladen.</li>
-                  ) : (
-                    dashboard?.milestones.map((milestone) => (
-                      <li
-                        key={milestone.id}
-                        className={milestone.completed ? 'milestone-done' : 'milestone-pending'}
-                      >
-                        <span className="milestone-name">{milestone.name}</span>
-                        <span className="milestone-id">{milestone.id}</span>
-                      </li>
-                    ))
-                  )}
-                </ul>
-              </section>
-            </aside>
+            <DashboardDetailPanel
+              dashboard={dashboard}
+              selection={detailSelection}
+              onClearSelection={clearDetailSelection}
+              labelBuilding={labelBuilding}
+              labelRecipe={labelRecipe}
+              labelResource={labelResource}
+              labelTechnology={labelTechnology}
+              renderMarketTable={
+                <DataTable
+                  columns={[
+                    { key: 'resourceId', label: 'Ressource' },
+                    { key: 'lastPrice', label: 'Preis', numeric: true },
+                    { key: 'tradeVolume', label: 'Volumen', numeric: true },
+                  ]}
+                  rows={(dashboard?.marketPrices ?? []).map((price) => ({
+                    resourceId: labelResource(price.resourceId),
+                    lastPrice: price.lastPrice,
+                    tradeVolume: price.tradeVolume,
+                  }))}
+                  emptyText="Keine Marktpreise geladen."
+                />
+              }
+            />
           </div>
         </div>
       </div>

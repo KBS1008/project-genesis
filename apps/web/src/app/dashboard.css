@@ -832,6 +832,117 @@ tbody tr:hover {
   margin-bottom: 0.65rem;
 }
 
+.detail-focus {
+  border-color: rgba(37, 99, 235, 0.35);
+  box-shadow: var(--shadow-soft);
+}
+
+.detail-focus-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.detail-focus-header h2 {
+  margin-bottom: 0.15rem;
+}
+
+.detail-focus-subtitle {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--text-caption);
+}
+
+.detail-clear {
+  flex-shrink: 0;
+  padding: 0.35rem 0.65rem;
+  font-size: var(--text-caption);
+}
+
+.detail-hint {
+  margin: 0;
+  padding: 0.65rem 0.85rem;
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--border);
+  background: var(--color-bg);
+  color: var(--muted);
+  font-size: var(--text-small);
+}
+
+.detail-card-compact {
+  padding: 0.85rem 0.95rem;
+}
+
+.detail-card-compact h2 {
+  font-size: var(--text-small);
+  margin-bottom: 0.5rem;
+}
+
+.detail-card-compact .kv {
+  gap: 0.35rem 0.75rem;
+  margin-top: 0.35rem;
+}
+
+.detail-card-compact .kv dt,
+.detail-card-compact .kv dd {
+  font-size: var(--text-caption);
+}
+
+.detail-related {
+  margin-top: 0.85rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+.detail-related-title {
+  margin: 0 0 0.5rem;
+  font-size: var(--text-caption);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.detail-related-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.detail-related-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: var(--text-small);
+  color: var(--text);
+}
+
+.detail-related-list li span:last-child {
+  color: var(--muted);
+  text-align: right;
+}
+
+tbody tr.table-row-selectable {
+  cursor: pointer;
+}
+
+tbody tr.table-row-selected {
+  background: rgba(37, 99, 235, 0.08);
+  box-shadow: inset 3px 0 0 var(--color-primary);
+}
+
+html[data-theme='dark'] .detail-focus {
+  border-color: rgba(212, 175, 55, 0.35);
+}
+
+html[data-theme='dark'] tbody tr.table-row-selected {
+  background: rgba(212, 175, 55, 0.1);
+}
+
 .empty-state {
   margin: 0.5rem 0 0;
   padding: 0.85rem;
