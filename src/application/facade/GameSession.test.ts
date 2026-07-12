@@ -185,6 +185,31 @@ describe('GameSession', () => {
     }
   });
 
+  it('records tick history for dashboard charts', async () => {
+    const session = await createSession();
+    session.startNewGame('History Test Corp');
+
+    const initialHistory = session.getTickHistory();
+
+    expect(initialHistory.ok).toBe(true);
+
+    if (initialHistory.ok) {
+      expect(initialHistory.value.points).toHaveLength(1);
+      expect(initialHistory.value.points[0]?.availableCash).toBe(250_000);
+    }
+
+    session.tick(3);
+
+    const historyAfterTicks = session.getTickHistory();
+
+    expect(historyAfterTicks.ok).toBe(true);
+
+    if (historyAfterTicks.ok) {
+      expect(historyAfterTicks.value.points.length).toBe(4);
+      expect(historyAfterTicks.value.points.at(-1)?.tickNumber).toBe(3);
+    }
+  });
+
   it('persists and restores a browser session snapshot', async () => {
     const tempDirectory = await mkdtemp(path.join(tmpdir(), 'genesis-browser-save-'));
     const savePath = path.join(tempDirectory, 'browser-session.json');

@@ -5,9 +5,12 @@ import {
   buildNameMap,
   callApi,
   fetchDashboard,
+  fetchDashboardHistory,
   type BuildingReadModel,
   type GameSessionDashboard,
+  type TickMetricsSnapshot,
 } from '@/lib/api';
+import { TickHistoryCharts } from '@/components/TickHistoryCharts';
 
 type StatusTone = '' | 'success' | 'error' | 'info';
 
@@ -40,10 +43,35 @@ function trendLabel(direction: 'up' | 'down' | 'stable', text: string): string {
   return `${icon} ${text}`;
 }
 
+function trendFromHistory(
+  points: readonly TickMetricsSnapshot[],
+  key: keyof Pick<TickMetricsSnapshot, 'availableCash' | 'energyReserve' | 'activeTransportCount'>,
+  stableLabel: string,
+): string {
+  if (points.length < 2) {
+    return trendLabel('stable', stableLabel);
+  }
+
+  const previous = points.at(-2)?.[key] ?? 0;
+  const current = points.at(-1)?.[key] ?? 0;
+
+  if (current > previous) {
+    return trendLabel('up', stableLabel);
+  }
+
+  if (current < previous) {
+    return trendLabel('down', stableLabel);
+  }
+
+  return trendLabel('stable', stableLabel);
+}
+
 function KpiStrip({
   kpis,
+  history,
 }: {
   readonly kpis: GameSessionDashboard['kpis'];
+  readonly history: readonly TickMetricsSnapshot[];
 }) {
   if (kpis === null) {
     return null;
@@ -58,7 +86,9 @@ function KpiStrip({
         <div className="kpi-body">
           <span className="kpi-label">Verfügbar</span>
           <strong className="kpi-value">{kpis.availableCash.toLocaleString('de-DE')} GC</strong>
-          <span className="kpi-trend">{trendLabel('stable', 'Liquidität')}</span>
+          <span className="kpi-trend">
+            {trendFromHistory(history, 'availableCash', 'Liquidität')}
+          </span>
         </div>
       </article>
       <article className={`kpi-card${kpis.energyHasDeficit ? ' kpi-warning' : ''}`}>
@@ -69,7 +99,9 @@ function KpiStrip({
           <span className="kpi-label">Energie-Reserve</span>
           <strong className="kpi-value">{formatEnergy(kpis.energyReserve)}</strong>
           <span className="kpi-trend">
-            {trendLabel(kpis.energyHasDeficit ? 'down' : 'stable', kpis.energyHasDeficit ? 'Defizit' : 'Stabil')}
+            {kpis.energyHasDeficit
+              ? trendLabel('down', 'Defizit')
+              : trendFromHistory(history, 'energyReserve', 'Stabil')}
           </span>
         </div>
       </article>
@@ -81,7 +113,7 @@ function KpiStrip({
           <span className="kpi-label">Transporte</span>
           <strong className="kpi-value">{kpis.activeTransportCount}</strong>
           <span className="kpi-trend">
-            {trendLabel(kpis.activeTransportCount > 0 ? 'up' : 'stable', 'Aktiv unterwegs')}
+            {trendFromHistory(history, 'activeTransportCount', 'Aktiv unterwegs')}
           </span>
         </div>
       </article>
@@ -121,7 +153,7 @@ function OverviewStrip({
   const runningProduction = dashboard.productionJobs.filter((job) => job.status === 'RUNNING').length;
   const waitingProduction = dashboard.productionJobs.filter((job) => job.status === 'WAITING').length;
   const activeResearch = dashboard.researchJobs.filter((job) => job.status === 'IN_PROGRESS').length;
-  const activeTransport = dashboard.transportOrders?.length ?? 0;
+  const activeTransport = dashboard.logistics?.activeTransportCount ?? 0;
   const completedMilestones = dashboard.completedMilestones.length;
 
   return (
@@ -555,6 +587,7 @@ function applyTheme(theme: ThemeMode): void {
 /** Interactive browser dashboard wired to the NestJS API. */
 export function DashboardShell() {
   const [dashboard, setDashboard] = useState<GameSessionDashboard | null>(null);
+  const [tickHistory, setTickHistory] = useState<readonly TickMetricsSnapshot[]>([]);
   const [theme, setTheme] = useState<ThemeMode>('light');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
@@ -581,8 +614,12 @@ export function DashboardShell() {
   }, [dashboard]);
 
   const refreshDashboard = useCallback(async () => {
-    const nextDashboard = await fetchDashboard();
+    const [nextDashboard, nextHistory] = await Promise.all([
+      fetchDashboard(),
+      fetchDashboardHistory({ limit: 200 }),
+    ]);
     setDashboard(nextDashboard);
+    setTickHistory(nextHistory.points);
   }, []);
 
   useEffect(() => {
@@ -729,7 +766,9 @@ export function DashboardShell() {
         </aside>
 
         <div className="dashboard-content">
-          {hasGame && dashboard?.kpis ? <KpiStrip kpis={dashboard.kpis} /> : null}
+          {hasGame && dashboard?.kpis ? (
+            <KpiStrip kpis={dashboard.kpis} history={tickHistory} />
+          ) : null}
 
           <div className="status-bar">
             <LogisticsBanner message={dashboard?.logistics?.statusMessage ?? null} />
@@ -737,6 +776,8 @@ export function DashboardShell() {
           </div>
 
           {hasGame ? <OverviewStrip dashboard={dashboard} /> : null}
+
+          {hasGame ? <TickHistoryCharts points={tickHistory} /> : null}
 
           <div className="dashboard-panels">
             <div className="dashboard-tables">

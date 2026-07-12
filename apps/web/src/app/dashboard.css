@@ -442,6 +442,66 @@ button.btn-secondary:hover:not(:disabled) {
   color: var(--muted);
 }
 
+.chart-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.chart-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1rem 0.65rem;
+  box-shadow: var(--shadow-soft);
+  min-width: 0;
+}
+
+.chart-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+
+.chart-card-header h3 {
+  font-size: var(--text-small);
+  font-weight: 600;
+  color: var(--text);
+}
+
+.chart-current-value {
+  font-size: var(--text-caption);
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+
+.chart-canvas {
+  width: 100%;
+  min-height: 180px;
+}
+
+.chart-tooltip {
+  padding: 0.45rem 0.6rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  box-shadow: var(--shadow-soft);
+  font-size: var(--text-caption);
+}
+
+.chart-tooltip-label {
+  display: block;
+  color: var(--muted);
+  margin-bottom: 0.15rem;
+}
+
+.chart-tooltip strong {
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
 .kpi-strip {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -799,6 +859,10 @@ tbody tr:hover {
 
 @media (max-width: 1080px) {
   .dashboard-panels {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-strip {
     grid-template-columns: 1fr;
   }
 

@@ -28,6 +28,7 @@ import type {
   ResearchHint,
   TransportOrderSessionReadModel,
 } from './GameSessionDashboard.js';
+import type { TickMetricsSnapshot } from '../read-models/TickMetricsSnapshot.js';
 
 const DEFAULT_TRADE_AMOUNT = 5;
 
@@ -207,6 +208,23 @@ export class GameSessionDashboardBuilder {
       activeTransportCount: input.logistics.activeTransportCount,
       warehouseTotalUnits: input.logistics.warehouseTotalUnits,
       onSiteResourceLines: input.inventory.items.length,
+    });
+  }
+
+  /** Captures slim tick metrics for dashboard chart history. */
+  captureTickMetrics(input: {
+    readonly tickNumber: number;
+    readonly simulationTime: number;
+    readonly finance: FinanceReadModel;
+    readonly energy: EnergyReadModel | null;
+    readonly logistics: LogisticsSummaryReadModel;
+  }): TickMetricsSnapshot {
+    return Object.freeze({
+      tickNumber: input.tickNumber,
+      simulationTime: input.simulationTime,
+      availableCash: input.finance.availableCash,
+      energyReserve: input.energy?.reserve ?? 0,
+      activeTransportCount: input.logistics.activeTransportCount,
     });
   }
 

@@ -110,6 +110,19 @@ export type DashboardKpiReadModel = {
   readonly onSiteResourceLines: number;
 };
 
+export type TickMetricsSnapshot = {
+  readonly tickNumber: number;
+  readonly simulationTime: number;
+  readonly availableCash: number;
+  readonly energyReserve: number;
+  readonly activeTransportCount: number;
+};
+
+export type DashboardTickHistory = {
+  readonly companyId: string | null;
+  readonly points: readonly TickMetricsSnapshot[];
+};
+
 export type ContentNameEntry = {
   readonly id: string;
   readonly name: string;
@@ -222,6 +235,36 @@ export async function callApi<T>(path: string, options?: RequestInit): Promise<T
 /** Loads the aggregated dashboard snapshot. */
 export function fetchDashboard(): Promise<GameSessionDashboard> {
   return callApi<GameSessionDashboard>('/api/dashboard');
+}
+
+export type FetchDashboardHistoryOptions = {
+  readonly fromTick?: number;
+  readonly toTick?: number;
+  readonly limit?: number;
+};
+
+/** Loads tick metrics history for dashboard charts. */
+export function fetchDashboardHistory(
+  options: FetchDashboardHistoryOptions = {},
+): Promise<DashboardTickHistory> {
+  const params = new URLSearchParams();
+
+  if (options.fromTick !== undefined) {
+    params.set('fromTick', String(options.fromTick));
+  }
+
+  if (options.toTick !== undefined) {
+    params.set('toTick', String(options.toTick));
+  }
+
+  if (options.limit !== undefined) {
+    params.set('limit', String(options.limit));
+  }
+
+  const query = params.toString();
+  const path = query.length > 0 ? `/api/dashboard/history?${query}` : '/api/dashboard/history';
+
+  return callApi<DashboardTickHistory>(path);
 }
 
 /** Builds a lookup map from content name entries. */

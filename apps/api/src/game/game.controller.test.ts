@@ -57,4 +57,24 @@ describe('GameController (NestJS)', () => {
     expect(response.body.ok).toBe(false);
     expect(response.body.error).toContain('Missing building placement fields');
   });
+
+  it('GET /api/dashboard/history returns tick metrics after simulation ticks', async () => {
+    await request(app.getHttpServer())
+      .post('/api/session/new')
+      .send({ name: 'History Test Corp' });
+
+    await request(app.getHttpServer()).post('/api/simulation/tick').send({ count: 3 });
+
+    const response = await request(app.getHttpServer()).get('/api/dashboard/history');
+
+    expect(response.status).toBe(200);
+    expect(response.body.ok).toBe(true);
+    expect(response.body.data.companyId).toBeTruthy();
+    expect(response.body.data.points.length).toBeGreaterThanOrEqual(4);
+    expect(response.body.data.points.at(-1)).toMatchObject({
+      availableCash: expect.any(Number),
+      energyReserve: expect.any(Number),
+      activeTransportCount: expect.any(Number),
+    });
+  });
 });

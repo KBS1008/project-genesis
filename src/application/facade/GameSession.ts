@@ -33,6 +33,11 @@ import type {
   TransportOrderSessionReadModel,
 } from './GameSessionDashboard.js';
 import { GameSessionDashboardBuilder } from './GameSessionDashboardBuilder.js';
+import { TickHistoryService } from '../services/TickHistoryService.js';
+import type {
+  DashboardTickHistory,
+  TickHistoryQuery,
+} from '../read-models/TickMetricsSnapshot.js';
 
 /** Options for creating a {@link GameSession}. */
 export type CreateGameSessionOptions = {
@@ -93,6 +98,7 @@ export class GameSession {
   #getFinance!: GetFinanceQueryHandler;
   #getMarketPrices!: GetMarketPricesQueryHandler;
   #dashboardBuilder!: GameSessionDashboardBuilder;
+  readonly #tickHistory = new TickHistoryService();
   readonly #gameContentRoot: string;
   readonly #savePath: string;
   #activeCompanyId: string | undefined;
@@ -164,6 +170,8 @@ export class GameSession {
     inventory.pullDomainEvents();
 
     this.#activeCompanyId = DEFAULT_COMPANY_ID;
+    this.#tickHistory.clear(DEFAULT_COMPANY_ID);
+    this.#recordTickSnapshot();
     return Result.ok(undefined);
   }
 
@@ -274,6 +282,16 @@ export class GameSession {
     });
   }
 
+  /** Returns recorded tick metrics for dashboard charts. */
+  getTickHistory(query: TickHistoryQuery = {}): Result<DashboardTickHistory, ValidationError> {
+    return Result.ok(
+      Object.freeze({
+        companyId: this.#activeCompanyId ?? null,
+        points: this.#tickHistory.getHistory(query),
+      }),
+    );
+  }
+
   /** Advances the simulation by one or more ticks. */
   tick(count = 1): Result<void, ValidationError> {
     if (!Number.isInteger(count) || count < 1 || count > MAX_TICK_BATCH) {
@@ -288,6 +306,8 @@ export class GameSession {
       if (!tickResult.ok) {
         return Result.fail(tickResult.error);
       }
+
+      this.#recordTickSnapshot();
     }
 
     return Result.ok(undefined);
@@ -421,6 +441,8 @@ export class GameSession {
     }
 
     this.#replaceContext(loadResult.value);
+    this.#tickHistory.clear(this.#activeCompanyId);
+    this.#recordTickSnapshot();
     return Result.ok(undefined);
   }
 
@@ -509,6 +531,53 @@ export class GameSession {
       const numericPart = Number.parseInt(id.slice(prefix.length), 10);
       return Number.isFinite(numericPart) ? Math.max(max, numericPart) : max;
     }, 0);
+  }
+
+  #recordTickSnapshot(): void {
+    if (this.#activeCompanyId === undefined) {
+      return;
+    }
+
+    const companyId = this.#activeCompanyId;
+    const financeResult = this.#getFinance.execute({ companyId });
+
+    if (!financeResult.ok) {
+      return;
+    }
+
+    const buildingsResult = this.#listBuildings.execute({ companyId });
+
+    if (!buildingsResult.ok) {
+      return;
+    }
+
+    const productionJobs = this.#readProductionJobs(companyId);
+    const transportOrders = this.#readTransportOrders(
+      companyId,
+      buildingsResult.value,
+      productionJobs,
+    );
+    const warehouseStorage = this.#dashboardBuilder.readWarehouseStorage(
+      companyId,
+      buildingsResult.value,
+    );
+    const energy = this.#dashboardBuilder.readEnergy(companyId);
+    const logistics = this.#dashboardBuilder.readLogisticsSummary({
+      warehouseStorage,
+      productionJobs,
+      transportOrders,
+    });
+
+    this.#tickHistory.record(
+      this.#dashboardBuilder.captureTickMetrics({
+        tickNumber: this.#context.simulationEngine.state.tickNumber,
+        simulationTime: this.#context.clock.now(),
+        finance: financeResult.value,
+        energy,
+        logistics,
+      }),
+      companyId,
+    );
   }
 
   #emptyDashboard(): GameSessionDashboard {

@@ -12,6 +12,7 @@ import {
   HttpCode,
   Inject,
   Post,
+  Query,
 } from '@nestjs/common';
 import { toApiSuccess } from '../common/api-response.js';
 import { unwrapResult } from '../common/unwrap-result.js';
@@ -39,6 +40,40 @@ export class GameController {
   getDashboard() {
     return toApiSuccess(
       unwrapResult(this.gameSessionService.getSession().getDashboard()),
+    );
+  }
+
+  /** Returns tick metrics history for dashboard charts. */
+  @Get('dashboard/history')
+  getDashboardHistory(
+    @Query('fromTick') fromTick?: string,
+    @Query('toTick') toTick?: string,
+    @Query('limit') limit?: string,
+  ) {
+    const parsedFromTick = fromTick === undefined ? undefined : Number.parseInt(fromTick, 10);
+    const parsedToTick = toTick === undefined ? undefined : Number.parseInt(toTick, 10);
+    const parsedLimit = limit === undefined ? undefined : Number.parseInt(limit, 10);
+
+    if (fromTick !== undefined && !Number.isInteger(parsedFromTick)) {
+      throw new BadRequestException('fromTick must be an integer.');
+    }
+
+    if (toTick !== undefined && !Number.isInteger(parsedToTick)) {
+      throw new BadRequestException('toTick must be an integer.');
+    }
+
+    if (limit !== undefined && (!Number.isInteger(parsedLimit) || parsedLimit! < 1)) {
+      throw new BadRequestException('limit must be a positive integer.');
+    }
+
+    return toApiSuccess(
+      unwrapResult(
+        this.gameSessionService.getSession().getTickHistory({
+          fromTick: parsedFromTick,
+          toTick: parsedToTick,
+          limit: parsedLimit,
+        }),
+      ),
     );
   }
 
