@@ -8,9 +8,25 @@ export type CompanyReadModel = {
 };
 
 export type FinanceReadModel = {
+  readonly id: string;
+  readonly companyId: string;
+  readonly currency: string;
   readonly cashBalance: number;
   readonly reservedCash: number;
   readonly availableCash: number;
+};
+
+export type FinanceTransactionReadModel = {
+  readonly id: string;
+  readonly financeId: string;
+  readonly companyId: string;
+  readonly transactionType: string;
+  readonly direction: string;
+  readonly amount: number;
+  readonly balanceBefore: number;
+  readonly balanceAfter: number;
+  readonly reservedCashDelta: number;
+  readonly timestamp: number;
 };
 
 export type InventoryItemReadModel = {
@@ -189,6 +205,7 @@ export type GameSessionDashboard = {
   readonly simulationTime: number;
   readonly company: CompanyReadModel | null;
   readonly finance: FinanceReadModel | null;
+  readonly financeTransactions: readonly FinanceTransactionReadModel[];
   readonly inventory: InventoryReadModel | null;
   readonly warehouseStorage: readonly WarehouseStorageReadModel[];
   readonly buildings: readonly BuildingReadModel[];

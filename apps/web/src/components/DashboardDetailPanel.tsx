@@ -3,6 +3,7 @@
 import type { ReactNode } from 'react';
 import type {
   BuildingReadModel,
+  FinanceTransactionReadModel,
   GameSessionDashboard,
   ProductionJobSessionReadModel,
   ResearchJobSessionReadModel,
@@ -14,9 +15,65 @@ export type DetailSelection =
   | { readonly kind: 'building'; readonly id: string }
   | { readonly kind: 'production'; readonly id: string }
   | { readonly kind: 'transport'; readonly id: string }
-  | { readonly kind: 'research'; readonly id: string };
+  | { readonly kind: 'research'; readonly id: string }
+  | { readonly kind: 'finance' }
+  | { readonly kind: 'transaction'; readonly id: string };
 
 type KeyValueEntry = readonly [label: string, value: string, valueClass?: string];
+
+function formatCurrency(value: number, currency = 'GC'): string {
+  return `${value.toLocaleString('de-DE')} ${currency}`;
+}
+
+function formatTransactionType(type: string): string {
+  const labels: Record<string, string> = {
+    SALE: 'Verkauf',
+    PURCHASE: 'Einkauf',
+    PRODUCTION_COST: 'Produktionskosten',
+    BUILDING_COST: 'Baukosten',
+    BUILDING_REFUND: 'Bau-Rückerstattung',
+    RESEARCH_COST: 'Forschungskosten',
+    RESEARCH_REWARD: 'Forschungsprämie',
+    MAINTENANCE: 'Wartung',
+    SALARY: 'Gehalt',
+    LOAN_RECEIVED: 'Kredit erhalten',
+    LOAN_PAYMENT: 'Kreditrate',
+    INTEREST: 'Zinsen',
+    MARKET_FEE: 'Marktgebühr',
+    TRANSPORT_COST: 'Transportkosten',
+    CONTRACT_PAYMENT: 'Vertragszahlung',
+    NPC_REWARD: 'NPC-Belohnung',
+    TAX: 'Steuer',
+    ADMIN: 'Administration',
+    SYSTEM: 'System',
+  };
+
+  return labels[type] ?? type;
+}
+
+function formatTransactionDirection(direction: string, amount: number): string {
+  if (direction === 'IN') {
+    return `+${amount.toLocaleString('de-DE')}`;
+  }
+
+  if (direction === 'OUT') {
+    return `−${amount.toLocaleString('de-DE')}`;
+  }
+
+  return amount.toLocaleString('de-DE');
+}
+
+function transactionDirectionClass(direction: string): string | undefined {
+  if (direction === 'IN') {
+    return 'kv-value-success';
+  }
+
+  if (direction === 'OUT') {
+    return 'kv-value-error';
+  }
+
+  return undefined;
+}
 
 function formatProgress(progress: number): string {
   return `${Math.round(progress)}%`;
@@ -247,6 +304,87 @@ function ResearchFocus({
   );
 }
 
+function FinanceFocus({
+  dashboard,
+  onClear,
+}: {
+  readonly dashboard: GameSessionDashboard;
+  readonly onClear: () => void;
+}) {
+  const finance = dashboard.finance;
+  const recentTransactions = dashboard.financeTransactions.slice(0, 5);
+
+  if (finance === null) {
+    return null;
+  }
+
+  return (
+    <DetailFocusCard title="Finanzen" subtitle="Kontostand & Buchungen" onClear={onClear}>
+      <KeyValuePanel
+        entries={[
+          ['Konto-ID', finance.id],
+          ['Währung', finance.currency],
+          ['Cash', formatCurrency(finance.cashBalance, finance.currency)],
+          ['Reserviert', formatCurrency(finance.reservedCash, finance.currency)],
+          ['Verfügbar', formatCurrency(finance.availableCash, finance.currency)],
+          ['Buchungen gesamt', String(dashboard.financeTransactions.length)],
+        ]}
+      />
+      {recentTransactions.length > 0 ? (
+        <div className="detail-related">
+          <h3 className="detail-related-title">Letzte Buchungen</h3>
+          <ul className="detail-related-list">
+            {recentTransactions.map((transaction) => (
+              <li key={transaction.id}>
+                <span>{formatTransactionType(transaction.transactionType)}</span>
+                <span className={transactionDirectionClass(transaction.direction)}>
+                  {formatTransactionDirection(transaction.direction, transaction.amount)}{' '}
+                  {finance.currency}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+    </DetailFocusCard>
+  );
+}
+
+function TransactionFocus({
+  transaction,
+  currency,
+  onClear,
+}: {
+  readonly transaction: FinanceTransactionReadModel;
+  readonly currency: string;
+  readonly onClear: () => void;
+}) {
+  return (
+    <DetailFocusCard
+      title={formatTransactionType(transaction.transactionType)}
+      subtitle="Finanzbuchung"
+      onClear={onClear}
+    >
+      <KeyValuePanel
+        entries={[
+          ['Buchungs-ID', transaction.id],
+          ['Typ', formatTransactionType(transaction.transactionType)],
+          ['Richtung', transaction.direction],
+          [
+            'Betrag',
+            `${formatTransactionDirection(transaction.direction, transaction.amount)} ${currency}`,
+            transactionDirectionClass(transaction.direction),
+          ],
+          ['Saldo vorher', formatCurrency(transaction.balanceBefore, currency)],
+          ['Saldo nachher', formatCurrency(transaction.balanceAfter, currency)],
+          ['Reserviert Δ', String(transaction.reservedCashDelta)],
+          ['Simulationszeit', String(transaction.timestamp)],
+        ]}
+      />
+    </DetailFocusCard>
+  );
+}
+
 /** Validates that the current selection still references dashboard data. */
 export function normalizeDetailSelection(
   dashboard: GameSessionDashboard | null,
@@ -273,6 +411,12 @@ export function normalizeDetailSelection(
       return dashboard.researchJobs.some((job) => job.id === selection.id)
         ? selection
         : { kind: 'overview' };
+    case 'finance':
+      return dashboard.finance === null ? { kind: 'overview' } : selection;
+    case 'transaction':
+      return dashboard.financeTransactions.some((transaction) => transaction.id === selection.id)
+        ? selection
+        : { kind: 'overview' };
     default:
       return { kind: 'overview' };
   }
@@ -283,6 +427,7 @@ export function DashboardDetailPanel({
   dashboard,
   selection,
   onClearSelection,
+  onSelectFinance,
   labelBuilding,
   labelRecipe,
   labelResource,
@@ -292,6 +437,7 @@ export function DashboardDetailPanel({
   readonly dashboard: GameSessionDashboard | null;
   readonly selection: DetailSelection;
   readonly onClearSelection: () => void;
+  readonly onSelectFinance: () => void;
   readonly labelBuilding: (id: string) => string;
   readonly labelRecipe: (id: string) => string;
   readonly labelResource: (id: string) => string;
@@ -349,6 +495,20 @@ export function DashboardDetailPanel({
                 />
               ) : null;
             }
+            case 'finance':
+              return <FinanceFocus dashboard={dashboard} onClear={onClearSelection} />;
+            case 'transaction': {
+              const transaction = dashboard.financeTransactions.find(
+                (entry) => entry.id === selection.id,
+              );
+              return transaction ? (
+                <TransactionFocus
+                  transaction={transaction}
+                  currency={dashboard.finance?.currency ?? 'GC'}
+                  onClear={onClearSelection}
+                />
+              ) : null;
+            }
             default:
               return null;
           }
@@ -379,16 +539,21 @@ export function DashboardDetailPanel({
         )}
       </section>
 
-      <section className={`card detail-card${selection.kind !== 'overview' ? ' detail-card-compact' : ''}`}>
-        <h2>Finanzen</h2>
+      <section
+        className={`card detail-card detail-card-selectable${selection.kind === 'finance' || selection.kind === 'transaction' ? ' detail-card-active' : ''}${selection.kind !== 'overview' && selection.kind !== 'finance' && selection.kind !== 'transaction' ? ' detail-card-compact' : ''}`}
+      >
+        <button type="button" className="detail-section-button" onClick={onSelectFinance}>
+          <h2>Finanzen</h2>
+          <span className="detail-section-hint">Klicken für Kontodetails</span>
+        </button>
         {!dashboard?.finance ? (
           <KeyValuePanel entries={[['Status', '—']]} />
         ) : (
           <KeyValuePanel
             entries={[
-              ['Cash', `${dashboard.finance.cashBalance.toLocaleString('de-DE')} GC`],
-              ['Reserviert', `${dashboard.finance.reservedCash.toLocaleString('de-DE')} GC`],
-              ['Verfügbar', `${dashboard.finance.availableCash.toLocaleString('de-DE')} GC`],
+              ['Cash', formatCurrency(dashboard.finance.cashBalance, dashboard.finance.currency)],
+              ['Reserviert', formatCurrency(dashboard.finance.reservedCash, dashboard.finance.currency)],
+              ['Verfügbar', formatCurrency(dashboard.finance.availableCash, dashboard.finance.currency)],
             ]}
           />
         )}

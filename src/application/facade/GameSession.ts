@@ -20,6 +20,7 @@ import { GetCompanyQueryHandler } from '../queries/GetCompanyQueryHandler.js';
 import { ListBuildingsQueryHandler } from '../queries/ListBuildingsQueryHandler.js';
 import { GetInventoryQueryHandler } from '../queries/GetInventoryQueryHandler.js';
 import { GetFinanceQueryHandler } from '../queries/GetFinanceQueryHandler.js';
+import { ListFinanceTransactionsQueryHandler } from '../queries/ListFinanceTransactionsQueryHandler.js';
 import { GetMarketPricesQueryHandler } from '../queries/GetMarketPricesQueryHandler.js';
 import { createCompanyId } from '../../domain/company/Company.js';
 import { ProductionJobStatus } from '../../domain/production/ProductionJobStatus.js';
@@ -95,6 +96,7 @@ export class GameSession {
   #listBuildings!: ListBuildingsQueryHandler;
   #getInventory!: GetInventoryQueryHandler;
   #getFinance!: GetFinanceQueryHandler;
+  #listFinanceTransactions!: ListFinanceTransactionsQueryHandler;
   #getMarketPrices!: GetMarketPricesQueryHandler;
   #dashboardBuilder!: GameSessionDashboardBuilder;
   readonly #gameContentRoot: string;
@@ -198,6 +200,12 @@ export class GameSession {
       return Result.fail(financeResult.error);
     }
 
+    const financeTransactionsResult = this.#listFinanceTransactions.execute({ companyId });
+
+    if (!financeTransactionsResult.ok) {
+      return Result.fail(financeTransactionsResult.error);
+    }
+
     const inventoryResult = this.#getInventory.execute({ companyId });
 
     if (!inventoryResult.ok) {
@@ -262,6 +270,7 @@ export class GameSession {
       simulationTime: this.#context.clock.now(),
       company: companyResult.value,
       finance: financeResult.value,
+      financeTransactions: financeTransactionsResult.value,
       inventory: inventoryResult.value,
       warehouseStorage,
       buildings: buildingsResult.value,
@@ -464,6 +473,7 @@ export class GameSession {
     this.#listBuildings = new ListBuildingsQueryHandler(this.#context);
     this.#getInventory = new GetInventoryQueryHandler(this.#context);
     this.#getFinance = new GetFinanceQueryHandler(this.#context);
+    this.#listFinanceTransactions = new ListFinanceTransactionsQueryHandler(this.#context);
     this.#getMarketPrices = new GetMarketPricesQueryHandler(this.#context);
     this.#dashboardBuilder = new GameSessionDashboardBuilder(
       this.#context,
@@ -598,7 +608,9 @@ export class GameSession {
       simulationTime: this.#context.clock.now(),
       company: null,
       finance: null,
+      financeTransactions: Object.freeze([]),
       inventory: null,
+      warehouseStorage: Object.freeze([]),
       buildings: Object.freeze([]),
       marketPrices: this.#readMarketPrices(),
       milestones: this.#readMilestoneCatalog(new Set()),

@@ -30,11 +30,11 @@ Update this document whenever a meaningful implementation milestone is completed
 | Simulation | Partial (SimulationEngine, systems pipeline) |
 | Infrastructure | Partial (in-memory repositories, JSON savegames incl. tick metrics history) |
 | Application layer | Partial (bootstrap, use cases, queries, dashboard facade) |
-| UI | Partial (Next.js dashboard per DASHBOARD_STYLE_GUIDE: layout, charts, drill-down, sortable tables) |
+| UI | Partial (Next.js dashboard per DASHBOARD_STYLE_GUIDE: layout, charts, drill-down, sortable tables, live WebSocket refresh, finance drill-down) |
 | Energy system | Partial (balance service, production gating, baseline grid) |
 | Transport / logistics | Partial (warehouse storage, transport orders, dashboard KPIs) |
 
-**Tests:** 286 (run `pnpm test` for current count)
+**Tests:** 289 (run `pnpm test` for current count)
 
 ---
 
@@ -531,6 +531,7 @@ Coordinates use cases between domain, infrastructure and simulation.
 | `EnergyBalanceService` | `services/EnergyBalanceService.ts` |
 | `TransportLogisticsService` | `services/TransportLogisticsService.ts` |
 | `TickHistoryService` | `services/TickHistoryService.ts` |
+| `ListFinanceTransactionsQueryHandler` | `queries/ListFinanceTransactionsQueryHandler.ts` |
 | `GameSession` | `facade/GameSession.ts` |
 | `GameSessionDashboardBuilder` | `facade/GameSessionDashboardBuilder.ts` |
 | `SaveGameCommand` | `commands/SaveGameCommand.ts` |
@@ -543,7 +544,7 @@ Coordinates use cases between domain, infrastructure and simulation.
 | `GetInventoryQueryHandler` | `queries/GetInventoryQueryHandler.ts` |
 | `GetFinanceQueryHandler` | `queries/GetFinanceQueryHandler.ts` |
 | `GetMarketPricesQueryHandler` | `queries/GetMarketPricesQueryHandler.ts` |
-| Read models | `read-models/CompanyReadModel.ts`, `BuildingReadModel.ts`, `InventoryReadModel.ts`, `FinanceReadModel.ts`, `MarketPriceReadModel.ts`, `TickMetricsSnapshot.ts` |
+| Read models | `read-models/CompanyReadModel.ts`, `BuildingReadModel.ts`, `InventoryReadModel.ts`, `FinanceReadModel.ts`, `MarketPriceReadModel.ts`, `TickMetricsSnapshot.ts`, `FinanceTransactionReadModel.ts` |
 | Tests | `bootstrap/bootstrapApplication.test.ts`, `services/*.test.ts`, `queries/*.test.ts`, `use-cases/*.test.ts`, `facade/GameSession.test.ts` |
 
 **Behaviour:**
@@ -565,6 +566,7 @@ Coordinates use cases between domain, infrastructure and simulation.
 - `MilestoneEvaluationService` completes milestones from domain events: first sale → `first_profit`, cumulative sale revenue → `profit_100`, finished production jobs → `first_production`.
 - `GameSession` exposes browser-facing dashboard, tick history, save/load and simulation actions; records per-tick KPI snapshots after each simulation tick.
 - `TickHistoryService` stores a ring buffer (max 500 points) of cash, energy reserve and active transport counts for dashboard charts.
+- `ListFinanceTransactionsQueryHandler` exposes finance ledger entries for dashboard drill-down.
 - `PlaceBuildingUseCase` and `StartProductionUseCase` enforce `requiredResearch` / `requiredMilestones` via domain specifications.
 
 ---
@@ -583,6 +585,7 @@ Coordinates use cases between domain, infrastructure and simulation.
 | `GameStateSerializer` | `persistence/savegame/GameStateSerializer.ts` |
 | `FileSavegameStore` | `persistence/savegame/FileSavegameStore.ts` |
 | NestJS API | `apps/api/` |
+| Dashboard WebSocket | `apps/api/src/dashboard/` (`/ws/v1/dashboard`) |
 | Next.js web app | `apps/web/` |
 | Tests | `persistence/InMemory*.test.ts`, `use-cases/SaveGameUseCase.test.ts`, `apps/api/src/**/*.test.ts` |
 
@@ -613,6 +616,7 @@ Coordinates use cases between domain, infrastructure and simulation.
 |---|---|---|
 | GET | `/api/dashboard` | Aggregated session snapshot |
 | GET | `/api/dashboard/history` | Tick metrics history for charts (`fromTick`, `toTick`, `limit`) |
+| WS | `/ws/v1/dashboard` | Live refresh event `dashboard:refresh` after ticks and session mutations |
 | POST | `/api/session/new` | Start new game |
 | POST | `/api/session/save` | Persist to `saves/browser-session.json` |
 | POST | `/api/session/load` | Restore from save file |
@@ -634,6 +638,7 @@ Coordinates use cases between domain, infrastructure and simulation.
 | Detail panel | `src/components/DashboardDetailPanel.tsx` |
 | Tick history charts | `src/components/TickHistoryCharts.tsx` |
 | Data table | `src/components/DataTable.tsx` |
+| Dashboard socket client | `src/lib/dashboard-socket.ts` |
 | API client | `src/lib/api.ts` |
 | Styles | `src/app/dashboard.css` |
 
@@ -646,6 +651,8 @@ Coordinates use cases between domain, infrastructure and simulation.
 - Line charts (Recharts) for cash, energy reserve and active transports; KPI trend arrows from tick history.
 - Drill-down: selectable table rows update the detail panel (buildings, production, transport, research).
 - Sortable, searchable tables with sticky headers and numeric alignment.
+- Live dashboard refresh via WebSocket (`dashboard:refresh` → automatic refetch).
+- Finance drill-down: KPI cash card, Finanzbuchungen table, detail panel focus for account and single transactions.
 - Light/dark theme toggle; separate on-site inventory and warehouse storage panels.
 - Content-driven toolbar hints with disable reasons; energy panel; localized resource/building names.
 
@@ -747,6 +754,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 | Application / MarketTrade | `MarketTradeService.test.ts` | Instant buy/sell, insufficient stock/cash |
 | Application / SaveGame | `SaveGameUseCase.test.ts` | Snapshot round-trip, pending event guard, tick metrics history |
 | Application / TickHistory | `TickHistoryService.test.ts` | Record, filter, ring buffer, save/restore |
+| Application / FinanceTransactions | `ListFinanceTransactionsQueryHandler.test.ts` | Ledger listing, newest first |
 | Application / SellBuyResource | `MarketTradeUseCases.test.ts` | Use case validation, trade flow |
 | Infrastructure / Finance repo | `InMemoryFinanceRepository.test.ts` | Save, find by company |
 
@@ -763,10 +771,9 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 # Planned Next Steps
 
 1. Session/auth model for multi-user API access
-2. WebSocket tick streaming (optional live dashboard refresh)
-3. Icon library integration (replace KPI emoji placeholders per `ICON_GUIDELINES.md`)
-4. Additional dashboard charts and drill-down paths (finance, logistics views)
-5. Full tick log / replay per DD-033 (beyond metrics ring buffer)
+2. Icon library integration (replace KPI emoji placeholders per `ICON_GUIDELINES.md`)
+3. Additional dashboard charts and drill-down paths (logistics views)
+4. Full tick log / replay per DD-033 (beyond metrics ring buffer)
 
 ---
 
@@ -779,6 +786,8 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 - Dashboard drill-down detail panel for buildings, production, transport and research
 - Sortable, searchable dashboard tables
 - Tick metrics history persisted in savegames (`tickMetricsHistory` on schema v1)
+- WebSocket live dashboard refresh (`/ws/v1/dashboard`)
+- Finance drill-down with ledger table and transaction detail focus
 
 ---
 

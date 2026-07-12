@@ -7,6 +7,7 @@
 import type { BuildingReadModel } from '../read-models/BuildingReadModel.js';
 import type { CompanyReadModel } from '../read-models/CompanyReadModel.js';
 import type { FinanceReadModel } from '../read-models/FinanceReadModel.js';
+import type { FinanceTransactionReadModel } from '../read-models/FinanceTransactionReadModel.js';
 import type { InventoryReadModel } from '../read-models/InventoryReadModel.js';
 import type { MarketPriceReadModel } from '../read-models/MarketPriceReadModel.js';
 import type { WarehouseStorageReadModel } from '../read-models/WarehouseStorageReadModel.js';
@@ -147,6 +148,7 @@ export type GameSessionDashboard = {
   readonly simulationTime: number;
   readonly company: CompanyReadModel | null;
   readonly finance: FinanceReadModel | null;
+  readonly financeTransactions: readonly FinanceTransactionReadModel[];
   readonly inventory: InventoryReadModel | null;
   readonly warehouseStorage: readonly WarehouseStorageReadModel[];
   readonly buildings: readonly BuildingReadModel[];

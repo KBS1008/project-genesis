@@ -553,6 +553,27 @@ button.btn-secondary:hover:not(:disabled) {
   border-color: rgba(37, 99, 235, 0.45);
 }
 
+.kpi-card-button {
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.kpi-card-button:hover,
+.kpi-card-button:focus-visible {
+  border-color: rgba(37, 99, 235, 0.55);
+  box-shadow: var(--shadow);
+  outline: none;
+}
+
+.meta-pill-live {
+  color: var(--color-success);
+  border-color: rgba(34, 197, 94, 0.45);
+}
+
 .kpi-label {
   font-size: 0.75rem;
   text-transform: uppercase;
@@ -977,6 +998,47 @@ tbody tr:hover {
 .detail-card-compact .kv dt,
 .detail-card-compact .kv dd {
   font-size: var(--text-caption);
+}
+
+.detail-card-selectable {
+  position: relative;
+}
+
+.detail-card-active {
+  border-color: rgba(37, 99, 235, 0.55);
+  box-shadow: var(--shadow-soft);
+}
+
+.detail-section-button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  width: 100%;
+  margin: 0 0 0.75rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+}
+
+.detail-section-button:hover .detail-section-hint,
+.detail-section-button:focus-visible .detail-section-hint {
+  color: var(--color-primary);
+}
+
+.detail-section-button:focus-visible {
+  outline: 2px solid rgba(37, 99, 235, 0.45);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.detail-section-hint {
+  font-size: var(--text-caption);
+  color: var(--muted);
 }
 
 .detail-related {

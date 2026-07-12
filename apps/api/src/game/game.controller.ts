@@ -22,6 +22,7 @@ import type { SellResourceDto } from './dto/sell-resource.dto.js';
 import type { TickSimulationDto } from './dto/tick-simulation.dto.js';
 import type { StartProductionDto } from './dto/start-production.dto.js';
 import type { StartResearchDto } from './dto/start-research.dto.js';
+import { DashboardBroadcastService } from '../dashboard/dashboard-broadcast.service.js';
 import { GameSessionService } from './game-session.service.js';
 
 /** Exposes game session actions over HTTP. */
@@ -33,7 +34,16 @@ export class GameController {
   constructor(
     @Inject(GameSessionService)
     private readonly gameSessionService: GameSessionService,
+    @Inject(DashboardBroadcastService)
+    private readonly dashboardBroadcast: DashboardBroadcastService,
   ) {}
+
+  /** Notifies connected dashboard clients to refresh after session mutations. */
+  #notifyDashboardRefresh(): void {
+    const dashboardResult = this.gameSessionService.getSession().getDashboard();
+    const tickNumber = dashboardResult.ok ? dashboardResult.value.tickNumber : null;
+    this.dashboardBroadcast.notifyRefresh(tickNumber);
+  }
 
   /** Returns the aggregated dashboard snapshot. */
   @Get('dashboard')
@@ -81,9 +91,11 @@ export class GameController {
   @Post('session/new')
   @HttpCode(200)
   startNewGame(@Body() body: NewGameDto | undefined) {
-    return toApiSuccess(
+    const result = toApiSuccess(
       unwrapResult(this.gameSessionService.getSession().startNewGame(body?.name)),
     );
+    this.#notifyDashboardRefresh();
+    return result;
   }
 
   /** Persists the active session to disk. */
@@ -91,7 +103,9 @@ export class GameController {
   @HttpCode(200)
   async saveGame() {
     const saveResult = await this.gameSessionService.getSession().saveGame();
-    return toApiSuccess(unwrapResult(saveResult));
+    const result = toApiSuccess(unwrapResult(saveResult));
+    this.#notifyDashboardRefresh();
+    return result;
   }
 
   /** Restores the active session from disk. */
@@ -99,7 +113,9 @@ export class GameController {
   @HttpCode(200)
   async loadGame() {
     const loadResult = await this.gameSessionService.getSession().loadGame();
-    return toApiSuccess(unwrapResult(loadResult));
+    const result = toApiSuccess(unwrapResult(loadResult));
+    this.#notifyDashboardRefresh();
+    return result;
   }
 
   /** Advances the simulation by one or more ticks. */
@@ -112,7 +128,9 @@ export class GameController {
       throw new BadRequestException('Tick count must be an integer.');
     }
 
-    return toApiSuccess(unwrapResult(this.gameSessionService.getSession().tick(count)));
+    const result = toApiSuccess(unwrapResult(this.gameSessionService.getSession().tick(count)));
+    this.#notifyDashboardRefresh();
+    return result;
   }
 
   /** Places a building for the active company. */
@@ -128,7 +146,7 @@ export class GameController {
       throw new BadRequestException('Missing building placement fields.');
     }
 
-    return toApiSuccess(
+    const result = toApiSuccess(
       unwrapResult(
         this.gameSessionService.getSession().placeBuilding({
           buildingTypeId: body.buildingTypeId,
@@ -138,6 +156,8 @@ export class GameController {
         }),
       ),
     );
+    this.#notifyDashboardRefresh();
+    return result;
   }
 
   /** Starts a production job on a building. */
@@ -148,7 +168,7 @@ export class GameController {
       throw new BadRequestException('Missing production start fields.');
     }
 
-    return toApiSuccess(
+    const result = toApiSuccess(
       unwrapResult(
         this.gameSessionService.getSession().startProduction({
           buildingId: body.buildingId,
@@ -156,6 +176,8 @@ export class GameController {
         }),
       ),
     );
+    this.#notifyDashboardRefresh();
+    return result;
   }
 
   /** Starts a research job for the active company. */
@@ -166,13 +188,15 @@ export class GameController {
       throw new BadRequestException('Missing research start fields.');
     }
 
-    return toApiSuccess(
+    const result = toApiSuccess(
       unwrapResult(
         this.gameSessionService.getSession().startResearch({
           technologyId: body.technologyId,
         }),
       ),
     );
+    this.#notifyDashboardRefresh();
+    return result;
   }
 
   /** Sells resources on the market for the active company. */
@@ -183,7 +207,7 @@ export class GameController {
       throw new BadRequestException('Missing market sell fields.');
     }
 
-    return toApiSuccess(
+    const result = toApiSuccess(
       unwrapResult(
         this.gameSessionService.getSession().sellResource({
           resourceId: body.resourceId,
@@ -191,6 +215,8 @@ export class GameController {
         }),
       ),
     );
+    this.#notifyDashboardRefresh();
+    return result;
   }
 
   /** Buys resources on the market for the active company. */
@@ -201,7 +227,7 @@ export class GameController {
       throw new BadRequestException('Missing market buy fields.');
     }
 
-    return toApiSuccess(
+    const result = toApiSuccess(
       unwrapResult(
         this.gameSessionService.getSession().buyResource({
           resourceId: body.resourceId,
@@ -209,5 +235,7 @@ export class GameController {
         }),
       ),
     );
+    this.#notifyDashboardRefresh();
+    return result;
   }
 }

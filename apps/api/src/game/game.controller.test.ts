@@ -46,6 +46,7 @@ describe('GameController (NestJS)', () => {
     expect(dashboardResponse.status).toBe(200);
     expect(dashboardResponse.body.data.company?.name).toBe('NestJS Test Corp');
     expect(dashboardResponse.body.data.finance?.cashBalance).toBe(250_000);
+    expect(Array.isArray(dashboardResponse.body.data.financeTransactions)).toBe(true);
   });
 
   it('POST /api/buildings/place validates required fields', async () => {

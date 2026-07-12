@@ -6,12 +6,14 @@
 
 import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
+import { IoAdapter } from '@nestjs/platform-socket.io';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module.js';
 import { ApiExceptionFilter } from './common/api-exception.filter.js';
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  app.useWebSocketAdapter(new IoAdapter(app));
   app.useGlobalFilters(new ApiExceptionFilter());
 
   const host = process.env['HOST'] ?? '127.0.0.1';
@@ -32,6 +34,8 @@ async function bootstrap(): Promise<void> {
   console.log(`UI:   ${webOrigin}`);
   // eslint-disable-next-line no-console -- intentional startup message
   console.log(`API:  http://${host}:${port}/api/dashboard`);
+  // eslint-disable-next-line no-console -- intentional startup message
+  console.log(`WS:   http://${host}:${port}/ws/v1/dashboard`);
   // eslint-disable-next-line no-console -- intentional startup message
   console.log('Press Ctrl+C to stop.');
 }

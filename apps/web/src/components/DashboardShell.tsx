@@ -17,6 +17,7 @@ import {
   type DetailSelection,
 } from '@/components/DashboardDetailPanel';
 import { DataTable } from '@/components/DataTable';
+import { connectDashboardSocket } from '@/lib/dashboard-socket';
 
 type StatusTone = '' | 'success' | 'error' | 'info';
 
@@ -64,12 +65,52 @@ function trendFromHistory(
   return trendLabel('stable', stableLabel);
 }
 
+function formatTransactionType(type: string): string {
+  const labels: Record<string, string> = {
+    SALE: 'Verkauf',
+    PURCHASE: 'Einkauf',
+    PRODUCTION_COST: 'Produktionskosten',
+    BUILDING_COST: 'Baukosten',
+    BUILDING_REFUND: 'Bau-Rückerstattung',
+    RESEARCH_COST: 'Forschungskosten',
+    RESEARCH_REWARD: 'Forschungsprämie',
+    MAINTENANCE: 'Wartung',
+    SALARY: 'Gehalt',
+    LOAN_RECEIVED: 'Kredit erhalten',
+    LOAN_PAYMENT: 'Kreditrate',
+    INTEREST: 'Zinsen',
+    MARKET_FEE: 'Marktgebühr',
+    TRANSPORT_COST: 'Transportkosten',
+    CONTRACT_PAYMENT: 'Vertragszahlung',
+    NPC_REWARD: 'NPC-Belohnung',
+    TAX: 'Steuer',
+    ADMIN: 'Administration',
+    SYSTEM: 'System',
+  };
+
+  return labels[type] ?? type;
+}
+
+function formatTransactionAmount(direction: string, amount: number): string {
+  if (direction === 'IN') {
+    return `+${amount.toLocaleString('de-DE')}`;
+  }
+
+  if (direction === 'OUT') {
+    return `−${amount.toLocaleString('de-DE')}`;
+  }
+
+  return amount.toLocaleString('de-DE');
+}
+
 function KpiStrip({
   kpis,
   history,
+  onSelectFinance,
 }: {
   readonly kpis: GameSessionDashboard['kpis'];
   readonly history: readonly TickMetricsSnapshot[];
+  readonly onSelectFinance: () => void;
 }) {
   if (kpis === null) {
     return null;
@@ -77,7 +118,7 @@ function KpiStrip({
 
   return (
     <section className="kpi-strip" aria-label="Kennzahlen">
-      <article className="kpi-card">
+      <button type="button" className="kpi-card kpi-card-button" onClick={onSelectFinance}>
         <span className="kpi-icon" aria-hidden="true">
           💰
         </span>
@@ -88,7 +129,7 @@ function KpiStrip({
             {trendFromHistory(history, 'availableCash', 'Liquidität')}
           </span>
         </div>
-      </article>
+      </button>
       <article className={`kpi-card${kpis.energyHasDeficit ? ' kpi-warning' : ''}`}>
         <span className="kpi-icon" aria-hidden="true">
           ⚡
@@ -527,6 +568,7 @@ export function DashboardShell() {
   const [isBusy, setIsBusy] = useState(false);
   const [statusMessage, setStatusMessage] = useState('');
   const [statusTone, setStatusTone] = useState<StatusTone>('');
+  const [isLiveConnected, setIsLiveConnected] = useState(false);
   const [detailSelection, setDetailSelection] = useState<DetailSelection>({ kind: 'overview' });
 
   const nameMaps = useMemo(() => {
@@ -591,6 +633,32 @@ export function DashboardShell() {
   }, [refreshDashboard]);
 
   useEffect(() => {
+    let active = true;
+
+    const socket = connectDashboardSocket(
+      () => {
+        if (!active || isBusy) {
+          return;
+        }
+
+        void refreshDashboard().catch(() => {
+          /* silent background refresh */
+        });
+      },
+      (connected) => {
+        if (active) {
+          setIsLiveConnected(connected);
+        }
+      },
+    );
+
+    return () => {
+      active = false;
+      socket.disconnect();
+    };
+  }, [isBusy, refreshDashboard]);
+
+  useEffect(() => {
     setDetailSelection((current) => normalizeDetailSelection(dashboard, current));
   }, [dashboard]);
 
@@ -628,16 +696,25 @@ export function DashboardShell() {
     nameMaps.technologies.get(technologyId) ?? technologyId;
 
   const selectedRowKey =
-    detailSelection.kind === 'overview'
+    detailSelection.kind === 'overview' || detailSelection.kind === 'finance'
       ? null
-      : `${detailSelection.kind}:${detailSelection.id}`;
+      : detailSelection.kind === 'transaction'
+        ? `transaction:${detailSelection.id}`
+        : `${detailSelection.kind}:${detailSelection.id}`;
 
   const selectDetail = useCallback(
-    (kind: 'building' | 'production' | 'transport' | 'research', id: string) => {
+    (
+      kind: 'building' | 'production' | 'transport' | 'research' | 'transaction',
+      id: string,
+    ) => {
       setDetailSelection({ kind, id });
     },
     [],
   );
+
+  const selectFinanceDetail = useCallback(() => {
+    setDetailSelection({ kind: 'finance' });
+  }, []);
 
   const clearDetailSelection = useCallback(() => {
     setDetailSelection({ kind: 'overview' });
@@ -694,6 +771,11 @@ export function DashboardShell() {
           >
             {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
           </button>
+          {isLiveConnected ? (
+            <span className="meta-pill meta-pill-live" title="Live-Updates aktiv">
+              Live
+            </span>
+          ) : null}
           {dashboard?.energy?.hasDeficit ? (
             <span
               className="meta-pill"
@@ -721,7 +803,7 @@ export function DashboardShell() {
 
         <div className="dashboard-content">
           {hasGame && dashboard?.kpis ? (
-            <KpiStrip kpis={dashboard.kpis} history={tickHistory} />
+            <KpiStrip kpis={dashboard.kpis} history={tickHistory} onSelectFinance={selectFinanceDetail} />
           ) : null}
 
           <div className="status-bar">
@@ -931,6 +1013,50 @@ export function DashboardShell() {
                     </div>
                   </section>
 
+                  <section className="card">
+                    <div className="section-header">
+                      <h2>Finanzbuchungen</h2>
+                      <p>Ledger-Einträge des Unternehmenskontos — neueste zuerst.</p>
+                    </div>
+                    <div className="table-wrap">
+                      {!dashboard?.company ? (
+                        <p className="empty-state">
+                          <strong>Keine Buchungen.</strong>
+                          Starten Sie ein Spiel, um Finanzbewegungen zu sehen.
+                        </p>
+                      ) : (
+                        <DataTable
+                          searchable
+                          searchPlaceholder="Buchungen suchen…"
+                          columns={[
+                            { key: 'transactionType', label: 'Typ' },
+                            { key: 'amount', label: 'Betrag', numeric: true },
+                            { key: 'balanceAfter', label: 'Saldo', numeric: true },
+                            { key: 'timestamp', label: 'Zeit', numeric: true },
+                          ]}
+                          rows={dashboard.financeTransactions.map((transaction) => ({
+                            transactionType: formatTransactionType(transaction.transactionType),
+                            amount: formatTransactionAmount(
+                              transaction.direction,
+                              transaction.amount,
+                            ),
+                            balanceAfter: transaction.balanceAfter.toLocaleString('de-DE'),
+                            timestamp: String(transaction.timestamp),
+                          }))}
+                          rowKeys={dashboard.financeTransactions.map(
+                            (transaction) => `transaction:${transaction.id}`,
+                          )}
+                          selectedRowKey={selectedRowKey}
+                          onRowSelect={(rowKey) => {
+                            selectDetail('transaction', rowKey.slice('transaction:'.length));
+                          }}
+                          emptyText="Noch keine Buchungen."
+                          emptyHint="Bauen, handeln oder forschen, um Buchungen zu erzeugen."
+                        />
+                      )}
+                    </div>
+                  </section>
+
                   <div className="table-grid">
                     <section className="card">
                       <div className="section-header">
@@ -1014,6 +1140,7 @@ export function DashboardShell() {
               dashboard={dashboard}
               selection={detailSelection}
               onClearSelection={clearDetailSelection}
+              onSelectFinance={selectFinanceDetail}
               labelBuilding={labelBuilding}
               labelRecipe={labelRecipe}
               labelResource={labelResource}
