@@ -139,6 +139,8 @@ export async function restoreApplicationFromSnapshot(
     eventBus,
     clock,
     companyMilestonesRepository,
+    productionJobRepository,
+    financeRepository,
     simulationEngine,
     milestones: contentResult.value.milestones,
   });

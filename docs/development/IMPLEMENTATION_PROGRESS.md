@@ -32,7 +32,7 @@ Update this document whenever a meaningful implementation milestone is completed
 | Application layer | Partial (bootstrap, use cases, queries) |
 | UI | Not started |
 
-**Tests:** 256 (run `pnpm test` for current count)
+**Tests:** 260 (run `pnpm test` for current count)
 
 ---
 
@@ -425,12 +425,16 @@ game-content/research/
 
 ```text
 game-content/milestones/
-└── first_profit.yaml
+├── first_profit.yaml
+├── first_production.yaml
+└── profit_100.yaml
 ```
 
 **Reference validation:**
 
 - `requiredMilestones` on buildings and recipes → `MilestoneRegistry` via `validateMilestoneReferences.ts`
+
+**Trigger types (v1):** `FIRST_SALE`, `PRODUCTION_VOLUME` (`count`, optional `recipeId`), `PROFIT_THRESHOLD` (`amount` = cumulative sale revenue in GC).
 
 ### Content validation orchestration
 
@@ -551,7 +555,7 @@ Coordinates use cases between domain, infrastructure and simulation.
 - `CompleteTechnologyUseCase` marks technologies as completed (internal completion path after research jobs finish).
 - `StartResearchUseCase` debits `researchCost`, enforces prerequisites and starts timed research jobs.
 - `ResearchCompletionService` unlocks technologies when research jobs complete via simulation ticks.
-- `MilestoneEvaluationService` completes milestones from domain events (e.g. first market sale → `first_profit`).
+- `MilestoneEvaluationService` completes milestones from domain events: first sale → `first_profit`, cumulative sale revenue → `profit_100`, finished production jobs → `first_production`.
 - `PlaceBuildingUseCase` and `StartProductionUseCase` enforce `requiredResearch` / `requiredMilestones` via domain specifications.
 
 ---
@@ -620,7 +624,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 | Application / StartResearch | `StartResearchUseCase.test.ts` | Timed research, cost debit, tech unlock |
 | Domain / ResearchJob | `ResearchJob.test.ts` | Create, start, tick completion |
 | Domain / CompanyMilestones | `CompanyMilestones.test.ts` | Create, complete milestone |
-| Application / MilestoneEvaluation | `MilestoneEvaluationService.test.ts` | First sale unlocks first_profit |
+| Application / MilestoneEvaluation | `MilestoneEvaluationService.test.ts` | First sale, profit threshold, production volume |
 | Domain / Policies | `ConstructionCostPolicy.test.ts`, `InstantTradePricingPolicy.test.ts` | Construction cost resolution, instant trade pricing |
 | Domain / Money | `Money.test.ts` | Amount, currency, validation |
 | Domain / Quantity | `Quantity.test.ts` | Non-negative values |
@@ -656,7 +660,8 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Planned Next Steps
 
-1. Additional milestone trigger types (production volume, profit thresholds)
+1. Milestone-gated content using new milestones (buildings, recipes)
+2. UI shell / first browser view
 
 ---
 

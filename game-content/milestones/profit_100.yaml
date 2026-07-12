@@ -1,0 +1,8 @@
+id: profit_100
+name: Steady Sales
+description: Earn 100 GC from market sales.
+trigger:
+  type: PROFIT_THRESHOLD
+  amount: 100
+enabled: true
+version: 1

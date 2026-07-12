@@ -92,6 +92,64 @@ function readBoolean(
   return Result.ok(value);
 }
 
+function readTriggerFieldNumber(
+  trigger: Record<string, unknown>,
+  field: string,
+  filePath: string | undefined,
+  parentRecord: Record<string, unknown>,
+  options: { min?: number } = {},
+): Result<number, ContentLoadError> {
+  const value = trigger[field];
+
+  if (typeof value !== 'number' || Number.isNaN(value)) {
+    return Result.fail(
+      new ContentLoadError(`Milestone trigger field "${field}" must be a number.`, {
+        ...contentContext(parentRecord, filePath),
+      }),
+    );
+  }
+
+  if (options.min !== undefined && value < options.min) {
+    return Result.fail(
+      new ContentLoadError(`Milestone trigger field "${field}" must be at least ${options.min}.`, {
+        ...contentContext(parentRecord, filePath),
+      }),
+    );
+  }
+
+  return Result.ok(value);
+}
+
+function readTriggerFieldId(
+  trigger: Record<string, unknown>,
+  field: string,
+  filePath: string | undefined,
+  parentRecord: Record<string, unknown>,
+): Result<string, ContentLoadError> {
+  const value = trigger[field];
+
+  if (typeof value !== 'string' || value.length === 0) {
+    return Result.fail(
+      new ContentLoadError(`Milestone trigger field "${field}" must be a non-empty string.`, {
+        ...contentContext(parentRecord, filePath),
+      }),
+    );
+  }
+
+  if (!GLOBAL_ID_PATTERN.test(value)) {
+    return Result.fail(
+      new ContentLoadError(
+        `Milestone trigger field "${field}" must match ${GLOBAL_ID_PATTERN.toString()}.`,
+        {
+          ...contentContext(parentRecord, filePath),
+        },
+      ),
+    );
+  }
+
+  return Result.ok(value);
+}
+
 function readTrigger(
   record: Record<string, unknown>,
   filePath: string | undefined,
@@ -119,9 +177,57 @@ function readTrigger(
     );
   }
 
-  return Result.ok({
-    type: type as MilestoneDefinitionProps['trigger']['type'],
-  });
+  switch (type) {
+    case MilestoneTriggerType.FIRST_SALE:
+      return Result.ok({ type: MilestoneTriggerType.FIRST_SALE });
+    case MilestoneTriggerType.PRODUCTION_VOLUME: {
+      const countResult = readTriggerFieldNumber(trigger, 'count', filePath, record, { min: 1 });
+
+      if (!countResult.ok) {
+        return Result.fail(countResult.error);
+      }
+
+      if (trigger['recipeId'] === undefined) {
+        return Result.ok({
+          type: MilestoneTriggerType.PRODUCTION_VOLUME,
+          count: countResult.value,
+        });
+      }
+
+      const recipeIdResult = readTriggerFieldId(trigger, 'recipeId', filePath, record);
+
+      if (!recipeIdResult.ok) {
+        return Result.fail(recipeIdResult.error);
+      }
+
+      return Result.ok({
+        type: MilestoneTriggerType.PRODUCTION_VOLUME,
+        count: countResult.value,
+        recipeId: recipeIdResult.value,
+      });
+    }
+    case MilestoneTriggerType.PROFIT_THRESHOLD: {
+      const amountResult = readTriggerFieldNumber(trigger, 'amount', filePath, record, { min: 1 });
+
+      if (!amountResult.ok) {
+        return Result.fail(amountResult.error);
+      }
+
+      return Result.ok({
+        type: MilestoneTriggerType.PROFIT_THRESHOLD,
+        amount: amountResult.value,
+      });
+    }
+    default:
+      return Result.fail(
+        new ContentLoadError(
+          `Milestone trigger type must be one of: ${[...TRIGGER_TYPES].join(', ')}.`,
+          {
+            ...contentContext(record, filePath),
+          },
+        ),
+      );
+  }
 }
 
 /**

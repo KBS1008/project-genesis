@@ -150,6 +150,8 @@ export async function bootstrapApplication(
     eventBus,
     clock,
     companyMilestonesRepository,
+    productionJobRepository,
+    financeRepository,
     simulationEngine,
     milestones: contentResult.value.milestones,
   });
