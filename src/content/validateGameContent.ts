@@ -117,6 +117,7 @@ export async function validateGameContent(
     milestonesResult.value,
     buildingTypesResult.value,
     recipesResult.value,
+    technologiesResult.value,
   );
 
   if (!milestoneReferencesResult.ok) {

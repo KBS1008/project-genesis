@@ -5,6 +5,7 @@ import type { DomainEvent } from '../../common/events/DomainEvent.js';
 import { ManualClock } from '../../common/time/ManualClock.js';
 import { validateGameContent } from '../../content/validateGameContent.js';
 import { createCompanyId } from '../../domain/company/Company.js';
+import { createMilestoneId } from '../../domain/milestone/MilestoneId.js';
 import { STARTING_MONEY } from '../../domain/finance/FinanceConstants.js';
 import { ResearchCompleted } from '../../domain/research/events/ResearchCompleted.js';
 import { ResearchStarted } from '../../domain/research/events/ResearchStarted.js';
@@ -104,6 +105,33 @@ function requireCompanyId(value: string) {
   return result.value;
 }
 
+function grantMilestone(
+  context: Awaited<ReturnType<typeof createContext>>,
+  companyId: string,
+  milestoneId: string,
+) {
+  const companyIdResult = createCompanyId(companyId);
+
+  if (!companyIdResult.ok) {
+    throw new Error(companyIdResult.error.message);
+  }
+
+  const milestones = context.companyMilestonesRepository.findByCompanyId(companyIdResult.value);
+
+  if (milestones === undefined) {
+    throw new Error(`Milestones for company "${companyId}" were not found.`);
+  }
+
+  const milestoneIdResult = createMilestoneId(milestoneId);
+
+  if (!milestoneIdResult.ok) {
+    throw new Error(milestoneIdResult.error.message);
+  }
+
+  milestones.completeMilestone(milestoneIdResult.value, context.clock);
+  context.companyMilestonesRepository.save(milestones);
+}
+
 describe('StartResearchUseCase', () => {
   it('starts a research job, debits cost and completes the technology after duration', async () => {
     const context = await createContext();
@@ -128,6 +156,7 @@ describe('StartResearchUseCase', () => {
       name: 'Genesis Industries',
       ownerId: 'player_001',
     });
+    grantMilestone(context, 'company_001', 'profit_100');
 
     const financeBefore = context.financeRepository.findByCompanyId(requireCompanyId('company_001'));
     expect(financeBefore?.getCashBalance()).toBe(STARTING_MONEY);
@@ -169,6 +198,7 @@ describe('StartResearchUseCase', () => {
       name: 'Genesis Industries',
       ownerId: 'player_001',
     });
+    grantMilestone(context, 'company_001', 'profit_100');
 
     const finance = context.financeRepository.findByCompanyId(requireCompanyId('company_001'));
 
@@ -201,6 +231,7 @@ describe('StartResearchUseCase', () => {
       name: 'Genesis Industries',
       ownerId: 'player_001',
     });
+    grantMilestone(context, 'company_001', 'profit_100');
 
     const firstResult = startResearch.execute({
       jobId: 'research_job_001',
@@ -217,5 +248,25 @@ describe('StartResearchUseCase', () => {
     });
 
     expect(duplicateResult.ok).toBe(false);
+  });
+
+  it('rejects research when required milestones are not completed', async () => {
+    const context = await createContext();
+    const createCompany = new CreateCompanyUseCase(context);
+    const startResearch = new StartResearchUseCase(context);
+
+    createCompany.execute({
+      companyId: 'company_001',
+      name: 'Genesis Industries',
+      ownerId: 'player_001',
+    });
+
+    const result = startResearch.execute({
+      jobId: 'research_job_001',
+      companyId: 'company_001',
+      technologyId: 'basic_woodworking',
+    });
+
+    expect(result.ok).toBe(false);
   });
 });

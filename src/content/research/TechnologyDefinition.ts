@@ -22,6 +22,7 @@ export type TechnologyDefinitionProps = {
   readonly description: string;
   readonly category: TechnologyCategory;
   readonly requiredResearch: readonly string[];
+  readonly requiredMilestones: readonly string[];
   readonly researchCost: number;
   readonly researchDuration: number;
   readonly enabled: boolean;
@@ -37,6 +38,7 @@ export class TechnologyDefinition {
   readonly description: string;
   readonly category: TechnologyCategory;
   readonly requiredResearch: readonly string[];
+  readonly requiredMilestones: readonly string[];
   readonly researchCost: number;
   readonly researchDuration: number;
   readonly enabled: boolean;
@@ -48,6 +50,7 @@ export class TechnologyDefinition {
     this.description = props.description;
     this.category = props.category;
     this.requiredResearch = Object.freeze([...props.requiredResearch]);
+    this.requiredMilestones = Object.freeze([...props.requiredMilestones]);
     this.researchCost = props.researchCost;
     this.researchDuration = props.researchDuration;
     this.enabled = props.enabled;

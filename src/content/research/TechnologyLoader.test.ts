@@ -58,6 +58,7 @@ describe('TechnologyLoader', () => {
       description: 'Invalid id test.',
       category: 'PRODUCTION',
       requiredResearch: [],
+      requiredMilestones: [],
       researchCost: 0,
       researchDuration: 0,
       enabled: true,

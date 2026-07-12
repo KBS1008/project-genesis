@@ -32,7 +32,7 @@ Update this document whenever a meaningful implementation milestone is completed
 | Application layer | Partial (bootstrap, use cases, queries) |
 | UI | Not started |
 
-**Tests:** 260 (run `pnpm test` for current count)
+**Tests:** 262 (run `pnpm test` for current count)
 
 ---
 
@@ -432,7 +432,7 @@ game-content/milestones/
 
 **Reference validation:**
 
-- `requiredMilestones` on buildings and recipes → `MilestoneRegistry` via `validateMilestoneReferences.ts`
+- `requiredMilestones` on buildings, recipes and technologies → `MilestoneRegistry` via `validateMilestoneReferences.ts`
 
 **Trigger types (v1):** `FIRST_SALE`, `PRODUCTION_VOLUME` (`count`, optional `recipeId`), `PROFIT_THRESHOLD` (`amount` = cumulative sale revenue in GC).
 
@@ -553,7 +553,7 @@ Coordinates use cases between domain, infrastructure and simulation.
 - `SaveGameUseCase` serializes all aggregate repositories and simulation metadata into a versioned JSON snapshot; saves are rejected while domain events remain queued.
 - `LoadGameUseCase` reads a snapshot file and `restoreApplicationFromSnapshot` hydrates fresh in-memory repositories, clock and simulation engine state.
 - `CompleteTechnologyUseCase` marks technologies as completed (internal completion path after research jobs finish).
-- `StartResearchUseCase` debits `researchCost`, enforces prerequisites and starts timed research jobs.
+- `StartResearchUseCase` debits `researchCost`, enforces research and milestone prerequisites and starts timed research jobs.
 - `ResearchCompletionService` unlocks technologies when research jobs complete via simulation ticks.
 - `MilestoneEvaluationService` completes milestones from domain events: first sale → `first_profit`, cumulative sale revenue → `profit_100`, finished production jobs → `first_production`.
 - `PlaceBuildingUseCase` and `StartProductionUseCase` enforce `requiredResearch` / `requiredMilestones` via domain specifications.
@@ -621,7 +621,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 | Domain / CompanyResearch | `CompanyResearch.test.ts` | Create, complete technology |
 | Domain / Specifications | `RequiredResearchSpecification.test.ts`, `BuildingPrerequisitesSpecification.test.ts`, ... | Research eligibility, building prerequisites |
 | Application / CompleteTechnology | `CompleteTechnologyUseCase.test.ts` | Complete technology for company |
-| Application / StartResearch | `StartResearchUseCase.test.ts` | Timed research, cost debit, tech unlock |
+| Application / StartResearch | `StartResearchUseCase.test.ts` | Timed research, milestone gate, cost debit, tech unlock |
 | Domain / ResearchJob | `ResearchJob.test.ts` | Create, start, tick completion |
 | Domain / CompanyMilestones | `CompanyMilestones.test.ts` | Create, complete milestone |
 | Application / MilestoneEvaluation | `MilestoneEvaluationService.test.ts` | First sale, profit threshold, production volume |
@@ -643,7 +643,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 | Application / Bootstrap | `bootstrapApplication.test.ts` | Content load, wiring |
 | Application / CreateCompany | `CreateCompanyUseCase.test.ts` | Create, events, duplicates |
 | Application / PlaceBuilding | `PlaceBuildingUseCase.test.ts` | Place, construction time, cost debit, events, validation |
-| Application / StartProduction | `StartProductionUseCase.test.ts` | Active-building guard, input reservation, tick completion, inventory transfer |
+| Application / StartProduction | `StartProductionUseCase.test.ts` | Active-building guard, milestone gate, input reservation, tick completion, inventory transfer |
 | Application / ProductionInventory | `ProductionInventoryService.test.ts` | Reserve, release, complete job inventory |
 | Application / GetCompany | `GetCompanyQueryHandler.test.ts` | Company read model, not found |
 | Application / ListBuildings | `ListBuildingsQueryHandler.test.ts` | Building list, empty company |
@@ -658,10 +658,17 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 ---
 
+**Progression (game-content):**
+
+| Milestone | Unlocks |
+|---|---|
+| `first_profit` | `warehouse` building |
+| `first_production` | `recipe_advanced_planks` |
+| `profit_100` | `basic_woodworking` research |
+
 # Planned Next Steps
 
-1. Milestone-gated content using new milestones (buildings, recipes)
-2. UI shell / first browser view
+1. UI shell / first browser view
 
 ---
 

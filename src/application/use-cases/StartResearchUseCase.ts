@@ -13,6 +13,7 @@ import { ResearchJob, createResearchJobId } from '../../domain/research/Research
 import { ResearchJobStatus } from '../../domain/research/ResearchJobStatus.js';
 import { createTechnologyId } from '../../domain/research/TechnologyId.js';
 import { RequiredResearchSpecification } from '../../domain/specifications/research/RequiredResearchSpecification.js';
+import { RequiredMilestonesSpecification } from '../../domain/specifications/research/RequiredMilestonesSpecification.js';
 import type { ApplicationContext } from '../bootstrap/ApplicationContext.js';
 import type { StartResearchCommand } from '../commands/StartResearchCommand.js';
 
@@ -23,6 +24,7 @@ export type StartResearchUseCaseDependencies = Pick<
   | 'companyRepository'
   | 'financeRepository'
   | 'companyResearchRepository'
+  | 'companyMilestonesRepository'
   | 'researchJobRepository'
   | 'simulationEngine'
   | 'gameContent'
@@ -36,10 +38,12 @@ export class StartResearchUseCase {
   readonly #companyRepository: StartResearchUseCaseDependencies['companyRepository'];
   readonly #financeRepository: StartResearchUseCaseDependencies['financeRepository'];
   readonly #companyResearchRepository: StartResearchUseCaseDependencies['companyResearchRepository'];
+  readonly #companyMilestonesRepository: StartResearchUseCaseDependencies['companyMilestonesRepository'];
   readonly #researchJobRepository: StartResearchUseCaseDependencies['researchJobRepository'];
   readonly #simulationEngine: StartResearchUseCaseDependencies['simulationEngine'];
   readonly #gameContent: StartResearchUseCaseDependencies['gameContent'];
   readonly #requiredResearchSpecification = new RequiredResearchSpecification();
+  readonly #requiredMilestonesSpecification = new RequiredMilestonesSpecification();
 
   /**
    * @param dependencies - Application services required to start research.
@@ -49,6 +53,7 @@ export class StartResearchUseCase {
     this.#companyRepository = dependencies.companyRepository;
     this.#financeRepository = dependencies.financeRepository;
     this.#companyResearchRepository = dependencies.companyResearchRepository;
+    this.#companyMilestonesRepository = dependencies.companyMilestonesRepository;
     this.#researchJobRepository = dependencies.researchJobRepository;
     this.#simulationEngine = dependencies.simulationEngine;
     this.#gameContent = dependencies.gameContent;
@@ -138,6 +143,28 @@ export class StartResearchUseCase {
 
     if (!requiredResearchResult.ok) {
       return Result.fail(requiredResearchResult.error);
+    }
+
+    const companyMilestones = this.#companyMilestonesRepository.findByCompanyId(companyId);
+
+    if (companyMilestones === undefined) {
+      return Result.fail(
+        new ValidationError(`Milestones module for company "${companyId.value}" was not found.`),
+      );
+    }
+
+    const requiredMilestonesResult = this.#requiredMilestonesSpecification.isSatisfiedBy(
+      {
+        subjectId: technologyId.value,
+        requiredMilestones: technology.requiredMilestones,
+      },
+      {
+        completedMilestones: new Set(companyMilestones.getCompletedMilestones()),
+      },
+    );
+
+    if (!requiredMilestonesResult.ok) {
+      return Result.fail(requiredMilestonesResult.error);
     }
 
     for (const existingJob of this.#researchJobRepository.findByCompanyId(companyId)) {

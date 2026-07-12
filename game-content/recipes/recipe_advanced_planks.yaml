@@ -17,7 +17,8 @@ workers: 2
 requiredResearch:
   - basic_woodworking
 requiredBuildings: []
-requiredMilestones: []
+requiredMilestones:
+  - first_production
 requiredResources: []
 maintenanceCost: 2
 productionCost: 1

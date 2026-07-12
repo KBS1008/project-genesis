@@ -3,6 +3,8 @@ name: Basic Woodworking
 description: Fundamental wood processing techniques for early production.
 category: PRODUCTION
 requiredResearch: []
+requiredMilestones:
+  - profit_100
 researchCost: 1000
 researchDuration: 60
 enabled: true

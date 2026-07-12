@@ -166,6 +166,33 @@ function grantFirstProfit(
   context.companyMilestonesRepository.save(milestones);
 }
 
+function grantMilestone(
+  context: Awaited<ReturnType<typeof createContext>>,
+  companyId: string,
+  milestoneId: string,
+) {
+  const companyIdResult = createCompanyId(companyId);
+
+  if (!companyIdResult.ok) {
+    throw new Error(companyIdResult.error.message);
+  }
+
+  const milestones = context.companyMilestonesRepository.findByCompanyId(companyIdResult.value);
+
+  if (milestones === undefined) {
+    throw new Error(`Milestones for company "${companyId}" were not found.`);
+  }
+
+  const milestoneIdResult = createMilestoneId(milestoneId);
+
+  if (!milestoneIdResult.ok) {
+    throw new Error(milestoneIdResult.error.message);
+  }
+
+  milestones.completeMilestone(milestoneIdResult.value, context.clock);
+  context.companyMilestonesRepository.save(milestones);
+}
+
 function activateBuilding(
   context: Awaited<ReturnType<typeof createContext>>,
   buildingId: string,
@@ -364,6 +391,8 @@ describe('StartProductionUseCase', () => {
 
     expect(blockedResult.ok).toBe(false);
 
+    grantMilestone(context, 'company_001', 'profit_100');
+
     const completeTechnology = new StartResearchUseCase(context);
     const completeResult = completeTechnology.execute({
       jobId: 'research_job_001',
@@ -376,6 +405,8 @@ describe('StartProductionUseCase', () => {
     context.clock.advance(60);
     context.simulationEngine.tick();
 
+    grantMilestone(context, 'company_001', 'first_production');
+
     const allowedResult = startProduction.execute({
       jobId: 'job_001',
       buildingId: 'building_001',
@@ -383,6 +414,49 @@ describe('StartProductionUseCase', () => {
     });
 
     expect(allowedResult.ok).toBe(true);
+  });
+
+  it('rejects advanced recipes when required milestones are not completed', async () => {
+    const context = await createContext();
+    const createCompany = new CreateCompanyUseCase(context);
+    const placeBuilding = new PlaceBuildingUseCase(context);
+    const startProduction = new StartProductionUseCase(context);
+    const startResearch = new StartResearchUseCase(context);
+
+    createCompany.execute({
+      companyId: 'company_001',
+      name: 'Genesis Industries',
+      ownerId: 'player_001',
+    });
+    addWoodStock(context, 'company_001', 10);
+    grantMilestone(context, 'company_001', 'profit_100');
+
+    placeBuilding.execute({
+      buildingId: 'building_001',
+      buildingTypeId: 'sawmill',
+      companyId: 'company_001',
+      name: 'Northern Sawmill',
+      x: 0,
+      y: 0,
+    });
+    activateBuilding(context, 'building_001');
+
+    startResearch.execute({
+      jobId: 'research_job_001',
+      companyId: 'company_001',
+      technologyId: 'basic_woodworking',
+    });
+
+    context.clock.advance(60);
+    context.simulationEngine.tick();
+
+    const blockedResult = startProduction.execute({
+      jobId: 'job_001',
+      buildingId: 'building_001',
+      recipeId: 'recipe_advanced_planks',
+    });
+
+    expect(blockedResult.ok).toBe(false);
   });
 });
 

@@ -208,6 +208,12 @@ export function validateTechnologyDefinition(
     return Result.fail(requiredResearchResult.error);
   }
 
+  const requiredMilestonesResult = readGlobalIdArray(raw, 'requiredMilestones', filePath);
+
+  if (!requiredMilestonesResult.ok) {
+    return Result.fail(requiredMilestonesResult.error);
+  }
+
   const researchCostResult = readNumber(raw, 'researchCost', filePath, { min: 0 });
 
   if (!researchCostResult.ok) {
@@ -238,6 +244,7 @@ export function validateTechnologyDefinition(
     description: descriptionResult.value,
     category: categoryResult.value,
     requiredResearch: requiredResearchResult.value,
+    requiredMilestones: requiredMilestonesResult.value,
     researchCost: researchCostResult.value,
     researchDuration: researchDurationResult.value,
     enabled: enabledResult.value,
