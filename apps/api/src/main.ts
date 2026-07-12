@@ -16,6 +16,7 @@ async function bootstrap(): Promise<void> {
 
   const host = process.env['HOST'] ?? '127.0.0.1';
   const port = Number.parseInt(process.env['PORT'] ?? '3001', 10);
+  const webOrigin = process.env['WEB_ORIGIN'] ?? 'http://127.0.0.1:3000';
 
   await app.listen(port, host);
 
@@ -28,7 +29,9 @@ async function bootstrap(): Promise<void> {
   // eslint-disable-next-line no-console -- intentional startup message
   console.log('');
   // eslint-disable-next-line no-console -- intentional startup message
-  console.log(`Open http://${host}:${port}`);
+  console.log(`UI:   ${webOrigin}`);
+  // eslint-disable-next-line no-console -- intentional startup message
+  console.log(`API:  http://${host}:${port}/api/dashboard`);
   // eslint-disable-next-line no-console -- intentional startup message
   console.log('Press Ctrl+C to stop.');
 }

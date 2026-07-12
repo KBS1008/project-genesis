@@ -11,7 +11,7 @@
     },
     "type": "module",
     "scripts": {
-        "dev": "pnpm run --parallel dev:api dev:web",
+        "dev": "pnpm --filter @project-genesis/api --filter @project-genesis/web --parallel dev",
         "dev:api": "pnpm --filter @project-genesis/api dev",
         "dev:web": "pnpm --filter @project-genesis/web dev",
         "dev:http": "tsx src/ui/devServer.ts",
