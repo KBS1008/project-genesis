@@ -483,3 +483,47 @@ tbody tr:hover {
     width: 100%;
   }
 }
+
+.theme-toggle {
+  min-width: 7.5rem;
+}
+
+html[data-theme='dark'] {
+  color-scheme: dark;
+
+  --color-primary: #d4af37;
+  --color-primary-hover: #e6c158;
+  --color-accent-cyan: #22d3ee;
+
+  --color-bg: #0f1419;
+  --color-surface: #1a2332;
+  --color-panel: #243044;
+  --color-border: #334155;
+  --color-text: #e8eaed;
+  --color-text-secondary: #94a3b8;
+  --color-text-disabled: #64748b;
+
+  --color-success: #22c55e;
+  --color-warning: #fbbf24;
+  --color-error: #f87171;
+  --color-info: #38bdf8;
+  --color-energy: #fde047;
+
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+html[data-theme='dark'] body {
+  background:
+    radial-gradient(circle at top right, rgba(212, 175, 55, 0.08), transparent 35%),
+    linear-gradient(180deg, #121820 0%, var(--color-bg) 100%);
+}
+
+html[data-theme='dark'] .skeleton-block {
+  background: linear-gradient(
+    90deg,
+    var(--color-panel) 0%,
+    #2d3a4f 50%,
+    var(--color-panel) 100%
+  );
+}

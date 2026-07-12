@@ -12,6 +12,8 @@ import { ManualClock } from '../../common/time/ManualClock.js';
 import { ContentLoadError } from '../../content/errors/ContentLoadError.js';
 import { validateGameContent } from '../../content/validateGameContent.js';
 import { InMemoryBuildingRepository } from '../../infrastructure/persistence/InMemoryBuildingRepository.js';
+import { InMemoryBuildingStorageRepository } from '../../infrastructure/persistence/InMemoryBuildingStorageRepository.js';
+import { InMemoryTransportOrderRepository } from '../../infrastructure/persistence/InMemoryTransportOrderRepository.js';
 import { InMemoryCompanyRepository } from '../../infrastructure/persistence/InMemoryCompanyRepository.js';
 import { InMemoryFinanceRepository } from '../../infrastructure/persistence/InMemoryFinanceRepository.js';
 import { InMemoryInventoryRepository } from '../../infrastructure/persistence/InMemoryInventoryRepository.js';
@@ -29,6 +31,7 @@ import { ProductionInventoryService } from '../services/ProductionInventoryServi
 import { ResearchCompletionService } from '../services/ResearchCompletionService.js';
 import { MilestoneEvaluationService } from '../services/MilestoneEvaluationService.js';
 import { EnergyBalanceService } from '../services/EnergyBalanceService.js';
+import { TransportLogisticsService } from '../services/TransportLogisticsService.js';
 import type { ApplicationContext } from './ApplicationContext.js';
 
 /** Options for restoring an application session. */
@@ -51,6 +54,8 @@ export async function restoreApplicationFromSnapshot(
 
   const companyRepository = new InMemoryCompanyRepository();
   const buildingRepository = new InMemoryBuildingRepository();
+  const buildingStorageRepository = new InMemoryBuildingStorageRepository();
+  const transportOrderRepository = new InMemoryTransportOrderRepository();
   const inventoryRepository = new InMemoryInventoryRepository();
   const financeRepository = new InMemoryFinanceRepository();
   const marketRepository = new InMemoryMarketRepository();
@@ -63,6 +68,8 @@ export async function restoreApplicationFromSnapshot(
   const hydrateResult = serializer.hydrate(options.snapshot, {
     companyRepository,
     buildingRepository,
+    buildingStorageRepository,
+    transportOrderRepository,
     inventoryRepository,
     financeRepository,
     marketRepository,
@@ -96,18 +103,31 @@ export async function restoreApplicationFromSnapshot(
     enqueueEvents,
   });
 
+  const energyBalanceService = new EnergyBalanceService({
+    buildingRepository,
+    productionJobRepository,
+    gameContent: contentResult.value,
+  });
+
+  const transportLogisticsService = new TransportLogisticsService({
+    clock,
+    buildingRepository,
+    buildingStorageRepository,
+    transportOrderRepository,
+    productionJobRepository,
+    inventoryRepository,
+    productionInventoryService,
+    gameContent: contentResult.value,
+    enqueueEvents,
+  });
+
   const marketTradeService = new MarketTradeService({
     inventoryRepository,
     financeRepository,
     marketRepository,
     clock,
     enqueueEvents,
-  });
-
-  const energyBalanceService = new EnergyBalanceService({
-    buildingRepository,
-    productionJobRepository,
-    gameContent: contentResult.value,
+    transportLogisticsService,
   });
 
   let researchCompletionService: ResearchCompletionService;
@@ -120,6 +140,8 @@ export async function restoreApplicationFromSnapshot(
     systems: createDefaultSimulationSystems({
       companyRepository,
       buildingRepository,
+      transportOrderRepository,
+      transportLogisticsService,
       productionJobRepository,
       researchJobRepository,
       financeRepository,
@@ -132,6 +154,9 @@ export async function restoreApplicationFromSnapshot(
         researchCompletionService.completeJob(job);
       },
       energyBalanceService,
+      onBuildingActivated: (building) => {
+        transportLogisticsService.ensureStorageForBuilding(building);
+      },
     }),
   });
 
@@ -159,6 +184,8 @@ export async function restoreApplicationFromSnapshot(
     simulationEngine,
     companyRepository,
     buildingRepository,
+    buildingStorageRepository,
+    transportOrderRepository,
     inventoryRepository,
     financeRepository,
     marketRepository,
@@ -169,6 +196,7 @@ export async function restoreApplicationFromSnapshot(
     productionInventoryService,
     marketTradeService,
     energyBalanceService,
+    transportLogisticsService,
     gameContent: contentResult.value,
   });
 }

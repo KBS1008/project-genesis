@@ -27,6 +27,7 @@ import type {
   MilestoneCatalogEntry,
   ProductionJobSessionReadModel,
   ResearchJobSessionReadModel,
+  TransportOrderSessionReadModel,
 } from './GameSessionDashboard.js';
 import { GameSessionDashboardBuilder } from './GameSessionDashboardBuilder.js';
 
@@ -212,6 +213,7 @@ export class GameSession {
     const completedResearch = Object.freeze(companyResearch?.getCompletedTechnologies() ?? []);
 
     const productionJobs = Object.freeze(this.#readProductionJobs(companyId));
+    const transportOrders = Object.freeze(this.#readTransportOrders(companyId));
     const researchJobs = Object.freeze(this.#readResearchJobs(companyId));
     const marketPrices = this.#readMarketPrices();
 
@@ -238,6 +240,7 @@ export class GameSession {
       completedMilestones,
       completedResearch,
       productionJobs,
+      transportOrders,
       researchJobs,
       contentNames: this.#dashboardBuilder.readContentNames(),
       energy: this.#dashboardBuilder.readEnergy(companyId),
@@ -502,6 +505,7 @@ export class GameSession {
       completedMilestones: Object.freeze([]),
       completedResearch: Object.freeze([]),
       productionJobs: Object.freeze([]),
+      transportOrders: Object.freeze([]),
       researchJobs: Object.freeze([]),
       contentNames: this.#dashboardBuilder.readContentNames(),
       energy: null,
@@ -539,6 +543,31 @@ export class GameSession {
             recipeId: job.getRecipeId().value,
             status: job.getStatus(),
             progress: job.getProgress(),
+          }),
+        ),
+    );
+  }
+
+  #readTransportOrders(companyId: string): readonly TransportOrderSessionReadModel[] {
+    const companyIdResult = createCompanyId(companyId);
+
+    if (!companyIdResult.ok) {
+      return Object.freeze([]);
+    }
+
+    return Object.freeze(
+      this.#context.transportOrderRepository
+        .findByCompanyId(companyIdResult.value)
+        .map((order) =>
+          Object.freeze({
+            id: order.getId().value,
+            resourceId: order.getResourceId(),
+            amount: order.getAmount(),
+            status: order.getStatus(),
+            progress: order.getProgress(),
+            sourceBuildingId: order.getSourceBuildingId().value,
+            destinationBuildingId: order.getDestinationBuildingId().value,
+            productionJobId: order.getProductionJobId(),
           }),
         ),
     );

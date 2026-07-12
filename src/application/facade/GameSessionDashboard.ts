@@ -34,6 +34,18 @@ export type ResearchJobSessionReadModel = {
   readonly progress: number;
 };
 
+/** Transport order summary for the browser dashboard. */
+export type TransportOrderSessionReadModel = {
+  readonly id: string;
+  readonly resourceId: string;
+  readonly amount: number;
+  readonly status: string;
+  readonly progress: number;
+  readonly sourceBuildingId: string;
+  readonly destinationBuildingId: string;
+  readonly productionJobId: string;
+};
+
 /** Content id/name pair for UI labels. */
 export type ContentNameEntry = {
   readonly id: string;
@@ -116,9 +128,10 @@ export type GameSessionDashboard = {
   readonly completedMilestones: readonly string[];
   readonly completedResearch: readonly string[];
   readonly productionJobs: readonly ProductionJobSessionReadModel[];
+  readonly transportOrders: readonly TransportOrderSessionReadModel[];
   readonly researchJobs: readonly ResearchJobSessionReadModel[];
   readonly contentNames: GameSessionContentNames;
   readonly energy: EnergyReadModel | null;
   readonly hints: GameSessionDashboardHints;
 };
-
+

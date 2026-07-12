@@ -23,9 +23,11 @@ import { InMemoryProductionJobRepository } from '../../infrastructure/persistenc
 import { InMemoryResearchJobRepository } from '../../infrastructure/persistence/InMemoryResearchJobRepository.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
 import { createDefaultSimulationSystems } from '../../simulation/systems/createDefaultSimulationSystems.js';
+import { createTransportTestServices } from '../../../tests/helpers/createTransportTestServices.js';
 import { completeBuildingConstruction } from '../../../tests/helpers/completeBuildingConstruction.js';
 import { CreateCompanyUseCase } from './CreateCompanyUseCase.js';
 import { PlaceBuildingUseCase } from './PlaceBuildingUseCase.js';
+import { ProductionInventoryService } from '../services/ProductionInventoryService.js';
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const gameContentRoot = path.resolve(testDirectory, '../../../game-content');
@@ -73,12 +75,31 @@ async function createContext(clock = new ManualClock(100)) {
     simulationEngine.enqueueEvents(events);
   };
 
+  const productionInventoryService = new ProductionInventoryService({
+    inventoryRepository,
+    recipes: contentResult.value.recipes,
+    clock,
+    enqueueEvents,
+  });
+
+  const transport = createTransportTestServices({
+    clock,
+    buildingRepository,
+    productionJobRepository,
+    inventoryRepository,
+    productionInventoryService,
+    gameContent: contentResult.value,
+    enqueueEvents,
+  });
+
   simulationEngine = new SimulationEngine({
     clock,
     eventBus,
     systems: createDefaultSimulationSystems({
       companyRepository,
       buildingRepository,
+      transportOrderRepository: transport.transportOrderRepository,
+      transportLogisticsService: transport.transportLogisticsService,
       productionJobRepository,
       researchJobRepository,
       financeRepository,

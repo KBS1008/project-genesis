@@ -14,11 +14,16 @@ import type { ResearchJobRepository } from '../../domain/research/ResearchJobRep
 import type { ProductionJobCompletedHandler } from './production/ProductionJobCompletedHandler.js';
 import type { ResearchJobCompletedHandler } from './research/ResearchJobCompletedHandler.js';
 import type { EnergyBalanceService } from '../../application/services/EnergyBalanceService.js';
+import type { TransportLogisticsService } from '../../application/services/TransportLogisticsService.js';
+import type { TransportOrderRepository } from '../../domain/transport/TransportOrderRepository.js';
+import type { Building } from '../../domain/building/Building.js';
 
 /** Repository dependencies for simulation systems. */
 export type SimulationSystemDependencies = {
   readonly companyRepository: CompanyRepository;
   readonly buildingRepository: BuildingRepository;
+  readonly transportOrderRepository: TransportOrderRepository;
+  readonly transportLogisticsService: TransportLogisticsService;
   readonly productionJobRepository: ProductionJobRepository;
   readonly researchJobRepository: ResearchJobRepository;
   readonly financeRepository: FinanceRepository;
@@ -27,4 +32,5 @@ export type SimulationSystemDependencies = {
   readonly onProductionJobCompleted?: ProductionJobCompletedHandler;
   readonly onResearchJobCompleted?: ResearchJobCompletedHandler;
   readonly energyBalanceService?: EnergyBalanceService;
+  readonly onBuildingActivated?: (building: Building) => void;
 };

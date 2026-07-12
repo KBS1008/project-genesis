@@ -23,6 +23,8 @@ import { FinanceTransactionType } from '../../domain/finance/FinanceTransactionT
 import { ResearchCompletionService } from '../services/ResearchCompletionService.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
 import { createDefaultSimulationSystems } from '../../simulation/systems/createDefaultSimulationSystems.js';
+import { createTransportTestServices } from '../../../tests/helpers/createTransportTestServices.js';
+import { ProductionInventoryService } from '../services/ProductionInventoryService.js';
 import { CreateCompanyUseCase } from './CreateCompanyUseCase.js';
 import { StartResearchUseCase } from './StartResearchUseCase.js';
 
@@ -55,12 +57,31 @@ async function createContext() {
 
   let researchCompletionService: ResearchCompletionService;
 
+  const productionInventoryService = new ProductionInventoryService({
+    inventoryRepository,
+    recipes: contentResult.value.recipes,
+    clock,
+    enqueueEvents,
+  });
+
+  const transport = createTransportTestServices({
+    clock,
+    buildingRepository,
+    productionJobRepository,
+    inventoryRepository,
+    productionInventoryService,
+    gameContent: contentResult.value,
+    enqueueEvents,
+  });
+
   simulationEngine = new SimulationEngine({
     clock,
     eventBus,
     systems: createDefaultSimulationSystems({
       companyRepository,
       buildingRepository,
+      transportOrderRepository: transport.transportOrderRepository,
+      transportLogisticsService: transport.transportLogisticsService,
       productionJobRepository,
       researchJobRepository,
       financeRepository,

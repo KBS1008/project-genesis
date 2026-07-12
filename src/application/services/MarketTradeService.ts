@@ -30,6 +30,8 @@ export type MarketTradeResult = {
   readonly amount: number;
 };
 
+import type { TransportLogisticsService } from './TransportLogisticsService.js';
+
 /** Dependencies for {@link MarketTradeService}. */
 export type MarketTradeServiceDependencies = {
   readonly inventoryRepository: InventoryRepository;
@@ -37,6 +39,7 @@ export type MarketTradeServiceDependencies = {
   readonly marketRepository: MarketRepository;
   readonly clock: Clock;
   readonly enqueueEvents: (events: readonly DomainEvent[]) => void;
+  readonly transportLogisticsService?: TransportLogisticsService;
 };
 
 /**
@@ -48,8 +51,7 @@ export class MarketTradeService {
   readonly #marketRepository: MarketTradeServiceDependencies['marketRepository'];
   readonly #clock: MarketTradeServiceDependencies['clock'];
   readonly #enqueueEvents: MarketTradeServiceDependencies['enqueueEvents'];
-  readonly #resourceListedOnMarketSpecification = new ResourceListedOnMarketSpecification();
-  readonly #instantTradePricingPolicy = new InstantTradePricingPolicy();
+  readonly #transportLogisticsService: TransportLogisticsService | undefined;
 
   /**
    * @param dependencies - Repositories and callbacks required for market trades.
@@ -60,7 +62,11 @@ export class MarketTradeService {
     this.#marketRepository = dependencies.marketRepository;
     this.#clock = dependencies.clock;
     this.#enqueueEvents = dependencies.enqueueEvents;
+    this.#transportLogisticsService = dependencies.transportLogisticsService;
   }
+
+  readonly #resourceListedOnMarketSpecification = new ResourceListedOnMarketSpecification();
+  readonly #instantTradePricingPolicy = new InstantTradePricingPolicy();
 
   /**
    * Sells available inventory at the current market price.
@@ -226,6 +232,16 @@ export class MarketTradeService {
     }
 
     this.#persistTrade(inventory, finance, market);
+
+    const warehouseDepositResult = this.#transportLogisticsService?.depositMarketPurchase(
+      companyId,
+      resourceId,
+      tradeAmount,
+    );
+
+    if (warehouseDepositResult !== undefined && !warehouseDepositResult.ok) {
+      return Result.fail(warehouseDepositResult.error);
+    }
 
     return Result.ok({
       totalAmount,

@@ -3,6 +3,7 @@ import { InMemoryCompanyResearchRepository } from '../../infrastructure/persiste
 import { InMemoryCompanyMilestonesRepository } from '../../infrastructure/persistence/InMemoryCompanyMilestonesRepository.js';
 import { InMemoryFinanceRepository } from '../../infrastructure/persistence/InMemoryFinanceRepository.js';
 import { InMemoryInventoryRepository } from '../../infrastructure/persistence/InMemoryInventoryRepository.js';
+import { InMemoryBuildingStorageRepository } from '../../infrastructure/persistence/InMemoryBuildingStorageRepository.js';
 import { ManualClock } from '../../common/time/ManualClock.js';
 import { InMemoryEventBus } from '../../common/events/InMemoryEventBus.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
@@ -23,6 +24,7 @@ function requireCompanyId(value: string) {
 function createContext(clock = new ManualClock(100)) {
   const companyRepository = new InMemoryCompanyRepository();
   const inventoryRepository = new InMemoryInventoryRepository();
+  const buildingStorageRepository = new InMemoryBuildingStorageRepository();
   const financeRepository = new InMemoryFinanceRepository();
   const companyResearchRepository = new InMemoryCompanyResearchRepository();
   const companyMilestonesRepository = new InMemoryCompanyMilestonesRepository();
@@ -37,7 +39,7 @@ function createContext(clock = new ManualClock(100)) {
     companyMilestonesRepository,
     simulationEngine,
   });
-  const getInventory = new GetInventoryQueryHandler({ inventoryRepository });
+  const getInventory = new GetInventoryQueryHandler({ inventoryRepository, buildingStorageRepository });
 
   return { clock, companyRepository, inventoryRepository, createCompany, getInventory };
 }

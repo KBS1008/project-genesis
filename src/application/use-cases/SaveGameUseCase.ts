@@ -18,6 +18,8 @@ export type SaveGameUseCaseDependencies = Pick<
   | 'simulationEngine'
   | 'companyRepository'
   | 'buildingRepository'
+  | 'buildingStorageRepository'
+  | 'transportOrderRepository'
   | 'inventoryRepository'
   | 'financeRepository'
   | 'marketRepository'
@@ -37,6 +39,8 @@ export class SaveGameUseCase {
   readonly #simulationEngine: SaveGameUseCaseDependencies['simulationEngine'];
   readonly #companyRepository: SaveGameUseCaseDependencies['companyRepository'];
   readonly #buildingRepository: SaveGameUseCaseDependencies['buildingRepository'];
+  readonly #buildingStorageRepository: SaveGameUseCaseDependencies['buildingStorageRepository'];
+  readonly #transportOrderRepository: SaveGameUseCaseDependencies['transportOrderRepository'];
   readonly #inventoryRepository: SaveGameUseCaseDependencies['inventoryRepository'];
   readonly #financeRepository: SaveGameUseCaseDependencies['financeRepository'];
   readonly #marketRepository: SaveGameUseCaseDependencies['marketRepository'];
@@ -55,6 +59,8 @@ export class SaveGameUseCase {
     this.#simulationEngine = dependencies.simulationEngine;
     this.#companyRepository = dependencies.companyRepository;
     this.#buildingRepository = dependencies.buildingRepository;
+    this.#buildingStorageRepository = dependencies.buildingStorageRepository;
+    this.#transportOrderRepository = dependencies.transportOrderRepository;
     this.#inventoryRepository = dependencies.inventoryRepository;
     this.#financeRepository = dependencies.financeRepository;
     this.#marketRepository = dependencies.marketRepository;
@@ -74,6 +80,8 @@ export class SaveGameUseCase {
       simulationEngine: this.#simulationEngine,
       companyRepository: this.#companyRepository,
       buildingRepository: this.#buildingRepository,
+      buildingStorageRepository: this.#buildingStorageRepository,
+      transportOrderRepository: this.#transportOrderRepository,
       inventoryRepository: this.#inventoryRepository,
       financeRepository: this.#financeRepository,
       marketRepository: this.#marketRepository,

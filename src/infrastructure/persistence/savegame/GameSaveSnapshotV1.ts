@@ -144,6 +144,30 @@ export type GameSaveCompanyMilestonesSnapshotV1 = {
   readonly completedMilestones: readonly string[];
 };
 
+/** Persisted warehouse storage state. */
+export type GameSaveBuildingStorageSnapshotV1 = {
+  readonly buildingId: string;
+  readonly companyId: string;
+  readonly items: readonly GameSaveInventoryItemSnapshotV1[];
+};
+
+/** Persisted transport order state. */
+export type GameSaveTransportOrderSnapshotV1 = {
+  readonly id: string;
+  readonly companyId: string;
+  readonly sourceBuildingId: string;
+  readonly destinationBuildingId: string;
+  readonly resourceId: string;
+  readonly amount: number;
+  readonly duration: number;
+  readonly productionJobId: string;
+  readonly createdAt: number;
+  readonly status: string;
+  readonly startTime: number;
+  readonly endTime: number | undefined;
+  readonly progress: number;
+};
+
 /** Full deterministic game session snapshot. */
 export type GameSaveSnapshotV1 = {
   readonly schemaVersion: typeof GAME_SAVE_SCHEMA_VERSION;
@@ -158,4 +182,6 @@ export type GameSaveSnapshotV1 = {
   readonly researchJobs: readonly GameSaveResearchJobSnapshotV1[];
   readonly companyResearch: readonly GameSaveCompanyResearchSnapshotV1[];
   readonly companyMilestones: readonly GameSaveCompanyMilestonesSnapshotV1[];
+  readonly buildingStorages: readonly GameSaveBuildingStorageSnapshotV1[];
+  readonly transportOrders: readonly GameSaveTransportOrderSnapshotV1[];
 };

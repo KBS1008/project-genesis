@@ -150,9 +150,17 @@ function DataTable<T extends string>({
   );
 }
 
+const THEME_STORAGE_KEY = 'pg-theme';
+type ThemeMode = 'light' | 'dark';
+
+function applyTheme(theme: ThemeMode): void {
+  document.documentElement.dataset.theme = theme;
+}
+
 /** Interactive browser dashboard wired to the NestJS API. */
 export function DashboardShell() {
   const [dashboard, setDashboard] = useState<GameSessionDashboard | null>(null);
+  const [theme, setTheme] = useState<ThemeMode>('light');
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [isBusy, setIsBusy] = useState(false);
   const [statusMessage, setStatusMessage] = useState('');
@@ -179,6 +187,27 @@ export function DashboardShell() {
   const refreshDashboard = useCallback(async () => {
     const nextDashboard = await fetchDashboard();
     setDashboard(nextDashboard);
+  }, []);
+
+  useEffect(() => {
+    const storedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
+
+    if (storedTheme === 'light' || storedTheme === 'dark') {
+      setTheme(storedTheme);
+      applyTheme(storedTheme);
+      return;
+    }
+
+    applyTheme('light');
+  }, []);
+
+  const toggleTheme = useCallback(() => {
+    setTheme((current) => {
+      const nextTheme: ThemeMode = current === 'light' ? 'dark' : 'light';
+      window.localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+      applyTheme(nextTheme);
+      return nextTheme;
+    });
   }, []);
 
   useEffect(() => {
@@ -243,6 +272,14 @@ export function DashboardShell() {
           <h1>Project Genesis</h1>
         </div>
         <div className="header-meta">
+          <button
+            type="button"
+            className="btn-secondary theme-toggle"
+            aria-label={theme === 'light' ? 'Dark Mode aktivieren' : 'Light Mode aktivieren'}
+            onClick={toggleTheme}
+          >
+            {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
+          </button>
           <span className="meta-pill">Tick {dashboard?.tickNumber ?? '—'}</span>
           <span className="meta-pill">Zeit {dashboard?.simulationTime ?? '—'}</span>
           {dashboard?.energy?.hasDeficit ? (
@@ -609,6 +646,31 @@ export function DashboardShell() {
                   progress: formatProgress(job.progress),
                 }))}
                 emptyText="Keine laufende Produktion."
+              />
+            )}
+          </div>
+        </section>
+
+        <section className="card">
+          <h2>Transport</h2>
+          <div className="table-wrap">
+            {!dashboard?.company ? (
+              <p className="empty">Keine aktiven Transporte.</p>
+            ) : (
+              <DataTable
+                columns={[
+                  { key: 'resourceId', label: 'Resource' },
+                  { key: 'amount', label: 'Menge' },
+                  { key: 'status', label: 'Status' },
+                  { key: 'progress', label: 'Progress' },
+                ]}
+                rows={(dashboard.transportOrders ?? []).map((order) => ({
+                  resourceId: labelResource(order.resourceId),
+                  amount: order.amount,
+                  status: order.status,
+                  progress: formatProgress(order.progress),
+                }))}
+                emptyText="Keine aktiven Transporte."
               />
             )}
           </div>

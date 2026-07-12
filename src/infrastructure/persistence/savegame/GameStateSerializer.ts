@@ -11,6 +11,8 @@ import { Building, createBuildingId, createBuildingTypeId } from '../../../domai
 import { BuildingStatus } from '../../../domain/building/BuildingStatus.js';
 import { Position } from '../../../domain/building/Position.js';
 import type { BuildingRepository } from '../../../domain/building/BuildingRepository.js';
+import { BuildingStorage } from '../../../domain/building/BuildingStorage.js';
+import type { BuildingStorageRepository } from '../../../domain/building/BuildingStorageRepository.js';
 import { Company, createCompanyId, createPlayerId } from '../../../domain/company/Company.js';
 import type { CompanyRepository } from '../../../domain/company/CompanyRepository.js';
 import {
@@ -45,6 +47,12 @@ import {
 import { createTechnologyId } from '../../../domain/research/TechnologyId.js';
 import { createRecipeId } from '../../../domain/production/RecipeId.js';
 import { createResourceTypeId } from '../../../domain/shared/ResourceTypeId.js';
+import {
+  TransportOrder,
+} from '../../../domain/transport/TransportOrder.js';
+import { createTransportOrderId } from '../../../domain/transport/TransportOrderId.js';
+import { TransportOrderStatus } from '../../../domain/transport/TransportOrderStatus.js';
+import type { TransportOrderRepository } from '../../../domain/transport/TransportOrderRepository.js';
 import type { SimulationEngine } from '../../../simulation/engine/SimulationEngine.js';
 import { SimulationState } from '../../../simulation/state/SimulationState.js';
 import {
@@ -58,6 +66,8 @@ export type GameStateSource = {
   readonly simulationEngine: SimulationEngine;
   readonly companyRepository: CompanyRepository;
   readonly buildingRepository: BuildingRepository;
+  readonly buildingStorageRepository: BuildingStorageRepository;
+  readonly transportOrderRepository: TransportOrderRepository;
   readonly inventoryRepository: InventoryRepository;
   readonly financeRepository: FinanceRepository;
   readonly marketRepository: MarketRepository;
@@ -71,6 +81,8 @@ export type GameStateSource = {
 export type GameStateTarget = {
   readonly companyRepository: CompanyRepository;
   readonly buildingRepository: BuildingRepository;
+  readonly buildingStorageRepository: BuildingStorageRepository;
+  readonly transportOrderRepository: TransportOrderRepository;
   readonly inventoryRepository: InventoryRepository;
   readonly financeRepository: FinanceRepository;
   readonly marketRepository: MarketRepository;
@@ -259,6 +271,50 @@ export class GameStateSerializer {
             }),
           ),
         ),
+        buildingStorages: Object.freeze(
+          source.companyRepository
+            .findAll()
+            .flatMap((company) =>
+              source.buildingStorageRepository.findByCompanyId(company.getId()).map((storage) =>
+                Object.freeze({
+                  buildingId: storage.getBuildingId().value,
+                  companyId: storage.getCompanyId().value,
+                  items: Object.freeze(
+                    storage.getLines().map((line) =>
+                      Object.freeze({
+                        resourceId: line.resourceId,
+                        quantity: line.quantity,
+                        reserved: line.reserved,
+                      }),
+                    ),
+                  ),
+                }),
+              ),
+            ),
+        ),
+        transportOrders: Object.freeze(
+          source.companyRepository
+            .findAll()
+            .flatMap((company) =>
+              source.transportOrderRepository.findByCompanyId(company.getId()).map((order) =>
+                Object.freeze({
+                  id: order.getId().value,
+                  companyId: order.getCompanyId().value,
+                  sourceBuildingId: order.getSourceBuildingId().value,
+                  destinationBuildingId: order.getDestinationBuildingId().value,
+                  resourceId: order.getResourceId(),
+                  amount: order.getAmount(),
+                  duration: order.getDuration(),
+                  productionJobId: order.getProductionJobId(),
+                  createdAt: order.getCreatedAt(),
+                  status: order.getStatus(),
+                  startTime: order.getStartTime(),
+                  endTime: order.getEndTime(),
+                  progress: order.getProgress(),
+                }),
+              ),
+            ),
+        ),
       }),
     );
   }
@@ -287,6 +343,8 @@ export class GameStateSerializer {
       researchJobs: candidate.researchJobs ?? [],
       companyResearch: candidate.companyResearch ?? [],
       companyMilestones: candidate.companyMilestones ?? [],
+      buildingStorages: candidate.buildingStorages ?? [],
+      transportOrders: candidate.transportOrders ?? [],
     } as GameSaveSnapshotV1);
   }
 
@@ -382,6 +440,26 @@ export class GameStateSerializer {
       }
 
       target.companyMilestonesRepository.save(restoreResult.value);
+    }
+
+    for (const storageSnapshot of snapshot.buildingStorages) {
+      const restoreResult = this.#restoreBuildingStorage(storageSnapshot);
+
+      if (!restoreResult.ok) {
+        return Result.fail(restoreResult.error);
+      }
+
+      target.buildingStorageRepository.save(restoreResult.value);
+    }
+
+    for (const transportSnapshot of snapshot.transportOrders) {
+      const restoreResult = this.#restoreTransportOrder(transportSnapshot);
+
+      if (!restoreResult.ok) {
+        return Result.fail(restoreResult.error);
+      }
+
+      target.transportOrderRepository.save(restoreResult.value);
     }
 
     return Result.ok(
@@ -700,5 +778,71 @@ export class GameStateSerializer {
       createdAt: snapshot.createdAt,
       completedMilestones: snapshot.completedMilestones,
     });
+  }
+
+  #restoreBuildingStorage(snapshot: GameSaveSnapshotV1['buildingStorages'][number]) {
+    const buildingIdResult = createBuildingId(snapshot.buildingId);
+
+    if (!buildingIdResult.ok) {
+      return buildingIdResult;
+    }
+
+    const companyIdResult = createCompanyId(snapshot.companyId);
+
+    if (!companyIdResult.ok) {
+      return companyIdResult;
+    }
+
+    return Result.ok(
+      BuildingStorage.restore({
+        buildingId: buildingIdResult.value,
+        companyId: companyIdResult.value,
+        items: snapshot.items,
+      }),
+    );
+  }
+
+  #restoreTransportOrder(snapshot: GameSaveSnapshotV1['transportOrders'][number]) {
+    const idResult = createTransportOrderId(snapshot.id);
+
+    if (!idResult.ok) {
+      return idResult;
+    }
+
+    const companyIdResult = createCompanyId(snapshot.companyId);
+
+    if (!companyIdResult.ok) {
+      return companyIdResult;
+    }
+
+    const sourceBuildingIdResult = createBuildingId(snapshot.sourceBuildingId);
+
+    if (!sourceBuildingIdResult.ok) {
+      return sourceBuildingIdResult;
+    }
+
+    const destinationBuildingIdResult = createBuildingId(snapshot.destinationBuildingId);
+
+    if (!destinationBuildingIdResult.ok) {
+      return destinationBuildingIdResult;
+    }
+
+    return Result.ok(
+      TransportOrder.restore({
+        id: idResult.value,
+        companyId: companyIdResult.value,
+        sourceBuildingId: sourceBuildingIdResult.value,
+        destinationBuildingId: destinationBuildingIdResult.value,
+        resourceId: snapshot.resourceId,
+        amount: snapshot.amount,
+        duration: snapshot.duration,
+        productionJobId: snapshot.productionJobId,
+        createdAt: snapshot.createdAt,
+        status: snapshot.status as TransportOrderStatus,
+        startTime: snapshot.startTime,
+        endTime: snapshot.endTime,
+        progress: snapshot.progress,
+      }),
+    );
   }
 }

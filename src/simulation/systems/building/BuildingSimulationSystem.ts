@@ -5,6 +5,7 @@
  */
 
 import type { DomainEvent } from '../../../common/events/DomainEvent.js';
+import type { Building } from '../../../domain/building/Building.js';
 import type { BuildingRepository } from '../../../domain/building/BuildingRepository.js';
 import type { SimulationSystem } from '../../engine/SimulationSystem.js';
 import type { TickContext } from '../../engine/TickContext.js';
@@ -13,6 +14,7 @@ import type { TickContext } from '../../engine/TickContext.js';
 export type BuildingSimulationSystemDependencies = {
   readonly buildingRepository: BuildingRepository;
   readonly enqueueEvents: (events: readonly DomainEvent[]) => void;
+  readonly onBuildingActivated?: (building: Building) => void;
 };
 
 /**
@@ -22,6 +24,7 @@ export class BuildingSimulationSystem implements SimulationSystem {
   readonly name = 'Building';
   readonly #buildingRepository: BuildingRepository;
   readonly #enqueueEvents: (events: readonly DomainEvent[]) => void;
+  readonly #onBuildingActivated: BuildingSimulationSystemDependencies['onBuildingActivated'];
 
   /**
    * @param dependencies - Repository and event enqueue callback.
@@ -29,6 +32,7 @@ export class BuildingSimulationSystem implements SimulationSystem {
   constructor(dependencies: BuildingSimulationSystemDependencies) {
     this.#buildingRepository = dependencies.buildingRepository;
     this.#enqueueEvents = dependencies.enqueueEvents;
+    this.#onBuildingActivated = dependencies.onBuildingActivated;
   }
 
   execute(context: TickContext): void {
@@ -36,6 +40,10 @@ export class BuildingSimulationSystem implements SimulationSystem {
       const tickResult = building.tickConstruction(context.clock);
 
       if (tickResult.ok) {
+        if (tickResult.value.status === 'completed') {
+          this.#onBuildingActivated?.(building);
+        }
+
         this.#buildingRepository.save(building);
         this.#enqueueEvents(building.pullDomainEvents());
       }

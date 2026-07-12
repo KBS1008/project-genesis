@@ -6,6 +6,7 @@
 
 import type { IEventBus } from '../../common/events/IEventBus.js';
 import type { BuildingRepository } from '../../domain/building/BuildingRepository.js';
+import type { BuildingStorageRepository } from '../../domain/building/BuildingStorageRepository.js';
 import type { CompanyRepository } from '../../domain/company/CompanyRepository.js';
 import type { InventoryRepository } from '../../domain/inventory/InventoryRepository.js';
 import type { FinanceRepository } from '../../domain/finance/FinanceRepository.js';
@@ -17,6 +18,8 @@ import type { CompanyMilestonesRepository } from '../../domain/milestone/Company
 import type { ProductionInventoryService } from '../services/ProductionInventoryService.js';
 import type { MarketTradeService } from '../services/MarketTradeService.js';
 import type { EnergyBalanceService } from '../services/EnergyBalanceService.js';
+import type { TransportLogisticsService } from '../services/TransportLogisticsService.js';
+import type { TransportOrderRepository } from '../../domain/transport/TransportOrderRepository.js';
 import type { GameContentLoadResult } from '../../content/validateGameContent.js';
 import type { ManualClock } from '../../common/time/ManualClock.js';
 import type { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
@@ -28,6 +31,8 @@ export type ApplicationContext = {
   readonly simulationEngine: SimulationEngine;
   readonly companyRepository: CompanyRepository;
   readonly buildingRepository: BuildingRepository;
+  readonly buildingStorageRepository: BuildingStorageRepository;
+  readonly transportOrderRepository: TransportOrderRepository;
   readonly inventoryRepository: InventoryRepository;
   readonly financeRepository: FinanceRepository;
   readonly marketRepository: MarketRepository;
@@ -38,5 +43,6 @@ export type ApplicationContext = {
   readonly productionInventoryService: ProductionInventoryService;
   readonly marketTradeService: MarketTradeService;
   readonly energyBalanceService: EnergyBalanceService;
+  readonly transportLogisticsService: TransportLogisticsService;
   readonly gameContent: GameContentLoadResult;
 };

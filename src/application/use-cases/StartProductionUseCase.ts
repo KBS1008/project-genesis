@@ -32,6 +32,8 @@ export type StartProductionUseCaseDependencies = Pick<
   | 'companyResearchRepository'
   | 'companyMilestonesRepository'
   | 'energyBalanceService'
+  | 'inventoryRepository'
+  | 'transportLogisticsService'
 >;
 
 /**
@@ -47,6 +49,8 @@ export class StartProductionUseCase {
   readonly #companyResearchRepository: StartProductionUseCaseDependencies['companyResearchRepository'];
   readonly #companyMilestonesRepository: StartProductionUseCaseDependencies['companyMilestonesRepository'];
   readonly #energyBalanceService: StartProductionUseCaseDependencies['energyBalanceService'];
+  readonly #inventoryRepository: StartProductionUseCaseDependencies['inventoryRepository'];
+  readonly #transportLogisticsService: StartProductionUseCaseDependencies['transportLogisticsService'];
   readonly #buildingSupportsRecipeSpecification = new BuildingSupportsRecipeSpecification();
   readonly #requiredResearchSpecification = new RequiredResearchSpecification();
   readonly #requiredMilestonesSpecification = new RequiredMilestonesSpecification();
@@ -64,6 +68,8 @@ export class StartProductionUseCase {
     this.#companyResearchRepository = dependencies.companyResearchRepository;
     this.#companyMilestonesRepository = dependencies.companyMilestonesRepository;
     this.#energyBalanceService = dependencies.energyBalanceService;
+    this.#inventoryRepository = dependencies.inventoryRepository;
+    this.#transportLogisticsService = dependencies.transportLogisticsService;
   }
 
   /**
@@ -192,13 +198,14 @@ export class StartProductionUseCase {
       );
     }
 
-    const reserveResult = this.#productionInventoryService.reserveInputs(
-      building.getCompanyId(),
-      recipe,
-    );
+    const inventory = this.#inventoryRepository.findByCompanyId(building.getCompanyId());
 
-    if (!reserveResult.ok) {
-      return Result.fail(reserveResult.error);
+    if (inventory === undefined) {
+      return Result.fail(
+        new ValidationError(
+          `Inventory for company "${building.getCompanyId().value}" was not found.`,
+        ),
+      );
     }
 
     const jobResult = ProductionJob.create({
@@ -211,11 +218,47 @@ export class StartProductionUseCase {
     });
 
     if (!jobResult.ok) {
-      this.#productionInventoryService.releaseInputs(building.getCompanyId(), recipe);
       return Result.fail(jobResult.error);
     }
 
     const job = jobResult.value;
+
+    if (this.#transportLogisticsService.needsInboundTransport(building.getCompanyId(), inventory, recipe)) {
+      const transportResult = this.#transportLogisticsService.createInboundTransports({
+        companyId: building.getCompanyId(),
+        destinationBuilding: building,
+        recipe,
+        productionJobId: jobId.value,
+      });
+
+      if (!transportResult.ok) {
+        return Result.fail(transportResult.error);
+      }
+
+      this.#productionJobRepository.save(job);
+      this.#simulationEngine.enqueueEvents(job.pullDomainEvents());
+
+      return Result.ok(jobId);
+    }
+
+    if (
+      !this.#transportLogisticsService.canFulfillFromGlobal(inventory, recipe) &&
+      !this.#transportLogisticsService.canFulfillFromWarehouse(building.getCompanyId(), recipe)
+    ) {
+      return Result.fail(
+        new ValidationError('Insufficient resources. Buy materials or wait for warehouse delivery.'),
+      );
+    }
+
+    const reserveResult = this.#productionInventoryService.reserveInputs(
+      building.getCompanyId(),
+      recipe,
+    );
+
+    if (!reserveResult.ok) {
+      return Result.fail(reserveResult.error);
+    }
+
     const startResult = job.start(this.#clock);
 
     if (!startResult.ok) {

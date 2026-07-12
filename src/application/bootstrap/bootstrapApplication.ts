@@ -11,6 +11,8 @@ import { ManualClock } from '../../common/time/ManualClock.js';
 import { validateGameContent } from '../../content/validateGameContent.js';
 import { ContentLoadError } from '../../content/errors/ContentLoadError.js';
 import type { BuildingRepository } from '../../domain/building/BuildingRepository.js';
+import type { BuildingStorageRepository } from '../../domain/building/BuildingStorageRepository.js';
+import type { TransportOrderRepository } from '../../domain/transport/TransportOrderRepository.js';
 import type { CompanyRepository } from '../../domain/company/CompanyRepository.js';
 import type { InventoryRepository } from '../../domain/inventory/InventoryRepository.js';
 import type { FinanceRepository } from '../../domain/finance/FinanceRepository.js';
@@ -19,6 +21,8 @@ import type { ResearchJobRepository } from '../../domain/research/ResearchJobRep
 import type { CompanyResearchRepository } from '../../domain/research/CompanyResearchRepository.js';
 import type { CompanyMilestonesRepository } from '../../domain/milestone/CompanyMilestonesRepository.js';
 import { InMemoryBuildingRepository } from '../../infrastructure/persistence/InMemoryBuildingRepository.js';
+import { InMemoryBuildingStorageRepository } from '../../infrastructure/persistence/InMemoryBuildingStorageRepository.js';
+import { InMemoryTransportOrderRepository } from '../../infrastructure/persistence/InMemoryTransportOrderRepository.js';
 import { InMemoryCompanyRepository } from '../../infrastructure/persistence/InMemoryCompanyRepository.js';
 import { InMemoryCompanyResearchRepository } from '../../infrastructure/persistence/InMemoryCompanyResearchRepository.js';
 import { InMemoryCompanyMilestonesRepository } from '../../infrastructure/persistence/InMemoryCompanyMilestonesRepository.js';
@@ -34,6 +38,7 @@ import { ProductionInventoryService } from '../services/ProductionInventoryServi
 import { ResearchCompletionService } from '../services/ResearchCompletionService.js';
 import { MilestoneEvaluationService } from '../services/MilestoneEvaluationService.js';
 import { EnergyBalanceService } from '../services/EnergyBalanceService.js';
+import { TransportLogisticsService } from '../services/TransportLogisticsService.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
 import { createDefaultSimulationSystems } from '../../simulation/systems/createDefaultSimulationSystems.js';
 import type { ApplicationContext } from './ApplicationContext.js';
@@ -44,6 +49,8 @@ export type BootstrapOptions = {
   readonly strictContent?: boolean;
   readonly companyRepository?: CompanyRepository;
   readonly buildingRepository?: BuildingRepository;
+  readonly buildingStorageRepository?: BuildingStorageRepository;
+  readonly transportOrderRepository?: TransportOrderRepository;
   readonly inventoryRepository?: InventoryRepository;
   readonly financeRepository?: FinanceRepository;
   readonly marketRepository?: MarketRepository;
@@ -69,6 +76,10 @@ export async function bootstrapApplication(
 
   const companyRepository = options.companyRepository ?? new InMemoryCompanyRepository();
   const buildingRepository = options.buildingRepository ?? new InMemoryBuildingRepository();
+  const buildingStorageRepository =
+    options.buildingStorageRepository ?? new InMemoryBuildingStorageRepository();
+  const transportOrderRepository =
+    options.transportOrderRepository ?? new InMemoryTransportOrderRepository();
   const inventoryRepository = options.inventoryRepository ?? new InMemoryInventoryRepository();
   const financeRepository = options.financeRepository ?? new InMemoryFinanceRepository();
   const marketRepository = options.marketRepository ?? new InMemoryMarketRepository();
@@ -109,18 +120,31 @@ export async function bootstrapApplication(
     );
   }
 
+  const energyBalanceService = new EnergyBalanceService({
+    buildingRepository,
+    productionJobRepository,
+    gameContent: contentResult.value,
+  });
+
+  const transportLogisticsService = new TransportLogisticsService({
+    clock,
+    buildingRepository,
+    buildingStorageRepository,
+    transportOrderRepository,
+    productionJobRepository,
+    inventoryRepository,
+    productionInventoryService,
+    gameContent: contentResult.value,
+    enqueueEvents,
+  });
+
   const marketTradeService = new MarketTradeService({
     inventoryRepository,
     financeRepository,
     marketRepository,
     clock,
     enqueueEvents,
-  });
-
-  const energyBalanceService = new EnergyBalanceService({
-    buildingRepository,
-    productionJobRepository,
-    gameContent: contentResult.value,
+    transportLogisticsService,
   });
 
   let researchCompletionService: ResearchCompletionService;
@@ -131,6 +155,8 @@ export async function bootstrapApplication(
     systems: createDefaultSimulationSystems({
       companyRepository,
       buildingRepository,
+      transportOrderRepository,
+      transportLogisticsService,
       productionJobRepository,
       researchJobRepository,
       financeRepository,
@@ -143,6 +169,9 @@ export async function bootstrapApplication(
         researchCompletionService.completeJob(job);
       },
       energyBalanceService,
+      onBuildingActivated: (building) => {
+        transportLogisticsService.ensureStorageForBuilding(building);
+      },
     }),
   });
 
@@ -170,6 +199,8 @@ export async function bootstrapApplication(
     simulationEngine,
     companyRepository,
     buildingRepository,
+    buildingStorageRepository,
+    transportOrderRepository,
     inventoryRepository,
     financeRepository,
     marketRepository,
@@ -180,6 +211,7 @@ export async function bootstrapApplication(
     productionInventoryService,
     marketTradeService,
     energyBalanceService,
+    transportLogisticsService,
     gameContent: contentResult.value,
   });
 }

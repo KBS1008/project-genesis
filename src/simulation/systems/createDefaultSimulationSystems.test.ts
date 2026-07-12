@@ -1,10 +1,13 @@
 import { ManualClock } from '../../common/time/ManualClock.js';
+import { Result } from '../../common/result/Result.js';
 import { InMemoryBuildingRepository } from '../../infrastructure/persistence/InMemoryBuildingRepository.js';
 import { InMemoryCompanyRepository } from '../../infrastructure/persistence/InMemoryCompanyRepository.js';
 import { InMemoryFinanceRepository } from '../../infrastructure/persistence/InMemoryFinanceRepository.js';
 import { InMemoryMarketRepository } from '../../infrastructure/persistence/InMemoryMarketRepository.js';
 import { InMemoryProductionJobRepository } from '../../infrastructure/persistence/InMemoryProductionJobRepository.js';
 import { InMemoryResearchJobRepository } from '../../infrastructure/persistence/InMemoryResearchJobRepository.js';
+import { InMemoryTransportOrderRepository } from '../../infrastructure/persistence/InMemoryTransportOrderRepository.js';
+import type { TransportLogisticsService } from '../../application/services/TransportLogisticsService.js';
 import { Company, createCompanyId, createPlayerId } from '../../domain/company/Company.js';
 import { createDefaultSimulationSystems } from './createDefaultSimulationSystems.js';
 
@@ -29,9 +32,16 @@ function requirePlayerId(value: string) {
 }
 
 function createDependencies() {
+  const transportOrderRepository = new InMemoryTransportOrderRepository();
+  const transportLogisticsService = {
+    completeTransportOrder: () => Result.ok(undefined),
+  } as TransportLogisticsService;
+
   return {
     companyRepository: new InMemoryCompanyRepository(),
     buildingRepository: new InMemoryBuildingRepository(),
+    transportOrderRepository,
+    transportLogisticsService,
     productionJobRepository: new InMemoryProductionJobRepository(),
     researchJobRepository: new InMemoryResearchJobRepository(),
     financeRepository: new InMemoryFinanceRepository(),
@@ -47,6 +57,7 @@ describe('createDefaultSimulationSystems', () => {
     expect(systems.map((system) => system.name)).toEqual([
       'Company',
       'Building',
+      'Transport',
       'Production',
       'Research',
       'Market',

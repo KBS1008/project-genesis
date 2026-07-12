@@ -62,6 +62,17 @@ export type ResearchJobSessionReadModel = {
   readonly progress: number;
 };
 
+export type TransportOrderSessionReadModel = {
+  readonly id: string;
+  readonly resourceId: string;
+  readonly amount: number;
+  readonly status: string;
+  readonly progress: number;
+  readonly sourceBuildingId: string;
+  readonly destinationBuildingId: string;
+  readonly productionJobId: string;
+};
+
 export type ContentNameEntry = {
   readonly id: string;
   readonly name: string;
@@ -135,6 +146,7 @@ export type GameSessionDashboard = {
   readonly completedMilestones: readonly string[];
   readonly completedResearch: readonly string[];
   readonly productionJobs: readonly ProductionJobSessionReadModel[];
+  readonly transportOrders: readonly TransportOrderSessionReadModel[];
   readonly researchJobs: readonly ResearchJobSessionReadModel[];
   readonly contentNames: GameSessionContentNames;
   readonly energy: EnergyReadModel | null;
@@ -176,4 +188,4 @@ export function fetchDashboard(): Promise<GameSessionDashboard> {
 export function buildNameMap(entries: readonly ContentNameEntry[]): ReadonlyMap<string, string> {
   return new Map(entries.map((entry) => [entry.id, entry.name]));
 }
-
+

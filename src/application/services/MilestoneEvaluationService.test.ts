@@ -17,6 +17,7 @@ import { InMemoryProductionJobRepository } from '../../infrastructure/persistenc
 import { InMemoryResearchJobRepository } from '../../infrastructure/persistence/InMemoryResearchJobRepository.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
 import { createDefaultSimulationSystems } from '../../simulation/systems/createDefaultSimulationSystems.js';
+import { createTransportTestServices } from '../../../tests/helpers/createTransportTestServices.js';
 import { completeBuildingConstruction } from '../../../tests/helpers/completeBuildingConstruction.js';
 import { CreateCompanyUseCase } from '../use-cases/CreateCompanyUseCase.js';
 import { PlaceBuildingUseCase } from '../use-cases/PlaceBuildingUseCase.js';
@@ -71,12 +72,24 @@ async function createContext() {
     enqueueEvents,
   });
 
+  const transport = createTransportTestServices({
+    clock,
+    buildingRepository,
+    productionJobRepository,
+    inventoryRepository,
+    productionInventoryService,
+    gameContent: contentResult.value,
+    enqueueEvents,
+  });
+
   simulationEngine = new SimulationEngine({
     clock,
     eventBus,
     systems: createDefaultSimulationSystems({
       companyRepository,
       buildingRepository,
+      transportOrderRepository: transport.transportOrderRepository,
+      transportLogisticsService: transport.transportLogisticsService,
       productionJobRepository,
       researchJobRepository,
       financeRepository,
@@ -116,6 +129,7 @@ async function createContext() {
     marketRepository,
     clock,
     enqueueEvents,
+    transportLogisticsService: transport.transportLogisticsService,
   });
 
   const energyBalanceService = new EnergyBalanceService({
@@ -130,11 +144,14 @@ async function createContext() {
     companyRepository,
     inventoryRepository,
     buildingRepository,
+    buildingStorageRepository: transport.buildingStorageRepository,
+    transportOrderRepository: transport.transportOrderRepository,
     financeRepository,
     companyMilestonesRepository,
     createCompany,
     marketTradeService,
     energyBalanceService,
+    transportLogisticsService: transport.transportLogisticsService,
     simulationEngine,
     gameContent: contentResult.value,
     productionInventoryService,

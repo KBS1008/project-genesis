@@ -22,6 +22,7 @@ import { EnergyBalanceService } from '../services/EnergyBalanceService.js';
 import { ResearchCompletionService } from '../services/ResearchCompletionService.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
 import { createDefaultSimulationSystems } from '../../simulation/systems/createDefaultSimulationSystems.js';
+import { createTransportTestServices } from '../../../tests/helpers/createTransportTestServices.js';
 import { completeBuildingConstruction } from '../../../tests/helpers/completeBuildingConstruction.js';
 import { CreateCompanyUseCase } from './CreateCompanyUseCase.js';
 import { PlaceBuildingUseCase } from './PlaceBuildingUseCase.js';
@@ -62,6 +63,16 @@ async function createContext() {
     enqueueEvents,
   });
 
+  const transport = createTransportTestServices({
+    clock,
+    buildingRepository,
+    productionJobRepository,
+    inventoryRepository,
+    productionInventoryService,
+    gameContent: contentResult.value,
+    enqueueEvents,
+  });
+
   let researchCompletionService: ResearchCompletionService;
 
   simulationEngine = new SimulationEngine({
@@ -70,6 +81,8 @@ async function createContext() {
     systems: createDefaultSimulationSystems({
       companyRepository,
       buildingRepository,
+      transportOrderRepository: transport.transportOrderRepository,
+      transportLogisticsService: transport.transportLogisticsService,
       productionJobRepository,
       researchJobRepository,
       financeRepository,
@@ -80,6 +93,9 @@ async function createContext() {
       },
       onResearchJobCompleted: (job) => {
         researchCompletionService.completeJob(job);
+      },
+      onBuildingActivated: (building) => {
+        transport.transportLogisticsService.ensureStorageForBuilding(building);
       },
     }),
   });
@@ -103,6 +119,8 @@ async function createContext() {
     eventBus,
     companyRepository,
     buildingRepository,
+    buildingStorageRepository: transport.buildingStorageRepository,
+    transportOrderRepository: transport.transportOrderRepository,
     inventoryRepository,
     financeRepository,
     productionJobRepository,
@@ -111,6 +129,7 @@ async function createContext() {
     companyMilestonesRepository,
     productionInventoryService,
     energyBalanceService,
+    transportLogisticsService: transport.transportLogisticsService,
     simulationEngine,
     gameContent: contentResult.value,
   };
