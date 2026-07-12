@@ -11,7 +11,8 @@ export default [
       "dist/**",
       "coverage/**",
       "node_modules/**",
-      "apps/api/dist/**"
+      "apps/api/dist/**",
+      "apps/web/.next/**"
     ]
   },
 

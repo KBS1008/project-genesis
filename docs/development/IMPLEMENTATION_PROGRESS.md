@@ -30,7 +30,7 @@ Update this document whenever a meaningful implementation milestone is completed
 | Simulation | Partial (SimulationEngine, systems pipeline) |
 | Infrastructure | Partial (in-memory repositories, JSON savegames) |
 | Application layer | Partial (bootstrap, use cases, queries) |
-| UI | Partial (browser dev shell + NestJS API) |
+| UI | Partial (Next.js frontend + NestJS API) |
 
 **Tests:** 271 (run `pnpm test` for current count)
 
@@ -593,15 +593,32 @@ Coordinates use cases between domain, infrastructure and simulation.
 
 **Behaviour:**
 
-- `pnpm dev` starts the NestJS API on `http://127.0.0.1:3000`.
+- `pnpm dev` starts the NestJS API on `http://127.0.0.1:3001`.
 - Controllers delegate exclusively to `GameSession`; no direct domain access.
 - JSON envelope matches the browser shell: `{ ok: true, data }` / `{ ok: false, error }`.
-- Static browser shell is served from `src/ui/web` via `@nestjs/serve-static`.
 - Legacy Node HTTP adapter remains available via `pnpm dev:http`.
 
 ---
 
-## UI Module (`src/ui/`)
+## Web Module (`apps/web/`)
+
+| Item | Path |
+|---|---|
+| Next.js app | `src/app/page.tsx`, `src/app/layout.tsx` |
+| Dashboard shell | `src/components/DashboardShell.tsx` |
+| API client | `src/lib/api.ts` |
+| Styles | `src/app/dashboard.css` |
+
+**Behaviour:**
+
+- `pnpm dev` starts API (`:3001`) and Next.js (`:3000`) in parallel.
+- Next.js rewrites `/api/*` to the NestJS backend.
+- React dashboard mirrors the legacy static shell feature set.
+- Legacy static shell remains in `src/ui/web` for reference and `pnpm dev:http`.
+
+---
+
+## UI Module (`src/ui/` — legacy static shell)
 
 | Item | Path |
 |---|---|
@@ -611,8 +628,7 @@ Coordinates use cases between domain, infrastructure and simulation.
 
 **Behaviour:**
 
-- `pnpm dev` starts the NestJS API and browser shell on `http://127.0.0.1:3000`.
-- `pnpm dev:http` starts the legacy `DevGameServer` adapter directly.
+- `pnpm dev:http` starts the legacy `DevGameServer` with embedded static UI on `:3000`.
 - Browser UI calls JSON routes under `/api/*`; no direct domain access.
 - `GameSession` coordinates bootstrap, use cases and query handlers for the dashboard shell.
 - Shell actions: new game, simulation tick, place sawmill/warehouse, start production, start research, market sell, save/load.
@@ -728,9 +744,9 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Planned Next Steps
 
-1. Next.js frontend (replace static shell)
-2. Session/auth model for multi-user API access
-3. WebSocket tick streaming (optional)
+1. Session/auth model for multi-user API access
+2. WebSocket tick streaming (optional)
+3. Retire legacy static shell once Next.js coverage is complete
 
 ---
 
