@@ -218,13 +218,21 @@ export class GameSessionDashboardBuilder {
     readonly finance: FinanceReadModel;
     readonly energy: EnergyReadModel | null;
     readonly logistics: LogisticsSummaryReadModel;
+    readonly inventory: InventoryReadModel;
   }): TickMetricsSnapshot {
+    const onSiteTotalUnits = input.inventory.items.reduce(
+      (total, item) => total + item.quantity,
+      0,
+    );
+
     return Object.freeze({
       tickNumber: input.tickNumber,
       simulationTime: input.simulationTime,
       availableCash: input.finance.availableCash,
       energyReserve: input.energy?.reserve ?? 0,
       activeTransportCount: input.logistics.activeTransportCount,
+      warehouseTotalUnits: input.logistics.warehouseTotalUnits,
+      onSiteTotalUnits,
     });
   }
 

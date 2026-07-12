@@ -343,6 +343,8 @@ export class GameStateSerializer {
             availableCash: point.availableCash,
             energyReserve: point.energyReserve,
             activeTransportCount: point.activeTransportCount,
+            warehouseTotalUnits: point.warehouseTotalUnits,
+            onSiteTotalUnits: point.onSiteTotalUnits,
           }),
         ),
       ),
@@ -527,6 +529,8 @@ export class GameStateSerializer {
           availableCash: point.availableCash,
           energyReserve: point.energyReserve,
           activeTransportCount: point.activeTransportCount,
+          warehouseTotalUnits: point.warehouseTotalUnits ?? 0,
+          onSiteTotalUnits: point.onSiteTotalUnits ?? 0,
         }),
       ),
     );

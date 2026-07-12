@@ -11,6 +11,7 @@ import {
   type TickMetricsSnapshot,
 } from '@/lib/api';
 import { TickHistoryCharts } from '@/components/TickHistoryCharts';
+import { InventoryHistoryChart } from '@/components/InventoryHistoryChart';
 import {
   DashboardDetailPanel,
   normalizeDetailSelection,
@@ -107,10 +108,12 @@ function KpiStrip({
   kpis,
   history,
   onSelectFinance,
+  onSelectLogistics,
 }: {
   readonly kpis: GameSessionDashboard['kpis'];
   readonly history: readonly TickMetricsSnapshot[];
   readonly onSelectFinance: () => void;
+  readonly onSelectLogistics: () => void;
 }) {
   if (kpis === null) {
     return null;
@@ -144,7 +147,11 @@ function KpiStrip({
           </span>
         </div>
       </article>
-      <article className={`kpi-card${kpis.activeTransportCount > 0 ? ' kpi-active' : ''}`}>
+      <button
+        type="button"
+        className={`kpi-card kpi-card-button${kpis.activeTransportCount > 0 ? ' kpi-active' : ''}`}
+        onClick={onSelectLogistics}
+      >
         <span className="kpi-icon" aria-hidden="true">
           🚚
         </span>
@@ -155,8 +162,8 @@ function KpiStrip({
             {trendFromHistory(history, 'activeTransportCount', 'Aktiv unterwegs')}
           </span>
         </div>
-      </article>
-      <article className="kpi-card">
+      </button>
+      <button type="button" className="kpi-card kpi-card-button" onClick={onSelectLogistics}>
         <span className="kpi-icon" aria-hidden="true">
           📦
         </span>
@@ -165,7 +172,7 @@ function KpiStrip({
           <strong className="kpi-value">{kpis.warehouseTotalUnits}</strong>
           <span className="kpi-trend">{trendLabel('stable', 'Einheiten gesamt')}</span>
         </div>
-      </article>
+      </button>
       <article className="kpi-card">
         <span className="kpi-icon" aria-hidden="true">
           🏭
@@ -182,8 +189,10 @@ function KpiStrip({
 
 function OverviewStrip({
   dashboard,
+  onSelectLogistics,
 }: {
   readonly dashboard: GameSessionDashboard | null;
+  readonly onSelectLogistics: () => void;
 }) {
   if (dashboard?.company === null || dashboard?.company === undefined) {
     return null;
@@ -214,7 +223,7 @@ function OverviewStrip({
         <strong className="overview-value">{activeResearch}</strong>
         <span className="overview-hint">{dashboard.completedResearch.length} abgeschlossen</span>
       </article>
-      <article className="overview-card">
+      <button type="button" className="overview-card overview-card-button" onClick={onSelectLogistics}>
         <span className="overview-label">Transport</span>
         <strong className="overview-value">{activeTransport}</strong>
         <span className="overview-hint">
@@ -222,7 +231,7 @@ function OverviewStrip({
             ? `${dashboard.logistics.waitingProductionCount} Jobs warten`
             : 'Logistik stabil'}
         </span>
-      </article>
+      </button>
       <article className="overview-card">
         <span className="overview-label">Meilensteine</span>
         <strong className="overview-value">{completedMilestones}</strong>
@@ -239,17 +248,19 @@ function OverviewStrip({
 
 function LogisticsBanner({
   message,
+  onSelectLogistics,
 }: {
   readonly message: string | null;
+  readonly onSelectLogistics: () => void;
 }) {
   if (message === null || message.length === 0) {
     return null;
   }
 
   return (
-    <p className="logistics-banner" role="status">
+    <button type="button" className="logistics-banner logistics-banner-button" onClick={onSelectLogistics}>
       {message}
-    </p>
+    </button>
   );
 }
 
@@ -696,15 +707,25 @@ export function DashboardShell() {
     nameMaps.technologies.get(technologyId) ?? technologyId;
 
   const selectedRowKey =
-    detailSelection.kind === 'overview' || detailSelection.kind === 'finance'
+    detailSelection.kind === 'overview' ||
+    detailSelection.kind === 'finance' ||
+    detailSelection.kind === 'logistics'
       ? null
       : detailSelection.kind === 'transaction'
         ? `transaction:${detailSelection.id}`
-        : `${detailSelection.kind}:${detailSelection.id}`;
+        : detailSelection.kind === 'warehouse'
+          ? `warehouse:${detailSelection.id}`
+          : `${detailSelection.kind}:${detailSelection.id}`;
 
   const selectDetail = useCallback(
     (
-      kind: 'building' | 'production' | 'transport' | 'research' | 'transaction',
+      kind:
+        | 'building'
+        | 'production'
+        | 'transport'
+        | 'research'
+        | 'transaction'
+        | 'warehouse',
       id: string,
     ) => {
       setDetailSelection({ kind, id });
@@ -714,6 +735,10 @@ export function DashboardShell() {
 
   const selectFinanceDetail = useCallback(() => {
     setDetailSelection({ kind: 'finance' });
+  }, []);
+
+  const selectLogisticsDetail = useCallback(() => {
+    setDetailSelection({ kind: 'logistics' });
   }, []);
 
   const clearDetailSelection = useCallback(() => {
@@ -803,17 +828,27 @@ export function DashboardShell() {
 
         <div className="dashboard-content">
           {hasGame && dashboard?.kpis ? (
-            <KpiStrip kpis={dashboard.kpis} history={tickHistory} onSelectFinance={selectFinanceDetail} />
+            <KpiStrip
+              kpis={dashboard.kpis}
+              history={tickHistory}
+              onSelectFinance={selectFinanceDetail}
+              onSelectLogistics={selectLogisticsDetail}
+            />
           ) : null}
 
           <div className="status-bar">
-            <LogisticsBanner message={dashboard?.logistics?.statusMessage ?? null} />
+            <LogisticsBanner
+              message={dashboard?.logistics?.statusMessage ?? null}
+              onSelectLogistics={selectLogisticsDetail}
+            />
             <Toast message={statusMessage} tone={statusTone} />
           </div>
 
-          {hasGame ? <OverviewStrip dashboard={dashboard} /> : null}
+          {hasGame ? <OverviewStrip dashboard={dashboard} onSelectLogistics={selectLogisticsDetail} /> : null}
 
           {hasGame ? <TickHistoryCharts points={tickHistory} /> : null}
+
+          {hasGame ? <InventoryHistoryChart points={tickHistory} /> : null}
 
           <div className="dashboard-panels">
             <div className="dashboard-tables">
@@ -1107,27 +1142,55 @@ export function DashboardShell() {
                             Kaufen Sie Ressourcen am Markt.
                           </p>
                         ) : (
-                          (dashboard.warehouseStorage ?? []).map((storage) => (
-                            <div key={storage.buildingId} className="warehouse-block">
-                              <h3 className="warehouse-name">{storage.buildingName}</h3>
-                              <DataTable
-                                searchable
-                                searchPlaceholder="Lager suchen…"
-                                columns={[
-                                  { key: 'resourceId', label: 'Ressource' },
-                                  { key: 'reserved', label: 'Reserviert', numeric: true },
-                                  { key: 'available', label: 'Verfügbar', numeric: true },
-                                ]}
-                                rows={storage.items.map((item) => ({
-                                  resourceId: labelResource(item.resourceId),
-                                  quantity: item.quantity,
-                                  reserved: item.reserved,
-                                  available: item.available,
-                                }))}
-                                emptyText="Lager ist leer."
-                              />
-                            </div>
-                          ))
+                          <>
+                            <DataTable
+                              searchable
+                              searchPlaceholder="Lagerhäuser suchen…"
+                              columns={[
+                                { key: 'buildingName', label: 'Lagerhaus' },
+                                { key: 'resourceLines', label: 'Zeilen', numeric: true },
+                                { key: 'totalUnits', label: 'Einheiten', numeric: true },
+                              ]}
+                              rows={(dashboard.warehouseStorage ?? []).map((storage) => ({
+                                buildingName: storage.buildingName,
+                                resourceLines: storage.items.length,
+                                totalUnits: storage.items.reduce(
+                                  (total, item) => total + item.quantity,
+                                  0,
+                                ),
+                              }))}
+                              rowKeys={(dashboard.warehouseStorage ?? []).map(
+                                (storage) => `warehouse:${storage.buildingId}`,
+                              )}
+                              selectedRowKey={selectedRowKey}
+                              onRowSelect={(rowKey) => {
+                                selectDetail('warehouse', rowKey.slice('warehouse:'.length));
+                              }}
+                              emptyText="Kein Lagerhaus aktiv."
+                              emptyHint="Schalten Sie das Lagerhaus-Meilenstein frei und bauen Sie es."
+                            />
+                            {(dashboard.warehouseStorage ?? []).map((storage) => (
+                              <div key={storage.buildingId} className="warehouse-block">
+                                <h3 className="warehouse-name">{storage.buildingName}</h3>
+                                <DataTable
+                                  searchable
+                                  searchPlaceholder="Lager suchen…"
+                                  columns={[
+                                    { key: 'resourceId', label: 'Ressource' },
+                                    { key: 'reserved', label: 'Reserviert', numeric: true },
+                                    { key: 'available', label: 'Verfügbar', numeric: true },
+                                  ]}
+                                  rows={storage.items.map((item) => ({
+                                    resourceId: labelResource(item.resourceId),
+                                    quantity: item.quantity,
+                                    reserved: item.reserved,
+                                    available: item.available,
+                                  }))}
+                                  emptyText="Lager ist leer."
+                                />
+                              </div>
+                            ))}
+                          </>
                         )}
                       </div>
                     </section>
@@ -1141,6 +1204,7 @@ export function DashboardShell() {
               selection={detailSelection}
               onClearSelection={clearDetailSelection}
               onSelectFinance={selectFinanceDetail}
+              onSelectLogistics={selectLogisticsDetail}
               labelBuilding={labelBuilding}
               labelRecipe={labelRecipe}
               labelResource={labelResource}

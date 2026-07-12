@@ -419,6 +419,22 @@ button.btn-secondary:hover:not(:disabled) {
   box-shadow: var(--shadow-soft);
 }
 
+.overview-card-button {
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.overview-card-button:hover,
+.overview-card-button:focus-visible {
+  border-color: rgba(37, 99, 235, 0.55);
+  box-shadow: var(--shadow);
+  outline: none;
+}
+
 .overview-label {
   display: block;
   font-size: var(--text-caption);
@@ -454,6 +470,14 @@ button.btn-secondary:hover:not(:disabled) {
   border-radius: var(--radius-md);
   padding: 0.85rem 1rem 0.65rem;
   box-shadow: var(--shadow-soft);
+  min-width: 0;
+}
+
+.inventory-chart-strip {
+  grid-template-columns: 1fr;
+}
+
+.chart-card-wide {
   min-width: 0;
 }
 
@@ -596,6 +620,22 @@ button.btn-secondary:hover:not(:disabled) {
   background: rgba(37, 99, 235, 0.08);
   color: var(--text);
   font-size: var(--text-body);
+}
+
+.logistics-banner-button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.logistics-banner-button:hover,
+.logistics-banner-button:focus-visible {
+  border-color: rgba(37, 99, 235, 0.55);
+  box-shadow: var(--shadow-soft);
+  outline: none;
 }
 
 .panel-hint {

@@ -175,6 +175,8 @@ export type GameSaveTickMetricsSnapshotV1 = {
   readonly availableCash: number;
   readonly energyReserve: number;
   readonly activeTransportCount: number;
+  readonly warehouseTotalUnits?: number;
+  readonly onSiteTotalUnits?: number;
 };
 
 /** Persisted tick metrics history for one company. */

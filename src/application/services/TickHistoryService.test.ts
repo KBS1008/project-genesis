@@ -1,13 +1,22 @@
 import { describe, expect, it } from 'vitest';
 import { TickHistoryService } from './TickHistoryService.js';
 
-function snapshot(tickNumber: number, cash = 1000, energy = 10, transports = 0) {
+function snapshot(
+  tickNumber: number,
+  cash = 1000,
+  energy = 10,
+  transports = 0,
+  warehouseUnits = 0,
+  onSiteUnits = 0,
+) {
   return Object.freeze({
     tickNumber,
     simulationTime: tickNumber,
     availableCash: cash,
     energyReserve: energy,
     activeTransportCount: transports,
+    warehouseTotalUnits: warehouseUnits,
+    onSiteTotalUnits: onSiteUnits,
   });
 }
 

@@ -30,7 +30,7 @@ Update this document whenever a meaningful implementation milestone is completed
 | Simulation | Partial (SimulationEngine, systems pipeline) |
 | Infrastructure | Partial (in-memory repositories, JSON savegames incl. tick metrics history) |
 | Application layer | Partial (bootstrap, use cases, queries, dashboard facade) |
-| UI | Partial (Next.js dashboard per DASHBOARD_STYLE_GUIDE: layout, charts, drill-down, sortable tables, live WebSocket refresh, finance drill-down) |
+| UI | Partial (Next.js dashboard per DASHBOARD_STYLE_GUIDE: layout, charts, drill-down, sortable tables, live WebSocket refresh, finance & logistics drill-down) |
 | Energy system | Partial (balance service, production gating, baseline grid) |
 | Transport / logistics | Partial (warehouse storage, transport orders, dashboard KPIs) |
 
@@ -637,6 +637,7 @@ Coordinates use cases between domain, infrastructure and simulation.
 | Dashboard shell | `src/components/DashboardShell.tsx` |
 | Detail panel | `src/components/DashboardDetailPanel.tsx` |
 | Tick history charts | `src/components/TickHistoryCharts.tsx` |
+| Inventory history chart | `src/components/InventoryHistoryChart.tsx` |
 | Data table | `src/components/DataTable.tsx` |
 | Dashboard socket client | `src/lib/dashboard-socket.ts` |
 | API client | `src/lib/api.ts` |
@@ -772,8 +773,9 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 1. Session/auth model for multi-user API access
 2. Icon library integration (replace KPI emoji placeholders per `ICON_GUIDELINES.md`)
-3. Additional dashboard charts and drill-down paths (logistics views)
-4. Full tick log / replay per DD-033 (beyond metrics ring buffer)
+3. Additional dashboard charts (market prices over time)
+4. Loading/toasts for dashboard actions
+5. Full tick log / replay per DD-033 (beyond metrics ring buffer)
 
 ---
 
@@ -788,6 +790,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 - Tick metrics history persisted in savegames (`tickMetricsHistory` on schema v1)
 - WebSocket live dashboard refresh (`/ws/v1/dashboard`)
 - Finance drill-down with ledger table and transaction detail focus
+- Logistics drill-down (overview, warehouse focus) and inventory history chart
 
 ---
 

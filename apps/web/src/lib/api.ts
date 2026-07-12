@@ -132,6 +132,8 @@ export type TickMetricsSnapshot = {
   readonly availableCash: number;
   readonly energyReserve: number;
   readonly activeTransportCount: number;
+  readonly warehouseTotalUnits: number;
+  readonly onSiteTotalUnits: number;
 };
 
 export type DashboardTickHistory = {

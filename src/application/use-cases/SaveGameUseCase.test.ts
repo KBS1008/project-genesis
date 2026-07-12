@@ -66,6 +66,8 @@ describe('SaveGameUseCase', () => {
           availableCash: 240_000,
           energyReserve: 30,
           activeTransportCount: 0,
+          warehouseTotalUnits: 0,
+          onSiteTotalUnits: 20,
         }),
         'company_001',
       );
@@ -111,6 +113,8 @@ describe('SaveGameUseCase', () => {
           availableCash: 240_000,
           energyReserve: 30,
           activeTransportCount: 0,
+          warehouseTotalUnits: 0,
+          onSiteTotalUnits: 20,
         }),
       ]);
     } finally {

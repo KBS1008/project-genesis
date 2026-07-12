@@ -8,6 +8,7 @@ import type {
   ProductionJobSessionReadModel,
   ResearchJobSessionReadModel,
   TransportOrderSessionReadModel,
+  WarehouseStorageReadModel,
 } from '@/lib/api';
 
 export type DetailSelection =
@@ -17,7 +18,9 @@ export type DetailSelection =
   | { readonly kind: 'transport'; readonly id: string }
   | { readonly kind: 'research'; readonly id: string }
   | { readonly kind: 'finance' }
-  | { readonly kind: 'transaction'; readonly id: string };
+  | { readonly kind: 'transaction'; readonly id: string }
+  | { readonly kind: 'logistics' }
+  | { readonly kind: 'warehouse'; readonly id: string };
 
 type KeyValueEntry = readonly [label: string, value: string, valueClass?: string];
 
@@ -385,6 +388,158 @@ function TransactionFocus({
   );
 }
 
+function LogisticsFocus({
+  dashboard,
+  labelResource,
+  labelRecipe,
+  onClear,
+}: {
+  readonly dashboard: GameSessionDashboard;
+  readonly labelResource: (id: string) => string;
+  readonly labelRecipe: (id: string) => string;
+  readonly onClear: () => void;
+}) {
+  const logistics = dashboard.logistics;
+  const activeTransports = (dashboard.transportOrders ?? []).filter(
+    (order) => order.status === 'IN_PROGRESS',
+  );
+  const waitingJobs = dashboard.productionJobs.filter(
+    (job) => job.status === 'WAITING' && job.awaitingTransport,
+  );
+
+  return (
+    <DetailFocusCard title="Logistik" subtitle="Transport & Lager" onClear={onClear}>
+      {!logistics ? (
+        <KeyValuePanel entries={[['Status', '—']]} />
+      ) : (
+        <KeyValuePanel
+          entries={[
+            ['Lagerhaus aktiv', logistics.hasActiveWarehouse ? 'Ja' : 'Nein'],
+            ['Transporte unterwegs', String(logistics.activeTransportCount)],
+            ['Produktion wartet', String(logistics.waitingProductionCount)],
+            ['Lagerzeilen', String(logistics.warehouseResourceLines)],
+            ['Einheiten im Lager', String(logistics.warehouseTotalUnits)],
+            ...(logistics.statusMessage ? ([['Status', logistics.statusMessage]] as const) : []),
+          ]}
+        />
+      )}
+      {activeTransports.length > 0 ? (
+        <div className="detail-related">
+          <h3 className="detail-related-title">Aktive Transporte</h3>
+          <ul className="detail-related-list">
+            {activeTransports.map((order) => (
+              <li key={order.id}>
+                <span>
+                  {order.amount}× {labelResource(order.resourceId)}
+                </span>
+                <span>
+                  {order.sourceBuildingName} → {order.destinationBuildingName}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+      {waitingJobs.length > 0 ? (
+        <div className="detail-related">
+          <h3 className="detail-related-title">Wartende Produktion</h3>
+          <ul className="detail-related-list">
+            {waitingJobs.map((job) => (
+              <li key={job.id}>
+                <span>{labelRecipe(job.recipeId)}</span>
+                <span>Wartet auf Material</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+      {(dashboard.warehouseStorage ?? []).length > 0 ? (
+        <div className="detail-related">
+          <h3 className="detail-related-title">Lagerhäuser</h3>
+          <ul className="detail-related-list">
+            {dashboard.warehouseStorage.map((storage) => {
+              const units = storage.items.reduce((total, item) => total + item.quantity, 0);
+              return (
+                <li key={storage.buildingId}>
+                  <span>{storage.buildingName}</span>
+                  <span>
+                    {storage.items.length} Zeilen · {units} Einheiten
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      ) : null}
+    </DetailFocusCard>
+  );
+}
+
+function WarehouseFocus({
+  storage,
+  dashboard,
+  labelResource,
+  onClear,
+}: {
+  readonly storage: WarehouseStorageReadModel;
+  readonly dashboard: GameSessionDashboard;
+  readonly labelResource: (id: string) => string;
+  readonly onClear: () => void;
+}) {
+  const totalUnits = storage.items.reduce((total, item) => total + item.quantity, 0);
+  const relatedTransports = (dashboard.transportOrders ?? []).filter(
+    (order) =>
+      order.sourceBuildingId === storage.buildingId ||
+      order.destinationBuildingId === storage.buildingId,
+  );
+
+  return (
+    <DetailFocusCard
+      title={storage.buildingName}
+      subtitle="Lagerhaus"
+      onClear={onClear}
+    >
+      <KeyValuePanel
+        entries={[
+          ['Gebäude-ID', storage.buildingId],
+          ['Ressourcenzeilen', String(storage.items.length)],
+          ['Einheiten gesamt', String(totalUnits)],
+        ]}
+      />
+      {storage.items.length > 0 ? (
+        <div className="detail-related">
+          <h3 className="detail-related-title">Bestand</h3>
+          <ul className="detail-related-list">
+            {storage.items.map((item) => (
+              <li key={item.resourceId}>
+                <span>{labelResource(item.resourceId)}</span>
+                <span>
+                  {item.available} verfügbar ({item.quantity} gesamt)
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+      {relatedTransports.length > 0 ? (
+        <div className="detail-related">
+          <h3 className="detail-related-title">Verknüpfte Transporte</h3>
+          <ul className="detail-related-list">
+            {relatedTransports.map((order) => (
+              <li key={order.id}>
+                <span>
+                  {order.amount}× {labelResource(order.resourceId)}
+                </span>
+                <span>{order.status}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+    </DetailFocusCard>
+  );
+}
+
 /** Validates that the current selection still references dashboard data. */
 export function normalizeDetailSelection(
   dashboard: GameSessionDashboard | null,
@@ -417,6 +572,14 @@ export function normalizeDetailSelection(
       return dashboard.financeTransactions.some((transaction) => transaction.id === selection.id)
         ? selection
         : { kind: 'overview' };
+    case 'logistics':
+      return dashboard.logistics === null ? { kind: 'overview' } : selection;
+    case 'warehouse':
+      return (dashboard.warehouseStorage ?? []).some(
+        (storage) => storage.buildingId === selection.id,
+      )
+        ? selection
+        : { kind: 'overview' };
     default:
       return { kind: 'overview' };
   }
@@ -428,6 +591,7 @@ export function DashboardDetailPanel({
   selection,
   onClearSelection,
   onSelectFinance,
+  onSelectLogistics,
   labelBuilding,
   labelRecipe,
   labelResource,
@@ -438,6 +602,7 @@ export function DashboardDetailPanel({
   readonly selection: DetailSelection;
   readonly onClearSelection: () => void;
   readonly onSelectFinance: () => void;
+  readonly onSelectLogistics: () => void;
   readonly labelBuilding: (id: string) => string;
   readonly labelRecipe: (id: string) => string;
   readonly labelResource: (id: string) => string;
@@ -509,6 +674,28 @@ export function DashboardDetailPanel({
                 />
               ) : null;
             }
+            case 'logistics':
+              return (
+                <LogisticsFocus
+                  dashboard={dashboard}
+                  labelResource={labelResource}
+                  labelRecipe={labelRecipe}
+                  onClear={onClearSelection}
+                />
+              );
+            case 'warehouse': {
+              const storage = (dashboard.warehouseStorage ?? []).find(
+                (entry) => entry.buildingId === selection.id,
+              );
+              return storage ? (
+                <WarehouseFocus
+                  storage={storage}
+                  dashboard={dashboard}
+                  labelResource={labelResource}
+                  onClear={onClearSelection}
+                />
+              ) : null;
+            }
             default:
               return null;
           }
@@ -554,6 +741,26 @@ export function DashboardDetailPanel({
               ['Cash', formatCurrency(dashboard.finance.cashBalance, dashboard.finance.currency)],
               ['Reserviert', formatCurrency(dashboard.finance.reservedCash, dashboard.finance.currency)],
               ['Verfügbar', formatCurrency(dashboard.finance.availableCash, dashboard.finance.currency)],
+            ]}
+          />
+        )}
+      </section>
+
+      <section
+        className={`card detail-card detail-card-selectable${selection.kind === 'logistics' || selection.kind === 'warehouse' || selection.kind === 'transport' ? ' detail-card-active' : ''}${selection.kind !== 'overview' && selection.kind !== 'logistics' && selection.kind !== 'warehouse' && selection.kind !== 'transport' ? ' detail-card-compact' : ''}`}
+      >
+        <button type="button" className="detail-section-button" onClick={onSelectLogistics}>
+          <h2>Logistik</h2>
+          <span className="detail-section-hint">Klicken für Transport- &amp; Lagerdetails</span>
+        </button>
+        {!dashboard?.logistics ? (
+          <KeyValuePanel entries={[['Status', '—']]} />
+        ) : (
+          <KeyValuePanel
+            entries={[
+              ['Transporte', String(dashboard.logistics.activeTransportCount)],
+              ['Wartende Jobs', String(dashboard.logistics.waitingProductionCount)],
+              ['Im Lagerhaus', String(dashboard.logistics.warehouseTotalUnits)],
             ]}
           />
         )}

@@ -582,6 +582,11 @@ export class GameSession {
       productionJobs,
       transportOrders,
     });
+    const inventoryResult = this.#getInventory.execute({ companyId });
+
+    if (!inventoryResult.ok) {
+      return;
+    }
 
     this.#context.tickHistoryService.record(
       this.#dashboardBuilder.captureTickMetrics({
@@ -590,6 +595,7 @@ export class GameSession {
         finance: financeResult.value,
         energy,
         logistics,
+        inventory: inventoryResult.value,
       }),
       companyId,
     );
