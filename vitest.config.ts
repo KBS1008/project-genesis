@@ -10,7 +10,9 @@ export default defineConfig({
       'tests/**/*.test.ts',
       'tests/**/*.spec.ts',
       'src/**/*.test.ts',
-      'src/**/*.spec.ts'
+      'src/**/*.spec.ts',
+      'apps/**/*.test.ts',
+      'apps/**/*.spec.ts'
     ],
 
     exclude: [

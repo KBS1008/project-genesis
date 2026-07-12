@@ -30,9 +30,9 @@ Update this document whenever a meaningful implementation milestone is completed
 | Simulation | Partial (SimulationEngine, systems pipeline) |
 | Infrastructure | Partial (in-memory repositories, JSON savegames) |
 | Application layer | Partial (bootstrap, use cases, queries) |
-| UI | Partial (browser dev shell) |
+| UI | Partial (browser dev shell + NestJS API) |
 
-**Tests:** 266 (run `pnpm test` for current count)
+**Tests:** 271 (run `pnpm test` for current count)
 
 ---
 
@@ -574,7 +574,30 @@ Coordinates use cases between domain, infrastructure and simulation.
 | `GameStateSerializer` | `persistence/savegame/GameStateSerializer.ts` |
 | `FileSavegameStore` | `persistence/savegame/FileSavegameStore.ts` |
 | `DevGameServer` | `http/DevGameServer.ts` |
-| Tests | `persistence/InMemory*.test.ts`, `use-cases/SaveGameUseCase.test.ts` |
+| NestJS API | `apps/api/` |
+| Tests | `persistence/InMemory*.test.ts`, `use-cases/SaveGameUseCase.test.ts`, `apps/api/src/**/*.test.ts` |
+
+---
+
+## API Module (`apps/api/`)
+
+| Item | Path |
+|---|---|
+| Entry point | `src/main.ts` |
+| Root module | `src/app.module.ts` |
+| Game module | `src/game/game.module.ts` |
+| Session service | `src/game/game-session.service.ts` |
+| REST controller | `src/game/game.controller.ts` |
+| Path resolution | `src/config/project-paths.ts` |
+| API envelope filter | `src/common/api-exception.filter.ts` |
+
+**Behaviour:**
+
+- `pnpm dev` starts the NestJS API on `http://127.0.0.1:3000`.
+- Controllers delegate exclusively to `GameSession`; no direct domain access.
+- JSON envelope matches the browser shell: `{ ok: true, data }` / `{ ok: false, error }`.
+- Static browser shell is served from `src/ui/web` via `@nestjs/serve-static`.
+- Legacy Node HTTP adapter remains available via `pnpm dev:http`.
 
 ---
 
@@ -588,7 +611,8 @@ Coordinates use cases between domain, infrastructure and simulation.
 
 **Behaviour:**
 
-- `pnpm dev` starts `DevGameServer` on `http://127.0.0.1:3000`.
+- `pnpm dev` starts the NestJS API and browser shell on `http://127.0.0.1:3000`.
+- `pnpm dev:http` starts the legacy `DevGameServer` adapter directly.
 - Browser UI calls JSON routes under `/api/*`; no direct domain access.
 - `GameSession` coordinates bootstrap, use cases and query handlers for the dashboard shell.
 - Shell actions: new game, simulation tick, place sawmill/warehouse, start production, start research, market sell, save/load.
@@ -674,6 +698,8 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 | Infrastructure / Company repo | `InMemoryCompanyRepository.test.ts` | Save, find, ordering |
 | Infrastructure / Building repo | `InMemoryBuildingRepository.test.ts` | Save, find by company, under construction |
 | Application / GameSession | `GameSession.test.ts` | Dashboard facade, building placement, production, save/load round-trip |
+| API / GameController | `apps/api/src/game/game.controller.test.ts` | NestJS route contract, validation envelope |
+| API / Project paths | `apps/api/src/config/project-paths.test.ts` | Monorepo root and static asset resolution |
 | Application / Bootstrap | `bootstrapApplication.test.ts` | Content load, wiring |
 | Application / CreateCompany | `CreateCompanyUseCase.test.ts` | Create, events, duplicates |
 | Application / PlaceBuilding | `PlaceBuildingUseCase.test.ts` | Place, construction time, cost debit, events, validation |
@@ -702,8 +728,9 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Planned Next Steps
 
-1. NestJS REST API layer (replace dev HTTP adapter)
-2. Next.js frontend (replace static shell)
+1. Next.js frontend (replace static shell)
+2. Session/auth model for multi-user API access
+3. WebSocket tick streaming (optional)
 
 ---
 

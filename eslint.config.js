@@ -10,7 +10,8 @@ export default [
     ignores: [
       "dist/**",
       "coverage/**",
-      "node_modules/**"
+      "node_modules/**",
+      "apps/api/dist/**"
     ]
   },
 
