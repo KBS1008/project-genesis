@@ -28,12 +28,13 @@ Update this document whenever a meaningful implementation milestone is completed
 | Domain specifications & policies | Partial (foundation + first production/market rules) |
 | Content loaders | Partial (ResourceType, BuildingType, Recipe, Technology, Milestone) |
 | Simulation | Partial (SimulationEngine, systems pipeline) |
-| Infrastructure | Partial (in-memory repositories, JSON savegames) |
-| Application layer | Partial (bootstrap, use cases, queries) |
-| UI | Partial (Next.js frontend + NestJS API, content-driven dashboard) |
+| Infrastructure | Partial (in-memory repositories, JSON savegames incl. tick metrics history) |
+| Application layer | Partial (bootstrap, use cases, queries, dashboard facade) |
+| UI | Partial (Next.js dashboard per DASHBOARD_STYLE_GUIDE: layout, charts, drill-down, sortable tables) |
 | Energy system | Partial (balance service, production gating, baseline grid) |
+| Transport / logistics | Partial (warehouse storage, transport orders, dashboard KPIs) |
 
-**Tests:** 277 (run `pnpm test` for current count)
+**Tests:** 286 (run `pnpm test` for current count)
 
 ---
 
@@ -527,6 +528,11 @@ Coordinates use cases between domain, infrastructure and simulation.
 | `StartResearchUseCase` | `use-cases/StartResearchUseCase.ts` |
 | `ResearchCompletionService` | `services/ResearchCompletionService.ts` |
 | `MilestoneEvaluationService` | `services/MilestoneEvaluationService.ts` |
+| `EnergyBalanceService` | `services/EnergyBalanceService.ts` |
+| `TransportLogisticsService` | `services/TransportLogisticsService.ts` |
+| `TickHistoryService` | `services/TickHistoryService.ts` |
+| `GameSession` | `facade/GameSession.ts` |
+| `GameSessionDashboardBuilder` | `facade/GameSessionDashboardBuilder.ts` |
 | `SaveGameCommand` | `commands/SaveGameCommand.ts` |
 | `LoadGameCommand` | `commands/LoadGameCommand.ts` |
 | `SaveGameUseCase` | `use-cases/SaveGameUseCase.ts` |
@@ -537,8 +543,8 @@ Coordinates use cases between domain, infrastructure and simulation.
 | `GetInventoryQueryHandler` | `queries/GetInventoryQueryHandler.ts` |
 | `GetFinanceQueryHandler` | `queries/GetFinanceQueryHandler.ts` |
 | `GetMarketPricesQueryHandler` | `queries/GetMarketPricesQueryHandler.ts` |
-| Read models | `read-models/CompanyReadModel.ts`, `BuildingReadModel.ts`, `InventoryReadModel.ts`, `FinanceReadModel.ts`, `MarketPriceReadModel.ts` |
-| Tests | `bootstrap/bootstrapApplication.test.ts`, `services/ProductionInventoryService.test.ts`, `queries/*.test.ts`, `use-cases/*.test.ts` |
+| Read models | `read-models/CompanyReadModel.ts`, `BuildingReadModel.ts`, `InventoryReadModel.ts`, `FinanceReadModel.ts`, `MarketPriceReadModel.ts`, `TickMetricsSnapshot.ts` |
+| Tests | `bootstrap/bootstrapApplication.test.ts`, `services/*.test.ts`, `queries/*.test.ts`, `use-cases/*.test.ts`, `facade/GameSession.test.ts` |
 
 **Behaviour:**
 
@@ -551,12 +557,14 @@ Coordinates use cases between domain, infrastructure and simulation.
 - Bootstrap seeds global market prices from resource `basePrice` via `MarketPriceSeeder`.
 - `MarketTradeService` executes instant buy/sell at `lastPrice`, updating inventory, finance and market trade volume.
 - Query handlers (`GetCompany`, `ListBuildings`, `GetInventory`, `GetFinance`, `GetMarketPrices`) read repository state and return immutable read models without mutating aggregates.
-- `SaveGameUseCase` serializes all aggregate repositories and simulation metadata into a versioned JSON snapshot; saves are rejected while domain events remain queued.
-- `LoadGameUseCase` reads a snapshot file and `restoreApplicationFromSnapshot` hydrates fresh in-memory repositories, clock and simulation engine state.
+- `SaveGameUseCase` serializes all aggregate repositories, simulation metadata and dashboard tick metrics history into a versioned JSON snapshot; saves are rejected while domain events remain queued.
+- `LoadGameUseCase` reads a snapshot file and `restoreApplicationFromSnapshot` hydrates fresh in-memory repositories, clock, simulation engine state and tick chart history.
 - `CompleteTechnologyUseCase` marks technologies as completed (internal completion path after research jobs finish).
 - `StartResearchUseCase` debits `researchCost`, enforces research and milestone prerequisites and starts timed research jobs.
 - `ResearchCompletionService` unlocks technologies when research jobs complete via simulation ticks.
 - `MilestoneEvaluationService` completes milestones from domain events: first sale → `first_profit`, cumulative sale revenue → `profit_100`, finished production jobs → `first_production`.
+- `GameSession` exposes browser-facing dashboard, tick history, save/load and simulation actions; records per-tick KPI snapshots after each simulation tick.
+- `TickHistoryService` stores a ring buffer (max 500 points) of cash, energy reserve and active transport counts for dashboard charts.
 - `PlaceBuildingUseCase` and `StartProductionUseCase` enforce `requiredResearch` / `requiredMilestones` via domain specifications.
 
 ---
@@ -571,7 +579,7 @@ Coordinates use cases between domain, infrastructure and simulation.
 | `InMemoryProductionJobRepository` | `persistence/InMemoryProductionJobRepository.ts` |
 | `InMemoryFinanceRepository` | `persistence/InMemoryFinanceRepository.ts` |
 | `InMemoryMarketRepository` | `persistence/InMemoryMarketRepository.ts` |
-| `GameSaveSnapshotV1` | `persistence/savegame/GameSaveSnapshotV1.ts` |
+| `GameSaveSnapshotV1` | `persistence/savegame/GameSaveSnapshotV1.ts` (incl. optional `tickMetricsHistory`) |
 | `GameStateSerializer` | `persistence/savegame/GameStateSerializer.ts` |
 | `FileSavegameStore` | `persistence/savegame/FileSavegameStore.ts` |
 | NestJS API | `apps/api/` |
@@ -604,6 +612,7 @@ Coordinates use cases between domain, infrastructure and simulation.
 | Method | Path | Action |
 |---|---|---|
 | GET | `/api/dashboard` | Aggregated session snapshot |
+| GET | `/api/dashboard/history` | Tick metrics history for charts (`fromTick`, `toTick`, `limit`) |
 | POST | `/api/session/new` | Start new game |
 | POST | `/api/session/save` | Persist to `saves/browser-session.json` |
 | POST | `/api/session/load` | Restore from save file |
@@ -622,6 +631,9 @@ Coordinates use cases between domain, infrastructure and simulation.
 |---|---|
 | Next.js app | `src/app/page.tsx`, `src/app/layout.tsx` |
 | Dashboard shell | `src/components/DashboardShell.tsx` |
+| Detail panel | `src/components/DashboardDetailPanel.tsx` |
+| Tick history charts | `src/components/TickHistoryCharts.tsx` |
+| Data table | `src/components/DataTable.tsx` |
 | API client | `src/lib/api.ts` |
 | Styles | `src/app/dashboard.css` |
 
@@ -629,7 +641,12 @@ Coordinates use cases between domain, infrastructure and simulation.
 
 - `pnpm dev` starts API (`:3001`) and Next.js (`:3000`) in parallel.
 - Next.js rewrites `/api/*` to the NestJS backend.
+- Dashboard layout per `DASHBOARD_STYLE_GUIDE.md`: sidebar actions, KPI strip, overview strip, sticky detail panel, table area.
 - Dashboard actions: new game, tick / 10× tick, build, produce, research, market buy/sell, save/load.
+- Line charts (Recharts) for cash, energy reserve and active transports; KPI trend arrows from tick history.
+- Drill-down: selectable table rows update the detail panel (buildings, production, transport, research).
+- Sortable, searchable tables with sticky headers and numeric alignment.
+- Light/dark theme toggle; separate on-site inventory and warehouse storage panels.
 - Content-driven toolbar hints with disable reasons; energy panel; localized resource/building names.
 
 ---
@@ -728,7 +745,8 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 | Application / GetMarketPrices | `GetMarketPricesQueryHandler.test.ts` | Seeded prices, not initialized |
 | Application / MarketPriceSeeder | `MarketPriceSeeder.test.ts` | Bootstrap seed, idempotent |
 | Application / MarketTrade | `MarketTradeService.test.ts` | Instant buy/sell, insufficient stock/cash |
-| Application / SaveGame | `SaveGameUseCase.test.ts` | Snapshot round-trip, pending event guard |
+| Application / SaveGame | `SaveGameUseCase.test.ts` | Snapshot round-trip, pending event guard, tick metrics history |
+| Application / TickHistory | `TickHistoryService.test.ts` | Record, filter, ring buffer, save/restore |
 | Application / SellBuyResource | `MarketTradeUseCases.test.ts` | Use case validation, trade flow |
 | Infrastructure / Finance repo | `InMemoryFinanceRepository.test.ts` | Save, find by company |
 
@@ -745,9 +763,22 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 # Planned Next Steps
 
 1. Session/auth model for multi-user API access
-2. WebSocket tick streaming (optional)
-3. Transport/logistics system (Phase 1)
-4. Next.js UX polish (layout, toasts, loading states)
+2. WebSocket tick streaming (optional live dashboard refresh)
+3. Icon library integration (replace KPI emoji placeholders per `ICON_GUIDELINES.md`)
+4. Additional dashboard charts and drill-down paths (finance, logistics views)
+5. Full tick log / replay per DD-033 (beyond metrics ring buffer)
+
+---
+
+# Recently Completed (2026-07)
+
+- Warehouse transport system (Phase 1) with simulation pipeline integration
+- Switchable dashboard dark/light theme
+- Dashboard layout refactor per `DASHBOARD_STYLE_GUIDE.md`
+- Tick metrics history with line charts (`GET /api/dashboard/history`)
+- Dashboard drill-down detail panel for buildings, production, transport and research
+- Sortable, searchable dashboard tables
+- Tick metrics history persisted in savegames (`tickMetricsHistory` on schema v1)
 
 ---
 

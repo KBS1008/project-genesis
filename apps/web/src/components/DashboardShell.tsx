@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   buildNameMap,
   callApi,
@@ -16,14 +16,9 @@ import {
   normalizeDetailSelection,
   type DetailSelection,
 } from '@/components/DashboardDetailPanel';
+import { DataTable } from '@/components/DataTable';
 
 type StatusTone = '' | 'success' | 'error' | 'info';
-
-type TableColumn<T extends string> = {
-  readonly key: T;
-  readonly label: string;
-  readonly numeric?: boolean;
-};
 
 function formatProgress(progress: number): string {
   return `${Math.round(progress)}%`;
@@ -282,89 +277,6 @@ function ConstructionStatus({ building }: { readonly building: BuildingReadModel
       </div>
       <span className="progress-label">{formatProgress(building.constructionProgress)}</span>
     </div>
-  );
-}
-
-function DataTable<T extends string>({
-  columns,
-  rows,
-  rowKeys,
-  selectedRowKey,
-  onRowSelect,
-  emptyText,
-  emptyHint,
-  renderCell,
-}: {
-  readonly columns: readonly TableColumn<T>[];
-  readonly rows: ReadonlyArray<Partial<Record<T, string | number>>>;
-  readonly rowKeys?: readonly string[];
-  readonly selectedRowKey?: string | null;
-  readonly onRowSelect?: (rowKey: string) => void;
-  readonly emptyText: string;
-  readonly emptyHint?: string;
-  readonly renderCell?: (key: T, row: Partial<Record<T, string | number>>) => ReactNode;
-}) {
-  const isSelectable = rowKeys !== undefined && onRowSelect !== undefined;
-
-  if (rows.length === 0) {
-    return (
-      <p className="empty-state">
-        <strong>{emptyText}</strong>
-        {emptyHint ? emptyHint : null}
-      </p>
-    );
-  }
-
-  return (
-    <table className="table-sticky">
-      <thead>
-        <tr>
-          {columns.map((column) => (
-            <th key={column.key} className={column.numeric ? 'numeric' : undefined}>
-              {column.label}
-            </th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {rows.map((row, rowIndex) => {
-          const rowKey = rowKeys?.[rowIndex] ?? String(rowIndex);
-          const isSelected = selectedRowKey === rowKey;
-
-          return (
-            <tr
-              key={rowKey}
-              className={`${isSelectable ? 'table-row-selectable' : ''}${isSelected ? ' table-row-selected' : ''}`.trim()}
-              tabIndex={isSelectable ? 0 : undefined}
-              aria-selected={isSelectable ? isSelected : undefined}
-              onClick={
-                isSelectable
-                  ? () => {
-                      onRowSelect(rowKey);
-                    }
-                  : undefined
-              }
-              onKeyDown={
-                isSelectable
-                  ? (event) => {
-                      if (event.key === 'Enter' || event.key === ' ') {
-                        event.preventDefault();
-                        onRowSelect(rowKey);
-                      }
-                    }
-                  : undefined
-              }
-            >
-              {columns.map((column) => (
-                <td key={column.key} className={column.numeric ? 'numeric' : undefined}>
-                  {renderCell?.(column.key, row) ?? row[column.key] ?? ''}
-                </td>
-              ))}
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
   );
 }
 
@@ -848,6 +760,8 @@ export function DashboardShell() {
                         </p>
                       ) : (
                         <DataTable
+                          searchable
+                          searchPlaceholder="Gebäude suchen…"
                           columns={[
                             { key: 'name', label: 'Name' },
                             { key: 'buildingTypeId', label: 'Typ' },
@@ -897,6 +811,8 @@ export function DashboardShell() {
                           </p>
                         ) : (
                           <DataTable
+                            searchable
+                            searchPlaceholder="Produktion suchen…"
                             columns={[
                               { key: 'recipeId', label: 'Rezept' },
                               { key: 'buildingId', label: 'Gebäude' },
@@ -941,6 +857,8 @@ export function DashboardShell() {
                               </p>
                             ) : null}
                             <DataTable
+                              searchable
+                              searchPlaceholder="Forschung suchen…"
                               columns={[
                                 { key: 'technologyId', label: 'Technologie' },
                                 { key: 'status', label: 'Status' },
@@ -981,6 +899,8 @@ export function DashboardShell() {
                         </p>
                       ) : (
                         <DataTable
+                          searchable
+                          searchPlaceholder="Transporte suchen…"
                           columns={[
                             { key: 'resourceId', label: 'Ressource' },
                             { key: 'amount', label: 'Menge', numeric: true },
@@ -1024,9 +944,10 @@ export function DashboardShell() {
                           </p>
                         ) : (
                           <DataTable
+                            searchable
+                            searchPlaceholder="Inventar suchen…"
                             columns={[
                               { key: 'resourceId', label: 'Ressource' },
-                              { key: 'quantity', label: 'Menge', numeric: true },
                               { key: 'reserved', label: 'Reserviert', numeric: true },
                               { key: 'available', label: 'Verfügbar', numeric: true },
                             ]}
@@ -1064,9 +985,10 @@ export function DashboardShell() {
                             <div key={storage.buildingId} className="warehouse-block">
                               <h3 className="warehouse-name">{storage.buildingName}</h3>
                               <DataTable
+                                searchable
+                                searchPlaceholder="Lager suchen…"
                                 columns={[
                                   { key: 'resourceId', label: 'Ressource' },
-                                  { key: 'quantity', label: 'Menge', numeric: true },
                                   { key: 'reserved', label: 'Reserviert', numeric: true },
                                   { key: 'available', label: 'Verfügbar', numeric: true },
                                 ]}
@@ -1098,8 +1020,9 @@ export function DashboardShell() {
               labelTechnology={labelTechnology}
               renderMarketTable={
                 <DataTable
+                  searchable
+                  searchPlaceholder="Marktpreise suchen…"
                   columns={[
-                    { key: 'resourceId', label: 'Ressource' },
                     { key: 'lastPrice', label: 'Preis', numeric: true },
                     { key: 'tradeVolume', label: 'Volumen', numeric: true },
                   ]}
