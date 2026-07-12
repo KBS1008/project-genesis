@@ -2,6 +2,7 @@ import { InMemoryEventBus } from '../../common/events/InMemoryEventBus.js';
 import { ManualClock } from '../../common/time/ManualClock.js';
 import { CompanyFounded } from '../../domain/company/events/CompanyFounded.js';
 import { InMemoryCompanyRepository } from '../../infrastructure/persistence/InMemoryCompanyRepository.js';
+import { InMemoryCompanyResearchRepository } from '../../infrastructure/persistence/InMemoryCompanyResearchRepository.js';
 import { InMemoryFinanceRepository } from '../../infrastructure/persistence/InMemoryFinanceRepository.js';
 import { InMemoryInventoryRepository } from '../../infrastructure/persistence/InMemoryInventoryRepository.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
@@ -12,6 +13,7 @@ function createUseCase(clock = new ManualClock(100)) {
   const companyRepository = new InMemoryCompanyRepository();
   const inventoryRepository = new InMemoryInventoryRepository();
   const financeRepository = new InMemoryFinanceRepository();
+  const companyResearchRepository = new InMemoryCompanyResearchRepository();
   const eventBus = new InMemoryEventBus();
   const simulationEngine = new SimulationEngine({ clock, eventBus });
   const useCase = new CreateCompanyUseCase({
@@ -19,6 +21,7 @@ function createUseCase(clock = new ManualClock(100)) {
     companyRepository,
     inventoryRepository,
     financeRepository,
+    companyResearchRepository,
     simulationEngine,
   });
 
@@ -27,6 +30,7 @@ function createUseCase(clock = new ManualClock(100)) {
     companyRepository,
     inventoryRepository,
     financeRepository,
+    companyResearchRepository,
     eventBus,
     simulationEngine,
     useCase,
@@ -35,7 +39,8 @@ function createUseCase(clock = new ManualClock(100)) {
 
 describe('CreateCompanyUseCase', () => {
   it('creates and persists a company with an inventory and finance account', () => {
-    const { companyRepository, inventoryRepository, financeRepository, useCase } = createUseCase();
+    const { companyRepository, inventoryRepository, financeRepository, companyResearchRepository, useCase } =
+      createUseCase();
 
     const result = useCase.execute({
       companyId: 'company_001',
@@ -53,6 +58,7 @@ describe('CreateCompanyUseCase', () => {
       const finance = financeRepository.findByCompanyId(result.value);
       expect(finance?.getCashBalance()).toBe(STARTING_MONEY);
       expect(finance?.getAvailableCash()).toBe(STARTING_MONEY);
+      expect(companyResearchRepository.findByCompanyId(result.value)).toBeDefined();
     }
   });
 

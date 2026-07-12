@@ -9,6 +9,7 @@ import { BuildingPlaced } from '../../domain/building/events/BuildingPlaced.js';
 import { createCompanyId } from '../../domain/company/Company.js';
 import { InMemoryBuildingRepository } from '../../infrastructure/persistence/InMemoryBuildingRepository.js';
 import { InMemoryCompanyRepository } from '../../infrastructure/persistence/InMemoryCompanyRepository.js';
+import { InMemoryCompanyResearchRepository } from '../../infrastructure/persistence/InMemoryCompanyResearchRepository.js';
 import { InMemoryFinanceRepository } from '../../infrastructure/persistence/InMemoryFinanceRepository.js';
 import { InMemoryInventoryRepository } from '../../infrastructure/persistence/InMemoryInventoryRepository.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
@@ -39,6 +40,7 @@ async function createContext(clock = new ManualClock(100)) {
   const buildingRepository = new InMemoryBuildingRepository();
   const inventoryRepository = new InMemoryInventoryRepository();
   const financeRepository = new InMemoryFinanceRepository();
+  const companyResearchRepository = new InMemoryCompanyResearchRepository();
   const eventBus = new InMemoryEventBus();
   const simulationEngine = new SimulationEngine({ clock, eventBus });
 
@@ -47,6 +49,7 @@ async function createContext(clock = new ManualClock(100)) {
     companyRepository,
     inventoryRepository,
     financeRepository,
+    companyResearchRepository,
     simulationEngine,
   });
   const placeBuilding = new PlaceBuildingUseCase({
@@ -54,6 +57,7 @@ async function createContext(clock = new ManualClock(100)) {
     companyRepository,
     buildingRepository,
     financeRepository,
+    companyResearchRepository,
     simulationEngine,
     gameContent: contentResult.value,
   });
@@ -61,6 +65,7 @@ async function createContext(clock = new ManualClock(100)) {
   return {
     buildingRepository,
     createCompany,
+    companyResearchRepository,
     eventBus,
     financeRepository,
     placeBuilding,

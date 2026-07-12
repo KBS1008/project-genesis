@@ -22,6 +22,7 @@ export type SaveGameUseCaseDependencies = Pick<
   | 'financeRepository'
   | 'marketRepository'
   | 'productionJobRepository'
+  | 'companyResearchRepository'
 > & {
   readonly savegameStore?: FileSavegameStore;
 };
@@ -38,6 +39,7 @@ export class SaveGameUseCase {
   readonly #financeRepository: SaveGameUseCaseDependencies['financeRepository'];
   readonly #marketRepository: SaveGameUseCaseDependencies['marketRepository'];
   readonly #productionJobRepository: SaveGameUseCaseDependencies['productionJobRepository'];
+  readonly #companyResearchRepository: SaveGameUseCaseDependencies['companyResearchRepository'];
   readonly #savegameStore: FileSavegameStore;
   readonly #serializer = new GameStateSerializer();
 
@@ -53,6 +55,7 @@ export class SaveGameUseCase {
     this.#financeRepository = dependencies.financeRepository;
     this.#marketRepository = dependencies.marketRepository;
     this.#productionJobRepository = dependencies.productionJobRepository;
+    this.#companyResearchRepository = dependencies.companyResearchRepository;
     this.#savegameStore = dependencies.savegameStore ?? new FileSavegameStore();
   }
 
@@ -69,6 +72,7 @@ export class SaveGameUseCase {
       financeRepository: this.#financeRepository,
       marketRepository: this.#marketRepository,
       productionJobRepository: this.#productionJobRepository,
+      companyResearchRepository: this.#companyResearchRepository,
     });
 
     if (!snapshotResult.ok) {

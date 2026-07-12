@@ -14,6 +14,7 @@ import {
 } from '../../domain/production/ProductionJob.js';
 import { createRecipeId } from '../../domain/production/RecipeId.js';
 import { BuildingSupportsRecipeSpecification } from '../../domain/specifications/production/BuildingSupportsRecipeSpecification.js';
+import { RequiredResearchSpecification } from '../../domain/specifications/research/RequiredResearchSpecification.js';
 import type { ApplicationContext } from '../bootstrap/ApplicationContext.js';
 import type { StartProductionCommand } from '../commands/StartProductionCommand.js';
 
@@ -26,6 +27,7 @@ export type StartProductionUseCaseDependencies = Pick<
   | 'simulationEngine'
   | 'gameContent'
   | 'productionInventoryService'
+  | 'companyResearchRepository'
 >;
 
 /**
@@ -38,7 +40,9 @@ export class StartProductionUseCase {
   readonly #simulationEngine: StartProductionUseCaseDependencies['simulationEngine'];
   readonly #gameContent: StartProductionUseCaseDependencies['gameContent'];
   readonly #productionInventoryService: StartProductionUseCaseDependencies['productionInventoryService'];
+  readonly #companyResearchRepository: StartProductionUseCaseDependencies['companyResearchRepository'];
   readonly #buildingSupportsRecipeSpecification = new BuildingSupportsRecipeSpecification();
+  readonly #requiredResearchSpecification = new RequiredResearchSpecification();
 
   /**
    * @param dependencies - Application services required to start production.
@@ -50,6 +54,7 @@ export class StartProductionUseCase {
     this.#simulationEngine = dependencies.simulationEngine;
     this.#gameContent = dependencies.gameContent;
     this.#productionInventoryService = dependencies.productionInventoryService;
+    this.#companyResearchRepository = dependencies.companyResearchRepository;
   }
 
   /**
@@ -112,6 +117,30 @@ export class StartProductionUseCase {
 
     if (!supportsRecipeResult.ok) {
       return Result.fail(supportsRecipeResult.error);
+    }
+
+    const companyResearch = this.#companyResearchRepository.findByCompanyId(building.getCompanyId());
+
+    if (companyResearch === undefined) {
+      return Result.fail(
+        new ValidationError(
+          `Research module for company "${building.getCompanyId().value}" was not found.`,
+        ),
+      );
+    }
+
+    const requiredResearchResult = this.#requiredResearchSpecification.isSatisfiedBy(
+      {
+        subjectId: recipeId.value,
+        requiredResearch: recipe.requiredResearch,
+      },
+      {
+        completedResearch: new Set(companyResearch.getCompletedTechnologies()),
+      },
+    );
+
+    if (!requiredResearchResult.ok) {
+      return Result.fail(requiredResearchResult.error);
     }
 
     const reserveResult = this.#productionInventoryService.reserveInputs(

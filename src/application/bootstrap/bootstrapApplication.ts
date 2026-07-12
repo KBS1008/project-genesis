@@ -15,8 +15,10 @@ import type { CompanyRepository } from '../../domain/company/CompanyRepository.j
 import type { InventoryRepository } from '../../domain/inventory/InventoryRepository.js';
 import type { FinanceRepository } from '../../domain/finance/FinanceRepository.js';
 import type { ProductionJobRepository } from '../../domain/production/ProductionJobRepository.js';
+import type { CompanyResearchRepository } from '../../domain/research/CompanyResearchRepository.js';
 import { InMemoryBuildingRepository } from '../../infrastructure/persistence/InMemoryBuildingRepository.js';
 import { InMemoryCompanyRepository } from '../../infrastructure/persistence/InMemoryCompanyRepository.js';
+import { InMemoryCompanyResearchRepository } from '../../infrastructure/persistence/InMemoryCompanyResearchRepository.js';
 import { InMemoryInventoryRepository } from '../../infrastructure/persistence/InMemoryInventoryRepository.js';
 import type { MarketRepository } from '../../domain/market/MarketRepository.js';
 import { InMemoryFinanceRepository } from '../../infrastructure/persistence/InMemoryFinanceRepository.js';
@@ -39,6 +41,7 @@ export type BootstrapOptions = {
   readonly financeRepository?: FinanceRepository;
   readonly marketRepository?: MarketRepository;
   readonly productionJobRepository?: ProductionJobRepository;
+  readonly companyResearchRepository?: CompanyResearchRepository;
 };
 
 /**
@@ -62,6 +65,8 @@ export async function bootstrapApplication(
   const marketRepository = options.marketRepository ?? new InMemoryMarketRepository();
   const productionJobRepository =
     options.productionJobRepository ?? new InMemoryProductionJobRepository();
+  const companyResearchRepository =
+    options.companyResearchRepository ?? new InMemoryCompanyResearchRepository();
   const clock = new ManualClock(0);
   const eventBus = new InMemoryEventBus();
 
@@ -125,6 +130,7 @@ export async function bootstrapApplication(
     financeRepository,
     marketRepository,
     productionJobRepository,
+    companyResearchRepository,
     productionInventoryService,
     marketTradeService,
     gameContent: contentResult.value,

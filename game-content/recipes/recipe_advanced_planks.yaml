@@ -1,0 +1,28 @@
+id: recipe_advanced_planks
+name: Advanced Plank Production
+description: Improved plank production requiring woodworking research.
+version: 1
+category: WOOD
+buildingTypes:
+  - sawmill
+inputs:
+  - resource: wood
+    amount: 10
+outputs:
+  - resource: planks
+    amount: 25
+duration: 60
+energy: 12
+workers: 2
+requiredResearch:
+  - basic_woodworking
+requiredBuildings: []
+requiredMilestones: []
+requiredResources: []
+maintenanceCost: 2
+productionCost: 1
+experience: 5
+tags:
+  - advanced
+  - wood
+enabled: true

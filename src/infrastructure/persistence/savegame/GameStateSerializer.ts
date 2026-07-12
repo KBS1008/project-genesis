@@ -30,6 +30,9 @@ import {
   createProductionJobId,
 } from '../../../domain/production/ProductionJob.js';
 import type { ProductionJobRepository } from '../../../domain/production/ProductionJobRepository.js';
+import type { CompanyResearchRepository } from '../../../domain/research/CompanyResearchRepository.js';
+import { CompanyResearch } from '../../../domain/research/CompanyResearch.js';
+import { createCompanyResearchId } from '../../../domain/research/CompanyResearchId.js';
 import { createRecipeId } from '../../../domain/production/RecipeId.js';
 import { createResourceTypeId } from '../../../domain/shared/ResourceTypeId.js';
 import type { SimulationEngine } from '../../../simulation/engine/SimulationEngine.js';
@@ -49,6 +52,7 @@ export type GameStateSource = {
   readonly financeRepository: FinanceRepository;
   readonly marketRepository: MarketRepository;
   readonly productionJobRepository: ProductionJobRepository;
+  readonly companyResearchRepository: CompanyResearchRepository;
 };
 
 /** Repositories populated during snapshot restore. */
@@ -59,9 +63,8 @@ export type GameStateTarget = {
   readonly financeRepository: FinanceRepository;
   readonly marketRepository: MarketRepository;
   readonly productionJobRepository: ProductionJobRepository;
+  readonly companyResearchRepository: CompanyResearchRepository;
 };
-
-/** Simulation metadata restored from a snapshot. */
 export type RestoredSimulationMetadata = {
   readonly clockTime: number;
   readonly simulationState: SimulationState;
@@ -202,6 +205,16 @@ export class GameStateSerializer {
             }),
           ),
         ),
+        companyResearch: Object.freeze(
+          source.companyResearchRepository.findAll().map((research) =>
+            Object.freeze({
+              id: research.getId().value,
+              companyId: research.getCompanyId().value,
+              createdAt: research.getCreatedAt(),
+              completedTechnologies: research.getCompletedTechnologies(),
+            }),
+          ),
+        ),
       }),
     );
   }
@@ -225,7 +238,10 @@ export class GameStateSerializer {
       return Result.fail(new ValidationError('Savegame payload is missing required metadata.'));
     }
 
-    return Result.ok(candidate as GameSaveSnapshotV1);
+    return Result.ok({
+      ...candidate,
+      companyResearch: candidate.companyResearch ?? [],
+    } as GameSaveSnapshotV1);
   }
 
   hydrate(
@@ -290,6 +306,16 @@ export class GameStateSerializer {
       }
 
       target.productionJobRepository.save(restoreResult.value);
+    }
+
+    for (const researchSnapshot of snapshot.companyResearch) {
+      const restoreResult = this.#restoreCompanyResearch(researchSnapshot);
+
+      if (!restoreResult.ok) {
+        return Result.fail(restoreResult.error);
+      }
+
+      target.companyResearchRepository.save(restoreResult.value);
     }
 
     return Result.ok(
@@ -517,6 +543,27 @@ export class GameStateSerializer {
       progress: snapshot.progress,
       startTime: snapshot.startTime,
       endTime: snapshot.endTime,
+    });
+  }
+
+  #restoreCompanyResearch(snapshot: GameSaveSnapshotV1['companyResearch'][number]) {
+    const idResult = createCompanyResearchId(snapshot.id);
+
+    if (!idResult.ok) {
+      return idResult;
+    }
+
+    const companyIdResult = createCompanyId(snapshot.companyId);
+
+    if (!companyIdResult.ok) {
+      return companyIdResult;
+    }
+
+    return CompanyResearch.restore({
+      id: idResult.value,
+      companyId: companyIdResult.value,
+      createdAt: snapshot.createdAt,
+      completedTechnologies: snapshot.completedTechnologies,
     });
   }
 }

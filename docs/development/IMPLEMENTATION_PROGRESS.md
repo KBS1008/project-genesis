@@ -23,16 +23,16 @@ Update this document whenever a meaningful implementation milestone is completed
 | Area | Status |
 |---|---|
 | Common foundation | Implemented |
-| Domain aggregates | Partial (Company, Building, Inventory, ProductionJob, FinanceAccount, Market) |
+| Domain aggregates | Partial (Company, Building, Inventory, ProductionJob, FinanceAccount, Market, CompanyResearch) |
 | Domain value objects | Partial (Money, Quantity, ResourceAmount, Capacity, Position) |
 | Domain specifications & policies | Partial (foundation + first production/market rules) |
-| Content loaders | Partial (ResourceType, BuildingType, Recipe) |
+| Content loaders | Partial (ResourceType, BuildingType, Recipe, Technology) |
 | Simulation | Partial (SimulationEngine, systems pipeline) |
 | Infrastructure | Partial (in-memory repositories, JSON savegames) |
 | Application layer | Partial (bootstrap, use cases, queries) |
 | UI | Not started |
 
-**Tests:** 221 (run `pnpm test` for current count)
+**Tests:** 233 (run `pnpm test` for current count)
 
 ---
 
@@ -234,6 +234,9 @@ Persistence contracts for aggregate roots. Implementations belong in Infrastruct
 | `Specification<TCandidate, TContext>` | `specifications/Specification.ts` |
 | `AndSpecification` | `specifications/AndSpecification.ts` |
 | `BuildingSupportsRecipeSpecification` | `specifications/production/BuildingSupportsRecipeSpecification.ts` |
+| `RequiredResearchSpecification` | `specifications/research/RequiredResearchSpecification.ts` |
+| `RequiredMilestonesSpecification` | `specifications/research/RequiredMilestonesSpecification.ts` |
+| `BuildingPrerequisitesSpecification` | `specifications/building/BuildingPrerequisitesSpecification.ts` |
 | `ResourceListedOnMarketSpecification` | `specifications/market/ResourceListedOnMarketSpecification.ts` |
 | `Policy<TContext, TDecision>` | `policies/Policy.ts` |
 | `ConstructionCostPolicy` | `policies/building/ConstructionCostPolicy.ts` |
@@ -245,11 +248,28 @@ Persistence contracts for aggregate roots. Implementations belong in Infrastruct
 - Specifications return `Result<void, ValidationError>` for composable eligibility checks.
 - Policies return typed decisions (e.g. unit price, construction cost) from context snapshots.
 - Application layer passes content-derived context; domain does not import `src/content/`.
-- `StartProductionUseCase` uses `BuildingSupportsRecipeSpecification`.
+- `StartProductionUseCase` uses `BuildingSupportsRecipeSpecification` and `RequiredResearchSpecification`.
+- `PlaceBuildingUseCase` uses `BuildingPrerequisitesSpecification` and debits `constructionCost` via `ConstructionCostPolicy`.
 - `MarketTradeService` uses `ResourceListedOnMarketSpecification` and `InstantTradePricingPolicy`.
-- `PlaceBuildingUseCase` debits `constructionCost` via `ConstructionCostPolicy` and `FinanceTransactionType.BUILDING_COST`.
 
 **References:** `src/domain/readme.md`
+
+### CompanyResearch aggregate
+
+| Item | Path |
+|---|---|
+| Aggregate | `research/CompanyResearch.ts` |
+| Identifiers | `research/CompanyResearchId.ts`, `research/TechnologyId.ts` |
+| Domain event | `research/events/TechnologyCompleted.ts` |
+| Repository | `research/CompanyResearchRepository.ts` |
+| Tests | `research/CompanyResearch.test.ts` |
+
+**Behaviour:**
+
+- `CompanyResearch.create()` — empty completed-technology set per company.
+- `completeTechnology()` — permanently records a completed technology id.
+- Created alongside company, inventory and finance in `CreateCompanyUseCase`.
+- Persisted in savegame snapshots as `companyResearch`.
 
 ---
 
@@ -333,12 +353,36 @@ game-content/recipes/
 
 **References:** DD-011, DD-031, `docs/schemas/Recipe.Schema.md`
 
+### Technology loader
+
+| Item | Path |
+|---|---|
+| Definition | `research/TechnologyDefinition.ts` |
+| Validator | `research/TechnologyValidator.ts` |
+| Registry | `research/TechnologyRegistry.ts` |
+| Loader | `research/TechnologyLoader.ts` |
+| Tests | `research/TechnologyLoader.test.ts` |
+
+**Content files:**
+
+```text
+game-content/research/
+└── basic_woodworking.yaml
+```
+
+**Reference validation:**
+
+- `requiredResearch` on buildings, recipes and technologies → `TechnologyRegistry` via `validateResearchReferences.ts`
+
+**References:** `docs/gameplay/research.md`, DD-031
+
 ### Content validation orchestration
 
 | Item | Path |
 |---|---|
 | Orchestrator | `validateGameContent.ts` |
 | Building/recipe consistency | `validateBuildingRecipeConsistency.ts` |
+| Research reference validation | `validateResearchReferences.ts` |
 | CLI tool | `tools/validate-content.ts` |
 | Tests | `validateGameContent.test.ts`, `validateBuildingRecipeConsistency.test.ts` |
 
@@ -410,6 +454,8 @@ Coordinates use cases between domain, infrastructure and simulation.
 | `BuyResourceCommand` | `commands/BuyResourceCommand.ts` |
 | `StartProductionUseCase` | `use-cases/StartProductionUseCase.ts` |
 | `SellResourceUseCase` | `use-cases/SellResourceUseCase.ts` |
+| `CompleteTechnologyCommand` | `commands/CompleteTechnologyCommand.ts` |
+| `CompleteTechnologyUseCase` | `use-cases/CompleteTechnologyUseCase.ts` |
 | `SaveGameCommand` | `commands/SaveGameCommand.ts` |
 | `LoadGameCommand` | `commands/LoadGameCommand.ts` |
 | `SaveGameUseCase` | `use-cases/SaveGameUseCase.ts` |
@@ -436,6 +482,8 @@ Coordinates use cases between domain, infrastructure and simulation.
 - Query handlers (`GetCompany`, `ListBuildings`, `GetInventory`, `GetFinance`, `GetMarketPrices`) read repository state and return immutable read models without mutating aggregates.
 - `SaveGameUseCase` serializes all aggregate repositories and simulation metadata into a versioned JSON snapshot; saves are rejected while domain events remain queued.
 - `LoadGameUseCase` reads a snapshot file and `restoreApplicationFromSnapshot` hydrates fresh in-memory repositories, clock and simulation engine state.
+- `CompleteTechnologyUseCase` marks technologies as completed on the company research aggregate (foundation for future timed/cost research jobs).
+- `PlaceBuildingUseCase` and `StartProductionUseCase` enforce `requiredResearch` / `requiredMilestones` via domain specifications.
 
 ---
 
@@ -497,7 +545,9 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 | Domain / ProductionJob | `ProductionJob.test.ts` | Start, tick, completion |
 | Domain / FinanceAccount | `FinanceAccount.test.ts` | Credit, debit, reserve, transactions |
 | Domain / Market | `Market.test.ts` | Seed prices, update price, events |
-| Domain / Specifications | `AndSpecification.test.ts`, `BuildingSupportsRecipeSpecification.test.ts`, `ResourceListedOnMarketSpecification.test.ts` | Composable rules, recipe/building eligibility, market listing |
+| Domain / CompanyResearch | `CompanyResearch.test.ts` | Create, complete technology |
+| Domain / Specifications | `RequiredResearchSpecification.test.ts`, `BuildingPrerequisitesSpecification.test.ts`, ... | Research eligibility, building prerequisites |
+| Application / CompleteTechnology | `CompleteTechnologyUseCase.test.ts` | Complete technology for company |
 | Domain / Policies | `ConstructionCostPolicy.test.ts`, `InstantTradePricingPolicy.test.ts` | Construction cost resolution, instant trade pricing |
 | Domain / Money | `Money.test.ts` | Amount, currency, validation |
 | Domain / Quantity | `Quantity.test.ts` | Non-negative values |
@@ -533,8 +583,9 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Planned Next Steps
 
-1. Recipe reference validation for `requiredResearch` once research content exists
-2. Research content foundation and eligibility specifications
+1. Research job aggregate with timed/cost-based completion flow
+2. Milestone system and `RequiredMilestonesSpecification` context wiring
+3. Construction time for building placement
 
 ---
 

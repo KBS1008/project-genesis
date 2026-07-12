@@ -11,6 +11,7 @@ constructionCost: 5000
 constructionTime: 120
 allowedRecipes:
   - recipe_planks
+  - recipe_advanced_planks
 maxProductionLines: 1
 requiredResearch: []
 requiredMilestones: []

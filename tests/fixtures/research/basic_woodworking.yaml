@@ -1,0 +1,9 @@
+id: basic_woodworking
+name: Basic Woodworking
+description: Fundamental wood processing techniques for early production.
+category: PRODUCTION
+requiredResearch: []
+researchCost: 1000
+researchDuration: 60
+enabled: true
+version: 1

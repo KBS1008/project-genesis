@@ -16,6 +16,7 @@ import { Position } from '../../domain/building/Position.js';
 import { createCompanyId } from '../../domain/company/Company.js';
 import { FinanceTransactionType } from '../../domain/finance/FinanceTransactionType.js';
 import { ConstructionCostPolicy } from '../../domain/policies/building/ConstructionCostPolicy.js';
+import { BuildingPrerequisitesSpecification } from '../../domain/specifications/building/BuildingPrerequisitesSpecification.js';
 import type { ApplicationContext } from '../bootstrap/ApplicationContext.js';
 import type { PlaceBuildingCommand } from '../commands/PlaceBuildingCommand.js';
 
@@ -26,6 +27,7 @@ export type PlaceBuildingUseCaseDependencies = Pick<
   | 'companyRepository'
   | 'buildingRepository'
   | 'financeRepository'
+  | 'companyResearchRepository'
   | 'simulationEngine'
   | 'gameContent'
 >;
@@ -38,9 +40,11 @@ export class PlaceBuildingUseCase {
   readonly #companyRepository: PlaceBuildingUseCaseDependencies['companyRepository'];
   readonly #buildingRepository: PlaceBuildingUseCaseDependencies['buildingRepository'];
   readonly #financeRepository: PlaceBuildingUseCaseDependencies['financeRepository'];
+  readonly #companyResearchRepository: PlaceBuildingUseCaseDependencies['companyResearchRepository'];
   readonly #simulationEngine: PlaceBuildingUseCaseDependencies['simulationEngine'];
   readonly #gameContent: PlaceBuildingUseCaseDependencies['gameContent'];
   readonly #constructionCostPolicy = new ConstructionCostPolicy();
+  readonly #buildingPrerequisitesSpecification = new BuildingPrerequisitesSpecification();
 
   /**
    * @param dependencies - Application services required for building placement.
@@ -50,6 +54,7 @@ export class PlaceBuildingUseCase {
     this.#companyRepository = dependencies.companyRepository;
     this.#buildingRepository = dependencies.buildingRepository;
     this.#financeRepository = dependencies.financeRepository;
+    this.#companyResearchRepository = dependencies.companyResearchRepository;
     this.#simulationEngine = dependencies.simulationEngine;
     this.#gameContent = dependencies.gameContent;
   }
@@ -110,6 +115,30 @@ export class PlaceBuildingUseCase {
 
     if (!costResult.ok) {
       return Result.fail(costResult.error);
+    }
+
+    const companyResearch = this.#companyResearchRepository.findByCompanyId(companyId);
+
+    if (companyResearch === undefined) {
+      return Result.fail(
+        new ValidationError(`Research module for company "${companyId.value}" was not found.`),
+      );
+    }
+
+    const prerequisitesResult = this.#buildingPrerequisitesSpecification.isSatisfiedBy(
+      {
+        buildingTypeId: buildingTypeId.value,
+        requiredResearch: buildingType.requiredResearch,
+        requiredMilestones: buildingType.requiredMilestones,
+      },
+      {
+        completedResearch: new Set(companyResearch.getCompletedTechnologies()),
+        completedMilestones: new Set<string>(),
+      },
+    );
+
+    if (!prerequisitesResult.ok) {
+      return Result.fail(prerequisitesResult.error);
     }
 
     const finance = this.#financeRepository.findByCompanyId(companyId);

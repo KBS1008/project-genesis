@@ -17,6 +17,7 @@ import { InMemoryFinanceRepository } from '../../infrastructure/persistence/InMe
 import { InMemoryInventoryRepository } from '../../infrastructure/persistence/InMemoryInventoryRepository.js';
 import { InMemoryMarketRepository } from '../../infrastructure/persistence/InMemoryMarketRepository.js';
 import { InMemoryProductionJobRepository } from '../../infrastructure/persistence/InMemoryProductionJobRepository.js';
+import { InMemoryCompanyResearchRepository } from '../../infrastructure/persistence/InMemoryCompanyResearchRepository.js';
 import { GameStateSerializer } from '../../infrastructure/persistence/savegame/GameStateSerializer.js';
 import type { GameSaveSnapshotV1 } from '../../infrastructure/persistence/savegame/GameSaveSnapshotV1.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
@@ -49,6 +50,7 @@ export async function restoreApplicationFromSnapshot(
   const financeRepository = new InMemoryFinanceRepository();
   const marketRepository = new InMemoryMarketRepository();
   const productionJobRepository = new InMemoryProductionJobRepository();
+  const companyResearchRepository = new InMemoryCompanyResearchRepository();
   const serializer = new GameStateSerializer();
 
   const hydrateResult = serializer.hydrate(options.snapshot, {
@@ -58,6 +60,7 @@ export async function restoreApplicationFromSnapshot(
     financeRepository,
     marketRepository,
     productionJobRepository,
+    companyResearchRepository,
   });
 
   if (!hydrateResult.ok) {
@@ -120,6 +123,7 @@ export async function restoreApplicationFromSnapshot(
     financeRepository,
     marketRepository,
     productionJobRepository,
+    companyResearchRepository,
     productionInventoryService,
     marketTradeService,
     gameContent: contentResult.value,

@@ -6,6 +6,7 @@ import { validateGameContent } from '../../content/validateGameContent.js';
 import { createCompanyId } from '../../domain/company/Company.js';
 import { STARTING_MONEY } from '../../domain/finance/FinanceConstants.js';
 import { InMemoryCompanyRepository } from '../../infrastructure/persistence/InMemoryCompanyRepository.js';
+import { InMemoryCompanyResearchRepository } from '../../infrastructure/persistence/InMemoryCompanyResearchRepository.js';
 import { InMemoryFinanceRepository } from '../../infrastructure/persistence/InMemoryFinanceRepository.js';
 import { InMemoryInventoryRepository } from '../../infrastructure/persistence/InMemoryInventoryRepository.js';
 import { InMemoryMarketRepository } from '../../infrastructure/persistence/InMemoryMarketRepository.js';
@@ -40,6 +41,7 @@ async function createContext() {
   const companyRepository = new InMemoryCompanyRepository();
   const inventoryRepository = new InMemoryInventoryRepository();
   const financeRepository = new InMemoryFinanceRepository();
+  const companyResearchRepository = new InMemoryCompanyResearchRepository();
   const marketRepository = new InMemoryMarketRepository();
   const eventBus = new InMemoryEventBus();
   const simulationEngine = new SimulationEngine({ clock, eventBus });
@@ -51,6 +53,7 @@ async function createContext() {
     companyRepository,
     inventoryRepository,
     financeRepository,
+    companyResearchRepository,
     simulationEngine,
   });
 

@@ -12,6 +12,7 @@ import { InMemoryCompanyRepository } from '../../infrastructure/persistence/InMe
 import { InMemoryFinanceRepository } from '../../infrastructure/persistence/InMemoryFinanceRepository.js';
 import { InMemoryMarketRepository } from '../../infrastructure/persistence/InMemoryMarketRepository.js';
 import { InMemoryInventoryRepository } from '../../infrastructure/persistence/InMemoryInventoryRepository.js';
+import { InMemoryCompanyResearchRepository } from '../../infrastructure/persistence/InMemoryCompanyResearchRepository.js';
 import { InMemoryProductionJobRepository } from '../../infrastructure/persistence/InMemoryProductionJobRepository.js';
 import { ProductionInventoryService } from '../services/ProductionInventoryService.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
@@ -19,6 +20,7 @@ import { createDefaultSimulationSystems } from '../../simulation/systems/createD
 import { CreateCompanyUseCase } from './CreateCompanyUseCase.js';
 import { PlaceBuildingUseCase } from './PlaceBuildingUseCase.js';
 import { StartProductionUseCase } from './StartProductionUseCase.js';
+import { CompleteTechnologyUseCase } from './CompleteTechnologyUseCase.js';
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const gameContentRoot = path.resolve(testDirectory, '../../../game-content');
@@ -37,6 +39,7 @@ async function createContext() {
   const financeRepository = new InMemoryFinanceRepository();
   const marketRepository = new InMemoryMarketRepository();
   const productionJobRepository = new InMemoryProductionJobRepository();
+  const companyResearchRepository = new InMemoryCompanyResearchRepository();
   const eventBus = new InMemoryEventBus();
 
   let simulationEngine: SimulationEngine;
@@ -75,6 +78,7 @@ async function createContext() {
     inventoryRepository,
     financeRepository,
     productionJobRepository,
+    companyResearchRepository,
     productionInventoryService,
     simulationEngine,
     gameContent: contentResult.value,
@@ -261,5 +265,52 @@ describe('StartProductionUseCase', () => {
     });
 
     expect(result.ok).toBe(false);
+  });
+
+  it('rejects recipes when required research is not completed', async () => {
+    const context = await createContext();
+    const createCompany = new CreateCompanyUseCase(context);
+    const placeBuilding = new PlaceBuildingUseCase(context);
+    const startProduction = new StartProductionUseCase(context);
+
+    createCompany.execute({
+      companyId: 'company_001',
+      name: 'Genesis Industries',
+      ownerId: 'player_001',
+    });
+    addWoodStock(context, 'company_001', 10);
+
+    placeBuilding.execute({
+      buildingId: 'building_001',
+      buildingTypeId: 'sawmill',
+      companyId: 'company_001',
+      name: 'Northern Sawmill',
+      x: 0,
+      y: 0,
+    });
+
+    const blockedResult = startProduction.execute({
+      jobId: 'job_001',
+      buildingId: 'building_001',
+      recipeId: 'recipe_advanced_planks',
+    });
+
+    expect(blockedResult.ok).toBe(false);
+
+    const completeTechnology = new CompleteTechnologyUseCase(context);
+    const completeResult = completeTechnology.execute({
+      companyId: 'company_001',
+      technologyId: 'basic_woodworking',
+    });
+
+    expect(completeResult.ok).toBe(true);
+
+    const allowedResult = startProduction.execute({
+      jobId: 'job_001',
+      buildingId: 'building_001',
+      recipeId: 'recipe_advanced_planks',
+    });
+
+    expect(allowedResult.ok).toBe(true);
   });
 });

@@ -9,6 +9,7 @@ import { FinanceTransactionType } from '../../domain/finance/FinanceTransactionT
 import { createMarketId } from '../../domain/market/Market.js';
 import { GLOBAL_MARKET_ID } from '../../domain/market/MarketConstants.js';
 import { InMemoryCompanyRepository } from '../../infrastructure/persistence/InMemoryCompanyRepository.js';
+import { InMemoryCompanyResearchRepository } from '../../infrastructure/persistence/InMemoryCompanyResearchRepository.js';
 import { InMemoryFinanceRepository } from '../../infrastructure/persistence/InMemoryFinanceRepository.js';
 import { InMemoryInventoryRepository } from '../../infrastructure/persistence/InMemoryInventoryRepository.js';
 import { InMemoryMarketRepository } from '../../infrastructure/persistence/InMemoryMarketRepository.js';
@@ -51,6 +52,7 @@ async function createTradeContext() {
   const companyRepository = new InMemoryCompanyRepository();
   const inventoryRepository = new InMemoryInventoryRepository();
   const financeRepository = new InMemoryFinanceRepository();
+  const companyResearchRepository = new InMemoryCompanyResearchRepository();
   const marketRepository = new InMemoryMarketRepository();
   const eventBus = new InMemoryEventBus();
   const simulationEngine = new SimulationEngine({ clock, eventBus });
@@ -62,6 +64,7 @@ async function createTradeContext() {
     companyRepository,
     inventoryRepository,
     financeRepository,
+    companyResearchRepository,
     simulationEngine,
   });
 

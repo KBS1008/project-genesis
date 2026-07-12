@@ -17,13 +17,20 @@ import {
   FinanceAccount,
   createFinanceAccountId,
 } from '../../domain/finance/FinanceAccount.js';
+import { CompanyResearch } from '../../domain/research/CompanyResearch.js';
+import { createCompanyResearchId } from '../../domain/research/CompanyResearchId.js';
 import type { ApplicationContext } from '../bootstrap/ApplicationContext.js';
 import type { CreateCompanyCommand } from '../commands/CreateCompanyCommand.js';
 
 /** Dependencies required by {@link CreateCompanyUseCase}. */
 export type CreateCompanyUseCaseDependencies = Pick<
   ApplicationContext,
-  'clock' | 'companyRepository' | 'inventoryRepository' | 'financeRepository' | 'simulationEngine'
+  | 'clock'
+  | 'companyRepository'
+  | 'inventoryRepository'
+  | 'financeRepository'
+  | 'companyResearchRepository'
+  | 'simulationEngine'
 >;
 
 /**
@@ -34,6 +41,7 @@ export class CreateCompanyUseCase {
   readonly #companyRepository: CreateCompanyUseCaseDependencies['companyRepository'];
   readonly #inventoryRepository: CreateCompanyUseCaseDependencies['inventoryRepository'];
   readonly #financeRepository: CreateCompanyUseCaseDependencies['financeRepository'];
+  readonly #companyResearchRepository: CreateCompanyUseCaseDependencies['companyResearchRepository'];
   readonly #simulationEngine: CreateCompanyUseCaseDependencies['simulationEngine'];
 
   /**
@@ -44,6 +52,7 @@ export class CreateCompanyUseCase {
     this.#companyRepository = dependencies.companyRepository;
     this.#inventoryRepository = dependencies.inventoryRepository;
     this.#financeRepository = dependencies.financeRepository;
+    this.#companyResearchRepository = dependencies.companyResearchRepository;
     this.#simulationEngine = dependencies.simulationEngine;
   }
 
@@ -136,6 +145,30 @@ export class CreateCompanyUseCase {
 
     this.#financeRepository.save(financeResult.value);
     this.#simulationEngine.enqueueEvents(financeResult.value.pullDomainEvents());
+
+    const companyResearchIdResult = createCompanyResearchId(`research_${companyId.value}`);
+
+    if (!companyResearchIdResult.ok) {
+      return Result.fail(companyResearchIdResult.error);
+    }
+
+    if (this.#companyResearchRepository.findByCompanyId(companyId) !== undefined) {
+      return Result.fail(
+        new ValidationError(`Research module for company "${companyId.value}" already exists.`),
+      );
+    }
+
+    const companyResearchResult = CompanyResearch.create({
+      id: companyResearchIdResult.value,
+      companyId,
+      clock: this.#clock,
+    });
+
+    if (!companyResearchResult.ok) {
+      return Result.fail(companyResearchResult.error);
+    }
+
+    this.#companyResearchRepository.save(companyResearchResult.value);
 
     return Result.ok(companyId);
   }
