@@ -232,6 +232,12 @@ th {
   color: var(--muted);
 }
 
+.research-done {
+  margin: 0 0 0.75rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
 .progress-cell {
   display: grid;
   gap: 0.25rem;

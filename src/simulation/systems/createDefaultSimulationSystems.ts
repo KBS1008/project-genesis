@@ -35,6 +35,9 @@ export function createDefaultSimulationSystems(
       ...(dependencies.onProductionJobCompleted !== undefined
         ? { onJobCompleted: dependencies.onProductionJobCompleted }
         : {}),
+      ...(dependencies.energyBalanceService !== undefined
+        ? { energyBalanceService: dependencies.energyBalanceService }
+        : {}),
     }),
     new ResearchSimulationSystem({
       researchJobRepository: dependencies.researchJobRepository,

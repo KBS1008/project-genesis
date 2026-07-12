@@ -28,6 +28,7 @@ import { MarketTradeService } from '../services/MarketTradeService.js';
 import { ProductionInventoryService } from '../services/ProductionInventoryService.js';
 import { ResearchCompletionService } from '../services/ResearchCompletionService.js';
 import { MilestoneEvaluationService } from '../services/MilestoneEvaluationService.js';
+import { EnergyBalanceService } from '../services/EnergyBalanceService.js';
 import type { ApplicationContext } from './ApplicationContext.js';
 
 /** Options for restoring an application session. */
@@ -103,6 +104,12 @@ export async function restoreApplicationFromSnapshot(
     enqueueEvents,
   });
 
+  const energyBalanceService = new EnergyBalanceService({
+    buildingRepository,
+    productionJobRepository,
+    gameContent: contentResult.value,
+  });
+
   let researchCompletionService: ResearchCompletionService;
 
   simulationEngine = new SimulationEngine({
@@ -124,6 +131,7 @@ export async function restoreApplicationFromSnapshot(
       onResearchJobCompleted: (job) => {
         researchCompletionService.completeJob(job);
       },
+      energyBalanceService,
     }),
   });
 
@@ -160,6 +168,7 @@ export async function restoreApplicationFromSnapshot(
     companyMilestonesRepository,
     productionInventoryService,
     marketTradeService,
+    energyBalanceService,
     gameContent: contentResult.value,
   });
 }

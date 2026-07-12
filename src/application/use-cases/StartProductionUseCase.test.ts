@@ -18,6 +18,7 @@ import { InMemoryCompanyMilestonesRepository } from '../../infrastructure/persis
 import { InMemoryProductionJobRepository } from '../../infrastructure/persistence/InMemoryProductionJobRepository.js';
 import { InMemoryResearchJobRepository } from '../../infrastructure/persistence/InMemoryResearchJobRepository.js';
 import { ProductionInventoryService } from '../services/ProductionInventoryService.js';
+import { EnergyBalanceService } from '../services/EnergyBalanceService.js';
 import { ResearchCompletionService } from '../services/ResearchCompletionService.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
 import { createDefaultSimulationSystems } from '../../simulation/systems/createDefaultSimulationSystems.js';
@@ -91,6 +92,12 @@ async function createContext() {
     gameContent: contentResult.value,
   });
 
+  const energyBalanceService = new EnergyBalanceService({
+    buildingRepository,
+    productionJobRepository,
+    gameContent: contentResult.value,
+  });
+
   return {
     clock,
     eventBus,
@@ -103,6 +110,7 @@ async function createContext() {
     companyResearchRepository,
     companyMilestonesRepository,
     productionInventoryService,
+    energyBalanceService,
     simulationEngine,
     gameContent: contentResult.value,
   };

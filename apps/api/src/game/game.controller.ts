@@ -18,6 +18,7 @@ import { unwrapResult } from '../common/unwrap-result.js';
 import type { NewGameDto } from './dto/new-game.dto.js';
 import type { PlaceBuildingDto } from './dto/place-building.dto.js';
 import type { SellResourceDto } from './dto/sell-resource.dto.js';
+import type { TickSimulationDto } from './dto/tick-simulation.dto.js';
 import type { StartProductionDto } from './dto/start-production.dto.js';
 import type { StartResearchDto } from './dto/start-research.dto.js';
 import { GameSessionService } from './game-session.service.js';
@@ -66,11 +67,17 @@ export class GameController {
     return toApiSuccess(unwrapResult(loadResult));
   }
 
-  /** Advances the simulation by one tick. */
+  /** Advances the simulation by one or more ticks. */
   @Post('simulation/tick')
   @HttpCode(200)
-  tick() {
-    return toApiSuccess(unwrapResult(this.gameSessionService.getSession().tick()));
+  tick(@Body() body: TickSimulationDto | undefined) {
+    const count = body?.count ?? 1;
+
+    if (!Number.isInteger(count)) {
+      throw new BadRequestException('Tick count must be an integer.');
+    }
+
+    return toApiSuccess(unwrapResult(this.gameSessionService.getSession().tick(count)));
   }
 
   /** Places a building for the active company. */
@@ -144,6 +151,24 @@ export class GameController {
     return toApiSuccess(
       unwrapResult(
         this.gameSessionService.getSession().sellResource({
+          resourceId: body.resourceId,
+          amount: body.amount,
+        }),
+      ),
+    );
+  }
+
+  /** Buys resources on the market for the active company. */
+  @Post('market/buy')
+  @HttpCode(200)
+  buyResource(@Body() body: SellResourceDto | undefined) {
+    if (body?.resourceId === undefined || body.amount === undefined) {
+      throw new BadRequestException('Missing market buy fields.');
+    }
+
+    return toApiSuccess(
+      unwrapResult(
+        this.gameSessionService.getSession().buyResource({
           resourceId: body.resourceId,
           amount: body.amount,
         }),

@@ -1,0 +1,19 @@
+id: coal_power_plant
+name: Kohlekraftwerk
+description: Erzeugt Energie für Produktionsgebäude.
+category: ENERGY
+size:
+  width: 5
+  height: 4
+energyUsage: 5
+energyGeneration: 50
+maintenanceCost: 12
+constructionCost: 18000
+constructionTime: 180
+allowedRecipes: []
+maxProductionLines: 1
+requiredResearch: []
+requiredMilestones:
+  - first_profit
+enabled: true
+version: 1

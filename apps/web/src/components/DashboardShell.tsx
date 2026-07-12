@@ -1,7 +1,8 @@
 'use client';
 
-import { useCallback, useEffect, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import {
+  buildNameMap,
   callApi,
   fetchDashboard,
   type BuildingReadModel,
@@ -19,9 +20,25 @@ function formatProgress(progress: number): string {
   return `${Math.round(progress)}%`;
 }
 
-function findActiveSawmill(buildings: readonly BuildingReadModel[]) {
-  return buildings.find(
-    (building) => building.buildingTypeId === 'sawmill' && building.status === 'ACTIVE',
+function formatEnergy(value: number): string {
+  return `${value.toFixed(1)} MW`;
+}
+
+function HintButton({
+  label,
+  disabled,
+  reason,
+  onClick,
+}: {
+  readonly label: string;
+  readonly disabled: boolean;
+  readonly reason: string | null;
+  readonly onClick: () => void;
+}) {
+  return (
+    <button type="button" disabled={disabled} title={reason ?? undefined} onClick={onClick}>
+      {label}
+    </button>
   );
 }
 
@@ -106,6 +123,24 @@ export function DashboardShell() {
   const [statusMessage, setStatusMessage] = useState('');
   const [statusTone, setStatusTone] = useState<StatusTone>('');
 
+  const nameMaps = useMemo(() => {
+    if (dashboard === null) {
+      return {
+        resources: new Map<string, string>(),
+        buildings: new Map<string, string>(),
+        recipes: new Map<string, string>(),
+        technologies: new Map<string, string>(),
+      };
+    }
+
+    return {
+      resources: buildNameMap(dashboard.contentNames.resources),
+      buildings: buildNameMap(dashboard.contentNames.buildings),
+      recipes: buildNameMap(dashboard.contentNames.recipes),
+      technologies: buildNameMap(dashboard.contentNames.technologies),
+    };
+  }, [dashboard]);
+
   const refreshDashboard = useCallback(async () => {
     const nextDashboard = await fetchDashboard();
     setDashboard(nextDashboard);
@@ -137,18 +172,17 @@ export function DashboardShell() {
     [refreshDashboard],
   );
 
-  const requireActiveSawmill = useCallback(() => {
-    const sawmill = findActiveSawmill(dashboard?.buildings ?? []);
-
-    if (sawmill === undefined) {
-      throw new Error('Kein aktives Sägewerk verfügbar. Bau abschließen und Ticks ausführen.');
-    }
-
-    return sawmill.id;
-  }, [dashboard?.buildings]);
-
   const hasGame = Boolean(dashboard?.company);
-  const actions = dashboard?.availableActions;
+  const hints = dashboard?.hints;
+  const buildingCount = dashboard?.buildings.length ?? 0;
+
+  const labelResource = (resourceId: string) =>
+    nameMaps.resources.get(resourceId) ?? resourceId;
+  const labelBuilding = (buildingTypeId: string) =>
+    nameMaps.buildings.get(buildingTypeId) ?? buildingTypeId;
+  const labelRecipe = (recipeId: string) => nameMaps.recipes.get(recipeId) ?? recipeId;
+  const labelTechnology = (technologyId: string) =>
+    nameMaps.technologies.get(technologyId) ?? technologyId;
 
   return (
     <div className="layout">
@@ -221,126 +255,140 @@ export function DashboardShell() {
           >
             Simulation Tick
           </button>
+          <button
+            type="button"
+            disabled={!hasGame}
+            onClick={() => {
+              void runAction(
+                () =>
+                  callApi('/api/simulation/tick', {
+                    method: 'POST',
+                    body: JSON.stringify({ count: 10 }),
+                  }),
+                '10 Simulation ticks ausgeführt.',
+              );
+            }}
+          >
+            10× Tick
+          </button>
         </div>
 
         <div className="toolbar-group">
           <span className="toolbar-label">Bauen</span>
-          <button
-            type="button"
-            disabled={!hasGame}
-            onClick={() => {
-              void runAction(
-                () =>
-                  callApi('/api/buildings/place', {
-                    method: 'POST',
-                    body: JSON.stringify({
-                      buildingTypeId: 'sawmill',
-                      name: 'Starter Sawmill',
-                      x: 0,
-                      y: 0,
+          {(hints?.placeBuilding ?? []).map((hint) => (
+            <HintButton
+              key={hint.buildingTypeId}
+              label={hint.name}
+              disabled={!hasGame || !hint.canPlace}
+              reason={hint.reason}
+              onClick={() => {
+                void runAction(
+                  () =>
+                    callApi('/api/buildings/place', {
+                      method: 'POST',
+                      body: JSON.stringify({
+                        buildingTypeId: hint.buildingTypeId,
+                        name: hint.name,
+                        x: buildingCount * 2,
+                        y: 0,
+                      }),
                     }),
-                  }),
-                'Sägewerk in Bau gegeben.',
-              );
-            }}
-          >
-            Sägewerk bauen
-          </button>
-          <button
-            type="button"
-            disabled={!hasGame || !actions?.canPlaceWarehouse}
-            onClick={() => {
-              void runAction(
-                () =>
-                  callApi('/api/buildings/place', {
-                    method: 'POST',
-                    body: JSON.stringify({
-                      buildingTypeId: 'warehouse',
-                      name: 'Main Warehouse',
-                      x: 2,
-                      y: 0,
-                    }),
-                  }),
-                'Lager in Bau gegeben.',
-              );
-            }}
-          >
-            Lager bauen
-          </button>
+                  `${hint.name} in Bau gegeben.`,
+                );
+              }}
+            />
+          ))}
         </div>
 
         <div className="toolbar-group">
           <span className="toolbar-label">Produktion</span>
-          <button
-            type="button"
-            disabled={!hasGame || !actions?.canStartPlanksProduction}
-            onClick={() => {
-              void runAction(async () => {
-                const buildingId = requireActiveSawmill();
-                await callApi('/api/production/start', {
-                  method: 'POST',
-                  body: JSON.stringify({ buildingId, recipeId: 'recipe_planks' }),
-                });
-              }, 'Bretter-Produktion gestartet.');
-            }}
-          >
-            Bretter produzieren
-          </button>
-          <button
-            type="button"
-            disabled={!hasGame || !actions?.canStartAdvancedPlanksProduction}
-            onClick={() => {
-              void runAction(async () => {
-                const buildingId = requireActiveSawmill();
-                await callApi('/api/production/start', {
-                  method: 'POST',
-                  body: JSON.stringify({ buildingId, recipeId: 'recipe_advanced_planks' }),
-                });
-              }, 'Premium-Bretter-Produktion gestartet.');
-            }}
-          >
-            Premium-Bretter
-          </button>
+          {(hints?.production ?? []).map((hint) => (
+            <HintButton
+              key={`${hint.buildingId}-${hint.recipeId}`}
+              label={`${hint.recipeName} (${hint.buildingName})`}
+              disabled={!hasGame || !hint.canStart}
+              reason={hint.reason}
+              onClick={() => {
+                void runAction(
+                  () =>
+                    callApi('/api/production/start', {
+                      method: 'POST',
+                      body: JSON.stringify({
+                        buildingId: hint.buildingId,
+                        recipeId: hint.recipeId,
+                      }),
+                    }),
+                  `${hint.recipeName} gestartet.`,
+                );
+              }}
+            />
+          ))}
         </div>
 
         <div className="toolbar-group">
           <span className="toolbar-label">Markt</span>
-          <button
-            type="button"
-            disabled={!hasGame}
-            onClick={() => {
-              void runAction(
-                () =>
-                  callApi('/api/market/sell', {
-                    method: 'POST',
-                    body: JSON.stringify({ resourceId: 'wood', amount: 5 }),
-                  }),
-                'Holz verkauft.',
-              );
-            }}
-          >
-            5× Holz verkaufen
-          </button>
+          {(hints?.market ?? []).flatMap((hint) => [
+            <HintButton
+              key={`sell-${hint.resourceId}`}
+              label={`${hint.tradeAmount}× ${hint.name} verkaufen`}
+              disabled={!hasGame || !hint.canSell}
+              reason={hint.sellReason}
+              onClick={() => {
+                void runAction(
+                  () =>
+                    callApi('/api/market/sell', {
+                      method: 'POST',
+                      body: JSON.stringify({
+                        resourceId: hint.resourceId,
+                        amount: hint.tradeAmount,
+                      }),
+                    }),
+                  `${hint.name} verkauft.`,
+                );
+              }}
+            />,
+            <HintButton
+              key={`buy-${hint.resourceId}`}
+              label={`${hint.tradeAmount}× ${hint.name} kaufen`}
+              disabled={!hasGame || !hint.canBuy}
+              reason={hint.buyReason}
+              onClick={() => {
+                void runAction(
+                  () =>
+                    callApi('/api/market/buy', {
+                      method: 'POST',
+                      body: JSON.stringify({
+                        resourceId: hint.resourceId,
+                        amount: hint.tradeAmount,
+                      }),
+                    }),
+                  `${hint.name} gekauft.`,
+                );
+              }}
+            />,
+          ])}
         </div>
 
         <div className="toolbar-group">
           <span className="toolbar-label">Forschung</span>
-          <button
-            type="button"
-            disabled={!hasGame || !actions?.canStartWoodworkingResearch}
-            onClick={() => {
-              void runAction(
-                () =>
-                  callApi('/api/research/start', {
-                    method: 'POST',
-                    body: JSON.stringify({ technologyId: 'basic_woodworking' }),
-                  }),
-                'Forschung „Holzbearbeitung“ gestartet.',
-              );
-            }}
-          >
-            Holzbearbeitung
-          </button>
+          {(hints?.research ?? []).map((hint) => (
+            <HintButton
+              key={hint.technologyId}
+              label={hint.name}
+              disabled={!hasGame || !hint.canStart}
+              reason={hint.reason}
+              onClick={() => {
+                void runAction(
+                  () =>
+                    callApi('/api/research/start', {
+                      method: 'POST',
+                      body: JSON.stringify({ technologyId: hint.technologyId }),
+                    }),
+                  `Forschung „${hint.name}“ gestartet.`,
+                );
+              }}
+            />
+          ))}
         </div>
 
         <p className={`status-message ${statusTone}`.trim()} aria-live="polite">
@@ -381,6 +429,26 @@ export function DashboardShell() {
         </section>
 
         <section className="card">
+          <h2>Energie</h2>
+          {!dashboard?.energy ? (
+            <KeyValuePanel entries={[['Status', '—']]} />
+          ) : (
+            <KeyValuePanel
+              entries={[
+                ['Erzeugung', formatEnergy(dashboard.energy.generation)],
+                ['Verbrauch', formatEnergy(dashboard.energy.consumption)],
+                ['Reserve', formatEnergy(dashboard.energy.reserve)],
+                [
+                  'Netz',
+                  dashboard.energy.usesBaselineGrid ? 'Öffentliches Netz (30 MW)' : 'Eigenversorgung',
+                ],
+                ['Status', dashboard.energy.hasDeficit ? 'Defizit' : 'Stabil'],
+              ]}
+            />
+          )}
+        </section>
+
+        <section className="card">
           <h2>Inventar</h2>
           <div className="table-wrap">
             {!dashboard?.inventory ? (
@@ -393,7 +461,12 @@ export function DashboardShell() {
                   { key: 'reserved', label: 'Reserved' },
                   { key: 'available', label: 'Available' },
                 ]}
-                rows={dashboard.inventory.items}
+                rows={dashboard.inventory.items.map((item) => ({
+                  resourceId: labelResource(item.resourceId),
+                  quantity: item.quantity,
+                  reserved: item.reserved,
+                  available: item.available,
+                }))}
                 emptyText="Inventar ist leer."
               />
             )}
@@ -415,7 +488,7 @@ export function DashboardShell() {
                 ]}
                 rows={dashboard.buildings.map((building) => ({
                   name: building.name,
-                  buildingTypeId: building.buildingTypeId,
+                  buildingTypeId: labelBuilding(building.buildingTypeId),
                   status: building.status,
                   position: `${building.x}, ${building.y}`,
                 }))}
@@ -426,7 +499,7 @@ export function DashboardShell() {
                   }
 
                   const building = dashboard.buildings.find(
-                    (entry) => entry.name === row.name && entry.buildingTypeId === row.buildingTypeId,
+                    (entry) => entry.name === row.name && entry.status === row.status,
                   );
 
                   return building ? <ConstructionStatus building={building} /> : row.status;
@@ -450,7 +523,7 @@ export function DashboardShell() {
                   { key: 'progress', label: 'Progress' },
                 ]}
                 rows={dashboard.productionJobs.map((job) => ({
-                  recipeId: job.recipeId,
+                  recipeId: labelRecipe(job.recipeId),
                   buildingId: job.buildingId,
                   status: job.status,
                   progress: formatProgress(job.progress),
@@ -466,26 +539,28 @@ export function DashboardShell() {
           <div className="table-wrap">
             {!dashboard?.company ? (
               <p className="empty">Keine laufende Forschung.</p>
-            ) : dashboard.researchJobs.length === 0 ? (
-              <p className="empty">
-                {dashboard.completedResearch.length > 0
-                  ? `Abgeschlossen: ${dashboard.completedResearch.join(', ')}`
-                  : 'Keine laufende Forschung.'}
-              </p>
             ) : (
-              <DataTable
-                columns={[
-                  { key: 'technologyId', label: 'Technology' },
-                  { key: 'status', label: 'Status' },
-                  { key: 'progress', label: 'Progress' },
-                ]}
-                rows={dashboard.researchJobs.map((job) => ({
-                  technologyId: job.technologyId,
-                  status: job.status,
-                  progress: formatProgress(job.progress),
-                }))}
-                emptyText="Keine laufende Forschung."
-              />
+              <>
+                {dashboard.completedResearch.length > 0 ? (
+                  <p className="research-done">
+                    Abgeschlossen:{' '}
+                    {dashboard.completedResearch.map(labelTechnology).join(', ')}
+                  </p>
+                ) : null}
+                <DataTable
+                  columns={[
+                    { key: 'technologyId', label: 'Technology' },
+                    { key: 'status', label: 'Status' },
+                    { key: 'progress', label: 'Progress' },
+                  ]}
+                  rows={dashboard.researchJobs.map((job) => ({
+                    technologyId: labelTechnology(job.technologyId),
+                    status: job.status,
+                    progress: formatProgress(job.progress),
+                  }))}
+                  emptyText="Keine laufende Forschung."
+                />
+              </>
             )}
           </div>
         </section>
@@ -499,7 +574,11 @@ export function DashboardShell() {
                 { key: 'lastPrice', label: 'Price' },
                 { key: 'tradeVolume', label: 'Volume' },
               ]}
-              rows={dashboard?.marketPrices ?? []}
+              rows={(dashboard?.marketPrices ?? []).map((price) => ({
+                resourceId: labelResource(price.resourceId),
+                lastPrice: price.lastPrice,
+                tradeVolume: price.tradeVolume,
+              }))}
               emptyText="Keine Marktpreise geladen."
             />
           </div>

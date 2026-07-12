@@ -257,6 +257,18 @@ export function validateBuildingTypeDefinition(
     return Result.fail(energyUsageResult.error);
   }
 
+  let energyGenerationValue = 0;
+
+  if (raw['energyGeneration'] !== undefined) {
+    const energyGenerationResult = readNumber(raw, 'energyGeneration', filePath, { min: 0 });
+
+    if (!energyGenerationResult.ok) {
+      return Result.fail(energyGenerationResult.error);
+    }
+
+    energyGenerationValue = energyGenerationResult.value;
+  }
+
   const maintenanceCostResult = readNumber(raw, 'maintenanceCost', filePath, { min: 0 });
 
   if (!maintenanceCostResult.ok) {
@@ -318,6 +330,7 @@ export function validateBuildingTypeDefinition(
     category: categoryResult.value,
     size: sizeResult.value,
     energyUsage: energyUsageResult.value,
+    energyGeneration: energyGenerationValue,
     maintenanceCost: maintenanceCostResult.value,
     constructionCost: constructionCostResult.value,
     constructionTime: constructionTimeResult.value,

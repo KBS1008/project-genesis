@@ -1,7 +1,7 @@
 /**
  * @module @project-genesis/api/config/project-paths
  *
- * Resolves repository root paths for content, saves and static UI assets.
+ * Resolves repository root paths for content and savegames.
  */
 
 import { existsSync } from 'node:fs';
@@ -13,7 +13,6 @@ export type ProjectPaths = {
   readonly projectRoot: string;
   readonly gameContentRoot: string;
   readonly savePath: string;
-  readonly webRoot: string;
 };
 
 /**
@@ -48,6 +47,5 @@ export function resolveProjectPaths(currentModuleUrl: string): ProjectPaths {
     projectRoot,
     gameContentRoot: path.join(projectRoot, 'game-content'),
     savePath: path.join(projectRoot, 'saves', 'browser-session.json'),
-    webRoot: path.join(projectRoot, 'src', 'ui', 'web'),
   };
 }

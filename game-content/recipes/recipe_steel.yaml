@@ -1,0 +1,27 @@
+id: recipe_steel
+name: Stahl schmelzen
+description: Schmelzt Eisenerz zu Stahl.
+version: 1
+category: METAL
+buildingTypes:
+  - smelter
+inputs:
+  - resource: iron_ore
+    amount: 5
+outputs:
+  - resource: steel
+    amount: 2
+duration: 90
+energy: 20
+workers: 3
+requiredResearch: []
+requiredBuildings: []
+requiredMilestones: []
+requiredResources: []
+maintenanceCost: 3
+productionCost: 2
+experience: 8
+tags:
+  - steel
+  - smelting
+enabled: true

@@ -1,0 +1,27 @@
+id: steel
+name: Stahl
+description: Verarbeiteter Stahl für den Industriebau.
+category: PROCESSED_RESOURCE
+tier: 1
+state: SOLID
+weight: 6
+volume: 3
+basePrice: 80
+marketEnabled: true
+tradable: true
+stackSize: 999999
+storageType: WAREHOUSE
+transportType: TRUCK
+qualityEnabled: false
+decayEnabled: false
+hazardous: false
+flammable: false
+recyclable: false
+energyValue: 0
+requiredResearch: []
+tags:
+  - steel
+  - metal
+  - basic
+enabled: true
+version: 1

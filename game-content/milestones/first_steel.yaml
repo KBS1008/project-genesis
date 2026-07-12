@@ -1,0 +1,9 @@
+id: first_steel
+name: Erster Stahl
+description: Stelle zum ersten Mal Stahl her.
+trigger:
+  type: PRODUCTION_VOLUME
+  count: 1
+  recipeId: recipe_steel
+enabled: true
+version: 1

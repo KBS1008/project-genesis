@@ -24,11 +24,6 @@ export class GameSessionService implements OnModuleInit {
     return this.#paths.savePath;
   }
 
-  /** Static browser shell asset root. */
-  get webRoot(): string {
-    return this.#paths.webRoot;
-  }
-
   /** Bootstraps the in-memory browser session on module init. */
   async onModuleInit(): Promise<void> {
     const sessionResult = await GameSession.create({

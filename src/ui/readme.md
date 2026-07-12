@@ -261,4 +261,6 @@ These should all consume the same Application Layer.
 
 The User Interface Module presents the state of Project Genesis to the player and forwards user interactions to the Application Layer.
 
-It remains independent of business logic, ensuring that the simulation can evolve without requiring changes to the presentation layer.
+The active browser shell is implemented in `apps/web/` (Next.js). This folder documents UI-layer conventions and may hold shared assets later.
+
+---

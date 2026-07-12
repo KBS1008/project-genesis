@@ -30,9 +30,10 @@ Update this document whenever a meaningful implementation milestone is completed
 | Simulation | Partial (SimulationEngine, systems pipeline) |
 | Infrastructure | Partial (in-memory repositories, JSON savegames) |
 | Application layer | Partial (bootstrap, use cases, queries) |
-| UI | Partial (Next.js frontend + NestJS API) |
+| UI | Partial (Next.js frontend + NestJS API, content-driven dashboard) |
+| Energy system | Partial (balance service, production gating, baseline grid) |
 
-**Tests:** 271 (run `pnpm test` for current count)
+**Tests:** 277 (run `pnpm test` for current count)
 
 ---
 
@@ -573,8 +574,8 @@ Coordinates use cases between domain, infrastructure and simulation.
 | `GameSaveSnapshotV1` | `persistence/savegame/GameSaveSnapshotV1.ts` |
 | `GameStateSerializer` | `persistence/savegame/GameStateSerializer.ts` |
 | `FileSavegameStore` | `persistence/savegame/FileSavegameStore.ts` |
-| `DevGameServer` | `http/DevGameServer.ts` |
 | NestJS API | `apps/api/` |
+| Next.js web app | `apps/web/` |
 | Tests | `persistence/InMemory*.test.ts`, `use-cases/SaveGameUseCase.test.ts`, `apps/api/src/**/*.test.ts` |
 
 ---
@@ -596,7 +597,22 @@ Coordinates use cases between domain, infrastructure and simulation.
 - `pnpm dev` starts the NestJS API on `http://127.0.0.1:3001`.
 - Controllers delegate exclusively to `GameSession`; no direct domain access.
 - JSON envelope matches the browser shell: `{ ok: true, data }` / `{ ok: false, error }`.
-- Legacy Node HTTP adapter remains available via `pnpm dev:http`.
+- `GET /` redirects browsers to the Next.js frontend.
+
+**API routes:**
+
+| Method | Path | Action |
+|---|---|---|
+| GET | `/api/dashboard` | Aggregated session snapshot |
+| POST | `/api/session/new` | Start new game |
+| POST | `/api/session/save` | Persist to `saves/browser-session.json` |
+| POST | `/api/session/load` | Restore from save file |
+| POST | `/api/simulation/tick` | Advance one or more ticks (`{ count?: number }`) |
+| POST | `/api/buildings/place` | Place building |
+| POST | `/api/production/start` | Start recipe on building |
+| POST | `/api/research/start` | Start technology research |
+| POST | `/api/market/sell` | Sell resources |
+| POST | `/api/market/buy` | Buy resources |
 
 ---
 
@@ -613,40 +629,24 @@ Coordinates use cases between domain, infrastructure and simulation.
 
 - `pnpm dev` starts API (`:3001`) and Next.js (`:3000`) in parallel.
 - Next.js rewrites `/api/*` to the NestJS backend.
-- React dashboard mirrors the legacy static shell feature set.
-- Legacy static shell remains in `src/ui/web` for reference and `pnpm dev:http`.
+- Dashboard actions: new game, tick / 10× tick, build, produce, research, market buy/sell, save/load.
+- Content-driven toolbar hints with disable reasons; energy panel; localized resource/building names.
 
 ---
 
-## UI Module (`src/ui/` — legacy static shell)
+## UI Module (`src/ui/`)
+
+The active browser UI lives in `apps/web/`. This folder remains reserved for future shared UI assets and documentation.
 
 | Item | Path |
 |---|---|
-| Dev server entry | `devServer.ts` |
-| Static shell | `web/index.html`, `web/styles.css`, `web/main.js` |
-| Application facade | `../application/facade/GameSession.ts` |
+| Module readme | `readme.md` |
 
 **Behaviour:**
 
-- `pnpm dev:http` starts the legacy `DevGameServer` with embedded static UI on `:3000`.
-- Browser UI calls JSON routes under `/api/*`; no direct domain access.
+- Presentation logic stays in Next.js (`apps/web/`).
 - `GameSession` coordinates bootstrap, use cases and query handlers for the dashboard shell.
-- Shell actions: new game, simulation tick, place sawmill/warehouse, start production, start research, market sell, save/load.
 - Dashboard shows construction progress, milestone catalog, production/research jobs and action availability hints.
-
-**API routes:**
-
-| Method | Path | Action |
-|---|---|---|
-| GET | `/api/dashboard` | Aggregated session snapshot |
-| POST | `/api/session/new` | Start new game |
-| POST | `/api/session/save` | Persist to `saves/browser-session.json` |
-| POST | `/api/session/load` | Restore from save file |
-| POST | `/api/simulation/tick` | Advance one tick |
-| POST | `/api/buildings/place` | Place building |
-| POST | `/api/production/start` | Start recipe on building |
-| POST | `/api/research/start` | Start technology research |
-| POST | `/api/market/sell` | Sell resources |
 
 ---
 
@@ -713,7 +713,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 | Simulation / Systems | `createDefaultSimulationSystems.test.ts` | Default pipeline order |
 | Infrastructure / Company repo | `InMemoryCompanyRepository.test.ts` | Save, find, ordering |
 | Infrastructure / Building repo | `InMemoryBuildingRepository.test.ts` | Save, find by company, under construction |
-| Application / GameSession | `GameSession.test.ts` | Dashboard facade, building placement, production, save/load round-trip |
+| Application / GameSession | `GameSession.test.ts` | Dashboard facade, market buy, batch ticks, save/load |
 | API / GameController | `apps/api/src/game/game.controller.test.ts` | NestJS route contract, validation envelope |
 | API / Project paths | `apps/api/src/config/project-paths.test.ts` | Monorepo root and static asset resolution |
 | Application / Bootstrap | `bootstrapApplication.test.ts` | Content load, wiring |
@@ -746,7 +746,8 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 1. Session/auth model for multi-user API access
 2. WebSocket tick streaming (optional)
-3. Retire legacy static shell once Next.js coverage is complete
+3. Transport/logistics system (Phase 1)
+4. Next.js UX polish (layout, toasts, loading states)
 
 ---
 

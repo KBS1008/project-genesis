@@ -23,6 +23,7 @@ import { PlaceBuildingUseCase } from '../use-cases/PlaceBuildingUseCase.js';
 import { StartProductionUseCase } from '../use-cases/StartProductionUseCase.js';
 import { MarketPriceSeeder } from './MarketPriceSeeder.js';
 import { MarketTradeService } from './MarketTradeService.js';
+import { EnergyBalanceService } from './EnergyBalanceService.js';
 import { ProductionInventoryService } from './ProductionInventoryService.js';
 import { MilestoneEvaluationService } from './MilestoneEvaluationService.js';
 
@@ -117,6 +118,12 @@ async function createContext() {
     enqueueEvents,
   });
 
+  const energyBalanceService = new EnergyBalanceService({
+    buildingRepository,
+    productionJobRepository,
+    gameContent: contentResult.value,
+  });
+
   return {
     clock,
     eventBus,
@@ -127,6 +134,7 @@ async function createContext() {
     companyMilestonesRepository,
     createCompany,
     marketTradeService,
+    energyBalanceService,
     simulationEngine,
     gameContent: contentResult.value,
     productionInventoryService,

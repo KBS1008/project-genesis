@@ -15,6 +15,7 @@ function createBuildingType(
     category: 'PRODUCTION',
     size: { width: 1, height: 1 },
     energyUsage: 0,
+    energyGeneration: 0,
     maintenanceCost: 0,
     constructionCost: 0,
     constructionTime: 0,

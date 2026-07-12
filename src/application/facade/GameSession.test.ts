@@ -22,10 +22,8 @@ async function createSession(savePath?: string) {
 }
 
 function completeConstructionWithTicks(session: GameSession, tickCount = 120): void {
-  for (let index = 0; index < tickCount; index += 1) {
-    const tickResult = session.tick();
-    expect(tickResult.ok).toBe(true);
-  }
+  const tickResult = session.tick(tickCount);
+  expect(tickResult.ok).toBe(true);
 }
 
 describe('GameSession', () => {
@@ -55,7 +53,10 @@ describe('GameSession', () => {
         true,
       );
       expect(dashboardResult.value.marketPrices.length).toBeGreaterThan(0);
-      expect(dashboardResult.value.availableActions.canStartPlanksProduction).toBe(false);
+      expect(dashboardResult.value.hints.production.some((hint) => hint.recipeId === 'recipe_planks')).toBe(
+        false,
+      );
+      expect(dashboardResult.value.energy?.usesBaselineGrid).toBe(true);
     }
   });
 
@@ -122,6 +123,65 @@ describe('GameSession', () => {
       expect(dashboardResult.value.buildings[0]?.status).toBe('ACTIVE');
       expect(dashboardResult.value.productionJobs).toHaveLength(1);
       expect(dashboardResult.value.productionJobs[0]?.recipeId).toBe('recipe_planks');
+    }
+  });
+
+  it('buys wood on the market and advances the simulation', async () => {
+    const session = await createSession();
+    session.startNewGame('Market Buy Corp');
+
+    const sellResult = session.sellResource({ resourceId: 'wood', amount: 5 });
+
+    expect(sellResult.ok).toBe(true);
+
+    const dashboardBeforeBuy = session.getDashboard();
+
+    expect(dashboardBeforeBuy.ok).toBe(true);
+
+    if (!dashboardBeforeBuy.ok) {
+      return;
+    }
+
+    const woodBeforeBuy =
+      dashboardBeforeBuy.value.inventory?.items.find((item) => item.resourceId === 'wood')
+        ?.quantity ?? 0;
+
+    const buyResult = session.buyResource({ resourceId: 'wood', amount: 5 });
+
+    expect(buyResult.ok).toBe(true);
+
+    const dashboardAfterBuy = session.getDashboard();
+
+    expect(dashboardAfterBuy.ok).toBe(true);
+
+    if (dashboardAfterBuy.ok) {
+      const woodAfterBuy =
+        dashboardAfterBuy.value.inventory?.items.find((item) => item.resourceId === 'wood')
+          ?.quantity ?? 0;
+
+      expect(woodAfterBuy).toBe(woodBeforeBuy + 5);
+      expect(
+        dashboardAfterBuy.value.hints.market.some(
+          (hint) => hint.resourceId === 'wood' && hint.canBuy,
+        ),
+      ).toBe(true);
+    }
+  });
+
+  it('advances multiple simulation ticks in one request', async () => {
+    const session = await createSession();
+    session.startNewGame('Batch Tick Corp');
+
+    const tickResult = session.tick(10);
+
+    expect(tickResult.ok).toBe(true);
+
+    const dashboardResult = session.getDashboard();
+
+    expect(dashboardResult.ok).toBe(true);
+
+    if (dashboardResult.ok) {
+      expect(dashboardResult.value.tickNumber).toBe(10);
     }
   });
 

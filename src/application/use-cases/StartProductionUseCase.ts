@@ -31,6 +31,7 @@ export type StartProductionUseCaseDependencies = Pick<
   | 'productionInventoryService'
   | 'companyResearchRepository'
   | 'companyMilestonesRepository'
+  | 'energyBalanceService'
 >;
 
 /**
@@ -45,6 +46,7 @@ export class StartProductionUseCase {
   readonly #productionInventoryService: StartProductionUseCaseDependencies['productionInventoryService'];
   readonly #companyResearchRepository: StartProductionUseCaseDependencies['companyResearchRepository'];
   readonly #companyMilestonesRepository: StartProductionUseCaseDependencies['companyMilestonesRepository'];
+  readonly #energyBalanceService: StartProductionUseCaseDependencies['energyBalanceService'];
   readonly #buildingSupportsRecipeSpecification = new BuildingSupportsRecipeSpecification();
   readonly #requiredResearchSpecification = new RequiredResearchSpecification();
   readonly #requiredMilestonesSpecification = new RequiredMilestonesSpecification();
@@ -61,6 +63,7 @@ export class StartProductionUseCase {
     this.#productionInventoryService = dependencies.productionInventoryService;
     this.#companyResearchRepository = dependencies.companyResearchRepository;
     this.#companyMilestonesRepository = dependencies.companyMilestonesRepository;
+    this.#energyBalanceService = dependencies.energyBalanceService;
   }
 
   /**
@@ -177,6 +180,16 @@ export class StartProductionUseCase {
 
     if (!requiredMilestonesResult.ok) {
       return Result.fail(requiredMilestonesResult.error);
+    }
+
+    if (
+      !this.#energyBalanceService.canAffordRecipeEnergy(building.getCompanyId(), recipeId.value, {
+        includeRecipeLoad: true,
+      })
+    ) {
+      return Result.fail(
+        new ValidationError('Insufficient energy to start production. Build a power plant.'),
+      );
     }
 
     const reserveResult = this.#productionInventoryService.reserveInputs(

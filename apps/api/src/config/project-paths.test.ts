@@ -1,7 +1,7 @@
-import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
+import { existsSync } from 'node:fs';
 import { findProjectRoot, resolveProjectPaths } from './project-paths.js';
 
 describe('project-paths', () => {
@@ -10,14 +10,13 @@ describe('project-paths', () => {
     const projectRoot = findProjectRoot(currentDirectory);
 
     expect(existsSync(path.join(projectRoot, 'game-content'))).toBe(true);
-    expect(existsSync(path.join(projectRoot, 'src', 'ui', 'web', 'index.html'))).toBe(true);
+    expect(existsSync(path.join(projectRoot, 'apps', 'web'))).toBe(true);
   });
 
-  it('resolves browser shell asset paths', () => {
+  it('resolves game content and save paths', () => {
     const paths = resolveProjectPaths(import.meta.url);
 
-    expect(existsSync(paths.webRoot)).toBe(true);
-    expect(existsSync(path.join(paths.webRoot, 'index.html'))).toBe(true);
     expect(existsSync(paths.gameContentRoot)).toBe(true);
+    expect(paths.savePath).toMatch(/saves[\\/]browser-session\.json$/);
   });
 });

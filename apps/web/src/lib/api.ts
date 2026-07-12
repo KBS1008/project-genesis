@@ -62,11 +62,65 @@ export type ResearchJobSessionReadModel = {
   readonly progress: number;
 };
 
-export type GameSessionAvailableActions = {
-  readonly canPlaceWarehouse: boolean;
-  readonly canStartPlanksProduction: boolean;
-  readonly canStartAdvancedPlanksProduction: boolean;
-  readonly canStartWoodworkingResearch: boolean;
+export type ContentNameEntry = {
+  readonly id: string;
+  readonly name: string;
+};
+
+export type EnergyReadModel = {
+  readonly generation: number;
+  readonly consumption: number;
+  readonly reserve: number;
+  readonly hasDeficit: boolean;
+  readonly usesBaselineGrid: boolean;
+};
+
+export type PlaceBuildingHint = {
+  readonly buildingTypeId: string;
+  readonly name: string;
+  readonly category: string;
+  readonly canPlace: boolean;
+  readonly reason: string | null;
+};
+
+export type ProductionHint = {
+  readonly recipeId: string;
+  readonly recipeName: string;
+  readonly buildingId: string;
+  readonly buildingName: string;
+  readonly canStart: boolean;
+  readonly reason: string | null;
+};
+
+export type ResearchHint = {
+  readonly technologyId: string;
+  readonly name: string;
+  readonly canStart: boolean;
+  readonly reason: string | null;
+};
+
+export type MarketTradeHint = {
+  readonly resourceId: string;
+  readonly name: string;
+  readonly tradeAmount: number;
+  readonly canBuy: boolean;
+  readonly canSell: boolean;
+  readonly buyReason: string | null;
+  readonly sellReason: string | null;
+};
+
+export type GameSessionDashboardHints = {
+  readonly placeBuilding: readonly PlaceBuildingHint[];
+  readonly production: readonly ProductionHint[];
+  readonly research: readonly ResearchHint[];
+  readonly market: readonly MarketTradeHint[];
+};
+
+export type GameSessionContentNames = {
+  readonly resources: readonly ContentNameEntry[];
+  readonly buildings: readonly ContentNameEntry[];
+  readonly recipes: readonly ContentNameEntry[];
+  readonly technologies: readonly ContentNameEntry[];
 };
 
 export type GameSessionDashboard = {
@@ -82,7 +136,9 @@ export type GameSessionDashboard = {
   readonly completedResearch: readonly string[];
   readonly productionJobs: readonly ProductionJobSessionReadModel[];
   readonly researchJobs: readonly ResearchJobSessionReadModel[];
-  readonly availableActions: GameSessionAvailableActions;
+  readonly contentNames: GameSessionContentNames;
+  readonly energy: EnergyReadModel | null;
+  readonly hints: GameSessionDashboardHints;
 };
 
 type ApiSuccessResponse<T> = {
@@ -115,3 +171,9 @@ export async function callApi<T>(path: string, options?: RequestInit): Promise<T
 export function fetchDashboard(): Promise<GameSessionDashboard> {
   return callApi<GameSessionDashboard>('/api/dashboard');
 }
+
+/** Builds a lookup map from content name entries. */
+export function buildNameMap(entries: readonly ContentNameEntry[]): ReadonlyMap<string, string> {
+  return new Map(entries.map((entry) => [entry.id, entry.name]));
+}
+

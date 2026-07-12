@@ -13,6 +13,7 @@ import type { ProductionJobRepository } from '../../domain/production/Production
 import type { ResearchJobRepository } from '../../domain/research/ResearchJobRepository.js';
 import type { ProductionJobCompletedHandler } from './production/ProductionJobCompletedHandler.js';
 import type { ResearchJobCompletedHandler } from './research/ResearchJobCompletedHandler.js';
+import type { EnergyBalanceService } from '../../application/services/EnergyBalanceService.js';
 
 /** Repository dependencies for simulation systems. */
 export type SimulationSystemDependencies = {
@@ -25,4 +26,5 @@ export type SimulationSystemDependencies = {
   readonly enqueueEvents: (events: readonly DomainEvent[]) => void;
   readonly onProductionJobCompleted?: ProductionJobCompletedHandler;
   readonly onResearchJobCompleted?: ResearchJobCompletedHandler;
+  readonly energyBalanceService?: EnergyBalanceService;
 };

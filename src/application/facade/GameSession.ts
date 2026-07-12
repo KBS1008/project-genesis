@@ -11,6 +11,7 @@ import type { ApplicationContext } from '../bootstrap/ApplicationContext.js';
 import { CreateCompanyUseCase } from '../use-cases/CreateCompanyUseCase.js';
 import { PlaceBuildingUseCase } from '../use-cases/PlaceBuildingUseCase.js';
 import { SellResourceUseCase } from '../use-cases/SellResourceUseCase.js';
+import { BuyResourceUseCase } from '../use-cases/BuyResourceUseCase.js';
 import { StartProductionUseCase } from '../use-cases/StartProductionUseCase.js';
 import { StartResearchUseCase } from '../use-cases/StartResearchUseCase.js';
 import { SaveGameUseCase } from '../use-cases/SaveGameUseCase.js';
@@ -21,15 +22,13 @@ import { GetInventoryQueryHandler } from '../queries/GetInventoryQueryHandler.js
 import { GetFinanceQueryHandler } from '../queries/GetFinanceQueryHandler.js';
 import { GetMarketPricesQueryHandler } from '../queries/GetMarketPricesQueryHandler.js';
 import { createCompanyId } from '../../domain/company/Company.js';
-import { BuildingStatus } from '../../domain/building/BuildingStatus.js';
-import { ResearchJobStatus } from '../../domain/research/ResearchJobStatus.js';
 import type {
-  GameSessionAvailableActions,
   GameSessionDashboard,
   MilestoneCatalogEntry,
   ProductionJobSessionReadModel,
   ResearchJobSessionReadModel,
 } from './GameSessionDashboard.js';
+import { GameSessionDashboardBuilder } from './GameSessionDashboardBuilder.js';
 
 /** Options for creating a {@link GameSession}. */
 export type CreateGameSessionOptions = {
@@ -45,11 +44,14 @@ export type PlaceBuildingInput = {
   readonly y: number;
 };
 
-/** Input for selling resources through the session facade. */
-export type SellResourceInput = {
+/** Input for market trades through the session facade. */
+export type MarketTradeInput = {
   readonly resourceId: string;
   readonly amount: number;
 };
+
+/** @deprecated Use {@link MarketTradeInput}. */
+export type SellResourceInput = MarketTradeInput;
 
 /** Input for starting production through the session facade. */
 export type StartProductionInput = {
@@ -66,6 +68,7 @@ const DEFAULT_COMPANY_ID = 'company_001';
 const DEFAULT_PLAYER_ID = 'player_001';
 const STARTER_WOOD = 20;
 const DEFAULT_SAVE_PATH = 'saves/browser-session.json';
+const MAX_TICK_BATCH = 500;
 
 /**
  * Coordinates a single-player browser session against the application layer.
@@ -75,6 +78,7 @@ export class GameSession {
   #createCompany!: CreateCompanyUseCase;
   #placeBuilding!: PlaceBuildingUseCase;
   #sellResource!: SellResourceUseCase;
+  #buyResource!: BuyResourceUseCase;
   #startProduction!: StartProductionUseCase;
   #startResearch!: StartResearchUseCase;
   #saveGame!: SaveGameUseCase;
@@ -84,6 +88,7 @@ export class GameSession {
   #getInventory!: GetInventoryQueryHandler;
   #getFinance!: GetFinanceQueryHandler;
   #getMarketPrices!: GetMarketPricesQueryHandler;
+  #dashboardBuilder!: GameSessionDashboardBuilder;
   readonly #gameContentRoot: string;
   readonly #savePath: string;
   #activeCompanyId: string | undefined;
@@ -208,6 +213,18 @@ export class GameSession {
 
     const productionJobs = Object.freeze(this.#readProductionJobs(companyId));
     const researchJobs = Object.freeze(this.#readResearchJobs(companyId));
+    const marketPrices = this.#readMarketPrices();
+
+    const hintInput = {
+      companyId,
+      buildings: buildingsResult.value,
+      inventory: inventoryResult.value,
+      finance: financeResult.value,
+      marketPrices,
+      completedMilestones: completedSet,
+      completedResearch: new Set(completedResearch),
+      researchJobs,
+    };
 
     return Result.ok({
       tickNumber: this.#context.simulationEngine.state.tickNumber,
@@ -216,28 +233,32 @@ export class GameSession {
       finance: financeResult.value,
       inventory: inventoryResult.value,
       buildings: buildingsResult.value,
-      marketPrices: this.#readMarketPrices(),
+      marketPrices,
       milestones: this.#readMilestoneCatalog(completedSet),
       completedMilestones,
       completedResearch,
       productionJobs,
       researchJobs,
-      availableActions: this.#readAvailableActions({
-        buildings: buildingsResult.value,
-        inventory: inventoryResult.value,
-        completedMilestones: completedSet,
-        completedResearch: new Set(completedResearch),
-        researchJobs,
-      }),
+      contentNames: this.#dashboardBuilder.readContentNames(),
+      energy: this.#dashboardBuilder.readEnergy(companyId),
+      hints: this.#dashboardBuilder.readHints(hintInput),
     });
   }
 
-  /** Advances the simulation by one tick. */
-  tick(): Result<void, ValidationError> {
-    const tickResult = this.#context.simulationEngine.tick();
+  /** Advances the simulation by one or more ticks. */
+  tick(count = 1): Result<void, ValidationError> {
+    if (!Number.isInteger(count) || count < 1 || count > MAX_TICK_BATCH) {
+      return Result.fail(
+        new ValidationError(`Tick count must be an integer between 1 and ${MAX_TICK_BATCH}.`),
+      );
+    }
 
-    if (!tickResult.ok) {
-      return Result.fail(tickResult.error);
+    for (let index = 0; index < count; index += 1) {
+      const tickResult = this.#context.simulationEngine.tick();
+
+      if (!tickResult.ok) {
+        return Result.fail(tickResult.error);
+      }
     }
 
     return Result.ok(undefined);
@@ -313,7 +334,7 @@ export class GameSession {
   }
 
   /** Sells resources for the active company. */
-  sellResource(input: SellResourceInput): Result<void, ValidationError> {
+  sellResource(input: MarketTradeInput): Result<void, ValidationError> {
     if (this.#activeCompanyId === undefined) {
       return Result.fail(new ValidationError('Start a new game before trading.'));
     }
@@ -328,13 +349,26 @@ export class GameSession {
       return Result.fail(sellResult.error);
     }
 
-    const tickResult = this.#context.simulationEngine.tick();
+    return this.tick();
+  }
 
-    if (!tickResult.ok) {
-      return Result.fail(tickResult.error);
+  /** Buys resources for the active company. */
+  buyResource(input: MarketTradeInput): Result<void, ValidationError> {
+    if (this.#activeCompanyId === undefined) {
+      return Result.fail(new ValidationError('Start a new game before trading.'));
     }
 
-    return Result.ok(undefined);
+    const buyResult = this.#buyResource.execute({
+      companyId: this.#activeCompanyId,
+      resourceId: input.resourceId,
+      amount: input.amount,
+    });
+
+    if (!buyResult.ok) {
+      return Result.fail(buyResult.error);
+    }
+
+    return this.tick();
   }
 
   /** Persists the current session to the configured save path. */
@@ -365,6 +399,7 @@ export class GameSession {
     this.#createCompany = new CreateCompanyUseCase(this.#context);
     this.#placeBuilding = new PlaceBuildingUseCase(this.#context);
     this.#sellResource = new SellResourceUseCase(this.#context);
+    this.#buyResource = new BuyResourceUseCase(this.#context);
     this.#startProduction = new StartProductionUseCase(this.#context);
     this.#startResearch = new StartResearchUseCase(this.#context);
     this.#saveGame = new SaveGameUseCase(this.#context);
@@ -374,6 +409,10 @@ export class GameSession {
     this.#getInventory = new GetInventoryQueryHandler(this.#context);
     this.#getFinance = new GetFinanceQueryHandler(this.#context);
     this.#getMarketPrices = new GetMarketPricesQueryHandler(this.#context);
+    this.#dashboardBuilder = new GameSessionDashboardBuilder(
+      this.#context,
+      this.#context.energyBalanceService,
+    );
   }
 
   #replaceContext(context: ApplicationContext): void {
@@ -444,6 +483,13 @@ export class GameSession {
   }
 
   #emptyDashboard(): GameSessionDashboard {
+    const emptyHints = Object.freeze({
+      placeBuilding: Object.freeze([]),
+      production: Object.freeze([]),
+      research: Object.freeze([]),
+      market: Object.freeze([]),
+    });
+
     return {
       tickNumber: this.#context.simulationEngine.state.tickNumber,
       simulationTime: this.#context.clock.now(),
@@ -457,12 +503,9 @@ export class GameSession {
       completedResearch: Object.freeze([]),
       productionJobs: Object.freeze([]),
       researchJobs: Object.freeze([]),
-      availableActions: {
-        canPlaceWarehouse: false,
-        canStartPlanksProduction: false,
-        canStartAdvancedPlanksProduction: false,
-        canStartWoodworkingResearch: false,
-      },
+      contentNames: this.#dashboardBuilder.readContentNames(),
+      energy: null,
+      hints: emptyHints,
     };
   }
 
@@ -520,40 +563,6 @@ export class GameSession {
           }),
         ),
     );
-  }
-
-  #readAvailableActions(options: {
-    readonly buildings: GameSessionDashboard['buildings'];
-    readonly inventory: NonNullable<GameSessionDashboard['inventory']>;
-    readonly completedMilestones: ReadonlySet<string>;
-    readonly completedResearch: ReadonlySet<string>;
-    readonly researchJobs: readonly ResearchJobSessionReadModel[];
-  }): GameSessionAvailableActions {
-    const activeSawmills = options.buildings.filter(
-      (building) =>
-        building.buildingTypeId === 'sawmill' && building.status === BuildingStatus.ACTIVE,
-    );
-    const woodAvailable =
-      options.inventory.items.find((item) => item.resourceId === 'wood')?.available ?? 0;
-
-    const woodworkingInProgress = options.researchJobs.some(
-      (job) =>
-        job.technologyId === 'basic_woodworking' &&
-        (job.status === ResearchJobStatus.WAITING || job.status === ResearchJobStatus.RUNNING),
-    );
-
-    return {
-      canPlaceWarehouse: options.completedMilestones.has('first_profit'),
-      canStartPlanksProduction: activeSawmills.length > 0 && woodAvailable >= 10,
-      canStartAdvancedPlanksProduction:
-        activeSawmills.length > 0 &&
-        options.completedMilestones.has('first_production') &&
-        woodAvailable >= 10,
-      canStartWoodworkingResearch:
-        options.completedMilestones.has('profit_100') &&
-        !options.completedResearch.has('basic_woodworking') &&
-        !woodworkingInProgress,
-    };
   }
 
   #readMarketPrices() {

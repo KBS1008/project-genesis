@@ -33,6 +33,7 @@ import { MarketTradeService } from '../services/MarketTradeService.js';
 import { ProductionInventoryService } from '../services/ProductionInventoryService.js';
 import { ResearchCompletionService } from '../services/ResearchCompletionService.js';
 import { MilestoneEvaluationService } from '../services/MilestoneEvaluationService.js';
+import { EnergyBalanceService } from '../services/EnergyBalanceService.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
 import { createDefaultSimulationSystems } from '../../simulation/systems/createDefaultSimulationSystems.js';
 import type { ApplicationContext } from './ApplicationContext.js';
@@ -116,6 +117,12 @@ export async function bootstrapApplication(
     enqueueEvents,
   });
 
+  const energyBalanceService = new EnergyBalanceService({
+    buildingRepository,
+    productionJobRepository,
+    gameContent: contentResult.value,
+  });
+
   let researchCompletionService: ResearchCompletionService;
 
   simulationEngine = new SimulationEngine({
@@ -135,6 +142,7 @@ export async function bootstrapApplication(
       onResearchJobCompleted: (job) => {
         researchCompletionService.completeJob(job);
       },
+      energyBalanceService,
     }),
   });
 
@@ -171,6 +179,7 @@ export async function bootstrapApplication(
     companyMilestonesRepository,
     productionInventoryService,
     marketTradeService,
+    energyBalanceService,
     gameContent: contentResult.value,
   });
 }

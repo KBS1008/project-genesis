@@ -34,6 +34,7 @@ export type BuildingTypeDefinitionProps = {
   readonly category: BuildingCategory;
   readonly size: BuildingSize;
   readonly energyUsage: number;
+  readonly energyGeneration: number;
   readonly maintenanceCost: number;
   readonly constructionCost: number;
   readonly constructionTime: number;
@@ -55,6 +56,7 @@ export class BuildingTypeDefinition {
   readonly category: BuildingCategory;
   readonly size: BuildingSize;
   readonly energyUsage: number;
+  readonly energyGeneration: number;
   readonly maintenanceCost: number;
   readonly constructionCost: number;
   readonly constructionTime: number;
@@ -72,6 +74,7 @@ export class BuildingTypeDefinition {
     this.category = props.category;
     this.size = Object.freeze({ ...props.size });
     this.energyUsage = props.energyUsage;
+    this.energyGeneration = props.energyGeneration;
     this.maintenanceCost = props.maintenanceCost;
     this.constructionCost = props.constructionCost;
     this.constructionTime = props.constructionTime;

@@ -1,0 +1,19 @@
+id: smelter
+name: Schmelze
+description: Verarbeitet Eisenerz zu Stahl.
+category: PRODUCTION
+size:
+  width: 4
+  height: 3
+energyUsage: 25
+maintenanceCost: 8
+constructionCost: 12000
+constructionTime: 150
+allowedRecipes:
+  - recipe_steel
+maxProductionLines: 1
+requiredResearch: []
+requiredMilestones:
+  - first_production
+enabled: true
+version: 1

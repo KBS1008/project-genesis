@@ -16,6 +16,7 @@ import type { CompanyResearchRepository } from '../../domain/research/CompanyRes
 import type { CompanyMilestonesRepository } from '../../domain/milestone/CompanyMilestonesRepository.js';
 import type { ProductionInventoryService } from '../services/ProductionInventoryService.js';
 import type { MarketTradeService } from '../services/MarketTradeService.js';
+import type { EnergyBalanceService } from '../services/EnergyBalanceService.js';
 import type { GameContentLoadResult } from '../../content/validateGameContent.js';
 import type { ManualClock } from '../../common/time/ManualClock.js';
 import type { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
@@ -36,5 +37,6 @@ export type ApplicationContext = {
   readonly companyMilestonesRepository: CompanyMilestonesRepository;
   readonly productionInventoryService: ProductionInventoryService;
   readonly marketTradeService: MarketTradeService;
+  readonly energyBalanceService: EnergyBalanceService;
   readonly gameContent: GameContentLoadResult;
 };
