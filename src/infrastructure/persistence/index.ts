@@ -13,6 +13,7 @@ export { InMemoryFinanceRepository } from './InMemoryFinanceRepository.js';
 export { InMemoryMarketRepository } from './InMemoryMarketRepository.js';
 export { InMemoryCompanyResearchRepository } from './InMemoryCompanyResearchRepository.js';
 export { InMemoryCompanyMilestonesRepository } from './InMemoryCompanyMilestonesRepository.js';
+export { InMemoryEmployeeRepository } from './InMemoryEmployeeRepository.js';
 export { FileSavegameStore } from './savegame/FileSavegameStore.js';
 export { GameStateSerializer } from './savegame/GameStateSerializer.js';
 export type { GameSaveSnapshotV1 } from './savegame/GameSaveSnapshotV1.js';

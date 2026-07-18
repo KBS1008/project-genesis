@@ -1,0 +1,22 @@
+id: employee_logistics_operator
+version: 1
+displayName: Logistikmitarbeiter
+category: logistics
+profession: logistics_operator
+cost: 900
+salary: 140
+productivity: 1.0
+description: Steigert Lager- und Transporteffizienz im Unternehmen.
+statistics:
+  productivity: 1.0
+  efficiency: 1.1
+  stamina: 1.0
+  intelligence: 0.9
+  reliability: 1.0
+requirements:
+  buildings:
+    - warehouse
+tags:
+  - worker
+  - logistics
+enabled: true

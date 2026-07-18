@@ -16,8 +16,10 @@ describe('validateGameContent', () => {
       expect(result.value.milestones.size).toBeGreaterThanOrEqual(1);
       expect(result.value.technologies.size).toBeGreaterThanOrEqual(1);
       expect(result.value.buildingTypes.size).toBeGreaterThanOrEqual(2);
+      expect(result.value.employees.size).toBeGreaterThanOrEqual(5);
       expect(result.value.recipes.size).toBeGreaterThanOrEqual(1);
       expect(result.value.recipes.has('recipe_planks')).toBe(true);
+      expect(result.value.employees.has('employee_production_worker')).toBe(true);
     }
   });
 

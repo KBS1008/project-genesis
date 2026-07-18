@@ -1,0 +1,22 @@
+id: employee_administrator_basic
+version: 1
+displayName: Verwaltungsmitarbeiter
+category: administration
+profession: administrator
+cost: 1000
+salary: 160
+productivity: 0.9
+description: Unterstützt die Unternehmensorganisation in der Firmenzentrale.
+statistics:
+  productivity: 0.9
+  efficiency: 1.0
+  stamina: 1.0
+  intelligence: 1.0
+  reliability: 1.1
+requirements:
+  buildings:
+    - headquarters
+tags:
+  - worker
+  - administration
+enabled: true

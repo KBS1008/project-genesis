@@ -23,7 +23,7 @@ Update this document whenever a meaningful implementation milestone is completed
 | Area | Status |
 |---|---|
 | Common foundation | Implemented |
-| Domain aggregates | Partial (Company, Building, Inventory, ProductionJob, FinanceAccount, Market, CompanyResearch, ResearchJob, CompanyMilestones) |
+| Domain aggregates | Partial (Company, Building, Inventory, ProductionJob, FinanceAccount, Market, CompanyResearch, ResearchJob, CompanyMilestones, Employee) |
 | Domain value objects | Partial (Money, Quantity, ResourceAmount, Capacity, Position) |
 | Domain specifications & policies | Partial (foundation + first production/market rules) |
 | Content loaders | Partial (ResourceType, BuildingType, Recipe, Technology, Milestone) |
@@ -34,7 +34,7 @@ Update this document whenever a meaningful implementation milestone is completed
 | Energy system | Partial (balance service, production gating, baseline grid) |
 | Transport / logistics | Partial (warehouse storage, transport orders, dashboard KPIs) |
 
-**Tests:** 324 (run `pnpm test` for current count)
+**Tests:** 341 (run `pnpm test` for current count)
 
 ---
 
@@ -139,6 +139,26 @@ Business aggregates and domain events.
 
 **References:** `docs/schemas/Inventory.Schema.md`
 
+### Employee aggregate
+
+| Item | Path |
+|---|---|
+| Aggregate | `employee/Employee.ts` |
+| Identifiers | `employee/EmployeeId.ts` (`EmployeeId`, `EmployeeTypeId`) |
+| Status enum | `employee/EmployeeStatus.ts` |
+| Domain events | `employee/events/EmployeeHired.ts`, `EmployeeAssignedToBuilding.ts`, `EmployeeUnassignedFromBuilding.ts` |
+| Repository | `employee/EmployeeRepository.ts` |
+| Tests | `employee/Employee.test.ts` |
+
+**Behaviour:**
+
+- `Employee.hire()` — validates display name, salary > 0, productivity > 0; raises `EmployeeHired`.
+- `assignToBuilding()` / `unassignFromBuilding()` — single building assignment; raises assignment events.
+- `restore()` — rehydrates persisted state without domain events.
+- Salary and productivity are supplied by the application layer from static content definitions.
+
+**References:** `docs/schemas/Employee.schema.md`, `docs/gameplay/employees.md`, `docs/architecture/domain-model.md`
+
 ### ProductionJob aggregate
 
 | Item | Path |
@@ -228,6 +248,7 @@ Business aggregates and domain events.
 | `ProductionJobRepository` | `production/ProductionJobRepository.ts` |
 | `FinanceRepository` | `finance/FinanceRepository.ts` |
 | `MarketRepository` | `market/MarketRepository.ts` |
+| `EmployeeRepository` | `employee/EmployeeRepository.ts` |
 
 Persistence contracts for aggregate roots. Implementations belong in Infrastructure.
 
@@ -578,6 +599,7 @@ Coordinates use cases between domain, infrastructure and simulation.
 | `InMemoryCompanyRepository` | `persistence/InMemoryCompanyRepository.ts` |
 | `InMemoryBuildingRepository` | `persistence/InMemoryBuildingRepository.ts` |
 | `InMemoryInventoryRepository` | `persistence/InMemoryInventoryRepository.ts` |
+| `InMemoryEmployeeRepository` | `persistence/InMemoryEmployeeRepository.ts` |
 | `InMemoryProductionJobRepository` | `persistence/InMemoryProductionJobRepository.ts` |
 | `InMemoryFinanceRepository` | `persistence/InMemoryFinanceRepository.ts` |
 | `InMemoryMarketRepository` | `persistence/InMemoryMarketRepository.ts` |
@@ -716,6 +738,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 | Domain / Company | `Company.test.ts` | Creation, validation, events |
 | Domain / Building | `Building.test.ts` | Placement, construction lifecycle, validation, events |
 | Domain / Inventory | `Inventory.test.ts` | Quantities, reservations, removal, events |
+| Domain / Employee | `Employee.test.ts` | Hire, assign, unassign, validation, restore |
 | Domain / ProductionJob | `ProductionJob.test.ts` | Start, tick, completion |
 | Domain / FinanceAccount | `FinanceAccount.test.ts` | Credit, debit, reserve, transactions |
 | Domain / Market | `Market.test.ts` | Seed prices, update price, events |
@@ -783,6 +806,8 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Recently Completed (2026-07)
 
+- Employee domain layer (`Employee` aggregate, events, repository, in-memory persistence)
+- Employee content layer (5 YAML types, loader, validator, registry, validateGameContent integration)
 - Core gameplay start via `StartNewGameUseCase` (100k capital, 4 starter buildings, wood/stone/iron)
 - Persistence verification tests for `GameStateSerializer` (11) and `LoadGameUseCase` (6)
 - Warehouse transport system (Phase 1) with simulation pipeline integration

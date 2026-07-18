@@ -1,0 +1,19 @@
+id: employee_researcher_basic
+version: 1
+displayName: Forscher
+category: research
+profession: researcher
+cost: 1500
+salary: 220
+productivity: 1.0
+description: Beschleunigt Forschungsprojekte im Unternehmen.
+statistics:
+  productivity: 1.0
+  efficiency: 1.0
+  stamina: 0.9
+  intelligence: 1.2
+  reliability: 0.9
+tags:
+  - worker
+  - research
+enabled: true

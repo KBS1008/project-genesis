@@ -10,7 +10,7 @@ relatedDocuments:
   - research.md
   - buildings.md
   - economy.md
-  - Employee.schema.md
+  - docs/schemas/Employee.schema.md
 ---
 
 # Employee System

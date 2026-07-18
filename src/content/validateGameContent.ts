@@ -8,6 +8,8 @@ import path from 'node:path';
 import { Result } from '../common/result/Result.js';
 import { BuildingTypeLoader } from './building/BuildingTypeLoader.js';
 import type { BuildingTypeRegistry } from './building/BuildingTypeRegistry.js';
+import { EmployeeLoader } from './employee/EmployeeLoader.js';
+import type { EmployeeRegistry } from './employee/EmployeeRegistry.js';
 import { ContentLoadError } from './errors/ContentLoadError.js';
 import { MilestoneLoader } from './milestone/MilestoneLoader.js';
 import type { MilestoneRegistry } from './milestone/MilestoneRegistry.js';
@@ -18,6 +20,7 @@ import type { TechnologyRegistry } from './research/TechnologyRegistry.js';
 import { ResourceTypeLoader } from './resource/ResourceTypeLoader.js';
 import type { ResourceTypeRegistry } from './resource/ResourceTypeRegistry.js';
 import { validateBuildingRecipeConsistency } from './validateBuildingRecipeConsistency.js';
+import { validateEmployeeReferences } from './validateEmployeeReferences.js';
 import { validateMilestoneReferences } from './validateMilestoneReferences.js';
 import { validateResearchReferences } from './validateResearchReferences.js';
 
@@ -33,6 +36,7 @@ export type GameContentLoadResult = {
   readonly milestones: MilestoneRegistry;
   readonly technologies: TechnologyRegistry;
   readonly buildingTypes: BuildingTypeRegistry;
+  readonly employees: EmployeeRegistry;
   readonly recipes: RecipeRegistry;
 };
 
@@ -44,7 +48,8 @@ export type GameContentLoadResult = {
  * 2. Milestones
  * 3. Technologies
  * 4. Building types
- * 5. Recipes (with cross-reference validation)
+ * 5. Employees
+ * 6. Recipes (with cross-reference validation)
  *
  * @param gameContentRoot - Path to the `game-content/` directory.
  * @param options - Optional validation options such as strict cross-reference checks.
@@ -57,6 +62,7 @@ export async function validateGameContent(
   const milestoneLoader = new MilestoneLoader();
   const technologyLoader = new TechnologyLoader();
   const buildingLoader = new BuildingTypeLoader();
+  const employeeLoader = new EmployeeLoader();
   const recipeLoader = new RecipeLoader();
 
   const resourceTypesResult = await resourceLoader.loadFromDirectory(
@@ -91,6 +97,14 @@ export async function validateGameContent(
     return Result.fail(buildingTypesResult.error);
   }
 
+  const employeesResult = await employeeLoader.loadFromDirectory(
+    path.join(gameContentRoot, 'employees'),
+  );
+
+  if (!employeesResult.ok) {
+    return Result.fail(employeesResult.error);
+  }
+
   const recipesResult = await recipeLoader.loadFromDirectory(
     path.join(gameContentRoot, 'recipes'),
     {
@@ -101,6 +115,16 @@ export async function validateGameContent(
 
   if (!recipesResult.ok) {
     return Result.fail(recipesResult.error);
+  }
+
+  const employeeReferencesResult = validateEmployeeReferences(
+    employeesResult.value,
+    technologiesResult.value,
+    buildingTypesResult.value,
+  );
+
+  if (!employeeReferencesResult.ok) {
+    return Result.fail(employeeReferencesResult.error);
   }
 
   const researchReferencesResult = validateResearchReferences(
@@ -139,6 +163,7 @@ export async function validateGameContent(
     milestones: milestonesResult.value,
     technologies: technologiesResult.value,
     buildingTypes: buildingTypesResult.value,
+    employees: employeesResult.value,
     recipes: recipesResult.value,
   });
 }

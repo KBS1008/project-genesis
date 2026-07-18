@@ -1,0 +1,19 @@
+id: employee_production_worker
+version: 1
+displayName: Produktionsmitarbeiter
+category: production
+profession: production_worker
+cost: 800
+salary: 120
+productivity: 1.0
+description: Betreibt Produktionsanlagen in Sägewerken und Fabriken.
+statistics:
+  productivity: 1.0
+  efficiency: 1.0
+  stamina: 1.0
+  intelligence: 0.9
+  reliability: 1.0
+tags:
+  - worker
+  - production
+enabled: true

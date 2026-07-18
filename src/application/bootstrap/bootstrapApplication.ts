@@ -206,6 +206,7 @@ export async function bootstrapApplication(
   logger.info(LogCategory.Application, 'Application bootstrap completed.', {
     resources: contentResult.value.resourceTypes.size,
     buildingTypes: contentResult.value.buildingTypes.size,
+    employees: contentResult.value.employees.size,
     recipes: contentResult.value.recipes.size,
     tickNumber: simulationEngine.state.tickNumber,
   });
