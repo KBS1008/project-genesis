@@ -93,7 +93,7 @@ M5 ist **code-seitig abgeschlossen** und für den Übergang zu M6 **freigegeben*
 |---|---|---|
 | F-04 | `priceIndex` in Tick-Historie, aber kein eigenes Chart | Optional: Liniendiagramm „Preisindex“ |
 | F-05 | Vertrag zieht nur **Standort-Inventar** ab, nicht Lagerhaus | In Wirtschaft-Sektion erklären oder später erweitern |
-| F-06 | Start-Holz 40 statt 20 (Balance-Fix für Vertrag + Produktion) | In `core-gameplay.md` / Tutorial erwähnen |
+| F-06 | Start-Holz 40 statt 20 (Balance-Fix für Vertrag + Produktion) | ✅ In Tutorial + `CORE_GAMEPLAY_START_REPORT.md` dokumentiert |
 | F-07 | `docs/schemas/Resource.schema.md`, `Vehicle.schema.md` noch untracked | Vor M6 committen |
 
 ---
@@ -112,10 +112,10 @@ M5 ist **code-seitig abgeschlossen** und für den Übergang zu M6 **freigegeben*
 
 | Prio | Task | Status |
 |---|---|---|
-| 🟠 | Savegame-Test: Verträge + Steuer-Zeitstempel | Open |
-| 🟡 | Schema-Docs committen | Open |
-| 🟡 | Tutorial: Vertrag/Steuer kurz erklären | Open |
-| 🟢 | Preisindex-Chart (optional) | Open |
+| 🟠 | Savegame-Test: Verträge + Steuer-Zeitstempel | ✅ Completed (2026-07-18) |
+| 🟡 | Schema-Docs committen | ✅ Completed (2026-07-18) |
+| 🟡 | Tutorial: Vertrag/Steuer kurz erklären | ✅ Completed (2026-07-18) |
+| 🟢 | Preisindex-Chart (optional) | ✅ Completed (2026-07-18) |
 
 ---
 

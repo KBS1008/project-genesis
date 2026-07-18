@@ -5,11 +5,14 @@ import { createBuildingId } from '../../../domain/building/Building.js';
 import { BuildingStatus } from '../../../domain/building/BuildingStatus.js';
 import { createCompanyId } from '../../../domain/company/Company.js';
 import { STARTING_MONEY } from '../../../domain/finance/FinanceConstants.js';
+import { FinanceTransactionType } from '../../../domain/finance/FinanceTransactionType.js';
+import { STARTER_NPC_WOOD_CONTRACT_ID } from '../../../domain/contract/SupplyContractConstants.js';
 import { GAME_SAVE_SCHEMA_VERSION } from '../../../application/persistence/GameSaveSnapshotV1.js';
 import { bootstrapApplication } from '../../../application/bootstrap/bootstrapApplication.js';
 import { TickHistoryService } from '../../../application/services/TickHistoryService.js';
 import { CreateCompanyUseCase } from '../../../application/use-cases/CreateCompanyUseCase.js';
 import { PlaceBuildingUseCase } from '../../../application/use-cases/PlaceBuildingUseCase.js';
+import { StartNewGameUseCase } from '../../../application/use-cases/StartNewGameUseCase.js';
 import { InMemoryBuildingRepository } from '../InMemoryBuildingRepository.js';
 import { InMemoryBuildingStorageRepository } from '../InMemoryBuildingStorageRepository.js';
 import { InMemoryCompanyMilestonesRepository } from '../InMemoryCompanyMilestonesRepository.js';
@@ -318,6 +321,7 @@ describe('GameStateSerializer', () => {
       expect(parseResult.value.buildingStorages).toEqual([]);
       expect(parseResult.value.transportOrders).toEqual([]);
       expect(parseResult.value.employees).toEqual([]);
+      expect(parseResult.value.supplyContracts).toEqual([]);
     });
   });
 
@@ -729,6 +733,113 @@ describe('GameStateSerializer', () => {
           marketPrices: Object.freeze([]),
         }),
       ]);
+    });
+
+    it('preserves supply contracts and tax assessment timestamps through serialize, parse and hydrate', async () => {
+      const bootstrapResult = await bootstrapApplication({ gameContentRoot });
+
+      if (!bootstrapResult.ok) {
+        throw new Error(bootstrapResult.error.message);
+      }
+
+      const sourceContext = bootstrapResult.value;
+      const startNewGame = new StartNewGameUseCase(sourceContext);
+      const startResult = startNewGame.execute({
+        companyId: 'company_001',
+        name: 'Economy Save Corp',
+        ownerId: 'player_001',
+      });
+
+      expect(startResult.ok).toBe(true);
+
+      for (let index = 0; index < 29; index += 1) {
+        const tickResult = sourceContext.simulationEngine.tick();
+
+        expect(tickResult.ok).toBe(true);
+      }
+
+      expect(sourceContext.simulationEngine.state.tickNumber).toBe(30);
+      expect(sourceContext.simulationEngine.hasPendingEvents()).toBe(false);
+
+      const companyId = requireCompanyId('company_001');
+      const contractsBefore = sourceContext.supplyContractRepository.findByCompanyId(companyId);
+      const financeBefore = sourceContext.financeRepository.findByCompanyId(companyId);
+
+      expect(contractsBefore).toHaveLength(1);
+      expect(contractsBefore[0]?.getId().value).toBe(STARTER_NPC_WOOD_CONTRACT_ID);
+      expect(contractsBefore[0]?.getLastFulfilledTick()).toBe(20);
+      expect(contractsBefore[0]?.isActive()).toBe(true);
+      expect(financeBefore).toBeDefined();
+      expect(
+        financeBefore
+          ?.getTransactions()
+          .some((transaction) => transaction.transactionType === FinanceTransactionType.CONTRACT_PAYMENT),
+      ).toBe(true);
+      expect(
+        financeBefore
+          ?.getTransactions()
+          .some((transaction) => transaction.transactionType === FinanceTransactionType.TAX),
+      ).toBe(true);
+
+      const lastTaxCollectedAtBefore = financeBefore!.getLastTaxCollectedAt();
+
+      const serializeResult = serializer.serialize({
+        clock: sourceContext.clock,
+        simulationEngine: sourceContext.simulationEngine,
+        companyRepository: sourceContext.companyRepository,
+        buildingRepository: sourceContext.buildingRepository,
+        buildingStorageRepository: sourceContext.buildingStorageRepository,
+        transportOrderRepository: sourceContext.transportOrderRepository,
+        inventoryRepository: sourceContext.inventoryRepository,
+        financeRepository: sourceContext.financeRepository,
+        marketRepository: sourceContext.marketRepository,
+        productionJobRepository: sourceContext.productionJobRepository,
+        researchJobRepository: sourceContext.researchJobRepository,
+        companyResearchRepository: sourceContext.companyResearchRepository,
+        companyMilestonesRepository: sourceContext.companyMilestonesRepository,
+        employeeRepository: sourceContext.employeeRepository,
+        supplyContractRepository: sourceContext.supplyContractRepository,
+        tickHistoryService: sourceContext.tickHistoryService,
+      });
+
+      expect(serializeResult.ok).toBe(true);
+
+      if (!serializeResult.ok) {
+        return;
+      }
+
+      expect(serializeResult.value.supplyContracts).toHaveLength(1);
+      expect(serializeResult.value.supplyContracts?.[0]?.lastFulfilledTick).toBe(20);
+      expect(serializeResult.value.financeAccounts[0]?.lastTaxCollectedAt).toBe(
+        lastTaxCollectedAtBefore,
+      );
+
+      const jsonRoundTrip: unknown = JSON.parse(JSON.stringify(serializeResult.value));
+      const parseResult = serializer.parse(jsonRoundTrip);
+
+      expect(parseResult.ok).toBe(true);
+
+      if (!parseResult.ok) {
+        return;
+      }
+
+      const target = createEmptyHydrateTarget();
+      const hydrateResult = serializer.hydrate(parseResult.value, target);
+
+      expect(hydrateResult.ok).toBe(true);
+
+      if (!hydrateResult.ok) {
+        return;
+      }
+
+      const contractsAfter = target.supplyContractRepository.findByCompanyId(companyId);
+      const financeAfter = target.financeRepository.findByCompanyId(companyId);
+
+      expect(contractsAfter).toHaveLength(1);
+      expect(contractsAfter[0]?.getId().value).toBe(STARTER_NPC_WOOD_CONTRACT_ID);
+      expect(contractsAfter[0]?.getLastFulfilledTick()).toBe(20);
+      expect(contractsAfter[0]?.getPaymentAmount()).toBe(125);
+      expect(financeAfter?.getLastTaxCollectedAt()).toBe(lastTaxCollectedAtBefore);
     });
 
     it('preserves hired and assigned employees through serialize, parse and hydrate', async () => {

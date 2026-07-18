@@ -751,6 +751,12 @@ export class GameSessionDashboardBuilder {
       (transaction) => transaction.transactionType === 'SALE',
     );
     const hasFirstProfit = input.completedMilestones.has('first_profit');
+    const hasContractPayment = input.financeTransactions.some(
+      (transaction) => transaction.transactionType === 'CONTRACT_PAYMENT',
+    );
+    const hasTaxPayment = input.financeTransactions.some(
+      (transaction) => transaction.transactionType === 'TAX',
+    );
 
     const steps: TutorialStepReadModel[] = [
       Object.freeze({
@@ -790,6 +796,20 @@ export class GameSessionDashboardBuilder {
         title: 'Ersten Gewinn erzielen',
         description: 'Schließen Sie den ersten Verkauf ab und erreichen Sie den Meilenstein „First Profit“.',
         completed: hasFirstProfit,
+      }),
+      Object.freeze({
+        id: 'npc_supply_contract',
+        title: 'NPC-Liefervertrag nutzen',
+        description:
+          'Ein Abnehmer kauft alle 20 Ticks 5 Holz vom Standort-Inventar für 125 GC — halten Sie genug Holz bereit.',
+        completed: hasContractPayment,
+      }),
+      Object.freeze({
+        id: 'corporate_tax',
+        title: 'Unternehmenssteuer verstehen',
+        description:
+          'Alle 30 Ticks fällt 5 % Steuer auf den Gewinn seit der letzten Abrechnung an — prüfen Sie das Finanz-Ledger.',
+        completed: hasTaxPayment,
       }),
     ];
 

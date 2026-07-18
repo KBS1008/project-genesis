@@ -94,7 +94,7 @@ Typecheck:   passed (root, api, web)
 | Lager Level 1 | `warehouse` @ (8, 12) |
 | Umspannwerk | `power_substation` @ (16, 12) |
 | Zufahrtsstraße | `access_road` @ (12, 8) |
-| Holz, Stein, Eisen | `wood` 20, `stone` 15, `iron_ore` 10 |
+| Holz, Stein, Eisen | `wood` 40, `stone` 15, `iron_ore` 10 |
 | 25×25 Startgebiet | Noch nicht modelliert (kein Grid-Aggregat) |
 
 ---

@@ -36,7 +36,7 @@ Update this document whenever a meaningful implementation milestone is completed
 | M4 Core Gameplay | Completed |
 | M5 Economy | Completed |
 
-**Tests:** 396 (run `pnpm test` for current count)
+**Tests:** 397 (run `pnpm test` for current count)
 
 ---
 
@@ -848,7 +848,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 | Application / FinanceTransactions | `ListFinanceTransactionsQueryHandler.test.ts` | Ledger listing, newest first |
 | Application / SellBuyResource | `MarketTradeUseCases.test.ts` | Use case validation, trade flow |
 | Infrastructure / Finance repo | `InMemoryFinanceRepository.test.ts` | Save, find by company |
-| Infrastructure / Savegame | `GameStateSerializer.test.ts` | Snapshot parse/hydrate, employee round-trip |
+| Infrastructure / Savegame | `GameStateSerializer.test.ts` | Snapshot parse/hydrate, employee round-trip, supply contracts + tax timestamps |
 
 ---
 
@@ -865,14 +865,13 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 1. **M6 – Logistics:** Transport routes, vehicles, networks, warehouse capacities (extend existing Phase-1 warehouse transport)
 2. Session/auth model for multi-user API access
 3. Full tick log / replay per DD-033 (beyond metrics ring buffer)
-4. Resource / Vehicle schema docs commit (`docs/schemas/Resource.schema.md`, `Vehicle.schema.md`)
-5. Dedicated savegame round-trip test for `supplyContracts[]` and `lastTaxCollectedAt`
 
 ---
 
 # Recently Completed (2026-07)
 
 - **M5 Economy completed:** dynamic prices, dashboard supply/demand, market fees, taxes, NPC contracts, inflation dampening (reports in `docs/quality/M5_ECONOMY_*`)
+- M5 audit follow-ups: supply-contract savegame test, schema docs, tutorial economy steps, price-index chart
 - M5 economy step 3: market trade fees (`MarketFeePolicy`, `MARKET_FEE` ledger entries)
 - M5 economy step 2: dashboard supply/demand (extended market read model, charts, market table)
 - M5 economy step 1: dynamic market prices (supply & demand via `MarketPriceCalculator`, simulation tick updates)

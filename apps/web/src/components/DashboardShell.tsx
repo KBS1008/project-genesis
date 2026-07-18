@@ -15,6 +15,7 @@ import { InventoryHistoryChart } from '@/components/InventoryHistoryChart';
 import { MarketPriceHistoryChart } from '@/components/MarketPriceHistoryChart';
 import { MarketSupplyDemandChart } from '@/components/MarketSupplyDemandChart';
 import { MarketPressureHistoryChart } from '@/components/MarketPressureHistoryChart';
+import { PriceIndexHistoryChart } from '@/components/PriceIndexHistoryChart';
 import { MarketPricesTable } from '@/components/MarketPricesTable';
 import { EnergyHistoryChart } from '@/components/EnergyHistoryChart';
 import {
@@ -1007,6 +1008,8 @@ export function DashboardShell() {
           {hasGame ? (
             <MarketPressureHistoryChart points={tickHistory} labelResource={labelResource} />
           ) : null}
+
+          {hasGame ? <PriceIndexHistoryChart points={tickHistory} /> : null}
 
           <div className="dashboard-panels">
             <div className="dashboard-tables">
