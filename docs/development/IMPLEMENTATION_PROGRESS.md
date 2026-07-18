@@ -34,7 +34,7 @@ Update this document whenever a meaningful implementation milestone is completed
 | Energy system | Partial (balance service, production gating, baseline grid) |
 | Transport / logistics | Partial (warehouse storage, transport orders, dashboard KPIs) |
 
-**Tests:** 289 (run `pnpm test` for current count)
+**Tests:** 321 (run `pnpm test` for current count)
 
 ---
 
@@ -783,6 +783,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Recently Completed (2026-07)
 
+- Persistence verification tests for `GameStateSerializer` (11) and `LoadGameUseCase` (6)
 - Warehouse transport system (Phase 1) with simulation pipeline integration
 - Switchable dashboard dark/light theme
 - Dashboard layout refactor per `DASHBOARD_STYLE_GUIDE.md`
