@@ -53,11 +53,9 @@ fee = max(1, round(tradeValue × 0.02))
 
 ---
 
-## Offen (M5 Rest)
+## M5 Abschluss
 
-| Schritt | Inhalt |
-|---|---|
-| M5-4 | Verträge, Steuern, Inflation | Completed — see `M5_ECONOMY_TAX_CONTRACTS_INFLATION_REPORT.md` |
+M5-4 abgeschlossen — Milestone M5 vollständig. Audit: `docs/quality/M5_ECONOMY_AUDIT_REPORT.md`.
 
 ---
 

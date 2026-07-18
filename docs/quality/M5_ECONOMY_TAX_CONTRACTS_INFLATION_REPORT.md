@@ -80,9 +80,4 @@ Company → Building → Transport → Production → Research → Market → Co
 - Tick-Historie: Feld `priceIndex`
 - Finanz-Ledger: `TAX`, `CONTRACT_PAYMENT` (bereits gelabelt)
 
----
-
-## Referenzen
-
-- `docs/gameplay/economy.md` — Geldsenken, Inflation
-- `docs/gameplay/market.md` — Marktmechanik
+Alle Schritte abgeschlossen. Milestone-Audit: `docs/quality/M5_ECONOMY_AUDIT_REPORT.md`.

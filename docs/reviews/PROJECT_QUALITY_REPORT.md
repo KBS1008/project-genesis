@@ -46,6 +46,7 @@ The report serves as the project's long-term quality history.
 | Review | Date | Result |
 |---------|------|--------|
 | AUD-001 | 2026-07 | Completed |
+| AUD-003 (M5 Economy) | 2026-07-18 | Completed — see `docs/quality/M5_ECONOMY_AUDIT_REPORT.md` |
 
 Future reviews:
 

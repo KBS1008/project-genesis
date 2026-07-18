@@ -48,17 +48,13 @@ Instant-Kauf/-Verkauf nutzt weiterhin `lastPrice` über `InstantTradePricingPoli
 | `MarketPriceCalculator.test.ts` | Stabil, steigend, fallend, Min/Max-Clamping |
 | `MarketSimulationSystem.test.ts` | Hohes/niedriges Angebot, Intervall-Skip, Events |
 
-**Ergebnis:** 380 Tests grün, Typecheck grün.
+**Ergebnis:** 396 Tests grün, Typecheck grün.
 
 ---
 
-## Offen (M5 Rest)
+## M5 Abschluss
 
-| Schritt | Inhalt |
-|---|---|
-| M5-2 | Dashboard: Preis-Trends / Supply-Demand sichtbar machen |
-| M5-3 | Marktgebühren (`MARKET_FEE`) bei Trades |
-| M5-4 | Verträge, Steuern, Inflation-Kontrollen |
+Alle vier Schritte abgeschlossen. Siehe `docs/quality/M5_ECONOMY_AUDIT_REPORT.md`.
 
 ---
 

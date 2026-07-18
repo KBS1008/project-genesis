@@ -48,12 +48,9 @@ Marktdynamik im Dashboard sichtbar machen: neben Preisverläufen auch Angebot, N
 
 ---
 
-## Offen (M5 Rest)
+## M5 Abschluss
 
-| Schritt | Inhalt |
-|---|---|
-| M5-3 | Marktgebühren (`MARKET_FEE`) bei Trades |
-| M5-4 | Verträge, Steuern, Inflation |
+M5-3 und M5-4 abgeschlossen. Siehe `docs/quality/M5_ECONOMY_MARKET_FEES_REPORT.md` und `M5_ECONOMY_TAX_CONTRACTS_INFLATION_REPORT.md`.
 
 ---
 

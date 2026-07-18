@@ -234,7 +234,9 @@ Introduce a dynamic economic system.
 
 ### Status
 
-🟡 In Progress (M5-1 Dynamic Prices completed 2026-07-18)
+✅ Completed (2026-07-18)
+
+Deliverables M5-1 through M5-4 shipped in commit `d1a9987`. See `docs/quality/M5_ECONOMY_*_REPORT.md`.
 
 ---
 

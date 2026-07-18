@@ -23,19 +23,20 @@ Update this document whenever a meaningful implementation milestone is completed
 | Area | Status |
 |---|---|
 | Common foundation | Implemented |
-| Domain aggregates | Implemented (Company, Building, Inventory, ProductionJob, FinanceAccount, Market, CompanyResearch, ResearchJob, CompanyMilestones, Employee) |
+| Domain aggregates | Implemented (Company, Building, Inventory, ProductionJob, FinanceAccount, Market, SupplyContract, CompanyResearch, ResearchJob, CompanyMilestones, Employee) |
 | Domain value objects | Partial (Money, Quantity, ResourceAmount, Capacity, Position) |
 | Domain specifications & policies | Partial (foundation + production/market/employee rules) |
 | Content loaders | Partial (ResourceType, BuildingType, Recipe, Technology, Milestone, Employee) |
-| Simulation | Partial (SimulationEngine, systems pipeline incl. payroll & worker efficiency) |
-| Infrastructure | Partial (in-memory repositories, JSON savegames incl. employees & tick metrics history) |
+| Simulation | Partial (SimulationEngine, systems pipeline incl. market, contracts, payroll, tax, inflation dampening) |
+| Infrastructure | Partial (in-memory repositories, JSON savegames incl. employees, supply contracts, tick metrics history) |
 | Application layer | Implemented (bootstrap, use cases, queries, dashboard facade, tutorial progress) |
 | UI | Partial (Next.js dashboard per DASHBOARD_STYLE_GUIDE: layout, charts, drill-down, tutorial checklist, outline KPI icons, auto-dismiss toasts, live WebSocket refresh) |
 | Energy system | Partial (balance service, production gating, baseline grid) |
 | Transport / logistics | Partial (warehouse storage, transport orders, dashboard KPIs) |
 | M4 Core Gameplay | Completed |
+| M5 Economy | Completed |
 
-**Tests:** 371 (run `pnpm test` for current count)
+**Tests:** 396 (run `pnpm test` for current count)
 
 ---
 
@@ -186,7 +187,8 @@ Business aggregates and domain events.
 | Identifiers | `finance/FinanceAccountId.ts`, `finance/FinanceTransactionId.ts` |
 | Transaction snapshot | `finance/FinanceTransaction.ts` |
 | Enums | `finance/FinanceTransactionType.ts`, `finance/FinanceTransactionDirection.ts` |
-| Constants | `finance/FinanceConstants.ts` (`STARTING_MONEY`) |
+| Constants | `finance/FinanceConstants.ts` (`STARTING_MONEY`), `finance/TaxConstants.ts` |
+| Tax | `finance/TaxCalculator.ts` |
 | Domain events | `finance/events/FinanceAccountCreated.ts`, `FinanceTransactionRecorded.ts` |
 | Repository | `finance/FinanceRepository.ts` |
 | Tests | `finance/FinanceAccount.test.ts` |
@@ -195,8 +197,27 @@ Business aggregates and domain events.
 
 - `FinanceAccount.create()` — account per company with `STARTING_MONEY` (100,000 GC) and initial SYSTEM credit transaction.
 - `credit()` / `debit()` / `reserveCash()` / `releaseReserved()` / `consumeReserved()` — all balance changes recorded as transactions; debits fail when available cash is insufficient.
+- `closeTaxPeriod()` — marks end of a corporate tax assessment window via `lastTaxCollectedAt`.
+- `TaxCalculator` — computes taxable profit and flat corporate tax on ledger entries since the last assessment.
 
-**References:** `docs/schemas/Finance.Schema.md`, `docs/schemas/FinanceTransaction.Schema.md`
+**References:** `docs/schemas/Finance.Schema.md`, `docs/schemas/FinanceTransaction.Schema.md`, `docs/gameplay/economy.md`
+
+### SupplyContract aggregate
+
+| Item | Path |
+|---|---|
+| Aggregate | `contract/SupplyContract.ts` |
+| Identifiers | `contract/SupplyContractId.ts` |
+| Constants | `contract/SupplyContractConstants.ts` |
+| Repository | `contract/SupplyContractRepository.ts` |
+| Tests | `contract/SupplyContract.test.ts` |
+
+**Behaviour:**
+
+- `createStarterNpcWoodPurchase()` — seeds the documented NPC wood buy contract (5 units / 125 GC / 20 ticks).
+- `shouldFulfill()` / `markFulfilled()` — interval-based fulfillment guard.
+
+**References:** `docs/gameplay/economy.md`, `docs/gameplay/market.md`
 
 ### Market aggregate
 
@@ -206,8 +227,8 @@ Business aggregates and domain events.
 | Identifiers | `market/MarketId.ts` |
 | Price snapshot | `market/ResourceMarketPrice.ts` |
 | Constants | `market/MarketConstants.ts` (`GLOBAL_MARKET_ID`) |
-| Price simulation | `market/MarketPriceCalculator.ts`, `market/MarketPriceConstants.ts`, `market/MarketPressureCalculator.ts`, `market/MarketSupplyAggregator.ts` |
-| Read projection | `read-models/projectMarketPrice.ts` |
+| Price simulation | `market/MarketPriceCalculator.ts`, `market/MarketPriceConstants.ts`, `market/MarketPressureCalculator.ts`, `market/MarketSupplyAggregator.ts`, `market/InflationCalculator.ts`, `market/InflationConstants.ts` |
+| Read projection | `read-models/projectMarketPrice.ts`, `read-models/EconomyReadModel.ts` |
 | Domain event | `market/events/MarketPriceChanged.ts` |
 | Repository | `market/MarketRepository.ts` |
 | Tests | `market/Market.test.ts` |
@@ -217,8 +238,9 @@ Business aggregates and domain events.
 - `Market.seedFromResources()` — global price book from enabled, market-enabled resource definitions; `lastPrice` starts at `basePrice`.
 - `updateLastPrice()` — records price changes and emits `MarketPriceChanged`.
 - `MarketPriceSeeder` (application) initializes `market_global` during bootstrap.
+- `MarketSimulationSystem` dampens or stimulates price adjustment via `InflationCalculator` when the global price index leaves the neutral band.
 
-**References:** `docs/gameplay/market.md`, DD-018
+**References:** `docs/gameplay/market.md`, `docs/gameplay/economy.md`, DD-018
 
 ### Shared value objects
 
@@ -251,6 +273,7 @@ Business aggregates and domain events.
 | `ProductionJobRepository` | `production/ProductionJobRepository.ts` |
 | `FinanceRepository` | `finance/FinanceRepository.ts` |
 | `MarketRepository` | `market/MarketRepository.ts` |
+| `SupplyContractRepository` | `contract/SupplyContractRepository.ts` |
 | `EmployeeRepository` | `employee/EmployeeRepository.ts` |
 
 Persistence contracts for aggregate roots. Implementations belong in Infrastructure.
@@ -281,7 +304,7 @@ Persistence contracts for aggregate roots. Implementations belong in Infrastruct
 | `ConstructionCostPolicy` | `policies/building/ConstructionCostPolicy.ts` |
 | `InstantTradePricingPolicy` | `policies/market/InstantTradePricingPolicy.ts` |
 | `MarketFeePolicy` | `policies/market/MarketFeePolicy.ts` |
-| Tests | `specifications/**/*.test.ts`, `policies/**/*.test.ts` |
+| Tests | `specifications/**/*.test.ts`, `policies/**/*.test.ts`, `finance/TaxCalculator.test.ts`, `market/InflationCalculator.test.ts` |
 
 **Behaviour:**
 
@@ -521,11 +544,12 @@ Deterministic simulation engine (first increment).
 | `ProductionSimulationSystem` | `systems/production/ProductionSimulationSystem.ts` |
 | `ResearchSimulationSystem` | `systems/research/ResearchSimulationSystem.ts` |
 | `MarketSimulationSystem` | `systems/market/MarketSimulationSystem.ts` |
-| `MarketSupplyAggregator` | `systems/market/MarketSupplyAggregator.ts` |
+| `MarketSupplyAggregator` | `domain/market/MarketSupplyAggregator.ts` |
+| `ContractSimulationSystem` | `systems/contract/ContractSimulationSystem.ts` |
 | `FinanceSimulationSystem` | `systems/finance/FinanceSimulationSystem.ts` |
 | Factory | `systems/createDefaultSimulationSystems.ts` |
 
-Default order: Company → Building → Transport → Production → Research → Market → Finance
+Default order: Company → Building → Transport → Production → Research → Market → Contract → Finance
 
 Building system advances {@link Building} construction progress each tick for aggregates in `UNDER_CONSTRUCTION` status.
 
@@ -533,9 +557,11 @@ Production system advances running {@link ProductionJob} aggregates each tick, g
 
 Research system advances running {@link ResearchJob} aggregates each tick and invokes an optional completion callback for technology unlock.
 
-Finance system debits combined employee salaries every `PAYROLL_INTERVAL_TICKS` ticks as `SALARY` transactions.
+Finance system debits combined employee salaries every `PAYROLL_INTERVAL_TICKS` ticks as `SALARY` transactions and collects flat corporate tax every `TAX_INTERVAL_TICKS` ticks as `TAX` transactions.
 
-Market system adjusts global resource prices every `MARKET_PRICE_UPDATE_INTERVAL_TICKS` ticks from aggregate inventory supply and baseline demand via `MarketPriceCalculator`.
+Market system adjusts global resource prices every `MARKET_PRICE_UPDATE_INTERVAL_TICKS` ticks from aggregate inventory supply and baseline demand via `MarketPriceCalculator`, scaled by `InflationCalculator`.
+
+Contract system fulfills active NPC supply contracts before finance processing; starter wood purchase contract is seeded by `StartNewGameUseCase`.
 
 **References:** DD-009, DD-011, DD-027, `docs/architecture/runtime-view.md`
 
@@ -791,8 +817,10 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 | Content / All | `validateGameContent.test.ts` | Full content pipeline |
 | Simulation / Engine | `SimulationEngine.test.ts` | Tick, determinism, pause |
 | Simulation / EventQueue | `EventQueue.test.ts` | Enqueue, drain, peek |
-| Simulation / Systems | `createDefaultSimulationSystems.test.ts`, `MarketSimulationSystem.test.ts` | Default pipeline order, dynamic price ticks |
-| Simulation / Finance | `FinanceSimulationSystem.test.ts` | Payroll debits on interval ticks |
+| Simulation / Systems | `createDefaultSimulationSystems.test.ts`, `MarketSimulationSystem.test.ts`, `ContractSimulationSystem.test.ts` | Default pipeline order, dynamic prices, NPC contracts |
+| Simulation / Finance | `FinanceSimulationSystem.test.ts`, `TaxCalculator.test.ts` | Payroll and corporate tax debits |
+| Domain / Market | `MarketPriceCalculator.test.ts`, `InflationCalculator.test.ts`, `MarketFeePolicy.test.ts` | Price formula, inflation dampening, trade fees |
+| Domain / Contract | `SupplyContract.test.ts` | Starter contract defaults and fulfillment guard |
 | Simulation / Production | `ProductionSimulationSystem.test.ts` | Worker shortage and full staffing |
 | Application / EmployeeAllocation | `EmployeeAllocationService.test.ts` | Assigned count and recipe efficiency |
 | Domain / EmployeeAllocation | `EmployeeAllocationCalculator.test.ts` | Efficiency scaling and cap |
@@ -834,16 +862,17 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Planned Next Steps
 
-1. **M5 – Economy (continued):** Contracts, taxes, inflation controls
+1. **M6 – Logistics:** Transport routes, vehicles, networks, warehouse capacities (extend existing Phase-1 warehouse transport)
 2. Session/auth model for multi-user API access
 3. Full tick log / replay per DD-033 (beyond metrics ring buffer)
 4. Resource / Vehicle schema docs commit (`docs/schemas/Resource.schema.md`, `Vehicle.schema.md`)
+5. Dedicated savegame round-trip test for `supplyContracts[]` and `lastTaxCollectedAt`
 
 ---
 
 # Recently Completed (2026-07)
 
-- M5 economy step 4: taxes, NPC supply contracts, inflation dampening (`TaxCalculator`, `ContractSimulationSystem`, `InflationCalculator`, dashboard economy KPIs)
+- **M5 Economy completed:** dynamic prices, dashboard supply/demand, market fees, taxes, NPC contracts, inflation dampening (reports in `docs/quality/M5_ECONOMY_*`)
 - M5 economy step 3: market trade fees (`MarketFeePolicy`, `MARKET_FEE` ledger entries)
 - M5 economy step 2: dashboard supply/demand (extended market read model, charts, market table)
 - M5 economy step 1: dynamic market prices (supply & demand via `MarketPriceCalculator`, simulation tick updates)
