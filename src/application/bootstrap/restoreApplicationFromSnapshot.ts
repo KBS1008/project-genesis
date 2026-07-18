@@ -22,6 +22,7 @@ import { InMemoryProductionJobRepository } from '../../infrastructure/persistenc
 import { InMemoryResearchJobRepository } from '../../infrastructure/persistence/InMemoryResearchJobRepository.js';
 import { InMemoryCompanyResearchRepository } from '../../infrastructure/persistence/InMemoryCompanyResearchRepository.js';
 import { InMemoryCompanyMilestonesRepository } from '../../infrastructure/persistence/InMemoryCompanyMilestonesRepository.js';
+import { InMemoryEmployeeRepository } from '../../infrastructure/persistence/InMemoryEmployeeRepository.js';
 import { GameStateSerializer } from '../../infrastructure/persistence/savegame/GameStateSerializer.js';
 import { FileSavegameStore } from '../../infrastructure/persistence/savegame/FileSavegameStore.js';
 import { ConsoleLogger } from '../../infrastructure/logging/ConsoleLogger.js';
@@ -33,6 +34,7 @@ import { ProductionInventoryService } from '../services/ProductionInventoryServi
 import { ResearchCompletionService } from '../services/ResearchCompletionService.js';
 import { MilestoneEvaluationService } from '../services/MilestoneEvaluationService.js';
 import { EnergyBalanceService } from '../services/EnergyBalanceService.js';
+import { EmployeeAllocationService } from '../services/EmployeeAllocationService.js';
 import { TransportLogisticsService } from '../services/TransportLogisticsService.js';
 import { TickHistoryService } from '../services/TickHistoryService.js';
 import type { ApplicationContext } from './ApplicationContext.js';
@@ -66,6 +68,7 @@ export async function restoreApplicationFromSnapshot(
   const researchJobRepository = new InMemoryResearchJobRepository();
   const companyResearchRepository = new InMemoryCompanyResearchRepository();
   const companyMilestonesRepository = new InMemoryCompanyMilestonesRepository();
+  const employeeRepository = new InMemoryEmployeeRepository();
   const tickHistoryService = new TickHistoryService();
   const gameStateSerializer = new GameStateSerializer();
   const savegameStore = new FileSavegameStore();
@@ -116,6 +119,11 @@ export async function restoreApplicationFromSnapshot(
     gameContent: contentResult.value,
   });
 
+  const employeeAllocationService = new EmployeeAllocationService({
+    employeeRepository,
+    gameContent: contentResult.value,
+  });
+
   const transportLogisticsService = new TransportLogisticsService({
     clock,
     buildingRepository,
@@ -153,6 +161,7 @@ export async function restoreApplicationFromSnapshot(
       researchJobRepository,
       financeRepository,
       marketRepository,
+      employeeRepository,
       enqueueEvents,
       onProductionJobCompleted: (job) => {
         productionInventoryService.completeJob(job);
@@ -161,6 +170,7 @@ export async function restoreApplicationFromSnapshot(
         researchCompletionService.completeJob(job);
       },
       energyBalanceService,
+      employeeAllocationService,
       onBuildingActivated: (building) => {
         transportLogisticsService.ensureStorageForBuilding(building);
       },
@@ -200,6 +210,7 @@ export async function restoreApplicationFromSnapshot(
     researchJobRepository,
     companyResearchRepository,
     companyMilestonesRepository,
+    employeeRepository,
     productionInventoryService,
     marketTradeService,
     energyBalanceService,

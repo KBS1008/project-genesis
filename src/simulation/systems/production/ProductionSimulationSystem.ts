@@ -12,6 +12,7 @@ import type { SimulationSystem } from '../../engine/SimulationSystem.js';
 import type { TickContext } from '../../engine/TickContext.js';
 import type { ProductionJobCompletedHandler } from './ProductionJobCompletedHandler.js';
 import type { EnergyBalancePort } from '../../../domain/energy/EnergyBalancePort.js';
+import type { EmployeeAllocationPort } from '../../../domain/employee/EmployeeAllocationPort.js';
 
 /** Dependencies for {@link ProductionSimulationSystem}. */
 export type ProductionSimulationSystemDependencies = {
@@ -19,6 +20,7 @@ export type ProductionSimulationSystemDependencies = {
   readonly enqueueEvents: (events: readonly DomainEvent[]) => void;
   readonly onJobCompleted?: ProductionJobCompletedHandler;
   readonly energyBalanceService?: EnergyBalancePort;
+  readonly employeeAllocationService?: EmployeeAllocationPort;
 };
 
 /**
@@ -30,6 +32,7 @@ export class ProductionSimulationSystem implements SimulationSystem {
   readonly #enqueueEvents: (events: readonly DomainEvent[]) => void;
   readonly #onJobCompleted: ProductionJobCompletedHandler | undefined;
   readonly #energyBalanceService: EnergyBalancePort | undefined;
+  readonly #employeeAllocationService: EmployeeAllocationPort | undefined;
 
   /**
    * @param dependencies - Repository and event enqueue callback.
@@ -39,6 +42,7 @@ export class ProductionSimulationSystem implements SimulationSystem {
     this.#enqueueEvents = dependencies.enqueueEvents;
     this.#onJobCompleted = dependencies.onJobCompleted;
     this.#energyBalanceService = dependencies.energyBalanceService;
+    this.#employeeAllocationService = dependencies.employeeAllocationService;
   }
 
   execute(context: TickContext): void {
@@ -50,7 +54,17 @@ export class ProductionSimulationSystem implements SimulationSystem {
         continue;
       }
 
-      const tickResult = job.tick(context.clock);
+      const workerEfficiency =
+        this.#employeeAllocationService?.getWorkerEfficiency(
+          job.getBuildingId(),
+          job.getRecipeId().value,
+        ) ?? 1;
+
+      if (workerEfficiency <= 0) {
+        continue;
+      }
+
+      const tickResult = job.tick(context.clock, { workerEfficiency });
 
       if (tickResult.ok) {
         if (tickResult.value.status === 'completed') {

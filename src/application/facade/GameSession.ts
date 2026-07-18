@@ -17,6 +17,8 @@ import { SellResourceUseCase } from '../use-cases/SellResourceUseCase.js';
 import { BuyResourceUseCase } from '../use-cases/BuyResourceUseCase.js';
 import { StartProductionUseCase } from '../use-cases/StartProductionUseCase.js';
 import { StartResearchUseCase } from '../use-cases/StartResearchUseCase.js';
+import { HireEmployeeUseCase } from '../use-cases/HireEmployeeUseCase.js';
+import { AssignEmployeeUseCase } from '../use-cases/AssignEmployeeUseCase.js';
 import { SaveGameUseCase } from '../use-cases/SaveGameUseCase.js';
 import { LoadGameUseCase } from '../use-cases/LoadGameUseCase.js';
 import { GetCompanyQueryHandler } from '../queries/GetCompanyQueryHandler.js';
@@ -76,6 +78,18 @@ export type StartResearchInput = {
   readonly technologyId: string;
 };
 
+/** Input for hiring an employee through the session facade. */
+export type HireEmployeeInput = {
+  readonly employeeTypeId: string;
+  readonly displayName: string;
+};
+
+/** Input for assigning an employee through the session facade. */
+export type AssignEmployeeInput = {
+  readonly employeeId: string;
+  readonly buildingId: string;
+};
+
 const DEFAULT_COMPANY_ID = 'company_001';
 const DEFAULT_PLAYER_ID = 'player_001';
 const DEFAULT_SAVE_PATH = 'saves/browser-session.json';
@@ -93,6 +107,8 @@ export class GameSession {
   #buyResource!: BuyResourceUseCase;
   #startProduction!: StartProductionUseCase;
   #startResearch!: StartResearchUseCase;
+  #hireEmployee!: HireEmployeeUseCase;
+  #assignEmployee!: AssignEmployeeUseCase;
   #saveGame!: SaveGameUseCase;
   #loadGame!: LoadGameUseCase;
   #getCompany!: GetCompanyQueryHandler;
@@ -108,6 +124,7 @@ export class GameSession {
   #buildingSequence = 0;
   #productionSequence = 0;
   #researchSequence = 0;
+  #employeeSequence = 0;
 
   private constructor(context: ApplicationContext, gameContentRoot: string, savePath: string) {
     this.#context = context;
@@ -145,6 +162,7 @@ export class GameSession {
     this.#buildingSequence = NEW_GAME_STARTER_BUILDINGS.length;
     this.#productionSequence = 0;
     this.#researchSequence = 0;
+    this.#employeeSequence = 0;
 
     const startResult = this.#startNewGame.execute({
       companyId: DEFAULT_COMPANY_ID,
@@ -376,6 +394,47 @@ export class GameSession {
     return Result.ok(startResult.value.value);
   }
 
+  /** Hires an employee for the active company. */
+  hireEmployee(input: HireEmployeeInput): Result<string, ValidationError> {
+    if (this.#activeCompanyId === undefined) {
+      return Result.fail(new ValidationError('Start a new game before hiring employees.'));
+    }
+
+    this.#employeeSequence += 1;
+    const employeeId = `employee_${String(this.#employeeSequence).padStart(3, '0')}`;
+
+    const hireResult = this.#hireEmployee.execute({
+      employeeId,
+      companyId: this.#activeCompanyId,
+      employeeTypeId: input.employeeTypeId,
+      displayName: input.displayName,
+    });
+
+    if (!hireResult.ok) {
+      return Result.fail(hireResult.error);
+    }
+
+    return Result.ok(hireResult.value.value);
+  }
+
+  /** Assigns an employee to a building owned by the active company. */
+  assignEmployee(input: AssignEmployeeInput): Result<void, ValidationError> {
+    if (this.#activeCompanyId === undefined) {
+      return Result.fail(new ValidationError('Start a new game before assigning employees.'));
+    }
+
+    const assignResult = this.#assignEmployee.execute({
+      employeeId: input.employeeId,
+      buildingId: input.buildingId,
+    });
+
+    if (!assignResult.ok) {
+      return Result.fail(assignResult.error);
+    }
+
+    return Result.ok(undefined);
+  }
+
   /** Sells resources for the active company. */
   sellResource(input: MarketTradeInput): Result<void, ValidationError> {
     if (this.#activeCompanyId === undefined) {
@@ -455,6 +514,8 @@ export class GameSession {
     this.#buyResource = new BuyResourceUseCase(this.#context);
     this.#startProduction = new StartProductionUseCase(this.#context);
     this.#startResearch = new StartResearchUseCase(this.#context);
+    this.#hireEmployee = new HireEmployeeUseCase(this.#context);
+    this.#assignEmployee = new AssignEmployeeUseCase(this.#context);
     this.#saveGame = new SaveGameUseCase(this.#context);
     this.#loadGame = new LoadGameUseCase({ savegameStore: this.#context.savegameStore });
     this.#getCompany = new GetCompanyQueryHandler(this.#context);
@@ -483,6 +544,7 @@ export class GameSession {
       this.#buildingSequence = 0;
       this.#productionSequence = 0;
       this.#researchSequence = 0;
+      this.#employeeSequence = 0;
       return;
     }
 
@@ -510,6 +572,7 @@ export class GameSession {
       .findAll()
       .filter((job) => job.getCompanyId().value === companyId.value);
     const researchJobs = this.#context.researchJobRepository.findByCompanyId(companyId);
+    const employees = this.#context.employeeRepository.findByCompanyId(companyId);
 
     this.#buildingSequence = this.#maxSequenceFromIds(
       'building_',
@@ -522,6 +585,10 @@ export class GameSession {
     this.#researchSequence = this.#maxSequenceFromIds(
       'research_',
       researchJobs.map((job) => job.getId().value),
+    );
+    this.#employeeSequence = this.#maxSequenceFromIds(
+      'employee_',
+      employees.map((employee) => employee.getId().value),
     );
   }
 

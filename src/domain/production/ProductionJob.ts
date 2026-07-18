@@ -27,6 +27,11 @@ export type ProductionJobTickResult = {
   readonly progress: number;
 };
 
+/** Options for ticking a running production job. */
+export type ProductionJobTickOptions = {
+  readonly workerEfficiency?: number;
+};
+
 /** Parameters required to create a production job. */
 export type CreateProductionJobParams = {
   readonly id: ProductionJobId;
@@ -235,7 +240,10 @@ export class ProductionJob extends AggregateRoot<'ProductionJob'> {
   /**
    * Advances progress for a running job based on elapsed simulation time.
    */
-  tick(clock: Clock): Result<ProductionJobTickResult, ValidationError> {
+  tick(
+    clock: Clock,
+    options: ProductionJobTickOptions = {},
+  ): Result<ProductionJobTickResult, ValidationError> {
     if (this.#status !== ProductionJobStatus.RUNNING) {
       return Result.fail(new ValidationError('Only running production jobs can be ticked.'));
     }
@@ -244,7 +252,14 @@ export class ProductionJob extends AggregateRoot<'ProductionJob'> {
       return Result.fail(new ValidationError('Running production job is missing a start time.'));
     }
 
-    const elapsed = clock.now() - this.#startTime;
+    const workerEfficiency = options.workerEfficiency ?? 1;
+    const clampedEfficiency = Math.max(0, Math.min(1, workerEfficiency));
+
+    if (clampedEfficiency === 0) {
+      return Result.ok({ status: 'running', progress: this.#progress });
+    }
+
+    const elapsed = (clock.now() - this.#startTime) * clampedEfficiency;
     this.#progress = Math.min(100, (elapsed / this.#duration) * 100);
 
     if (this.#progress >= 100) {

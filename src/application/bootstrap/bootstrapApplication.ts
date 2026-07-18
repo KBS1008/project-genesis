@@ -20,6 +20,7 @@ import type { ProductionJobRepository } from '../../domain/production/Production
 import type { ResearchJobRepository } from '../../domain/research/ResearchJobRepository.js';
 import type { CompanyResearchRepository } from '../../domain/research/CompanyResearchRepository.js';
 import type { CompanyMilestonesRepository } from '../../domain/milestone/CompanyMilestonesRepository.js';
+import type { EmployeeRepository } from '../../domain/employee/EmployeeRepository.js';
 import { InMemoryBuildingRepository } from '../../infrastructure/persistence/InMemoryBuildingRepository.js';
 import { InMemoryBuildingStorageRepository } from '../../infrastructure/persistence/InMemoryBuildingStorageRepository.js';
 import { InMemoryTransportOrderRepository } from '../../infrastructure/persistence/InMemoryTransportOrderRepository.js';
@@ -32,12 +33,14 @@ import { InMemoryFinanceRepository } from '../../infrastructure/persistence/InMe
 import { InMemoryMarketRepository } from '../../infrastructure/persistence/InMemoryMarketRepository.js';
 import { InMemoryProductionJobRepository } from '../../infrastructure/persistence/InMemoryProductionJobRepository.js';
 import { InMemoryResearchJobRepository } from '../../infrastructure/persistence/InMemoryResearchJobRepository.js';
+import { InMemoryEmployeeRepository } from '../../infrastructure/persistence/InMemoryEmployeeRepository.js';
 import { MarketPriceSeeder } from '../services/MarketPriceSeeder.js';
 import { MarketTradeService } from '../services/MarketTradeService.js';
 import { ProductionInventoryService } from '../services/ProductionInventoryService.js';
 import { ResearchCompletionService } from '../services/ResearchCompletionService.js';
 import { MilestoneEvaluationService } from '../services/MilestoneEvaluationService.js';
 import { EnergyBalanceService } from '../services/EnergyBalanceService.js';
+import { EmployeeAllocationService } from '../services/EmployeeAllocationService.js';
 import { TransportLogisticsService } from '../services/TransportLogisticsService.js';
 import { TickHistoryService } from '../services/TickHistoryService.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
@@ -63,6 +66,7 @@ export type BootstrapOptions = {
   readonly researchJobRepository?: ResearchJobRepository;
   readonly companyResearchRepository?: CompanyResearchRepository;
   readonly companyMilestonesRepository?: CompanyMilestonesRepository;
+  readonly employeeRepository?: EmployeeRepository;
 };
 
 /**
@@ -96,6 +100,7 @@ export async function bootstrapApplication(
     options.companyResearchRepository ?? new InMemoryCompanyResearchRepository();
   const companyMilestonesRepository =
     options.companyMilestonesRepository ?? new InMemoryCompanyMilestonesRepository();
+  const employeeRepository = options.employeeRepository ?? new InMemoryEmployeeRepository();
   const clock = new ManualClock(0);
   const eventBus = new InMemoryEventBus();
 
@@ -128,6 +133,11 @@ export async function bootstrapApplication(
   const energyBalanceService = new EnergyBalanceService({
     buildingRepository,
     productionJobRepository,
+    gameContent: contentResult.value,
+  });
+
+  const employeeAllocationService = new EmployeeAllocationService({
+    employeeRepository,
     gameContent: contentResult.value,
   });
 
@@ -166,6 +176,7 @@ export async function bootstrapApplication(
       researchJobRepository,
       financeRepository,
       marketRepository,
+      employeeRepository,
       enqueueEvents,
       onProductionJobCompleted: (job) => {
         productionInventoryService.completeJob(job);
@@ -174,6 +185,7 @@ export async function bootstrapApplication(
         researchCompletionService.completeJob(job);
       },
       energyBalanceService,
+      employeeAllocationService,
       onBuildingActivated: (building) => {
         transportLogisticsService.ensureStorageForBuilding(building);
       },
@@ -226,6 +238,7 @@ export async function bootstrapApplication(
     researchJobRepository,
     companyResearchRepository,
     companyMilestonesRepository,
+    employeeRepository,
     productionInventoryService,
     marketTradeService,
     energyBalanceService,

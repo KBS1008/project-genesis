@@ -14,6 +14,8 @@ import type { ResearchJobRepository } from '../../domain/research/ResearchJobRep
 import type { ProductionJobCompletedHandler } from './production/ProductionJobCompletedHandler.js';
 import type { ResearchJobCompletedHandler } from './research/ResearchJobCompletedHandler.js';
 import type { EnergyBalancePort } from '../../domain/energy/EnergyBalancePort.js';
+import type { EmployeeAllocationPort } from '../../domain/employee/EmployeeAllocationPort.js';
+import type { EmployeeRepository } from '../../domain/employee/EmployeeRepository.js';
 import type { TransportLogisticsPort } from '../../domain/transport/TransportLogisticsPort.js';
 import type { TransportOrderRepository } from '../../domain/transport/TransportOrderRepository.js';
 import type { Building } from '../../domain/building/Building.js';
@@ -28,9 +30,11 @@ export type SimulationSystemDependencies = {
   readonly researchJobRepository: ResearchJobRepository;
   readonly financeRepository: FinanceRepository;
   readonly marketRepository: MarketRepository;
+  readonly employeeRepository: EmployeeRepository;
   readonly enqueueEvents: (events: readonly DomainEvent[]) => void;
   readonly onProductionJobCompleted?: ProductionJobCompletedHandler;
   readonly onResearchJobCompleted?: ResearchJobCompletedHandler;
   readonly energyBalanceService?: EnergyBalancePort;
+  readonly employeeAllocationService?: EmployeeAllocationPort;
   readonly onBuildingActivated?: (building: Building) => void;
 };

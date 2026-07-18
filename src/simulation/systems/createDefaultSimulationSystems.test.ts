@@ -4,6 +4,7 @@ import { InMemoryBuildingRepository } from '../../infrastructure/persistence/InM
 import { InMemoryCompanyRepository } from '../../infrastructure/persistence/InMemoryCompanyRepository.js';
 import { InMemoryFinanceRepository } from '../../infrastructure/persistence/InMemoryFinanceRepository.js';
 import { InMemoryMarketRepository } from '../../infrastructure/persistence/InMemoryMarketRepository.js';
+import { InMemoryEmployeeRepository } from '../../infrastructure/persistence/InMemoryEmployeeRepository.js';
 import { InMemoryProductionJobRepository } from '../../infrastructure/persistence/InMemoryProductionJobRepository.js';
 import { InMemoryResearchJobRepository } from '../../infrastructure/persistence/InMemoryResearchJobRepository.js';
 import { InMemoryTransportOrderRepository } from '../../infrastructure/persistence/InMemoryTransportOrderRepository.js';
@@ -46,6 +47,7 @@ function createDependencies() {
     researchJobRepository: new InMemoryResearchJobRepository(),
     financeRepository: new InMemoryFinanceRepository(),
     marketRepository: new InMemoryMarketRepository(),
+    employeeRepository: new InMemoryEmployeeRepository(),
     enqueueEvents: () => undefined,
   };
 }

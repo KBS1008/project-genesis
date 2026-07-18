@@ -47,6 +47,9 @@ export function createDefaultSimulationSystems(
       ...(dependencies.energyBalanceService !== undefined
         ? { energyBalanceService: dependencies.energyBalanceService }
         : {}),
+      ...(dependencies.employeeAllocationService !== undefined
+        ? { employeeAllocationService: dependencies.employeeAllocationService }
+        : {}),
     }),
     new ResearchSimulationSystem({
       researchJobRepository: dependencies.researchJobRepository,
@@ -56,6 +59,10 @@ export function createDefaultSimulationSystems(
         : {}),
     }),
     new MarketSimulationSystem(dependencies.marketRepository),
-    new FinanceSimulationSystem(dependencies.financeRepository),
+    new FinanceSimulationSystem({
+      financeRepository: dependencies.financeRepository,
+      employeeRepository: dependencies.employeeRepository,
+      enqueueEvents: dependencies.enqueueEvents,
+    }),
   ]);
 }

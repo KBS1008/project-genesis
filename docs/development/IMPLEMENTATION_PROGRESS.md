@@ -34,7 +34,7 @@ Update this document whenever a meaningful implementation milestone is completed
 | Energy system | Partial (balance service, production gating, baseline grid) |
 | Transport / logistics | Partial (warehouse storage, transport orders, dashboard KPIs) |
 
-**Tests:** 341 (run `pnpm test` for current count)
+**Tests:** 365 (run `pnpm test` for current count)
 
 ---
 
@@ -252,6 +252,15 @@ Business aggregates and domain events.
 
 Persistence contracts for aggregate roots. Implementations belong in Infrastructure.
 
+### Domain services and ports
+
+| Item | Path |
+|---|---|
+| `EmployeeAllocationCalculator` | `employee/EmployeeAllocationCalculator.ts` |
+| `EmployeeAllocationPort` | `employee/EmployeeAllocationPort.ts` |
+| `EmployeePayrollConstants` | `employee/EmployeePayrollConstants.ts` |
+| `EnergyBalancePort` | `energy/EnergyBalancePort.ts` |
+
 ### Specifications and policies
 
 | Item | Path |
@@ -262,6 +271,8 @@ Persistence contracts for aggregate roots. Implementations belong in Infrastruct
 | `RequiredResearchSpecification` | `specifications/research/RequiredResearchSpecification.ts` |
 | `RequiredMilestonesSpecification` | `specifications/research/RequiredMilestonesSpecification.ts` |
 | `BuildingPrerequisitesSpecification` | `specifications/building/BuildingPrerequisitesSpecification.ts` |
+| `EmployeePrerequisitesSpecification` | `specifications/employee/EmployeePrerequisitesSpecification.ts` |
+| `RequiredBuildingTypesSpecification` | `specifications/employee/RequiredBuildingTypesSpecification.ts` |
 | `ResourceListedOnMarketSpecification` | `specifications/market/ResourceListedOnMarketSpecification.ts` |
 | `Policy<TContext, TDecision>` | `policies/Policy.ts` |
 | `ConstructionCostPolicy` | `policies/building/ConstructionCostPolicy.ts` |
@@ -275,6 +286,7 @@ Persistence contracts for aggregate roots. Implementations belong in Infrastruct
 - Application layer passes content-derived context; domain does not import `src/content/`.
 - `StartProductionUseCase` uses `BuildingSupportsRecipeSpecification` and `RequiredResearchSpecification`.
 - `PlaceBuildingUseCase` uses `BuildingPrerequisitesSpecification` and debits `constructionCost` via `ConstructionCostPolicy`.
+- `HireEmployeeUseCase` uses `EmployeePrerequisitesSpecification` and debits `cost` as `RECRUITMENT_COST`.
 - `MarketTradeService` uses `ResourceListedOnMarketSpecification` and `InstantTradePricingPolicy`.
 
 **References:** `src/domain/readme.md`
@@ -501,21 +513,22 @@ Deterministic simulation engine (first increment).
 |---|---|
 | `CompanySimulationSystem` | `systems/company/CompanySimulationSystem.ts` |
 | `BuildingSimulationSystem` | `systems/building/BuildingSimulationSystem.ts` |
+| `TransportSimulationSystem` | `systems/transport/TransportSimulationSystem.ts` |
 | `ProductionSimulationSystem` | `systems/production/ProductionSimulationSystem.ts` |
 | `ResearchSimulationSystem` | `systems/research/ResearchSimulationSystem.ts` |
 | `MarketSimulationSystem` | `systems/market/MarketSimulationSystem.ts` |
 | `FinanceSimulationSystem` | `systems/finance/FinanceSimulationSystem.ts` |
 | Factory | `systems/createDefaultSimulationSystems.ts` |
 
-Default order: Company → Building → Production → Research → Market → Finance
+Default order: Company → Building → Transport → Production → Research → Market → Finance
 
 Building system advances {@link Building} construction progress each tick for aggregates in `UNDER_CONSTRUCTION` status.
 
-Production system advances running {@link ProductionJob} aggregates each tick and invokes an optional completion callback for inventory delivery.
+Production system advances running {@link ProductionJob} aggregates each tick, gates on energy and worker efficiency (`recipe.workers` vs assigned employees), and invokes an optional completion callback for inventory delivery.
 
 Research system advances running {@link ResearchJob} aggregates each tick and invokes an optional completion callback for technology unlock.
 
-Finance system visits all persisted finance accounts each tick (recurring costs deferred).
+Finance system debits combined employee salaries every `PAYROLL_INTERVAL_TICKS` ticks as `SALARY` transactions.
 
 Market system visits the global market each tick (dynamic pricing deferred).
 
@@ -547,10 +560,15 @@ Coordinates use cases between domain, infrastructure and simulation.
 | `CompleteTechnologyUseCase` | `use-cases/CompleteTechnologyUseCase.ts` |
 | `StartResearchCommand` | `commands/StartResearchCommand.ts` |
 | `StartResearchUseCase` | `use-cases/StartResearchUseCase.ts` |
+| `HireEmployeeCommand` | `commands/HireEmployeeCommand.ts` |
+| `AssignEmployeeCommand` | `commands/AssignEmployeeCommand.ts` |
+| `HireEmployeeUseCase` | `use-cases/HireEmployeeUseCase.ts` |
+| `AssignEmployeeUseCase` | `use-cases/AssignEmployeeUseCase.ts` |
 | `ResearchCompletionService` | `services/ResearchCompletionService.ts` |
 | `MilestoneEvaluationService` | `services/MilestoneEvaluationService.ts` |
 | `EnergyBalanceService` | `services/EnergyBalanceService.ts` |
 | `TransportLogisticsService` | `services/TransportLogisticsService.ts` |
+| `EmployeeAllocationService` | `services/EmployeeAllocationService.ts` |
 | `TickHistoryService` | `services/TickHistoryService.ts` |
 | `ListFinanceTransactionsQueryHandler` | `queries/ListFinanceTransactionsQueryHandler.ts` |
 | `GameSession` | `facade/GameSession.ts` |
@@ -583,6 +601,9 @@ Coordinates use cases between domain, infrastructure and simulation.
 - `LoadGameUseCase` reads a snapshot file and `restoreApplicationFromSnapshot` hydrates fresh in-memory repositories, clock, simulation engine state and tick chart history.
 - `CompleteTechnologyUseCase` marks technologies as completed (internal completion path after research jobs finish).
 - `StartResearchUseCase` debits `researchCost`, enforces research and milestone prerequisites and starts timed research jobs.
+- `HireEmployeeUseCase` debits one-time recruitment `cost` as `RECRUITMENT_COST`, enforces employee type prerequisites and persists hired employees.
+- `AssignEmployeeUseCase` assigns employees to `ACTIVE` buildings owned by the same company.
+- `GameSession.hireEmployee()` / `assignEmployee()` expose employee workflows with generated employee ids.
 - `ResearchCompletionService` unlocks technologies when research jobs complete via simulation ticks.
 - `MilestoneEvaluationService` completes milestones from domain events: first sale → `first_profit`, cumulative sale revenue → `profit_100`, finished production jobs → `first_production`.
 - `GameSession` exposes browser-facing dashboard, tick history, save/load and simulation actions; records per-tick KPI snapshots after each simulation tick.
@@ -762,6 +783,10 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 | Simulation / Engine | `SimulationEngine.test.ts` | Tick, determinism, pause |
 | Simulation / EventQueue | `EventQueue.test.ts` | Enqueue, drain, peek |
 | Simulation / Systems | `createDefaultSimulationSystems.test.ts` | Default pipeline order |
+| Simulation / Finance | `FinanceSimulationSystem.test.ts` | Payroll debits on interval ticks |
+| Simulation / Production | `ProductionSimulationSystem.test.ts` | Worker shortage and full staffing |
+| Application / EmployeeAllocation | `EmployeeAllocationService.test.ts` | Assigned count and recipe efficiency |
+| Domain / EmployeeAllocation | `EmployeeAllocationCalculator.test.ts` | Efficiency scaling and cap |
 | Infrastructure / Company repo | `InMemoryCompanyRepository.test.ts` | Save, find, ordering |
 | Infrastructure / Building repo | `InMemoryBuildingRepository.test.ts` | Save, find by company, under construction |
 | Application / GameSession | `GameSession.test.ts` | Dashboard facade, market buy, batch ticks, save/load |
@@ -770,6 +795,8 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 | Application / Bootstrap | `bootstrapApplication.test.ts` | Content load, wiring |
 | Application / CreateCompany | `CreateCompanyUseCase.test.ts` | Create, events, duplicates |
 | Application / PlaceBuilding | `PlaceBuildingUseCase.test.ts` | Place, construction time, cost debit, events, validation |
+| Application / HireEmployee | `HireEmployeeUseCase.test.ts` | Hire, recruitment debit, prerequisites, events |
+| Application / AssignEmployee | `AssignEmployeeUseCase.test.ts` | Assign, active building, duplicate assignment |
 | Application / StartProduction | `StartProductionUseCase.test.ts` | Active-building guard, milestone gate, input reservation, tick completion, inventory transfer |
 | Application / ProductionInventory | `ProductionInventoryService.test.ts` | Reserve, release, complete job inventory |
 | Application / GetCompany | `GetCompanyQueryHandler.test.ts` | Company read model, not found |
@@ -806,6 +833,8 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Recently Completed (2026-07)
 
+- Employee simulation layer (payroll debits, worker efficiency, `recipe.workers` enforcement)
+- Employee application layer (`HireEmployeeUseCase`, `AssignEmployeeUseCase`, GameSession wiring)
 - Employee domain layer (`Employee` aggregate, events, repository, in-memory persistence)
 - Employee content layer (5 YAML types, loader, validator, registry, validateGameContent integration)
 - Core gameplay start via `StartNewGameUseCase` (100k capital, 4 starter buildings, wood/stone/iron)

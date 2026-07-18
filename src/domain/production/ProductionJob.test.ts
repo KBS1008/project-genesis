@@ -130,4 +130,63 @@ describe('ProductionJob', () => {
     expect(events).toHaveLength(1);
     expect((events[0] as ProductionCompleted).jobId).toBe('job_001');
   });
+
+  it('scales progress by worker efficiency', () => {
+    const clock = new ManualClock(100);
+    const jobResult = ProductionJob.create({
+      id: requireProductionJobId('job_001'),
+      buildingId: requireBuildingId('building_001'),
+      companyId: requireCompanyId('company_001'),
+      recipeId: requireRecipeId('recipe_planks'),
+      duration: 10,
+      clock,
+    });
+
+    expect(jobResult.ok).toBe(true);
+
+    if (!jobResult.ok) {
+      return;
+    }
+
+    jobResult.value.start(clock);
+    clock.advance(5);
+
+    const tickResult = jobResult.value.tick(clock, { workerEfficiency: 0.5 });
+
+    expect(tickResult.ok).toBe(true);
+
+    if (tickResult.ok) {
+      expect(tickResult.value.status).toBe('running');
+      expect(tickResult.value.progress).toBe(25);
+    }
+  });
+
+  it('does not advance progress when worker efficiency is zero', () => {
+    const clock = new ManualClock(100);
+    const jobResult = ProductionJob.create({
+      id: requireProductionJobId('job_001'),
+      buildingId: requireBuildingId('building_001'),
+      companyId: requireCompanyId('company_001'),
+      recipeId: requireRecipeId('recipe_planks'),
+      duration: 10,
+      clock,
+    });
+
+    expect(jobResult.ok).toBe(true);
+
+    if (!jobResult.ok) {
+      return;
+    }
+
+    jobResult.value.start(clock);
+    clock.advance(10);
+
+    const tickResult = jobResult.value.tick(clock, { workerEfficiency: 0 });
+
+    expect(tickResult.ok).toBe(true);
+
+    if (tickResult.ok) {
+      expect(tickResult.value.progress).toBe(0);
+    }
+  });
 });

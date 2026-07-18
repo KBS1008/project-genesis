@@ -19,6 +19,7 @@ import { InMemoryCompanyMilestonesRepository } from '../../infrastructure/persis
 import { InMemoryFinanceRepository } from '../../infrastructure/persistence/InMemoryFinanceRepository.js';
 import { InMemoryInventoryRepository } from '../../infrastructure/persistence/InMemoryInventoryRepository.js';
 import { InMemoryMarketRepository } from '../../infrastructure/persistence/InMemoryMarketRepository.js';
+import { InMemoryEmployeeRepository } from '../../infrastructure/persistence/InMemoryEmployeeRepository.js';
 import { InMemoryProductionJobRepository } from '../../infrastructure/persistence/InMemoryProductionJobRepository.js';
 import { InMemoryResearchJobRepository } from '../../infrastructure/persistence/InMemoryResearchJobRepository.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
@@ -69,6 +70,7 @@ async function createContext(clock = new ManualClock(100)) {
   const productionJobRepository = new InMemoryProductionJobRepository();
   const researchJobRepository = new InMemoryResearchJobRepository();
   const marketRepository = new InMemoryMarketRepository();
+  const employeeRepository = new InMemoryEmployeeRepository();
 
   let simulationEngine: SimulationEngine;
   const enqueueEvents = (events: readonly DomainEvent[]): void => {
@@ -104,6 +106,7 @@ async function createContext(clock = new ManualClock(100)) {
       researchJobRepository,
       financeRepository,
       marketRepository,
+      employeeRepository,
       enqueueEvents,
     }),
   });
