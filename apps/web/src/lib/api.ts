@@ -150,6 +150,8 @@ export type DashboardKpiReadModel = {
   readonly corporateTaxRate: number;
   readonly taxIntervalTicks: number;
   readonly priceIndex: number;
+  readonly pendingTaxAmount: number;
+  readonly taxPaymentBlocked: boolean;
   readonly activeContractCount: number;
 };
 
@@ -190,6 +192,8 @@ export type EconomyReadModel = {
   readonly corporateTaxRate: number;
   readonly taxIntervalTicks: number;
   readonly priceIndex: number;
+  readonly pendingTaxAmount: number;
+  readonly taxPaymentBlocked: boolean;
   readonly activeContractCount: number;
   readonly contracts: readonly SupplyContractReadModel[];
 };

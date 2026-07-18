@@ -215,7 +215,7 @@ function KpiStrip({
           <span className="kpi-trend">{trendLabel('stable', 'Neutral bei 1,00')}</span>
         </div>
       </article>
-      <article className="kpi-card">
+      <article className={`kpi-card${kpis.taxPaymentBlocked ? ' kpi-warning' : ''}`}>
         <span className="kpi-icon" aria-hidden="true">
           <DashboardIcon name="cash" className="dashboard-icon" />
         </span>
@@ -223,7 +223,9 @@ function KpiStrip({
           <span className="kpi-label">Steuer / Verträge</span>
           <strong className="kpi-value">{(kpis.corporateTaxRate * 100).toFixed(0)} %</strong>
           <span className="kpi-trend">
-            {kpis.activeContractCount} aktiv · alle {kpis.taxIntervalTicks} Ticks
+            {kpis.taxPaymentBlocked
+              ? trendLabel('down', `${kpis.pendingTaxAmount.toLocaleString('de-DE')} GC offen · Kasse zu niedrig`)
+              : `${kpis.activeContractCount} aktiv · alle ${kpis.taxIntervalTicks} Ticks`}
           </span>
         </div>
       </article>
@@ -1116,15 +1118,23 @@ export function DashboardShell() {
                     </div>
                   </section>
 
-                  <section className="card">
+                  <section className={`card${dashboard?.economy?.taxPaymentBlocked ? ' card-warning' : ''}`}>
                     <div className="section-header">
                       <h2>Wirtschaft</h2>
                       <p>
                         Unternehmenssteuer {(dashboard?.economy?.corporateTaxRate ?? 0.05) * 100} % alle{' '}
                         {dashboard?.economy?.taxIntervalTicks ?? 30} Ticks · Preisindex{' '}
-                        {(dashboard?.economy?.priceIndex ?? 1).toFixed(2)} (neutral 1,00)
+                        {(dashboard?.economy?.priceIndex ?? 1).toFixed(2)} (neutral 1,00). Lieferverträge
+                        entnehmen Ressourcen nur aus dem Standort-Inventar, nicht aus Lagerhaus-Beständen.
                       </p>
                     </div>
+                    {dashboard?.economy?.taxPaymentBlocked ? (
+                      <p className="empty-state kv-value-warning" role="status">
+                        <strong>Steuer offen:</strong>{' '}
+                        {dashboard.economy.pendingTaxAmount.toLocaleString('de-DE')} GC fällig, aber die Kasse
+                        reicht nicht — die Abbuchung wird übersprungen, bis genug Cash vorhanden ist.
+                      </p>
+                    ) : null}
                     <div className="table-wrap">
                       {!dashboard?.company || (dashboard.economy?.contracts.length ?? 0) === 0 ? (
                         <p className="empty-state">

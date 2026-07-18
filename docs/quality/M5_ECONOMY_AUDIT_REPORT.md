@@ -3,7 +3,7 @@
 **Audit ID:** AUD-003 (M5 scope)  
 **Project:** Project Genesis  
 **Date:** 2026-07-18  
-**Commit:** `d1a9987`  
+**Commit:** `49110dd` (Follow-ups; Audit-Basis `d1a9987`)  
 **Scope:** M5 Economy (M5-1 … M5-4) — dynamic prices, dashboard, fees, taxes, contracts, inflation  
 **Auditor:** Cursor (repo-backed review per `docs/project-management/AUDIT_PROCESS.md`)
 
@@ -19,12 +19,13 @@ M5 ist **code-seitig abgeschlossen** und für den Übergang zu M6 **freigegeben*
 | Exit: dynamische Preise | ✅ Erfüllt |
 | Exit: Determinismus | ✅ Erfüllt |
 | Exit: stabile Wirtschaft | 🟡 Teilweise (Single-Company-Prototyp, keine Insolvenz-/Multiplayer-Simulation) |
-| Tests / Typecheck | ✅ 396 / grün |
+| Tests / Typecheck | ✅ 400 / grün |
 | Dokumentation | ✅ Reports + IMPLEMENTATION_PROGRESS aktualisiert |
+| Audit-Follow-ups (F-01, F-04, F-07) | ✅ Abgeschlossen (2026-07-18) |
 
-**Gesamtbewertung M5:** **8.5 / 10** — solide Milestone-Umsetzung mit wenigen nachverfolgbaren Lücken.
+**Gesamtbewertung M5:** **8.5 / 10** — solide Milestone-Umsetzung; Audit-Follow-ups erledigt.
 
-**Empfehlung:** Mit **M6 Logistics** starten; offene M5-Follow-ups parallel als kleine Tasks abarbeiten.
+**Empfehlung:** Mit **M6 Logistics** starten; verbleibende Low-Priority-Punkte (F-02, F-03 Dashboard-Hinweis, F-05 Lagerhaus) nicht blockierend.
 
 ---
 
@@ -83,18 +84,18 @@ M5 ist **code-seitig abgeschlossen** und für den Übergang zu M6 **freigegeben*
 
 | ID | Finding | Empfehlung | Target |
 |---|---|---|---|
-| F-01 | Kein dedizierter Savegame-Test für `supplyContracts[]` + `lastTaxCollectedAt` Round-Trip | Serializer-Test mit StartNewGame + 20 Ticks + Reload | M6 oder Tech-Debt |
+| F-01 | ~~Kein dedizierter Savegame-Test~~ | ✅ `GameStateSerializer.test.ts` — StartNewGame + 30 Ticks, Vertrag + `lastTaxCollectedAt` | — |
 | F-02 | Nur ein Vertragstyp (`NPC_PURCHASE` Starter-Holz) | Für M6+ Vertragscatalog / Spieler-Verträge planen | M7+ |
-| F-03 | Steuer wird bei fehlendem Cash übersprungen, Periode bleibt offen | Dashboard-Hinweis oder Tutorial-Step | UX Polish |
+| F-03 | ~~Steuer bei fehlendem Cash übersprungen ohne UI-Hinweis~~ | ✅ Dashboard-Warnung + KPI-Hinweis (M5.1) | — |
 
 ## 🟢 Low
 
 | ID | Finding | Empfehlung |
 |---|---|---|
-| F-04 | `priceIndex` in Tick-Historie, aber kein eigenes Chart | Optional: Liniendiagramm „Preisindex“ |
-| F-05 | Vertrag zieht nur **Standort-Inventar** ab, nicht Lagerhaus | In Wirtschaft-Sektion erklären oder später erweitern |
+| F-04 | ~~Kein Preisindex-Chart~~ | ✅ `PriceIndexHistoryChart.tsx` im Dashboard | — |
+| F-05 | ~~Vertrag nur Standort-Inventar und nicht dokumentiert~~ | ✅ In Wirtschaft-Sektion erklärt (M5.1); Lagerhaus-Anbindung später M6 | M6 |
 | F-06 | Start-Holz 40 statt 20 (Balance-Fix für Vertrag + Produktion) | ✅ In Tutorial + `CORE_GAMEPLAY_START_REPORT.md` dokumentiert |
-| F-07 | `docs/schemas/Resource.schema.md`, `Vehicle.schema.md` noch untracked | Vor M6 committen |
+| F-07 | ~~Schema-Docs untracked~~ | ✅ `docs/schemas/Resource.schema.md`, `Vehicle.schema.md` committed | — |
 
 ---
 
@@ -116,6 +117,8 @@ M5 ist **code-seitig abgeschlossen** und für den Übergang zu M6 **freigegeben*
 | 🟡 | Schema-Docs committen | ✅ Completed (2026-07-18) |
 | 🟡 | Tutorial: Vertrag/Steuer kurz erklären | ✅ Completed (2026-07-18) |
 | 🟢 | Preisindex-Chart (optional) | ✅ Completed (2026-07-18) |
+| 🟢 | M5.1: Steuer-Hinweis bei Skip (F-03) | ✅ Completed (2026-07-18) |
+| 🟢 | M5.1: Vertrag Standort-Inventar erklären (F-05) | ✅ Completed (2026-07-18) |
 
 ---
 

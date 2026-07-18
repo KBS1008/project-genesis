@@ -98,6 +98,8 @@ export type DashboardKpiReadModel = {
   readonly corporateTaxRate: number;
   readonly taxIntervalTicks: number;
   readonly priceIndex: number;
+  readonly pendingTaxAmount: number;
+  readonly taxPaymentBlocked: boolean;
   readonly activeContractCount: number;
 };
 /** Energy balance summary for the dashboard. */

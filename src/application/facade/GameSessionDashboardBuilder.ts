@@ -10,6 +10,7 @@ import { BuildingStatus } from '../../domain/building/BuildingStatus.js';
 import { createCompanyId } from '../../domain/company/Company.js';
 import { MarketFeePolicy } from '../../domain/policies/market/MarketFeePolicy.js';
 import { CORPORATE_TAX_RATE, TAX_INTERVAL_TICKS } from '../../domain/finance/TaxConstants.js';
+import { TaxCalculator } from '../../domain/finance/TaxCalculator.js';
 import { InflationCalculator } from '../../domain/market/InflationCalculator.js';
 import { GLOBAL_MARKET_ID } from '../../domain/market/MarketConstants.js';
 import { createMarketId } from '../../domain/market/Market.js';
@@ -257,11 +258,26 @@ export class GameSessionDashboardBuilder {
           }),
         ),
     );
+    const finance = this.#context.financeRepository.findByCompanyId(companyIdResult.value);
+    const taxAssessment =
+      finance === undefined
+        ? Object.freeze({
+            pendingTaxAmount: 0,
+            taxPaymentBlocked: false,
+          })
+        : TaxCalculator.assessPendingTaxCollection({
+            transactions: finance.getTransactions(),
+            lastTaxCollectedAt: finance.getLastTaxCollectedAt(),
+            availableCash: finance.getAvailableCash(),
+            currentSimulationTime: this.#context.clock.now(),
+          });
 
     return Object.freeze({
       corporateTaxRate: CORPORATE_TAX_RATE,
       taxIntervalTicks: TAX_INTERVAL_TICKS,
       priceIndex,
+      pendingTaxAmount: taxAssessment.pendingTaxAmount,
+      taxPaymentBlocked: taxAssessment.taxPaymentBlocked,
       activeContractCount: contracts.filter((contract) => contract.active).length,
       contracts,
     });
@@ -297,6 +313,8 @@ export class GameSessionDashboardBuilder {
       corporateTaxRate: input.economy?.corporateTaxRate ?? CORPORATE_TAX_RATE,
       taxIntervalTicks: input.economy?.taxIntervalTicks ?? TAX_INTERVAL_TICKS,
       priceIndex: input.economy?.priceIndex ?? 1,
+      pendingTaxAmount: input.economy?.pendingTaxAmount ?? 0,
+      taxPaymentBlocked: input.economy?.taxPaymentBlocked ?? false,
       activeContractCount: input.economy?.activeContractCount ?? 0,
     });
   }

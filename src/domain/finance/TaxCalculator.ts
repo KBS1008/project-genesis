@@ -7,7 +7,14 @@
 import type { FinanceTransaction } from './FinanceTransaction.js';
 import { FinanceTransactionDirection } from './FinanceTransactionDirection.js';
 import { FinanceTransactionType } from './FinanceTransactionType.js';
-import { CORPORATE_TAX_RATE } from './TaxConstants.js';
+import { CORPORATE_TAX_RATE, TAX_INTERVAL_TICKS } from './TaxConstants.js';
+
+/** Pending corporate tax assessment for dashboard and finance UX. */
+export type PendingTaxAssessment = {
+  readonly pendingTaxableProfit: number;
+  readonly pendingTaxAmount: number;
+  readonly taxPaymentBlocked: boolean;
+};
 
 const REVENUE_TYPES = new Set<FinanceTransactionType>([
   FinanceTransactionType.SALE,
@@ -74,5 +81,42 @@ export class TaxCalculator {
     }
 
     return Math.round(taxableProfit * CORPORATE_TAX_RATE);
+  }
+
+  /**
+   * Derives whether an overdue tax assessment could not be debited due to low cash.
+   *
+   * Mirrors {@link FinanceSimulationSystem} behaviour: when a tax interval elapses but
+   * `debit` fails, the assessment period stays open until cash is sufficient.
+   */
+  static assessPendingTaxCollection(params: {
+    readonly transactions: readonly FinanceTransaction[];
+    readonly lastTaxCollectedAt: number;
+    readonly availableCash: number;
+    readonly currentSimulationTime: number;
+    readonly taxIntervalTicks?: number;
+    readonly tickDuration?: number;
+  }): PendingTaxAssessment {
+    const taxIntervalTicks = params.taxIntervalTicks ?? TAX_INTERVAL_TICKS;
+    const tickDuration = params.tickDuration ?? 1;
+    const pendingTaxableProfit = TaxCalculator.computeTaxableProfit(
+      params.transactions,
+      params.lastTaxCollectedAt,
+    );
+    const pendingTaxAmount = TaxCalculator.computeTaxAmount(pendingTaxableProfit);
+    const ticksSinceLastClose = Math.floor(
+      (params.currentSimulationTime - params.lastTaxCollectedAt) / tickDuration,
+    );
+    const isCollectionOverdue = ticksSinceLastClose >= taxIntervalTicks;
+    const taxPaymentBlocked =
+      isCollectionOverdue &&
+      pendingTaxAmount > 0 &&
+      params.availableCash < pendingTaxAmount;
+
+    return Object.freeze({
+      pendingTaxableProfit,
+      pendingTaxAmount,
+      taxPaymentBlocked,
+    });
   }
 }
