@@ -21,8 +21,8 @@ export type NewGameStarterBuilding = {
   readonly y: number;
 };
 
-/** Wood granted at game start — enough for early sawmill production. */
-export const NEW_GAME_STARTER_WOOD = 20;
+/** Wood granted at game start — enough for early sawmill production and NPC contracts. */
+export const NEW_GAME_STARTER_WOOD = 40;
 
 /** Stone granted at game start — enough for early infrastructure. */
 export const NEW_GAME_STARTER_STONE = 15;

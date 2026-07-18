@@ -7,6 +7,8 @@
 import type { DomainEvent } from '../../../common/events/DomainEvent.js';
 import type { EmployeeRepository } from '../../../domain/employee/EmployeeRepository.js';
 import { PAYROLL_INTERVAL_TICKS } from '../../../domain/employee/EmployeePayrollConstants.js';
+import { TaxCalculator } from '../../../domain/finance/TaxCalculator.js';
+import { TAX_INTERVAL_TICKS } from '../../../domain/finance/TaxConstants.js';
 import { FinanceTransactionType } from '../../../domain/finance/FinanceTransactionType.js';
 import type { FinanceRepository } from '../../../domain/finance/FinanceRepository.js';
 import type { SimulationSystem } from '../../engine/SimulationSystem.js';
@@ -38,10 +40,16 @@ export class FinanceSimulationSystem implements SimulationSystem {
   }
 
   execute(context: TickContext): void {
-    if (context.tickNumber % PAYROLL_INTERVAL_TICKS !== 0) {
-      return;
+    if (context.tickNumber % PAYROLL_INTERVAL_TICKS === 0) {
+      this.#collectPayroll(context);
     }
 
+    if (context.tickNumber % TAX_INTERVAL_TICKS === 0) {
+      this.#collectTaxes(context);
+    }
+  }
+
+  #collectPayroll(context: TickContext): void {
     for (const finance of this.#financeRepository.findAll()) {
       const employees = this.#employeeRepository.findByCompanyId(finance.getCompanyId());
       const payrollAmount = employees.reduce((total, employee) => total + employee.getSalary(), 0);
@@ -60,6 +68,32 @@ export class FinanceSimulationSystem implements SimulationSystem {
         continue;
       }
 
+      this.#financeRepository.save(finance);
+      this.#enqueueEvents(finance.pullDomainEvents());
+    }
+  }
+
+  #collectTaxes(context: TickContext): void {
+    for (const finance of this.#financeRepository.findAll()) {
+      const taxableProfit = TaxCalculator.computeTaxableProfit(
+        finance.getTransactions(),
+        finance.getLastTaxCollectedAt(),
+      );
+      const taxAmount = TaxCalculator.computeTaxAmount(taxableProfit);
+
+      if (taxAmount === 0) {
+        finance.closeTaxPeriod(context.clock);
+        this.#financeRepository.save(finance);
+        continue;
+      }
+
+      const debitResult = finance.debit(taxAmount, FinanceTransactionType.TAX, context.clock);
+
+      if (!debitResult.ok) {
+        continue;
+      }
+
+      finance.closeTaxPeriod(context.clock);
       this.#financeRepository.save(finance);
       this.#enqueueEvents(finance.pullDomainEvents());
     }

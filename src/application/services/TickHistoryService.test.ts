@@ -28,6 +28,7 @@ function snapshot(
     activeTransportCount: transports,
     warehouseTotalUnits: warehouseUnits,
     onSiteTotalUnits: onSiteUnits,
+    priceIndex: 1,
     marketPrices: Object.freeze(
       marketPrices.map((entry) =>
         Object.freeze({

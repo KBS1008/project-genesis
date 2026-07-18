@@ -80,6 +80,7 @@ export type GameSaveFinanceAccountSnapshotV1 = {
   readonly createdAt: number;
   readonly cashBalance: number;
   readonly reservedCash: number;
+  readonly lastTaxCollectedAt?: number;
   readonly transactionSequence: number;
   readonly transactions: readonly GameSaveFinanceTransactionSnapshotV1[];
 };
@@ -181,6 +182,20 @@ export type GameSaveEmployeeSnapshotV1 = {
   readonly assignedBuildingId: string | undefined;
 };
 
+/** Persisted supply contract aggregate state. */
+export type GameSaveSupplyContractSnapshotV1 = {
+  readonly id: string;
+  readonly companyId: string;
+  readonly kind: string;
+  readonly resourceId: string;
+  readonly amount: number;
+  readonly paymentAmount: number;
+  readonly intervalTicks: number;
+  readonly createdAt: number;
+  readonly lastFulfilledTick: number;
+  readonly active: boolean;
+};
+
 /** Persisted dashboard tick metrics for chart history. */
 export type GameSaveTickMetricsSnapshotV1 = {
   readonly tickNumber: number;
@@ -190,6 +205,7 @@ export type GameSaveTickMetricsSnapshotV1 = {
   readonly activeTransportCount: number;
   readonly warehouseTotalUnits?: number;
   readonly onSiteTotalUnits?: number;
+  readonly priceIndex?: number;
   readonly energyGeneration?: number;
   readonly energyConsumption?: number;
   readonly marketPrices?: readonly {
@@ -224,5 +240,6 @@ export type GameSaveSnapshotV1 = {
   readonly buildingStorages: readonly GameSaveBuildingStorageSnapshotV1[];
   readonly transportOrders: readonly GameSaveTransportOrderSnapshotV1[];
   readonly employees: readonly GameSaveEmployeeSnapshotV1[];
+  readonly supplyContracts?: readonly GameSaveSupplyContractSnapshotV1[];
   readonly tickMetricsHistory?: GameSaveTickMetricsHistorySnapshotV1;
 };

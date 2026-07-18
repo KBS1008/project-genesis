@@ -9,6 +9,7 @@
 import type { SimulationSystem } from '../engine/SimulationSystem.js';
 import { BuildingSimulationSystem } from './building/BuildingSimulationSystem.js';
 import { CompanySimulationSystem } from './company/CompanySimulationSystem.js';
+import { ContractSimulationSystem } from './contract/ContractSimulationSystem.js';
 import { FinanceSimulationSystem } from './finance/FinanceSimulationSystem.js';
 import { MarketSimulationSystem } from './market/MarketSimulationSystem.js';
 import { ProductionSimulationSystem } from './production/ProductionSimulationSystem.js';
@@ -19,7 +20,7 @@ import type { SimulationSystemDependencies } from './SimulationSystemDependencie
 /**
  * Creates the default simulation systems in deterministic runtime order.
  *
- * Order: Company → Building → Transport → Production → Research → Market → Finance
+ * Order: Company → Building → Transport → Production → Research → Market → Contract → Finance
  */
 export function createDefaultSimulationSystems(
   dependencies: SimulationSystemDependencies,
@@ -61,6 +62,12 @@ export function createDefaultSimulationSystems(
     new MarketSimulationSystem({
       marketRepository: dependencies.marketRepository,
       inventoryRepository: dependencies.inventoryRepository,
+      enqueueEvents: dependencies.enqueueEvents,
+    }),
+    new ContractSimulationSystem({
+      supplyContractRepository: dependencies.supplyContractRepository,
+      inventoryRepository: dependencies.inventoryRepository,
+      financeRepository: dependencies.financeRepository,
       enqueueEvents: dependencies.enqueueEvents,
     }),
     new FinanceSimulationSystem({

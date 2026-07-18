@@ -6,7 +6,8 @@
 
 import type { DomainEvent } from '../../../common/events/DomainEvent.js';
 import type { InventoryRepository } from '../../../domain/inventory/InventoryRepository.js';
-import { MARKET_BASELINE_DEMAND, MARKET_PRICE_UPDATE_INTERVAL_TICKS } from '../../../domain/market/MarketPriceConstants.js';
+import { MARKET_BASELINE_DEMAND, MARKET_PRICE_ADJUSTMENT_RATE, MARKET_PRICE_UPDATE_INTERVAL_TICKS } from '../../../domain/market/MarketPriceConstants.js';
+import { InflationCalculator } from '../../../domain/market/InflationCalculator.js';
 import { MarketPriceCalculator } from '../../../domain/market/MarketPriceCalculator.js';
 import type { MarketRepository } from '../../../domain/market/MarketRepository.js';
 import type { SimulationSystem } from '../../engine/SimulationSystem.js';
@@ -52,6 +53,9 @@ export class MarketSimulationSystem implements SimulationSystem {
 
     for (const market of this.#marketRepository.findAll()) {
       let changed = false;
+      const priceIndex = InflationCalculator.computePriceIndexFromMarketPrices(market.getPrices());
+      const adjustmentRate =
+        MARKET_PRICE_ADJUSTMENT_RATE * InflationCalculator.computeAdjustmentMultiplier(priceIndex);
 
       for (const priceEntry of market.getPrices()) {
         const resourceId = priceEntry.resourceId.value;
@@ -61,6 +65,7 @@ export class MarketSimulationSystem implements SimulationSystem {
           basePrice: priceEntry.basePrice,
           totalSupply,
           baselineDemand: this.#baselineDemand,
+          adjustmentRate,
         });
 
         if (nextPrice === priceEntry.lastPrice) {

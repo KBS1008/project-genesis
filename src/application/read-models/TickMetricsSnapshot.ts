@@ -24,6 +24,7 @@ export type TickMetricsSnapshot = {
   readonly activeTransportCount: number;
   readonly warehouseTotalUnits: number;
   readonly onSiteTotalUnits: number;
+  readonly priceIndex: number;
   readonly marketPrices: readonly TickMarketPriceSnapshot[];
 };
 

@@ -843,6 +843,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Recently Completed (2026-07)
 
+- M5 economy step 4: taxes, NPC supply contracts, inflation dampening (`TaxCalculator`, `ContractSimulationSystem`, `InflationCalculator`, dashboard economy KPIs)
 - M5 economy step 3: market trade fees (`MarketFeePolicy`, `MARKET_FEE` ledger entries)
 - M5 economy step 2: dashboard supply/demand (extended market read model, charts, market table)
 - M5 economy step 1: dynamic market prices (supply & demand via `MarketPriceCalculator`, simulation tick updates)

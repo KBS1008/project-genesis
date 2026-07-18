@@ -19,6 +19,7 @@ export type MarketPriceAdjustmentInput = {
   readonly basePrice: number;
   readonly totalSupply: number;
   readonly baselineDemand: number;
+  readonly adjustmentRate?: number;
 };
 
 /**
@@ -35,8 +36,8 @@ export class MarketPriceCalculator {
     const effectiveSupply = Math.max(input.totalSupply, MARKET_MIN_SUPPLY_UNITS);
     const pressureIndex = input.baselineDemand / effectiveSupply;
     const targetPrice = input.basePrice * pressureIndex;
-    const adjusted =
-      input.lastPrice + (targetPrice - input.lastPrice) * MARKET_PRICE_ADJUSTMENT_RATE;
+    const adjustmentRate = input.adjustmentRate ?? MARKET_PRICE_ADJUSTMENT_RATE;
+    const adjusted = input.lastPrice + (targetPrice - input.lastPrice) * adjustmentRate;
     const minPrice = input.basePrice * MARKET_MIN_PRICE_RATIO;
     const maxPrice = input.basePrice * MARKET_MAX_PRICE_RATIO;
     const clamped = Math.min(Math.max(adjusted, minPrice), maxPrice);

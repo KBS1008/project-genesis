@@ -9,6 +9,11 @@ import type { ApplicationContext } from '../bootstrap/ApplicationContext.js';
 import { BuildingStatus } from '../../domain/building/BuildingStatus.js';
 import { createCompanyId } from '../../domain/company/Company.js';
 import { MarketFeePolicy } from '../../domain/policies/market/MarketFeePolicy.js';
+import { CORPORATE_TAX_RATE, TAX_INTERVAL_TICKS } from '../../domain/finance/TaxConstants.js';
+import { InflationCalculator } from '../../domain/market/InflationCalculator.js';
+import { GLOBAL_MARKET_ID } from '../../domain/market/MarketConstants.js';
+import { createMarketId } from '../../domain/market/Market.js';
+import type { EconomyReadModel } from '../read-models/EconomyReadModel.js';
 import { EmployeePrerequisitesSpecification } from '../../domain/specifications/employee/EmployeePrerequisitesSpecification.js';
 import { ProductionJobStatus } from '../../domain/production/ProductionJobStatus.js';
 import { ResearchJobStatus } from '../../domain/research/ResearchJobStatus.js';
@@ -217,6 +222,51 @@ export class GameSessionDashboardBuilder {
     });
   }
 
+  /** Builds economy KPIs and active supply contracts for the dashboard. */
+  readEconomy(companyId: string): EconomyReadModel | null {
+    const companyIdResult = createCompanyId(companyId);
+
+    if (!companyIdResult.ok) {
+      return null;
+    }
+
+    const marketIdResult = createMarketId(GLOBAL_MARKET_ID);
+
+    if (!marketIdResult.ok) {
+      return null;
+    }
+
+    const market = this.#context.marketRepository.findById(marketIdResult.value);
+    const priceIndex =
+      market === undefined
+        ? 1
+        : InflationCalculator.computePriceIndexFromMarketPrices(market.getPrices());
+    const contracts = Object.freeze(
+      this.#context.supplyContractRepository
+        .findByCompanyId(companyIdResult.value)
+        .map((contract) =>
+          Object.freeze({
+            id: contract.getId().value,
+            kind: contract.getKind(),
+            resourceId: contract.getResourceId(),
+            amount: contract.getAmount(),
+            paymentAmount: contract.getPaymentAmount(),
+            intervalTicks: contract.getIntervalTicks(),
+            active: contract.isActive(),
+            lastFulfilledTick: contract.getLastFulfilledTick(),
+          }),
+        ),
+    );
+
+    return Object.freeze({
+      corporateTaxRate: CORPORATE_TAX_RATE,
+      taxIntervalTicks: TAX_INTERVAL_TICKS,
+      priceIndex,
+      activeContractCount: contracts.filter((contract) => contract.active).length,
+      contracts,
+    });
+  }
+
   /** Builds compact KPI values for the dashboard header strip. */
   readKpis(input: {
     readonly finance: FinanceReadModel;
@@ -224,6 +274,7 @@ export class GameSessionDashboardBuilder {
     readonly inventory: InventoryReadModel;
     readonly logistics: LogisticsSummaryReadModel;
     readonly employees: readonly EmployeeSessionReadModel[];
+    readonly economy: EconomyReadModel | null;
   }): DashboardKpiReadModel {
     const assignedEmployeeCount = input.employees.filter(
       (employee) => employee.assignedBuildingId !== null,
@@ -243,6 +294,10 @@ export class GameSessionDashboardBuilder {
       employeeCount: input.employees.length,
       assignedEmployeeCount,
       payrollPerInterval,
+      corporateTaxRate: input.economy?.corporateTaxRate ?? CORPORATE_TAX_RATE,
+      taxIntervalTicks: input.economy?.taxIntervalTicks ?? TAX_INTERVAL_TICKS,
+      priceIndex: input.economy?.priceIndex ?? 1,
+      activeContractCount: input.economy?.activeContractCount ?? 0,
     });
   }
 
@@ -255,6 +310,7 @@ export class GameSessionDashboardBuilder {
     readonly logistics: LogisticsSummaryReadModel;
     readonly inventory: InventoryReadModel;
     readonly marketPrices: readonly MarketPriceReadModel[];
+    readonly priceIndex?: number;
   }): TickMetricsSnapshot {
     const onSiteTotalUnits = input.inventory.items.reduce(
       (total, item) => total + item.quantity,
@@ -282,6 +338,7 @@ export class GameSessionDashboardBuilder {
       activeTransportCount: input.logistics.activeTransportCount,
       warehouseTotalUnits: input.logistics.warehouseTotalUnits,
       onSiteTotalUnits,
+      priceIndex: input.priceIndex ?? 1,
       marketPrices,
     });
   }

@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { BuildingStatus } from '../../domain/building/BuildingStatus.js';
 import { createCompanyId } from '../../domain/company/Company.js';
 import { STARTING_MONEY } from '../../domain/finance/FinanceConstants.js';
+import { STARTER_NPC_WOOD_CONTRACT_ID } from '../../domain/contract/SupplyContractConstants.js';
 import { bootstrapApplication } from '../bootstrap/bootstrapApplication.js';
 import { BuildingTypeRegistry } from '../../content/building/BuildingTypeRegistry.js';
 import {
@@ -69,6 +70,13 @@ describe('StartNewGameUseCase', () => {
 
     expect(warehouse).toBeDefined();
     expect(context.buildingStorageRepository.findByBuildingId(warehouse!.getId())).toBeDefined();
+    expect(context.supplyContractRepository.findByCompanyId(companyId.value)).toHaveLength(1);
+    expect(
+      context.supplyContractRepository
+        .findByCompanyId(companyId.value)[0]
+        ?.getId()
+        .value,
+    ).toBe(STARTER_NPC_WOOD_CONTRACT_ID);
     expect(context.simulationEngine.hasPendingEvents()).toBe(false);
   });
 

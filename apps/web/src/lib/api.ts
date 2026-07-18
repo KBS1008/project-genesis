@@ -147,6 +147,10 @@ export type DashboardKpiReadModel = {
   readonly employeeCount: number;
   readonly assignedEmployeeCount: number;
   readonly payrollPerInterval: number;
+  readonly corporateTaxRate: number;
+  readonly taxIntervalTicks: number;
+  readonly priceIndex: number;
+  readonly activeContractCount: number;
 };
 
 export type TickMarketPriceSnapshot = {
@@ -167,7 +171,27 @@ export type TickMetricsSnapshot = {
   readonly activeTransportCount: number;
   readonly warehouseTotalUnits: number;
   readonly onSiteTotalUnits: number;
+  readonly priceIndex: number;
   readonly marketPrices: readonly TickMarketPriceSnapshot[];
+};
+
+export type SupplyContractReadModel = {
+  readonly id: string;
+  readonly kind: string;
+  readonly resourceId: string;
+  readonly amount: number;
+  readonly paymentAmount: number;
+  readonly intervalTicks: number;
+  readonly active: boolean;
+  readonly lastFulfilledTick: number;
+};
+
+export type EconomyReadModel = {
+  readonly corporateTaxRate: number;
+  readonly taxIntervalTicks: number;
+  readonly priceIndex: number;
+  readonly activeContractCount: number;
+  readonly contracts: readonly SupplyContractReadModel[];
 };
 
 export type DashboardTickHistory = {
@@ -292,6 +316,7 @@ export type GameSessionDashboard = {
   readonly energy: EnergyReadModel | null;
   readonly logistics: LogisticsSummaryReadModel | null;
   readonly kpis: DashboardKpiReadModel | null;
+  readonly economy: EconomyReadModel | null;
   readonly hints: GameSessionDashboardHints;
   readonly tutorial: TutorialProgressReadModel | null;
 };

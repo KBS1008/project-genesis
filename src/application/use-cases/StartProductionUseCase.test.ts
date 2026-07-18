@@ -12,6 +12,7 @@ import { InMemoryBuildingRepository } from '../../infrastructure/persistence/InM
 import { InMemoryCompanyRepository } from '../../infrastructure/persistence/InMemoryCompanyRepository.js';
 import { InMemoryFinanceRepository } from '../../infrastructure/persistence/InMemoryFinanceRepository.js';
 import { InMemoryMarketRepository } from '../../infrastructure/persistence/InMemoryMarketRepository.js';
+import { InMemorySupplyContractRepository } from '../../infrastructure/persistence/InMemorySupplyContractRepository.js';
 import { InMemoryEmployeeRepository } from '../../infrastructure/persistence/InMemoryEmployeeRepository.js';
 import { InMemoryInventoryRepository } from '../../infrastructure/persistence/InMemoryInventoryRepository.js';
 import { InMemoryCompanyResearchRepository } from '../../infrastructure/persistence/InMemoryCompanyResearchRepository.js';
@@ -46,6 +47,7 @@ async function createContext() {
   const inventoryRepository = new InMemoryInventoryRepository();
   const financeRepository = new InMemoryFinanceRepository();
   const marketRepository = new InMemoryMarketRepository();
+  const supplyContractRepository = new InMemorySupplyContractRepository();
   const employeeRepository = new InMemoryEmployeeRepository();
   const productionJobRepository = new InMemoryProductionJobRepository();
   const researchJobRepository = new InMemoryResearchJobRepository();
@@ -90,6 +92,7 @@ async function createContext() {
       financeRepository,
       inventoryRepository,
       marketRepository,
+      supplyContractRepository,
       employeeRepository,
       enqueueEvents,
       onProductionJobCompleted: (job) => {

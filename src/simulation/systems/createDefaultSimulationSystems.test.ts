@@ -6,6 +6,7 @@ import { InMemoryFinanceRepository } from '../../infrastructure/persistence/InMe
 import { InMemoryInventoryRepository } from '../../infrastructure/persistence/InMemoryInventoryRepository.js';
 import { InMemoryMarketRepository } from '../../infrastructure/persistence/InMemoryMarketRepository.js';
 import { InMemoryEmployeeRepository } from '../../infrastructure/persistence/InMemoryEmployeeRepository.js';
+import { InMemorySupplyContractRepository } from '../../infrastructure/persistence/InMemorySupplyContractRepository.js';
 import { InMemoryProductionJobRepository } from '../../infrastructure/persistence/InMemoryProductionJobRepository.js';
 import { InMemoryResearchJobRepository } from '../../infrastructure/persistence/InMemoryResearchJobRepository.js';
 import { InMemoryTransportOrderRepository } from '../../infrastructure/persistence/InMemoryTransportOrderRepository.js';
@@ -49,6 +50,7 @@ function createDependencies() {
     financeRepository: new InMemoryFinanceRepository(),
     inventoryRepository: new InMemoryInventoryRepository(),
     marketRepository: new InMemoryMarketRepository(),
+    supplyContractRepository: new InMemorySupplyContractRepository(),
     employeeRepository: new InMemoryEmployeeRepository(),
     enqueueEvents: () => undefined,
   };
@@ -65,6 +67,7 @@ describe('createDefaultSimulationSystems', () => {
       'Production',
       'Research',
       'Market',
+      'Contract',
       'Finance',
     ]);
   });

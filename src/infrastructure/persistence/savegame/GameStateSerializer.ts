@@ -59,6 +59,11 @@ import {
 import { createTransportOrderId } from '../../../domain/transport/TransportOrderId.js';
 import { TransportOrderStatus } from '../../../domain/transport/TransportOrderStatus.js';
 import type { TransportOrderRepository } from '../../../domain/transport/TransportOrderRepository.js';
+import {
+  SupplyContract,
+  createSupplyContractId,
+  type SupplyContractKind,
+} from '../../../domain/contract/SupplyContract.js';
 import type { TickHistorySnapshotProvider } from '../../../application/ports/TickHistorySnapshotProvider.js';
 import type {
   GameStateSerializerPort,
@@ -71,6 +76,7 @@ import { SimulationState } from '../../../simulation/state/SimulationState.js';
 import {
   GAME_SAVE_SCHEMA_VERSION,
   type GameSaveSnapshotV1,
+  type GameSaveSupplyContractSnapshotV1,
 } from '../../../application/persistence/GameSaveSnapshotV1.js';
 
 export type { GameStateSource, GameStateTarget, RestoredSimulationMetadata };
@@ -160,6 +166,7 @@ export class GameStateSerializer implements GameStateSerializerPort {
               createdAt: account.getCreatedAt(),
               cashBalance: account.getCashBalance(),
               reservedCash: account.getReservedCash(),
+              lastTaxCollectedAt: account.getLastTaxCollectedAt(),
               transactionSequence: account.getTransactionSequence(),
               transactions: Object.freeze(
                 account.getTransactions().map((transaction) =>
@@ -310,6 +317,22 @@ export class GameStateSerializer implements GameStateSerializerPort {
             }),
           ),
         ),
+        supplyContracts: Object.freeze(
+          source.supplyContractRepository.findAll().map((contract) =>
+            Object.freeze({
+              id: contract.getId().value,
+              companyId: contract.getCompanyId().value,
+              kind: contract.getKind(),
+              resourceId: contract.getResourceId(),
+              amount: contract.getAmount(),
+              paymentAmount: contract.getPaymentAmount(),
+              intervalTicks: contract.getIntervalTicks(),
+              createdAt: contract.getCreatedAt(),
+              lastFulfilledTick: contract.getLastFulfilledTick(),
+              active: contract.isActive(),
+            }),
+          ),
+        ),
         ...(tickMetricsHistory !== undefined ? { tickMetricsHistory } : {}),
       }),
     );
@@ -337,6 +360,7 @@ export class GameStateSerializer implements GameStateSerializerPort {
             activeTransportCount: point.activeTransportCount,
             warehouseTotalUnits: point.warehouseTotalUnits,
             onSiteTotalUnits: point.onSiteTotalUnits,
+            priceIndex: point.priceIndex,
             energyGeneration: point.energyGeneration,
             energyConsumption: point.energyConsumption,
             marketPrices: Object.freeze(
@@ -383,6 +407,7 @@ export class GameStateSerializer implements GameStateSerializerPort {
       buildingStorages: candidate.buildingStorages ?? [],
       transportOrders: candidate.transportOrders ?? [],
       employees: candidate.employees ?? [],
+      supplyContracts: candidate.supplyContracts ?? [],
       tickMetricsHistory: candidate.tickMetricsHistory,
     } as GameSaveSnapshotV1);
   }
@@ -511,6 +536,16 @@ export class GameStateSerializer implements GameStateSerializerPort {
       target.transportOrderRepository.save(restoreResult.value);
     }
 
+    for (const contractSnapshot of snapshot.supplyContracts ?? []) {
+      const restoreResult = this.#restoreSupplyContract(contractSnapshot);
+
+      if (!restoreResult.ok) {
+        return Result.fail(restoreResult.error);
+      }
+
+      target.supplyContractRepository.save(restoreResult.value);
+    }
+
     this.#restoreTickMetricsHistory(snapshot, target.tickHistoryService);
 
     return Result.ok(
@@ -547,6 +582,7 @@ export class GameStateSerializer implements GameStateSerializerPort {
           activeTransportCount: point.activeTransportCount,
           warehouseTotalUnits: point.warehouseTotalUnits ?? 0,
           onSiteTotalUnits: point.onSiteTotalUnits ?? 0,
+          priceIndex: point.priceIndex ?? 1,
           energyGeneration: point.energyGeneration ?? 0,
           energyConsumption: point.energyConsumption ?? 0,
           marketPrices: Object.freeze(
@@ -762,8 +798,38 @@ export class GameStateSerializer implements GameStateSerializerPort {
       createdAt: snapshot.createdAt,
       cashBalance: snapshot.cashBalance,
       reservedCash: snapshot.reservedCash,
+      ...(snapshot.lastTaxCollectedAt !== undefined
+        ? { lastTaxCollectedAt: snapshot.lastTaxCollectedAt }
+        : {}),
       transactionSequence: snapshot.transactionSequence,
       transactions,
+    });
+  }
+
+  #restoreSupplyContract(snapshot: GameSaveSupplyContractSnapshotV1) {
+    const idResult = createSupplyContractId(snapshot.id);
+
+    if (!idResult.ok) {
+      return idResult;
+    }
+
+    const companyIdResult = createCompanyId(snapshot.companyId);
+
+    if (!companyIdResult.ok) {
+      return companyIdResult;
+    }
+
+    return SupplyContract.restore({
+      id: idResult.value,
+      companyId: companyIdResult.value,
+      kind: snapshot.kind as SupplyContractKind,
+      resourceId: snapshot.resourceId,
+      amount: snapshot.amount,
+      paymentAmount: snapshot.paymentAmount,
+      intervalTicks: snapshot.intervalTicks,
+      createdAt: snapshot.createdAt,
+      lastFulfilledTick: snapshot.lastFulfilledTick,
+      active: snapshot.active,
     });
   }
 

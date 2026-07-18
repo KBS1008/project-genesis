@@ -23,6 +23,7 @@ import { InMemoryResearchJobRepository } from '../../infrastructure/persistence/
 import { InMemoryCompanyResearchRepository } from '../../infrastructure/persistence/InMemoryCompanyResearchRepository.js';
 import { InMemoryCompanyMilestonesRepository } from '../../infrastructure/persistence/InMemoryCompanyMilestonesRepository.js';
 import { InMemoryEmployeeRepository } from '../../infrastructure/persistence/InMemoryEmployeeRepository.js';
+import { InMemorySupplyContractRepository } from '../../infrastructure/persistence/InMemorySupplyContractRepository.js';
 import { GameStateSerializer } from '../../infrastructure/persistence/savegame/GameStateSerializer.js';
 import { FileSavegameStore } from '../../infrastructure/persistence/savegame/FileSavegameStore.js';
 import { ConsoleLogger } from '../../infrastructure/logging/ConsoleLogger.js';
@@ -69,6 +70,7 @@ export async function restoreApplicationFromSnapshot(
   const companyResearchRepository = new InMemoryCompanyResearchRepository();
   const companyMilestonesRepository = new InMemoryCompanyMilestonesRepository();
   const employeeRepository = new InMemoryEmployeeRepository();
+  const supplyContractRepository = new InMemorySupplyContractRepository();
   const tickHistoryService = new TickHistoryService();
   const gameStateSerializer = new GameStateSerializer();
   const savegameStore = new FileSavegameStore();
@@ -87,6 +89,7 @@ export async function restoreApplicationFromSnapshot(
     companyResearchRepository,
     companyMilestonesRepository,
     employeeRepository,
+    supplyContractRepository,
     tickHistoryService,
   });
 
@@ -163,6 +166,7 @@ export async function restoreApplicationFromSnapshot(
       financeRepository,
       inventoryRepository,
       marketRepository,
+      supplyContractRepository,
       employeeRepository,
       enqueueEvents,
       onProductionJobCompleted: (job) => {
@@ -213,6 +217,7 @@ export async function restoreApplicationFromSnapshot(
     companyResearchRepository,
     companyMilestonesRepository,
     employeeRepository,
+    supplyContractRepository,
     productionInventoryService,
     marketTradeService,
     energyBalanceService,

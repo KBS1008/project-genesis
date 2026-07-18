@@ -8,6 +8,7 @@ import { createFinanceAccountId } from '../../../domain/finance/FinanceAccount.j
 import { FinanceAccount } from '../../../domain/finance/FinanceAccount.js';
 import { InMemoryEmployeeRepository } from '../../../infrastructure/persistence/InMemoryEmployeeRepository.js';
 import { InMemoryFinanceRepository } from '../../../infrastructure/persistence/InMemoryFinanceRepository.js';
+import { TAX_INTERVAL_TICKS } from '../../../domain/finance/TaxConstants.js';
 import { FinanceSimulationSystem } from './FinanceSimulationSystem.js';
 
 function requireCompanyId(value: string) {
@@ -150,5 +151,48 @@ describe('FinanceSimulationSystem', () => {
 
     const finance = financeRepository.findByCompanyId(companyId);
     expect(finance?.getCashBalance()).toBe(STARTING_MONEY);
+  });
+
+  it('debits corporate tax on tax ticks from taxable profit', () => {
+    const clock = new ManualClock(100);
+    const companyId = requireCompanyId('company_001');
+    const financeRepository = new InMemoryFinanceRepository();
+    const employeeRepository = new InMemoryEmployeeRepository();
+
+    const financeResult = FinanceAccount.create({
+      id: requireFinanceAccountId('finance_001'),
+      companyId,
+      clock,
+    });
+
+    expect(financeResult.ok).toBe(true);
+
+    if (!financeResult.ok) {
+      return;
+    }
+
+    const finance = financeResult.value;
+    clock.advance(1);
+    const creditResult = finance.credit(1000, FinanceTransactionType.SALE, clock);
+
+    expect(creditResult.ok).toBe(true);
+    finance.pullDomainEvents();
+    financeRepository.save(finance);
+
+    const system = new FinanceSimulationSystem({
+      financeRepository,
+      employeeRepository,
+      enqueueEvents: () => undefined,
+    });
+
+    system.execute({ tickNumber: TAX_INTERVAL_TICKS, clock });
+
+    const updatedFinance = financeRepository.findByCompanyId(companyId);
+    const expectedTax = Math.round(1000 * 0.05);
+
+    expect(updatedFinance?.getCashBalance()).toBe(STARTING_MONEY + 1000 - expectedTax);
+    expect(updatedFinance?.getTransactions().at(-1)?.transactionType).toBe(
+      FinanceTransactionType.TAX,
+    );
   });
 });

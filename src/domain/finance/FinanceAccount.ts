@@ -42,6 +42,7 @@ export class FinanceAccount extends AggregateRoot<'FinanceAccount'> {
   readonly #createdAt: number;
   #cashBalance: number;
   #reservedCash: number;
+  #lastTaxCollectedAt: number;
   readonly #transactions: FinanceTransaction[] = [];
   #transactionSequence = 0;
 
@@ -53,6 +54,7 @@ export class FinanceAccount extends AggregateRoot<'FinanceAccount'> {
       createdAt: number;
       cashBalance: number;
       reservedCash: number;
+      lastTaxCollectedAt: number;
       transactions: readonly FinanceTransaction[];
       transactionSequence: number;
     },
@@ -64,6 +66,7 @@ export class FinanceAccount extends AggregateRoot<'FinanceAccount'> {
     this.#createdAt = params.createdAt;
     this.#cashBalance = params.cashBalance;
     this.#reservedCash = params.reservedCash;
+    this.#lastTaxCollectedAt = params.lastTaxCollectedAt;
     this.#transactions.push(...params.transactions);
     this.#transactionSequence = params.transactionSequence;
 
@@ -99,6 +102,7 @@ export class FinanceAccount extends AggregateRoot<'FinanceAccount'> {
       createdAt,
       cashBalance: balanceResult.value,
       reservedCash: 0,
+      lastTaxCollectedAt: createdAt,
       transactions: [],
       transactionSequence: 0,
     });
@@ -142,6 +146,7 @@ export class FinanceAccount extends AggregateRoot<'FinanceAccount'> {
     readonly createdAt: number;
     readonly cashBalance: number;
     readonly reservedCash: number;
+    readonly lastTaxCollectedAt?: number;
     readonly transactionSequence: number;
     readonly transactions: readonly FinanceTransaction[];
   }): Result<FinanceAccount, ValidationError> {
@@ -194,6 +199,7 @@ export class FinanceAccount extends AggregateRoot<'FinanceAccount'> {
           createdAt: params.createdAt,
           cashBalance: balanceResult.value,
           reservedCash: reservedResult.value,
+          lastTaxCollectedAt: params.lastTaxCollectedAt ?? params.createdAt,
           transactions: params.transactions,
           transactionSequence: sequenceResult.value,
         },
@@ -215,6 +221,16 @@ export class FinanceAccount extends AggregateRoot<'FinanceAccount'> {
   /** Simulation time when the account was created. */
   getCreatedAt(): number {
     return this.#createdAt;
+  }
+
+  /** Simulation time when corporate tax was last collected. */
+  getLastTaxCollectedAt(): number {
+    return this.#lastTaxCollectedAt;
+  }
+
+  /** Marks the current simulation time as the end of the latest tax period. */
+  closeTaxPeriod(clock: Clock): void {
+    this.#lastTaxCollectedAt = clock.now();
   }
 
   /** Current cash balance. */

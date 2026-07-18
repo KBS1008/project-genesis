@@ -11,6 +11,7 @@ import type { FinanceTransactionReadModel } from '../read-models/FinanceTransact
 import type { InventoryReadModel } from '../read-models/InventoryReadModel.js';
 import type { MarketPriceReadModel } from '../read-models/MarketPriceReadModel.js';
 import type { WarehouseStorageReadModel } from '../read-models/WarehouseStorageReadModel.js';
+import type { EconomyReadModel } from '../read-models/EconomyReadModel.js';
 
 /** Milestone catalog entry with completion state for the UI shell. */
 export type MilestoneCatalogEntry = {
@@ -94,6 +95,10 @@ export type DashboardKpiReadModel = {
   readonly employeeCount: number;
   readonly assignedEmployeeCount: number;
   readonly payrollPerInterval: number;
+  readonly corporateTaxRate: number;
+  readonly taxIntervalTicks: number;
+  readonly priceIndex: number;
+  readonly activeContractCount: number;
 };
 /** Energy balance summary for the dashboard. */
 export type EnergyReadModel = {
@@ -219,6 +224,7 @@ export type GameSessionDashboard = {
   readonly energy: EnergyReadModel | null;
   readonly logistics: LogisticsSummaryReadModel | null;
   readonly kpis: DashboardKpiReadModel | null;
+  readonly economy: EconomyReadModel | null;
   readonly hints: GameSessionDashboardHints;
   readonly tutorial: TutorialProgressReadModel | null;
 };

@@ -17,6 +17,7 @@ import type { ResearchJobRepository } from '../../domain/research/ResearchJobRep
 import type { CompanyResearchRepository } from '../../domain/research/CompanyResearchRepository.js';
 import type { CompanyMilestonesRepository } from '../../domain/milestone/CompanyMilestonesRepository.js';
 import type { EmployeeRepository } from '../../domain/employee/EmployeeRepository.js';
+import type { SupplyContractRepository } from '../../domain/contract/SupplyContractRepository.js';
 import type { ProductionInventoryService } from '../services/ProductionInventoryService.js';
 import type { MarketTradeService } from '../services/MarketTradeService.js';
 import type { EnergyBalanceService } from '../services/EnergyBalanceService.js';
@@ -46,6 +47,7 @@ export type ApplicationContext = {
   readonly companyResearchRepository: CompanyResearchRepository;
   readonly companyMilestonesRepository: CompanyMilestonesRepository;
   readonly employeeRepository: EmployeeRepository;
+  readonly supplyContractRepository: SupplyContractRepository;
   readonly productionInventoryService: ProductionInventoryService;
   readonly marketTradeService: MarketTradeService;
   readonly energyBalanceService: EnergyBalanceService;

@@ -18,6 +18,7 @@ import type { ResearchJobRepository } from '../../domain/research/ResearchJobRep
 import type { CompanyResearchRepository } from '../../domain/research/CompanyResearchRepository.js';
 import type { CompanyMilestonesRepository } from '../../domain/milestone/CompanyMilestonesRepository.js';
 import type { EmployeeRepository } from '../../domain/employee/EmployeeRepository.js';
+import type { SupplyContractRepository } from '../../domain/contract/SupplyContractRepository.js';
 import type { TransportOrderRepository } from '../../domain/transport/TransportOrderRepository.js';
 import type { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
 import type { SimulationState } from '../../simulation/state/SimulationState.js';
@@ -40,6 +41,7 @@ export type GameStateSource = {
   readonly companyResearchRepository: CompanyResearchRepository;
   readonly companyMilestonesRepository: CompanyMilestonesRepository;
   readonly employeeRepository: EmployeeRepository;
+  readonly supplyContractRepository: SupplyContractRepository;
   readonly tickHistoryService: TickHistorySnapshotProvider;
 };
 
@@ -57,6 +59,7 @@ export type GameStateTarget = {
   readonly companyResearchRepository: CompanyResearchRepository;
   readonly companyMilestonesRepository: CompanyMilestonesRepository;
   readonly employeeRepository: EmployeeRepository;
+  readonly supplyContractRepository: SupplyContractRepository;
   readonly tickHistoryService: TickHistorySnapshotProvider;
 };
 

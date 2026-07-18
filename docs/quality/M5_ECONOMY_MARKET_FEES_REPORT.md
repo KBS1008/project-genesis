@@ -57,7 +57,7 @@ fee = max(1, round(tradeValue × 0.02))
 
 | Schritt | Inhalt |
 |---|---|
-| M5-4 | Verträge, Steuern, Inflation |
+| M5-4 | Verträge, Steuern, Inflation | Completed — see `M5_ECONOMY_TAX_CONTRACTS_INFLATION_REPORT.md` |
 
 ---
 

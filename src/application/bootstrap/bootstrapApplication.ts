@@ -21,6 +21,7 @@ import type { ResearchJobRepository } from '../../domain/research/ResearchJobRep
 import type { CompanyResearchRepository } from '../../domain/research/CompanyResearchRepository.js';
 import type { CompanyMilestonesRepository } from '../../domain/milestone/CompanyMilestonesRepository.js';
 import type { EmployeeRepository } from '../../domain/employee/EmployeeRepository.js';
+import type { SupplyContractRepository } from '../../domain/contract/SupplyContractRepository.js';
 import { InMemoryBuildingRepository } from '../../infrastructure/persistence/InMemoryBuildingRepository.js';
 import { InMemoryBuildingStorageRepository } from '../../infrastructure/persistence/InMemoryBuildingStorageRepository.js';
 import { InMemoryTransportOrderRepository } from '../../infrastructure/persistence/InMemoryTransportOrderRepository.js';
@@ -34,6 +35,7 @@ import { InMemoryMarketRepository } from '../../infrastructure/persistence/InMem
 import { InMemoryProductionJobRepository } from '../../infrastructure/persistence/InMemoryProductionJobRepository.js';
 import { InMemoryResearchJobRepository } from '../../infrastructure/persistence/InMemoryResearchJobRepository.js';
 import { InMemoryEmployeeRepository } from '../../infrastructure/persistence/InMemoryEmployeeRepository.js';
+import { InMemorySupplyContractRepository } from '../../infrastructure/persistence/InMemorySupplyContractRepository.js';
 import { MarketPriceSeeder } from '../services/MarketPriceSeeder.js';
 import { MarketTradeService } from '../services/MarketTradeService.js';
 import { ProductionInventoryService } from '../services/ProductionInventoryService.js';
@@ -67,6 +69,7 @@ export type BootstrapOptions = {
   readonly companyResearchRepository?: CompanyResearchRepository;
   readonly companyMilestonesRepository?: CompanyMilestonesRepository;
   readonly employeeRepository?: EmployeeRepository;
+  readonly supplyContractRepository?: SupplyContractRepository;
 };
 
 /**
@@ -101,6 +104,8 @@ export async function bootstrapApplication(
   const companyMilestonesRepository =
     options.companyMilestonesRepository ?? new InMemoryCompanyMilestonesRepository();
   const employeeRepository = options.employeeRepository ?? new InMemoryEmployeeRepository();
+  const supplyContractRepository =
+    options.supplyContractRepository ?? new InMemorySupplyContractRepository();
   const clock = new ManualClock(0);
   const eventBus = new InMemoryEventBus();
 
@@ -177,6 +182,7 @@ export async function bootstrapApplication(
       financeRepository,
       inventoryRepository,
       marketRepository,
+      supplyContractRepository,
       employeeRepository,
       enqueueEvents,
       onProductionJobCompleted: (job) => {
@@ -240,6 +246,7 @@ export async function bootstrapApplication(
     companyResearchRepository,
     companyMilestonesRepository,
     employeeRepository,
+    supplyContractRepository,
     productionInventoryService,
     marketTradeService,
     energyBalanceService,

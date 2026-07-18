@@ -19,6 +19,7 @@ import type { EmployeeAllocationPort } from '../../domain/employee/EmployeeAlloc
 import type { EmployeeRepository } from '../../domain/employee/EmployeeRepository.js';
 import type { TransportLogisticsPort } from '../../domain/transport/TransportLogisticsPort.js';
 import type { TransportOrderRepository } from '../../domain/transport/TransportOrderRepository.js';
+import type { SupplyContractRepository } from '../../domain/contract/SupplyContractRepository.js';
 import type { Building } from '../../domain/building/Building.js';
 
 /** Repository dependencies for simulation systems. */
@@ -32,6 +33,7 @@ export type SimulationSystemDependencies = {
   readonly financeRepository: FinanceRepository;
   readonly inventoryRepository: InventoryRepository;
   readonly marketRepository: MarketRepository;
+  readonly supplyContractRepository: SupplyContractRepository;
   readonly employeeRepository: EmployeeRepository;
   readonly enqueueEvents: (events: readonly DomainEvent[]) => void;
   readonly onProductionJobCompleted?: ProductionJobCompletedHandler;

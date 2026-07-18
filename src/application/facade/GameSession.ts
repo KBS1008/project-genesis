@@ -246,6 +246,7 @@ export class GameSession {
     const employees = Object.freeze(this.#readEmployees(companyId, buildingsResult.value));
     const marketPrices = this.#readMarketPrices();
     const energy = this.#dashboardBuilder.readEnergy(companyId);
+    const economy = this.#dashboardBuilder.readEconomy(companyId);
     const logistics = this.#dashboardBuilder.readLogisticsSummary({
       warehouseStorage,
       productionJobs,
@@ -257,6 +258,7 @@ export class GameSession {
       inventory: inventoryResult.value,
       logistics,
       employees,
+      economy,
     });
 
     const hintInput = {
@@ -295,6 +297,7 @@ export class GameSession {
       energy,
       logistics,
       kpis,
+      economy,
       hints: this.#dashboardBuilder.readHints(hintInput),
       tutorial: this.#dashboardBuilder.readTutorialProgress({
         hasCompany: true,
@@ -665,6 +668,7 @@ export class GameSession {
         logistics,
         inventory: inventoryResult.value,
         marketPrices: this.#readMarketPrices(),
+        priceIndex: this.#dashboardBuilder.readEconomy(companyId)?.priceIndex ?? 1,
       }),
       companyId,
     );
@@ -701,6 +705,7 @@ export class GameSession {
       energy: null,
       logistics: null,
       kpis: null,
+      economy: null,
       hints: emptyHints,
       tutorial: null,
     };

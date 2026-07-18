@@ -204,6 +204,28 @@ function KpiStrip({
           </span>
         </div>
       </article>
+      <article className="kpi-card">
+        <span className="kpi-icon" aria-hidden="true">
+          <DashboardIcon name="info" className="dashboard-icon" />
+        </span>
+        <div className="kpi-body">
+          <span className="kpi-label">Preisindex</span>
+          <strong className="kpi-value">{kpis.priceIndex.toFixed(2)}</strong>
+          <span className="kpi-trend">{trendLabel('stable', 'Neutral bei 1,00')}</span>
+        </div>
+      </article>
+      <article className="kpi-card">
+        <span className="kpi-icon" aria-hidden="true">
+          <DashboardIcon name="cash" className="dashboard-icon" />
+        </span>
+        <div className="kpi-body">
+          <span className="kpi-label">Steuer / Verträge</span>
+          <strong className="kpi-value">{(kpis.corporateTaxRate * 100).toFixed(0)} %</strong>
+          <span className="kpi-trend">
+            {kpis.activeContractCount} aktiv · alle {kpis.taxIntervalTicks} Ticks
+          </span>
+        </div>
+      </article>
     </section>
   );
 }
@@ -1086,6 +1108,47 @@ export function DashboardShell() {
                           }}
                           emptyText="Noch keine Mitarbeiter."
                           emptyHint="Stellen Sie Produktions- oder Logistikpersonal ein."
+                        />
+                      )}
+                    </div>
+                  </section>
+
+                  <section className="card">
+                    <div className="section-header">
+                      <h2>Wirtschaft</h2>
+                      <p>
+                        Unternehmenssteuer {(dashboard?.economy?.corporateTaxRate ?? 0.05) * 100} % alle{' '}
+                        {dashboard?.economy?.taxIntervalTicks ?? 30} Ticks · Preisindex{' '}
+                        {(dashboard?.economy?.priceIndex ?? 1).toFixed(2)} (neutral 1,00)
+                      </p>
+                    </div>
+                    <div className="table-wrap">
+                      {!dashboard?.company || (dashboard.economy?.contracts.length ?? 0) === 0 ? (
+                        <p className="empty-state">
+                          <strong>Keine Lieferverträge.</strong>
+                          NPC-Verträge erscheinen nach Spielstart automatisch.
+                        </p>
+                      ) : (
+                        <DataTable
+                          searchable={false}
+                          columns={[
+                            { key: 'resourceId', label: 'Ressource' },
+                            { key: 'amount', label: 'Menge', numeric: true },
+                            { key: 'paymentAmount', label: 'Zahlung', numeric: true },
+                            { key: 'intervalTicks', label: 'Intervall', numeric: true },
+                            { key: 'status', label: 'Status' },
+                          ]}
+                          rows={(dashboard.economy?.contracts ?? []).map((contract) => ({
+                            resourceId: labelResource(contract.resourceId),
+                            amount: contract.amount,
+                            paymentAmount: `${contract.paymentAmount.toLocaleString('de-DE')} GC`,
+                            intervalTicks: `${contract.intervalTicks} Ticks`,
+                            status: contract.active ? 'Aktiv' : 'Inaktiv',
+                          }))}
+                          rowKeys={(dashboard.economy?.contracts ?? []).map(
+                            (contract) => `contract:${contract.id}`,
+                          )}
+                          emptyText="Keine Verträge."
                         />
                       )}
                     </div>

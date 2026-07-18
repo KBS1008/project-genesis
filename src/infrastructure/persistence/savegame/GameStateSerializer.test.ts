@@ -22,6 +22,7 @@ import { InMemoryProductionJobRepository } from '../InMemoryProductionJobReposit
 import { InMemoryResearchJobRepository } from '../InMemoryResearchJobRepository.js';
 import { InMemoryTransportOrderRepository } from '../InMemoryTransportOrderRepository.js';
 import { InMemoryEmployeeRepository } from '../InMemoryEmployeeRepository.js';
+import { InMemorySupplyContractRepository } from '../InMemorySupplyContractRepository.js';
 import { GameStateSerializer } from './GameStateSerializer.js';
 import { HireEmployeeUseCase } from '../../../application/use-cases/HireEmployeeUseCase.js';
 import { AssignEmployeeUseCase } from '../../../application/use-cases/AssignEmployeeUseCase.js';
@@ -56,6 +57,7 @@ function createEmptyHydrateTarget() {
     companyResearchRepository: new InMemoryCompanyResearchRepository(),
     companyMilestonesRepository: new InMemoryCompanyMilestonesRepository(),
     employeeRepository: new InMemoryEmployeeRepository(),
+    supplyContractRepository: new InMemorySupplyContractRepository(),
     tickHistoryService: new TickHistoryService(),
   };
 }
@@ -116,6 +118,7 @@ describe('GameStateSerializer', () => {
         companyResearchRepository: context.companyResearchRepository,
         companyMilestonesRepository: context.companyMilestonesRepository,
         employeeRepository: context.employeeRepository,
+        supplyContractRepository: context.supplyContractRepository,
         tickHistoryService: context.tickHistoryService,
       });
 
@@ -155,6 +158,7 @@ describe('GameStateSerializer', () => {
           activeTransportCount: 0,
           warehouseTotalUnits: 0,
           onSiteTotalUnits: 0,
+          priceIndex: 1,
           energyGeneration: 0,
           energyConsumption: 0,
           marketPrices: Object.freeze([]),
@@ -177,6 +181,7 @@ describe('GameStateSerializer', () => {
         companyResearchRepository: context.companyResearchRepository,
         companyMilestonesRepository: context.companyMilestonesRepository,
         employeeRepository: context.employeeRepository,
+        supplyContractRepository: context.supplyContractRepository,
         tickHistoryService: context.tickHistoryService,
       });
 
@@ -198,6 +203,7 @@ describe('GameStateSerializer', () => {
               activeTransportCount: 0,
               warehouseTotalUnits: 0,
               onSiteTotalUnits: 0,
+              priceIndex: 1,
               energyGeneration: 0,
               energyConsumption: 0,
               marketPrices: Object.freeze([]),
@@ -240,6 +246,7 @@ describe('GameStateSerializer', () => {
         companyResearchRepository: context.companyResearchRepository,
         companyMilestonesRepository: context.companyMilestonesRepository,
         employeeRepository: context.employeeRepository,
+        supplyContractRepository: context.supplyContractRepository,
         tickHistoryService: context.tickHistoryService,
       });
 
@@ -419,6 +426,7 @@ describe('GameStateSerializer', () => {
                 activeTransportCount: 1,
                 warehouseTotalUnits: 5,
                 onSiteTotalUnits: 10,
+                priceIndex: 1,
                 energyGeneration: 2,
                 energyConsumption: 1,
                 marketPrices: Object.freeze([
@@ -453,6 +461,7 @@ describe('GameStateSerializer', () => {
           activeTransportCount: 1,
           warehouseTotalUnits: 5,
           onSiteTotalUnits: 10,
+          priceIndex: 1,
           energyGeneration: 2,
           energyConsumption: 1,
           marketPrices: Object.freeze([
@@ -633,6 +642,7 @@ describe('GameStateSerializer', () => {
           activeTransportCount: 0,
           warehouseTotalUnits: 0,
           onSiteTotalUnits: 20,
+          priceIndex: 1,
           energyGeneration: 0,
           energyConsumption: 0,
           marketPrices: Object.freeze([]),
@@ -655,6 +665,7 @@ describe('GameStateSerializer', () => {
         companyResearchRepository: sourceContext.companyResearchRepository,
         companyMilestonesRepository: sourceContext.companyMilestonesRepository,
         employeeRepository: sourceContext.employeeRepository,
+        supplyContractRepository: sourceContext.supplyContractRepository,
         tickHistoryService: sourceContext.tickHistoryService,
       });
 
@@ -712,6 +723,7 @@ describe('GameStateSerializer', () => {
           activeTransportCount: 0,
           warehouseTotalUnits: 0,
           onSiteTotalUnits: 20,
+          priceIndex: 1,
           energyGeneration: 0,
           energyConsumption: 0,
           marketPrices: Object.freeze([]),
@@ -803,6 +815,7 @@ describe('GameStateSerializer', () => {
         companyResearchRepository: sourceContext.companyResearchRepository,
         companyMilestonesRepository: sourceContext.companyMilestonesRepository,
         employeeRepository: sourceContext.employeeRepository,
+        supplyContractRepository: sourceContext.supplyContractRepository,
         tickHistoryService: sourceContext.tickHistoryService,
       });
 
