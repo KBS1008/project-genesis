@@ -21,32 +21,33 @@
 
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { LogCategory } from './common/logging/LogCategory.js';
+import { ConsoleLogger } from './infrastructure/logging/ConsoleLogger.js';
 import { bootstrapApplication } from './application/bootstrap/bootstrapApplication.js';
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const gameContentRoot = path.join(projectRoot, 'game-content');
 
 async function main(): Promise<void> {
-  console.log('===========================================');
-  console.log(' Project Genesis');
-  console.log(' Deterministic Economy Simulation');
-  console.log('===========================================');
-  console.log('');
-
   const result = await bootstrapApplication({ gameContentRoot });
 
   if (!result.ok) {
-    console.error(`Bootstrap failed: ${result.error.message}`);
+    const logger = new ConsoleLogger();
+    logger.error(LogCategory.Application, 'Bootstrap failed.', {
+      errorCode: result.error.errorCode,
+      message: result.error.message,
+    });
     process.exit(1);
   }
 
-  const { gameContent, simulationEngine } = result.value;
+  const { gameContent, simulationEngine, logger } = result.value;
 
-  console.log('Application bootstrap succeeded.');
-  console.log(`Resources loaded: ${gameContent.resourceTypes.size}`);
-  console.log(`Building types loaded: ${gameContent.buildingTypes.size}`);
-  console.log(`Recipes loaded: ${gameContent.recipes.size}`);
-  console.log(`Simulation tick: ${simulationEngine.state.tickNumber}`);
+  logger.info(LogCategory.Application, 'Project Genesis console session ready.', {
+    resources: gameContent.resourceTypes.size,
+    buildingTypes: gameContent.buildingTypes.size,
+    recipes: gameContent.recipes.size,
+    tickNumber: simulationEngine.state.tickNumber,
+  });
 }
 
 await main();

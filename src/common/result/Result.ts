@@ -5,7 +5,7 @@
  *
  * Expected business failures are represented as values rather than thrown exceptions.
  *
- * @see docs/development/CURSOR_IMPLEMENTATION_GUIDE.md
+ * @see docs/architecture/RESULT_PATTERN.md
  */
 
 /**
@@ -69,6 +69,13 @@ export const Result = {
   },
 
   /**
+   * Alias for {@link Result.isOk} aligned with the architecture documentation.
+   */
+  isSuccess<TValue, TError>(result: Result<TValue, TError>): result is Success<TValue> {
+    return result.ok;
+  },
+
+  /**
    * Type guard that narrows a result to {@link Failure}.
    *
    * @param result - The result to inspect.
@@ -76,6 +83,30 @@ export const Result = {
    */
   isFailure<TValue, TError>(result: Result<TValue, TError>): result is Failure<TError> {
     return !result.ok;
+  },
+
+  /**
+   * Returns the success value or throws when the result failed.
+   *
+   * Use only at boundaries where failure is considered unexpected.
+   */
+  getValue<TValue, TError>(result: Result<TValue, TError>): TValue {
+    if (result.ok) {
+      return result.value;
+    }
+
+    throw result.error;
+  },
+
+  /**
+   * Returns the failure error or throws when the result succeeded.
+   */
+  getError<TValue, TError>(result: Result<TValue, TError>): TError {
+    if (!result.ok) {
+      return result.error;
+    }
+
+    throw new Error('Cannot read error from a successful result.');
   },
 
   /**
@@ -168,5 +199,18 @@ export const Result = {
     handler: (error: TError) => TValue,
   ): TValue {
     return result.ok ? result.value : handler(result.error);
+  },
+
+  /**
+   * Handles both success and failure branches explicitly.
+   */
+  fold<TValue, TError, TResult>(
+    result: Result<TValue, TError>,
+    handlers: {
+      readonly onSuccess: (value: TValue) => TResult;
+      readonly onFailure: (error: TError) => TResult;
+    },
+  ): TResult {
+    return result.ok ? handlers.onSuccess(result.value) : handlers.onFailure(result.error);
   },
 } as const;

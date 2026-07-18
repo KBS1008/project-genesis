@@ -5,11 +5,11 @@
  */
 
 import { BadRequestException } from '@nestjs/common';
-import type { ValidationError } from '../../../../src/common/errors/ValidationError.js';
+import type { ProjectGenesisError } from '../../../../src/common/errors/ProjectGenesisError.js';
 import type { Result } from '../../../../src/common/result/Result.js';
 
 /** Throws {@link BadRequestException} when a Result failed. */
-export function unwrapResult<T>(result: Result<T, ValidationError>): T {
+export function unwrapResult<T>(result: Result<T, ProjectGenesisError>): T {
   if (!result.ok) {
     throw new BadRequestException(result.error.message);
   }

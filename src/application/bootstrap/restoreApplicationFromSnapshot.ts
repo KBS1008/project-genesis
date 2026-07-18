@@ -23,7 +23,9 @@ import { InMemoryResearchJobRepository } from '../../infrastructure/persistence/
 import { InMemoryCompanyResearchRepository } from '../../infrastructure/persistence/InMemoryCompanyResearchRepository.js';
 import { InMemoryCompanyMilestonesRepository } from '../../infrastructure/persistence/InMemoryCompanyMilestonesRepository.js';
 import { GameStateSerializer } from '../../infrastructure/persistence/savegame/GameStateSerializer.js';
-import type { GameSaveSnapshotV1 } from '../../infrastructure/persistence/savegame/GameSaveSnapshotV1.js';
+import { FileSavegameStore } from '../../infrastructure/persistence/savegame/FileSavegameStore.js';
+import { ConsoleLogger } from '../../infrastructure/logging/ConsoleLogger.js';
+import type { GameSaveSnapshotV1 } from '../persistence/GameSaveSnapshotV1.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
 import { createDefaultSimulationSystems } from '../../simulation/systems/createDefaultSimulationSystems.js';
 import { MarketTradeService } from '../services/MarketTradeService.js';
@@ -65,9 +67,11 @@ export async function restoreApplicationFromSnapshot(
   const companyResearchRepository = new InMemoryCompanyResearchRepository();
   const companyMilestonesRepository = new InMemoryCompanyMilestonesRepository();
   const tickHistoryService = new TickHistoryService();
-  const serializer = new GameStateSerializer();
+  const gameStateSerializer = new GameStateSerializer();
+  const savegameStore = new FileSavegameStore();
+  const logger = new ConsoleLogger();
 
-  const hydrateResult = serializer.hydrate(options.snapshot, {
+  const hydrateResult = gameStateSerializer.hydrate(options.snapshot, {
     companyRepository,
     buildingRepository,
     buildingStorageRepository,
@@ -201,6 +205,9 @@ export async function restoreApplicationFromSnapshot(
     energyBalanceService,
     transportLogisticsService,
     tickHistoryService,
+    savegameStore,
+    gameStateSerializer,
+    logger,
     gameContent: contentResult.value,
   });
 }

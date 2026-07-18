@@ -4,6 +4,7 @@
  * Coordinates warehouse storage and automated inbound transport for production.
  */
 
+import type { TransportLogisticsPort } from '../../domain/transport/TransportLogisticsPort.js';
 import type { DomainEvent } from '../../common/events/DomainEvent.js';
 import { ValidationError } from '../../common/errors/ValidationError.js';
 import { Result } from '../../common/result/Result.js';
@@ -49,7 +50,7 @@ export type TransportLogisticsServiceDependencies = {
 /**
  * Plans and completes warehouse-to-production transport orders.
  */
-export class TransportLogisticsService {
+export class TransportLogisticsService implements TransportLogisticsPort {
   readonly #clock: TransportLogisticsServiceDependencies['clock'];
   readonly #buildingRepository: TransportLogisticsServiceDependencies['buildingRepository'];
   readonly #buildingStorageRepository: TransportLogisticsServiceDependencies['buildingStorageRepository'];

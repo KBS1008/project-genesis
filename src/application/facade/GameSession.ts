@@ -5,6 +5,7 @@
  */
 
 import { ValidationError } from '../../common/errors/ValidationError.js';
+import type { PersistenceError } from '../../common/errors/PersistenceError.js';
 import { Result } from '../../common/result/Result.js';
 import { bootstrapApplication } from '../bootstrap/bootstrapApplication.js';
 import type { ApplicationContext } from '../bootstrap/ApplicationContext.js';
@@ -428,7 +429,7 @@ export class GameSession {
   }
 
   /** Persists the current session to the configured save path. */
-  async saveGame(): Promise<Result<string, ValidationError>> {
+  async saveGame(): Promise<Result<string, ValidationError | PersistenceError>> {
     if (this.#activeCompanyId === undefined) {
       return Result.fail(new ValidationError('Start a new game before saving.'));
     }
@@ -437,7 +438,7 @@ export class GameSession {
   }
 
   /** Restores a session from the configured save path. */
-  async loadGame(): Promise<Result<void, ValidationError>> {
+  async loadGame(): Promise<Result<void, ValidationError | PersistenceError>> {
     const loadResult = await this.#loadGame.execute({
       filePath: this.#savePath,
       gameContentRoot: this.#gameContentRoot,
@@ -468,7 +469,7 @@ export class GameSession {
     this.#startProduction = new StartProductionUseCase(this.#context);
     this.#startResearch = new StartResearchUseCase(this.#context);
     this.#saveGame = new SaveGameUseCase(this.#context);
-    this.#loadGame = new LoadGameUseCase();
+    this.#loadGame = new LoadGameUseCase({ savegameStore: this.#context.savegameStore });
     this.#getCompany = new GetCompanyQueryHandler(this.#context);
     this.#listBuildings = new ListBuildingsQueryHandler(this.#context);
     this.#getInventory = new GetInventoryQueryHandler(this.#context);

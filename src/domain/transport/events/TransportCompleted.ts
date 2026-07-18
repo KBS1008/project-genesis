@@ -6,6 +6,7 @@ import { DomainEvent } from '../../../common/events/DomainEvent.js';
 
 /** Raised when a transport order finishes delivery. */
 export class TransportCompleted extends DomainEvent {
+  readonly eventName = 'TransportCompleted';
   readonly transportOrderId: string;
   readonly companyId: string;
   readonly sourceBuildingId: string;
@@ -24,7 +25,7 @@ export class TransportCompleted extends DomainEvent {
     amount: number,
     productionJobId: string,
   ) {
-    super('TransportCompleted', occurredAt);
+    super(occurredAt);
     this.transportOrderId = transportOrderId;
     this.companyId = companyId;
     this.sourceBuildingId = sourceBuildingId;
@@ -32,5 +33,6 @@ export class TransportCompleted extends DomainEvent {
     this.resourceId = resourceId;
     this.amount = amount;
     this.productionJobId = productionJobId;
+    this.freeze();
   }
 }

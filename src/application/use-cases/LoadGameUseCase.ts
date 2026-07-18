@@ -4,30 +4,30 @@
  * Restores a game session from a persisted snapshot file.
  */
 
-import { ValidationError } from '../../common/errors/ValidationError.js';
 import { Result } from '../../common/result/Result.js';
 import { ContentLoadError } from '../../content/errors/ContentLoadError.js';
+import type { PersistenceError } from '../../common/errors/PersistenceError.js';
 import type { ApplicationContext } from '../bootstrap/ApplicationContext.js';
 import { restoreApplicationFromSnapshot } from '../bootstrap/restoreApplicationFromSnapshot.js';
 import type { LoadGameCommand } from '../commands/LoadGameCommand.js';
-import { FileSavegameStore } from '../../infrastructure/persistence/savegame/FileSavegameStore.js';
+import type { SavegameStore } from '../ports/SavegameStore.js';
 
 /** Dependencies required by {@link LoadGameUseCase}. */
 export type LoadGameUseCaseDependencies = {
-  readonly savegameStore?: FileSavegameStore;
+  readonly savegameStore: SavegameStore;
 };
 
 /**
  * Reads a savegame file and restores the application session.
  */
 export class LoadGameUseCase {
-  readonly #savegameStore: FileSavegameStore;
+  readonly #savegameStore: SavegameStore;
 
   /**
-   * @param dependencies - Optional savegame store override for tests.
+   * @param dependencies - Savegame store provided by the composition root.
    */
-  constructor(dependencies: LoadGameUseCaseDependencies = {}) {
-    this.#savegameStore = dependencies.savegameStore ?? new FileSavegameStore();
+  constructor(dependencies: LoadGameUseCaseDependencies) {
+    this.#savegameStore = dependencies.savegameStore;
   }
 
   /**
@@ -35,7 +35,7 @@ export class LoadGameUseCase {
    */
   async execute(
     command: LoadGameCommand,
-  ): Promise<Result<ApplicationContext, ContentLoadError | ValidationError>> {
+  ): Promise<Result<ApplicationContext, ContentLoadError | PersistenceError>> {
     const snapshotResult = await this.#savegameStore.load(command.filePath);
 
     if (!snapshotResult.ok) {

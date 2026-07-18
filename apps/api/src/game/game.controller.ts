@@ -76,14 +76,26 @@ export class GameController {
       throw new BadRequestException('limit must be a positive integer.');
     }
 
+    const historyQuery: {
+      fromTick?: number;
+      toTick?: number;
+      limit?: number;
+    } = {};
+
+    if (parsedFromTick !== undefined) {
+      historyQuery.fromTick = parsedFromTick;
+    }
+
+    if (parsedToTick !== undefined) {
+      historyQuery.toTick = parsedToTick;
+    }
+
+    if (parsedLimit !== undefined) {
+      historyQuery.limit = parsedLimit;
+    }
+
     return toApiSuccess(
-      unwrapResult(
-        this.gameSessionService.getSession().getTickHistory({
-          fromTick: parsedFromTick,
-          toTick: parsedToTick,
-          limit: parsedLimit,
-        }),
-      ),
+      unwrapResult(this.gameSessionService.getSession().getTickHistory(historyQuery)),
     );
   }
 

@@ -5,10 +5,41 @@
  *
  * Guards return explicit {@link Result} values instead of throwing
  * for expected validation failures.
+ *
+ * @see docs/architecture/VALIDATION_STRATEGY.md
  */
 
 import { ValidationError } from '../errors/ValidationError.js';
 import { Result } from '../result/Result.js';
+
+/** Options for guard validation failures. */
+export type GuardValidationOptions = {
+  readonly field?: string | undefined;
+  readonly constraint?: string | undefined;
+  readonly value?: unknown;
+};
+
+function createValidationError(
+  message: string,
+  options: GuardValidationOptions,
+  defaultConstraint: string,
+  value: unknown,
+): ValidationError {
+  const validationOptions: {
+    field?: string;
+    constraint?: string;
+    value?: unknown;
+  } = {
+    constraint: options.constraint ?? defaultConstraint,
+    value: options.value ?? value,
+  };
+
+  if (options.field !== undefined) {
+    validationOptions.field = options.field;
+  }
+
+  return new ValidationError(message, validationOptions);
+}
 
 /**
  * Validation guard utilities.
@@ -16,18 +47,16 @@ import { Result } from '../result/Result.js';
 export const Guard = {
   /**
    * Rejects `null` and `undefined` values.
-   *
-   * @typeParam TValue - The expected non-nullish value type.
-   * @param value - The value to validate.
-   * @param message - Error message when validation fails.
-   * @returns A result containing the value or a validation error.
    */
   againstNull<TValue>(
     value: TValue | null | undefined,
     message: string,
+    options: GuardValidationOptions = {},
   ): Result<TValue, ValidationError> {
     if (value === null || value === undefined) {
-      return Result.fail(new ValidationError(message));
+      return Result.fail(
+        createValidationError(message, options, 'required', value),
+      );
     }
 
     return Result.ok(value);
@@ -35,17 +64,14 @@ export const Guard = {
 
   /**
    * Rejects empty strings.
-   *
-   * @param value - The string to validate.
-   * @param message - Error message when validation fails.
-   * @returns A result containing the string or a validation error.
    */
   againstEmptyString(
     value: string,
     message: string,
+    options: GuardValidationOptions = {},
   ): Result<string, ValidationError> {
     if (value.length === 0) {
-      return Result.fail(new ValidationError(message));
+      return Result.fail(createValidationError(message, options, 'nonEmpty', value));
     }
 
     return Result.ok(value);
@@ -55,14 +81,29 @@ export const Guard = {
    * Rejects negative numbers.
    *
    * Zero is allowed.
-   *
-   * @param value - The number to validate.
-   * @param message - Error message when validation fails.
-   * @returns A result containing the number or a validation error.
    */
-  againstNegative(value: number, message: string): Result<number, ValidationError> {
+  againstNegative(
+    value: number,
+    message: string,
+    options: GuardValidationOptions = {},
+  ): Result<number, ValidationError> {
     if (value < 0) {
-      return Result.fail(new ValidationError(message));
+      return Result.fail(createValidationError(message, options, 'value >= 0', value));
+    }
+
+    return Result.ok(value);
+  },
+
+  /**
+   * Rejects zero and negative numbers.
+   */
+  againstZeroOrNegative(
+    value: number,
+    message: string,
+    options: GuardValidationOptions = {},
+  ): Result<number, ValidationError> {
+    if (value <= 0) {
+      return Result.fail(createValidationError(message, options, 'value > 0', value));
     }
 
     return Result.ok(value);

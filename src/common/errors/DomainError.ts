@@ -3,29 +3,39 @@
  *
  * Base error type for domain-level failures in Project Genesis.
  *
- * Expected business failures are represented as structured error objects
- * rather than thrown exceptions.
- *
- * @see docs/development/CURSOR_IMPLEMENTATION_GUIDE.md
+ * @see docs/architecture/ERROR_HANDLING_STRATEGY.md
  */
+
+import { ErrorCategory } from './ErrorCategory.js';
+import { ErrorSeverity } from './ErrorSeverity.js';
+import { ProjectGenesisError, type ProjectGenesisErrorOptions } from './ProjectGenesisError.js';
+
+/** Options for constructing a {@link DomainError}. */
+export type DomainErrorOptions = Omit<ProjectGenesisErrorOptions, 'category'> & {
+  readonly category?: ErrorCategory.Domain;
+};
 
 /**
- * Base class for structured domain errors.
+ * Base class for structured domain errors representing expected gameplay situations.
  */
-export class DomainError {
-  /** Machine-readable error code. */
-  readonly code: string;
-
-  /** Human-readable error description. */
-  readonly message: string;
-
+export class DomainError extends ProjectGenesisError {
   /**
-   * @param code - Machine-readable error code.
+   * @param errorCode - Stable machine-readable error identifier.
    * @param message - Human-readable error description.
+   * @param options - Optional cause, context and severity metadata.
    */
-  constructor(code: string, message: string) {
-    this.code = code;
-    this.message = message;
+  constructor(
+    errorCode: string,
+    message: string,
+    options: Omit<DomainErrorOptions, 'errorCode' | 'message'> = {},
+  ) {
+    super({
+      errorCode,
+      message,
+      category: ErrorCategory.Domain,
+      severity: ErrorSeverity.Warning,
+      ...options,
+    });
 
     if (new.target === DomainError) {
       Object.freeze(this);

@@ -4,6 +4,7 @@
  * Computes company energy supply, demand and reserve from active buildings and jobs.
  */
 
+import type { EnergyBalancePort } from '../../domain/energy/EnergyBalancePort.js';
 import { BuildingCategory } from '../../content/building/BuildingTypeDefinition.js';
 import type { GameContentLoadResult } from '../../content/validateGameContent.js';
 import { BuildingStatus } from '../../domain/building/BuildingStatus.js';
@@ -34,7 +35,7 @@ export type EnergyBalanceServiceDependencies = {
 /**
  * Derives deterministic energy metrics from building content and runtime state.
  */
-export class EnergyBalanceService {
+export class EnergyBalanceService implements EnergyBalancePort {
   readonly #buildingRepository: BuildingRepository;
   readonly #productionJobRepository: ProductionJobRepository;
   readonly #gameContent: GameContentLoadResult;

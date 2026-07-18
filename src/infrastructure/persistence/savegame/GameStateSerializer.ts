@@ -53,57 +53,26 @@ import {
 import { createTransportOrderId } from '../../../domain/transport/TransportOrderId.js';
 import { TransportOrderStatus } from '../../../domain/transport/TransportOrderStatus.js';
 import type { TransportOrderRepository } from '../../../domain/transport/TransportOrderRepository.js';
-import type { TickHistoryService } from '../../../application/services/TickHistoryService.js';
+import type { TickHistorySnapshotProvider } from '../../../application/ports/TickHistorySnapshotProvider.js';
+import type {
+  GameStateSerializerPort,
+  GameStateSource,
+  GameStateTarget,
+  RestoredSimulationMetadata,
+} from '../../../application/ports/GameStateSerializerPort.js';
 import type { SimulationEngine } from '../../../simulation/engine/SimulationEngine.js';
 import { SimulationState } from '../../../simulation/state/SimulationState.js';
 import {
   GAME_SAVE_SCHEMA_VERSION,
   type GameSaveSnapshotV1,
-} from './GameSaveSnapshotV1.js';
+} from '../../../application/persistence/GameSaveSnapshotV1.js';
 
-/** Repositories and runtime state used to build a save snapshot. */
-export type GameStateSource = {
-  readonly clock: ManualClock;
-  readonly simulationEngine: SimulationEngine;
-  readonly companyRepository: CompanyRepository;
-  readonly buildingRepository: BuildingRepository;
-  readonly buildingStorageRepository: BuildingStorageRepository;
-  readonly transportOrderRepository: TransportOrderRepository;
-  readonly inventoryRepository: InventoryRepository;
-  readonly financeRepository: FinanceRepository;
-  readonly marketRepository: MarketRepository;
-  readonly productionJobRepository: ProductionJobRepository;
-  readonly researchJobRepository: ResearchJobRepository;
-  readonly companyResearchRepository: CompanyResearchRepository;
-  readonly companyMilestonesRepository: CompanyMilestonesRepository;
-  readonly tickHistoryService: TickHistoryService;
-};
-
-/** Repositories populated during snapshot restore. */
-export type GameStateTarget = {
-  readonly companyRepository: CompanyRepository;
-  readonly buildingRepository: BuildingRepository;
-  readonly buildingStorageRepository: BuildingStorageRepository;
-  readonly transportOrderRepository: TransportOrderRepository;
-  readonly inventoryRepository: InventoryRepository;
-  readonly financeRepository: FinanceRepository;
-  readonly marketRepository: MarketRepository;
-  readonly productionJobRepository: ProductionJobRepository;
-  readonly researchJobRepository: ResearchJobRepository;
-  readonly companyResearchRepository: CompanyResearchRepository;
-  readonly companyMilestonesRepository: CompanyMilestonesRepository;
-  readonly tickHistoryService: TickHistoryService;
-};
-export type RestoredSimulationMetadata = {
-  readonly clockTime: number;
-  readonly simulationState: SimulationState;
-  readonly tickDuration: number;
-};
+export type { GameStateSource, GameStateTarget, RestoredSimulationMetadata };
 
 /**
  * Converts live repositories into a versioned save snapshot.
  */
-export class GameStateSerializer {
+export class GameStateSerializer implements GameStateSerializerPort {
   serialize(source: GameStateSource): Result<GameSaveSnapshotV1, ValidationError> {
     if (source.simulationEngine.hasPendingEvents()) {
       return Result.fail(
@@ -112,6 +81,8 @@ export class GameStateSerializer {
         ),
       );
     }
+
+    const tickMetricsHistory = this.#serializeTickMetricsHistory(source.tickHistoryService);
 
     return Result.ok(
       Object.freeze({
@@ -318,13 +289,13 @@ export class GameStateSerializer {
               ),
             ),
         ),
-        tickMetricsHistory: this.#serializeTickMetricsHistory(source.tickHistoryService),
+        ...(tickMetricsHistory !== undefined ? { tickMetricsHistory } : {}),
       }),
     );
   }
 
   #serializeTickMetricsHistory(
-    tickHistoryService: TickHistoryService,
+    tickHistoryService: TickHistorySnapshotProvider,
   ): GameSaveSnapshotV1['tickMetricsHistory'] {
     const companyId = tickHistoryService.getCompanyId();
     const points = tickHistoryService.exportForSave();
@@ -521,7 +492,7 @@ export class GameStateSerializer {
 
   #restoreTickMetricsHistory(
     snapshot: GameSaveSnapshotV1,
-    tickHistoryService: TickHistoryService,
+    tickHistoryService: TickHistorySnapshotProvider,
   ): void {
     const history = snapshot.tickMetricsHistory;
 

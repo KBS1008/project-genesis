@@ -11,14 +11,14 @@ import type { ProductionJobRepository } from '../../../domain/production/Product
 import type { SimulationSystem } from '../../engine/SimulationSystem.js';
 import type { TickContext } from '../../engine/TickContext.js';
 import type { ProductionJobCompletedHandler } from './ProductionJobCompletedHandler.js';
-import type { EnergyBalanceService } from '../../../application/services/EnergyBalanceService.js';
+import type { EnergyBalancePort } from '../../../domain/energy/EnergyBalancePort.js';
 
 /** Dependencies for {@link ProductionSimulationSystem}. */
 export type ProductionSimulationSystemDependencies = {
   readonly productionJobRepository: ProductionJobRepository;
   readonly enqueueEvents: (events: readonly DomainEvent[]) => void;
   readonly onJobCompleted?: ProductionJobCompletedHandler;
-  readonly energyBalanceService?: EnergyBalanceService;
+  readonly energyBalanceService?: EnergyBalancePort;
 };
 
 /**
@@ -29,7 +29,7 @@ export class ProductionSimulationSystem implements SimulationSystem {
   readonly #productionJobRepository: ProductionJobRepository;
   readonly #enqueueEvents: (events: readonly DomainEvent[]) => void;
   readonly #onJobCompleted: ProductionJobCompletedHandler | undefined;
-  readonly #energyBalanceService: EnergyBalanceService | undefined;
+  readonly #energyBalanceService: EnergyBalancePort | undefined;
 
   /**
    * @param dependencies - Repository and event enqueue callback.

@@ -42,6 +42,10 @@ import { TransportLogisticsService } from '../services/TransportLogisticsService
 import { TickHistoryService } from '../services/TickHistoryService.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
 import { createDefaultSimulationSystems } from '../../simulation/systems/createDefaultSimulationSystems.js';
+import { FileSavegameStore } from '../../infrastructure/persistence/savegame/FileSavegameStore.js';
+import { GameStateSerializer } from '../../infrastructure/persistence/savegame/GameStateSerializer.js';
+import { ConsoleLogger } from '../../infrastructure/logging/ConsoleLogger.js';
+import { LogCategory } from '../../common/logging/LogCategory.js';
 import type { ApplicationContext } from './ApplicationContext.js';
 
 /** Options for application bootstrap. */
@@ -195,6 +199,16 @@ export async function bootstrapApplication(
   });
 
   const tickHistoryService = new TickHistoryService();
+  const savegameStore = new FileSavegameStore();
+  const gameStateSerializer = new GameStateSerializer();
+  const logger = new ConsoleLogger();
+
+  logger.info(LogCategory.Application, 'Application bootstrap completed.', {
+    resources: contentResult.value.resourceTypes.size,
+    buildingTypes: contentResult.value.buildingTypes.size,
+    recipes: contentResult.value.recipes.size,
+    tickNumber: simulationEngine.state.tickNumber,
+  });
 
   return Result.ok({
     clock,
@@ -216,6 +230,9 @@ export async function bootstrapApplication(
     energyBalanceService,
     transportLogisticsService,
     tickHistoryService,
+    savegameStore,
+    gameStateSerializer,
+    logger,
     gameContent: contentResult.value,
   });
 }

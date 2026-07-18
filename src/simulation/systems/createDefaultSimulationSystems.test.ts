@@ -7,7 +7,7 @@ import { InMemoryMarketRepository } from '../../infrastructure/persistence/InMem
 import { InMemoryProductionJobRepository } from '../../infrastructure/persistence/InMemoryProductionJobRepository.js';
 import { InMemoryResearchJobRepository } from '../../infrastructure/persistence/InMemoryResearchJobRepository.js';
 import { InMemoryTransportOrderRepository } from '../../infrastructure/persistence/InMemoryTransportOrderRepository.js';
-import type { TransportLogisticsService } from '../../application/services/TransportLogisticsService.js';
+import type { TransportLogisticsPort } from '../../domain/transport/TransportLogisticsPort.js';
 import { Company, createCompanyId, createPlayerId } from '../../domain/company/Company.js';
 import { createDefaultSimulationSystems } from './createDefaultSimulationSystems.js';
 
@@ -35,7 +35,7 @@ function createDependencies() {
   const transportOrderRepository = new InMemoryTransportOrderRepository();
   const transportLogisticsService = {
     completeTransportOrder: () => Result.ok(undefined),
-  } as TransportLogisticsService;
+  } as TransportLogisticsPort;
 
   return {
     companyRepository: new InMemoryCompanyRepository(),

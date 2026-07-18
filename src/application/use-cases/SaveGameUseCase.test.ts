@@ -41,7 +41,7 @@ describe('SaveGameUseCase', () => {
       const createCompany = new CreateCompanyUseCase(context);
       const placeBuilding = new PlaceBuildingUseCase(context);
       const saveGame = new SaveGameUseCase(context);
-      const loadGame = new LoadGameUseCase();
+      const loadGame = new LoadGameUseCase({ savegameStore: context.savegameStore });
 
       createCompany.execute({
         companyId: 'company_001',

@@ -148,6 +148,52 @@ describe('Result', () => {
     });
   });
 
+  describe('isSuccess', () => {
+    it('returns true for a successful result', () => {
+      const result = Result.ok('value');
+
+      expect(Result.isSuccess(result)).toBe(true);
+    });
+  });
+
+  describe('getValue', () => {
+    it('returns the success value', () => {
+      expect(Result.getValue(Result.ok('value'))).toBe('value');
+    });
+
+    it('throws for a failed result', () => {
+      expect(() => Result.getValue(Result.fail('error'))).toThrow('error');
+    });
+  });
+
+  describe('getError', () => {
+    it('returns the failure error', () => {
+      expect(Result.getError(Result.fail('error'))).toBe('error');
+    });
+
+    it('throws for a successful result', () => {
+      expect(() => Result.getError(Result.ok('value'))).toThrow();
+    });
+  });
+
+  describe('fold', () => {
+    it('handles success and failure branches', () => {
+      expect(
+        Result.fold(Result.ok(2), {
+          onSuccess: (value) => `ok:${value}`,
+          onFailure: () => 'failed',
+        }),
+      ).toBe('ok:2');
+
+      expect(
+        Result.fold(Result.fail('invalid'), {
+          onSuccess: () => 'ok',
+          onFailure: (error) => `failed:${error}`,
+        }),
+      ).toBe('failed:invalid');
+    });
+  });
+
   describe('unwrapOrElse', () => {
     it('returns the success value', () => {
       const result = Result.ok('value');

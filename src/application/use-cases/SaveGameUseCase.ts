@@ -5,11 +5,12 @@
  */
 
 import { ValidationError } from '../../common/errors/ValidationError.js';
+import type { PersistenceError } from '../../common/errors/PersistenceError.js';
 import { Result } from '../../common/result/Result.js';
-import { FileSavegameStore } from '../../infrastructure/persistence/savegame/FileSavegameStore.js';
-import { GameStateSerializer } from '../../infrastructure/persistence/savegame/GameStateSerializer.js';
 import type { ApplicationContext } from '../bootstrap/ApplicationContext.js';
 import type { SaveGameCommand } from '../commands/SaveGameCommand.js';
+import type { GameStateSerializerPort } from '../ports/GameStateSerializerPort.js';
+import type { SavegameStore } from '../ports/SavegameStore.js';
 
 /** Dependencies required by {@link SaveGameUseCase}. */
 export type SaveGameUseCaseDependencies = Pick<
@@ -29,7 +30,8 @@ export type SaveGameUseCaseDependencies = Pick<
   | 'companyMilestonesRepository'
   | 'tickHistoryService'
 > & {
-  readonly savegameStore?: FileSavegameStore;
+  readonly savegameStore: SavegameStore;
+  readonly gameStateSerializer: GameStateSerializerPort;
 };
 
 /**
@@ -50,11 +52,11 @@ export class SaveGameUseCase {
   readonly #companyResearchRepository: SaveGameUseCaseDependencies['companyResearchRepository'];
   readonly #companyMilestonesRepository: SaveGameUseCaseDependencies['companyMilestonesRepository'];
   readonly #tickHistoryService: SaveGameUseCaseDependencies['tickHistoryService'];
-  readonly #savegameStore: FileSavegameStore;
-  readonly #serializer = new GameStateSerializer();
+  readonly #savegameStore: SavegameStore;
+  readonly #serializer: GameStateSerializerPort;
 
   /**
-   * @param dependencies - Application state and optional savegame store override.
+   * @param dependencies - Application state and persistence ports from the composition root.
    */
   constructor(dependencies: SaveGameUseCaseDependencies) {
     this.#clock = dependencies.clock;
@@ -71,13 +73,16 @@ export class SaveGameUseCase {
     this.#companyResearchRepository = dependencies.companyResearchRepository;
     this.#companyMilestonesRepository = dependencies.companyMilestonesRepository;
     this.#tickHistoryService = dependencies.tickHistoryService;
-    this.#savegameStore = dependencies.savegameStore ?? new FileSavegameStore();
+    this.#savegameStore = dependencies.savegameStore;
+    this.#serializer = dependencies.gameStateSerializer;
   }
 
   /**
    * Executes the save-game workflow.
    */
-  async execute(command: SaveGameCommand): Promise<Result<string, ValidationError>> {
+  async execute(
+    command: SaveGameCommand,
+  ): Promise<Result<string, ValidationError | PersistenceError>> {
     const snapshotResult = this.#serializer.serialize({
       clock: this.#clock,
       simulationEngine: this.#simulationEngine,

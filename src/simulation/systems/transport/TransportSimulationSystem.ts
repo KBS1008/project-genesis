@@ -6,18 +6,18 @@ import type { DomainEvent } from '../../../common/events/DomainEvent.js';
 import type { TransportOrderRepository } from '../../../domain/transport/TransportOrderRepository.js';
 import type { SimulationSystem } from '../../engine/SimulationSystem.js';
 import type { TickContext } from '../../engine/TickContext.js';
-import type { TransportLogisticsService } from '../../../application/services/TransportLogisticsService.js';
+import type { TransportLogisticsPort } from '../../../domain/transport/TransportLogisticsPort.js';
 
 export type TransportSimulationSystemDependencies = {
   readonly transportOrderRepository: TransportOrderRepository;
-  readonly transportLogisticsService: TransportLogisticsService;
+  readonly transportLogisticsService: TransportLogisticsPort;
   readonly enqueueEvents: (events: readonly DomainEvent[]) => void;
 };
 
 export class TransportSimulationSystem implements SimulationSystem {
   readonly name = 'Transport';
   readonly #transportOrderRepository: TransportOrderRepository;
-  readonly #transportLogisticsService: TransportLogisticsService;
+  readonly #transportLogisticsService: TransportLogisticsPort;
   readonly #enqueueEvents: (events: readonly DomainEvent[]) => void;
 
   constructor(dependencies: TransportSimulationSystemDependencies) {

@@ -1,5 +1,6 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import type { ApplicationContext } from '../bootstrap/ApplicationContext.js';
 import { bootstrapApplication } from '../bootstrap/bootstrapApplication.js';
 import { createBuildingId } from '../../domain/building/Building.js';
 import { createCompanyId } from '../../domain/company/Company.js';
@@ -47,13 +48,7 @@ function requireResourceTypeId(value: string) {
   return result.value;
 }
 
-function grantMilestone(
-  context: Awaited<ReturnType<typeof bootstrapApplication>> extends { ok: true; value: infer T }
-    ? T
-    : never,
-  companyId: string,
-  milestoneId: string,
-) {
+function grantMilestone(context: ApplicationContext, companyId: string, milestoneId: string) {
   const companyIdResult = createCompanyId(companyId);
 
   if (!companyIdResult.ok) {

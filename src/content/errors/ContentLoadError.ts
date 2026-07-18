@@ -4,17 +4,20 @@
  * Errors raised during content loading and validation.
  */
 
-import { DomainError } from '../../common/errors/DomainError.js';
+import { ErrorCategory } from '../../common/errors/ErrorCategory.js';
+import { ErrorSeverity } from '../../common/errors/ErrorSeverity.js';
+import { ProjectGenesisError } from '../../common/errors/ProjectGenesisError.js';
 
 /** Machine-readable code for content load failures. */
 export const ContentLoadErrorCode = {
-  CONTENT_LOAD: 'CONTENT_LOAD',
+  CONTENT_LOAD: 'CFG-0001',
+  INVALID_REFERENCE: 'CFG-0002',
 } as const;
 
 /**
  * Describes a failure while loading or validating game content.
  */
-export class ContentLoadError extends DomainError {
+export class ContentLoadError extends ProjectGenesisError {
   readonly filePath: string | undefined;
   readonly contentId: string | undefined;
 
@@ -24,9 +27,22 @@ export class ContentLoadError extends DomainError {
    */
   constructor(
     message: string,
-    options: { filePath?: string | undefined; contentId?: string | undefined } = {},
+    options: {
+      readonly errorCode?: string;
+      readonly filePath?: string | undefined;
+      readonly contentId?: string | undefined;
+    } = {},
   ) {
-    super(ContentLoadErrorCode.CONTENT_LOAD, message);
+    super({
+      errorCode: options.errorCode ?? ContentLoadErrorCode.CONTENT_LOAD,
+      category: ErrorCategory.Configuration,
+      message,
+      severity: ErrorSeverity.Error,
+      context: {
+        ...(options.filePath !== undefined ? { filePath: options.filePath } : {}),
+        ...(options.contentId !== undefined ? { contentId: options.contentId } : {}),
+      },
+    });
     this.filePath = options.filePath;
     this.contentId = options.contentId;
     Object.freeze(this);
