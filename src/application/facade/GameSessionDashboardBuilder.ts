@@ -8,6 +8,7 @@ import type { EnergyBalanceService } from '../services/EnergyBalanceService.js';
 import type { ApplicationContext } from '../bootstrap/ApplicationContext.js';
 import { BuildingStatus } from '../../domain/building/BuildingStatus.js';
 import { createCompanyId } from '../../domain/company/Company.js';
+import { MarketFeePolicy } from '../../domain/policies/market/MarketFeePolicy.js';
 import { EmployeePrerequisitesSpecification } from '../../domain/specifications/employee/EmployeePrerequisitesSpecification.js';
 import { ProductionJobStatus } from '../../domain/production/ProductionJobStatus.js';
 import { ResearchJobStatus } from '../../domain/research/ResearchJobStatus.js';
@@ -264,6 +265,9 @@ export class GameSessionDashboardBuilder {
         Object.freeze({
           resourceId: price.resourceId,
           lastPrice: price.lastPrice,
+          totalSupply: price.totalSupply,
+          baselineDemand: price.baselineDemand,
+          pressureIndex: price.pressureIndex,
         }),
       ),
     );
@@ -518,6 +522,7 @@ export class GameSessionDashboardBuilder {
 
   #readMarketHints(input: DashboardHintInput): readonly MarketTradeHint[] {
     const hasWarehouse = input.warehouseStorage.length > 0;
+    const marketFeePolicy = new MarketFeePolicy();
 
     return Object.freeze(
       this.#context.gameContent.resourceTypes
@@ -528,7 +533,10 @@ export class GameSessionDashboardBuilder {
             input.marketPrices.find((entry) => entry.resourceId === resource.id)?.lastPrice ?? 0;
           const onSiteAvailable =
             input.inventory.items.find((item) => item.resourceId === resource.id)?.available ?? 0;
-          const buyCost = price * DEFAULT_TRADE_AMOUNT;
+          const tradeValue = price * DEFAULT_TRADE_AMOUNT;
+          const feeResult = marketFeePolicy.evaluate({ tradeValue });
+          const feeAmount = feeResult.ok ? feeResult.value.feeAmount : 0;
+          const buyCost = tradeValue + feeAmount;
 
           const canBuy = price > 0 && input.finance.availableCash >= buyCost;
           const canSell = onSiteAvailable >= DEFAULT_TRADE_AMOUNT;
@@ -543,7 +551,7 @@ export class GameSessionDashboardBuilder {
               ? hasWarehouse
                 ? 'Landet im Lagerhaus.'
                 : null
-              : `Benötigt ${buyCost.toLocaleString('de-DE')} GC.`,
+              : `Benötigt ${buyCost.toLocaleString('de-DE')} GC inkl. Marktgebühr.`,
             sellReason: canSell
               ? null
               : `Benötigt ${DEFAULT_TRADE_AMOUNT}× ${resource.name} am Standort (nicht im Lager).`,

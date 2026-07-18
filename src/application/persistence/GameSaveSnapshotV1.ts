@@ -195,6 +195,9 @@ export type GameSaveTickMetricsSnapshotV1 = {
   readonly marketPrices?: readonly {
     readonly resourceId: string;
     readonly lastPrice: number;
+    readonly totalSupply?: number;
+    readonly baselineDemand?: number;
+    readonly pressureIndex?: number;
   }[];
 };
 

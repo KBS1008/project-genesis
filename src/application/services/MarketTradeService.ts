@@ -20,6 +20,7 @@ import { GLOBAL_MARKET_ID } from '../../domain/market/MarketConstants.js';
 import type { Market } from '../../domain/market/Market.js';
 import type { MarketRepository } from '../../domain/market/MarketRepository.js';
 import { InstantTradePricingPolicy } from '../../domain/policies/market/InstantTradePricingPolicy.js';
+import { MarketFeePolicy } from '../../domain/policies/market/MarketFeePolicy.js';
 import { ResourceListedOnMarketSpecification } from '../../domain/specifications/market/ResourceListedOnMarketSpecification.js';
 import { createResourceTypeId } from '../../domain/shared/ResourceTypeId.js';
 
@@ -28,6 +29,8 @@ export type MarketTradeResult = {
   readonly totalAmount: number;
   readonly unitPrice: number;
   readonly amount: number;
+  readonly feeAmount: number;
+  readonly netAmount: number;
 };
 
 import type { TransportLogisticsService } from './TransportLogisticsService.js';
@@ -67,6 +70,7 @@ export class MarketTradeService {
 
   readonly #resourceListedOnMarketSpecification = new ResourceListedOnMarketSpecification();
   readonly #instantTradePricingPolicy = new InstantTradePricingPolicy();
+  readonly #marketFeePolicy = new MarketFeePolicy();
 
   /**
    * Sells available inventory at the current market price.
@@ -118,6 +122,14 @@ export class MarketTradeService {
     const tradeAmount = amountResult.value;
     const unitPrice = pricingResult.value.unitPrice;
     const totalAmount = unitPrice * tradeAmount;
+    const feeResult = this.#resolveTradeFee(totalAmount);
+
+    if (!feeResult.ok) {
+      return Result.fail(feeResult.error);
+    }
+
+    const feeAmount = feeResult.value;
+    const netAmount = totalAmount - feeAmount;
 
     const removeResult = inventory.removeQuantity(resourceId, tradeAmount, this.#clock);
 
@@ -132,6 +144,14 @@ export class MarketTradeService {
       return Result.fail(creditResult.error);
     }
 
+    const feeDebitResult = this.#debitMarketFee(finance, feeAmount);
+
+    if (!feeDebitResult.ok) {
+      finance.debit(totalAmount, FinanceTransactionType.ADMIN, this.#clock);
+      inventory.addQuantity(resourceId, tradeAmount, this.#clock);
+      return Result.fail(feeDebitResult.error);
+    }
+
     const volumeResult = market.updateLastPrice(
       resourceId,
       unitPrice,
@@ -140,6 +160,7 @@ export class MarketTradeService {
     );
 
     if (!volumeResult.ok) {
+      this.#refundMarketFee(finance, feeAmount);
       finance.debit(totalAmount, FinanceTransactionType.ADMIN, this.#clock);
       inventory.addQuantity(resourceId, tradeAmount, this.#clock);
       return Result.fail(volumeResult.error);
@@ -151,6 +172,8 @@ export class MarketTradeService {
       totalAmount,
       unitPrice,
       amount: tradeAmount,
+      feeAmount,
+      netAmount,
     });
   }
 
@@ -204,6 +227,14 @@ export class MarketTradeService {
     const tradeAmount = amountResult.value;
     const unitPrice = pricingResult.value.unitPrice;
     const totalAmount = unitPrice * tradeAmount;
+    const feeResult = this.#resolveTradeFee(totalAmount);
+
+    if (!feeResult.ok) {
+      return Result.fail(feeResult.error);
+    }
+
+    const feeAmount = feeResult.value;
+    const netAmount = totalAmount + feeAmount;
 
     const debitResult = finance.debit(totalAmount, FinanceTransactionType.PURCHASE, this.#clock);
 
@@ -211,9 +242,17 @@ export class MarketTradeService {
       return Result.fail(debitResult.error);
     }
 
+    const feeDebitResult = this.#debitMarketFee(finance, feeAmount);
+
+    if (!feeDebitResult.ok) {
+      finance.credit(totalAmount, FinanceTransactionType.SYSTEM, this.#clock);
+      return Result.fail(feeDebitResult.error);
+    }
+
     const addResult = inventory.addQuantity(resourceId, tradeAmount, this.#clock);
 
     if (!addResult.ok) {
+      this.#refundMarketFee(finance, feeAmount);
       finance.credit(totalAmount, FinanceTransactionType.SYSTEM, this.#clock);
       return Result.fail(addResult.error);
     }
@@ -227,6 +266,7 @@ export class MarketTradeService {
 
     if (!volumeResult.ok) {
       inventory.removeQuantity(resourceId, tradeAmount, this.#clock);
+      this.#refundMarketFee(finance, feeAmount);
       finance.credit(totalAmount, FinanceTransactionType.SYSTEM, this.#clock);
       return Result.fail(volumeResult.error);
     }
@@ -247,7 +287,35 @@ export class MarketTradeService {
       totalAmount,
       unitPrice,
       amount: tradeAmount,
+      feeAmount,
+      netAmount,
     });
+  }
+
+  #resolveTradeFee(tradeValue: number): Result<number, ValidationError> {
+    const feeResult = this.#marketFeePolicy.evaluate({ tradeValue });
+
+    if (!feeResult.ok) {
+      return Result.fail(feeResult.error);
+    }
+
+    return Result.ok(feeResult.value.feeAmount);
+  }
+
+  #debitMarketFee(finance: FinanceAccount, feeAmount: number): Result<void, ValidationError> {
+    if (feeAmount === 0) {
+      return Result.ok(undefined);
+    }
+
+    return finance.debit(feeAmount, FinanceTransactionType.MARKET_FEE, this.#clock);
+  }
+
+  #refundMarketFee(finance: FinanceAccount, feeAmount: number): void {
+    if (feeAmount === 0) {
+      return;
+    }
+
+    finance.credit(feeAmount, FinanceTransactionType.SYSTEM, this.#clock);
   }
 
   #resolveTradePricing(

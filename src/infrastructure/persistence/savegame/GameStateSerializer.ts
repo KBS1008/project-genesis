@@ -344,6 +344,9 @@ export class GameStateSerializer implements GameStateSerializerPort {
                 Object.freeze({
                   resourceId: entry.resourceId,
                   lastPrice: entry.lastPrice,
+                  totalSupply: entry.totalSupply,
+                  baselineDemand: entry.baselineDemand,
+                  pressureIndex: entry.pressureIndex,
                 }),
               ),
             ),
@@ -551,6 +554,9 @@ export class GameStateSerializer implements GameStateSerializerPort {
               Object.freeze({
                 resourceId: entry.resourceId,
                 lastPrice: entry.lastPrice,
+                totalSupply: entry.totalSupply ?? 0,
+                baselineDemand: entry.baselineDemand ?? 0,
+                pressureIndex: entry.pressureIndex ?? 0,
               }),
             ),
           ),

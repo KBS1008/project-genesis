@@ -234,7 +234,7 @@ Introduce a dynamic economic system.
 
 ### Status
 
-⚪ Planned
+🟡 In Progress (M5-1 Dynamic Prices completed 2026-07-18)
 
 ---
 

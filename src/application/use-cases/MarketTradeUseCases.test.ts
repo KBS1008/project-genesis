@@ -105,10 +105,12 @@ describe('SellResourceUseCase', () => {
 
     if (result.ok) {
       expect(result.value.totalAmount).toBe(50);
+      expect(result.value.feeAmount).toBe(1);
+      expect(result.value.netAmount).toBe(49);
     }
 
     const finance = context.financeRepository.findByCompanyId(requireCompanyId('company_001'));
-    expect(finance?.getCashBalance()).toBe(STARTING_MONEY + 50);
+    expect(finance?.getCashBalance()).toBe(STARTING_MONEY + 49);
   });
 
   it('rejects sells for unknown companies', async () => {

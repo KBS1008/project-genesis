@@ -80,6 +80,7 @@ async function createContext(clock = new ManualClock(100)) {
       productionJobRepository,
       researchJobRepository,
       financeRepository,
+      inventoryRepository,
       marketRepository,
       employeeRepository,
       enqueueEvents,

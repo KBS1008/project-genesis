@@ -8,25 +8,31 @@ import { ValidationError } from '../../common/errors/ValidationError.js';
 import { Result } from '../../common/result/Result.js';
 import { createMarketId } from '../../domain/market/Market.js';
 import { GLOBAL_MARKET_ID } from '../../domain/market/MarketConstants.js';
-import type { ResourceMarketPrice } from '../../domain/market/ResourceMarketPrice.js';
+import { aggregateResourceSupply } from '../../domain/market/MarketSupplyAggregator.js';
 import type { ApplicationContext } from '../bootstrap/ApplicationContext.js';
+import { projectMarketPrice } from '../read-models/projectMarketPrice.js';
 import type { MarketPriceReadModel } from '../read-models/MarketPriceReadModel.js';
 import type { GetMarketPricesQuery } from './GetMarketPricesQuery.js';
 
 /** Dependencies required by {@link GetMarketPricesQueryHandler}. */
-export type GetMarketPricesQueryHandlerDependencies = Pick<ApplicationContext, 'marketRepository'>;
+export type GetMarketPricesQueryHandlerDependencies = Pick<
+  ApplicationContext,
+  'marketRepository' | 'inventoryRepository'
+>;
 
 /**
  * Returns read models for all listed market resource prices.
  */
 export class GetMarketPricesQueryHandler {
   readonly #marketRepository: GetMarketPricesQueryHandlerDependencies['marketRepository'];
+  readonly #inventoryRepository: GetMarketPricesQueryHandlerDependencies['inventoryRepository'];
 
   /**
-   * @param dependencies - Repository access for market lookup.
+   * @param dependencies - Repository access for market and inventory lookup.
    */
   constructor(dependencies: GetMarketPricesQueryHandlerDependencies) {
     this.#marketRepository = dependencies.marketRepository;
+    this.#inventoryRepository = dependencies.inventoryRepository;
   }
 
   /**
@@ -45,16 +51,17 @@ export class GetMarketPricesQueryHandler {
       return Result.fail(new ValidationError('Global market prices were not initialized.'));
     }
 
-    return Result.ok(Object.freeze(market.getPrices().map(mapMarketPrice)));
-  }
-}
+    const inventories = this.#inventoryRepository.findAll();
 
-function mapMarketPrice(price: ResourceMarketPrice): MarketPriceReadModel {
-  return Object.freeze({
-    resourceId: price.resourceId.value,
-    basePrice: price.basePrice,
-    lastPrice: price.lastPrice,
-    tradeVolume: price.tradeVolume,
-    updatedAt: price.updatedAt,
-  });
+    return Result.ok(
+      Object.freeze(
+        market.getPrices().map((price) =>
+          projectMarketPrice(
+            price,
+            aggregateResourceSupply(inventories, price.resourceId.value),
+          ),
+        ),
+      ),
+    );
+  }
 }

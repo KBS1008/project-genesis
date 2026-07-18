@@ -58,7 +58,11 @@ export function createDefaultSimulationSystems(
         ? { onJobCompleted: dependencies.onResearchJobCompleted }
         : {}),
     }),
-    new MarketSimulationSystem(dependencies.marketRepository),
+    new MarketSimulationSystem({
+      marketRepository: dependencies.marketRepository,
+      inventoryRepository: dependencies.inventoryRepository,
+      enqueueEvents: dependencies.enqueueEvents,
+    }),
     new FinanceSimulationSystem({
       financeRepository: dependencies.financeRepository,
       employeeRepository: dependencies.employeeRepository,

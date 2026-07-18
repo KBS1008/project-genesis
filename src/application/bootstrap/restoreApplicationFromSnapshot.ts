@@ -161,6 +161,7 @@ export async function restoreApplicationFromSnapshot(
       productionJobRepository,
       researchJobRepository,
       financeRepository,
+      inventoryRepository,
       marketRepository,
       employeeRepository,
       enqueueEvents,

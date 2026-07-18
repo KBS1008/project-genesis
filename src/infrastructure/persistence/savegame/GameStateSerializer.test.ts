@@ -459,6 +459,9 @@ describe('GameStateSerializer', () => {
             Object.freeze({
               resourceId: 'wood',
               lastPrice: 12,
+              totalSupply: 0,
+              baselineDemand: 0,
+              pressureIndex: 0,
             }),
           ]),
         }),

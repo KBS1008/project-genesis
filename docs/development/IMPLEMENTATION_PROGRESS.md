@@ -206,6 +206,8 @@ Business aggregates and domain events.
 | Identifiers | `market/MarketId.ts` |
 | Price snapshot | `market/ResourceMarketPrice.ts` |
 | Constants | `market/MarketConstants.ts` (`GLOBAL_MARKET_ID`) |
+| Price simulation | `market/MarketPriceCalculator.ts`, `market/MarketPriceConstants.ts`, `market/MarketPressureCalculator.ts`, `market/MarketSupplyAggregator.ts` |
+| Read projection | `read-models/projectMarketPrice.ts` |
 | Domain event | `market/events/MarketPriceChanged.ts` |
 | Repository | `market/MarketRepository.ts` |
 | Tests | `market/Market.test.ts` |
@@ -278,6 +280,7 @@ Persistence contracts for aggregate roots. Implementations belong in Infrastruct
 | `Policy<TContext, TDecision>` | `policies/Policy.ts` |
 | `ConstructionCostPolicy` | `policies/building/ConstructionCostPolicy.ts` |
 | `InstantTradePricingPolicy` | `policies/market/InstantTradePricingPolicy.ts` |
+| `MarketFeePolicy` | `policies/market/MarketFeePolicy.ts` |
 | Tests | `specifications/**/*.test.ts`, `policies/**/*.test.ts` |
 
 **Behaviour:**
@@ -518,6 +521,7 @@ Deterministic simulation engine (first increment).
 | `ProductionSimulationSystem` | `systems/production/ProductionSimulationSystem.ts` |
 | `ResearchSimulationSystem` | `systems/research/ResearchSimulationSystem.ts` |
 | `MarketSimulationSystem` | `systems/market/MarketSimulationSystem.ts` |
+| `MarketSupplyAggregator` | `systems/market/MarketSupplyAggregator.ts` |
 | `FinanceSimulationSystem` | `systems/finance/FinanceSimulationSystem.ts` |
 | Factory | `systems/createDefaultSimulationSystems.ts` |
 
@@ -531,7 +535,7 @@ Research system advances running {@link ResearchJob} aggregates each tick and in
 
 Finance system debits combined employee salaries every `PAYROLL_INTERVAL_TICKS` ticks as `SALARY` transactions.
 
-Market system visits the global market each tick (dynamic pricing deferred).
+Market system adjusts global resource prices every `MARKET_PRICE_UPDATE_INTERVAL_TICKS` ticks from aggregate inventory supply and baseline demand via `MarketPriceCalculator`.
 
 **References:** DD-009, DD-011, DD-027, `docs/architecture/runtime-view.md`
 
@@ -584,6 +588,7 @@ Coordinates use cases between domain, infrastructure and simulation.
 | `GetInventoryQueryHandler` | `queries/GetInventoryQueryHandler.ts` |
 | `GetFinanceQueryHandler` | `queries/GetFinanceQueryHandler.ts` |
 | `GetMarketPricesQueryHandler` | `queries/GetMarketPricesQueryHandler.ts` |
+| Market dashboard charts | `apps/web/src/components/MarketSupplyDemandChart.tsx`, `MarketPressureHistoryChart.tsx`, `MarketPricesTable.tsx` |
 | Read models | `read-models/CompanyReadModel.ts`, `BuildingReadModel.ts`, `InventoryReadModel.ts`, `FinanceReadModel.ts`, `MarketPriceReadModel.ts`, `TickMetricsSnapshot.ts`, `FinanceTransactionReadModel.ts` |
 | Tests | `bootstrap/bootstrapApplication.test.ts`, `services/*.test.ts`, `queries/*.test.ts`, `use-cases/*.test.ts`, `facade/GameSession.test.ts` |
 
@@ -766,7 +771,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 | Domain / Employee | `Employee.test.ts` | Hire, assign, unassign, validation, restore |
 | Domain / ProductionJob | `ProductionJob.test.ts` | Start, tick, completion |
 | Domain / FinanceAccount | `FinanceAccount.test.ts` | Credit, debit, reserve, transactions |
-| Domain / Market | `Market.test.ts` | Seed prices, update price, events |
+| Domain / Market | `Market.test.ts`, `MarketPriceCalculator.test.ts` | Seed prices, update price, supply-demand formula |
 | Domain / CompanyResearch | `CompanyResearch.test.ts` | Create, complete technology |
 | Domain / Specifications | `RequiredResearchSpecification.test.ts`, `BuildingPrerequisitesSpecification.test.ts`, ... | Research eligibility, building prerequisites |
 | Application / CompleteTechnology | `CompleteTechnologyUseCase.test.ts` | Complete technology for company |
@@ -786,7 +791,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 | Content / All | `validateGameContent.test.ts` | Full content pipeline |
 | Simulation / Engine | `SimulationEngine.test.ts` | Tick, determinism, pause |
 | Simulation / EventQueue | `EventQueue.test.ts` | Enqueue, drain, peek |
-| Simulation / Systems | `createDefaultSimulationSystems.test.ts` | Default pipeline order |
+| Simulation / Systems | `createDefaultSimulationSystems.test.ts`, `MarketSimulationSystem.test.ts` | Default pipeline order, dynamic price ticks |
 | Simulation / Finance | `FinanceSimulationSystem.test.ts` | Payroll debits on interval ticks |
 | Simulation / Production | `ProductionSimulationSystem.test.ts` | Worker shortage and full staffing |
 | Application / EmployeeAllocation | `EmployeeAllocationService.test.ts` | Assigned count and recipe efficiency |
@@ -829,7 +834,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Planned Next Steps
 
-1. **M5 – Economy:** Dynamic prices, supply & demand, taxes (deterministic)
+1. **M5 – Economy (continued):** Contracts, taxes, inflation controls
 2. Session/auth model for multi-user API access
 3. Full tick log / replay per DD-033 (beyond metrics ring buffer)
 4. Resource / Vehicle schema docs commit (`docs/schemas/Resource.schema.md`, `Vehicle.schema.md`)
@@ -838,7 +843,9 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Recently Completed (2026-07)
 
-- M4 milestone closure (first-play tutorial checklist, milestone docs updated)
+- M5 economy step 3: market trade fees (`MarketFeePolicy`, `MARKET_FEE` ledger entries)
+- M5 economy step 2: dashboard supply/demand (extended market read model, charts, market table)
+- M5 economy step 1: dynamic market prices (supply & demand via `MarketPriceCalculator`, simulation tick updates)
 - Dashboard UX polish (outline KPI icons, auto-dismiss toasts, tutorial panel)
 - Employee dashboard & API integration (hire/assign routes, table, KPIs, detail panel)
 - Employee savegame persistence (`employees[]` on schema v1, serializer round-trip)

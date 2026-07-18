@@ -3,6 +3,7 @@ import { Result } from '../../common/result/Result.js';
 import { InMemoryBuildingRepository } from '../../infrastructure/persistence/InMemoryBuildingRepository.js';
 import { InMemoryCompanyRepository } from '../../infrastructure/persistence/InMemoryCompanyRepository.js';
 import { InMemoryFinanceRepository } from '../../infrastructure/persistence/InMemoryFinanceRepository.js';
+import { InMemoryInventoryRepository } from '../../infrastructure/persistence/InMemoryInventoryRepository.js';
 import { InMemoryMarketRepository } from '../../infrastructure/persistence/InMemoryMarketRepository.js';
 import { InMemoryEmployeeRepository } from '../../infrastructure/persistence/InMemoryEmployeeRepository.js';
 import { InMemoryProductionJobRepository } from '../../infrastructure/persistence/InMemoryProductionJobRepository.js';
@@ -46,6 +47,7 @@ function createDependencies() {
     productionJobRepository: new InMemoryProductionJobRepository(),
     researchJobRepository: new InMemoryResearchJobRepository(),
     financeRepository: new InMemoryFinanceRepository(),
+    inventoryRepository: new InMemoryInventoryRepository(),
     marketRepository: new InMemoryMarketRepository(),
     employeeRepository: new InMemoryEmployeeRepository(),
     enqueueEvents: () => undefined,

@@ -13,6 +13,9 @@ import {
 import { TickHistoryCharts } from '@/components/TickHistoryCharts';
 import { InventoryHistoryChart } from '@/components/InventoryHistoryChart';
 import { MarketPriceHistoryChart } from '@/components/MarketPriceHistoryChart';
+import { MarketSupplyDemandChart } from '@/components/MarketSupplyDemandChart';
+import { MarketPressureHistoryChart } from '@/components/MarketPressureHistoryChart';
+import { MarketPricesTable } from '@/components/MarketPricesTable';
 import { EnergyHistoryChart } from '@/components/EnergyHistoryChart';
 import {
   DashboardDetailPanel,
@@ -972,6 +975,17 @@ export function DashboardShell() {
             <MarketPriceHistoryChart points={tickHistory} labelResource={labelResource} />
           ) : null}
 
+          {hasGame ? (
+            <MarketSupplyDemandChart
+              marketPrices={dashboard?.marketPrices ?? []}
+              labelResource={labelResource}
+            />
+          ) : null}
+
+          {hasGame ? (
+            <MarketPressureHistoryChart points={tickHistory} labelResource={labelResource} />
+          ) : null}
+
           <div className="dashboard-panels">
             <div className="dashboard-tables">
               {isInitialLoading ? (
@@ -1072,6 +1086,26 @@ export function DashboardShell() {
                           }}
                           emptyText="Noch keine Mitarbeiter."
                           emptyHint="Stellen Sie Produktions- oder Logistikpersonal ein."
+                        />
+                      )}
+                    </div>
+                  </section>
+
+                  <section className="card">
+                    <div className="section-header">
+                      <h2>Markt</h2>
+                      <p>Preise, Angebot, Nachfrage und Trend je Ressource. Handelsgebühr: 2&nbsp;% (min. 1 GC) pro Transaktion.</p>
+                    </div>
+                    <div className="table-wrap">
+                      {!dashboard?.company ? (
+                        <p className="empty-state">
+                          <strong>Noch keine Marktdaten.</strong>
+                          Starten Sie ein Spiel, um dynamische Preise zu sehen.
+                        </p>
+                      ) : (
+                        <MarketPricesTable
+                          marketPrices={dashboard.marketPrices}
+                          labelResource={labelResource}
                         />
                       )}
                     </div>
@@ -1374,19 +1408,9 @@ export function DashboardShell() {
               labelTechnology={labelTechnology}
               labelEmployee={labelEmployee}
               renderMarketTable={
-                <DataTable
-                  searchable
-                  searchPlaceholder="Marktpreise suchen…"
-                  columns={[
-                    { key: 'lastPrice', label: 'Preis', numeric: true },
-                    { key: 'tradeVolume', label: 'Volumen', numeric: true },
-                  ]}
-                  rows={(dashboard?.marketPrices ?? []).map((price) => ({
-                    resourceId: labelResource(price.resourceId),
-                    lastPrice: price.lastPrice,
-                    tradeVolume: price.tradeVolume,
-                  }))}
-                  emptyText="Keine Marktpreise geladen."
+                <MarketPricesTable
+                  marketPrices={dashboard?.marketPrices ?? []}
+                  labelResource={labelResource}
                 />
               }
             />

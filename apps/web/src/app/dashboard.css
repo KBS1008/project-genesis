@@ -715,6 +715,27 @@ button.btn-secondary:hover:not(:disabled) {
   color: var(--muted);
 }
 
+.market-trend {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: var(--text-caption);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.market-trend-up {
+  color: #16a34a;
+}
+
+.market-trend-down {
+  color: #dc2626;
+}
+
+.market-trend-stable {
+  color: var(--muted);
+}
+
 .kpi-card.kpi-warning {
   border-color: rgba(245, 158, 11, 0.45);
 }

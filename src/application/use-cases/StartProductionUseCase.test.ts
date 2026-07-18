@@ -88,6 +88,7 @@ async function createContext() {
       productionJobRepository,
       researchJobRepository,
       financeRepository,
+      inventoryRepository,
       marketRepository,
       employeeRepository,
       enqueueEvents,

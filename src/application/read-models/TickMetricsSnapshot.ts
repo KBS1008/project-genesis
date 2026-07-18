@@ -8,6 +8,9 @@
 export type TickMarketPriceSnapshot = {
   readonly resourceId: string;
   readonly lastPrice: number;
+  readonly totalSupply: number;
+  readonly baselineDemand: number;
+  readonly pressureIndex: number;
 };
 
 /** One recorded simulation tick for chart rendering. */

@@ -175,6 +175,7 @@ export async function bootstrapApplication(
       productionJobRepository,
       researchJobRepository,
       financeRepository,
+      inventoryRepository,
       marketRepository,
       employeeRepository,
       enqueueEvents,

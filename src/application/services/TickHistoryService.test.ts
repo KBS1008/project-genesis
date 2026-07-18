@@ -10,7 +10,13 @@ function snapshot(
   onSiteUnits = 0,
   energyGeneration = 0,
   energyConsumption = 0,
-  marketPrices: readonly { resourceId: string; lastPrice: number }[] = [],
+  marketPrices: readonly {
+    resourceId: string;
+    lastPrice: number;
+    totalSupply?: number;
+    baselineDemand?: number;
+    pressureIndex?: number;
+  }[] = [],
 ) {
   return Object.freeze({
     tickNumber,
@@ -22,7 +28,17 @@ function snapshot(
     activeTransportCount: transports,
     warehouseTotalUnits: warehouseUnits,
     onSiteTotalUnits: onSiteUnits,
-    marketPrices: Object.freeze(marketPrices.map((entry) => Object.freeze({ ...entry }))),
+    marketPrices: Object.freeze(
+      marketPrices.map((entry) =>
+        Object.freeze({
+          resourceId: entry.resourceId,
+          lastPrice: entry.lastPrice,
+          totalSupply: entry.totalSupply ?? 0,
+          baselineDemand: entry.baselineDemand ?? 0,
+          pressureIndex: entry.pressureIndex ?? 0,
+        }),
+      ),
+    ),
   });
 }
 

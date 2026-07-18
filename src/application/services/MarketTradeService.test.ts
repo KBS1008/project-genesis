@@ -107,7 +107,7 @@ async function createTradeContext() {
 }
 
 describe('MarketTradeService', () => {
-  it('sells inventory and credits finance at the market price', async () => {
+  it('sells inventory and credits finance at the market price minus fee', async () => {
     const { marketTradeService, inventoryRepository, financeRepository, marketRepository } =
       await createTradeContext();
 
@@ -120,6 +120,8 @@ describe('MarketTradeService', () => {
         totalAmount: 100,
         unitPrice: 25,
         amount: 4,
+        feeAmount: 2,
+        netAmount: 98,
       });
     }
 
@@ -127,13 +129,20 @@ describe('MarketTradeService', () => {
     const finance = financeRepository.findByCompanyId(requireCompanyId('company_001'));
     const market = marketRepository.findById(requireMarketId(GLOBAL_MARKET_ID));
     const wood = inventory?.getItems().find((item) => item.resourceId.value === 'wood');
+    const feeTransactions =
+      finance
+        ?.getTransactions()
+        .filter((transaction) => transaction.transactionType === FinanceTransactionType.MARKET_FEE) ??
+      [];
 
     expect(wood?.quantity).toBe(6);
-    expect(finance?.getCashBalance()).toBe(STARTING_MONEY + 100);
+    expect(finance?.getCashBalance()).toBe(STARTING_MONEY + 98);
     expect(market?.getPrice('wood')?.tradeVolume).toBe(4);
+    expect(feeTransactions).toHaveLength(1);
+    expect(feeTransactions[0]?.amount).toBe(2);
   });
 
-  it('buys inventory and debits finance at the market price', async () => {
+  it('buys inventory and debits finance at the market price plus fee', async () => {
     const { marketTradeService, inventoryRepository, financeRepository } =
       await createTradeContext();
 
@@ -142,15 +151,27 @@ describe('MarketTradeService', () => {
     expect(result.ok).toBe(true);
 
     if (result.ok) {
-      expect(result.value.totalAmount).toBe(80);
+      expect(result.value).toEqual({
+        totalAmount: 80,
+        unitPrice: 40,
+        amount: 2,
+        feeAmount: 2,
+        netAmount: 82,
+      });
     }
 
     const inventory = inventoryRepository.findByCompanyId(requireCompanyId('company_001'));
     const finance = financeRepository.findByCompanyId(requireCompanyId('company_001'));
     const iron = inventory?.getItems().find((item) => item.resourceId.value === 'iron_ore');
+    const feeTransactions =
+      finance
+        ?.getTransactions()
+        .filter((transaction) => transaction.transactionType === FinanceTransactionType.MARKET_FEE) ??
+      [];
 
     expect(iron?.quantity).toBe(2);
-    expect(finance?.getCashBalance()).toBe(STARTING_MONEY - 80);
+    expect(finance?.getCashBalance()).toBe(STARTING_MONEY - 82);
+    expect(feeTransactions).toHaveLength(1);
   });
 
   it('rejects sells when stock is insufficient', async () => {
@@ -161,7 +182,7 @@ describe('MarketTradeService', () => {
     expect(result.ok).toBe(false);
   });
 
-  it('rejects buys when cash is insufficient', async () => {
+  it('rejects buys when cash is insufficient including market fee', async () => {
     const { marketTradeService, financeRepository, clock } = await createTradeContext();
     const finance = financeRepository.findByCompanyId(requireCompanyId('company_001'));
 

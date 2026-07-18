@@ -6,6 +6,7 @@ import {
   Legend,
   Line,
   LineChart,
+  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -24,7 +25,7 @@ function resourceColor(resourceId: string, index: number): string {
   return RESOURCE_COLORS[resourceId] ?? `hsl(${(index * 67) % 360} 55% 45%)`;
 }
 
-function MarketTooltip({
+function PressureTooltip({
   active,
   payload,
   label,
@@ -48,16 +49,15 @@ function MarketTooltip({
       <span className="chart-tooltip-label">Tick {label}</span>
       {payload.map((entry) => (
         <strong key={entry.name} style={{ color: entry.color }}>
-          {labelResource(String(entry.name ?? ''))}:{' '}
-          {(entry.value ?? 0).toLocaleString('de-DE')} GC
+          {labelResource(String(entry.name ?? ''))}: {(entry.value ?? 0).toLocaleString('de-DE')}
         </strong>
       ))}
     </div>
   );
 }
 
-/** Multi-line chart of market prices per resource over simulation ticks. */
-export function MarketPriceHistoryChart({
+/** Multi-line chart of market pressure (demand/supply ratio) over simulation ticks. */
+export function MarketPressureHistoryChart({
   points,
   labelResource,
 }: {
@@ -74,13 +74,13 @@ export function MarketPriceHistoryChart({
   const data = useMemo(
     () =>
       points.map((point) => {
-        const prices = Object.fromEntries(
-          point.marketPrices.map((entry) => [entry.resourceId, entry.lastPrice]),
+        const pressure = Object.fromEntries(
+          point.marketPrices.map((entry) => [entry.resourceId, entry.pressureIndex]),
         );
 
         return Object.freeze({
           tickNumber: point.tickNumber,
-          ...prices,
+          ...pressure,
         });
       }),
     [points],
@@ -91,34 +91,34 @@ export function MarketPriceHistoryChart({
   }
 
   const latest = points.at(-1);
+  const latestPressure = latest?.marketPrices
+    .slice(0, 3)
+    .map(
+      (entry) =>
+        `${labelResource(entry.resourceId)} ${entry.pressureIndex.toLocaleString('de-DE')}`,
+    )
+    .join(' · ');
 
   return (
-    <section className="chart-strip inventory-chart-strip" aria-label="Marktpreisverlauf">
+    <section className="chart-strip inventory-chart-strip" aria-label="Marktdruck-Verlauf">
       <article className="chart-card chart-card-wide">
         <header className="chart-card-header">
-          <h3>Marktpreise</h3>
-          {latest !== undefined ? (
-            <span className="chart-current-value">
-              {resourceIds
-                .slice(0, 3)
-                .map((resourceId) => {
-                  const price = latest.marketPrices.find((entry) => entry.resourceId === resourceId);
-                  return `${labelResource(resourceId)} ${(price?.lastPrice ?? 0).toLocaleString('de-DE')} GC`;
-                })
-                .join(' · ')}
-            </span>
+          <h3>Marktdruck</h3>
+          {latestPressure !== undefined && latestPressure.length > 0 ? (
+            <span className="chart-current-value">{latestPressure}</span>
           ) : null}
         </header>
         {points.length < 2 ? (
           <p className="empty-state">
             <strong>Noch zu wenig Verlauf.</strong>
-            Führen Sie Ticks aus — Preise passen sich alle 10 Ticks an Angebot und Nachfrage an.
+            Führen Sie Ticks aus, um den Druckindex (Nachfrage/Angebot) zu verfolgen.
           </p>
         ) : (
           <div className="chart-canvas">
             <ResponsiveContainer width="100%" height={200}>
               <LineChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
                 <CartesianGrid stroke="var(--color-panel)" strokeDasharray="3 3" vertical={false} />
+                <ReferenceLine y={1} stroke="var(--muted)" strokeDasharray="4 4" />
                 <XAxis
                   dataKey="tickNumber"
                   tick={{ fill: 'var(--muted)', fontSize: 11 }}
@@ -131,9 +131,9 @@ export function MarketPriceHistoryChart({
                   axisLine={false}
                   tickLine={false}
                   width={52}
-                  tickFormatter={(value: number) => `${Math.round(value)}`}
+                  domain={[0, 'auto']}
                 />
-                <Tooltip content={<MarketTooltip labelResource={labelResource} />} />
+                <Tooltip content={<PressureTooltip labelResource={labelResource} />} />
                 <Legend
                   wrapperStyle={{ fontSize: 12 }}
                   formatter={(value) => labelResource(String(value))}

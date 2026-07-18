@@ -53,8 +53,16 @@ export type BuildingReadModel = {
 
 export type MarketPriceReadModel = {
   readonly resourceId: string;
+  readonly basePrice: number;
   readonly lastPrice: number;
   readonly tradeVolume: number;
+  readonly updatedAt: number;
+  readonly totalSupply: number;
+  readonly baselineDemand: number;
+  readonly pressureIndex: number;
+  readonly changeFromBase: number;
+  readonly changePercent: number;
+  readonly trend: 'UP' | 'DOWN' | 'STABLE';
 };
 
 export type MilestoneCatalogEntry = {
@@ -144,6 +152,9 @@ export type DashboardKpiReadModel = {
 export type TickMarketPriceSnapshot = {
   readonly resourceId: string;
   readonly lastPrice: number;
+  readonly totalSupply: number;
+  readonly baselineDemand: number;
+  readonly pressureIndex: number;
 };
 
 export type TickMetricsSnapshot = {
