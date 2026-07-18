@@ -597,7 +597,7 @@ Coordinates use cases between domain, infrastructure and simulation.
 - Bootstrap seeds global market prices from resource `basePrice` via `MarketPriceSeeder`.
 - `MarketTradeService` executes instant buy/sell at `lastPrice`, updating inventory, finance and market trade volume.
 - Query handlers (`GetCompany`, `ListBuildings`, `GetInventory`, `GetFinance`, `GetMarketPrices`) read repository state and return immutable read models without mutating aggregates.
-- `SaveGameUseCase` serializes all aggregate repositories, simulation metadata and dashboard tick metrics history into a versioned JSON snapshot; saves are rejected while domain events remain queued.
+- `SaveGameUseCase` serializes all aggregate repositories (including employees), simulation metadata and dashboard tick metrics history into a versioned JSON snapshot; saves are rejected while domain events remain queued.
 - `LoadGameUseCase` reads a snapshot file and `restoreApplicationFromSnapshot` hydrates fresh in-memory repositories, clock, simulation engine state and tick chart history.
 - `CompleteTechnologyUseCase` marks technologies as completed (internal completion path after research jobs finish).
 - `StartResearchUseCase` debits `researchCost`, enforces research and milestone prerequisites and starts timed research jobs.
@@ -624,7 +624,7 @@ Coordinates use cases between domain, infrastructure and simulation.
 | `InMemoryProductionJobRepository` | `persistence/InMemoryProductionJobRepository.ts` |
 | `InMemoryFinanceRepository` | `persistence/InMemoryFinanceRepository.ts` |
 | `InMemoryMarketRepository` | `persistence/InMemoryMarketRepository.ts` |
-| `GameSaveSnapshotV1` | `persistence/savegame/GameSaveSnapshotV1.ts` (incl. optional `tickMetricsHistory`) |
+| `GameSaveSnapshotV1` | `persistence/savegame/GameSaveSnapshotV1.ts` (incl. `employees`, optional `tickMetricsHistory`) |
 | `GameStateSerializer` | `persistence/savegame/GameStateSerializer.ts` |
 | `FileSavegameStore` | `persistence/savegame/FileSavegameStore.ts` |
 | NestJS API | `apps/api/` |
@@ -811,6 +811,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 | Application / FinanceTransactions | `ListFinanceTransactionsQueryHandler.test.ts` | Ledger listing, newest first |
 | Application / SellBuyResource | `MarketTradeUseCases.test.ts` | Use case validation, trade flow |
 | Infrastructure / Finance repo | `InMemoryFinanceRepository.test.ts` | Save, find by company |
+| Infrastructure / Savegame | `GameStateSerializer.test.ts` | Snapshot parse/hydrate, employee round-trip |
 
 ---
 
@@ -833,6 +834,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Recently Completed (2026-07)
 
+- Employee savegame persistence (`employees[]` on schema v1, serializer round-trip)
 - Employee simulation layer (payroll debits, worker efficiency, `recipe.workers` enforcement)
 - Employee application layer (`HireEmployeeUseCase`, `AssignEmployeeUseCase`, GameSession wiring)
 - Employee domain layer (`Employee` aggregate, events, repository, in-memory persistence)

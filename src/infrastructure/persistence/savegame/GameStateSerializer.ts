@@ -38,6 +38,12 @@ import type { CompanyResearchRepository } from '../../../domain/research/Company
 import { CompanyResearch } from '../../../domain/research/CompanyResearch.js';
 import { createCompanyResearchId } from '../../../domain/research/CompanyResearchId.js';
 import type { CompanyMilestonesRepository } from '../../../domain/milestone/CompanyMilestonesRepository.js';
+import {
+  Employee,
+  createEmployeeId,
+  createEmployeeTypeId,
+} from '../../../domain/employee/Employee.js';
+import { EmployeeStatus } from '../../../domain/employee/EmployeeStatus.js';
 import { CompanyMilestones } from '../../../domain/milestone/CompanyMilestones.js';
 import { createCompanyMilestonesId } from '../../../domain/milestone/CompanyMilestonesId.js';
 import {
@@ -289,6 +295,21 @@ export class GameStateSerializer implements GameStateSerializerPort {
               ),
             ),
         ),
+        employees: Object.freeze(
+          source.employeeRepository.findAll().map((employee) =>
+            Object.freeze({
+              id: employee.getId().value,
+              companyId: employee.getCompanyId().value,
+              employeeTypeId: employee.getEmployeeTypeId().value,
+              displayName: employee.getDisplayName(),
+              salary: employee.getSalary(),
+              productivity: employee.getProductivity(),
+              hiredAt: employee.getHiredAt(),
+              status: employee.getStatus(),
+              assignedBuildingId: employee.getAssignedBuildingId()?.value,
+            }),
+          ),
+        ),
         ...(tickMetricsHistory !== undefined ? { tickMetricsHistory } : {}),
       }),
     );
@@ -358,6 +379,7 @@ export class GameStateSerializer implements GameStateSerializerPort {
       companyMilestones: candidate.companyMilestones ?? [],
       buildingStorages: candidate.buildingStorages ?? [],
       transportOrders: candidate.transportOrders ?? [],
+      employees: candidate.employees ?? [],
       tickMetricsHistory: candidate.tickMetricsHistory,
     } as GameSaveSnapshotV1);
   }
@@ -384,6 +406,16 @@ export class GameStateSerializer implements GameStateSerializerPort {
       }
 
       target.buildingRepository.save(restoreResult.value);
+    }
+
+    for (const employeeSnapshot of snapshot.employees) {
+      const restoreResult = this.#restoreEmployee(employeeSnapshot);
+
+      if (!restoreResult.ok) {
+        return Result.fail(restoreResult.error);
+      }
+
+      target.employeeRepository.save(restoreResult.value);
     }
 
     for (const inventorySnapshot of snapshot.inventories) {
@@ -593,6 +625,50 @@ export class GameStateSerializer implements GameStateSerializerPort {
     }
 
     return status;
+  }
+
+  #restoreEmployee(snapshot: GameSaveSnapshotV1['employees'][number]) {
+    const idResult = createEmployeeId(snapshot.id);
+
+    if (!idResult.ok) {
+      return idResult;
+    }
+
+    const companyIdResult = createCompanyId(snapshot.companyId);
+
+    if (!companyIdResult.ok) {
+      return companyIdResult;
+    }
+
+    const employeeTypeIdResult = createEmployeeTypeId(snapshot.employeeTypeId);
+
+    if (!employeeTypeIdResult.ok) {
+      return employeeTypeIdResult;
+    }
+
+    let assignedBuildingId: ReturnType<Employee['getAssignedBuildingId']> = undefined;
+
+    if (snapshot.assignedBuildingId !== undefined) {
+      const buildingIdResult = createBuildingId(snapshot.assignedBuildingId);
+
+      if (!buildingIdResult.ok) {
+        return buildingIdResult;
+      }
+
+      assignedBuildingId = buildingIdResult.value;
+    }
+
+    return Employee.restore({
+      id: idResult.value,
+      companyId: companyIdResult.value,
+      employeeTypeId: employeeTypeIdResult.value,
+      displayName: snapshot.displayName,
+      salary: snapshot.salary,
+      productivity: snapshot.productivity,
+      hiredAt: snapshot.hiredAt,
+      status: snapshot.status as EmployeeStatus,
+      assignedBuildingId,
+    });
   }
 
   #restoreInventory(snapshot: GameSaveSnapshotV1['inventories'][number]) {

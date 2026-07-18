@@ -28,6 +28,7 @@ export type SaveGameUseCaseDependencies = Pick<
   | 'researchJobRepository'
   | 'companyResearchRepository'
   | 'companyMilestonesRepository'
+  | 'employeeRepository'
   | 'tickHistoryService'
 > & {
   readonly savegameStore: SavegameStore;
@@ -51,6 +52,7 @@ export class SaveGameUseCase {
   readonly #researchJobRepository: SaveGameUseCaseDependencies['researchJobRepository'];
   readonly #companyResearchRepository: SaveGameUseCaseDependencies['companyResearchRepository'];
   readonly #companyMilestonesRepository: SaveGameUseCaseDependencies['companyMilestonesRepository'];
+  readonly #employeeRepository: SaveGameUseCaseDependencies['employeeRepository'];
   readonly #tickHistoryService: SaveGameUseCaseDependencies['tickHistoryService'];
   readonly #savegameStore: SavegameStore;
   readonly #serializer: GameStateSerializerPort;
@@ -72,6 +74,7 @@ export class SaveGameUseCase {
     this.#researchJobRepository = dependencies.researchJobRepository;
     this.#companyResearchRepository = dependencies.companyResearchRepository;
     this.#companyMilestonesRepository = dependencies.companyMilestonesRepository;
+    this.#employeeRepository = dependencies.employeeRepository;
     this.#tickHistoryService = dependencies.tickHistoryService;
     this.#savegameStore = dependencies.savegameStore;
     this.#serializer = dependencies.gameStateSerializer;
@@ -97,6 +100,7 @@ export class SaveGameUseCase {
       researchJobRepository: this.#researchJobRepository,
       companyResearchRepository: this.#companyResearchRepository,
       companyMilestonesRepository: this.#companyMilestonesRepository,
+      employeeRepository: this.#employeeRepository,
       tickHistoryService: this.#tickHistoryService,
     });
 

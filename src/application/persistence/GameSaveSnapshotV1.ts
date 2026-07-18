@@ -168,6 +168,19 @@ export type GameSaveTransportOrderSnapshotV1 = {
   readonly progress: number;
 };
 
+/** Persisted employee aggregate state. */
+export type GameSaveEmployeeSnapshotV1 = {
+  readonly id: string;
+  readonly companyId: string;
+  readonly employeeTypeId: string;
+  readonly displayName: string;
+  readonly salary: number;
+  readonly productivity: number;
+  readonly hiredAt: number;
+  readonly status: string;
+  readonly assignedBuildingId: string | undefined;
+};
+
 /** Persisted dashboard tick metrics for chart history. */
 export type GameSaveTickMetricsSnapshotV1 = {
   readonly tickNumber: number;
@@ -207,5 +220,6 @@ export type GameSaveSnapshotV1 = {
   readonly companyMilestones: readonly GameSaveCompanyMilestonesSnapshotV1[];
   readonly buildingStorages: readonly GameSaveBuildingStorageSnapshotV1[];
   readonly transportOrders: readonly GameSaveTransportOrderSnapshotV1[];
+  readonly employees: readonly GameSaveEmployeeSnapshotV1[];
   readonly tickMetricsHistory?: GameSaveTickMetricsHistorySnapshotV1;
 };

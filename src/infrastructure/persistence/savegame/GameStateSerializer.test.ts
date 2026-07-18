@@ -21,7 +21,13 @@ import { InMemoryMarketRepository } from '../InMemoryMarketRepository.js';
 import { InMemoryProductionJobRepository } from '../InMemoryProductionJobRepository.js';
 import { InMemoryResearchJobRepository } from '../InMemoryResearchJobRepository.js';
 import { InMemoryTransportOrderRepository } from '../InMemoryTransportOrderRepository.js';
+import { InMemoryEmployeeRepository } from '../InMemoryEmployeeRepository.js';
 import { GameStateSerializer } from './GameStateSerializer.js';
+import { HireEmployeeUseCase } from '../../../application/use-cases/HireEmployeeUseCase.js';
+import { AssignEmployeeUseCase } from '../../../application/use-cases/AssignEmployeeUseCase.js';
+import { completeBuildingConstruction } from '../../../../tests/helpers/completeBuildingConstruction.js';
+import { EmployeeStatus } from '../../../domain/employee/EmployeeStatus.js';
+import { createEmployeeId } from '../../../domain/employee/Employee.js';
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const gameContentRoot = path.resolve(testDirectory, '../../../../game-content');
@@ -49,6 +55,7 @@ function createEmptyHydrateTarget() {
     researchJobRepository: new InMemoryResearchJobRepository(),
     companyResearchRepository: new InMemoryCompanyResearchRepository(),
     companyMilestonesRepository: new InMemoryCompanyMilestonesRepository(),
+    employeeRepository: new InMemoryEmployeeRepository(),
     tickHistoryService: new TickHistoryService(),
   };
 }
@@ -69,6 +76,7 @@ function createMinimalSnapshot(overrides: Record<string, unknown> = {}) {
     financeAccounts: Object.freeze([]),
     markets: Object.freeze([]),
     productionJobs: Object.freeze([]),
+    employees: Object.freeze([]),
     ...overrides,
   };
 }
@@ -107,6 +115,7 @@ describe('GameStateSerializer', () => {
         researchJobRepository: context.researchJobRepository,
         companyResearchRepository: context.companyResearchRepository,
         companyMilestonesRepository: context.companyMilestonesRepository,
+        employeeRepository: context.employeeRepository,
         tickHistoryService: context.tickHistoryService,
       });
 
@@ -167,6 +176,7 @@ describe('GameStateSerializer', () => {
         researchJobRepository: context.researchJobRepository,
         companyResearchRepository: context.companyResearchRepository,
         companyMilestonesRepository: context.companyMilestonesRepository,
+        employeeRepository: context.employeeRepository,
         tickHistoryService: context.tickHistoryService,
       });
 
@@ -229,6 +239,7 @@ describe('GameStateSerializer', () => {
         researchJobRepository: context.researchJobRepository,
         companyResearchRepository: context.companyResearchRepository,
         companyMilestonesRepository: context.companyMilestonesRepository,
+        employeeRepository: context.employeeRepository,
         tickHistoryService: context.tickHistoryService,
       });
 
@@ -299,6 +310,7 @@ describe('GameStateSerializer', () => {
       expect(parseResult.value.companyMilestones).toEqual([]);
       expect(parseResult.value.buildingStorages).toEqual([]);
       expect(parseResult.value.transportOrders).toEqual([]);
+      expect(parseResult.value.employees).toEqual([]);
     });
   });
 
@@ -452,6 +464,132 @@ describe('GameStateSerializer', () => {
         }),
       ]);
     });
+
+    it('restores assigned and unassigned employees after buildings', () => {
+      const parseResult = serializer.parse(
+        createMinimalSnapshot({
+          companies: Object.freeze([
+            Object.freeze({
+              id: 'company_001',
+              name: 'Genesis Industries',
+              ownerId: 'player_001',
+              foundedAt: 0,
+              status: 'ACTIVE',
+            }),
+          ]),
+          buildings: Object.freeze([
+            Object.freeze({
+              id: 'building_001',
+              buildingTypeId: 'warehouse',
+              companyId: 'company_001',
+              name: 'Starter Warehouse',
+              position: Object.freeze({ x: 1, y: 1 }),
+              level: 1,
+              createdAt: 0,
+              status: BuildingStatus.ACTIVE,
+              constructionDuration: 0,
+              constructionProgress: 0,
+              constructionStartTime: undefined,
+              constructionEndTime: undefined,
+            }),
+          ]),
+          employees: Object.freeze([
+            Object.freeze({
+              id: 'employee_001',
+              companyId: 'company_001',
+              employeeTypeId: 'employee_logistics_operator',
+              displayName: 'Alex Operator',
+              salary: 1200,
+              productivity: 1,
+              hiredAt: 50,
+              status: EmployeeStatus.ACTIVE,
+              assignedBuildingId: 'building_001',
+            }),
+            Object.freeze({
+              id: 'employee_002',
+              companyId: 'company_001',
+              employeeTypeId: 'employee_production_worker',
+              displayName: 'Sam Worker',
+              salary: 900,
+              productivity: 0.8,
+              hiredAt: 75,
+              status: EmployeeStatus.ACTIVE,
+              assignedBuildingId: undefined,
+            }),
+          ]),
+        }),
+      );
+
+      expect(parseResult.ok).toBe(true);
+
+      if (!parseResult.ok) {
+        return;
+      }
+
+      const target = createEmptyHydrateTarget();
+      const hydrateResult = serializer.hydrate(parseResult.value, target);
+
+      expect(hydrateResult.ok).toBe(true);
+
+      if (!hydrateResult.ok) {
+        return;
+      }
+
+      const assignedEmployeeId = createEmployeeId('employee_001');
+      const unassignedEmployeeId = createEmployeeId('employee_002');
+
+      if (!assignedEmployeeId.ok || !unassignedEmployeeId.ok) {
+        throw new Error('Invalid employee id in test fixture.');
+      }
+
+      const assignedEmployee = target.employeeRepository.findById(assignedEmployeeId.value);
+      const unassignedEmployee = target.employeeRepository.findById(unassignedEmployeeId.value);
+
+      expect(target.employeeRepository.findAll()).toHaveLength(2);
+      expect(assignedEmployee?.getAssignedBuildingId()?.value).toBe('building_001');
+      expect(assignedEmployee?.getSalary()).toBe(1200);
+      expect(unassignedEmployee?.getAssignedBuildingId()).toBeUndefined();
+      expect(unassignedEmployee?.getProductivity()).toBe(0.8);
+    });
+
+    it('rejects invalid assigned building ids during employee restore', () => {
+      const parseResult = serializer.parse(
+        createMinimalSnapshot({
+          companies: Object.freeze([
+            Object.freeze({
+              id: 'company_001',
+              name: 'Genesis Industries',
+              ownerId: 'player_001',
+              foundedAt: 0,
+              status: 'ACTIVE',
+            }),
+          ]),
+          employees: Object.freeze([
+            Object.freeze({
+              id: 'employee_001',
+              companyId: 'company_001',
+              employeeTypeId: 'employee_logistics_operator',
+              displayName: 'Alex Operator',
+              salary: 1200,
+              productivity: 1,
+              hiredAt: 50,
+              status: EmployeeStatus.ACTIVE,
+              assignedBuildingId: '',
+            }),
+          ]),
+        }),
+      );
+
+      expect(parseResult.ok).toBe(true);
+
+      if (!parseResult.ok) {
+        return;
+      }
+
+      const hydrateResult = serializer.hydrate(parseResult.value, createEmptyHydrateTarget());
+
+      expect(hydrateResult.ok).toBe(false);
+    });
   });
 
   describe('round trip', () => {
@@ -513,6 +651,7 @@ describe('GameStateSerializer', () => {
         researchJobRepository: sourceContext.researchJobRepository,
         companyResearchRepository: sourceContext.companyResearchRepository,
         companyMilestonesRepository: sourceContext.companyMilestonesRepository,
+        employeeRepository: sourceContext.employeeRepository,
         tickHistoryService: sourceContext.tickHistoryService,
       });
 
@@ -575,6 +714,147 @@ describe('GameStateSerializer', () => {
           marketPrices: Object.freeze([]),
         }),
       ]);
+    });
+
+    it('preserves hired and assigned employees through serialize, parse and hydrate', async () => {
+      const bootstrapResult = await bootstrapApplication({ gameContentRoot });
+
+      if (!bootstrapResult.ok) {
+        throw new Error(bootstrapResult.error.message);
+      }
+
+      const sourceContext = bootstrapResult.value;
+      const createCompany = new CreateCompanyUseCase(sourceContext);
+      const placeBuilding = new PlaceBuildingUseCase(sourceContext);
+      const hireEmployee = new HireEmployeeUseCase(sourceContext);
+      const assignEmployee = new AssignEmployeeUseCase(sourceContext);
+
+      createCompany.execute({
+        companyId: 'company_001',
+        name: 'Genesis Industries',
+        ownerId: 'player_001',
+      });
+
+      placeBuilding.execute({
+        buildingId: 'building_001',
+        buildingTypeId: 'sawmill',
+        companyId: 'company_001',
+        name: 'Northern Sawmill',
+        x: 0,
+        y: 0,
+      });
+
+      completeBuildingConstruction({
+        buildingId: 'building_001',
+        clock: sourceContext.clock,
+        simulationEngine: sourceContext.simulationEngine,
+        buildingRepository: sourceContext.buildingRepository,
+      });
+
+      const hireResult = hireEmployee.execute({
+        employeeId: 'employee_001',
+        companyId: 'company_001',
+        employeeTypeId: 'employee_production_worker',
+        displayName: 'Production Worker',
+      });
+
+      expect(hireResult.ok).toBe(true);
+
+      if (!hireResult.ok) {
+        return;
+      }
+
+      const assignResult = assignEmployee.execute({
+        employeeId: 'employee_001',
+        buildingId: 'building_001',
+      });
+
+      expect(assignResult.ok).toBe(true);
+
+      sourceContext.simulationEngine.tick();
+
+      const sourceEmployeeId = createEmployeeId('employee_001');
+
+      if (!sourceEmployeeId.ok) {
+        throw new Error(sourceEmployeeId.error.message);
+      }
+
+      const sourceEmployee = sourceContext.employeeRepository.findById(sourceEmployeeId.value);
+
+      if (sourceEmployee === undefined) {
+        throw new Error('Expected hired employee in source context.');
+      }
+
+      const serializeResult = serializer.serialize({
+        clock: sourceContext.clock,
+        simulationEngine: sourceContext.simulationEngine,
+        companyRepository: sourceContext.companyRepository,
+        buildingRepository: sourceContext.buildingRepository,
+        buildingStorageRepository: sourceContext.buildingStorageRepository,
+        transportOrderRepository: sourceContext.transportOrderRepository,
+        inventoryRepository: sourceContext.inventoryRepository,
+        financeRepository: sourceContext.financeRepository,
+        marketRepository: sourceContext.marketRepository,
+        productionJobRepository: sourceContext.productionJobRepository,
+        researchJobRepository: sourceContext.researchJobRepository,
+        companyResearchRepository: sourceContext.companyResearchRepository,
+        companyMilestonesRepository: sourceContext.companyMilestonesRepository,
+        employeeRepository: sourceContext.employeeRepository,
+        tickHistoryService: sourceContext.tickHistoryService,
+      });
+
+      expect(serializeResult.ok).toBe(true);
+
+      if (!serializeResult.ok) {
+        return;
+      }
+
+      expect(serializeResult.value.employees).toEqual([
+        Object.freeze({
+          id: 'employee_001',
+          companyId: 'company_001',
+          employeeTypeId: 'employee_production_worker',
+          displayName: 'Production Worker',
+          salary: sourceEmployee.getSalary(),
+          productivity: sourceEmployee.getProductivity(),
+          hiredAt: sourceEmployee.getHiredAt(),
+          status: EmployeeStatus.ACTIVE,
+          assignedBuildingId: 'building_001',
+        }),
+      ]);
+
+      const jsonRoundTrip: unknown = JSON.parse(JSON.stringify(serializeResult.value));
+      const parseResult = serializer.parse(jsonRoundTrip);
+
+      expect(parseResult.ok).toBe(true);
+
+      if (!parseResult.ok) {
+        return;
+      }
+
+      const target = createEmptyHydrateTarget();
+      const hydrateResult = serializer.hydrate(parseResult.value, target);
+
+      expect(hydrateResult.ok).toBe(true);
+
+      if (!hydrateResult.ok) {
+        return;
+      }
+
+      const employeeId = createEmployeeId('employee_001');
+
+      if (!employeeId.ok) {
+        throw new Error(employeeId.error.message);
+      }
+
+      const restoredEmployee = target.employeeRepository.findById(employeeId.value);
+
+      expect(target.employeeRepository.findAll()).toHaveLength(1);
+      expect(restoredEmployee?.getDisplayName()).toBe('Production Worker');
+      expect(restoredEmployee?.getSalary()).toBe(sourceEmployee.getSalary());
+      expect(restoredEmployee?.getProductivity()).toBe(sourceEmployee.getProductivity());
+      expect(restoredEmployee?.getHiredAt()).toBe(sourceEmployee.getHiredAt());
+      expect(restoredEmployee?.getAssignedBuildingId()?.value).toBe('building_001');
     });
   });
 });

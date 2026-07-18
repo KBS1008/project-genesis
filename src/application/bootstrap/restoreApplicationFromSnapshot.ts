@@ -86,6 +86,7 @@ export async function restoreApplicationFromSnapshot(
     researchJobRepository,
     companyResearchRepository,
     companyMilestonesRepository,
+    employeeRepository,
     tickHistoryService,
   });
 
