@@ -113,6 +113,8 @@ export type TransportOrderSessionReadModel = {
   readonly productionJobId: string;
   readonly recipeId: string | null;
   readonly recipeName: string | null;
+  readonly durationTicks: number;
+  readonly routeId: string | null;
 };
 
 export type WarehouseStorageItemReadModel = {
@@ -134,6 +136,7 @@ export type WarehouseStorageReadModel = {
 export type LogisticsSummaryReadModel = {
   readonly hasActiveWarehouse: boolean;
   readonly activeTransportCount: number;
+  readonly queuedTransportCount: number;
   readonly waitingProductionCount: number;
   readonly warehouseResourceLines: number;
   readonly warehouseTotalUnits: number;

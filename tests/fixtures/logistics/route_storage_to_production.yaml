@@ -1,0 +1,9 @@
+id: route_storage_to_production
+name: Storage to production
+description: Test fixture route from warehouse to production buildings.
+sourceCategory: STORAGE
+destinationCategory: PRODUCTION
+durationTicks: 8
+throughputCapacity: 1
+enabled: true
+version: 1

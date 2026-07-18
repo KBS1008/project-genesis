@@ -7,6 +7,7 @@
 import type { EnergyBalanceService } from '../services/EnergyBalanceService.js';
 import type { ApplicationContext } from '../bootstrap/ApplicationContext.js';
 import { BuildingStatus } from '../../domain/building/BuildingStatus.js';
+import { createBuildingId } from '../../domain/building/Building.js';
 import { createCompanyId } from '../../domain/company/Company.js';
 import { MarketFeePolicy } from '../../domain/policies/market/MarketFeePolicy.js';
 import { CORPORATE_TAX_RATE, TAX_INTERVAL_TICKS } from '../../domain/finance/TaxConstants.js';
@@ -207,6 +208,9 @@ export class GameSessionDashboardBuilder {
     const activeTransportCount = input.transportOrders.filter(
       (order) => order.status === TransportOrderStatus.IN_PROGRESS,
     ).length;
+    const queuedTransportCount = input.transportOrders.filter(
+      (order) => order.status === TransportOrderStatus.WAITING,
+    ).length;
     const waitingProductionCount = input.productionJobs.filter(
       (job) => job.status === ProductionJobStatus.WAITING && job.awaitingTransport,
     ).length;
@@ -219,8 +223,12 @@ export class GameSessionDashboardBuilder {
 
     let statusMessage: string | null = null;
 
-    if (activeTransportCount > 0) {
+    if (activeTransportCount > 0 && queuedTransportCount > 0) {
+      statusMessage = `${activeTransportCount} Transport(e) unterwegs, ${queuedTransportCount} in Warteschlange — Netzwerk ausgelastet.`;
+    } else if (activeTransportCount > 0) {
       statusMessage = `${activeTransportCount} Transport(e) unterwegs — Produktion startet nach Ankunft.`;
+    } else if (queuedTransportCount > 0) {
+      statusMessage = `${queuedTransportCount} Transport(e) warten auf Netzwerkkapazität.`;
     } else if (waitingProductionCount > 0) {
       statusMessage = `${waitingProductionCount} Produktion(en) warten auf Material.`;
     } else if (isWarehouseFull) {
@@ -234,6 +242,7 @@ export class GameSessionDashboardBuilder {
     return Object.freeze({
       hasActiveWarehouse,
       activeTransportCount,
+      queuedTransportCount,
       waitingProductionCount,
       warehouseResourceLines,
       warehouseTotalUnits,
@@ -523,7 +532,14 @@ export class GameSessionDashboardBuilder {
             )
           ) {
             canStart = true;
-            reason = 'Material im Lagerhaus — Transport startet automatisch (~5 Ticks).';
+            const destinationBuildingIdResult = createBuildingId(building.id);
+            const durationTicks = destinationBuildingIdResult.ok
+              ? this.#context.transportLogisticsService.resolveInboundTransportDurationTicks(
+                  companyIdResult.value,
+                  destinationBuildingIdResult.value,
+                )
+              : 5;
+            reason = `Material im Lagerhaus — Transport startet automatisch (~${durationTicks} Ticks).`;
           } else if (
             this.#context.transportLogisticsService.canFulfillFromWarehouse(
               companyIdResult.value,

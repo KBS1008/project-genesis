@@ -38,6 +38,22 @@ function formatEnergy(value: number): string {
   return `${value.toFixed(1)} MW`;
 }
 
+function formatTransportStatus(status: string): string {
+  if (status === 'WAITING') {
+    return 'Warteschlange';
+  }
+
+  if (status === 'IN_PROGRESS') {
+    return 'Unterwegs';
+  }
+
+  if (status === 'COMPLETED') {
+    return 'Abgeschlossen';
+  }
+
+  return status;
+}
+
 function formatProductionStatus(status: string, awaitingTransport: boolean): string {
   if (status === 'WAITING' && awaitingTransport) {
     return 'Wartet auf Transport';
@@ -252,6 +268,7 @@ function OverviewStrip({
   const waitingProduction = dashboard.productionJobs.filter((job) => job.status === 'WAITING').length;
   const activeResearch = dashboard.researchJobs.filter((job) => job.status === 'IN_PROGRESS').length;
   const activeTransport = dashboard.logistics?.activeTransportCount ?? 0;
+  const queuedTransport = dashboard.logistics?.queuedTransportCount ?? 0;
   const completedMilestones = dashboard.completedMilestones.length;
   const assignedEmployees =
     dashboard.kpis?.assignedEmployeeCount ??
@@ -289,9 +306,11 @@ function OverviewStrip({
         <span className="overview-label">Transport</span>
         <strong className="overview-value">{activeTransport}</strong>
         <span className="overview-hint">
-          {dashboard.logistics?.waitingProductionCount
-            ? `${dashboard.logistics.waitingProductionCount} Jobs warten`
-            : 'Logistik stabil'}
+          {queuedTransport > 0
+            ? `${queuedTransport} in Warteschlange`
+            : dashboard.logistics?.waitingProductionCount
+              ? `${dashboard.logistics.waitingProductionCount} Jobs warten`
+              : 'Logistik stabil'}
         </span>
       </button>
       <article className="overview-card">
@@ -1281,8 +1300,8 @@ export function DashboardShell() {
                     <div className="section-header">
                       <h2>Transport &amp; Logistik</h2>
                       <p>
-                        Interner Transport vom Lagerhaus zum Produktionsgebäude (~5 Ticks). Produktion
-                        startet nach Ankunft aller Lieferungen.
+                        Interner Transport vom Lagerhaus zum Produktionsgebäude (Dauer aus
+                        Routen-Content). Produktion startet nach Ankunft aller Lieferungen.
                       </p>
                     </div>
                     <div className="table-wrap">
@@ -1301,6 +1320,7 @@ export function DashboardShell() {
                             { key: 'route', label: 'Route' },
                             { key: 'recipeName', label: 'Produktion' },
                             { key: 'status', label: 'Status' },
+                            { key: 'durationTicks', label: 'Dauer (Ticks)', numeric: true },
                             { key: 'progress', label: 'Fortschritt', numeric: true },
                           ]}
                           rows={(dashboard.transportOrders ?? []).map((order) => ({
@@ -1308,7 +1328,8 @@ export function DashboardShell() {
                             amount: order.amount,
                             route: `${order.sourceBuildingName} → ${order.destinationBuildingName}`,
                             recipeName: order.recipeName ?? '—',
-                            status: order.status,
+                            status: formatTransportStatus(order.status),
+                            durationTicks: order.durationTicks,
                             progress: formatProgress(order.progress),
                           }))}
                           rowKeys={(dashboard.transportOrders ?? []).map(

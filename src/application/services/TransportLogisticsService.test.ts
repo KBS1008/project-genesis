@@ -13,7 +13,6 @@ import { PlaceBuildingUseCase } from '../use-cases/PlaceBuildingUseCase.js';
 import { StartProductionUseCase } from '../use-cases/StartProductionUseCase.js';
 import { BuyResourceUseCase } from '../use-cases/BuyResourceUseCase.js';
 import { completeBuildingConstruction } from '../../../tests/helpers/completeBuildingConstruction.js';
-import { DEFAULT_TRANSPORT_DURATION } from './TransportLogisticsService.js';
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const gameContentRoot = path.resolve(testDirectory, '../../../game-content');
@@ -161,9 +160,11 @@ describe('TransportLogisticsService integration', () => {
 
     const transports = context.transportOrderRepository.findByProductionJobId('production_001');
     expect(transports).toHaveLength(1);
+    expect(transports[0]?.getRouteId()).toBe('route_storage_to_production');
     expect(transports[0]?.getStatus()).toBe(TransportOrderStatus.IN_PROGRESS);
+    expect(transports[0]?.getDuration()).toBe(8);
 
-    for (let tick = 0; tick < DEFAULT_TRANSPORT_DURATION; tick += 1) {
+    for (let tick = 0; tick < transports[0]!.getDuration(); tick += 1) {
       context.simulationEngine.tick();
     }
 
@@ -174,6 +175,159 @@ describe('TransportLogisticsService integration', () => {
 
     const completedTransports = context.transportOrderRepository.findByProductionJobId('production_001');
     expect(completedTransports[0]?.getStatus()).toBe(TransportOrderStatus.COMPLETED);
+  });
+
+  it('queues transports when route throughput capacity is saturated', async () => {
+    const bootstrapResult = await bootstrapApplication({ gameContentRoot });
+
+    expect(bootstrapResult.ok).toBe(true);
+
+    if (!bootstrapResult.ok) {
+      return;
+    }
+
+    const context = bootstrapResult.value;
+    const createCompany = new CreateCompanyUseCase(context);
+    const placeBuilding = new PlaceBuildingUseCase(context);
+    const buyResource = new BuyResourceUseCase(context);
+    const startProduction = new StartProductionUseCase(context);
+
+    createCompany.execute({
+      companyId: 'company_001',
+      name: 'Queue Test Co',
+      ownerId: 'player_001',
+    });
+
+    grantMilestone(context, 'company_001', 'first_profit');
+    grantMilestone(context, 'company_001', 'first_production');
+
+    placeBuilding.execute({
+      buildingId: 'building_001',
+      buildingTypeId: 'warehouse',
+      companyId: 'company_001',
+      name: 'Central Warehouse',
+      x: 0,
+      y: 0,
+    });
+
+    placeBuilding.execute({
+      buildingId: 'building_002',
+      buildingTypeId: 'coal_power_plant',
+      companyId: 'company_001',
+      name: 'Coal Plant',
+      x: 1,
+      y: 0,
+    });
+
+    for (const [buildingId, name, x] of [
+      ['building_003', 'Smelter A', 2],
+      ['building_004', 'Smelter B', 3],
+      ['building_005', 'Smelter C', 4],
+    ] as const) {
+      placeBuilding.execute({
+        buildingId,
+        buildingTypeId: 'smelter',
+        companyId: 'company_001',
+        name,
+        x,
+        y: 0,
+      });
+    }
+
+    for (const buildingId of ['building_001', 'building_002', 'building_003', 'building_004', 'building_005']) {
+      completeBuildingConstruction({
+        clock: context.clock,
+        simulationEngine: context.simulationEngine,
+        buildingRepository: context.buildingRepository,
+        buildingId,
+      });
+    }
+
+    const buyResult = buyResource.execute({
+      companyId: 'company_001',
+      resourceId: 'iron_ore',
+      amount: 30,
+    });
+
+    expect(buyResult.ok).toBe(true);
+
+    const recipe = context.gameContent.recipes.get('recipe_steel');
+
+    expect(recipe).toBeDefined();
+
+    if (recipe === undefined) {
+      return;
+    }
+
+    for (const [jobId, buildingId] of [
+      ['production_001', 'building_003'],
+      ['production_002', 'building_004'],
+      ['production_003', 'building_005'],
+    ] as const) {
+      const building = context.buildingRepository.findById(requireBuildingId(buildingId));
+
+      expect(building).toBeDefined();
+
+      if (building === undefined) {
+        return;
+      }
+
+      const transportResult = context.transportLogisticsService.createInboundTransports({
+        companyId: requireCompanyId('company_001'),
+        destinationBuilding: building,
+        recipe,
+        productionJobId: jobId,
+      });
+
+      expect(transportResult.ok).toBe(true);
+    }
+
+    const allTransports = context.transportOrderRepository
+      .findByCompanyId(requireCompanyId('company_001'));
+
+    expect(allTransports).toHaveLength(3);
+
+    const inProgress = allTransports.filter(
+      (order) => order.getStatus() === TransportOrderStatus.IN_PROGRESS,
+    );
+    const waiting = allTransports.filter(
+      (order) => order.getStatus() === TransportOrderStatus.WAITING,
+    );
+
+    expect(inProgress).toHaveLength(2);
+    expect(waiting).toHaveLength(1);
+
+    for (let tick = 0; tick < 8; tick += 1) {
+      context.simulationEngine.tick();
+    }
+
+    const afterFirstWave = context.transportOrderRepository.findByCompanyId(
+      requireCompanyId('company_001'),
+    );
+    const completedCount = afterFirstWave.filter(
+      (order) => order.getStatus() === TransportOrderStatus.COMPLETED,
+    ).length;
+    const stillInProgress = afterFirstWave.filter(
+      (order) => order.getStatus() === TransportOrderStatus.IN_PROGRESS,
+    ).length;
+
+    expect(completedCount).toBe(2);
+
+    const queuedAfterFirstWave = afterFirstWave.filter(
+      (order) => order.getStatus() === TransportOrderStatus.WAITING,
+    ).length;
+
+    expect(stillInProgress + queuedAfterFirstWave).toBe(1);
+
+    context.simulationEngine.tick();
+
+    const afterPromotion = context.transportOrderRepository.findByCompanyId(
+      requireCompanyId('company_001'),
+    );
+
+    expect(
+      afterPromotion.filter((order) => order.getStatus() === TransportOrderStatus.IN_PROGRESS),
+    ).toHaveLength(1);
   });
 
   it('rejects market deposits when warehouse storage capacity is full', async () => {

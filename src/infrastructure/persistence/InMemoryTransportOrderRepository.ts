@@ -27,6 +27,14 @@ export class InMemoryTransportOrderRepository implements TransportOrderRepositor
     );
   }
 
+  findWaiting(): readonly TransportOrder[] {
+    return Object.freeze(
+      [...this.#orders.values()]
+        .filter((order) => order.getStatus() === TransportOrderStatus.WAITING)
+        .sort((left, right) => left.getCreatedAt() - right.getCreatedAt()),
+    );
+  }
+
   findByCompanyId(companyId: CompanyId): readonly TransportOrder[] {
     return Object.freeze(
       [...this.#orders.values()]

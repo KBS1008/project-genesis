@@ -19,6 +19,8 @@ describe('validateGameContent', () => {
       expect(result.value.employees.size).toBeGreaterThanOrEqual(5);
       expect(result.value.recipes.size).toBeGreaterThanOrEqual(1);
       expect(result.value.recipes.has('recipe_planks')).toBe(true);
+      expect(result.value.transportRoutes.size).toBeGreaterThanOrEqual(1);
+      expect(result.value.transportRoutes.has('route_storage_to_production')).toBe(true);
       expect(result.value.employees.has('employee_production_worker')).toBe(true);
     }
   });

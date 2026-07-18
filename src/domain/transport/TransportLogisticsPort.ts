@@ -10,5 +10,6 @@ import type { TransportOrder } from './TransportOrder.js';
 
 /** Transport logistics operations required by simulation systems. */
 export interface TransportLogisticsPort {
+  dispatchPendingTransports(): void;
   completeTransportOrder(order: TransportOrder): Result<void, ValidationError>;
 }

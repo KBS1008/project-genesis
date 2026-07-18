@@ -1,0 +1,9 @@
+id: route_storage_to_production
+name: Lager zu Produktion
+description: Standardroute vom Unternehmenslagerhaus zu Produktionsgebäuden.
+sourceCategory: STORAGE
+destinationCategory: PRODUCTION
+durationTicks: 8
+throughputCapacity: 2
+enabled: true
+version: 1

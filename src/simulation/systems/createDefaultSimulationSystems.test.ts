@@ -38,6 +38,7 @@ function createDependencies() {
   const transportOrderRepository = new InMemoryTransportOrderRepository();
   const transportLogisticsService = {
     completeTransportOrder: () => Result.ok(undefined),
+    dispatchPendingTransports: () => undefined,
   } as TransportLogisticsPort;
 
   return {

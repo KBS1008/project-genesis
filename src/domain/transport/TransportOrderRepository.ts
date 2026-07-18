@@ -10,6 +10,7 @@ export interface TransportOrderRepository {
   save(order: TransportOrder): void;
   findById(id: TransportOrderId): TransportOrder | undefined;
   findInProgress(): readonly TransportOrder[];
+  findWaiting(): readonly TransportOrder[];
   findByCompanyId(companyId: CompanyId): readonly TransportOrder[];
   findByProductionJobId(productionJobId: string): readonly TransportOrder[];
 }

@@ -162,10 +162,11 @@ export type GameSaveTransportOrderSnapshotV1 = {
   readonly resourceId: string;
   readonly amount: number;
   readonly duration: number;
+  readonly routeId?: string | null;
   readonly productionJobId: string;
   readonly createdAt: number;
   readonly status: string;
-  readonly startTime: number;
+  readonly startTime: number | undefined;
   readonly endTime: number | undefined;
   readonly progress: number;
 };

@@ -28,6 +28,7 @@ export type CreateTransportOrderParams = {
   readonly resourceId: string;
   readonly amount: number;
   readonly duration: number;
+  readonly routeId: string | null;
   readonly productionJobId: string;
   readonly clock: Clock;
 };
@@ -39,10 +40,11 @@ export class TransportOrder extends AggregateRoot<'TransportOrder'> {
   readonly #resourceId: string;
   readonly #amount: number;
   readonly #duration: number;
+  readonly #routeId: string | null;
   readonly #productionJobId: string;
   readonly #createdAt: number;
   #status: TransportOrderStatus;
-  #startTime: number;
+  #startTime: number | undefined;
   #endTime: number | undefined;
   #progress: number;
 
@@ -55,10 +57,11 @@ export class TransportOrder extends AggregateRoot<'TransportOrder'> {
       resourceId: string;
       amount: number;
       duration: number;
+      routeId: string | null;
       productionJobId: string;
       createdAt: number;
       status: TransportOrderStatus;
-      startTime: number;
+      startTime: number | undefined;
       endTime: number | undefined;
       progress: number;
     },
@@ -71,6 +74,7 @@ export class TransportOrder extends AggregateRoot<'TransportOrder'> {
     this.#resourceId = params.resourceId;
     this.#amount = params.amount;
     this.#duration = params.duration;
+    this.#routeId = params.routeId;
     this.#productionJobId = params.productionJobId;
     this.#createdAt = params.createdAt;
     this.#status = params.status;
@@ -104,7 +108,7 @@ export class TransportOrder extends AggregateRoot<'TransportOrder'> {
       return Result.fail(new ValidationError('Transport amount must be greater than zero.'));
     }
 
-    const startTime = params.clock.now();
+    const createdAt = params.clock.now();
 
     return Result.ok(
       new TransportOrder({
@@ -115,10 +119,11 @@ export class TransportOrder extends AggregateRoot<'TransportOrder'> {
         resourceId: params.resourceId,
         amount: amountResult.value,
         duration: durationResult.value,
+        routeId: params.routeId,
         productionJobId: params.productionJobId,
-        createdAt: startTime,
-        status: TransportOrderStatus.IN_PROGRESS,
-        startTime,
+        createdAt,
+        status: TransportOrderStatus.WAITING,
+        startTime: undefined,
         endTime: undefined,
         progress: 0,
       }),
@@ -133,14 +138,21 @@ export class TransportOrder extends AggregateRoot<'TransportOrder'> {
     readonly resourceId: string;
     readonly amount: number;
     readonly duration: number;
+    readonly routeId?: string | null;
     readonly productionJobId: string;
     readonly createdAt: number;
     readonly status: TransportOrderStatus;
-    readonly startTime: number;
+    readonly startTime: number | undefined;
     readonly endTime: number | undefined;
     readonly progress: number;
   }): TransportOrder {
-    return new TransportOrder(params, true);
+    return new TransportOrder(
+      {
+        ...params,
+        routeId: params.routeId ?? null,
+      },
+      true,
+    );
   }
 
   getCompanyId(): CompanyId {
@@ -167,6 +179,10 @@ export class TransportOrder extends AggregateRoot<'TransportOrder'> {
     return this.#duration;
   }
 
+  getRouteId(): string | null {
+    return this.#routeId;
+  }
+
   getProductionJobId(): string {
     return this.#productionJobId;
   }
@@ -183,7 +199,7 @@ export class TransportOrder extends AggregateRoot<'TransportOrder'> {
     return this.#createdAt;
   }
 
-  getStartTime(): number {
+  getStartTime(): number | undefined {
     return this.#startTime;
   }
 
@@ -191,9 +207,25 @@ export class TransportOrder extends AggregateRoot<'TransportOrder'> {
     return this.#endTime;
   }
 
+  dispatch(clock: Clock): Result<void, ValidationError> {
+    if (this.#status !== TransportOrderStatus.WAITING) {
+      return Result.fail(new ValidationError('Only waiting transport orders can be dispatched.'));
+    }
+
+    this.#status = TransportOrderStatus.IN_PROGRESS;
+    this.#startTime = clock.now();
+    this.#progress = 0;
+
+    return Result.ok(undefined);
+  }
+
   tick(clock: Clock): Result<TransportOrderTickResult, ValidationError> {
     if (this.#status !== TransportOrderStatus.IN_PROGRESS) {
       return Result.fail(new ValidationError('Only in-progress transport orders can be ticked.'));
+    }
+
+    if (this.#startTime === undefined) {
+      return Result.fail(new ValidationError('In-progress transport orders must have a start time.'));
     }
 
     const elapsed = clock.now() - this.#startTime;

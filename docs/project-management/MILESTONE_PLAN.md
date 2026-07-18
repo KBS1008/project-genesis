@@ -262,7 +262,7 @@ Implement transportation.
 
 ### Status
 
-🟡 In Progress (M6-1 completed 2026-07-18)
+🟡 In Progress (M6-1–M6-3 completed 2026-07-18; gate review pending)
 
 ---
 

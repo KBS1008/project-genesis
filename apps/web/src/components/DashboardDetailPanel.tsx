@@ -81,6 +81,22 @@ function transactionDirectionClass(direction: string): string | undefined {
   return undefined;
 }
 
+function formatTransportStatus(status: string): string {
+  if (status === 'WAITING') {
+    return 'Warteschlange';
+  }
+
+  if (status === 'IN_PROGRESS') {
+    return 'Unterwegs';
+  }
+
+  if (status === 'COMPLETED') {
+    return 'Abgeschlossen';
+  }
+
+  return status;
+}
+
 function formatProgress(progress: number): string {
   return `${Math.round(progress)}%`;
 }
@@ -273,7 +289,9 @@ function TransportFocus({
           ['Route', `${order.sourceBuildingName} → ${order.destinationBuildingName}`],
           ['Quelle', order.sourceBuildingName],
           ['Ziel', order.destinationBuildingName],
-          ['Status', order.status],
+          ['Status', formatTransportStatus(order.status)],
+          ['Route-ID', order.routeId ?? 'Fallback'],
+          ['Dauer', `${order.durationTicks} Ticks`],
           ['Fortschritt', formatProgress(order.progress)],
           ['Produktionsjob', order.productionJobId],
           ['Rezept', order.recipeName ?? '—'],

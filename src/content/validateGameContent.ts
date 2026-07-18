@@ -19,10 +19,13 @@ import { TechnologyLoader } from './research/TechnologyLoader.js';
 import type { TechnologyRegistry } from './research/TechnologyRegistry.js';
 import { ResourceTypeLoader } from './resource/ResourceTypeLoader.js';
 import type { ResourceTypeRegistry } from './resource/ResourceTypeRegistry.js';
+import { TransportRouteLoader } from './logistics/TransportRouteLoader.js';
+import type { TransportRouteRegistry } from './logistics/TransportRouteRegistry.js';
 import { validateBuildingRecipeConsistency } from './validateBuildingRecipeConsistency.js';
 import { validateEmployeeReferences } from './validateEmployeeReferences.js';
 import { validateMilestoneReferences } from './validateMilestoneReferences.js';
 import { validateResearchReferences } from './validateResearchReferences.js';
+import { validateTransportRouteReferences } from './validateTransportRouteReferences.js';
 
 /** Options for loading and validating game content. */
 export type ValidateGameContentOptions = {
@@ -38,6 +41,7 @@ export type GameContentLoadResult = {
   readonly buildingTypes: BuildingTypeRegistry;
   readonly employees: EmployeeRegistry;
   readonly recipes: RecipeRegistry;
+  readonly transportRoutes: TransportRouteRegistry;
 };
 
 /**
@@ -64,6 +68,7 @@ export async function validateGameContent(
   const buildingLoader = new BuildingTypeLoader();
   const employeeLoader = new EmployeeLoader();
   const recipeLoader = new RecipeLoader();
+  const transportRouteLoader = new TransportRouteLoader();
 
   const resourceTypesResult = await resourceLoader.loadFromDirectory(
     path.join(gameContentRoot, 'resources'),
@@ -117,6 +122,14 @@ export async function validateGameContent(
     return Result.fail(recipesResult.error);
   }
 
+  const transportRoutesResult = await transportRouteLoader.loadFromDirectory(
+    path.join(gameContentRoot, 'logistics'),
+  );
+
+  if (!transportRoutesResult.ok) {
+    return Result.fail(transportRoutesResult.error);
+  }
+
   const employeeReferencesResult = validateEmployeeReferences(
     employeesResult.value,
     technologiesResult.value,
@@ -158,6 +171,15 @@ export async function validateGameContent(
     return Result.fail(consistencyResult.error);
   }
 
+  const transportRouteReferencesResult = validateTransportRouteReferences(
+    transportRoutesResult.value,
+    buildingTypesResult.value,
+  );
+
+  if (!transportRouteReferencesResult.ok) {
+    return Result.fail(transportRouteReferencesResult.error);
+  }
+
   return Result.ok({
     resourceTypes: resourceTypesResult.value,
     milestones: milestonesResult.value,
@@ -165,5 +187,6 @@ export async function validateGameContent(
     buildingTypes: buildingTypesResult.value,
     employees: employeesResult.value,
     recipes: recipesResult.value,
+    transportRoutes: transportRoutesResult.value,
   });
 }

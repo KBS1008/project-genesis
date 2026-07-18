@@ -26,18 +26,202 @@ Update this document whenever a meaningful implementation milestone is completed
 | Domain aggregates | Implemented (Company, Building, Inventory, ProductionJob, FinanceAccount, Market, SupplyContract, CompanyResearch, ResearchJob, CompanyMilestones, Employee) |
 | Domain value objects | Partial (Money, Quantity, ResourceAmount, Capacity, Position) |
 | Domain specifications & policies | Partial (foundation + production/market/employee rules) |
-| Content loaders | Partial (ResourceType, BuildingType, Recipe, Technology, Milestone, Employee) |
+| Content loaders | Partial (ResourceType, BuildingType, Recipe, Technology, Milestone, Employee, TransportRoute) |
 | Simulation | Partial (SimulationEngine, systems pipeline incl. market, contracts, payroll, tax, inflation dampening) |
 | Infrastructure | Partial (in-memory repositories, JSON savegames incl. employees, supply contracts, tick metrics history) |
 | Application layer | Implemented (bootstrap, use cases, queries, dashboard facade, tutorial progress) |
 | UI | Partial (Next.js dashboard per DASHBOARD_STYLE_GUIDE: layout, charts, drill-down, tutorial checklist, outline KPI icons, auto-dismiss toasts, live WebSocket refresh) |
 | Energy system | Partial (balance service, production gating, baseline grid) |
-| Transport / logistics | Partial → M6-1 capacities (warehouse storage limits, dashboard) |
+| Transport / logistics | M6-1 capacities, M6-2 route durations, M6-3 throughput queue |
 | M4 Core Gameplay | Completed |
 | M5 Economy | Completed |
-| M6 Logistics | In Progress (M6-1 capacities ✅) |
+| M6 Logistics | In Progress (M6-1 ✅, M6-2 ✅, M6-3 network throughput ✅ — gate review) |
 
-**Tests:** 404 (run `pnpm test` for current count)
+**Tests:** 417 (run `pnpm test` for current count)
+
+---
+
+# Release Progress (M1 → M12)
+
+Trackable estimate of progress toward **Release 1.0** (`MILESTONE_PLAN.md`).
+
+**Last calculated:** 2026-07-18 · **Commit:** `9e8357a`
+
+## Summary
+
+| Metric | Value | Notes |
+|---|---:|---|
+| **Release progress (primary)** | **50 %** | Average of milestone completion % (see below) |
+| Deliverable work invested | 58 % | Average including partial pre-work (e.g. dashboard in M9) |
+| Playable prototype readiness | ~72 % | M1–M5 core + partial M6; not a release metric |
+| Milestones completed | 4 / 12 | M1, M2, M4, M5 |
+| Milestones in progress | 2 / 12 | M3, M6 |
+| Tests | 404 | `pnpm test` |
+
+**Primary formula:**
+
+```text
+Release % = sum(milestone_completion_%) / 12
+```
+
+Update deliverable rows when a step ships; set milestone % to the **average of its deliverable rows**, or **100** when exit criteria are met and the milestone is closed in `MILESTONE_PLAN.md`.
+
+## Milestone Rollup
+
+| MS | Name | Status | MS % | Weight | Contribution |
+|---|---|---|---:|---:|---:|
+| M1 | Foundation | ✅ Completed | 100 | 8,3 % | 8,3 % |
+| M2 | Architecture | ✅ Completed | 100 | 8,3 % | 8,3 % |
+| M3 | Governance & Standards | 🟡 In Progress | 85 | 8,3 % | 7,1 % |
+| M4 | Core Gameplay | ✅ Completed | 100 | 8,3 % | 8,3 % |
+| M5 | Economy | ✅ Completed | 100 | 8,3 % | 8,3 % |
+| M6 | Logistics | 🟡 In Progress | 70 | 8,3 % | 5,8 % |
+| M7 | World Simulation | ⚪ Planned | 0 | 8,3 % | 0 % |
+| M8 | NPC Economy | ⚪ Planned | 0 | 8,3 % | 0 % |
+| M9 | User Interface | ⚪ Planned* | 35 | 8,3 % | 2,9 % |
+| M10 | Content Expansion | ⚪ Planned | 10 | 8,3 % | 0,8 % |
+| M11 | Polish | ⚪ Planned | 0 | 8,3 % | 0 % |
+| M12 | Release | ⚪ Planned | 0 | 8,3 % | 0 % |
+| | **Total** | | **50 %** | **100 %** | **50 %** |
+
+\*M9 is officially planned; dashboard, charts, tutorial and WebSocket from M4/M5 count as pre-work in the deliverable matrix below.
+
+## Deliverable Matrix
+
+### M1 – Foundation ✅ (100 %)
+
+| Deliverable | % | Evidence |
+|---|---:|---|
+| Repository / Monorepo | 100 | Git repo, pnpm workspaces |
+| Build system / TypeScript | 100 | `pnpm build`, `tsc`, Vitest |
+| Tooling | 100 | ESLint, CI hooks |
+| Documentation structure | 100 | `docs/` tree, ADRs |
+| **Milestone average** | **100** | Closed |
+
+### M2 – Architecture ✅ (100 %)
+
+| Deliverable | % | Evidence |
+|---|---:|---|
+| Clean Architecture / DDD layers | 100 | `src/domain`, `application`, `infrastructure` |
+| Repository pattern | 100 | Domain repository ports + in-memory impl |
+| Event system | 100 | `DomainEvent`, `SimulationEngine` queue |
+| CQRS lite | 100 | Use cases + query handlers |
+| Simulation architecture | 100 | `SimulationEngine`, systems pipeline |
+| **Milestone average** | **100** | AUD-001 |
+
+### M3 – Governance & Standards 🟡 (85 %)
+
+| Deliverable | % | Evidence |
+|---|---:|---|
+| Project quality / roadmap / milestone plan | 95 | `docs/project-management/*` |
+| Release & quality gates | 85 | `QUALITY_GATES.md`, metrics |
+| Error / logging / validation / result patterns | 90 | Implemented + docs |
+| Testing & dependency rules | 85 | `TESTING_STRATEGY.md`, architecture tests |
+| Cursor rules alignment | 60 | Partial; ongoing |
+| **Milestone average** | **85** | Exit criteria not formally closed |
+
+### M4 – Core Gameplay ✅ (100 %)
+
+| Deliverable | % | Evidence |
+|---|---:|---|
+| Companies / buildings / resources | 100 | Domain + content loaders |
+| Recipes / production | 100 | `ProductionJob`, simulation system |
+| Warehouses (phase 1) | 100 | `BuildingStorage`, inbound transport |
+| Employees / research / finance | 100 | Full loops + savegame |
+| Save / load | 100 | `GameStateSerializer`, schema v1 |
+| **Milestone average** | **100** | M4 closure report |
+
+### M5 – Economy ✅ (100 %)
+
+| Deliverable | % | Evidence |
+|---|---:|---|
+| Dynamic prices / supply & demand | 100 | M5-1, `MarketPriceCalculator` |
+| Trading / market fees | 100 | M5-3, `MarketFeePolicy` |
+| Taxes / contracts / inflation | 100 | M5-4, finance + contract systems |
+| Dashboard economy UX | 100 | M5-2, KPIs, charts, Wirtschaft section |
+| **Milestone average** | **100** | AUD-003 |
+
+### M6 – Logistics 🟡 (70 % milestone · 70 % deliverable work)
+
+| Deliverable | % | Evidence / next step |
+|---|---:|---|
+| Capacities | 100 | M6-1 ✅ `storageCapacity`, enforcement, dashboard |
+| Warehouses | 75 | Phase-1 storage + deposit; multi-warehouse routing open |
+| Transport routes | 85 | M6-2 ✅ content routes, duration policy, dashboard duration |
+| Networks | 85 | M6-3 ✅ `throughputCapacity`, WAITING queue, FIFO dispatch |
+| Vehicles | 5 | Schema/docs only (DD-022: no sim entities in V1) |
+| **Milestone average (gate)** | **70** | M6-1–M6-3 done; formal gate review pending |
+| **Deliverable average** | **70** | |
+
+### M7 – World Simulation ⚪ (0 %)
+
+| Deliverable | % | Next step |
+|---|---:|---|
+| Regions / map / biomes | 0 | Not started |
+| Infrastructure / cities | 0 | Not started |
+| Regional resources | 0 | Not started |
+| **Milestone average** | **0** | Blocked on M6 gate |
+
+### M8 – NPC Economy ⚪ (0 %)
+
+| Deliverable | % | Next step |
+|---|---:|---|
+| AI companies / expansion | 0 | Not started |
+| Market behaviour / competition | 0 | Not started |
+| Bankruptcy / long-term sim | 0 | Not started |
+| **Milestone average** | **0** | Blocked on M7 |
+
+### M9 – User Interface ⚪ (35 % milestone · 49 % deliverable work)
+
+| Deliverable | % | Evidence / gap |
+|---|---:|---|
+| Dashboard | 70 | `DashboardShell`, KPI strip, sections |
+| Windows / drill-down | 40 | `DashboardDetailPanel`; not full window model |
+| Charts | 65 | Tick, market, energy, inventory, price index |
+| Notifications | 50 | Toasts; no full notification center |
+| Tutorials | 60 | Checklist; not full guided flow |
+| Accessibility | 10 | Minimal ARIA; style guide not fully applied |
+| **Milestone average (gate)** | **35** | Pre-work from M4/M5; exit criteria open |
+| **Deliverable average** | **49** | |
+
+### M10 – Content Expansion ⚪ (10 %)
+
+| Deliverable | % | Evidence |
+|---|---:|---|
+| Buildings / resources / recipes | 25 | Starter set in `game-content/` |
+| Technologies / employees | 15 | Loaders + small catalog |
+| Industries / scenarios | 0 | Not started |
+| Vehicles (content) | 5 | `Vehicle.schema.md`, art library docs |
+| Content pipeline / registry | 20 | Loaders, validation; global registry partial |
+| **Milestone average** | **10** | |
+
+### M11 – Polish ⚪ (0 %)
+
+| Deliverable | % | Next step |
+|---|---:|---|
+| Animations / effects / audio | 0 | Art docs only |
+| Localization / balancing | 0 | Not started |
+| Optimization pass | 0 | Not started |
+| **Milestone average** | **0** | After M9–M10 |
+
+### M12 – Release ⚪ (0 %)
+
+| Deliverable | % | Next step |
+|---|---:|---|
+| Release candidate / QA approval | 0 | Not started |
+| Final documentation | 0 | Partial |
+| Stable savegames / performance validation | 0 | v1 saves exist; release gate open |
+| **Milestone average** | **0** | Final gate |
+
+## Maintenance
+
+When completing a milestone step:
+
+1. Update the deliverable **%** and **Evidence** column.
+2. Recompute milestone **%** (average of deliverables, or 100 on formal closure).
+3. Update **Release progress (primary)** = sum of milestone % ÷ 12.
+4. Update **Last calculated** date and commit hash in this section.
+5. Sync `MILESTONE_PLAN.md` status and add a row under **Recently Completed** below.
 
 ---
 
@@ -863,7 +1047,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Planned Next Steps
 
-1. **M6 – Logistics:** M6-2 transport routes (abstract durations), then network throughput
+1. **M6 – Logistics:** Milestone gate review, then **M7 World Simulation**
 2. Session/auth model for multi-user API access
 3. Full tick log / replay per DD-033 (beyond metrics ring buffer)
 
@@ -874,6 +1058,8 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 - **M5 Economy completed:** dynamic prices, dashboard supply/demand, market fees, taxes, NPC contracts, inflation dampening (reports in `docs/quality/M5_ECONOMY_*`)
 - M5 audit follow-ups: supply-contract savegame test, schema docs, tutorial economy steps, price-index chart
 - M6-1 logistics: warehouse `storageCapacity` from content, enforcement, dashboard + market hints
+- M6-2 logistics: transport route content, duration policy, dashboard duration display (`docs/quality/M6_LOGISTICS_ROUTES_REPORT.md`)
+- M6-3 logistics: network throughput queue, WAITING status, FIFO dispatch (`docs/quality/M6_LOGISTICS_NETWORK_REPORT.md`)
 - M5 economy step 3: market trade fees (`MarketFeePolicy`, `MARKET_FEE` ledger entries)
 - M5 economy step 2: dashboard supply/demand (extended market read model, charts, market table)
 - M5 economy step 1: dynamic market prices (supply & demand via `MarketPriceCalculator`, simulation tick updates)

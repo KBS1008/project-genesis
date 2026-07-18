@@ -796,6 +796,8 @@ export class GameSession {
             productionJobId: order.getProductionJobId(),
             recipeId,
             recipeName: recipe?.name ?? null,
+            durationTicks: order.getDuration(),
+            routeId: order.getRouteId(),
           });
         }),
     );

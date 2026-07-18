@@ -27,6 +27,8 @@ export class TransportSimulationSystem implements SimulationSystem {
   }
 
   execute(context: TickContext): void {
+    this.#transportLogisticsService.dispatchPendingTransports();
+
     for (const order of this.#transportOrderRepository.findInProgress()) {
       const tickResult = order.tick(context.clock);
 

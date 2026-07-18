@@ -17,6 +17,7 @@ import type { BuildingStorageRepository } from '../../domain/building/BuildingSt
 import type { BuildingRepository } from '../../domain/building/BuildingRepository.js';
 import { BuildingStatus } from '../../domain/building/BuildingStatus.js';
 import type { Building } from '../../domain/building/Building.js';
+import type { BuildingId } from '../../domain/building/BuildingId.js';
 import type { CompanyId } from '../../domain/company/CompanyId.js';
 import type { Inventory } from '../../domain/inventory/Inventory.js';
 import type { InventoryRepository } from '../../domain/inventory/InventoryRepository.js';
@@ -31,9 +32,16 @@ import { createTransportOrderId } from '../../domain/transport/TransportOrderId.
 import type { TransportOrderRepository } from '../../domain/transport/TransportOrderRepository.js';
 import type { ProductionInventoryService } from './ProductionInventoryService.js';
 import { createResourceTypeId } from '../../domain/shared/ResourceTypeId.js';
+import {
+  FALLBACK_TRANSPORT_DURATION_TICKS,
+  FALLBACK_TRANSPORT_THROUGHPUT_CAPACITY,
+  TransportRouteDurationPolicy,
+  type ResolvedTransportRoute,
+} from '../../domain/policies/transport/TransportRouteDurationPolicy.js';
+import { TransportNetworkThroughputPolicy } from '../../domain/policies/transport/TransportNetworkThroughputPolicy.js';
 
-/** Default transport duration in simulation ticks (transport.md v1). */
-export const DEFAULT_TRANSPORT_DURATION = 5;
+/** Documented fallback when no content route matches a building pair. */
+export const DEFAULT_TRANSPORT_DURATION = FALLBACK_TRANSPORT_DURATION_TICKS;
 
 export type TransportLogisticsServiceDependencies = {
   readonly clock: Clock;
@@ -85,6 +93,20 @@ export class TransportLogisticsService implements TransportLogisticsPort {
         const buildingType = this.#gameContent.buildingTypes.get(building.getBuildingTypeId().value);
         return buildingType?.category === BuildingCategory.STORAGE;
       });
+  }
+
+  /** Resolves inbound warehouse→destination duration from content routes (fallback when unknown). */
+  resolveInboundTransportDurationTicks(companyId: CompanyId, destinationBuildingId: BuildingId): number {
+    const warehouse = this.findActiveWarehouse(companyId);
+    const destination = this.#buildingRepository.findById(destinationBuildingId);
+
+    if (warehouse === undefined || destination === undefined) {
+      return FALLBACK_TRANSPORT_DURATION_TICKS;
+    }
+
+    const durationResult = this.#resolveTransportDuration(warehouse, destination);
+
+    return durationResult.ok ? durationResult.value : FALLBACK_TRANSPORT_DURATION_TICKS;
   }
 
   /** Ensures a storage record exists when a storage building becomes active. */
@@ -240,6 +262,14 @@ export class TransportLogisticsService implements TransportLogisticsPort {
       return Result.fail(new ValidationError('Warehouse storage was not initialized.'));
     }
 
+    const durationResult = this.#resolveTransportRoute(warehouse, params.destinationBuilding);
+
+    if (!durationResult.ok) {
+      return Result.fail(durationResult.error);
+    }
+
+    const resolvedRoute = durationResult.value;
+
     for (const input of params.recipe.inputs) {
       const orderId = `transport_${params.productionJobId}_${input.resource}`;
       const orderIdResult = createTransportOrderId(orderId);
@@ -265,7 +295,8 @@ export class TransportLogisticsService implements TransportLogisticsPort {
         destinationBuildingId: params.destinationBuilding.getId(),
         resourceId: input.resource,
         amount: input.amount,
-        duration: DEFAULT_TRANSPORT_DURATION,
+        duration: resolvedRoute.durationTicks,
+        routeId: resolvedRoute.routeId,
         productionJobId: params.productionJobId,
         clock: this.#clock,
       });
@@ -281,7 +312,41 @@ export class TransportLogisticsService implements TransportLogisticsPort {
       this.#enqueueEvents(order.pullDomainEvents());
     }
 
+    this.dispatchPendingTransports();
+
     return Result.ok(undefined);
+  }
+
+  /** Promotes waiting transport orders when abstract route throughput allows. */
+  dispatchPendingTransports(): void {
+    const orderSnapshots = this.#collectThroughputSnapshots();
+    const waitingOrders = this.#transportOrderRepository.findWaiting();
+
+    for (const order of waitingOrders) {
+      const throughputCapacity = this.#resolveThroughputCapacity(order.getRouteId());
+      const activeCount = TransportNetworkThroughputPolicy.countActiveOnRoute(
+        orderSnapshots,
+        order.getRouteId(),
+      );
+
+      if (!TransportNetworkThroughputPolicy.canDispatch(activeCount, throughputCapacity)) {
+        continue;
+      }
+
+      const dispatchResult = order.dispatch(this.#clock);
+
+      if (!dispatchResult.ok) {
+        continue;
+      }
+
+      this.#transportOrderRepository.save(order);
+      this.#enqueueEvents(order.pullDomainEvents());
+      orderSnapshots.push({
+        routeId: order.getRouteId(),
+        status: order.getStatus(),
+        createdAt: order.getCreatedAt(),
+      });
+    }
   }
 
   /** Delivers transported resources and starts the linked production job. */
@@ -316,9 +381,14 @@ export class TransportLogisticsService implements TransportLogisticsPort {
 
     const pendingTransports = this.#transportOrderRepository
       .findByProductionJobId(order.getProductionJobId())
-      .filter((entry) => entry.getStatus() === TransportOrderStatus.IN_PROGRESS);
+      .filter(
+        (entry) =>
+          entry.getStatus() === TransportOrderStatus.IN_PROGRESS ||
+          entry.getStatus() === TransportOrderStatus.WAITING,
+      );
 
     if (pendingTransports.length > 0) {
+      this.dispatchPendingTransports();
       return Result.ok(undefined);
     }
 
@@ -363,5 +433,67 @@ export class TransportLogisticsService implements TransportLogisticsPort {
     this.#enqueueEvents(job.pullDomainEvents());
 
     return Result.ok(undefined);
+  }
+
+  #collectThroughputSnapshots() {
+    return [
+      ...this.#transportOrderRepository.findInProgress(),
+      ...this.#transportOrderRepository.findWaiting(),
+    ].map((order) =>
+      Object.freeze({
+        routeId: order.getRouteId(),
+        status: order.getStatus(),
+        createdAt: order.getCreatedAt(),
+      }),
+    );
+  }
+
+  #resolveThroughputCapacity(routeId: string | null): number {
+    if (routeId === null) {
+      return FALLBACK_TRANSPORT_THROUGHPUT_CAPACITY;
+    }
+
+    const route = this.#gameContent.transportRoutes.get(routeId);
+
+    return route?.throughputCapacity ?? FALLBACK_TRANSPORT_THROUGHPUT_CAPACITY;
+  }
+
+  #resolveTransportRoute(
+    sourceBuilding: Building,
+    destinationBuilding: Building,
+  ): Result<ResolvedTransportRoute, ValidationError> {
+    const sourceType = this.#gameContent.buildingTypes.get(sourceBuilding.getBuildingTypeId().value);
+    const destinationType = this.#gameContent.buildingTypes.get(
+      destinationBuilding.getBuildingTypeId().value,
+    );
+
+    if (sourceType === undefined || destinationType === undefined) {
+      return Result.fail(
+        new ValidationError('Building type was not found for transport route resolution.'),
+      );
+    }
+
+    return Result.ok(
+      TransportRouteDurationPolicy.resolve({
+        routes: this.#gameContent.transportRoutes.getAll(),
+        sourceBuildingTypeId: sourceBuilding.getBuildingTypeId().value,
+        destinationBuildingTypeId: destinationBuilding.getBuildingTypeId().value,
+        sourceCategory: sourceType.category,
+        destinationCategory: destinationType.category,
+      }),
+    );
+  }
+
+  #resolveTransportDuration(
+    sourceBuilding: Building,
+    destinationBuilding: Building,
+  ): Result<number, ValidationError> {
+    const routeResult = this.#resolveTransportRoute(sourceBuilding, destinationBuilding);
+
+    if (!routeResult.ok) {
+      return routeResult;
+    }
+
+    return Result.ok(routeResult.value.durationTicks);
   }
 }
