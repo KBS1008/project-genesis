@@ -292,4 +292,75 @@ describe('GameSession', () => {
       await rm(tempDirectory, { recursive: true, force: true });
     }
   });
+
+  it('exposes hired and assigned employees on the dashboard', async () => {
+    const session = await createSession();
+
+    session.startNewGame('Employee Dashboard Corp');
+
+    const placeResult = session.placeBuilding({
+      buildingTypeId: 'sawmill',
+      name: 'Worker Sawmill',
+      x: 4,
+      y: 4,
+    });
+
+    expect(placeResult.ok).toBe(true);
+
+    if (!placeResult.ok) {
+      return;
+    }
+
+    const buildingId = placeResult.value;
+
+    completeConstructionWithTicks(session, 120);
+
+    const hireResult = session.hireEmployee({
+      employeeTypeId: 'employee_production_worker',
+      displayName: 'Production Worker',
+    });
+
+    expect(hireResult.ok).toBe(true);
+
+    const dashboardAfterHire = session.getDashboard();
+
+    expect(dashboardAfterHire.ok).toBe(true);
+
+    if (!dashboardAfterHire.ok || !hireResult.ok) {
+      return;
+    }
+
+    expect(dashboardAfterHire.value.employees).toHaveLength(1);
+    expect(dashboardAfterHire.value.employees[0]?.displayName).toBe('Production Worker');
+    expect(dashboardAfterHire.value.kpis?.employeeCount).toBe(1);
+    expect(dashboardAfterHire.value.kpis?.assignedEmployeeCount).toBe(0);
+    expect(dashboardAfterHire.value.kpis?.payrollPerInterval).toBe(120);
+    expect(
+      dashboardAfterHire.value.hints.hireEmployee.some(
+        (hint) => hint.employeeTypeId === 'employee_production_worker',
+      ),
+    ).toBe(true);
+    expect(dashboardAfterHire.value.contentNames.employees.length).toBeGreaterThan(0);
+
+    const assignResult = session.assignEmployee({
+      employeeId: hireResult.value,
+      buildingId,
+    });
+
+    expect(assignResult.ok).toBe(true);
+
+    const dashboardAfterAssign = session.getDashboard();
+
+    expect(dashboardAfterAssign.ok).toBe(true);
+
+    if (dashboardAfterAssign.ok) {
+      expect(dashboardAfterAssign.value.employees[0]?.assignedBuildingId).toBe(buildingId);
+      expect(dashboardAfterAssign.value.kpis?.assignedEmployeeCount).toBe(1);
+      expect(
+        dashboardAfterAssign.value.hints.assignEmployee.some(
+          (hint) => hint.employeeId === hireResult.value && hint.canAssign,
+        ),
+      ).toBe(false);
+    }
+  });
 });

@@ -185,6 +185,20 @@ function KpiStrip({
           <span className="kpi-trend">{trendLabel('stable', 'Ressourcenlinien')}</span>
         </div>
       </article>
+      <article className="kpi-card">
+        <span className="kpi-icon" aria-hidden="true">
+          👥
+        </span>
+        <div className="kpi-body">
+          <span className="kpi-label">Mitarbeiter</span>
+          <strong className="kpi-value">
+            {kpis.assignedEmployeeCount}/{kpis.employeeCount}
+          </strong>
+          <span className="kpi-trend">
+            {kpis.payrollPerInterval.toLocaleString('de-DE')} GC Payroll / 10 Ticks
+          </span>
+        </div>
+      </article>
     </section>
   );
 }
@@ -205,6 +219,9 @@ function OverviewStrip({
   const activeResearch = dashboard.researchJobs.filter((job) => job.status === 'IN_PROGRESS').length;
   const activeTransport = dashboard.logistics?.activeTransportCount ?? 0;
   const completedMilestones = dashboard.completedMilestones.length;
+  const assignedEmployees =
+    dashboard.kpis?.assignedEmployeeCount ??
+    dashboard.employees.filter((employee) => employee.assignedBuildingId !== null).length;
 
   return (
     <section className="overview-strip" aria-label="Überblick">
@@ -212,6 +229,15 @@ function OverviewStrip({
         <span className="overview-label">Gebäude</span>
         <strong className="overview-value">{dashboard.buildings.length}</strong>
         <span className="overview-hint">Standorte &amp; Anlagen</span>
+      </article>
+      <article className="overview-card">
+        <span className="overview-label">Mitarbeiter</span>
+        <strong className="overview-value">{dashboard.employees.length}</strong>
+        <span className="overview-hint">
+          {assignedEmployees > 0
+            ? `${assignedEmployees} zugewiesen`
+            : 'Noch keine Zuweisungen'}
+        </span>
       </article>
       <article className="overview-card">
         <span className="overview-label">Produktion</span>
@@ -560,6 +586,63 @@ function SidebarActions({
           ))
         )}
       </div>
+
+      <div className="toolbar-group">
+        <span className="toolbar-label">Personal</span>
+        {(hints?.hireEmployee ?? []).length === 0 ? (
+          <p className="empty-state">Keine Einstellungsoptionen verfügbar.</p>
+        ) : (
+          (hints?.hireEmployee ?? []).map((hint) => (
+            <HintButton
+              key={hint.employeeTypeId}
+              label={`${hint.name} (${hint.cost.toLocaleString('de-DE')} GC)`}
+              disabled={!hasGame || !hint.canHire}
+              reason={hint.reason}
+              onClick={() => {
+                void runAction(
+                  () =>
+                    callApi('/api/employees/hire', {
+                      method: 'POST',
+                      body: JSON.stringify({
+                        employeeTypeId: hint.employeeTypeId,
+                        displayName: hint.defaultDisplayName,
+                      }),
+                    }),
+                  `${hint.name} eingestellt.`,
+                );
+              }}
+            />
+          ))
+        )}
+        {(hints?.assignEmployee ?? []).filter((hint) => hint.canAssign).length === 0 ? (
+          <p className="empty-state">Keine Zuweisungen möglich.</p>
+        ) : (
+          (hints?.assignEmployee ?? [])
+            .filter((hint) => hint.canAssign)
+            .map((hint) => (
+              <HintButton
+                key={`${hint.employeeId}-${hint.buildingId}`}
+                label={`${hint.employeeName} → ${hint.buildingName}`}
+                variant="secondary"
+                disabled={!hasGame}
+                reason={hint.reason}
+                onClick={() => {
+                  void runAction(
+                    () =>
+                      callApi('/api/employees/assign', {
+                        method: 'POST',
+                        body: JSON.stringify({
+                          employeeId: hint.employeeId,
+                          buildingId: hint.buildingId,
+                        }),
+                      }),
+                    `${hint.employeeName} zugewiesen.`,
+                  );
+                }}
+              />
+            ))
+        )}
+      </div>
     </>
   );
 }
@@ -591,6 +674,7 @@ export function DashboardShell() {
         buildings: new Map<string, string>(),
         recipes: new Map<string, string>(),
         technologies: new Map<string, string>(),
+        employees: new Map<string, string>(),
       };
     }
 
@@ -599,6 +683,7 @@ export function DashboardShell() {
       buildings: buildNameMap(dashboard.contentNames.buildings),
       recipes: buildNameMap(dashboard.contentNames.recipes),
       technologies: buildNameMap(dashboard.contentNames.technologies),
+      employees: buildNameMap(dashboard.contentNames.employees),
     };
   }, [dashboard]);
 
@@ -707,6 +792,8 @@ export function DashboardShell() {
   const labelRecipe = (recipeId: string) => nameMaps.recipes.get(recipeId) ?? recipeId;
   const labelTechnology = (technologyId: string) =>
     nameMaps.technologies.get(technologyId) ?? technologyId;
+  const labelEmployee = (employeeTypeId: string) =>
+    nameMaps.employees.get(employeeTypeId) ?? employeeTypeId;
 
   const selectedRowKey =
     detailSelection.kind === 'overview' ||
@@ -726,6 +813,7 @@ export function DashboardShell() {
         | 'production'
         | 'transport'
         | 'research'
+        | 'employee'
         | 'transaction'
         | 'warehouse',
       id: string,
@@ -917,6 +1005,47 @@ export function DashboardShell() {
 
                             return building ? <ConstructionStatus building={building} /> : row.status;
                           }}
+                        />
+                      )}
+                    </div>
+                  </section>
+
+                  <section className="card">
+                    <div className="section-header">
+                      <h2>Mitarbeiter</h2>
+                      <p>Eingestelltes Personal, Gehälter und Gebäudezuweisungen.</p>
+                    </div>
+                    <div className="table-wrap">
+                      {!dashboard?.company ? (
+                        <p className="empty-state">
+                          <strong>Noch keine Mitarbeiter.</strong>
+                          Stellen Sie Personal über die Seitenleiste ein.
+                        </p>
+                      ) : (
+                        <DataTable
+                          searchable
+                          searchPlaceholder="Mitarbeiter suchen…"
+                          columns={[
+                            { key: 'displayName', label: 'Name' },
+                            { key: 'employeeTypeId', label: 'Typ' },
+                            { key: 'salary', label: 'Gehalt', numeric: true },
+                            { key: 'productivity', label: 'Produktivität', numeric: true },
+                            { key: 'assignment', label: 'Zuweisung' },
+                          ]}
+                          rows={dashboard.employees.map((employee) => ({
+                            displayName: employee.displayName,
+                            employeeTypeId: labelEmployee(employee.employeeTypeId),
+                            salary: employee.salary,
+                            productivity: employee.productivity.toFixed(2),
+                            assignment: employee.assignedBuildingName ?? '—',
+                          }))}
+                          rowKeys={dashboard.employees.map((employee) => `employee:${employee.id}`)}
+                          selectedRowKey={selectedRowKey}
+                          onRowSelect={(rowKey) => {
+                            selectDetail('employee', rowKey.slice('employee:'.length));
+                          }}
+                          emptyText="Noch keine Mitarbeiter."
+                          emptyHint="Stellen Sie Produktions- oder Logistikpersonal ein."
                         />
                       )}
                     </div>
@@ -1217,6 +1346,7 @@ export function DashboardShell() {
               labelRecipe={labelRecipe}
               labelResource={labelResource}
               labelTechnology={labelTechnology}
+              labelEmployee={labelEmployee}
               renderMarketTable={
                 <DataTable
                   searchable

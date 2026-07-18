@@ -22,6 +22,8 @@ import type { SellResourceDto } from './dto/sell-resource.dto.js';
 import type { TickSimulationDto } from './dto/tick-simulation.dto.js';
 import type { StartProductionDto } from './dto/start-production.dto.js';
 import type { StartResearchDto } from './dto/start-research.dto.js';
+import type { HireEmployeeDto } from './dto/hire-employee.dto.js';
+import type { AssignEmployeeDto } from './dto/assign-employee.dto.js';
 import { DashboardBroadcastService } from '../dashboard/dashboard-broadcast.service.js';
 import { GameSessionService } from './game-session.service.js';
 
@@ -204,6 +206,46 @@ export class GameController {
       unwrapResult(
         this.gameSessionService.getSession().startResearch({
           technologyId: body.technologyId,
+        }),
+      ),
+    );
+    this.#notifyDashboardRefresh();
+    return result;
+  }
+
+  /** Hires an employee for the active company. */
+  @Post('employees/hire')
+  @HttpCode(200)
+  hireEmployee(@Body() body: HireEmployeeDto | undefined) {
+    if (body?.employeeTypeId === undefined || body.displayName === undefined) {
+      throw new BadRequestException('Missing employee hire fields.');
+    }
+
+    const result = toApiSuccess(
+      unwrapResult(
+        this.gameSessionService.getSession().hireEmployee({
+          employeeTypeId: body.employeeTypeId,
+          displayName: body.displayName,
+        }),
+      ),
+    );
+    this.#notifyDashboardRefresh();
+    return result;
+  }
+
+  /** Assigns an employee to a building owned by the active company. */
+  @Post('employees/assign')
+  @HttpCode(200)
+  assignEmployee(@Body() body: AssignEmployeeDto | undefined) {
+    if (body?.employeeId === undefined || body.buildingId === undefined) {
+      throw new BadRequestException('Missing employee assignment fields.');
+    }
+
+    const result = toApiSuccess(
+      unwrapResult(
+        this.gameSessionService.getSession().assignEmployee({
+          employeeId: body.employeeId,
+          buildingId: body.buildingId,
         }),
       ),
     );

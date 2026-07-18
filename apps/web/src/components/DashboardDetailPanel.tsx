@@ -9,6 +9,7 @@ import type {
   ResearchJobSessionReadModel,
   TransportOrderSessionReadModel,
   WarehouseStorageReadModel,
+  EmployeeSessionReadModel,
 } from '@/lib/api';
 
 export type DetailSelection =
@@ -17,6 +18,7 @@ export type DetailSelection =
   | { readonly kind: 'production'; readonly id: string }
   | { readonly kind: 'transport'; readonly id: string }
   | { readonly kind: 'research'; readonly id: string }
+  | { readonly kind: 'employee'; readonly id: string }
   | { readonly kind: 'finance' }
   | { readonly kind: 'transaction'; readonly id: string }
   | { readonly kind: 'logistics' }
@@ -38,6 +40,7 @@ function formatTransactionType(type: string): string {
     RESEARCH_COST: 'Forschungskosten',
     RESEARCH_REWARD: 'Forschungsprämie',
     MAINTENANCE: 'Wartung',
+    RECRUITMENT_COST: 'Rekrutierungskosten',
     SALARY: 'Gehalt',
     LOAN_RECEIVED: 'Kredit erhalten',
     LOAN_PAYMENT: 'Kreditrate',
@@ -540,6 +543,39 @@ function WarehouseFocus({
   );
 }
 
+function EmployeeFocus({
+  employee,
+  labelEmployee,
+  onClear,
+}: {
+  readonly employee: EmployeeSessionReadModel;
+  readonly labelEmployee: (id: string) => string;
+  readonly onClear: () => void;
+}) {
+  return (
+    <DetailFocusCard
+      title={employee.displayName}
+      subtitle={labelEmployee(employee.employeeTypeId)}
+      onClear={onClear}
+    >
+      <KeyValuePanel
+        entries={[
+          ['Mitarbeiter-ID', employee.id],
+          ['Typ', labelEmployee(employee.employeeTypeId)],
+          ['Gehalt / Tick-Zyklus', `${employee.salary.toLocaleString('de-DE')} GC`],
+          ['Produktivität', employee.productivity.toFixed(2)],
+          ['Eingestellt', String(employee.hiredAt)],
+          ['Status', employee.status],
+          [
+            'Zugewiesen',
+            employee.assignedBuildingName ?? 'Noch keinem Gebäude zugewiesen',
+          ],
+        ]}
+      />
+    </DetailFocusCard>
+  );
+}
+
 /** Validates that the current selection still references dashboard data. */
 export function normalizeDetailSelection(
   dashboard: GameSessionDashboard | null,
@@ -564,6 +600,10 @@ export function normalizeDetailSelection(
         : { kind: 'overview' };
     case 'research':
       return dashboard.researchJobs.some((job) => job.id === selection.id)
+        ? selection
+        : { kind: 'overview' };
+    case 'employee':
+      return dashboard.employees.some((employee) => employee.id === selection.id)
         ? selection
         : { kind: 'overview' };
     case 'finance':
@@ -596,6 +636,7 @@ export function DashboardDetailPanel({
   labelRecipe,
   labelResource,
   labelTechnology,
+  labelEmployee,
   renderMarketTable,
 }: {
   readonly dashboard: GameSessionDashboard | null;
@@ -607,6 +648,7 @@ export function DashboardDetailPanel({
   readonly labelRecipe: (id: string) => string;
   readonly labelResource: (id: string) => string;
   readonly labelTechnology: (id: string) => string;
+  readonly labelEmployee: (id: string) => string;
   readonly renderMarketTable: ReactNode;
 }) {
   const focus =
@@ -656,6 +698,16 @@ export function DashboardDetailPanel({
                 <ResearchFocus
                   job={job}
                   labelTechnology={labelTechnology}
+                  onClear={onClearSelection}
+                />
+              ) : null;
+            }
+            case 'employee': {
+              const employee = dashboard.employees.find((entry) => entry.id === selection.id);
+              return employee ? (
+                <EmployeeFocus
+                  employee={employee}
+                  labelEmployee={labelEmployee}
                   onClear={onClearSelection}
                 />
               ) : null;

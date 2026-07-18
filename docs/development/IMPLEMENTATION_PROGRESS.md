@@ -604,6 +604,7 @@ Coordinates use cases between domain, infrastructure and simulation.
 - `HireEmployeeUseCase` debits one-time recruitment `cost` as `RECRUITMENT_COST`, enforces employee type prerequisites and persists hired employees.
 - `AssignEmployeeUseCase` assigns employees to `ACTIVE` buildings owned by the same company.
 - `GameSession.hireEmployee()` / `assignEmployee()` expose employee workflows with generated employee ids.
+- Dashboard exposes `employees[]`, hire/assign hints and employee KPIs (count, payroll per interval).
 - `ResearchCompletionService` unlocks technologies when research jobs complete via simulation ticks.
 - `MilestoneEvaluationService` completes milestones from domain events: first sale → `first_profit`, cumulative sale revenue → `profit_100`, finished production jobs → `first_production`.
 - `GameSession` exposes browser-facing dashboard, tick history, save/load and simulation actions; records per-tick KPI snapshots after each simulation tick.
@@ -667,6 +668,8 @@ Coordinates use cases between domain, infrastructure and simulation.
 | POST | `/api/buildings/place` | Place building |
 | POST | `/api/production/start` | Start recipe on building |
 | POST | `/api/research/start` | Start technology research |
+| POST | `/api/employees/hire` | Hire employee |
+| POST | `/api/employees/assign` | Assign employee to building |
 | POST | `/api/market/sell` | Sell resources |
 | POST | `/api/market/buy` | Buy resources |
 
@@ -789,7 +792,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 | Domain / EmployeeAllocation | `EmployeeAllocationCalculator.test.ts` | Efficiency scaling and cap |
 | Infrastructure / Company repo | `InMemoryCompanyRepository.test.ts` | Save, find, ordering |
 | Infrastructure / Building repo | `InMemoryBuildingRepository.test.ts` | Save, find by company, under construction |
-| Application / GameSession | `GameSession.test.ts` | Dashboard facade, market buy, batch ticks, save/load |
+| Application / GameSession | `GameSession.test.ts` | Dashboard facade, market buy, batch ticks, save/load, employees |
 | API / GameController | `apps/api/src/game/game.controller.test.ts` | NestJS route contract, validation envelope |
 | API / Project paths | `apps/api/src/config/project-paths.test.ts` | Monorepo root and static asset resolution |
 | Application / Bootstrap | `bootstrapApplication.test.ts` | Content load, wiring |
@@ -834,6 +837,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Recently Completed (2026-07)
 
+- Employee dashboard & API integration (hire/assign routes, table, KPIs, detail panel)
 - Employee savegame persistence (`employees[]` on schema v1, serializer round-trip)
 - Employee simulation layer (payroll debits, worker efficiency, `recipe.workers` enforcement)
 - Employee application layer (`HireEmployeeUseCase`, `AssignEmployeeUseCase`, GameSession wiring)

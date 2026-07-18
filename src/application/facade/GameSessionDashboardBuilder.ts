@@ -8,6 +8,7 @@ import type { EnergyBalanceService } from '../services/EnergyBalanceService.js';
 import type { ApplicationContext } from '../bootstrap/ApplicationContext.js';
 import { BuildingStatus } from '../../domain/building/BuildingStatus.js';
 import { createCompanyId } from '../../domain/company/Company.js';
+import { EmployeePrerequisitesSpecification } from '../../domain/specifications/employee/EmployeePrerequisitesSpecification.js';
 import { ProductionJobStatus } from '../../domain/production/ProductionJobStatus.js';
 import { ResearchJobStatus } from '../../domain/research/ResearchJobStatus.js';
 import { TransportOrderStatus } from '../../domain/transport/TransportOrderStatus.js';
@@ -27,6 +28,9 @@ import type {
   ProductionJobSessionReadModel,
   ResearchHint,
   TransportOrderSessionReadModel,
+  EmployeeSessionReadModel,
+  HireEmployeeHint,
+  AssignEmployeeHint,
 } from './GameSessionDashboard.js';
 import type { MarketPriceReadModel } from '../read-models/MarketPriceReadModel.js';
 import type {
@@ -49,6 +53,7 @@ export type DashboardHintInput = {
   readonly researchJobs: readonly { readonly technologyId: string; readonly status: string }[];
   readonly productionJobs: readonly ProductionJobSessionReadModel[];
   readonly transportOrders: readonly TransportOrderSessionReadModel[];
+  readonly employees: readonly EmployeeSessionReadModel[];
 };
 
 /**
@@ -57,6 +62,7 @@ export type DashboardHintInput = {
 export class GameSessionDashboardBuilder {
   readonly #context: ApplicationContext;
   readonly #energyBalanceService: EnergyBalanceService;
+  readonly #employeePrerequisitesSpecification = new EmployeePrerequisitesSpecification();
 
   constructor(context: ApplicationContext, energyBalanceService: EnergyBalanceService) {
     this.#context = context;
@@ -69,6 +75,7 @@ export class GameSessionDashboardBuilder {
     readonly buildings: readonly ContentNameEntry[];
     readonly recipes: readonly ContentNameEntry[];
     readonly technologies: readonly ContentNameEntry[];
+    readonly employees: readonly ContentNameEntry[];
   } {
     return {
       resources: Object.freeze(
@@ -94,6 +101,14 @@ export class GameSessionDashboardBuilder {
           .getAll()
           .filter((technology) => technology.enabled)
           .map((technology) => Object.freeze({ id: technology.id, name: technology.name })),
+      ),
+      employees: Object.freeze(
+        this.#context.gameContent.employees
+          .getAll()
+          .filter((employeeType) => employeeType.enabled)
+          .map((employeeType) =>
+            Object.freeze({ id: employeeType.id, name: employeeType.displayName }),
+          ),
       ),
     };
   }
@@ -204,7 +219,16 @@ export class GameSessionDashboardBuilder {
     readonly energy: EnergyReadModel | null;
     readonly inventory: InventoryReadModel;
     readonly logistics: LogisticsSummaryReadModel;
+    readonly employees: readonly EmployeeSessionReadModel[];
   }): DashboardKpiReadModel {
+    const assignedEmployeeCount = input.employees.filter(
+      (employee) => employee.assignedBuildingId !== null,
+    ).length;
+    const payrollPerInterval = input.employees.reduce(
+      (total, employee) => total + employee.salary,
+      0,
+    );
+
     return Object.freeze({
       availableCash: input.finance.availableCash,
       energyReserve: input.energy?.reserve ?? 0,
@@ -212,6 +236,9 @@ export class GameSessionDashboardBuilder {
       activeTransportCount: input.logistics.activeTransportCount,
       warehouseTotalUnits: input.logistics.warehouseTotalUnits,
       onSiteResourceLines: input.inventory.items.length,
+      employeeCount: input.employees.length,
+      assignedEmployeeCount,
+      payrollPerInterval,
     });
   }
 
@@ -265,6 +292,8 @@ export class GameSessionDashboardBuilder {
       production: this.#readProductionHints(input, companyIdResult.value.value),
       research: this.#readResearchHints(input),
       market: this.#readMarketHints(input),
+      hireEmployee: this.#readHireEmployeeHints(input, companyIdResult.value.value),
+      assignEmployee: this.#readAssignEmployeeHints(input),
     });
   }
 
@@ -274,6 +303,8 @@ export class GameSessionDashboardBuilder {
       production: Object.freeze([]),
       research: Object.freeze([]),
       market: Object.freeze([]),
+      hireEmployee: Object.freeze([]),
+      assignEmployee: Object.freeze([]),
     });
   }
 
@@ -516,5 +547,111 @@ export class GameSessionDashboardBuilder {
           });
         }),
     );
+  }
+
+  #readHireEmployeeHints(
+    input: DashboardHintInput,
+    companyId: string,
+  ): readonly HireEmployeeHint[] {
+    const companyIdResult = createCompanyId(companyId);
+
+    if (!companyIdResult.ok) {
+      return Object.freeze([]);
+    }
+
+    const companyResearch = this.#context.companyResearchRepository.findByCompanyId(
+      companyIdResult.value,
+    );
+
+    if (companyResearch === undefined) {
+      return Object.freeze([]);
+    }
+
+    const ownedActiveBuildingTypes = new Set(
+      input.buildings
+        .filter((building) => building.status === BuildingStatus.ACTIVE)
+        .map((building) => building.buildingTypeId),
+    );
+
+    return Object.freeze(
+      this.#context.gameContent.employees
+        .getAll()
+        .filter((employeeType) => employeeType.enabled)
+        .map((employeeType) => {
+          const prerequisitesResult = this.#employeePrerequisitesSpecification.isSatisfiedBy(
+            {
+              employeeTypeId: employeeType.id,
+              requiredResearch: employeeType.requirements.research,
+              requiredBuildingTypes: employeeType.requirements.buildings,
+            },
+            {
+              completedResearch: input.completedResearch,
+              ownedActiveBuildingTypes,
+            },
+          );
+
+          let canHire = true;
+          let reason: string | null = null;
+
+          if (!prerequisitesResult.ok) {
+            canHire = false;
+            reason = prerequisitesResult.error.message;
+          } else if (input.finance.availableCash < employeeType.cost) {
+            canHire = false;
+            reason = `Benötigt ${employeeType.cost.toLocaleString('de-DE')} GC.`;
+          }
+
+          return Object.freeze({
+            employeeTypeId: employeeType.id,
+            name: employeeType.displayName,
+            category: employeeType.category,
+            cost: employeeType.cost,
+            defaultDisplayName: employeeType.displayName,
+            canHire,
+            reason,
+          });
+        }),
+    );
+  }
+
+  #readAssignEmployeeHints(input: DashboardHintInput): readonly AssignEmployeeHint[] {
+    const hints: AssignEmployeeHint[] = [];
+    const activeBuildings = input.buildings.filter(
+      (building) => building.status === BuildingStatus.ACTIVE,
+    );
+
+    for (const employee of input.employees) {
+      if (employee.assignedBuildingId !== null) {
+        continue;
+      }
+
+      for (const building of activeBuildings) {
+        hints.push(
+          Object.freeze({
+            employeeId: employee.id,
+            employeeName: employee.displayName,
+            buildingId: building.id,
+            buildingName: building.name,
+            canAssign: true,
+            reason: null,
+          }),
+        );
+      }
+
+      if (activeBuildings.length === 0) {
+        hints.push(
+          Object.freeze({
+            employeeId: employee.id,
+            employeeName: employee.displayName,
+            buildingId: '',
+            buildingName: '',
+            canAssign: false,
+            reason: 'Kein aktives Gebäude für die Zuweisung verfügbar.',
+          }),
+        );
+      }
+    }
+
+    return Object.freeze(hints);
   }
 }

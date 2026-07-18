@@ -80,6 +80,18 @@ export type ResearchJobSessionReadModel = {
   readonly progress: number;
 };
 
+export type EmployeeSessionReadModel = {
+  readonly id: string;
+  readonly employeeTypeId: string;
+  readonly displayName: string;
+  readonly salary: number;
+  readonly productivity: number;
+  readonly hiredAt: number;
+  readonly status: string;
+  readonly assignedBuildingId: string | null;
+  readonly assignedBuildingName: string | null;
+};
+
 export type TransportOrderSessionReadModel = {
   readonly id: string;
   readonly resourceId: string;
@@ -124,6 +136,9 @@ export type DashboardKpiReadModel = {
   readonly activeTransportCount: number;
   readonly warehouseTotalUnits: number;
   readonly onSiteResourceLines: number;
+  readonly employeeCount: number;
+  readonly assignedEmployeeCount: number;
+  readonly payrollPerInterval: number;
 };
 
 export type TickMarketPriceSnapshot = {
@@ -186,6 +201,25 @@ export type ResearchHint = {
   readonly reason: string | null;
 };
 
+export type HireEmployeeHint = {
+  readonly employeeTypeId: string;
+  readonly name: string;
+  readonly category: string;
+  readonly cost: number;
+  readonly defaultDisplayName: string;
+  readonly canHire: boolean;
+  readonly reason: string | null;
+};
+
+export type AssignEmployeeHint = {
+  readonly employeeId: string;
+  readonly employeeName: string;
+  readonly buildingId: string;
+  readonly buildingName: string;
+  readonly canAssign: boolean;
+  readonly reason: string | null;
+};
+
 export type MarketTradeHint = {
   readonly resourceId: string;
   readonly name: string;
@@ -201,6 +235,8 @@ export type GameSessionDashboardHints = {
   readonly production: readonly ProductionHint[];
   readonly research: readonly ResearchHint[];
   readonly market: readonly MarketTradeHint[];
+  readonly hireEmployee: readonly HireEmployeeHint[];
+  readonly assignEmployee: readonly AssignEmployeeHint[];
 };
 
 export type GameSessionContentNames = {
@@ -208,6 +244,7 @@ export type GameSessionContentNames = {
   readonly buildings: readonly ContentNameEntry[];
   readonly recipes: readonly ContentNameEntry[];
   readonly technologies: readonly ContentNameEntry[];
+  readonly employees: readonly ContentNameEntry[];
 };
 
 export type GameSessionDashboard = {
@@ -226,6 +263,7 @@ export type GameSessionDashboard = {
   readonly productionJobs: readonly ProductionJobSessionReadModel[];
   readonly transportOrders: readonly TransportOrderSessionReadModel[];
   readonly researchJobs: readonly ResearchJobSessionReadModel[];
+  readonly employees: readonly EmployeeSessionReadModel[];
   readonly contentNames: GameSessionContentNames;
   readonly energy: EnergyReadModel | null;
   readonly logistics: LogisticsSummaryReadModel | null;

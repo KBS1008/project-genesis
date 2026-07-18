@@ -81,4 +81,59 @@ describe('GameController (NestJS)', () => {
       activeTransportCount: expect.any(Number),
     });
   });
+
+  it('POST /api/employees/hire validates required fields', async () => {
+    await request(app.getHttpServer())
+      .post('/api/session/new')
+      .send({ name: 'Employee API Corp' });
+
+    const response = await request(app.getHttpServer())
+      .post('/api/employees/hire')
+      .send({ employeeTypeId: 'employee_production_worker' });
+
+    expect(response.status).toBe(400);
+    expect(response.body.ok).toBe(false);
+    expect(response.body.error).toContain('Missing employee hire fields');
+  });
+
+  it('POST /api/employees/hire and assign expose employees on dashboard', async () => {
+    await request(app.getHttpServer())
+      .post('/api/session/new')
+      .send({ name: 'Employee API Corp' });
+
+    const hireResponse = await request(app.getHttpServer()).post('/api/employees/hire').send({
+      employeeTypeId: 'employee_production_worker',
+      displayName: 'Production Worker',
+    });
+
+    expect(hireResponse.status).toBe(200);
+    expect(hireResponse.body.ok).toBe(true);
+
+    const dashboardAfterHire = await request(app.getHttpServer()).get('/api/dashboard');
+
+    expect(dashboardAfterHire.status).toBe(200);
+    expect(dashboardAfterHire.body.data.employees).toHaveLength(1);
+    expect(dashboardAfterHire.body.data.kpis.employeeCount).toBe(1);
+    expect(dashboardAfterHire.body.data.hints.hireEmployee.length).toBeGreaterThan(0);
+
+    const employeeId = hireResponse.body.data as string;
+    const activeBuilding = dashboardAfterHire.body.data.buildings.find(
+      (building: { status: string; id: string }) => building.status === 'ACTIVE',
+    );
+
+    expect(activeBuilding).toBeDefined();
+
+    const assignResponse = await request(app.getHttpServer()).post('/api/employees/assign').send({
+      employeeId,
+      buildingId: activeBuilding.id,
+    });
+
+    expect(assignResponse.status).toBe(200);
+    expect(assignResponse.body.ok).toBe(true);
+
+    const dashboardAfterAssign = await request(app.getHttpServer()).get('/api/dashboard');
+
+    expect(dashboardAfterAssign.body.data.employees[0].assignedBuildingId).toBe(activeBuilding.id);
+    expect(dashboardAfterAssign.body.data.kpis.assignedEmployeeCount).toBe(1);
+  });
 });

@@ -37,6 +37,7 @@ import type {
   ProductionJobSessionReadModel,
   ResearchJobSessionReadModel,
   TransportOrderSessionReadModel,
+  EmployeeSessionReadModel,
 } from './GameSessionDashboard.js';
 import { GameSessionDashboardBuilder } from './GameSessionDashboardBuilder.js';
 import type {
@@ -242,6 +243,7 @@ export class GameSession {
       this.#dashboardBuilder.readWarehouseStorage(companyId, buildingsResult.value),
     );
     const researchJobs = Object.freeze(this.#readResearchJobs(companyId));
+    const employees = Object.freeze(this.#readEmployees(companyId, buildingsResult.value));
     const marketPrices = this.#readMarketPrices();
     const energy = this.#dashboardBuilder.readEnergy(companyId);
     const logistics = this.#dashboardBuilder.readLogisticsSummary({
@@ -254,6 +256,7 @@ export class GameSession {
       energy,
       inventory: inventoryResult.value,
       logistics,
+      employees,
     });
 
     const hintInput = {
@@ -268,6 +271,7 @@ export class GameSession {
       researchJobs,
       productionJobs,
       transportOrders,
+      employees,
     };
 
     return Result.ok({
@@ -286,6 +290,7 @@ export class GameSession {
       productionJobs,
       transportOrders,
       researchJobs,
+      employees,
       contentNames: this.#dashboardBuilder.readContentNames(),
       energy,
       logistics,
@@ -663,6 +668,8 @@ export class GameSession {
       production: Object.freeze([]),
       research: Object.freeze([]),
       market: Object.freeze([]),
+      hireEmployee: Object.freeze([]),
+      assignEmployee: Object.freeze([]),
     });
 
     return {
@@ -681,6 +688,7 @@ export class GameSession {
       productionJobs: Object.freeze([]),
       transportOrders: Object.freeze([]),
       researchJobs: Object.freeze([]),
+      employees: Object.freeze([]),
       contentNames: this.#dashboardBuilder.readContentNames(),
       energy: null,
       logistics: null,
@@ -797,6 +805,42 @@ export class GameSession {
             progress: job.getProgress(),
           }),
         ),
+    );
+  }
+
+  #readEmployees(
+    companyId: string,
+    buildings: readonly BuildingReadModel[],
+  ): readonly EmployeeSessionReadModel[] {
+    const companyIdResult = createCompanyId(companyId);
+
+    if (!companyIdResult.ok) {
+      return Object.freeze([]);
+    }
+
+    const buildingNameById = new Map(buildings.map((building) => [building.id, building.name]));
+
+    return Object.freeze(
+      this.#context.employeeRepository
+        .findByCompanyId(companyIdResult.value)
+        .map((employee) => {
+          const assignedBuildingId = employee.getAssignedBuildingId()?.value ?? null;
+
+          return Object.freeze({
+            id: employee.getId().value,
+            employeeTypeId: employee.getEmployeeTypeId().value,
+            displayName: employee.getDisplayName(),
+            salary: employee.getSalary(),
+            productivity: employee.getProductivity(),
+            hiredAt: employee.getHiredAt(),
+            status: employee.getStatus(),
+            assignedBuildingId,
+            assignedBuildingName:
+              assignedBuildingId === null
+                ? null
+                : (buildingNameById.get(assignedBuildingId) ?? assignedBuildingId),
+          });
+        }),
     );
   }
 
