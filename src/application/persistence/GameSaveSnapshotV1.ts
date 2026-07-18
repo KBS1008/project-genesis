@@ -149,6 +149,7 @@ export type GameSaveCompanyMilestonesSnapshotV1 = {
 export type GameSaveBuildingStorageSnapshotV1 = {
   readonly buildingId: string;
   readonly companyId: string;
+  readonly storageCapacity?: number;
   readonly items: readonly GameSaveInventoryItemSnapshotV1[];
 };
 

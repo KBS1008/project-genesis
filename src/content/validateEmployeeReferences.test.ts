@@ -34,6 +34,7 @@ function registerBuilding(registry: BuildingTypeRegistry, id: string): void {
       maxProductionLines: 1,
       requiredResearch: [],
       requiredMilestones: [],
+      storageCapacity: 0,
       enabled: true,
       version: 1,
     }),

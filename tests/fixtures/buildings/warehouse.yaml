@@ -11,6 +11,7 @@ constructionCost: 3000
 constructionTime: 90
 allowedRecipes: []
 maxProductionLines: 1
+storageCapacity: 500
 requiredResearch: []
 requiredMilestones:
   - first_profit

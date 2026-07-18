@@ -262,7 +262,7 @@ Implement transportation.
 
 ### Status
 
-⚪ Planned
+🟡 In Progress (M6-1 completed 2026-07-18)
 
 ---
 

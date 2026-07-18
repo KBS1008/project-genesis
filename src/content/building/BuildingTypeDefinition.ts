@@ -42,6 +42,7 @@ export type BuildingTypeDefinitionProps = {
   readonly maxProductionLines: number;
   readonly requiredResearch: readonly string[];
   readonly requiredMilestones: readonly string[];
+  readonly storageCapacity: number;
   readonly enabled: boolean;
   readonly version: number;
 };
@@ -64,6 +65,7 @@ export class BuildingTypeDefinition {
   readonly maxProductionLines: number;
   readonly requiredResearch: readonly string[];
   readonly requiredMilestones: readonly string[];
+  readonly storageCapacity: number;
   readonly enabled: boolean;
   readonly version: number;
 
@@ -82,6 +84,7 @@ export class BuildingTypeDefinition {
     this.maxProductionLines = props.maxProductionLines;
     this.requiredResearch = Object.freeze([...props.requiredResearch]);
     this.requiredMilestones = Object.freeze([...props.requiredMilestones]);
+    this.storageCapacity = props.storageCapacity;
     this.enabled = props.enabled;
     this.version = props.version;
     Object.freeze(this);

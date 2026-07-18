@@ -25,6 +25,10 @@ describe('BuildingTypeLoader', () => {
       expect(sawmill?.category).toBe('PRODUCTION');
       expect(sawmill?.size.width).toBe(3);
       expect(sawmill?.allowedRecipes).toEqual(['recipe_planks']);
+
+      const warehouse = result.value.get('warehouse');
+      expect(warehouse?.category).toBe('STORAGE');
+      expect(warehouse?.storageCapacity).toBe(500);
     }
   });
 

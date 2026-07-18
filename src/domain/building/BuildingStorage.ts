@@ -19,11 +19,13 @@ type StorageLine = {
 export class BuildingStorage {
   readonly #buildingId: BuildingId;
   readonly #companyId: CompanyId;
+  #storageCapacity: number;
   readonly #items = new Map<string, StorageLine>();
 
-  constructor(buildingId: BuildingId, companyId: CompanyId) {
+  constructor(buildingId: BuildingId, companyId: CompanyId, storageCapacity = 0) {
     this.#buildingId = buildingId;
     this.#companyId = companyId;
+    this.#storageCapacity = storageCapacity;
   }
 
   getBuildingId(): BuildingId {
@@ -32,6 +34,36 @@ export class BuildingStorage {
 
   getCompanyId(): CompanyId {
     return this.#companyId;
+  }
+
+  /** Maximum total units stored; zero means unlimited capacity. */
+  getStorageCapacity(): number {
+    return this.#storageCapacity;
+  }
+
+  /** Updates capacity from building content; used when storage records already exist. */
+  syncStorageCapacity(storageCapacity: number): void {
+    this.#storageCapacity = storageCapacity;
+  }
+
+  /** Sum of all stored units including reserved stock. */
+  getUsedCapacity(): number {
+    let total = 0;
+
+    for (const line of this.#items.values()) {
+      total += line.quantity;
+    }
+
+    return total;
+  }
+
+  /** Remaining units that can still be deposited; unlimited when capacity is zero. */
+  getAvailableCapacity(): number {
+    if (this.#storageCapacity === 0) {
+      return Number.MAX_SAFE_INTEGER;
+    }
+
+    return Math.max(0, this.#storageCapacity - this.getUsedCapacity());
   }
 
   getAvailable(resourceId: string): number {
@@ -66,6 +98,14 @@ export class BuildingStorage {
 
     if (amountResult.value === 0) {
       return Result.ok(undefined);
+    }
+
+    if (this.#storageCapacity > 0 && this.getUsedCapacity() + amountResult.value > this.#storageCapacity) {
+      return Result.fail(
+        new ValidationError(
+          `Warehouse storage capacity exceeded (${this.getUsedCapacity()}/${this.#storageCapacity}).`,
+        ),
+      );
     }
 
     const line = this.#items.get(resourceId) ?? { quantity: 0, reserved: 0 };
@@ -126,9 +166,14 @@ export class BuildingStorage {
   static restore(params: {
     readonly buildingId: BuildingId;
     readonly companyId: CompanyId;
+    readonly storageCapacity?: number;
     readonly items: readonly { readonly resourceId: string; readonly quantity: number; readonly reserved: number }[];
   }): BuildingStorage {
-    const storage = new BuildingStorage(params.buildingId, params.companyId);
+    const storage = new BuildingStorage(
+      params.buildingId,
+      params.companyId,
+      params.storageCapacity ?? 0,
+    );
 
     for (const item of params.items) {
       storage.#items.set(item.resourceId, {

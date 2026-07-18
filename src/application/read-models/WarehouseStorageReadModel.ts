@@ -16,5 +16,8 @@ export type WarehouseStorageItemReadModel = {
 export type WarehouseStorageReadModel = {
   readonly buildingId: string;
   readonly buildingName: string;
+  readonly storageCapacity: number;
+  readonly usedCapacity: number;
+  readonly availableCapacity: number;
   readonly items: readonly WarehouseStorageItemReadModel[];
 };

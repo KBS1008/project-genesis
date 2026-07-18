@@ -175,4 +175,75 @@ describe('TransportLogisticsService integration', () => {
     const completedTransports = context.transportOrderRepository.findByProductionJobId('production_001');
     expect(completedTransports[0]?.getStatus()).toBe(TransportOrderStatus.COMPLETED);
   });
+
+  it('rejects market deposits when warehouse storage capacity is full', async () => {
+    const bootstrapResult = await bootstrapApplication({ gameContentRoot });
+
+    expect(bootstrapResult.ok).toBe(true);
+
+    if (!bootstrapResult.ok) {
+      return;
+    }
+
+    const context = bootstrapResult.value;
+    const createCompany = new CreateCompanyUseCase(context);
+    const placeBuilding = new PlaceBuildingUseCase(context);
+    const buyResource = new BuyResourceUseCase(context);
+
+    createCompany.execute({
+      companyId: 'company_001',
+      name: 'Capacity Test Co',
+      ownerId: 'player_001',
+    });
+
+    grantMilestone(context, 'company_001', 'first_profit');
+
+    placeBuilding.execute({
+      buildingId: 'building_warehouse_001',
+      buildingTypeId: 'warehouse',
+      companyId: 'company_001',
+      name: 'Central Warehouse',
+      x: 0,
+      y: 0,
+    });
+
+    completeBuildingConstruction({
+      clock: context.clock,
+      simulationEngine: context.simulationEngine,
+      buildingRepository: context.buildingRepository,
+      buildingId: 'building_warehouse_001',
+    });
+
+    const warehouse = context.buildingRepository.findById(requireBuildingId('building_warehouse_001'));
+
+    expect(warehouse).toBeDefined();
+
+    if (warehouse === undefined) {
+      return;
+    }
+
+    context.transportLogisticsService.ensureStorageForBuilding(warehouse);
+    const storage = context.buildingStorageRepository.findByBuildingId(warehouse.getId());
+
+    expect(storage).toBeDefined();
+
+    if (storage === undefined) {
+      return;
+    }
+
+    expect(storage.getStorageCapacity()).toBe(500);
+    expect(storage.addQuantity('wood', 500).ok).toBe(true);
+    context.buildingStorageRepository.save(storage);
+
+    const buyResult = buyResource.execute({
+      companyId: 'company_001',
+      resourceId: 'wood',
+      amount: 5,
+    });
+
+    expect(buyResult.ok).toBe(false);
+    expect(context.transportLogisticsService.canDepositToWarehouse(requireCompanyId('company_001'), 5)).toBe(
+      false,
+    );
+  });
 });

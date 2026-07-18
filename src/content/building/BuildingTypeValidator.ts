@@ -311,6 +311,27 @@ export function validateBuildingTypeDefinition(
     return Result.fail(requiredMilestonesResult.error);
   }
 
+  let storageCapacityValue = 0;
+
+  if (raw['storageCapacity'] !== undefined) {
+    const storageCapacityResult = readNumber(raw, 'storageCapacity', filePath, { min: 1 });
+
+    if (!storageCapacityResult.ok) {
+      return Result.fail(storageCapacityResult.error);
+    }
+
+    storageCapacityValue = storageCapacityResult.value;
+  }
+
+  if (categoryResult.value === BuildingCategory.STORAGE && storageCapacityValue === 0) {
+    return Result.fail(
+      new ContentLoadError(
+        'Building type field "storageCapacity" must be at least 1 for STORAGE buildings.',
+        { filePath, contentId: idResult.value },
+      ),
+    );
+  }
+
   const enabledResult = readBoolean(raw, 'enabled', filePath);
 
   if (!enabledResult.ok) {
@@ -338,6 +359,7 @@ export function validateBuildingTypeDefinition(
     maxProductionLines: maxProductionLinesResult.value,
     requiredResearch: requiredResearchResult.value,
     requiredMilestones: requiredMilestonesResult.value,
+    storageCapacity: storageCapacityValue,
     enabled: enabledResult.value,
     version: versionResult.value,
   };

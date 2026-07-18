@@ -95,13 +95,35 @@ export class TransportLogisticsService implements TransportLogisticsPort {
       return;
     }
 
-    if (this.#buildingStorageRepository.findByBuildingId(building.getId()) !== undefined) {
+    const existing = this.#buildingStorageRepository.findByBuildingId(building.getId());
+
+    if (existing !== undefined) {
+      existing.syncStorageCapacity(buildingType.storageCapacity);
+      this.#buildingStorageRepository.save(existing);
       return;
     }
 
     this.#buildingStorageRepository.save(
-      new BuildingStorage(building.getId(), building.getCompanyId()),
+      new BuildingStorage(building.getId(), building.getCompanyId(), buildingType.storageCapacity),
     );
+  }
+
+  /** Returns whether a warehouse can accept additional units. */
+  canDepositToWarehouse(companyId: CompanyId, amount: number): boolean {
+    if (amount <= 0) {
+      return true;
+    }
+
+    const warehouse = this.findActiveWarehouse(companyId);
+
+    if (warehouse === undefined) {
+      return true;
+    }
+
+    this.ensureStorageForBuilding(warehouse);
+    const storage = this.#buildingStorageRepository.findByBuildingId(warehouse.getId());
+
+    return storage !== undefined && storage.getAvailableCapacity() >= amount;
   }
 
   /** Deposits purchased resources into the company warehouse when available. */

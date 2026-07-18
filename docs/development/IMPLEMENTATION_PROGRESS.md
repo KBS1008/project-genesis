@@ -32,11 +32,12 @@ Update this document whenever a meaningful implementation milestone is completed
 | Application layer | Implemented (bootstrap, use cases, queries, dashboard facade, tutorial progress) |
 | UI | Partial (Next.js dashboard per DASHBOARD_STYLE_GUIDE: layout, charts, drill-down, tutorial checklist, outline KPI icons, auto-dismiss toasts, live WebSocket refresh) |
 | Energy system | Partial (balance service, production gating, baseline grid) |
-| Transport / logistics | Partial (warehouse storage, transport orders, dashboard KPIs) |
+| Transport / logistics | Partial → M6-1 capacities (warehouse storage limits, dashboard) |
 | M4 Core Gameplay | Completed |
 | M5 Economy | Completed |
+| M6 Logistics | In Progress (M6-1 capacities ✅) |
 
-**Tests:** 400 (run `pnpm test` for current count)
+**Tests:** 404 (run `pnpm test` for current count)
 
 ---
 
@@ -862,7 +863,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Planned Next Steps
 
-1. **M6 – Logistics:** Transport routes, vehicles, networks, warehouse capacities (extend existing Phase-1 warehouse transport)
+1. **M6 – Logistics:** M6-2 transport routes (abstract durations), then network throughput
 2. Session/auth model for multi-user API access
 3. Full tick log / replay per DD-033 (beyond metrics ring buffer)
 
@@ -872,7 +873,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 - **M5 Economy completed:** dynamic prices, dashboard supply/demand, market fees, taxes, NPC contracts, inflation dampening (reports in `docs/quality/M5_ECONOMY_*`)
 - M5 audit follow-ups: supply-contract savegame test, schema docs, tutorial economy steps, price-index chart
-- M5.1 polish: tax skip dashboard hint (F-03), contract on-site inventory note (F-05)
+- M6-1 logistics: warehouse `storageCapacity` from content, enforcement, dashboard + market hints
 - M5 economy step 3: market trade fees (`MarketFeePolicy`, `MARKET_FEE` ledger entries)
 - M5 economy step 2: dashboard supply/demand (extended market read model, charts, market table)
 - M5 economy step 1: dynamic market prices (supply & demand via `MarketPriceCalculator`, simulation tick updates)

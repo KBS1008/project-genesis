@@ -178,7 +178,11 @@ function KpiStrip({
         <div className="kpi-body">
           <span className="kpi-label">Im Lagerhaus</span>
           <strong className="kpi-value">{kpis.warehouseTotalUnits}</strong>
-          <span className="kpi-trend">{trendLabel('stable', 'Einheiten gesamt')}</span>
+          <span className="kpi-trend">
+            {kpis.warehouseStorageCapacity > 0
+              ? `${kpis.warehouseUsedCapacity}/${kpis.warehouseStorageCapacity} Kapazität`
+              : trendLabel('stable', 'Einheiten gesamt')}
+          </span>
         </div>
       </button>
       <article className="kpi-card">

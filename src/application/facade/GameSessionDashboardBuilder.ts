@@ -163,6 +163,9 @@ export class GameSessionDashboardBuilder {
             buildingId: storage.getBuildingId().value,
             buildingName:
               buildingNameById.get(storage.getBuildingId().value) ?? storage.getBuildingId().value,
+            storageCapacity: storage.getStorageCapacity(),
+            usedCapacity: storage.getUsedCapacity(),
+            availableCapacity: storage.getAvailableCapacity(),
             items: Object.freeze(
               storage.getLines().map((line) =>
                 Object.freeze({
@@ -193,6 +196,14 @@ export class GameSessionDashboardBuilder {
         total + storage.items.reduce((lineTotal, item) => lineTotal + item.quantity, 0),
       0,
     );
+    const warehouseStorageCapacity = input.warehouseStorage.reduce(
+      (total, storage) => total + storage.storageCapacity,
+      0,
+    );
+    const warehouseUsedCapacity = input.warehouseStorage.reduce(
+      (total, storage) => total + storage.usedCapacity,
+      0,
+    );
     const activeTransportCount = input.transportOrders.filter(
       (order) => order.status === TransportOrderStatus.IN_PROGRESS,
     ).length;
@@ -200,6 +211,11 @@ export class GameSessionDashboardBuilder {
       (job) => job.status === ProductionJobStatus.WAITING && job.awaitingTransport,
     ).length;
     const hasActiveWarehouse = input.warehouseStorage.length > 0;
+    const isWarehouseFull =
+      hasActiveWarehouse &&
+      input.warehouseStorage.some(
+        (storage) => storage.storageCapacity > 0 && storage.availableCapacity === 0,
+      );
 
     let statusMessage: string | null = null;
 
@@ -207,6 +223,8 @@ export class GameSessionDashboardBuilder {
       statusMessage = `${activeTransportCount} Transport(e) unterwegs — Produktion startet nach Ankunft.`;
     } else if (waitingProductionCount > 0) {
       statusMessage = `${waitingProductionCount} Produktion(en) warten auf Material.`;
+    } else if (isWarehouseFull) {
+      statusMessage = 'Lagerhaus voll — Marktkäufe können nicht eingelagert werden.';
     } else if (hasActiveWarehouse && warehouseTotalUnits > 0) {
       statusMessage = 'Lagerhaus enthält Material — Marktkäufe landen dort.';
     } else if (hasActiveWarehouse) {
@@ -219,6 +237,16 @@ export class GameSessionDashboardBuilder {
       waitingProductionCount,
       warehouseResourceLines,
       warehouseTotalUnits,
+      warehouseStorageCapacity,
+      warehouseUsedCapacity,
+      warehouseAvailableCapacity:
+        warehouseStorageCapacity > 0
+          ? input.warehouseStorage.reduce(
+              (total, storage) =>
+                total + (storage.storageCapacity > 0 ? storage.availableCapacity : 0),
+              0,
+            )
+          : 0,
       statusMessage,
     });
   }
@@ -306,6 +334,8 @@ export class GameSessionDashboardBuilder {
       energyHasDeficit: input.energy?.hasDeficit ?? false,
       activeTransportCount: input.logistics.activeTransportCount,
       warehouseTotalUnits: input.logistics.warehouseTotalUnits,
+      warehouseStorageCapacity: input.logistics.warehouseStorageCapacity,
+      warehouseUsedCapacity: input.logistics.warehouseUsedCapacity,
       onSiteResourceLines: input.inventory.items.length,
       employeeCount: input.employees.length,
       assignedEmployeeCount,
@@ -597,6 +627,11 @@ export class GameSessionDashboardBuilder {
 
   #readMarketHints(input: DashboardHintInput): readonly MarketTradeHint[] {
     const hasWarehouse = input.warehouseStorage.length > 0;
+    const primaryWarehouse = input.warehouseStorage[0];
+    const hasWarehouseSpace =
+      primaryWarehouse === undefined ||
+      primaryWarehouse.storageCapacity === 0 ||
+      primaryWarehouse.availableCapacity >= DEFAULT_TRADE_AMOUNT;
     const marketFeePolicy = new MarketFeePolicy();
 
     return Object.freeze(
@@ -613,7 +648,7 @@ export class GameSessionDashboardBuilder {
           const feeAmount = feeResult.ok ? feeResult.value.feeAmount : 0;
           const buyCost = tradeValue + feeAmount;
 
-          const canBuy = price > 0 && input.finance.availableCash >= buyCost;
+          const canBuy = price > 0 && input.finance.availableCash >= buyCost && hasWarehouseSpace;
           const canSell = onSiteAvailable >= DEFAULT_TRADE_AMOUNT;
 
           return Object.freeze({
@@ -626,7 +661,9 @@ export class GameSessionDashboardBuilder {
               ? hasWarehouse
                 ? 'Landet im Lagerhaus.'
                 : null
-              : `Benötigt ${buyCost.toLocaleString('de-DE')} GC inkl. Marktgebühr.`,
+              : !hasWarehouseSpace
+                ? `Lagerhaus voll (${primaryWarehouse?.usedCapacity ?? 0}/${primaryWarehouse?.storageCapacity ?? 0}).`
+                : `Benötigt ${buyCost.toLocaleString('de-DE')} GC inkl. Marktgebühr.`,
             sellReason: canSell
               ? null
               : `Benötigt ${DEFAULT_TRADE_AMOUNT}× ${resource.name} am Standort (nicht im Lager).`,

@@ -422,6 +422,12 @@ function LogisticsFocus({
             ['Produktion wartet', String(logistics.waitingProductionCount)],
             ['Lagerzeilen', String(logistics.warehouseResourceLines)],
             ['Einheiten im Lager', String(logistics.warehouseTotalUnits)],
+            ...(logistics.warehouseStorageCapacity > 0
+              ? ([
+                  ['Lagerkapazität', `${logistics.warehouseUsedCapacity}/${logistics.warehouseStorageCapacity}`],
+                  ['Freie Kapazität', String(logistics.warehouseAvailableCapacity)],
+                ] as const)
+              : []),
             ...(logistics.statusMessage ? ([['Status', logistics.statusMessage]] as const) : []),
           ]}
         />
@@ -507,6 +513,12 @@ function WarehouseFocus({
           ['Gebäude-ID', storage.buildingId],
           ['Ressourcenzeilen', String(storage.items.length)],
           ['Einheiten gesamt', String(totalUnits)],
+          ...(storage.storageCapacity > 0
+            ? ([
+                ['Kapazität', `${storage.usedCapacity}/${storage.storageCapacity}`],
+                ['Frei', String(storage.availableCapacity)],
+              ] as const)
+            : []),
         ]}
       />
       {storage.items.length > 0 ? (

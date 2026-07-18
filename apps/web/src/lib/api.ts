@@ -125,6 +125,9 @@ export type WarehouseStorageItemReadModel = {
 export type WarehouseStorageReadModel = {
   readonly buildingId: string;
   readonly buildingName: string;
+  readonly storageCapacity: number;
+  readonly usedCapacity: number;
+  readonly availableCapacity: number;
   readonly items: readonly WarehouseStorageItemReadModel[];
 };
 
@@ -134,6 +137,9 @@ export type LogisticsSummaryReadModel = {
   readonly waitingProductionCount: number;
   readonly warehouseResourceLines: number;
   readonly warehouseTotalUnits: number;
+  readonly warehouseStorageCapacity: number;
+  readonly warehouseUsedCapacity: number;
+  readonly warehouseAvailableCapacity: number;
   readonly statusMessage: string | null;
 };
 
@@ -143,6 +149,8 @@ export type DashboardKpiReadModel = {
   readonly energyHasDeficit: boolean;
   readonly activeTransportCount: number;
   readonly warehouseTotalUnits: number;
+  readonly warehouseStorageCapacity: number;
+  readonly warehouseUsedCapacity: number;
   readonly onSiteResourceLines: number;
   readonly employeeCount: number;
   readonly assignedEmployeeCount: number;

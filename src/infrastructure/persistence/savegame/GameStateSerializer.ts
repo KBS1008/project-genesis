@@ -266,6 +266,7 @@ export class GameStateSerializer implements GameStateSerializerPort {
                 Object.freeze({
                   buildingId: storage.getBuildingId().value,
                   companyId: storage.getCompanyId().value,
+                  storageCapacity: storage.getStorageCapacity(),
                   items: Object.freeze(
                     storage.getLines().map((line) =>
                       Object.freeze({
@@ -998,6 +999,9 @@ export class GameStateSerializer implements GameStateSerializerPort {
       BuildingStorage.restore({
         buildingId: buildingIdResult.value,
         companyId: companyIdResult.value,
+        ...(snapshot.storageCapacity !== undefined
+          ? { storageCapacity: snapshot.storageCapacity }
+          : {}),
         items: snapshot.items,
       }),
     );
