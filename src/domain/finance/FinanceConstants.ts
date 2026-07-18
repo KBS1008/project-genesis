@@ -5,4 +5,4 @@
  */
 
 /** Starting cash balance granted to newly founded companies. */
-export const STARTING_MONEY = 250_000;
+export const STARTING_MONEY = 100_000;

@@ -1,0 +1,17 @@
+id: access_road
+name: Zufahrtsstrasse
+description: Verbindet das Startgrundstueck mit dem Transportnetz.
+category: INFRASTRUCTURE
+size:
+  width: 5
+  height: 2
+energyUsage: 0
+maintenanceCost: 1
+constructionCost: 0
+constructionTime: 0
+allowedRecipes: []
+maxProductionLines: 1
+requiredResearch: []
+requiredMilestones: []
+enabled: true
+version: 1

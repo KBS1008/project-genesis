@@ -3,6 +3,8 @@ import { fileURLToPath } from 'node:url';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { GameSession } from './GameSession.js';
+import { STARTING_MONEY } from '../../domain/finance/FinanceConstants.js';
+import { NEW_GAME_STARTER_BUILDINGS } from '../new-game/NewGameSetupConstants.js';
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const gameContentRoot = path.resolve(testDirectory, '../../../game-content');
@@ -24,6 +26,21 @@ async function createSession(savePath?: string) {
 function completeConstructionWithTicks(session: GameSession, tickCount = 120): void {
   const tickResult = session.tick(tickCount);
   expect(tickResult.ok).toBe(true);
+}
+
+function readTotalWoodQuantity(dashboard: {
+  inventory: { items: readonly { resourceId: string; quantity: number }[] } | null;
+  warehouseStorage: readonly { items: readonly { resourceId: string; quantity: number }[] }[];
+}) {
+  const onSiteWood =
+    dashboard.inventory?.items.find((item) => item.resourceId === 'wood')?.quantity ?? 0;
+  const warehouseWood = dashboard.warehouseStorage.reduce(
+    (total, storage) =>
+      total + (storage.items.find((item) => item.resourceId === 'wood')?.quantity ?? 0),
+    0,
+  );
+
+  return onSiteWood + warehouseWood;
 }
 
 describe('GameSession', () => {
@@ -48,15 +65,23 @@ describe('GameSession', () => {
 
     if (dashboardResult.ok) {
       expect(dashboardResult.value.company?.name).toBe('Browser Test Corp');
-      expect(dashboardResult.value.finance?.cashBalance).toBe(250_000);
+      expect(dashboardResult.value.finance?.cashBalance).toBe(STARTING_MONEY);
+      expect(dashboardResult.value.buildings).toHaveLength(NEW_GAME_STARTER_BUILDINGS.length);
       expect(dashboardResult.value.inventory?.items.some((item) => item.resourceId === 'wood')).toBe(
+        true,
+      );
+      expect(dashboardResult.value.inventory?.items.some((item) => item.resourceId === 'stone')).toBe(
+        true,
+      );
+      expect(dashboardResult.value.inventory?.items.some((item) => item.resourceId === 'iron_ore')).toBe(
         true,
       );
       expect(dashboardResult.value.marketPrices.length).toBeGreaterThan(0);
       expect(dashboardResult.value.hints.production.some((hint) => hint.recipeId === 'recipe_planks')).toBe(
         false,
       );
-      expect(dashboardResult.value.energy?.usesBaselineGrid).toBe(true);
+      expect(dashboardResult.value.energy?.usesBaselineGrid).toBe(false);
+      expect(dashboardResult.value.energy?.generation).toBeGreaterThan(0);
     }
   });
 
@@ -83,9 +108,11 @@ describe('GameSession', () => {
     expect(dashboardResult.ok).toBe(true);
 
     if (dashboardResult.ok) {
-      expect(dashboardResult.value.buildings).toHaveLength(1);
-      expect(dashboardResult.value.buildings[0]?.buildingTypeId).toBe('sawmill');
-      expect(dashboardResult.value.buildings[0]?.constructionProgress).toBeGreaterThan(0);
+      expect(dashboardResult.value.buildings).toHaveLength(NEW_GAME_STARTER_BUILDINGS.length + 1);
+      const sawmill = dashboardResult.value.buildings.find(
+        (building) => building.buildingTypeId === 'sawmill',
+      );
+      expect(sawmill?.constructionProgress).toBeGreaterThan(0);
     }
   });
 
@@ -142,9 +169,7 @@ describe('GameSession', () => {
       return;
     }
 
-    const woodBeforeBuy =
-      dashboardBeforeBuy.value.inventory?.items.find((item) => item.resourceId === 'wood')
-        ?.quantity ?? 0;
+    const woodBeforeBuy = readTotalWoodQuantity(dashboardBeforeBuy.value);
 
     const buyResult = session.buyResource({ resourceId: 'wood', amount: 5 });
 
@@ -155,9 +180,7 @@ describe('GameSession', () => {
     expect(dashboardAfterBuy.ok).toBe(true);
 
     if (dashboardAfterBuy.ok) {
-      const woodAfterBuy =
-        dashboardAfterBuy.value.inventory?.items.find((item) => item.resourceId === 'wood')
-          ?.quantity ?? 0;
+      const woodAfterBuy = readTotalWoodQuantity(dashboardAfterBuy.value);
 
       expect(woodAfterBuy).toBe(woodBeforeBuy + 5);
       expect(
@@ -181,7 +204,7 @@ describe('GameSession', () => {
     expect(dashboardResult.ok).toBe(true);
 
     if (dashboardResult.ok) {
-      expect(dashboardResult.value.tickNumber).toBe(10);
+      expect(dashboardResult.value.tickNumber).toBe(11);
     }
   });
 
@@ -195,7 +218,7 @@ describe('GameSession', () => {
 
     if (initialHistory.ok) {
       expect(initialHistory.value.points).toHaveLength(1);
-      expect(initialHistory.value.points[0]?.availableCash).toBe(250_000);
+      expect(initialHistory.value.points[0]?.availableCash).toBe(STARTING_MONEY);
     }
 
     session.tick(3);
@@ -206,7 +229,7 @@ describe('GameSession', () => {
 
     if (historyAfterTicks.ok) {
       expect(historyAfterTicks.value.points.length).toBe(4);
-      expect(historyAfterTicks.value.points.at(-1)?.tickNumber).toBe(3);
+      expect(historyAfterTicks.value.points.at(-1)?.tickNumber).toBe(4);
     }
   });
 
@@ -260,8 +283,10 @@ describe('GameSession', () => {
 
       if (dashboardResult.ok) {
         expect(dashboardResult.value.company?.name).toBe('Save Test Corp');
-        expect(dashboardResult.value.buildings).toHaveLength(1);
-        expect(dashboardResult.value.buildings[0]?.name).toBe('Saved Sawmill');
+        expect(dashboardResult.value.buildings).toHaveLength(NEW_GAME_STARTER_BUILDINGS.length + 1);
+        expect(
+          dashboardResult.value.buildings.some((building) => building.name === 'Saved Sawmill'),
+        ).toBe(true);
       }
     } finally {
       await rm(tempDirectory, { recursive: true, force: true });

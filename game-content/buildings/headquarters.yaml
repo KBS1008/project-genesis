@@ -1,0 +1,17 @@
+id: headquarters
+name: Firmenzentrale
+description: Verwaltet das Unternehmen und dient als Ausgangspunkt neuer Spieler.
+category: ADMINISTRATION
+size:
+  width: 4
+  height: 4
+energyUsage: 4
+maintenanceCost: 2
+constructionCost: 0
+constructionTime: 0
+allowedRecipes: []
+maxProductionLines: 1
+requiredResearch: []
+requiredMilestones: []
+enabled: true
+version: 1

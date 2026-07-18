@@ -1,0 +1,18 @@
+id: power_substation
+name: Umspannwerk
+description: Verteilt Energie im Startgebiet und versorgt die ersten Produktionsgebaeude.
+category: ENERGY
+size:
+  width: 3
+  height: 3
+energyUsage: 2
+energyGeneration: 30
+maintenanceCost: 2
+constructionCost: 0
+constructionTime: 0
+allowedRecipes: []
+maxProductionLines: 1
+requiredResearch: []
+requiredMilestones: []
+enabled: true
+version: 1

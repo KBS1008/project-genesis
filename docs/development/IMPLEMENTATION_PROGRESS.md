@@ -34,7 +34,7 @@ Update this document whenever a meaningful implementation milestone is completed
 | Energy system | Partial (balance service, production gating, baseline grid) |
 | Transport / logistics | Partial (warehouse storage, transport orders, dashboard KPIs) |
 
-**Tests:** 321 (run `pnpm test` for current count)
+**Tests:** 324 (run `pnpm test` for current count)
 
 ---
 
@@ -172,7 +172,7 @@ Business aggregates and domain events.
 
 **Behaviour:**
 
-- `FinanceAccount.create()` — account per company with `STARTING_MONEY` (250,000 GC) and initial SYSTEM credit transaction.
+- `FinanceAccount.create()` — account per company with `STARTING_MONEY` (100,000 GC) and initial SYSTEM credit transaction.
 - `credit()` / `debit()` / `reserveCash()` / `releaseReserved()` / `consumeReserved()` — all balance changes recorded as transactions; debits fail when available cash is insufficient.
 
 **References:** `docs/schemas/Finance.Schema.md`, `docs/schemas/FinanceTransaction.Schema.md`
@@ -783,6 +783,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Recently Completed (2026-07)
 
+- Core gameplay start via `StartNewGameUseCase` (100k capital, 4 starter buildings, wood/stone/iron)
 - Persistence verification tests for `GameStateSerializer` (11) and `LoadGameUseCase` (6)
 - Warehouse transport system (Phase 1) with simulation pipeline integration
 - Switchable dashboard dark/light theme

@@ -1,0 +1,26 @@
+id: stone
+name: Stein
+description: Bausteine und Rohstein fuer fruehe Infrastruktur.
+category: PRIMARY_RESOURCE
+tier: 1
+state: SOLID
+weight: 10
+volume: 3
+basePrice: 18
+marketEnabled: true
+tradable: true
+stackSize: 999999
+storageType: WAREHOUSE
+transportType: TRUCK
+qualityEnabled: false
+decayEnabled: false
+hazardous: false
+flammable: false
+recyclable: false
+energyValue: 0
+requiredResearch: []
+tags:
+  - stone
+  - basic
+enabled: true
+version: 1

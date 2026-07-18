@@ -10,6 +10,8 @@ import { Result } from '../../common/result/Result.js';
 import { bootstrapApplication } from '../bootstrap/bootstrapApplication.js';
 import type { ApplicationContext } from '../bootstrap/ApplicationContext.js';
 import { CreateCompanyUseCase } from '../use-cases/CreateCompanyUseCase.js';
+import { StartNewGameUseCase } from '../use-cases/StartNewGameUseCase.js';
+import { NEW_GAME_STARTER_BUILDINGS } from '../new-game/NewGameSetupConstants.js';
 import { PlaceBuildingUseCase } from '../use-cases/PlaceBuildingUseCase.js';
 import { SellResourceUseCase } from '../use-cases/SellResourceUseCase.js';
 import { BuyResourceUseCase } from '../use-cases/BuyResourceUseCase.js';
@@ -76,7 +78,6 @@ export type StartResearchInput = {
 
 const DEFAULT_COMPANY_ID = 'company_001';
 const DEFAULT_PLAYER_ID = 'player_001';
-const STARTER_WOOD = 20;
 const DEFAULT_SAVE_PATH = 'saves/browser-session.json';
 const MAX_TICK_BATCH = 500;
 
@@ -86,6 +87,7 @@ const MAX_TICK_BATCH = 500;
 export class GameSession {
   #context: ApplicationContext;
   #createCompany!: CreateCompanyUseCase;
+  #startNewGame!: StartNewGameUseCase;
   #placeBuilding!: PlaceBuildingUseCase;
   #sellResource!: SellResourceUseCase;
   #buyResource!: BuyResourceUseCase;
@@ -138,37 +140,21 @@ export class GameSession {
     );
   }
 
-  /** Starts a fresh company with starter inventory for the browser shell. */
+  /** Starts a fresh company with starter infrastructure and resources. */
   startNewGame(name = 'Genesis Industries'): Result<void, ValidationError> {
-    this.#buildingSequence = 0;
+    this.#buildingSequence = NEW_GAME_STARTER_BUILDINGS.length;
     this.#productionSequence = 0;
     this.#researchSequence = 0;
 
-    const createResult = this.#createCompany.execute({
+    const startResult = this.#startNewGame.execute({
       companyId: DEFAULT_COMPANY_ID,
       name,
       ownerId: DEFAULT_PLAYER_ID,
     });
 
-    if (!createResult.ok) {
-      return Result.fail(createResult.error);
+    if (!startResult.ok) {
+      return Result.fail(startResult.error);
     }
-
-    const companyIdResult = createCompanyId(DEFAULT_COMPANY_ID);
-
-    if (!companyIdResult.ok) {
-      return Result.fail(companyIdResult.error);
-    }
-
-    const inventory = this.#context.inventoryRepository.findByCompanyId(companyIdResult.value);
-
-    if (inventory === undefined) {
-      return Result.fail(new ValidationError('Starter inventory was not created.'));
-    }
-
-    inventory.addQuantity('wood', STARTER_WOOD, this.#context.clock);
-    this.#context.inventoryRepository.save(inventory);
-    inventory.pullDomainEvents();
 
     this.#activeCompanyId = DEFAULT_COMPANY_ID;
     this.#context.tickHistoryService.clear(DEFAULT_COMPANY_ID);
@@ -463,6 +449,7 @@ export class GameSession {
 
   #wireUseCases(): void {
     this.#createCompany = new CreateCompanyUseCase(this.#context);
+    this.#startNewGame = new StartNewGameUseCase(this.#context);
     this.#placeBuilding = new PlaceBuildingUseCase(this.#context);
     this.#sellResource = new SellResourceUseCase(this.#context);
     this.#buyResource = new BuyResourceUseCase(this.#context);

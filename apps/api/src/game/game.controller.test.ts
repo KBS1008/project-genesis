@@ -6,6 +6,8 @@ import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { AppModule } from '../app.module.js';
 import { ApiExceptionFilter } from '../common/api-exception.filter.js';
+import { STARTING_MONEY } from '../../../../src/domain/finance/FinanceConstants.js';
+import { NEW_GAME_STARTER_BUILDINGS } from '../../../../src/application/new-game/NewGameSetupConstants.js';
 
 describe('GameController (NestJS)', () => {
   let app: INestApplication;
@@ -45,7 +47,8 @@ describe('GameController (NestJS)', () => {
 
     expect(dashboardResponse.status).toBe(200);
     expect(dashboardResponse.body.data.company?.name).toBe('NestJS Test Corp');
-    expect(dashboardResponse.body.data.finance?.cashBalance).toBe(250_000);
+    expect(dashboardResponse.body.data.finance?.cashBalance).toBe(STARTING_MONEY);
+    expect(dashboardResponse.body.data.buildings).toHaveLength(NEW_GAME_STARTER_BUILDINGS.length);
     expect(Array.isArray(dashboardResponse.body.data.financeTransactions)).toBe(true);
   });
 
