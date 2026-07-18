@@ -173,6 +173,21 @@ export type GameSessionDashboardHints = {
   readonly assignEmployee: readonly AssignEmployeeHint[];
 };
 
+/** Single step in the first-play tutorial checklist. */
+export type TutorialStepReadModel = {
+  readonly id: string;
+  readonly title: string;
+  readonly description: string;
+  readonly completed: boolean;
+};
+
+/** Guided first-play progress derived from live session state. */
+export type TutorialProgressReadModel = {
+  readonly steps: readonly TutorialStepReadModel[];
+  readonly activeStepId: string | null;
+  readonly completed: boolean;
+};
+
 /** Content display names grouped by type. */
 export type GameSessionContentNames = {
   readonly resources: readonly ContentNameEntry[];
@@ -205,5 +220,6 @@ export type GameSessionDashboard = {
   readonly logistics: LogisticsSummaryReadModel | null;
   readonly kpis: DashboardKpiReadModel | null;
   readonly hints: GameSessionDashboardHints;
+  readonly tutorial: TutorialProgressReadModel | null;
 };
 

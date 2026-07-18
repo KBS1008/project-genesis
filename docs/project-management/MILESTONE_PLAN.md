@@ -207,7 +207,7 @@ Implement the playable economic core.
 
 ### Status
 
-⚪ Planned
+✅ Completed (2026-07-18)
 
 ---
 

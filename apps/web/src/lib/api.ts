@@ -239,6 +239,19 @@ export type GameSessionDashboardHints = {
   readonly assignEmployee: readonly AssignEmployeeHint[];
 };
 
+export type TutorialStepReadModel = {
+  readonly id: string;
+  readonly title: string;
+  readonly description: string;
+  readonly completed: boolean;
+};
+
+export type TutorialProgressReadModel = {
+  readonly steps: readonly TutorialStepReadModel[];
+  readonly activeStepId: string | null;
+  readonly completed: boolean;
+};
+
 export type GameSessionContentNames = {
   readonly resources: readonly ContentNameEntry[];
   readonly buildings: readonly ContentNameEntry[];
@@ -269,6 +282,7 @@ export type GameSessionDashboard = {
   readonly logistics: LogisticsSummaryReadModel | null;
   readonly kpis: DashboardKpiReadModel | null;
   readonly hints: GameSessionDashboardHints;
+  readonly tutorial: TutorialProgressReadModel | null;
 };
 
 type ApiSuccessResponse<T> = {

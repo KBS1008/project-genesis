@@ -296,6 +296,14 @@ export class GameSession {
       logistics,
       kpis,
       hints: this.#dashboardBuilder.readHints(hintInput),
+      tutorial: this.#dashboardBuilder.readTutorialProgress({
+        hasCompany: true,
+        buildings: buildingsResult.value,
+        inventory: inventoryResult.value,
+        financeTransactions: financeTransactionsResult.value,
+        productionJobs,
+        completedMilestones: completedSet,
+      }),
     });
   }
 
@@ -694,6 +702,7 @@ export class GameSession {
       logistics: null,
       kpis: null,
       hints: emptyHints,
+      tutorial: null,
     };
   }
 

@@ -20,6 +20,8 @@ import {
   type DetailSelection,
 } from '@/components/DashboardDetailPanel';
 import { DataTable } from '@/components/DataTable';
+import { TutorialPanel } from '@/components/TutorialPanel';
+import { DashboardIcon, type DashboardIconName } from '@/components/icons/DashboardIcons';
 import { connectDashboardSocket } from '@/lib/dashboard-socket';
 
 type StatusTone = '' | 'success' | 'error' | 'info';
@@ -125,7 +127,7 @@ function KpiStrip({
     <section className="kpi-strip" aria-label="Kennzahlen">
       <button type="button" className="kpi-card kpi-card-button" onClick={onSelectFinance}>
         <span className="kpi-icon" aria-hidden="true">
-          💰
+          <DashboardIcon name="cash" className="dashboard-icon" />
         </span>
         <div className="kpi-body">
           <span className="kpi-label">Verfügbar</span>
@@ -137,7 +139,7 @@ function KpiStrip({
       </button>
       <article className={`kpi-card${kpis.energyHasDeficit ? ' kpi-warning' : ''}`}>
         <span className="kpi-icon" aria-hidden="true">
-          ⚡
+          <DashboardIcon name="energy" className="dashboard-icon" />
         </span>
         <div className="kpi-body">
           <span className="kpi-label">Energie-Reserve</span>
@@ -155,7 +157,7 @@ function KpiStrip({
         onClick={onSelectLogistics}
       >
         <span className="kpi-icon" aria-hidden="true">
-          🚚
+          <DashboardIcon name="transport" className="dashboard-icon" />
         </span>
         <div className="kpi-body">
           <span className="kpi-label">Transporte</span>
@@ -167,7 +169,7 @@ function KpiStrip({
       </button>
       <button type="button" className="kpi-card kpi-card-button" onClick={onSelectLogistics}>
         <span className="kpi-icon" aria-hidden="true">
-          📦
+          <DashboardIcon name="warehouse" className="dashboard-icon" />
         </span>
         <div className="kpi-body">
           <span className="kpi-label">Im Lagerhaus</span>
@@ -177,7 +179,7 @@ function KpiStrip({
       </button>
       <article className="kpi-card">
         <span className="kpi-icon" aria-hidden="true">
-          🏭
+          <DashboardIcon name="onsite" className="dashboard-icon" />
         </span>
         <div className="kpi-body">
           <span className="kpi-label">Am Standort</span>
@@ -187,7 +189,7 @@ function KpiStrip({
       </article>
       <article className="kpi-card">
         <span className="kpi-icon" aria-hidden="true">
-          👥
+          <DashboardIcon name="employees" className="dashboard-icon" />
         </span>
         <div className="kpi-body">
           <span className="kpi-label">Mitarbeiter</span>
@@ -329,12 +331,13 @@ function Toast({
     return null;
   }
 
-  const icon = tone === 'success' ? '✓' : tone === 'error' ? '!' : tone === 'info' ? '…' : '•';
+  const iconName: DashboardIconName =
+    tone === 'success' ? 'success' : tone === 'error' ? 'error' : tone === 'info' ? 'info' : 'info';
 
   return (
-    <p className={`toast ${tone}`.trim()} role="status" aria-live="polite">
+    <p className={`toast toast-visible ${tone}`.trim()} role="status" aria-live="polite">
       <span className="toast-icon" aria-hidden="true">
-        {icon}
+        <DashboardIcon name={iconName} className="dashboard-icon dashboard-icon-sm" />
       </span>
       <span>{message}</span>
     </p>
@@ -760,6 +763,27 @@ export function DashboardShell() {
     setDetailSelection((current) => normalizeDetailSelection(dashboard, current));
   }, [dashboard]);
 
+  useEffect(() => {
+    if (statusMessage.length === 0 || statusTone === '') {
+      return undefined;
+    }
+
+    const dismissMs = statusTone === 'error' ? 7000 : statusTone === 'info' ? 0 : 4500;
+
+    if (dismissMs === 0) {
+      return undefined;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setStatusMessage('');
+      setStatusTone('');
+    }, dismissMs);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [statusMessage, statusTone]);
+
   const runAction = useCallback(
     async (action: () => Promise<void>, successMessage: string) => {
       try {
@@ -935,6 +959,8 @@ export function DashboardShell() {
           </div>
 
           {hasGame ? <OverviewStrip dashboard={dashboard} onSelectLogistics={selectLogisticsDetail} /> : null}
+
+          {hasGame ? <TutorialPanel tutorial={dashboard?.tutorial} /> : null}
 
           {hasGame ? <TickHistoryCharts points={tickHistory} /> : null}
 

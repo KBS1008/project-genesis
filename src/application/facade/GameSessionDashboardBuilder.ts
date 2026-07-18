@@ -14,6 +14,7 @@ import { ResearchJobStatus } from '../../domain/research/ResearchJobStatus.js';
 import { TransportOrderStatus } from '../../domain/transport/TransportOrderStatus.js';
 import type { BuildingReadModel } from '../read-models/BuildingReadModel.js';
 import type { FinanceReadModel } from '../read-models/FinanceReadModel.js';
+import type { FinanceTransactionReadModel } from '../read-models/FinanceTransactionReadModel.js';
 import type { InventoryReadModel } from '../read-models/InventoryReadModel.js';
 import type { WarehouseStorageReadModel } from '../read-models/WarehouseStorageReadModel.js';
 import type {
@@ -31,6 +32,8 @@ import type {
   EmployeeSessionReadModel,
   HireEmployeeHint,
   AssignEmployeeHint,
+  TutorialProgressReadModel,
+  TutorialStepReadModel,
 } from './GameSessionDashboard.js';
 import type { MarketPriceReadModel } from '../read-models/MarketPriceReadModel.js';
 import type {
@@ -653,5 +656,84 @@ export class GameSessionDashboardBuilder {
     }
 
     return Object.freeze(hints);
+  }
+
+  /** Derives first-play tutorial progress from core gameplay steps. */
+  readTutorialProgress(input: {
+    readonly hasCompany: boolean;
+    readonly buildings: readonly BuildingReadModel[];
+    readonly inventory: InventoryReadModel;
+    readonly financeTransactions: readonly FinanceTransactionReadModel[];
+    readonly productionJobs: readonly ProductionJobSessionReadModel[];
+    readonly completedMilestones: ReadonlySet<string>;
+  }): TutorialProgressReadModel | null {
+    if (!input.hasCompany) {
+      return null;
+    }
+
+    const hasSawmill = input.buildings.some((building) => building.buildingTypeId === 'sawmill');
+    const woodAvailable =
+      input.inventory.items.find((item) => item.resourceId === 'wood')?.available ?? 0;
+    const planksAvailable =
+      input.inventory.items.find((item) => item.resourceId === 'planks')?.available ?? 0;
+    const hasWoodPurchase = input.financeTransactions.some(
+      (transaction) => transaction.transactionType === 'PURCHASE',
+    );
+    const hasPlankProduction = input.productionJobs.some(
+      (job) => job.recipeId === 'recipe_planks',
+    );
+    const hasPlankSale = input.financeTransactions.some(
+      (transaction) => transaction.transactionType === 'SALE',
+    );
+    const hasFirstProfit = input.completedMilestones.has('first_profit');
+
+    const steps: TutorialStepReadModel[] = [
+      Object.freeze({
+        id: 'open_plot',
+        title: 'Grundstück öffnen',
+        description: 'Starten Sie eine neue Session und sehen Sie sich das Dashboard an.',
+        completed: true,
+      }),
+      Object.freeze({
+        id: 'build_sawmill',
+        title: 'Sägewerk bauen',
+        description: 'Platzieren Sie ein Sägewerk über die Aktionen in der Seitenleiste.',
+        completed: hasSawmill,
+      }),
+      Object.freeze({
+        id: 'buy_wood',
+        title: 'Holz beschaffen',
+        description:
+          'Kaufen Sie Holz am Markt oder nutzen Sie Ihre Startressourcen (mindestens 10 Holz).',
+        completed: hasSawmill && (woodAvailable >= 10 || hasWoodPurchase),
+      }),
+      Object.freeze({
+        id: 'produce_planks',
+        title: 'Bretter produzieren',
+        description:
+          'Warten Sie auf die Fertigstellung des Sägewerks, stellen Sie Worker ein und starten Sie „Bretter herstellen“.',
+        completed: planksAvailable > 0 || hasPlankProduction,
+      }),
+      Object.freeze({
+        id: 'sell_planks',
+        title: 'Bretter verkaufen',
+        description: 'Verkaufen Sie Bretter am Markt über die Seitenleiste.',
+        completed: hasPlankSale,
+      }),
+      Object.freeze({
+        id: 'earn_profit',
+        title: 'Ersten Gewinn erzielen',
+        description: 'Schließen Sie den ersten Verkauf ab und erreichen Sie den Meilenstein „First Profit“.',
+        completed: hasFirstProfit,
+      }),
+    ];
+
+    const activeStep = steps.find((step) => !step.completed);
+
+    return Object.freeze({
+      steps: Object.freeze(steps),
+      activeStepId: activeStep?.id ?? null,
+      completed: activeStep === undefined,
+    });
   }
 }

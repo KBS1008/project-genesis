@@ -80,6 +80,8 @@ describe('GameSession', () => {
       expect(dashboardResult.value.hints.production.some((hint) => hint.recipeId === 'recipe_planks')).toBe(
         false,
       );
+      expect(dashboardResult.value.tutorial?.activeStepId).toBe('build_sawmill');
+      expect(dashboardResult.value.tutorial?.steps[0]?.completed).toBe(true);
       expect(dashboardResult.value.energy?.usesBaselineGrid).toBe(false);
       expect(dashboardResult.value.energy?.generation).toBeGreaterThan(0);
     }

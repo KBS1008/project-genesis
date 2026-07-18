@@ -4,7 +4,7 @@ Version: 1.0.0
 
 Status: Active
 
-Last Updated: 2026-07-12
+Last Updated: 2026-07-18
 
 ---
 
@@ -23,18 +23,19 @@ Update this document whenever a meaningful implementation milestone is completed
 | Area | Status |
 |---|---|
 | Common foundation | Implemented |
-| Domain aggregates | Partial (Company, Building, Inventory, ProductionJob, FinanceAccount, Market, CompanyResearch, ResearchJob, CompanyMilestones, Employee) |
+| Domain aggregates | Implemented (Company, Building, Inventory, ProductionJob, FinanceAccount, Market, CompanyResearch, ResearchJob, CompanyMilestones, Employee) |
 | Domain value objects | Partial (Money, Quantity, ResourceAmount, Capacity, Position) |
-| Domain specifications & policies | Partial (foundation + first production/market rules) |
-| Content loaders | Partial (ResourceType, BuildingType, Recipe, Technology, Milestone) |
-| Simulation | Partial (SimulationEngine, systems pipeline) |
-| Infrastructure | Partial (in-memory repositories, JSON savegames incl. tick metrics history) |
-| Application layer | Partial (bootstrap, use cases, queries, dashboard facade) |
-| UI | Partial (Next.js dashboard per DASHBOARD_STYLE_GUIDE: layout, charts, drill-down, sortable tables, live WebSocket refresh, finance & logistics drill-down) |
+| Domain specifications & policies | Partial (foundation + production/market/employee rules) |
+| Content loaders | Partial (ResourceType, BuildingType, Recipe, Technology, Milestone, Employee) |
+| Simulation | Partial (SimulationEngine, systems pipeline incl. payroll & worker efficiency) |
+| Infrastructure | Partial (in-memory repositories, JSON savegames incl. employees & tick metrics history) |
+| Application layer | Implemented (bootstrap, use cases, queries, dashboard facade, tutorial progress) |
+| UI | Partial (Next.js dashboard per DASHBOARD_STYLE_GUIDE: layout, charts, drill-down, tutorial checklist, outline KPI icons, auto-dismiss toasts, live WebSocket refresh) |
 | Energy system | Partial (balance service, production gating, baseline grid) |
 | Transport / logistics | Partial (warehouse storage, transport orders, dashboard KPIs) |
+| M4 Core Gameplay | Completed |
 
-**Tests:** 365 (run `pnpm test` for current count)
+**Tests:** 371 (run `pnpm test` for current count)
 
 ---
 
@@ -828,15 +829,17 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Planned Next Steps
 
-1. Session/auth model for multi-user API access
-2. Icon library integration (replace KPI emoji placeholders per `ICON_GUIDELINES.md`)
-3. Loading/toasts for dashboard actions
-4. Full tick log / replay per DD-033 (beyond metrics ring buffer)
+1. **M5 – Economy:** Dynamic prices, supply & demand, taxes (deterministic)
+2. Session/auth model for multi-user API access
+3. Full tick log / replay per DD-033 (beyond metrics ring buffer)
+4. Resource / Vehicle schema docs commit (`docs/schemas/Resource.schema.md`, `Vehicle.schema.md`)
 
 ---
 
 # Recently Completed (2026-07)
 
+- M4 milestone closure (first-play tutorial checklist, milestone docs updated)
+- Dashboard UX polish (outline KPI icons, auto-dismiss toasts, tutorial panel)
 - Employee dashboard & API integration (hire/assign routes, table, KPIs, detail panel)
 - Employee savegame persistence (`employees[]` on schema v1, serializer round-trip)
 - Employee simulation layer (payroll debits, worker efficiency, `recipe.workers` enforcement)
