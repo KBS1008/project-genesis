@@ -1,499 +1,1061 @@
-# Recipe.schema.md
+# Recipe.Schema.md
 
-**Version:** 1.0
-**Status:** Active
-**Asset Type:** Recipe
+**Version:** 1.0  
+**Status:** Active  
+**Asset Type:** Recipe  
 **Schema Version:** 1
 
 ---
 
 # Purpose
 
-Dieses Dokument definiert das kanonische Schema für alle Recipe-Assets in Project Genesis.
+Dieses Dokument definiert den kanonischen Content-Contract für statische `Recipe`-Assets in Project Genesis.
 
-Recipes beschreiben statische Produktions- und Verarbeitungsdefinitionen.
+Ein `Recipe` beschreibt eine unveränderliche Produktionsdefinition, die aus den Dateien unter `game-content/recipes/` geladen wird.
 
-Sie definieren insbesondere:
+Die tatsächliche Ausführung eines Recipes gehört zum Domain-Aggregat `ProductionJob` und zur Simulation.
 
-- benötigte Eingangsressourcen
-- erzeugte Ausgangsressourcen
-- Produktionsmenge
-- Produktionszeit
-- benötigte Gebäude
-- benötigte Mitarbeiter
-- Energiebedarf
-- optionale Voraussetzungen
+Die fachliche Trennung lautet:
 
-Die tatsächliche Ausführung eines Recipes gehört zur Domain- und Simulationsebene.
+```text
+Recipe
+    ↓
+statische Content-Definition
 
-Das Schema dient als Grundlage für:
+ProductionJob
+    ↓
+konkreter Produktionslauf
+```
 
-- JSON-Assets
-- Asset Registry
-- Content Pipeline
-- Validierung
-- Produktionssystem
-- Editor
-- Modding
-- Savegame-Kompatibilität
+Dieses Dokument beschreibt den implementierten `RecipeDefinition`-Contract.
+
+---
+
+# Architecture
+
+Die Recipe-Content-Pipeline folgt dem zentralen Content-Modell:
+
+```text
+Recipe YAML
+        ↓
+RecipeLoader
+        ↓
+YAML Parsing
+        ↓
+RecipeValidator
+        ↓
+Duplicate-ID-Prüfung
+        ↓
+RecipeRegistry
+        ↓
+Cross-Registry-Validierung
+        ↓
+Validated Recipe Content
+```
+
+Relevante Komponenten:
+
+```text
+src/content/recipe/
+├── RecipeDefinition.ts
+├── RecipeValidator.ts
+├── RecipeLoader.ts
+└── RecipeRegistry.ts
+```
+
+Die statische Definition wird von der Runtime getrennt:
+
+```text
+RecipeRegistry
+        ↓
+StartProductionUseCase
+        ↓
+ProductionJob
+        ↓
+Simulation / Persistence
+```
+
+---
+
+# Content Location
+
+Recipe-Assets liegen unter:
+
+```text
+game-content/recipes/
+```
+
+Beispiele:
+
+```text
+recipe_planks.yaml
+recipe_steel.yaml
+recipe_advanced_planks.yaml
+```
+
+Der Loader verarbeitet Dateien mit folgenden Endungen:
+
+```text
+.yaml
+.yml
+```
+
+Dateien werden in deterministisch sortierter Dateinamenreihenfolge geladen.
+
+---
+
+# Canonical v1 Contract
+
+Der aktuelle `RecipeDefinition`-Contract enthält folgende Felder:
+
+| Feld | Typ | Erforderlich | Beschreibung |
+| --- | --- | :---: | --- |
+| `id` | string | Ja | Nicht leer, globales ID-Format |
+| `name` | string | Ja | Nicht leer |
+| `description` | string | Ja | Nicht leer |
+| `version` | number | Ja | `>= 1` |
+| `category` | enum | Ja | Unterstützte Recipe-Kategorie |
+| `buildingTypes` | string[] | Ja | Mindestens ein Eintrag |
+| `inputs` | object[] | Ja | Mindestens ein Eintrag |
+| `outputs` | object[] | Ja | Mindestens ein Eintrag |
+| `duration` | number | Ja | `>= 1` |
+| `energy` | number | Ja | `>= 0` |
+| `workers` | number | Ja | `>= 0` |
+| `requiredResearch` | string[] | Ja | Gültige IDs |
+| `requiredMilestones` | string[] | Ja | Gültige IDs |
+| `maintenanceCost` | number | Ja | `>= 0` |
+| `productionCost` | number | Ja | `>= 0` |
+| `experience` | number | Ja | `>= 0` |
+| `tags` | string[] | Ja | Array von Strings |
+| `enabled` | boolean | Ja | Boolean |
+
+Alle Felder sind im aktuellen Validator verpflichtend.
+
+Der Validator definiert aktuell keine optionalen Recipe-Felder und setzt keine Defaultwerte.
+
+Nicht aufgeführte Felder sind kein Bestandteil des aktuellen v1-Contracts.
+
+---
+
+# Complete Structural Overview
+
+```text
+Recipe
+├── id
+├── name
+├── description
+├── version
+├── category
+├── buildingTypes[]
+├── inputs[]
+│   ├── resource
+│   └── amount
+├── outputs[]
+│   ├── resource
+│   └── amount
+├── duration
+├── energy
+├── workers
+├── requiredResearch[]
+├── requiredMilestones[]
+├── maintenanceCost
+├── productionCost
+├── experience
+├── tags[]
+└── enabled
+```
 
 ---
 
 # Asset Identity
 
-Jedes Recipe besitzt eine eindeutige Asset-ID.
+Jedes Recipe besitzt eine eindeutige ID.
 
 Beispiele:
 
 ```text
-recipe.steel
-recipe.copper_wire
-recipe.plastic_components
-recipe.electric_motor
-recipe.fuel
+recipe_planks
+recipe_steel
+recipe_advanced_planks
 ```
 
-Die Asset-ID bleibt über die gesamte Lebensdauer eines Assets stabil.
+Die ID muss folgendem Format entsprechen:
 
----
-
-# Required Fields
-
-| Feld        | Typ     | Beschreibung                 |
-| ----------- | ------- | ---------------------------- |
-| id          | string  | Eindeutige Asset-ID          |
-| version     | integer | Asset-Version                |
-| displayName | string  | Anzeigename                  |
-| category    | string  | Rezeptkategorie              |
-| description | string  | Beschreibung                 |
-| duration    | number  | Produktionsdauer             |
-| inputs      | object  | Benötigte Eingangsressourcen |
-| outputs     | object  | Erzeugte Ausgangsressourcen  |
-
----
-
-# Optional Fields
-
-| Feld                 | Typ    |
-| -------------------- | ------ |
-| icon                 | string |
-| localizationKey      | string |
-| tags                 | array  |
-| requirements         | object |
-| buildingRequirements | object |
-| workforce            | object |
-| energy               | object |
-| byproducts           | object |
-| quality              | object |
-| productionModifiers  | object |
-
----
-
-# Recipe Categories
-
-Empfohlene Kategorien:
-
-```yaml id="h5cs17"
-processing
-manufacturing
-assembly
-refining
-chemical
-energy
-food
-construction
-recycling
-special
+```regex
+^[a-z0-9_]+$
 ```
 
-Neue Kategorien können projektspezifisch ergänzt werden.
+Gültig:
+
+```text
+recipe_planks
+recipe_steel
+```
+
+Ungültig:
+
+```text
+Recipe_Planks
+recipe-planks
+recipe.planks
+```
+
+Die ID muss innerhalb der `RecipeRegistry` eindeutig sein.
 
 ---
 
-# Duration
+# Name
 
-Die Produktionsdauer wird als numerischer Wert definiert.
+`name` ist ein nicht leerer String.
 
 Beispiel:
 
-```yaml id="xk5cm3"
-duration: 30
+```yaml
+name: Bretter herstellen
 ```
 
-Die Einheit muss mit der zentralen Zeitdefinition der Simulation übereinstimmen.
+Der aktuelle v1-Contract verwendet `name`, nicht:
 
-Das Recipe definiert keine eigene Zeitlogik.
+```text
+displayName
+localizationKey
+```
 
-Die Simulation bestimmt, wie die Dauer in Simulations-Ticks oder Zeitintervalle übersetzt wird.
+---
+
+# Description
+
+`description` ist ein nicht leerer String.
+
+Beispiel:
+
+```yaml
+description: Verarbeitung von Holz zu Brettern.
+```
+
+---
+
+# Version
+
+`version` ist eine numerische Asset-Version.
+
+Beispiel:
+
+```yaml
+version: 1
+```
+
+Regel:
+
+```text
+version >= 1
+```
+
+---
+
+# Category
+
+Der aktuelle Contract unterstützt genau folgende Kategorien:
+
+```text
+WOOD
+METAL
+CHEMICAL
+FOOD
+ENERGY
+ELECTRONICS
+TEXTILE
+LOGISTICS
+```
+
+Beispiel:
+
+```yaml
+category: WOOD
+```
+
+Andere Kategorien sind im aktuellen v1-Validator nicht zulässig.
+
+---
+
+# Building Types
+
+`buildingTypes` listet die BuildingType-IDs, in denen das Recipe produziert werden darf.
+
+Beispiel:
+
+```yaml
+buildingTypes:
+  - sawmill
+```
+
+Regeln:
+
+- Array von Strings,
+- mindestens ein Eintrag,
+- globales ID-Format,
+- jeder BuildingType muss in der `BuildingTypeRegistry` existieren.
+
+`buildingTypes` ist nicht dasselbe wie allgemeine Gebäudevoraussetzungen außerhalb der Produktionszuordnung.
+
+Die bidirektionale Beziehung zu `BuildingType.allowedRecipes` wird unter [Building and Recipe Consistency](#building-and-recipe-consistency) beschrieben.
 
 ---
 
 # Inputs
 
-Eingangsressourcen werden über Asset-IDs referenziert.
+`inputs` beschreibt pro Produktionszyklus verbrauchte Ressourcen.
 
-Beispiel:
+Struktur:
 
-```yaml id="c5t0j7"
+```yaml
 inputs:
-  resource.iron_ore: 100
-  resource.coal: 20
+  - resource: wood
+    amount: 10
 ```
 
-Die angegebenen Werte definieren die benötigte Menge pro Produktionszyklus.
+Regeln:
 
-Alle Ressourcenreferenzen müssen gültige Resource-Assets sein.
+- nicht leeres Array,
+- jeder Eintrag ist ein Objekt,
+- `resource` ist eine nicht leere ID im globalen Format,
+- `amount >= 1`,
+- jede Ressource muss in der `ResourceTypeRegistry` existieren.
 
 ---
 
 # Outputs
 
-Ausgangsressourcen werden über Asset-IDs definiert.
+`outputs` beschreibt pro Produktionszyklus erzeugte Ressourcen.
 
-Beispiel:
+Struktur:
 
-```yaml id="y6t9oc"
+```yaml
 outputs:
-  resource.steel: 80
+  - resource: planks
+    amount: 20
 ```
 
-Die angegebenen Werte definieren die Produktionsmenge pro vollständigem Produktionszyklus.
+Regeln entsprechen denen von `inputs`.
 
 ---
 
-# Byproducts
+# Duration
 
-Ein Recipe kann optionale Nebenprodukte erzeugen.
-
-Beispiel:
-
-```yaml id="dr3k0m"
-byproducts:
-  resource.slag: 10
-```
-
-Nebenprodukte werden genauso wie reguläre Outputs über Asset-IDs referenziert.
-
----
-
-# Building Requirements
-
-Ein Recipe kann auf bestimmte Gebäude oder Gebäudekategorien beschränkt sein.
+`duration` beschreibt die Dauer eines Produktionszyklus.
 
 Beispiel:
 
-```yaml id="n0t7j1"
-buildingRequirements:
-  buildings:
-    - building.smelter
-
-  categories:
-    - production
+```yaml
+duration: 60
 ```
 
-Die tatsächliche Prüfung, ob ein Gebäude aktuell verfügbar und betriebsbereit ist, erfolgt in der Domain-/Simulationsebene.
+Regel:
 
----
-
-# Workforce
-
-Ein Recipe kann Anforderungen an Mitarbeiter definieren.
-
-Beispiel:
-
-```yaml id="g8y0l3"
-workforce:
-  minimum: 1
-
-  requiredEmployees:
-    - employee.engineer.basic
+```text
+duration >= 1
 ```
 
-Mitarbeiterreferenzen erfolgen ausschließlich über Asset-IDs.
-
-Die tatsächliche Zuweisung von Mitarbeitern gehört zum dynamischen Spielzustand.
+Die Einheit wird von der Simulation interpretiert.
 
 ---
 
 # Energy
 
-Ein Recipe kann einen Energiebedarf definieren.
+`energy` beschreibt den statischen Energiebedarf pro Produktionszyklus.
 
 Beispiel:
 
-```yaml id="t7p4k2"
-energy:
-  consumption:
-    resource: resource.electricity
-    amount: 50
+```yaml
+energy: 12
 ```
 
-Die tatsächliche Verfügbarkeit und Bilanzierung der Energie wird durch das Energy-System der Domain/Simulation bestimmt.
+Regel:
+
+```text
+energy >= 0
+```
+
+Der aktuelle Contract verwendet eine flache Zahl, kein verschachteltes Energieobjekt.
 
 ---
 
-# Requirements
+# Workers
 
-Ein Recipe kann allgemeine Voraussetzungen besitzen.
+`workers` beschreibt den statischen Mitarbeiterbedarf pro Produktionszyklus.
 
 Beispiel:
 
-```yaml id="p3s9m6"
-requirements:
-  research:
-    - technology.basic_metallurgy
-
-  buildings:
-    - building.smelter
+```yaml
+workers: 2
 ```
 
-Alle Referenzen erfolgen ausschließlich über Asset-IDs.
+Regel:
+
+```text
+workers >= 0
+```
+
+Die tatsächliche Zuweisung von Mitarbeitern gehört zum dynamischen Spielzustand.
 
 ---
 
-# Production Modifiers
+# Required Research
 
-Optional können statische Modifikatoren definiert werden.
+`requiredResearch` enthält Technology-IDs, die vor Nutzung des Recipes erfüllt sein müssen.
 
 Beispiel:
 
-```yaml id="v4j2r8"
-productionModifiers:
-  temperature:
-    optimal: 1200
-    tolerance: 100
-
-  efficiency:
-    base: 1.0
+```yaml
+requiredResearch:
+  - basic_woodworking
 ```
 
-Solche Werte definieren ausschließlich statische Parameter.
+Ohne Research-Anforderungen:
 
-Die Berechnung der tatsächlichen Produktionsleistung erfolgt in der Domain-/Simulationsebene.
+```yaml
+requiredResearch: []
+```
+
+Regeln:
+
+- Array von Strings,
+- globales ID-Format,
+- jede Technology muss in der `TechnologyRegistry` existieren.
+
+Die Cross-Registry-Prüfung erfolgt nach dem Laden über:
+
+```text
+validateResearchReferences.ts
+```
 
 ---
 
-# Quality
+# Required Milestones
 
-Recipes können optionale Qualitätsdefinitionen besitzen.
+`requiredMilestones` enthält Milestone-IDs, die vor Nutzung des Recipes erreicht sein müssen.
 
 Beispiel:
 
-```yaml id="m1w8q5"
-quality:
-  enabled: true
-
-  baseQuality: 1.0
-
-  minimum: 0.5
-  maximum: 1.5
+```yaml
+requiredMilestones:
+  - first_production
 ```
 
-Qualitätsberechnungen und deren Auswirkungen gehören zur Domain-/Simulationsebene.
+Ohne Milestone-Anforderungen:
+
+```yaml
+requiredMilestones: []
+```
+
+Regeln:
+
+- Array von Strings,
+- globales ID-Format,
+- jeder Milestone muss in der `MilestoneRegistry` existieren.
+
+Die Cross-Registry-Prüfung erfolgt über:
+
+```text
+validateMilestoneReferences.ts
+```
 
 ---
 
-# Asset References
+# Maintenance Cost
 
-Ein Recipe darf referenzieren:
-
-- Resources
-- Buildings
-- Employees
-- Technologies
-- Research
-- Effects
-
-Alle Referenzen erfolgen ausschließlich über Asset-IDs.
-
----
-
-# Localization
-
-Anzeigenamen und Beschreibungen sollen über Lokalisierungsschlüssel referenziert werden.
+`maintenanceCost` beschreibt einen statischen Kostenwert der Recipe.
 
 Beispiel:
 
-```yaml id="b2v6n9"
-localizationKey: recipe.steel
+```yaml
+maintenanceCost: 2
 ```
 
-Die konkrete Lokalisierung wird außerhalb des Recipe-Assets verwaltet.
+Regel:
+
+```text
+maintenanceCost >= 0
+```
+
+---
+
+# Production Cost
+
+`productionCost` beschreibt einen statischen Produktionskostenwert.
+
+Beispiel:
+
+```yaml
+productionCost: 1
+```
+
+Regel:
+
+```text
+productionCost >= 0
+```
+
+---
+
+# Experience
+
+`experience` beschreibt einen statischen Erfahrungswert.
+
+Beispiel:
+
+```yaml
+experience: 5
+```
+
+Regel:
+
+```text
+experience >= 0
+```
+
+---
+
+# Tags
+
+`tags` ist ein Array von Strings.
+
+Beispiel:
+
+```yaml
+tags:
+  - basic
+  - wood
+```
+
+Der Validator prüft nur, dass es ein String-Array ist.
+
+---
+
+# Enabled
+
+`enabled` steuert, ob das Recipe aktiv geladen und verwendet werden darf.
+
+Beispiel:
+
+```yaml
+enabled: true
+```
+
+Regel:
+
+```text
+enabled ist ein Boolean
+```
+
+---
+
+# Cross-Registry References
+
+Der Recipe-Contract referenziert andere Content-Registries:
+
+```text
+Recipe
+├── buildingTypes[]
+│       ↓
+│   BuildingTypeRegistry
+│
+├── inputs[].resource
+│       ↓
+│   ResourceTypeRegistry
+│
+├── outputs[].resource
+│       ↓
+│   ResourceTypeRegistry
+│
+├── requiredResearch
+│       ↓
+│   TechnologyRegistry
+│
+└── requiredMilestones
+        ↓
+    MilestoneRegistry
+```
+
+---
+
+# Validation Timing
+
+Nicht alle Referenzen werden im selben Schritt geprüft.
+
+## Während des Recipe-Ladens
+
+Der `RecipeLoader` übergibt:
+
+```text
+ResourceTypeRegistry
+BuildingTypeRegistry
+```
+
+an den `RecipeValidator`.
+
+Dadurch werden unmittelbar geprüft:
+
+```text
+buildingTypes
+inputs[].resource
+outputs[].resource
+```
+
+## Nach dem Laden aller Registries
+
+Später prüft die zentrale Content-Validierung:
+
+```text
+requiredResearch
+    ↓
+TechnologyRegistry
+
+requiredMilestones
+    ↓
+MilestoneRegistry
+```
+
+---
+
+# Building and Recipe Consistency
+
+Zwischen BuildingType und Recipe besteht eine bidirektionale Beziehung:
+
+```text
+BuildingType.allowedRecipes
+        ↕
+Recipe.buildingTypes
+```
+
+Beispiel:
+
+```yaml
+# BuildingType
+id: sawmill
+allowedRecipes:
+  - recipe_planks
+```
+
+```yaml
+# Recipe
+id: recipe_planks
+buildingTypes:
+  - sawmill
+```
+
+## Standardvalidierung
+
+Die normale Content-Validierung prüft mindestens:
+
+```text
+BuildingType.allowedRecipes
+        ↓
+RecipeRegistry
+```
+
+## Strict-Modus
+
+Im Strict-Modus muss zusätzlich die Beziehung symmetrisch sein:
+
+```text
+pnpm validate-content --strict
+```
 
 ---
 
 # Validation Rules
 
-Ein Recipe ist gültig, wenn:
+Eine Recipe ist gültig, wenn:
 
-- eine eindeutige Asset-ID vorhanden ist
-- die Version gültig ist
-- eine Kategorie definiert wurde
-- die Produktionsdauer größer als 0 ist
-- mindestens ein Input oder Output vorhanden ist
-- alle Input-Mengen größer als 0 sind
-- alle Output-Mengen größer als 0 sind
-- alle Ressourcenreferenzen gültig sind
-- alle Gebäude-, Mitarbeiter- und Technologie-Referenzen gültig sind
+- der Root-Wert ein Objekt ist,
+- `id` ein nicht leerer String ist,
+- `id` dem globalen ID-Format entspricht,
+- `id` innerhalb der Registry eindeutig ist,
+- `name` ein nicht leerer String ist,
+- `description` ein nicht leerer String ist,
+- `version >= 1`,
+- `category` unterstützt wird,
+- `buildingTypes` ein nicht leeres Array gültiger IDs ist,
+- alle `buildingTypes` existieren,
+- `inputs` ein nicht leeres Array ist,
+- jeder Input ein Objekt ist,
+- jeder Input eine gültige `resource` besitzt,
+- jeder Input `amount >= 1` besitzt,
+- alle Input-Ressourcen existieren,
+- `outputs` ein nicht leeres Array ist,
+- jeder Output ein Objekt ist,
+- jeder Output eine gültige `resource` besitzt,
+- jeder Output `amount >= 1` besitzt,
+- alle Output-Ressourcen existieren,
+- `duration >= 1`,
+- `energy >= 0`,
+- `workers >= 0`,
+- `requiredResearch` ein Array gültiger IDs ist,
+- alle `requiredResearch`-Referenzen existieren,
+- `requiredMilestones` ein Array gültiger IDs ist,
+- alle `requiredMilestones`-Referenzen existieren,
+- `maintenanceCost >= 0`,
+- `productionCost >= 0`,
+- `experience >= 0`,
+- `tags` ein Array von Strings ist,
+- `enabled` ein Boolean ist.
 
-Ein Recipe darf keine zirkulären oder ungültigen Referenzen enthalten.
-
-Ungültige Recipes dürfen nicht registriert oder geladen werden.
+Im Strict-Modus muss zusätzlich die BuildingType-/Recipe-Beziehung symmetrisch sein.
 
 ---
 
-# Production Cycle
+# Important Current Validator Characteristics
 
-Ein Recipe beschreibt einen vollständigen Produktionszyklus.
+Der aktuelle Validator:
 
-Beispiel:
+- verlangt alle Contract-Felder,
+- ignoriert unbekannte zusätzliche Root-Felder,
+- erzwingt für numerische Felder keine Ganzzahligkeit,
+- prüft keine doppelten Array-Einträge,
+- prüft keine leeren Strings in `tags`.
 
-```yaml id="f5n3d7"
-duration: 30
+Diese Eigenschaften sind Teil des aktuellen Implementierungsstands, aber nicht zwingend das langfristig gewünschte Qualitätsniveau.
 
-inputs:
-  resource.iron_ore: 100
-  resource.coal: 20
+---
 
-outputs:
-  resource.steel: 80
-```
+# Static vs. Runtime Boundary
 
-Die Simulation interpretiert dies als:
+## Static Content
 
 ```text
-Start Production
-        ↓
-Inputs prüfen
-        ↓
-Inputs reservieren / verbrauchen
-        ↓
-Production läuft
-        ↓
-Duration erreicht
-        ↓
-Outputs erzeugen
+Recipe
+├── id
+├── name
+├── description
+├── version
+├── category
+├── buildingTypes
+├── inputs
+├── outputs
+├── duration
+├── energy
+├── workers
+├── requiredResearch
+├── requiredMilestones
+├── maintenanceCost
+├── productionCost
+├── experience
+├── tags
+└── enabled
 ```
 
-Die konkrete Prozesssteuerung gehört nicht zum Asset-Schema.
+## Runtime State
+
+```text
+ProductionJob
+├── company id
+├── building id
+├── recipe id
+├── status
+├── progress
+└── weitere dynamische Zustände
+```
+
+Nicht Bestandteil des Recipe-Assets sind:
+
+- aktueller Produktionsfortschritt,
+- reservierte Ressourcen,
+- tatsächlich verbrauchte Ressourcen,
+- zugewiesene Mitarbeiter,
+- aktuelle Energiebilanz,
+- Produktionsfehler,
+- Produktionshistorie.
 
 ---
 
-# Runtime State Separation
+# Complete Example: Basic Production
 
-Das Recipe-Asset enthält ausschließlich statische Produktionsdefinitionen.
-
-Nicht Bestandteil dieses Schemas sind:
-
-- aktueller Produktionsfortschritt
-- aktuelle Produktionscharge
-- reservierte Ressourcen
-- tatsächlich verbrauchte Ressourcen
-- aktuell zugewiesene Mitarbeiter
-- aktueller Energieverbrauch
-- Produktionsfehler
-- Produktionshistorie
-- aktuelle Produktionskapazität
-
-Diese Daten gehören zum dynamischen Spielzustand.
-
----
-
-# Versioning
-
-Schemaänderungen erhöhen die Schema-Version.
-
-Änderungen an einzelnen Recipe-Assets erhöhen deren Asset-Version.
-
-Die Asset-ID bleibt unverändert.
-
----
-
-# Example
-
-```yaml id="n8q2s4"
-id: recipe.steel
-
+```yaml
+id: recipe_planks
+name: Bretter herstellen
+description: Verarbeitung von Holz zu Brettern.
 version: 1
+category: WOOD
 
-displayName: Steel Production
-
-category: processing
-
-description: Processes iron ore and coal into steel.
-
-duration: 30
+buildingTypes:
+  - sawmill
 
 inputs:
-  resource.iron_ore: 100
-  resource.coal: 20
+  - resource: wood
+    amount: 10
 
 outputs:
-  resource.steel: 80
+  - resource: planks
+    amount: 20
 
-byproducts:
-  resource.slag: 10
+duration: 60
+energy: 12
+workers: 2
 
-buildingRequirements:
-  buildings:
-    - building.smelter
+requiredResearch: []
+requiredMilestones: []
 
-workforce:
-  minimum: 1
-
-  requiredEmployees:
-    - employee.engineer.basic
-
-energy:
-  consumption:
-    resource: resource.electricity
-    amount: 50
-
-requirements:
-  research:
-    - technology.basic_metallurgy
+maintenanceCost: 2
+productionCost: 1
+experience: 5
 
 tags:
-  - production
-  - metallurgy
+  - basic
+  - wood
+
+enabled: true
+```
+
+---
+
+# Complete Example: Research and Milestone Requirements
+
+```yaml
+id: recipe_advanced_planks
+name: Advanced Plank Production
+description: Improved plank production requiring woodworking research.
+version: 1
+category: WOOD
+
+buildingTypes:
+  - sawmill
+
+inputs:
+  - resource: wood
+    amount: 10
+
+outputs:
+  - resource: planks
+    amount: 25
+
+duration: 60
+energy: 12
+workers: 2
+
+requiredResearch:
+  - basic_woodworking
+
+requiredMilestones:
+  - first_production
+
+maintenanceCost: 2
+productionCost: 1
+experience: 5
+
+tags:
+  - advanced
+  - wood
+
+enabled: true
+```
+
+---
+
+# Complete Example: Metal Production
+
+```yaml
+id: recipe_steel
+name: Stahl schmelzen
+description: Schmelzt Eisenerz zu Stahl.
+version: 1
+category: METAL
+
+buildingTypes:
+  - smelter
+
+inputs:
+  - resource: iron_ore
+    amount: 5
+
+outputs:
+  - resource: steel
+    amount: 2
+
+duration: 90
+energy: 20
+workers: 3
+
+requiredResearch: []
+requiredMilestones: []
+
+maintenanceCost: 3
+productionCost: 2
+experience: 8
+
+tags:
   - steel
+  - smelting
+
+enabled: true
+```
+
+---
+
+# Registry Contract
+
+Alle validierten Recipe-Definitionen werden in der `RecipeRegistry` gespeichert.
+
+Die Registry bietet:
+
+```text
+register()
+get()
+getRequired()
+getAll()
+has()
+size
+```
+
+Doppelte IDs werden abgelehnt.
+
+`getAll()` liefert die Definitionen deterministisch nach ID sortiert.
+
+Andere Systeme referenzieren Recipes ausschließlich über IDs.
+
+---
+
+# Not Part of v1
+
+Die folgenden Felder aus früheren Schemaentwürfen sind **nicht** Teil des aktuellen v1-Contracts:
+
+```text
+requiredBuildings
+requiredResources
+displayName
+localizationKey
+buildingRequirements
+byproducts
+workforce
+requirements
+productionModifiers
+quality
+icon
+```
+
+`requiredBuildings` und `requiredResources` waren frühere Entwurfsfelder für zusätzliche Gebäude- bzw. Ressourcenvoraussetzungen.
+
+Sie sind weder Teil von `RecipeDefinition` noch Teil von `RecipeValidator` und werden in den offiziellen Recipe-YAML-Assets nicht verwendet.
+
+Gebäudebezogene Produktionszuordnung erfolgt über `buildingTypes`.
+
+Ressourcenbezogene Verbrauchs- und Erzeugungslogik erfolgt über `inputs` und `outputs`.
+
+Ebenfalls nicht unterstützt:
+
+```yaml
+inputs:
+  resource.iron_ore: 100
+```
+
+Der aktuelle Contract verwendet stattdessen:
+
+```yaml
+inputs:
+  - resource: iron_ore
+    amount: 100
+```
+
+Solche Erweiterungen dürfen erst nach Anpassung von Definition, Validator, Loader, Tests und Dokumentation als aktiver Contract aufgenommen werden.
+
+---
+
+# Current Contract Gaps
+
+Der Audit hat folgende Lücken im aktuellen Code-Contract identifiziert:
+
+1. Unbekannte zusätzliche Felder werden nicht abgelehnt.
+2. Doppelte IDs innerhalb von Referenz- und Tag-Arrays werden nicht erkannt.
+3. Doppelte Ressourcen innerhalb von `inputs` oder `outputs` werden nicht erkannt.
+4. Numerische Felder werden nicht auf Ganzzahligkeit geprüft.
+5. `version` wird nicht auf Ganzzahligkeit geprüft.
+6. `tags` dürfen leere Strings enthalten.
+
+Diese Punkte sind Audit-Ergebnisse und keine bereits implementierten Regeln.
+
+---
+
+# Current Implementation Scope
+
+Der aktuelle Recipe-Contract umfasst:
+
+```text
+RecipeDefinition
+RecipeValidator
+RecipeLoader
+RecipeRegistry
+Loader Tests
+Duplicate-ID Validation
+Building/Recipe Consistency Validation
+Research Reference Validation
+Milestone Reference Validation
+Runtime Production Start
 ```
 
 ---
 
 # Compatibility
 
-Dieses Schema ist kompatibel mit:
+Dieses Schema steht insbesondere in Beziehung zu:
 
-- ASSET_ID_SYSTEM.md
-- ASSET_VERSIONING.md
-- REGISTRY_SCHEMA.md
-- GLOBAL_ASSET_REGISTRY.md
-- CONTENT_PIPELINE.md
-- Employee.schema.md
-- Vehicle.schema.md
-- Resource.schema.md
-- Building.schema.md
+```text
+ResourceType.Schema.md
+Building.schema.md
+Technology.schema.md
+Milestone.schema.md
+Production.Schema.md
+```
+
+sowie zu:
+
+```text
+ASSET_ID_SYSTEM.md
+ASSET_VERSIONING.md
+REGISTRY_SCHEMA.md
+GLOBAL_ASSET_REGISTRY.md
+CONTENT_PIPELINE.md
+```
+
+Die wichtigsten Cross-Registry-Beziehungen sind:
+
+```text
+Recipe.buildingTypes
+        ↓
+BuildingTypeRegistry
+
+Recipe.inputs / Recipe.outputs
+        ↓
+ResourceTypeRegistry
+
+Recipe.requiredResearch
+        ↓
+TechnologyRegistry
+
+Recipe.requiredMilestones
+        ↓
+MilestoneRegistry
+
+BuildingType.allowedRecipes
+        ↓
+RecipeRegistry
+```
 
 ---
 
-# Future Extensions
+# Implementation Status
 
-Geplante Erweiterungen:
+**Status:** Active
 
-- Produktionsvarianten
-- alternative Input-Ressourcen
-- Rezept-Substitution
-- Batch Production
-- Produktionsqualität
-- Ausschuss
-- Recycling
-- Nebenprodukte
-- dynamische Produktionsmodifikatoren
-- Produktionsketten
-- Multi-Stage Recipes
-- Machine Requirements
-- Skill Requirements
-- Recipe Unlocks
-- Tech Tree Integration
-- Recipe Upgrades
+`Recipe` ist ein vollständig implementierter Content-Typ der Project-Genesis-Content-Pipeline.
+
+Bei Abweichungen zwischen Dokumentation und Implementierung gilt:
+
+1. tatsächlichen `RecipeDefinition`-Contract feststellen
+2. `RecipeValidator` prüfen
+3. YAML-Assets prüfen
+4. Cross-Registry-Regeln prüfen
+5. Dokumentation oder Implementierung synchronisieren
+6. Tests aktualisieren
+7. `pnpm validate-content --strict` ausführen
+
+Die Dokumentation darf keine nicht implementierten Recipe-Eigenschaften als aktive v1-Funktionalität ausweisen.
