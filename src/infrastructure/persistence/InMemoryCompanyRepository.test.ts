@@ -42,6 +42,7 @@ describe('InMemoryCompanyRepository', () => {
     repository.save(companyResult.value);
 
     expect(repository.findById(requireCompanyId('company_001'))).toBe(companyResult.value);
+    expect(repository.findById(requireCompanyId('company_missing'))).toBeUndefined();
   });
 
   it('returns companies in deterministic id order', () => {
@@ -72,5 +73,33 @@ describe('InMemoryCompanyRepository', () => {
       'company_001',
       'company_002',
     ]);
+  });
+
+  it('overwrites an existing company when saving the same id again', () => {
+    const repository = new InMemoryCompanyRepository();
+    const clock = new ManualClock(100);
+    const firstResult = Company.create({
+      id: requireCompanyId('company_001'),
+      name: 'First Corp',
+      ownerId: requirePlayerId('player_001'),
+      clock,
+    });
+    const secondResult = Company.create({
+      id: requireCompanyId('company_001'),
+      name: 'Second Corp',
+      ownerId: requirePlayerId('player_001'),
+      clock,
+    });
+
+    expect(firstResult.ok && secondResult.ok).toBe(true);
+
+    if (!firstResult.ok || !secondResult.ok) {
+      return;
+    }
+
+    repository.save(firstResult.value);
+    repository.save(secondResult.value);
+
+    expect(repository.findById(requireCompanyId('company_001'))?.getName()).toBe('Second Corp');
   });
 });
