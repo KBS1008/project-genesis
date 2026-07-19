@@ -1,0 +1,8 @@
+id: biome_temperate_forest
+name: Temperate Forest
+description: Mixed woodland with moderate construction and transport overhead.
+category: FOREST
+constructionCostModifier: 1.1
+transportDurationModifier: 1.05
+enabled: true
+version: 1

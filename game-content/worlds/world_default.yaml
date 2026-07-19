@@ -1,0 +1,8 @@
+id: world_default
+name: Genesis World
+regionIds:
+  - region_default
+  - region_east
+  - region_north
+enabled: true
+version: 1

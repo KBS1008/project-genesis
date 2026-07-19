@@ -22,6 +22,10 @@ import type { CompanyResearchRepository } from '../../domain/research/CompanyRes
 import type { CompanyMilestonesRepository } from '../../domain/milestone/CompanyMilestonesRepository.js';
 import type { EmployeeRepository } from '../../domain/employee/EmployeeRepository.js';
 import type { SupplyContractRepository } from '../../domain/contract/SupplyContractRepository.js';
+import type { WorldRepository } from '../../domain/world/WorldRepository.js';
+import type { RegionRepository } from '../../domain/region/RegionRepository.js';
+import { InMemoryWorldRepository } from '../../infrastructure/persistence/InMemoryWorldRepository.js';
+import { InMemoryRegionRepository } from '../../infrastructure/persistence/InMemoryRegionRepository.js';
 import { InMemoryBuildingRepository } from '../../infrastructure/persistence/InMemoryBuildingRepository.js';
 import { InMemoryBuildingStorageRepository } from '../../infrastructure/persistence/InMemoryBuildingStorageRepository.js';
 import { InMemoryTransportOrderRepository } from '../../infrastructure/persistence/InMemoryTransportOrderRepository.js';
@@ -37,6 +41,7 @@ import { InMemoryResearchJobRepository } from '../../infrastructure/persistence/
 import { InMemoryEmployeeRepository } from '../../infrastructure/persistence/InMemoryEmployeeRepository.js';
 import { InMemorySupplyContractRepository } from '../../infrastructure/persistence/InMemorySupplyContractRepository.js';
 import { MarketPriceSeeder } from '../services/MarketPriceSeeder.js';
+import { WorldBootstrapService } from '../services/WorldBootstrapService.js';
 import { MarketTradeService } from '../services/MarketTradeService.js';
 import { ProductionInventoryService } from '../services/ProductionInventoryService.js';
 import { ResearchCompletionService } from '../services/ResearchCompletionService.js';
@@ -70,6 +75,8 @@ export type BootstrapOptions = {
   readonly companyMilestonesRepository?: CompanyMilestonesRepository;
   readonly employeeRepository?: EmployeeRepository;
   readonly supplyContractRepository?: SupplyContractRepository;
+  readonly worldRepository?: WorldRepository;
+  readonly regionRepository?: RegionRepository;
 };
 
 /**
@@ -106,6 +113,8 @@ export async function bootstrapApplication(
   const employeeRepository = options.employeeRepository ?? new InMemoryEmployeeRepository();
   const supplyContractRepository =
     options.supplyContractRepository ?? new InMemorySupplyContractRepository();
+  const worldRepository = options.worldRepository ?? new InMemoryWorldRepository();
+  const regionRepository = options.regionRepository ?? new InMemoryRegionRepository();
   const clock = new ManualClock(0);
   const eventBus = new InMemoryEventBus();
 
@@ -131,6 +140,20 @@ export async function bootstrapApplication(
     return Result.fail(
       new ContentLoadError(seedMarketResult.error.message, {
         contentId: 'market_global',
+      }),
+    );
+  }
+
+  const worldBootstrapService = new WorldBootstrapService({
+    worldRepository,
+    regionRepository,
+  });
+  const bootstrapWorldResult = worldBootstrapService.bootstrap(contentResult.value);
+
+  if (!bootstrapWorldResult.ok) {
+    return Result.fail(
+      new ContentLoadError(bootstrapWorldResult.error.message, {
+        contentId: 'world_default',
       }),
     );
   }
@@ -227,6 +250,8 @@ export async function bootstrapApplication(
     buildingTypes: contentResult.value.buildingTypes.size,
     employees: contentResult.value.employees.size,
     recipes: contentResult.value.recipes.size,
+    worlds: contentResult.value.worlds.size,
+    regions: contentResult.value.regions.size,
     tickNumber: simulationEngine.state.tickNumber,
   });
 
@@ -247,6 +272,8 @@ export async function bootstrapApplication(
     companyMilestonesRepository,
     employeeRepository,
     supplyContractRepository,
+    worldRepository,
+    regionRepository,
     productionInventoryService,
     marketTradeService,
     energyBalanceService,

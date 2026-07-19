@@ -14,6 +14,10 @@ describe('bootstrapApplication', () => {
     if (result.ok) {
       expect(result.value.gameContent.resourceTypes.size).toBeGreaterThanOrEqual(3);
       expect(result.value.gameContent.buildingTypes.size).toBeGreaterThanOrEqual(2);
+      expect(result.value.gameContent.worlds.has('world_default')).toBe(true);
+      expect(result.value.gameContent.regions.has('region_default')).toBe(true);
+      expect(result.value.worldRepository.findAll()).toHaveLength(1);
+      expect(result.value.regionRepository.findAll()).toHaveLength(3);
       expect(result.value.marketRepository.findAll()).toHaveLength(1);
       expect(result.value.clock.now()).toBe(0);
       expect(result.value.simulationEngine.state.tickNumber).toBe(0);

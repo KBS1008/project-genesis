@@ -1,0 +1,24 @@
+id: map_world_default
+name: Genesis World Map
+regions:
+  - regionId: region_default
+    x: 0
+    y: 0
+  - regionId: region_east
+    x: 2
+    y: 0
+  - regionId: region_north
+    x: 0
+    y: 2
+connections:
+  - fromRegionId: region_default
+    toRegionId: region_east
+    distance: 2
+  - fromRegionId: region_default
+    toRegionId: region_north
+    distance: 2
+  - fromRegionId: region_east
+    toRegionId: region_north
+    distance: 3
+enabled: true
+version: 1

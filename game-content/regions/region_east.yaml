@@ -1,0 +1,21 @@
+id: region_east
+name: Eastern Industrial Belt
+description: Industrial corridor with ore and steel processing potential.
+worldId: world_default
+biomeId: biome_industrial_plains
+mapPosition:
+  x: 2
+  y: 0
+neighborRegionIds:
+  - region_default
+cityIds:
+  - city_industrial_hub
+regionalResources:
+  - resourceTypeId: iron_ore
+    available: true
+    extractionModifier: 1.2
+  - resourceTypeId: steel
+    available: true
+    extractionModifier: 1.0
+enabled: true
+version: 1

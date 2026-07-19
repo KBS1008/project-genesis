@@ -1,0 +1,6 @@
+id: world_fixture
+name: Fixture World
+regionIds:
+  - region_fixture
+enabled: true
+version: 1

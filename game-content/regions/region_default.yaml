@@ -1,0 +1,22 @@
+id: region_default
+name: Central Basin
+description: Starter region with balanced resources and market access.
+worldId: world_default
+biomeId: biome_temperate_forest
+mapPosition:
+  x: 0
+  y: 0
+neighborRegionIds:
+  - region_east
+  - region_north
+cityIds:
+  - city_port_harbor
+regionalResources:
+  - resourceTypeId: wood
+    available: true
+    extractionModifier: 1.0
+  - resourceTypeId: planks
+    available: true
+    extractionModifier: 1.0
+enabled: true
+version: 1

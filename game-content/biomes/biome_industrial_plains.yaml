@@ -1,0 +1,8 @@
+id: biome_industrial_plains
+name: Industrial Plains
+description: Flat terrain suited to heavy industry and efficient logistics.
+category: PLAINS
+constructionCostModifier: 1.0
+transportDurationModifier: 0.95
+enabled: true
+version: 1

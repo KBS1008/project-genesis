@@ -1,0 +1,20 @@
+id: region_north
+name: Northern Highlands
+description: Forested highlands with stone deposits.
+worldId: world_default
+biomeId: biome_temperate_forest
+mapPosition:
+  x: 0
+  y: 2
+neighborRegionIds:
+  - region_default
+cityIds: []
+regionalResources:
+  - resourceTypeId: stone
+    available: true
+    extractionModifier: 1.1
+  - resourceTypeId: wood
+    available: true
+    extractionModifier: 0.9
+enabled: true
+version: 1

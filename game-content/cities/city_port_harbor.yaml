@@ -1,0 +1,6 @@
+id: city_port_harbor
+name: Port Harbor
+regionId: region_default
+category: MARKET_HUB
+enabled: true
+version: 1

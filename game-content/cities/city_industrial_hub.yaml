@@ -1,0 +1,6 @@
+id: city_industrial_hub
+name: Industrial Hub
+regionId: region_east
+category: INDUSTRIAL
+enabled: true
+version: 1

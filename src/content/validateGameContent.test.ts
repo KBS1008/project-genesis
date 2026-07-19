@@ -13,6 +13,15 @@ describe('validateGameContent', () => {
 
     if (result.ok) {
       expect(result.value.resourceTypes.size).toBeGreaterThanOrEqual(3);
+      expect(result.value.biomes.size).toBeGreaterThanOrEqual(2);
+      expect(result.value.worlds.size).toBeGreaterThanOrEqual(1);
+      expect(result.value.worlds.has('world_default')).toBe(true);
+      expect(result.value.regions.size).toBeGreaterThanOrEqual(3);
+      expect(result.value.regions.has('region_default')).toBe(true);
+      expect(result.value.maps.size).toBeGreaterThanOrEqual(1);
+      expect(result.value.maps.has('map_world_default')).toBe(true);
+      expect(result.value.cities.size).toBeGreaterThanOrEqual(2);
+      expect(result.value.cities.has('city_port_harbor')).toBe(true);
       expect(result.value.milestones.size).toBeGreaterThanOrEqual(1);
       expect(result.value.technologies.size).toBeGreaterThanOrEqual(1);
       expect(result.value.buildingTypes.size).toBeGreaterThanOrEqual(2);
