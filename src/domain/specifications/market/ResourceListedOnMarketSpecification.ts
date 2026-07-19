@@ -21,9 +21,10 @@ export type ResourceListedOnMarketContext = {
 /**
  * Verifies that a resource is currently listed on the market.
  */
-export class ResourceListedOnMarketSpecification
-  implements Specification<ResourceListedOnMarketCandidate, ResourceListedOnMarketContext>
-{
+export class ResourceListedOnMarketSpecification implements Specification<
+  ResourceListedOnMarketCandidate,
+  ResourceListedOnMarketContext
+> {
   isSatisfiedBy(
     candidate: ResourceListedOnMarketCandidate,
     context: ResourceListedOnMarketContext,

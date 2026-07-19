@@ -7,9 +7,9 @@
  */
 
 import {
-  LogCategory,
   LogLevel,
   isLogLevelEnabled,
+  type LogCategory,
   type LogContext,
   type LogEntry,
   type Logger,

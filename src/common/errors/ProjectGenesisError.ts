@@ -6,7 +6,7 @@
  * @see docs/architecture/ERROR_HANDLING_STRATEGY.md
  */
 
-import { ErrorCategory } from './ErrorCategory.js';
+import type { ErrorCategory } from './ErrorCategory.js';
 import { ErrorSeverity } from './ErrorSeverity.js';
 
 /** Options for constructing a {@link ProjectGenesisError}. */

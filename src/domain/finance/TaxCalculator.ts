@@ -109,9 +109,7 @@ export class TaxCalculator {
     );
     const isCollectionOverdue = ticksSinceLastClose >= taxIntervalTicks;
     const taxPaymentBlocked =
-      isCollectionOverdue &&
-      pendingTaxAmount > 0 &&
-      params.availableCash < pendingTaxAmount;
+      isCollectionOverdue && pendingTaxAmount > 0 && params.availableCash < pendingTaxAmount;
 
     return Object.freeze({
       pendingTaxableProfit,

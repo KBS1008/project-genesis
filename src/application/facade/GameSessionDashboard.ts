@@ -238,4 +238,3 @@ export type GameSessionDashboard = {
   readonly hints: GameSessionDashboardHints;
   readonly tutorial: TutorialProgressReadModel | null;
 };
-

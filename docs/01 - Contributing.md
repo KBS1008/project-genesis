@@ -108,7 +108,7 @@ Neue Dateien gehören immer in das passende Modul.
 Immer
 
 ```ts
-strict: true
+strict: true;
 ```
 
 verwenden.
@@ -116,13 +116,13 @@ verwenden.
 Keine Verwendung von
 
 ```ts
-any
+any;
 ```
 
 Stattdessen
 
 ```ts
-unknown
+unknown;
 ```
 
 oder passende Typen.
@@ -134,9 +134,9 @@ oder passende Typen.
 ## Klassen
 
 ```ts
-FactoryService
-MarketService
-PlayerRepository
+FactoryService;
+MarketService;
+PlayerRepository;
 ```
 
 ---
@@ -144,16 +144,16 @@ PlayerRepository
 ## Interfaces
 
 ```ts
-Player
-Factory
-Building
+Player;
+Factory;
+Building;
 ```
 
 Keine Präfixe wie
 
 ```ts
-IPlayer
-IFactory
+IPlayer;
+IFactory;
 ```
 
 ---
@@ -161,11 +161,11 @@ IFactory
 ## Enums
 
 ```ts
-BuildingType
+BuildingType;
 
-ResearchType
+ResearchType;
 
-MarketOrderType
+MarketOrderType;
 ```
 
 ---
@@ -175,11 +175,11 @@ MarketOrderType
 camelCase
 
 ```ts
-calculateProduction()
+calculateProduction();
 
-createFactory()
+createFactory();
 
-sellProducts()
+sellProducts();
 ```
 
 ---
@@ -189,11 +189,11 @@ sellProducts()
 UPPER_SNAKE_CASE
 
 ```ts
-MAX_STORAGE
+MAX_STORAGE;
 
-STARTING_MONEY
+STARTING_MONEY;
 
-DEFAULT_BUILD_TIME
+DEFAULT_BUILD_TIME;
 ```
 
 ---
@@ -383,7 +383,7 @@ Verwende strukturierte Logs.
 Keine
 
 ```ts
-console.log()
+console.log();
 ```
 
 im produktiven Code.

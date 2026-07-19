@@ -13,9 +13,9 @@ This document defines the versioning strategy for every asset in Project Genesis
 
 Asset versioning allows assets to evolve over time while maintaining compatibility with save games, tooling, documentation and AI-assisted workflows.
 
-The Asset ID identifies *which* asset exists.
+The Asset ID identifies _which_ asset exists.
 
-The asset version identifies *which revision* of that asset is currently implemented.
+The asset version identifies _which revision_ of that asset is currently implemented.
 
 ---
 
@@ -180,12 +180,12 @@ Every asset should maintain a changelog.
 
 Example
 
-| Version | Description |
-|----------|-------------|
-| 1.0.0 | Initial implementation |
-| 1.1.0 | Added winter variant |
-| 1.2.0 | Improved LOD models |
-| 1.2.1 | Fixed collision mesh |
+| Version | Description            |
+| ------- | ---------------------- |
+| 1.0.0   | Initial implementation |
+| 1.1.0   | Added winter variant   |
+| 1.2.0   | Improved LOD models    |
+| 1.2.1   | Fixed collision mesh   |
 
 ---
 
@@ -341,14 +341,14 @@ The versioning system should support:
 
 The Global Asset Registry should store:
 
-| Field | Example |
-|--------|---------|
-| Asset ID | BLD-0015 |
-| Current Version | 1.2.0 |
-| Lifecycle | Implemented |
-| Created | 2026-05-01 |
-| Updated | 2026-07-14 |
-| Deprecated | false |
+| Field           | Example     |
+| --------------- | ----------- |
+| Asset ID        | BLD-0015    |
+| Current Version | 1.2.0       |
+| Lifecycle       | Implemented |
+| Created         | 2026-05-01  |
+| Updated         | 2026-07-14  |
+| Deprecated      | false       |
 
 ---
 

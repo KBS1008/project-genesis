@@ -24,20 +24,20 @@ Der Schwerpunkt lag auf der Überprüfung der Übereinstimmung zwischen Architek
 
 Geprüfte Bereiche:
 
-* Projektstruktur
-* Clean Architecture
-* Domain Layer
-* Application Layer
-* Infrastructure Layer
-* Result Pattern
-* Error Handling
-* Validation
-* Logging
-* Dependency Rules
-* Testing
-* Performance
-* Dokumentationskonformität
-* Technische Schulden
+- Projektstruktur
+- Clean Architecture
+- Domain Layer
+- Application Layer
+- Infrastructure Layer
+- Result Pattern
+- Error Handling
+- Validation
+- Logging
+- Dependency Rules
+- Testing
+- Performance
+- Dokumentationskonformität
+- Technische Schulden
 
 ---
 
@@ -69,7 +69,7 @@ Während des Audits wurden keine bestätigten Architekturverletzungen festgestel
 
 | Status                       | Anzahl |
 | ---------------------------- | -----: |
-| ✅ A — Conform                |      8 |
+| ✅ A — Conform               |      8 |
 | 🟡 B — Verification Required |      0 |
 | 🟠 C — Architecture Drift    |      0 |
 | 🔴 D — Missing               |      0 |
@@ -84,10 +84,10 @@ Die Implementierung folgt konsequent der definierten Clean-Architecture-Struktur
 
 Besonders positiv:
 
-* klare Layertrennung
-* eindeutige Verantwortlichkeiten
-* konsistente Abhängigkeitsrichtung
-* vollständige Port-/Adapter-Architektur
+- klare Layertrennung
+- eindeutige Verantwortlichkeiten
+- konsistente Abhängigkeitsrichtung
+- vollständige Port-/Adapter-Architektur
 
 Bewertung:
 
@@ -101,15 +101,15 @@ Die Domäne ist weiterhin frei von technischen Verantwortlichkeiten.
 
 Positiv:
 
-* Domain Isolation
-* Domain Events
-* Business Rules
-* Result Pattern
-* Validation
+- Domain Isolation
+- Domain Events
+- Business Rules
+- Result Pattern
+- Validation
 
 Verbesserungspotenzial:
 
-* Einführung granularer Domain Errors
+- Einführung granularer Domain Errors
 
 Bewertung:
 
@@ -125,16 +125,16 @@ Use Cases instanziieren keine Infrastruktur mehr direkt.
 
 Neue Ports:
 
-* EnergyBalancePort
-* TransportLogisticsPort
-* SavegameStore
-* GameStateSerializerPort
+- EnergyBalancePort
+- TransportLogisticsPort
+- SavegameStore
+- GameStateSerializerPort
 
 Result:
 
-* deutlich geringere Kopplung
-* bessere Testbarkeit
-* höhere Austauschbarkeit
+- deutlich geringere Kopplung
+- bessere Testbarkeit
+- höhere Austauschbarkeit
 
 Bewertung:
 
@@ -148,10 +148,10 @@ Die Infrastruktur implementiert Ports und enthält keine fachliche Logik.
 
 Verbesserungen:
 
-* Logger-Abstraktion
-* strukturierte Persistenz
-* Port-basierte Serializer
-* bessere Testbarkeit
+- Logger-Abstraktion
+- strukturierte Persistenz
+- Port-basierte Serializer
+- bessere Testbarkeit
 
 Bewertung:
 
@@ -165,11 +165,11 @@ Die definierten Architekturstandards greifen inzwischen ineinander.
 
 Insbesondere:
 
-* Result Pattern
-* Validation
-* Error Handling
-* Dependency Rules
-* Logging
+- Result Pattern
+- Validation
+- Error Handling
+- Dependency Rules
+- Logging
 
 bilden ein konsistentes Gesamtsystem.
 
@@ -183,16 +183,16 @@ Bewertung:
 
 Folgende wesentliche Verbesserungen wurden umgesetzt:
 
-* Simulation vollständig über Domain Ports entkoppelt
-* Application Layer kennt Infrastructure nicht mehr direkt
-* strukturierte Logger-Architektur eingeführt
-* Result Pattern erweitert
-* ProjectGenesisError-Hierarchie eingeführt
-* ValidationErrors erweitert
-* Save/Load über Application Ports abstrahiert
-* TransportCompleted an DomainEvent angepasst
-* Architecture Tests ergänzt
-* Dependency Tests erfolgreich
+- Simulation vollständig über Domain Ports entkoppelt
+- Application Layer kennt Infrastructure nicht mehr direkt
+- strukturierte Logger-Architektur eingeführt
+- Result Pattern erweitert
+- ProjectGenesisError-Hierarchie eingeführt
+- ValidationErrors erweitert
+- Save/Load über Application Ports abstrahiert
+- TransportCompleted an DomainEvent angepasst
+- Architecture Tests ergänzt
+- Dependency Tests erfolgreich
 
 ---
 
@@ -200,14 +200,14 @@ Folgende wesentliche Verbesserungen wurden umgesetzt:
 
 Besonders positiv hervorzuheben sind:
 
-* Clean Architecture wird tatsächlich umgesetzt
-* konsequente Dependency Rule
-* hohe Dokumentationskonformität
-* konsistentes Error Handling
-* sehr gute Testbarkeit
-* strukturierte Logging-Architektur
-* klare Layerverantwortlichkeiten
-* zukunftsfähige Port-/Adapter-Struktur
+- Clean Architecture wird tatsächlich umgesetzt
+- konsequente Dependency Rule
+- hohe Dokumentationskonformität
+- konsistentes Error Handling
+- sehr gute Testbarkeit
+- strukturierte Logging-Architektur
+- klare Layerverantwortlichkeiten
+- zukunftsfähige Port-/Adapter-Struktur
 
 ---
 
@@ -237,9 +237,9 @@ Dedizierte Tests ergänzen.
 
 Beispiele:
 
-* InsufficientMoneyError
-* InventoryFullError
-* InvalidFactoryStateError
+- InsufficientMoneyError
+- InventoryFullError
+- InvalidFactoryStateError
 
 ---
 
@@ -251,9 +251,9 @@ Prüfung der Abhängigkeiten zu Content-Registries.
 
 ## P3
 
-* Query Audit
-* Performance Benchmarks
-* Persistenz-Benchmarks
+- Query Audit
+- Performance Benchmarks
+- Persistenz-Benchmarks
 
 ---
 
@@ -263,11 +263,11 @@ Aktuell wurden keine kritischen Architektur-Risiken identifiziert.
 
 Insbesondere bestehen keine Hinweise auf:
 
-* Layerverletzungen
-* Dependency Drift
-* Business Logic Leakage
-* Infrastrukturkopplung
-* Architekturinkonsistenzen
+- Layerverletzungen
+- Dependency Drift
+- Business Logic Leakage
+- Infrastrukturkopplung
+- Architekturinkonsistenzen
 
 ---
 
@@ -277,11 +277,11 @@ Die Implementierung orientiert sich nachweislich an den Architekturstandards.
 
 Insbesondere:
 
-* RESULT_PATTERN.md
-* ERROR_HANDLING_STRATEGY.md
-* VALIDATION_STRATEGY.md
-* DEPENDENCY_RULES.md
-* LOGGING_STRATEGY.md
+- RESULT_PATTERN.md
+- ERROR_HANDLING_STRATEGY.md
+- VALIDATION_STRATEGY.md
+- DEPENDENCY_RULES.md
+- LOGGING_STRATEGY.md
 
 wurden erfolgreich in die Implementierung übertragen.
 
@@ -304,26 +304,26 @@ wurden erfolgreich in die Implementierung übertragen.
 
 ## Kurzfristig
 
-* Serializer aufteilen
-* Serializer Tests ergänzen
-* Domain Errors verfeinern
+- Serializer aufteilen
+- Serializer Tests ergänzen
+- Domain Errors verfeinern
 
 ---
 
 ## Mittelfristig
 
-* Query-Struktur auditieren
-* Performance Benchmarks ergänzen
-* Asset Pipeline weiter validieren
+- Query-Struktur auditieren
+- Performance Benchmarks ergänzen
+- Asset Pipeline weiter validieren
 
 ---
 
 ## Langfristig
 
-* Multiplayer Readiness Audit
-* AI Architecture Audit
-* Performance Regression Testing
-* Release Readiness Audit
+- Multiplayer Readiness Audit
+- AI Architecture Audit
+- Performance Regression Testing
+- Release Readiness Audit
 
 ---
 
@@ -355,12 +355,12 @@ Der nächste empfohlene Audit-Zyklus ist:
 
 Schwerpunkte:
 
-* Tick-System
-* Event Flow
-* Scheduling
-* Determinismus
-* Performance
-* Simulation Services
+- Tick-System
+- Event Flow
+- Scheduling
+- Determinismus
+- Performance
+- Simulation Services
 
 ---
 
@@ -368,7 +368,7 @@ Schwerpunkte:
 
 ## Version 1.0
 
-* Erstes vollständiges Implementierungsaudit abgeschlossen
-* Konsolidierung aller Teilprüfungen (AUD-002.1 bis AUD-002.5)
-* Gesamtbewertung dokumentiert
-* Architekturfreigabe für Phase 2 erteilt
+- Erstes vollständiges Implementierungsaudit abgeschlossen
+- Konsolidierung aller Teilprüfungen (AUD-002.1 bis AUD-002.5)
+- Gesamtbewertung dokumentiert
+- Architekturfreigabe für Phase 2 erteilt

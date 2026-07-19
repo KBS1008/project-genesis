@@ -132,8 +132,9 @@ describe('MarketTradeService', () => {
     const feeTransactions =
       finance
         ?.getTransactions()
-        .filter((transaction) => transaction.transactionType === FinanceTransactionType.MARKET_FEE) ??
-      [];
+        .filter(
+          (transaction) => transaction.transactionType === FinanceTransactionType.MARKET_FEE,
+        ) ?? [];
 
     expect(wood?.quantity).toBe(6);
     expect(finance?.getCashBalance()).toBe(STARTING_MONEY + 98);
@@ -166,8 +167,9 @@ describe('MarketTradeService', () => {
     const feeTransactions =
       finance
         ?.getTransactions()
-        .filter((transaction) => transaction.transactionType === FinanceTransactionType.MARKET_FEE) ??
-      [];
+        .filter(
+          (transaction) => transaction.transactionType === FinanceTransactionType.MARKET_FEE,
+        ) ?? [];
 
     expect(iron?.quantity).toBe(2);
     expect(finance?.getCashBalance()).toBe(STARTING_MONEY - 82);

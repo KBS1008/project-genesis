@@ -23,10 +23,13 @@ export type InstantTradePricingDecision = {
 /**
  * Determines the unit price for an instant market buy or sell.
  */
-export class InstantTradePricingPolicy
-  implements Policy<InstantTradePricingContext, InstantTradePricingDecision>
-{
-  evaluate(context: InstantTradePricingContext): Result<InstantTradePricingDecision, ValidationError> {
+export class InstantTradePricingPolicy implements Policy<
+  InstantTradePricingContext,
+  InstantTradePricingDecision
+> {
+  evaluate(
+    context: InstantTradePricingContext,
+  ): Result<InstantTradePricingDecision, ValidationError> {
     if (context.lastPrice === undefined) {
       return Result.fail(
         new ValidationError(`Resource "${context.resourceId}" is not listed on the market.`),

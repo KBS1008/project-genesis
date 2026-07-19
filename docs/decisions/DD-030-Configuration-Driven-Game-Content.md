@@ -442,9 +442,9 @@ Diese Risiken werden durch Schema-Validierung, Referenzprüfung und automatisier
 
 # Änderungsprotokoll
 
-| Version | Datum | Änderung |
-|----------|--------|----------|
-| 1.0.0 | 2026-07-03 | Initiale Version |
+| Version | Datum      | Änderung         |
+| ------- | ---------- | ---------------- |
+| 1.0.0   | 2026-07-03 | Initiale Version |
 
 ---
 

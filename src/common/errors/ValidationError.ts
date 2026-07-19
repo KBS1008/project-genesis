@@ -82,10 +82,14 @@ export class ValidationErrors extends ValidationError {
       throw new ValidationError('ValidationErrors requires at least one validation error.');
     }
 
-    super(`${errors.length} validation error(s) occurred.`, {
-      errorCode: ValidationErrorCode.CONSTRAINT_VIOLATION,
-      context: { errorCount: errors.length },
-    }, false);
+    super(
+      `${errors.length} validation error(s) occurred.`,
+      {
+        errorCode: ValidationErrorCode.CONSTRAINT_VIOLATION,
+        context: { errorCount: errors.length },
+      },
+      false,
+    );
     this.errors = Object.freeze([...errors]);
     Object.freeze(this);
   }

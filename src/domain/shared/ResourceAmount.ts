@@ -5,7 +5,7 @@
  */
 
 import { ValueObject } from '../../common/core/ValueObject.js';
-import { ValidationError } from '../../common/errors/ValidationError.js';
+import type { ValidationError } from '../../common/errors/ValidationError.js';
 import { Result } from '../../common/result/Result.js';
 import { Quantity } from './Quantity.js';
 import { createResourceTypeId, type ResourceTypeId } from './ResourceTypeId.js';
@@ -30,10 +30,7 @@ export class ResourceAmount extends ValueObject {
    * @param resourceId - Global resource type identifier.
    * @param amount - Non-negative amount of the resource.
    */
-  static create(
-    resourceId: string,
-    amount: number,
-  ): Result<ResourceAmount, ValidationError> {
+  static create(resourceId: string, amount: number): Result<ResourceAmount, ValidationError> {
     const resourceIdResult = createResourceTypeId(resourceId);
 
     if (!resourceIdResult.ok) {

@@ -6,7 +6,7 @@ import { validateGameContent } from '../../content/validateGameContent.js';
 import { STARTING_MONEY } from '../../domain/finance/FinanceConstants.js';
 import { FinanceTransactionType } from '../../domain/finance/FinanceTransactionType.js';
 import { createCompanyId } from '../../domain/company/Company.js';
-import { EmployeeHired } from '../../domain/employee/events/EmployeeHired.js';
+import type { EmployeeHired } from '../../domain/employee/events/EmployeeHired.js';
 import { InMemoryBuildingRepository } from '../../infrastructure/persistence/InMemoryBuildingRepository.js';
 import { InMemoryCompanyRepository } from '../../infrastructure/persistence/InMemoryCompanyRepository.js';
 import { InMemoryCompanyResearchRepository } from '../../infrastructure/persistence/InMemoryCompanyResearchRepository.js';
@@ -37,8 +37,7 @@ async function createContext(clock = new ManualClock(100)) {
   const companyMilestonesRepository = new InMemoryCompanyMilestonesRepository();
   const eventBus = new InMemoryEventBus();
 
-  let simulationEngine: SimulationEngine;
-  simulationEngine = new SimulationEngine({ clock, eventBus });
+  const simulationEngine = new SimulationEngine({ clock, eventBus });
 
   const createCompany = new CreateCompanyUseCase({
     clock,

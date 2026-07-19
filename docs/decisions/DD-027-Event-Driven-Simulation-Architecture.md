@@ -457,9 +457,9 @@ Diese Risiken werden durch klare Namenskonventionen, Dokumentation und automatis
 
 # Änderungsprotokoll
 
-| Version | Datum | Änderung |
-|----------|--------|----------|
-| 1.0.0 | 2026-07-03 | Initiale Version |
+| Version | Datum      | Änderung         |
+| ------- | ---------- | ---------------- |
+| 1.0.0   | 2026-07-03 | Initiale Version |
 
 ---
 

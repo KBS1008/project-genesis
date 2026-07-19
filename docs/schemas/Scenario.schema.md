@@ -15,19 +15,19 @@ Ein Scenario definiert eine vollständig beschriebene Spielsituation und deren R
 
 Ein Szenario kann unter anderem festlegen:
 
-* Ausgangsbedingungen
-* Welt- und Biomeinstellungen
-* verfügbare Ressourcen
-* verfügbare Gebäude
-* verfügbare Fahrzeuge
-* verfügbare Technologien
-* Startbedingungen
-* Siegbedingungen
-* Niederlagebedingungen
-* Szenarioziele
-* Einschränkungen
-* Zeitlimits
-* Schwierigkeitsparameter
+- Ausgangsbedingungen
+- Welt- und Biomeinstellungen
+- verfügbare Ressourcen
+- verfügbare Gebäude
+- verfügbare Fahrzeuge
+- verfügbare Technologien
+- Startbedingungen
+- Siegbedingungen
+- Niederlagebedingungen
+- Szenarioziele
+- Einschränkungen
+- Zeitlimits
+- Schwierigkeitsparameter
 
 Das Scenario-Asset definiert ausschließlich die statischen Rahmenbedingungen.
 
@@ -35,15 +35,15 @@ Der tatsächliche Spielfortschritt gehört zum dynamischen Spielzustand.
 
 Das Schema dient als Grundlage für:
 
-* JSON-Assets
-* Asset Registry
-* Content Pipeline
-* Validierung
-* Szenarioauswahl
-* Spielstart
-* Editor
-* Modding
-* Savegame-Kompatibilität
+- JSON-Assets
+- Asset Registry
+- Content Pipeline
+- Validierung
+- Szenarioauswahl
+- Spielstart
+- Editor
+- Modding
+- Savegame-Kompatibilität
 
 ---
 
@@ -421,20 +421,20 @@ Die Interpretation erfolgt durch die jeweiligen Domain-/Simulation-Systeme.
 
 Ein Scenario darf referenzieren:
 
-* Biomes
-* Maps
-* Regions
-* Buildings
-* Vehicles
-* Resources
-* Employees
-* Recipes
-* Technologies
-* Objectives
-* Missions
-* Scenarios
-* Rewards
-* Effects
+- Biomes
+- Maps
+- Regions
+- Buildings
+- Vehicles
+- Resources
+- Employees
+- Recipes
+- Technologies
+- Objectives
+- Missions
+- Scenarios
+- Rewards
+- Effects
 
 Alle Referenzen erfolgen ausschließlich über Asset-IDs.
 
@@ -447,8 +447,7 @@ Anzeigenamen und Beschreibungen sollen über Lokalisierungsschlüssel referenzie
 Beispiel:
 
 ```yaml id="u7k3m5"
-localizationKey:
-  scenario.first_factory
+localizationKey: scenario.first_factory
 ```
 
 Die konkrete Lokalisierung wird außerhalb des Scenario-Assets verwaltet.
@@ -459,26 +458,26 @@ Die konkrete Lokalisierung wird außerhalb des Scenario-Assets verwaltet.
 
 Ein Scenario ist gültig, wenn:
 
-* eine eindeutige Asset-ID vorhanden ist
-* die Version gültig ist
-* eine Kategorie definiert wurde
-* eine World-Definition vorhanden ist
-* Starting Conditions valide sind
-* alle referenzierten Assets existieren
-* alle Objectives gültig sind
-* alle Victory Conditions gültig sind
-* alle Defeat Conditions gültig sind
-* keine widersprüchlichen Content Restrictions existieren
-* keine ungültigen Szenarioabhängigkeiten bestehen
+- eine eindeutige Asset-ID vorhanden ist
+- die Version gültig ist
+- eine Kategorie definiert wurde
+- eine World-Definition vorhanden ist
+- Starting Conditions valide sind
+- alle referenzierten Assets existieren
+- alle Objectives gültig sind
+- alle Victory Conditions gültig sind
+- alle Defeat Conditions gültig sind
+- keine widersprüchlichen Content Restrictions existieren
+- keine ungültigen Szenarioabhängigkeiten bestehen
 
 Zusätzlich gilt:
 
-* `timeLimit` muss größer als 0 sein, sofern definiert
-* Startressourcen dürfen keine negativen Mengen besitzen
-* Startgeld darf nicht negativ sein
-* Startgebäude müssen gültige Building-Assets sein
-* Startfahrzeuge müssen gültige Vehicle-Assets sein
-* Startmitarbeiter müssen gültige Employee-Assets sein
+- `timeLimit` muss größer als 0 sein, sofern definiert
+- Startressourcen dürfen keine negativen Mengen besitzen
+- Startgeld darf nicht negativ sein
+- Startgebäude müssen gültige Building-Assets sein
+- Startfahrzeuge müssen gültige Vehicle-Assets sein
+- Startmitarbeiter müssen gültige Employee-Assets sein
 
 Ungültige Szenarien dürfen nicht registriert oder geladen werden.
 
@@ -490,18 +489,18 @@ Das Scenario-Asset enthält ausschließlich statische Szenariodefinitionen.
 
 Nicht Bestandteil dieses Schemas sind:
 
-* aktueller Spielerfortschritt
-* aktueller Geldbestand
-* aktueller Ressourcenbestand
-* errichtete Gebäude
-* aktuell eingesetzte Fahrzeuge
-* Mitarbeiterzuweisungen
-* Produktionsfortschritt
-* Forschungsfortschritt
-* Objective-Fortschritt
-* aktuelle Marktpreise
-* aktuelle Weltzustände
-* Spielzeit
+- aktueller Spielerfortschritt
+- aktueller Geldbestand
+- aktueller Ressourcenbestand
+- errichtete Gebäude
+- aktuell eingesetzte Fahrzeuge
+- Mitarbeiterzuweisungen
+- Produktionsfortschritt
+- Forschungsfortschritt
+- Objective-Fortschritt
+- aktuelle Marktpreise
+- aktuelle Weltzustände
+- Spielzeit
 
 Diese Daten gehören zum dynamischen Spielzustand und werden durch Domain-, Application- und Savegame-Systeme verwaltet.
 
@@ -604,17 +603,17 @@ tags:
 
 Dieses Schema ist kompatibel mit:
 
-* ASSET_ID_SYSTEM.md
-* ASSET_VERSIONING.md
-* REGISTRY_SCHEMA.md
-* GLOBAL_ASSET_REGISTRY.md
-* CONTENT_PIPELINE.md
-* Employee.schema.md
-* Vehicle.schema.md
-* Resource.schema.md
-* Building.schema.md
-* Recipe.schema.md
-* Technology.schema.md
+- ASSET_ID_SYSTEM.md
+- ASSET_VERSIONING.md
+- REGISTRY_SCHEMA.md
+- GLOBAL_ASSET_REGISTRY.md
+- CONTENT_PIPELINE.md
+- Employee.schema.md
+- Vehicle.schema.md
+- Resource.schema.md
+- Building.schema.md
+- Recipe.schema.md
+- Technology.schema.md
 
 ---
 
@@ -622,22 +621,22 @@ Dieses Schema ist kompatibel mit:
 
 Geplante Erweiterungen:
 
-* Scenario Chains
-* Campaign Progression
-* Dynamic Objectives
-* Objective Dependencies
-* Scenario Events
-* Scenario Modifiers
-* Dynamic Difficulty
-* Scenario-specific Economy
-* Scenario-specific Market Rules
-* Faction Definitions
-* AI Opponents
-* Scenario-specific World Generation
-* Procedural Maps
-* Scenario Scripting
-* Scenario Milestones
-* Multiple Victory Paths
-* Optional Objectives
-* Hidden Objectives
-* Scenario-specific Technology Trees
+- Scenario Chains
+- Campaign Progression
+- Dynamic Objectives
+- Objective Dependencies
+- Scenario Events
+- Scenario Modifiers
+- Dynamic Difficulty
+- Scenario-specific Economy
+- Scenario-specific Market Rules
+- Faction Definitions
+- AI Opponents
+- Scenario-specific World Generation
+- Procedural Maps
+- Scenario Scripting
+- Scenario Milestones
+- Multiple Victory Paths
+- Optional Objectives
+- Hidden Objectives
+- Scenario-specific Technology Trees

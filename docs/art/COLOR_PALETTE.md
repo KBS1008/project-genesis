@@ -56,10 +56,10 @@ Purpose
 
 Primary actions, active buttons, links, selections.
 
-| Property | Value |
-|-----------|------|
-| HEX | **#2563EB** |
-| RGB | 37, 99, 235 |
+| Property | Value       |
+| -------- | ----------- |
+| HEX      | **#2563EB** |
+| RGB      | 37, 99, 235 |
 
 ---
 
@@ -69,10 +69,10 @@ Purpose
 
 Hover states and secondary highlights.
 
-| Property | Value |
-|-----------|------|
-| HEX | **#3B82F6** |
-| RGB | 59,130,246 |
+| Property | Value       |
+| -------- | ----------- |
+| HEX      | **#3B82F6** |
+| RGB      | 59,130,246  |
 
 ---
 
@@ -82,10 +82,10 @@ Purpose
 
 Information, technology, research.
 
-| Property | Value |
-|-----------|------|
-| HEX | **#06B6D4** |
-| RGB | 6,182,212 |
+| Property | Value       |
+| -------- | ----------- |
+| HEX      | **#06B6D4** |
+| RGB      | 6,182,212   |
 
 ---
 
@@ -93,13 +93,13 @@ Information, technology, research.
 
 ## Background
 
-| Name | HEX |
-|------|------|
-| White | #FFFFFF |
-| Light Gray | #F5F7FA |
-| Panel Gray | #E5E7EB |
-| Medium Gray | #9CA3AF |
-| Dark Gray | #4B5563 |
+| Name         | HEX     |
+| ------------ | ------- |
+| White        | #FFFFFF |
+| Light Gray   | #F5F7FA |
+| Panel Gray   | #E5E7EB |
+| Medium Gray  | #9CA3AF |
+| Dark Gray    | #4B5563 |
 | Almost Black | #1F2937 |
 
 ---
@@ -201,33 +201,33 @@ HEX
 
 These colors should be used consistently for resource categories.
 
-| Category | Color |
-|-----------|-------|
-| Wood | #8B5A2B |
-| Stone | #7C7C7C |
-| Sand | #D6C28A |
-| Iron | #6B7280 |
-| Copper | #C26A3D |
-| Coal | #2F2F2F |
-| Oil | #1B1B1B |
-| Water | #0EA5E9 |
+| Category    | Color   |
+| ----------- | ------- |
+| Wood        | #8B5A2B |
+| Stone       | #7C7C7C |
+| Sand        | #D6C28A |
+| Iron        | #6B7280 |
+| Copper      | #C26A3D |
+| Coal        | #2F2F2F |
+| Oil         | #1B1B1B |
+| Water       | #0EA5E9 |
 | Electricity | #FACC15 |
 | Agriculture | #65A30D |
-| Food | #FB923C |
-| Chemicals | #A855F7 |
+| Food        | #FB923C |
+| Chemicals   | #A855F7 |
 
 ---
 
 # Finance Colors
 
-| Meaning | Color |
-|-----------|-------|
-| Profit | Green |
-| Revenue | Blue |
-| Costs | Orange |
-| Loss | Red |
-| Investments | Purple |
-| Loans | Dark Blue |
+| Meaning     | Color     |
+| ----------- | --------- |
+| Profit      | Green     |
+| Revenue     | Blue      |
+| Costs       | Orange    |
+| Loss        | Red       |
+| Investments | Purple    |
+| Loans       | Dark Blue |
 
 ---
 

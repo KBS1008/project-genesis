@@ -42,6 +42,8 @@ export function completeBuildingConstruction(options: {
   }
 
   if (building.getStatus() !== BuildingStatus.ACTIVE) {
-    throw new Error(`Building id "${options.buildingId}" did not become active after construction.`);
+    throw new Error(
+      `Building id "${options.buildingId}" did not become active after construction.`,
+    );
   }
 }

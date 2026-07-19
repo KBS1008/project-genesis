@@ -5,7 +5,7 @@
  */
 
 import { AggregateRoot } from '../../common/core/AggregateRoot.js';
-import { ValidationError } from '../../common/errors/ValidationError.js';
+import type { ValidationError } from '../../common/errors/ValidationError.js';
 import { Result } from '../../common/result/Result.js';
 import type { Clock } from '../../common/time/Clock.js';
 import type { CompanyId } from '../company/CompanyId.js';

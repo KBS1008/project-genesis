@@ -100,16 +100,16 @@ Each category follows the same animation philosophy.
 
 Recommended durations:
 
-| Interaction | Duration |
-|------------|----------|
-| Hover | 100–150 ms |
-| Button Press | 80–120 ms |
-| Panel Open | 200–250 ms |
+| Interaction       | Duration   |
+| ----------------- | ---------- |
+| Hover             | 100–150 ms |
+| Button Press      | 80–120 ms  |
+| Panel Open        | 200–250 ms |
 | Window Transition | 250–350 ms |
-| Tooltip | 120–180 ms |
-| Notification | 250–400 ms |
-| Camera Zoom | 250–600 ms |
-| Camera Pan | Variable |
+| Tooltip           | 120–180 ms |
+| Notification      | 250–400 ms |
+| Camera Zoom       | 250–600 ms |
+| Camera Pan        | Variable   |
 
 Animations should never feel slow.
 
@@ -375,15 +375,15 @@ AI prompts should specify:
 
 # Animation Review Checklist
 
-| Question | Status |
-|-----------|--------|
-| Does the animation communicate useful information? | □ |
-| Is timing appropriate? | □ |
-| Is motion smooth? | □ |
-| Is performance acceptable? | □ |
-| Does it follow the industrial visual language? | □ |
-| Is reduced-motion support available? | □ |
-| Can it be reproduced consistently? | □ |
+| Question                                           | Status |
+| -------------------------------------------------- | ------ |
+| Does the animation communicate useful information? | □      |
+| Is timing appropriate?                             | □      |
+| Is motion smooth?                                  | □      |
+| Is performance acceptable?                         | □      |
+| Does it follow the industrial visual language?     | □      |
+| Is reduced-motion support available?               | □      |
+| Can it be reproduced consistently?                 | □      |
 
 ---
 

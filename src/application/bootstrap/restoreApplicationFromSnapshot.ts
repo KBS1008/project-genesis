@@ -6,10 +6,10 @@
 
 import type { DomainEvent } from '../../common/events/DomainEvent.js';
 import { InMemoryEventBus } from '../../common/events/InMemoryEventBus.js';
-import { ValidationError } from '../../common/errors/ValidationError.js';
+import type { ValidationError } from '../../common/errors/ValidationError.js';
 import { Result } from '../../common/result/Result.js';
 import { ManualClock } from '../../common/time/ManualClock.js';
-import { ContentLoadError } from '../../content/errors/ContentLoadError.js';
+import type { ContentLoadError } from '../../content/errors/ContentLoadError.js';
 import { validateGameContent } from '../../content/validateGameContent.js';
 import { InMemoryBuildingRepository } from '../../infrastructure/persistence/InMemoryBuildingRepository.js';
 import { InMemoryBuildingStorageRepository } from '../../infrastructure/persistence/InMemoryBuildingStorageRepository.js';

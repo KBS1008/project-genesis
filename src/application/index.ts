@@ -20,7 +20,10 @@ export { ProductionInventoryService } from './services/ProductionInventoryServic
 export type { ProductionInventoryServiceDependencies } from './services/ProductionInventoryService.js';
 export type { CompanyReadModel } from './read-models/CompanyReadModel.js';
 export type { BuildingReadModel } from './read-models/BuildingReadModel.js';
-export type { InventoryReadModel, InventoryItemReadModel } from './read-models/InventoryReadModel.js';
+export type {
+  InventoryReadModel,
+  InventoryItemReadModel,
+} from './read-models/InventoryReadModel.js';
 export type { GetCompanyQuery } from './queries/GetCompanyQuery.js';
 export { GetCompanyQueryHandler } from './queries/GetCompanyQueryHandler.js';
 export type { GetCompanyQueryHandlerDependencies } from './queries/GetCompanyQueryHandler.js';
@@ -41,7 +44,10 @@ export type { GetMarketPricesQueryHandlerDependencies } from './queries/GetMarke
 export { MarketPriceSeeder } from './services/MarketPriceSeeder.js';
 export type { MarketPriceSeederDependencies } from './services/MarketPriceSeeder.js';
 export { MarketTradeService } from './services/MarketTradeService.js';
-export type { MarketTradeServiceDependencies, MarketTradeResult } from './services/MarketTradeService.js';
+export type {
+  MarketTradeServiceDependencies,
+  MarketTradeResult,
+} from './services/MarketTradeService.js';
 export type { SellResourceCommand } from './commands/SellResourceCommand.js';
 export type { BuyResourceCommand } from './commands/BuyResourceCommand.js';
 export { SellResourceUseCase } from './use-cases/SellResourceUseCase.js';

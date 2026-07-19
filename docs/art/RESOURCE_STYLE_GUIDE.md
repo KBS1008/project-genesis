@@ -345,15 +345,15 @@ Never rely solely on color.
 
 # Resource Review Checklist
 
-| Question | Status |
-|-----------|--------|
-| Recognizable within one second? | □ |
-| Fits the correct category? | □ |
-| Consistent with the visual language? | □ |
-| Scales well to small sizes? | □ |
-| Suitable for logistics visualization? | □ |
-| Uses the official color palette? | □ |
-| AI reproducible? | □ |
+| Question                              | Status |
+| ------------------------------------- | ------ |
+| Recognizable within one second?       | □      |
+| Fits the correct category?            | □      |
+| Consistent with the visual language?  | □      |
+| Scales well to small sizes?           | □      |
+| Suitable for logistics visualization? | □      |
+| Uses the official color palette?      | □      |
+| AI reproducible?                      | □      |
 
 ---
 

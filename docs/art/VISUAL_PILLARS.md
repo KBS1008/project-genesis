@@ -224,16 +224,16 @@ Avoid fashionable effects that may quickly become outdated.
 
 Every new graphical asset should be reviewed against the following checklist.
 
-| Question | Yes / No |
-|-----------|----------|
-| Is it immediately readable? | □ |
-| Does it communicate its function? | □ |
-| Does it match the industrial style? | □ |
-| Does it fit existing assets? | □ |
-| Does it improve information clarity? | □ |
-| Is it modular and reusable? | □ |
-| Does it avoid unnecessary decoration? | □ |
-| Will it still look modern in ten years? | □ |
+| Question                                | Yes / No |
+| --------------------------------------- | -------- |
+| Is it immediately readable?             | □        |
+| Does it communicate its function?       | □        |
+| Does it match the industrial style?     | □        |
+| Does it fit existing assets?            | □        |
+| Does it improve information clarity?    | □        |
+| Is it modular and reusable?             | □        |
+| Does it avoid unnecessary decoration?   | □        |
+| Will it still look modern in ten years? | □        |
 
 Only assets that satisfy all pillars should become part of the official asset library.
 

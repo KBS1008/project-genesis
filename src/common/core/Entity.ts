@@ -8,7 +8,7 @@
  * @see docs/decisions/DD-003-global-identifiers.md
  */
 
-import { Identifier } from './Identifier.js';
+import type { Identifier } from './Identifier.js';
 
 /**
  * Base class for objects identified by a stable, strongly typed identifier.

@@ -603,10 +603,10 @@ Der Technologie-Stack unterstützt:
 
 # Änderungsprotokoll
 
-| Version | Datum | Änderung |
-|----------|--------|----------|
-| 1.0.0 | 2026-07-03 | Initiale Version |
-| 1.1.0 | 2026-07-03 | Einführung der hybriden Datenzugriffsstrategie (Prisma + Kysely), Repository Layer ergänzt |
+| Version | Datum      | Änderung                                                                                   |
+| ------- | ---------- | ------------------------------------------------------------------------------------------ |
+| 1.0.0   | 2026-07-03 | Initiale Version                                                                           |
+| 1.1.0   | 2026-07-03 | Einführung der hybriden Datenzugriffsstrategie (Prisma + Kysely), Repository Layer ergänzt |
 
 ---
 

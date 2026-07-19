@@ -18,29 +18,29 @@ All major milestones should be reviewed using this template.
 
 # Audit Information
 
-| Field | Value |
-|--------|-------|
-| Audit ID | AUD-XXX |
-| Date | YYYY-MM-DD |
-| Reviewer | |
-| Version | |
-| Commit | |
-| Scope | |
+| Field    | Value      |
+| -------- | ---------- |
+| Audit ID | AUD-XXX    |
+| Date     | YYYY-MM-DD |
+| Reviewer |            |
+| Version  |            |
+| Commit   |            |
+| Scope    |            |
 
 ---
 
 # Overall Assessment
 
-| Category | Score (0–10) |
-|----------|--------------:|
-| Architecture | |
-| Code Quality | |
-| Documentation | |
-| Gameplay Systems | |
-| Asset System | |
-| Testing | |
-| Automation | |
-| AI Readiness | |
+| Category         | Score (0–10) |
+| ---------------- | -----------: |
+| Architecture     |              |
+| Code Quality     |              |
+| Documentation    |              |
+| Gameplay Systems |              |
+| Asset System     |              |
+| Testing          |              |
+| Automation       |              |
+| AI Readiness     |              |
 
 Overall Score:
 
@@ -201,11 +201,11 @@ Review:
 # Action Items
 
 | Priority | Task | Status |
-|----------|------|--------|
-| 🔴 | | |
-| 🟠 | | |
-| 🟡 | | |
-| 🟢 | | |
+| -------- | ---- | ------ |
+| 🔴       |      |        |
+| 🟠       |      |        |
+| 🟡       |      |        |
+| 🟢       |      |        |
 
 ---
 
@@ -221,6 +221,6 @@ Next Audit Target:
 
 # Audit History
 
-| Audit | Date | Score |
-|--------|------|-------|
-| AUD-001 | | |
+| Audit   | Date | Score |
+| ------- | ---- | ----- |
+| AUD-001 |      |       |

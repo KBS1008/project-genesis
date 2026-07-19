@@ -63,9 +63,7 @@ describe('GameController (NestJS)', () => {
   });
 
   it('GET /api/dashboard/history returns tick metrics after simulation ticks', async () => {
-    await request(app.getHttpServer())
-      .post('/api/session/new')
-      .send({ name: 'History Test Corp' });
+    await request(app.getHttpServer()).post('/api/session/new').send({ name: 'History Test Corp' });
 
     await request(app.getHttpServer()).post('/api/simulation/tick').send({ count: 3 });
 
@@ -83,9 +81,7 @@ describe('GameController (NestJS)', () => {
   });
 
   it('POST /api/employees/hire validates required fields', async () => {
-    await request(app.getHttpServer())
-      .post('/api/session/new')
-      .send({ name: 'Employee API Corp' });
+    await request(app.getHttpServer()).post('/api/session/new').send({ name: 'Employee API Corp' });
 
     const response = await request(app.getHttpServer())
       .post('/api/employees/hire')
@@ -97,9 +93,7 @@ describe('GameController (NestJS)', () => {
   });
 
   it('POST /api/employees/hire and assign expose employees on dashboard', async () => {
-    await request(app.getHttpServer())
-      .post('/api/session/new')
-      .send({ name: 'Employee API Corp' });
+    await request(app.getHttpServer()).post('/api/session/new').send({ name: 'Employee API Corp' });
 
     const hireResponse = await request(app.getHttpServer()).post('/api/employees/hire').send({
       employeeTypeId: 'employee_production_worker',

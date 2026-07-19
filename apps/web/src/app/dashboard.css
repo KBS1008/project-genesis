@@ -571,7 +571,9 @@ button.btn-secondary:hover:not(:disabled) {
   cursor: pointer;
   font: inherit;
   color: inherit;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .overview-card-button:hover,
@@ -750,7 +752,9 @@ button.btn-secondary:hover:not(:disabled) {
   cursor: pointer;
   font: inherit;
   color: inherit;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .kpi-card-button:hover,
@@ -795,7 +799,9 @@ button.btn-secondary:hover:not(:disabled) {
   text-align: left;
   cursor: pointer;
   font: inherit;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .logistics-banner-button:hover,
@@ -1122,12 +1128,7 @@ tbody tr:hover {
 .skeleton-block {
   height: 0.85rem;
   border-radius: 6px;
-  background: linear-gradient(
-    90deg,
-    var(--color-panel) 0%,
-    #f3f4f6 50%,
-    var(--color-panel) 100%
-  );
+  background: linear-gradient(90deg, var(--color-panel) 0%, #f3f4f6 50%, var(--color-panel) 100%);
   background-size: 200% 100%;
   animation: shimmer 1.2s ease-in-out infinite;
 }
@@ -1435,10 +1436,5 @@ html[data-theme='dark'] body {
 }
 
 html[data-theme='dark'] .skeleton-block {
-  background: linear-gradient(
-    90deg,
-    var(--color-panel) 0%,
-    #2d3a4f 50%,
-    var(--color-panel) 100%
-  );
+  background: linear-gradient(90deg, var(--color-panel) 0%, #2d3a4f 50%, var(--color-panel) 100%);
 }

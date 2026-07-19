@@ -15,15 +15,15 @@ Eine Mission beschreibt eine definierte Aufgabe oder Herausforderung, die innerh
 
 Missions können unter anderem:
 
-* Produktionsziele
-* Transportziele
-* Forschungsziele
-* wirtschaftliche Ziele
-* Bauziele
-* Logistikziele
-* Überlebensziele
-* zeitbasierte Herausforderungen
-* kombinierte Aufgaben
+- Produktionsziele
+- Transportziele
+- Forschungsziele
+- wirtschaftliche Ziele
+- Bauziele
+- Logistikziele
+- Überlebensziele
+- zeitbasierte Herausforderungen
+- kombinierte Aufgaben
 
 definieren.
 
@@ -33,16 +33,16 @@ Der tatsächliche Fortschritt einer Mission gehört zum dynamischen Spielzustand
 
 Das Schema dient als Grundlage für:
 
-* JSON-Assets
-* Asset Registry
-* Content Pipeline
-* Validierung
-* Scenario-System
-* Campaign-System
-* Objective-System
-* Editor
-* Modding
-* Savegame-Kompatibilität
+- JSON-Assets
+- Asset Registry
+- Content Pipeline
+- Validierung
+- Scenario-System
+- Campaign-System
+- Objective-System
+- Editor
+- Modding
+- Savegame-Kompatibilität
 
 ---
 
@@ -440,12 +440,12 @@ requirements:
 
 Mögliche Requirement-Typen:
 
-* Buildings
-* Employees
-* Vehicles
-* Resources
-* Technologies
-* Scenarios
+- Buildings
+- Employees
+- Vehicles
+- Resources
+- Technologies
+- Scenarios
 
 Die konkrete Prüfung erfolgt durch das Scenario-/Mission-System.
 
@@ -513,14 +513,14 @@ rewards:
 
 Mögliche Belohnungen:
 
-* Geld
-* Ressourcen
-* Technologien
-* Gebäude
-* Fahrzeuge
-* Szenarien
-* Missionen
-* andere Assets
+- Geld
+- Ressourcen
+- Technologien
+- Gebäude
+- Fahrzeuge
+- Szenarien
+- Missionen
+- andere Assets
 
 Alle Asset-Referenzen erfolgen ausschließlich über Asset-IDs.
 
@@ -561,9 +561,9 @@ repeatable: true
 
 Bei wiederholbaren Missionen muss das Mission-System definieren:
 
-* wann die Mission erneut aktiviert werden kann
-* ob Belohnungen erneut vergeben werden
-* ob Fortschritt zurückgesetzt wird
+- wann die Mission erneut aktiviert werden kann
+- ob Belohnungen erneut vergeben werden
+- ob Fortschritt zurückgesetzt wird
 
 ---
 
@@ -579,10 +579,10 @@ hidden: true
 
 Verborgene Missionen können durch:
 
-* Fortschritt
-* Ereignisse
-* Entdeckungen
-* andere Missionen
+- Fortschritt
+- Ereignisse
+- Entdeckungen
+- andere Missionen
 
 sichtbar oder aktivierbar werden.
 
@@ -594,17 +594,17 @@ Die konkrete Freischaltlogik gehört zum Mission-/Scenario-System.
 
 Eine Mission darf referenzieren:
 
-* Resources
-* Buildings
-* Vehicles
-* Employees
-* Technologies
-* Scenarios
-* Missions
-* Regions
-* Biomes
-* Effects
-* Rewards
+- Resources
+- Buildings
+- Vehicles
+- Employees
+- Technologies
+- Scenarios
+- Missions
+- Regions
+- Biomes
+- Effects
+- Rewards
 
 Alle Referenzen erfolgen ausschließlich über Asset-IDs.
 
@@ -617,8 +617,7 @@ Anzeigenamen und Beschreibungen sollen über Lokalisierungsschlüssel referenzie
 Beispiel:
 
 ```yaml
-localizationKey:
-  mission.produce_1000_steel
+localizationKey: mission.produce_1000_steel
 ```
 
 Die konkrete Lokalisierung wird außerhalb des Mission-Assets verwaltet.
@@ -629,24 +628,24 @@ Die konkrete Lokalisierung wird außerhalb des Mission-Assets verwaltet.
 
 Eine Mission ist gültig, wenn:
 
-* eine eindeutige Asset-ID vorhanden ist
-* die Version gültig ist
-* eine Kategorie definiert wurde
-* mindestens ein Objective vorhanden ist
-* alle Objective-IDs innerhalb der Mission eindeutig sind
-* alle Objective-Typen unterstützt werden
-* alle referenzierten Assets existieren
-* keine zirkulären Missionsabhängigkeiten bestehen
-* `timeLimit` größer als 0 ist, sofern definiert
-* alle Objective-Mengen größer als 0 sind
-* alle Rewards gültig sind
-* alle Failure Conditions gültig sind
+- eine eindeutige Asset-ID vorhanden ist
+- die Version gültig ist
+- eine Kategorie definiert wurde
+- mindestens ein Objective vorhanden ist
+- alle Objective-IDs innerhalb der Mission eindeutig sind
+- alle Objective-Typen unterstützt werden
+- alle referenzierten Assets existieren
+- keine zirkulären Missionsabhängigkeiten bestehen
+- `timeLimit` größer als 0 ist, sofern definiert
+- alle Objective-Mengen größer als 0 sind
+- alle Rewards gültig sind
+- alle Failure Conditions gültig sind
 
 Zusätzlich gilt:
 
-* `completionMode` muss ein gültiger Wert sein
-* `duration` muss größer als 0 sein, sofern definiert
-* Asset-Referenzen müssen auf gültige Assets zeigen
+- `completionMode` muss ein gültiger Wert sein
+- `duration` muss größer als 0 sein, sofern definiert
+- Asset-Referenzen müssen auf gültige Assets zeigen
 
 Ungültige Missionen dürfen nicht registriert oder geladen werden.
 
@@ -658,15 +657,15 @@ Das Mission-Asset enthält ausschließlich statische Missionsdefinitionen.
 
 Nicht Bestandteil dieses Schemas sind:
 
-* aktueller Missionsfortschritt
-* aktueller Objective-Fortschritt
-* Missionsstatus
-* Aktivierungszeitpunkt
-* Abschlusszeitpunkt
-* aktuelle Missionsergebnisse
-* bereits vergebene Rewards
-* aktuelle Failure Conditions
-* temporäre Missionsmodifikatoren
+- aktueller Missionsfortschritt
+- aktueller Objective-Fortschritt
+- Missionsstatus
+- Aktivierungszeitpunkt
+- Abschlusszeitpunkt
+- aktuelle Missionsergebnisse
+- bereits vergebene Rewards
+- aktuelle Failure Conditions
+- temporäre Missionsmodifikatoren
 
 Diese Daten gehören zum dynamischen Spielzustand.
 
@@ -741,19 +740,19 @@ tags:
 
 Dieses Schema ist kompatibel mit:
 
-* ASSET_ID_SYSTEM.md
-* ASSET_VERSIONING.md
-* REGISTRY_SCHEMA.md
-* GLOBAL_ASSET_REGISTRY.md
-* CONTENT_PIPELINE.md
-* Employee.schema.md
-* Vehicle.schema.md
-* Resource.schema.md
-* Building.schema.md
-* Recipe.schema.md
-* Technology.schema.md
-* Scenario.schema.md
-* Biome.schema.md
+- ASSET_ID_SYSTEM.md
+- ASSET_VERSIONING.md
+- REGISTRY_SCHEMA.md
+- GLOBAL_ASSET_REGISTRY.md
+- CONTENT_PIPELINE.md
+- Employee.schema.md
+- Vehicle.schema.md
+- Resource.schema.md
+- Building.schema.md
+- Recipe.schema.md
+- Technology.schema.md
+- Scenario.schema.md
+- Biome.schema.md
 
 ---
 
@@ -761,26 +760,26 @@ Dieses Schema ist kompatibel mit:
 
 Geplante Erweiterungen:
 
-* Mission Chains
-* Campaign Missions
-* Dynamic Objectives
-* Objective Dependencies
-* Optional Objectives
-* Hidden Objectives
-* Branching Missions
-* Mission Events
-* Mission Scripting
-* Dynamic Rewards
-* Reward Scaling
-* Reputation Rewards
-* Faction Relations
-* Mission Difficulty Scaling
-* Procedural Missions
-* Daily Missions
-* Recurring Missions
-* Multiplayer Missions
-* Cooperative Objectives
-* Competitive Objectives
-* Mission Time Windows
-* Mission Expiration
-* Mission Modifiers
+- Mission Chains
+- Campaign Missions
+- Dynamic Objectives
+- Objective Dependencies
+- Optional Objectives
+- Hidden Objectives
+- Branching Missions
+- Mission Events
+- Mission Scripting
+- Dynamic Rewards
+- Reward Scaling
+- Reputation Rewards
+- Faction Relations
+- Mission Difficulty Scaling
+- Procedural Missions
+- Daily Missions
+- Recurring Missions
+- Multiplayer Missions
+- Cooperative Objectives
+- Competitive Objectives
+- Mission Time Windows
+- Mission Expiration
+- Mission Modifiers

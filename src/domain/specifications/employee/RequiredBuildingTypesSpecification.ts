@@ -22,9 +22,10 @@ export type RequiredBuildingTypesContext = {
 /**
  * Verifies that all required building types are owned and active.
  */
-export class RequiredBuildingTypesSpecification
-  implements Specification<RequiredBuildingTypesCandidate, RequiredBuildingTypesContext>
-{
+export class RequiredBuildingTypesSpecification implements Specification<
+  RequiredBuildingTypesCandidate,
+  RequiredBuildingTypesContext
+> {
   isSatisfiedBy(
     candidate: RequiredBuildingTypesCandidate,
     context: RequiredBuildingTypesContext,

@@ -50,10 +50,7 @@ describe('InMemoryEventBus', () => {
       payloads.push((event as SampleEvent).payload);
     });
 
-    bus.publishAll([
-      new SampleEvent(100, 'first'),
-      new SampleEvent(101, 'second'),
-    ]);
+    bus.publishAll([new SampleEvent(100, 'first'), new SampleEvent(101, 'second')]);
 
     expect(payloads).toEqual(['first', 'second']);
   });

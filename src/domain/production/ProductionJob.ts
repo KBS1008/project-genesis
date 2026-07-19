@@ -103,20 +103,18 @@ export class ProductionJob extends AggregateRoot<'ProductionJob'> {
     }
 
     return Result.ok(
-      new ProductionJob(
-        {
-          id: params.id,
-          buildingId: params.buildingId,
-          companyId: params.companyId,
-          recipeId: params.recipeId,
-          duration: durationResult.value,
-          createdAt: params.clock.now(),
-          status: ProductionJobStatus.WAITING,
-          progress: 0,
-          startTime: undefined,
-          endTime: undefined,
-        },
-      ),
+      new ProductionJob({
+        id: params.id,
+        buildingId: params.buildingId,
+        companyId: params.companyId,
+        recipeId: params.recipeId,
+        duration: durationResult.value,
+        createdAt: params.clock.now(),
+        status: ProductionJobStatus.WAITING,
+        progress: 0,
+        startTime: undefined,
+        endTime: undefined,
+      }),
     );
   }
 
@@ -295,9 +293,7 @@ export class ProductionJob extends AggregateRoot<'ProductionJob'> {
 }
 
 /** Creates a validated production job identifier from a raw string. */
-export function createProductionJobId(
-  rawValue: string,
-): Result<ProductionJobId, ValidationError> {
+export function createProductionJobId(rawValue: string): Result<ProductionJobId, ValidationError> {
   const result = Identifier.create<ProductionJobId>(rawValue);
 
   if (!result.ok) {

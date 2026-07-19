@@ -12,8 +12,5 @@ import type { Result } from '../../common/result/Result.js';
  */
 export interface Specification<TCandidate, TContext = void> {
   /** Returns success when the candidate satisfies the rule. */
-  isSatisfiedBy(
-    candidate: TCandidate,
-    context: TContext,
-  ): Result<void, ValidationError>;
+  isSatisfiedBy(candidate: TCandidate, context: TContext): Result<void, ValidationError>;
 }

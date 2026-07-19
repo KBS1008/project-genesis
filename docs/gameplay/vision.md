@@ -2,7 +2,7 @@
 
 > **Project Genesis**
 >
-> *Eine lebendige Wirtschaft. Tausende Entscheidungen. Ein gemeinsamer Markt.*
+> _Eine lebendige Wirtschaft. Tausende Entscheidungen. Ein gemeinsamer Markt._
 
 ---
 

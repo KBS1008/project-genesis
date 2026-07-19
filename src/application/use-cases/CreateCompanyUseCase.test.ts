@@ -1,6 +1,6 @@
 import { InMemoryEventBus } from '../../common/events/InMemoryEventBus.js';
 import { ManualClock } from '../../common/time/ManualClock.js';
-import { CompanyFounded } from '../../domain/company/events/CompanyFounded.js';
+import type { CompanyFounded } from '../../domain/company/events/CompanyFounded.js';
 import { InMemoryCompanyRepository } from '../../infrastructure/persistence/InMemoryCompanyRepository.js';
 import { InMemoryCompanyResearchRepository } from '../../infrastructure/persistence/InMemoryCompanyResearchRepository.js';
 import { InMemoryCompanyMilestonesRepository } from '../../infrastructure/persistence/InMemoryCompanyMilestonesRepository.js';
@@ -43,8 +43,14 @@ function createUseCase(clock = new ManualClock(100)) {
 
 describe('CreateCompanyUseCase', () => {
   it('creates and persists a company with an inventory and finance account', () => {
-    const { companyRepository, inventoryRepository, financeRepository, companyResearchRepository, companyMilestonesRepository, useCase } =
-      createUseCase();
+    const {
+      companyRepository,
+      inventoryRepository,
+      financeRepository,
+      companyResearchRepository,
+      companyMilestonesRepository,
+      useCase,
+    } = createUseCase();
 
     const result = useCase.execute({
       companyId: 'company_001',

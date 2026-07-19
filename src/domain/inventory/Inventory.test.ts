@@ -1,7 +1,7 @@
 import { ManualClock } from '../../common/time/ManualClock.js';
 import { createCompanyId } from '../company/Company.js';
 import { Inventory, createInventoryId } from './Inventory.js';
-import { InventoryChanged } from './events/InventoryChanged.js';
+import type { InventoryChanged } from './events/InventoryChanged.js';
 import { InventoryStatus } from './InventoryStatus.js';
 
 function requireInventoryId(value: string) {

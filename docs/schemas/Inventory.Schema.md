@@ -399,7 +399,6 @@ usedCapacity: 420
 reservedCapacity: 90
 
 items:
-
   - resourceId: WOOD
 
     quantity: 500
@@ -417,7 +416,6 @@ items:
     averagePurchasePrice: 13
 
 reservations:
-
   - id: RES-001
 
     resourceId: WOOD
@@ -431,7 +429,6 @@ reservations:
     referenceId: JOB-001
 
 statistics:
-
   totalStored: 820
 
   totalConsumed: 2500

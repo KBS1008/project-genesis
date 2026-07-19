@@ -327,10 +327,10 @@ Diese Risiken werden durch klare Verantwortlichkeiten und deterministische Simul
 
 # Änderungsprotokoll
 
-| Version | Datum | Änderung |
-|----------|--------|----------|
-| 1.0.0 | 2026-07-03 | Erste Version |
-| 2.0.0 | 2026-07-03 | Vollständige Überarbeitung entsprechend der aktuellen Architektur |
+| Version | Datum      | Änderung                                                          |
+| ------- | ---------- | ----------------------------------------------------------------- |
+| 1.0.0   | 2026-07-03 | Erste Version                                                     |
+| 2.0.0   | 2026-07-03 | Vollständige Überarbeitung entsprechend der aktuellen Architektur |
 
 ---
 

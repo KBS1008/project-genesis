@@ -42,12 +42,12 @@ Dependencies should always follow these principles:
 
 Dependencies are classified into four levels.
 
-| Level | Meaning |
-|---------|-----------------------------|
-| Required | Cannot function without it |
-| Strong | Frequently interacts |
+| Level    | Meaning                            |
+| -------- | ---------------------------------- |
+| Required | Cannot function without it         |
+| Strong   | Frequently interacts               |
 | Optional | Uses only under certain conditions |
-| None | No dependency |
+| None     | No dependency                      |
 
 ---
 
@@ -75,52 +75,52 @@ No lower layer may directly control a higher layer.
 
 # Domain Dependencies
 
-| Domain | Depends On |
-|----------|------------------------------|
-| Buildings | Resources, Recipes |
-| Resources | None |
-| Recipes | Resources |
-| Production | Buildings, Recipes |
-| Logistics | Vehicles, Buildings, Resources |
-| Market | Resources |
-| Finance | Market |
-| Workforce | NPCs, Buildings |
-| Technologies | Research |
-| Research | Resources |
-| Events | Simulation |
-| Scenarios | Events, Technologies |
+| Domain       | Depends On                     |
+| ------------ | ------------------------------ |
+| Buildings    | Resources, Recipes             |
+| Resources    | None                           |
+| Recipes      | Resources                      |
+| Production   | Buildings, Recipes             |
+| Logistics    | Vehicles, Buildings, Resources |
+| Market       | Resources                      |
+| Finance      | Market                         |
+| Workforce    | NPCs, Buildings                |
+| Technologies | Research                       |
+| Research     | Resources                      |
+| Events       | Simulation                     |
+| Scenarios    | Events, Technologies           |
 
 ---
 
 # Asset Library Dependencies
 
-| Asset Library | Depends On |
-|-------------------------|------------------------|
-| BUILDING_LIBRARY | RESOURCE_LIBRARY |
-| RESOURCE_LIBRARY | None |
-| VEHICLE_LIBRARY | RESOURCE_LIBRARY |
-| NPC_LIBRARY | BUILDING_LIBRARY |
-| EFFECT_LIBRARY | BUILDING_LIBRARY, VEHICLE_LIBRARY, NPC_LIBRARY |
-| MAP_OBJECT_LIBRARY | BIOME_GUIDE |
-| BIOME_GUIDE | MAP_STYLE_GUIDE |
+| Asset Library      | Depends On                                     |
+| ------------------ | ---------------------------------------------- |
+| BUILDING_LIBRARY   | RESOURCE_LIBRARY                               |
+| RESOURCE_LIBRARY   | None                                           |
+| VEHICLE_LIBRARY    | RESOURCE_LIBRARY                               |
+| NPC_LIBRARY        | BUILDING_LIBRARY                               |
+| EFFECT_LIBRARY     | BUILDING_LIBRARY, VEHICLE_LIBRARY, NPC_LIBRARY |
+| MAP_OBJECT_LIBRARY | BIOME_GUIDE                                    |
+| BIOME_GUIDE        | MAP_STYLE_GUIDE                                |
 
 ---
 
 # Documentation Dependencies
 
-| Document | Depends On |
-|-----------------------------|-------------------------|
-| COLOR_PALETTE | ART_DIRECTION |
-| VISUAL_LANGUAGE | DESIGN_PRINCIPLES |
-| TYPOGRAPHY | VISUAL_LANGUAGE |
-| UI_STYLE_GUIDE | TYPOGRAPHY |
-| ICON_GUIDELINES | UI_STYLE_GUIDE |
-| BUILDING_STYLE_GUIDE | VISUAL_LANGUAGE |
-| RESOURCE_STYLE_GUIDE | VISUAL_LANGUAGE |
-| VEHICLE_STYLE_GUIDE | VISUAL_LANGUAGE |
-| MAP_STYLE_GUIDE | VISUAL_LANGUAGE |
-| NPC_STYLE_GUIDE | VISUAL_LANGUAGE |
-| EFFECT_STYLE_GUIDE | VISUAL_LANGUAGE |
+| Document             | Depends On        |
+| -------------------- | ----------------- |
+| COLOR_PALETTE        | ART_DIRECTION     |
+| VISUAL_LANGUAGE      | DESIGN_PRINCIPLES |
+| TYPOGRAPHY           | VISUAL_LANGUAGE   |
+| UI_STYLE_GUIDE       | TYPOGRAPHY        |
+| ICON_GUIDELINES      | UI_STYLE_GUIDE    |
+| BUILDING_STYLE_GUIDE | VISUAL_LANGUAGE   |
+| RESOURCE_STYLE_GUIDE | VISUAL_LANGUAGE   |
+| VEHICLE_STYLE_GUIDE  | VISUAL_LANGUAGE   |
+| MAP_STYLE_GUIDE      | VISUAL_LANGUAGE   |
+| NPC_STYLE_GUIDE      | VISUAL_LANGUAGE   |
+| EFFECT_STYLE_GUIDE   | VISUAL_LANGUAGE   |
 
 ---
 

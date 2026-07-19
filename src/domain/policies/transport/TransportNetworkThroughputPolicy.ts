@@ -26,8 +26,7 @@ export class TransportNetworkThroughputPolicy {
     }
 
     return orders.filter(
-      (order) =>
-        order.routeId === routeId && order.status === TransportOrderStatus.IN_PROGRESS,
+      (order) => order.routeId === routeId && order.status === TransportOrderStatus.IN_PROGRESS,
     ).length;
   }
 

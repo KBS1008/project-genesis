@@ -185,8 +185,7 @@ Aktive Kredite.
 
 ```yaml
 loanIds:
-
-- LOAN-001
+  - LOAN-001
 ```
 
 ---
@@ -259,7 +258,6 @@ loanIds: []
 investmentIds: []
 
 statistics:
-
   totalIncome: 0
 
   totalExpenses: 0

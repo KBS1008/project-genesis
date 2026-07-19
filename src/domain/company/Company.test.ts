@@ -1,11 +1,7 @@
 import { ManualClock } from '../../common/time/ManualClock.js';
-import {
-  Company,
-  createCompanyId,
-  createPlayerId,
-} from './Company.js';
+import { Company, createCompanyId, createPlayerId } from './Company.js';
 import { CompanyStatus } from './CompanyStatus.js';
-import { CompanyFounded } from './events/CompanyFounded.js';
+import type { CompanyFounded } from './events/CompanyFounded.js';
 
 function requireCompanyId(value: string) {
   const result = createCompanyId(value);

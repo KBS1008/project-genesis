@@ -147,7 +147,7 @@ Ein Unternehmen kann sich beispielsweise konzentrieren auf:
 
 Player Market
 
-+
+-
 
 NPC Economy (vereinfacht)
 

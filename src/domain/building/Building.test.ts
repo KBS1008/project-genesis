@@ -1,15 +1,11 @@
 import { ManualClock } from '../../common/time/ManualClock.js';
 import { createCompanyId } from '../company/Company.js';
-import {
-  Building,
-  createBuildingId,
-  createBuildingTypeId,
-} from './Building.js';
+import { Building, createBuildingId, createBuildingTypeId } from './Building.js';
 import { BuildingStatus } from './BuildingStatus.js';
 import { Position } from './Position.js';
-import { BuildingPlaced } from './events/BuildingPlaced.js';
+import type { BuildingPlaced } from './events/BuildingPlaced.js';
 import { BuildingConstructionCompleted } from './events/BuildingConstructionCompleted.js';
-import { BuildingConstructionStarted } from './events/BuildingConstructionStarted.js';
+import type { BuildingConstructionStarted } from './events/BuildingConstructionStarted.js';
 
 function requireBuildingId(value: string) {
   const result = createBuildingId(value);
@@ -158,9 +154,8 @@ describe('Building', () => {
       expect(building.getConstructionProgress()).toBe(0);
 
       const events = building.pullDomainEvents();
-      const started = events.find(
-        (event) => event.eventName === 'BuildingConstructionStarted',
-      ) as BuildingConstructionStarted | undefined;
+      const started = events.find((event) => event.eventName === 'BuildingConstructionStarted') as
+        BuildingConstructionStarted | undefined;
 
       expect(started?.buildingId).toBe('building_001');
       expect(started?.duration).toBe(120);
@@ -192,7 +187,9 @@ describe('Building', () => {
       expect(building.getConstructionEndTime()).toBe(500);
 
       const events = building.pullDomainEvents();
-      expect(events.some((event) => event.eventName === 'BuildingConstructionCompleted')).toBe(true);
+      expect(events.some((event) => event.eventName === 'BuildingConstructionCompleted')).toBe(
+        true,
+      );
     });
 
     it('completes construction when elapsed time reaches duration', () => {

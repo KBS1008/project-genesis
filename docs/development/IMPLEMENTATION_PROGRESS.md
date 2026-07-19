@@ -20,22 +20,22 @@ Update this document whenever a meaningful implementation milestone is completed
 
 # Current Status
 
-| Area | Status |
-|---|---|
-| Common foundation | Implemented |
-| Domain aggregates | Implemented (Company, Building, Inventory, ProductionJob, FinanceAccount, Market, SupplyContract, CompanyResearch, ResearchJob, CompanyMilestones, Employee) |
-| Domain value objects | Partial (Money, Quantity, ResourceAmount, Capacity, Position) |
-| Domain specifications & policies | Partial (foundation + production/market/employee rules) |
-| Content loaders | Partial (ResourceType, BuildingType, Recipe, Technology, Milestone, Employee, TransportRoute) |
-| Simulation | Partial (SimulationEngine, systems pipeline incl. market, contracts, payroll, tax, inflation dampening) |
-| Infrastructure | Partial (in-memory repositories, JSON savegames incl. employees, supply contracts, tick metrics history) |
-| Application layer | Implemented (bootstrap, use cases, queries, dashboard facade, tutorial progress) |
-| UI | Partial (Next.js dashboard per DASHBOARD_STYLE_GUIDE: layout, charts, drill-down, tutorial checklist, outline KPI icons, auto-dismiss toasts, live WebSocket refresh) |
-| Energy system | Partial (balance service, production gating, baseline grid) |
-| Transport / logistics | ✅ M6 completed — capacities, route durations, throughput queue (DD-022) |
-| M4 Core Gameplay | Completed |
-| M5 Economy | Completed |
-| M6 Logistics | ✅ Completed (Gate AUD-004, 2026-07-19) |
+| Area                             | Status                                                                                                                                                                |
+| -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Common foundation                | Implemented                                                                                                                                                           |
+| Domain aggregates                | Implemented (Company, Building, Inventory, ProductionJob, FinanceAccount, Market, SupplyContract, CompanyResearch, ResearchJob, CompanyMilestones, Employee)          |
+| Domain value objects             | Partial (Money, Quantity, ResourceAmount, Capacity, Position)                                                                                                         |
+| Domain specifications & policies | Partial (foundation + production/market/employee rules)                                                                                                               |
+| Content loaders                  | Partial (ResourceType, BuildingType, Recipe, Technology, Milestone, Employee, TransportRoute)                                                                         |
+| Simulation                       | Partial (SimulationEngine, systems pipeline incl. market, contracts, payroll, tax, inflation dampening)                                                               |
+| Infrastructure                   | Partial (in-memory repositories, JSON savegames incl. employees, supply contracts, tick metrics history)                                                              |
+| Application layer                | Implemented (bootstrap, use cases, queries, dashboard facade, tutorial progress)                                                                                      |
+| UI                               | Partial (Next.js dashboard per DASHBOARD_STYLE_GUIDE: layout, charts, drill-down, tutorial checklist, outline KPI icons, auto-dismiss toasts, live WebSocket refresh) |
+| Energy system                    | Partial (balance service, production gating, baseline grid)                                                                                                           |
+| Transport / logistics            | ✅ M6 completed — capacities, route durations, throughput queue (DD-022)                                                                                              |
+| M4 Core Gameplay                 | Completed                                                                                                                                                             |
+| M5 Economy                       | Completed                                                                                                                                                             |
+| M6 Logistics                     | ✅ Completed (Gate AUD-004, 2026-07-19)                                                                                                                               |
 
 **Tests:** 417 (run `pnpm test` for current count)
 
@@ -49,14 +49,14 @@ Trackable estimate of progress toward **Release 1.0** (`MILESTONE_PLAN.md`).
 
 ## Summary
 
-| Metric | Value | Notes |
-|---|---:|---|
-| **Release progress (primary)** | **53 %** | Average of milestone completion % (see below) |
-| Deliverable work invested | 62 % | Average including partial pre-work (e.g. dashboard in M9) |
-| Playable prototype readiness | ~78 % | M1–M6 core; not a release metric |
-| Milestones completed | 5 / 12 | M1, M2, M4, M5, M6 |
-| Milestones in progress | 1 / 12 | M3 |
-| Tests | 417 | `pnpm test` |
+| Metric                         |    Value | Notes                                                     |
+| ------------------------------ | -------: | --------------------------------------------------------- |
+| **Release progress (primary)** | **53 %** | Average of milestone completion % (see below)             |
+| Deliverable work invested      |     62 % | Average including partial pre-work (e.g. dashboard in M9) |
+| Playable prototype readiness   |    ~78 % | M1–M6 core; not a release metric                          |
+| Milestones completed           |   5 / 12 | M1, M2, M4, M5, M6                                        |
+| Milestones in progress         |   1 / 12 | M3                                                        |
+| Tests                          |      417 | `pnpm test`                                               |
 
 **Primary formula:**
 
@@ -68,21 +68,21 @@ Update deliverable rows when a step ships; set milestone % to the **average of i
 
 ## Milestone Rollup
 
-| MS | Name | Status | MS % | Weight | Contribution |
-|---|---|---|---:|---:|---:|
-| M1 | Foundation | ✅ Completed | 100 | 8,3 % | 8,3 % |
-| M2 | Architecture | ✅ Completed | 100 | 8,3 % | 8,3 % |
-| M3 | Governance & Standards | 🟡 In Progress | 85 | 8,3 % | 7,1 % |
-| M4 | Core Gameplay | ✅ Completed | 100 | 8,3 % | 8,3 % |
-| M5 | Economy | ✅ Completed | 100 | 8,3 % | 8,3 % |
-| M6 | Logistics | ✅ Completed | 100 | 8,3 % | 8,3 % |
-| M7 | World Simulation | ⚪ Planned | 0 | 8,3 % | 0 % |
-| M8 | NPC Economy | ⚪ Planned | 0 | 8,3 % | 0 % |
-| M9 | User Interface | ⚪ Planned* | 35 | 8,3 % | 2,9 % |
-| M10 | Content Expansion | ⚪ Planned | 10 | 8,3 % | 0,8 % |
-| M11 | Polish | ⚪ Planned | 0 | 8,3 % | 0 % |
-| M12 | Release | ⚪ Planned | 0 | 8,3 % | 0 % |
-| | **Total** | | **53 %** | **100 %** | **53 %** |
+| MS  | Name                   | Status         |     MS % |    Weight | Contribution |
+| --- | ---------------------- | -------------- | -------: | --------: | -----------: |
+| M1  | Foundation             | ✅ Completed   |      100 |     8,3 % |        8,3 % |
+| M2  | Architecture           | ✅ Completed   |      100 |     8,3 % |        8,3 % |
+| M3  | Governance & Standards | 🟡 In Progress |       85 |     8,3 % |        7,1 % |
+| M4  | Core Gameplay          | ✅ Completed   |      100 |     8,3 % |        8,3 % |
+| M5  | Economy                | ✅ Completed   |      100 |     8,3 % |        8,3 % |
+| M6  | Logistics              | ✅ Completed   |      100 |     8,3 % |        8,3 % |
+| M7  | World Simulation       | ⚪ Planned     |        0 |     8,3 % |          0 % |
+| M8  | NPC Economy            | ⚪ Planned     |        0 |     8,3 % |          0 % |
+| M9  | User Interface         | ⚪ Planned*    |       35 |     8,3 % |        2,9 % |
+| M10 | Content Expansion      | ⚪ Planned     |       10 |     8,3 % |        0,8 % |
+| M11 | Polish                 | ⚪ Planned     |        0 |     8,3 % |          0 % |
+| M12 | Release                | ⚪ Planned     |        0 |     8,3 % |          0 % |
+|     | **Total**              |                | **53 %** | **100 %** |     **53 %** |
 
 \*M9 is officially planned; dashboard, charts, tutorial and WebSocket from M4/M5 count as pre-work in the deliverable matrix below.
 
@@ -90,128 +90,128 @@ Update deliverable rows when a step ships; set milestone % to the **average of i
 
 ### M1 – Foundation ✅ (100 %)
 
-| Deliverable | % | Evidence |
-|---|---:|---|
-| Repository / Monorepo | 100 | Git repo, pnpm workspaces |
-| Build system / TypeScript | 100 | `pnpm build`, `tsc`, Vitest |
-| Tooling | 100 | ESLint, CI hooks |
-| Documentation structure | 100 | `docs/` tree, ADRs |
-| **Milestone average** | **100** | Closed |
+| Deliverable               |       % | Evidence                    |
+| ------------------------- | ------: | --------------------------- |
+| Repository / Monorepo     |     100 | Git repo, pnpm workspaces   |
+| Build system / TypeScript |     100 | `pnpm build`, `tsc`, Vitest |
+| Tooling                   |     100 | ESLint, CI hooks            |
+| Documentation structure   |     100 | `docs/` tree, ADRs          |
+| **Milestone average**     | **100** | Closed                      |
 
 ### M2 – Architecture ✅ (100 %)
 
-| Deliverable | % | Evidence |
-|---|---:|---|
-| Clean Architecture / DDD layers | 100 | `src/domain`, `application`, `infrastructure` |
-| Repository pattern | 100 | Domain repository ports + in-memory impl |
-| Event system | 100 | `DomainEvent`, `SimulationEngine` queue |
-| CQRS lite | 100 | Use cases + query handlers |
-| Simulation architecture | 100 | `SimulationEngine`, systems pipeline |
-| **Milestone average** | **100** | AUD-001 |
+| Deliverable                     |       % | Evidence                                      |
+| ------------------------------- | ------: | --------------------------------------------- |
+| Clean Architecture / DDD layers |     100 | `src/domain`, `application`, `infrastructure` |
+| Repository pattern              |     100 | Domain repository ports + in-memory impl      |
+| Event system                    |     100 | `DomainEvent`, `SimulationEngine` queue       |
+| CQRS lite                       |     100 | Use cases + query handlers                    |
+| Simulation architecture         |     100 | `SimulationEngine`, systems pipeline          |
+| **Milestone average**           | **100** | AUD-001                                       |
 
 ### M3 – Governance & Standards 🟡 (85 %)
 
-| Deliverable | % | Evidence |
-|---|---:|---|
-| Project quality / roadmap / milestone plan | 95 | `docs/project-management/*` |
-| Release & quality gates | 85 | `QUALITY_GATES.md`, metrics |
-| Error / logging / validation / result patterns | 90 | Implemented + docs |
-| Testing & dependency rules | 85 | `TESTING_STRATEGY.md`, architecture tests |
-| Cursor rules alignment | 60 | Partial; ongoing |
-| **Milestone average** | **85** | Exit criteria not formally closed |
+| Deliverable                                    |      % | Evidence                                  |
+| ---------------------------------------------- | -----: | ----------------------------------------- |
+| Project quality / roadmap / milestone plan     |     95 | `docs/project-management/*`               |
+| Release & quality gates                        |     85 | `QUALITY_GATES.md`, metrics               |
+| Error / logging / validation / result patterns |     90 | Implemented + docs                        |
+| Testing & dependency rules                     |     85 | `TESTING_STRATEGY.md`, architecture tests |
+| Cursor rules alignment                         |     60 | Partial; ongoing                          |
+| **Milestone average**                          | **85** | Exit criteria not formally closed         |
 
 ### M4 – Core Gameplay ✅ (100 %)
 
-| Deliverable | % | Evidence |
-|---|---:|---|
-| Companies / buildings / resources | 100 | Domain + content loaders |
-| Recipes / production | 100 | `ProductionJob`, simulation system |
-| Warehouses (phase 1) | 100 | `BuildingStorage`, inbound transport |
-| Employees / research / finance | 100 | Full loops + savegame |
-| Save / load | 100 | `GameStateSerializer`, schema v1 |
-| **Milestone average** | **100** | M4 closure report |
+| Deliverable                       |       % | Evidence                             |
+| --------------------------------- | ------: | ------------------------------------ |
+| Companies / buildings / resources |     100 | Domain + content loaders             |
+| Recipes / production              |     100 | `ProductionJob`, simulation system   |
+| Warehouses (phase 1)              |     100 | `BuildingStorage`, inbound transport |
+| Employees / research / finance    |     100 | Full loops + savegame                |
+| Save / load                       |     100 | `GameStateSerializer`, schema v1     |
+| **Milestone average**             | **100** | M4 closure report                    |
 
 ### M5 – Economy ✅ (100 %)
 
-| Deliverable | % | Evidence |
-|---|---:|---|
-| Dynamic prices / supply & demand | 100 | M5-1, `MarketPriceCalculator` |
-| Trading / market fees | 100 | M5-3, `MarketFeePolicy` |
-| Taxes / contracts / inflation | 100 | M5-4, finance + contract systems |
-| Dashboard economy UX | 100 | M5-2, KPIs, charts, Wirtschaft section |
-| **Milestone average** | **100** | AUD-003 |
+| Deliverable                      |       % | Evidence                               |
+| -------------------------------- | ------: | -------------------------------------- |
+| Dynamic prices / supply & demand |     100 | M5-1, `MarketPriceCalculator`          |
+| Trading / market fees            |     100 | M5-3, `MarketFeePolicy`                |
+| Taxes / contracts / inflation    |     100 | M5-4, finance + contract systems       |
+| Dashboard economy UX             |     100 | M5-2, KPIs, charts, Wirtschaft section |
+| **Milestone average**            | **100** | AUD-003                                |
 
 ### M6 – Logistics ✅ (100 %)
 
-| Deliverable | % | Evidence |
-|---|---:|---|
-| Capacities | 100 | M6-1 ✅ `storageCapacity`, enforcement, dashboard |
-| Warehouses | 100 | Phase-1 storage + inbound transport (multi-warehouse routing → M7+) |
-| Transport routes | 100 | M6-2 ✅ content routes, duration policy, dashboard |
-| Networks | 100 | M6-3 ✅ `throughputCapacity`, WAITING queue, FIFO dispatch |
-| Vehicles | 100 | DD-022 V1 waiver — schema/art docs; no sim entities (AUD-004) |
-| **Milestone average (gate)** | **100** | Gate review `M6_LOGISTICS_GATE_REVIEW_REPORT.md` |
-| **Deliverable average** | **100** | |
+| Deliverable                  |       % | Evidence                                                            |
+| ---------------------------- | ------: | ------------------------------------------------------------------- |
+| Capacities                   |     100 | M6-1 ✅ `storageCapacity`, enforcement, dashboard                   |
+| Warehouses                   |     100 | Phase-1 storage + inbound transport (multi-warehouse routing → M7+) |
+| Transport routes             |     100 | M6-2 ✅ content routes, duration policy, dashboard                  |
+| Networks                     |     100 | M6-3 ✅ `throughputCapacity`, WAITING queue, FIFO dispatch          |
+| Vehicles                     |     100 | DD-022 V1 waiver — schema/art docs; no sim entities (AUD-004)       |
+| **Milestone average (gate)** | **100** | Gate review `M6_LOGISTICS_GATE_REVIEW_REPORT.md`                    |
+| **Deliverable average**      | **100** |                                                                     |
 
 ### M7 – World Simulation ⚪ (0 %)
 
-| Deliverable | % | Next step |
-|---|---:|---|
-| Regions / map / biomes | 0 | Not started |
-| Infrastructure / cities | 0 | Not started |
-| Regional resources | 0 | Not started |
-| **Milestone average** | **0** | Unblocked — M6 gate passed |
+| Deliverable             |     % | Next step                  |
+| ----------------------- | ----: | -------------------------- |
+| Regions / map / biomes  |     0 | Not started                |
+| Infrastructure / cities |     0 | Not started                |
+| Regional resources      |     0 | Not started                |
+| **Milestone average**   | **0** | Unblocked — M6 gate passed |
 
 ### M8 – NPC Economy ⚪ (0 %)
 
-| Deliverable | % | Next step |
-|---|---:|---|
-| AI companies / expansion | 0 | Not started |
-| Market behaviour / competition | 0 | Not started |
-| Bankruptcy / long-term sim | 0 | Not started |
-| **Milestone average** | **0** | Blocked on M7 |
+| Deliverable                    |     % | Next step     |
+| ------------------------------ | ----: | ------------- |
+| AI companies / expansion       |     0 | Not started   |
+| Market behaviour / competition |     0 | Not started   |
+| Bankruptcy / long-term sim     |     0 | Not started   |
+| **Milestone average**          | **0** | Blocked on M7 |
 
 ### M9 – User Interface ⚪ (35 % milestone · 49 % deliverable work)
 
-| Deliverable | % | Evidence / gap |
-|---|---:|---|
-| Dashboard | 70 | `DashboardShell`, KPI strip, sections |
-| Windows / drill-down | 40 | `DashboardDetailPanel`; not full window model |
-| Charts | 65 | Tick, market, energy, inventory, price index |
-| Notifications | 50 | Toasts; no full notification center |
-| Tutorials | 60 | Checklist; not full guided flow |
-| Accessibility | 10 | Minimal ARIA; style guide not fully applied |
-| **Milestone average (gate)** | **35** | Pre-work from M4/M5; exit criteria open |
-| **Deliverable average** | **49** | |
+| Deliverable                  |      % | Evidence / gap                                |
+| ---------------------------- | -----: | --------------------------------------------- |
+| Dashboard                    |     70 | `DashboardShell`, KPI strip, sections         |
+| Windows / drill-down         |     40 | `DashboardDetailPanel`; not full window model |
+| Charts                       |     65 | Tick, market, energy, inventory, price index  |
+| Notifications                |     50 | Toasts; no full notification center           |
+| Tutorials                    |     60 | Checklist; not full guided flow               |
+| Accessibility                |     10 | Minimal ARIA; style guide not fully applied   |
+| **Milestone average (gate)** | **35** | Pre-work from M4/M5; exit criteria open       |
+| **Deliverable average**      | **49** |                                               |
 
 ### M10 – Content Expansion ⚪ (10 %)
 
-| Deliverable | % | Evidence |
-|---|---:|---|
-| Buildings / resources / recipes | 25 | Starter set in `game-content/` |
-| Technologies / employees | 15 | Loaders + small catalog |
-| Industries / scenarios | 0 | Not started |
-| Vehicles (content) | 5 | `Vehicle.schema.md`, art library docs |
-| Content pipeline / registry | 20 | Loaders, validation; global registry partial |
-| **Milestone average** | **10** | |
+| Deliverable                     |      % | Evidence                                     |
+| ------------------------------- | -----: | -------------------------------------------- |
+| Buildings / resources / recipes |     25 | Starter set in `game-content/`               |
+| Technologies / employees        |     15 | Loaders + small catalog                      |
+| Industries / scenarios          |      0 | Not started                                  |
+| Vehicles (content)              |      5 | `Vehicle.schema.md`, art library docs        |
+| Content pipeline / registry     |     20 | Loaders, validation; global registry partial |
+| **Milestone average**           | **10** |                                              |
 
 ### M11 – Polish ⚪ (0 %)
 
-| Deliverable | % | Next step |
-|---|---:|---|
-| Animations / effects / audio | 0 | Art docs only |
-| Localization / balancing | 0 | Not started |
-| Optimization pass | 0 | Not started |
-| **Milestone average** | **0** | After M9–M10 |
+| Deliverable                  |     % | Next step     |
+| ---------------------------- | ----: | ------------- |
+| Animations / effects / audio |     0 | Art docs only |
+| Localization / balancing     |     0 | Not started   |
+| Optimization pass            |     0 | Not started   |
+| **Milestone average**        | **0** | After M9–M10  |
 
 ### M12 – Release ⚪ (0 %)
 
-| Deliverable | % | Next step |
-|---|---:|---|
-| Release candidate / QA approval | 0 | Not started |
-| Final documentation | 0 | Partial |
-| Stable savegames / performance validation | 0 | v1 saves exist; release gate open |
-| **Milestone average** | **0** | Final gate |
+| Deliverable                               |     % | Next step                         |
+| ----------------------------------------- | ----: | --------------------------------- |
+| Release candidate / QA approval           |     0 | Not started                       |
+| Final documentation                       |     0 | Partial                           |
+| Stable savegames / performance validation |     0 | v1 saves exist; release gate open |
+| **Milestone average**                     | **0** | Final gate                        |
 
 ## Maintenance
 
@@ -231,21 +231,21 @@ When completing a milestone step:
 
 Foundation building blocks shared across the project.
 
-| Component | Path | Description |
-|---|---|---|
-| `Identifier<T>` | `core/Identifier.ts` | Strongly typed, immutable global identifiers |
-| `Entity<TBrand>` | `core/Entity.ts` | Base class for identity-based domain objects |
-| `ValueObject` | `core/ValueObject.ts` | Base class for immutable value-based equality |
-| `AggregateRoot<TBrand>` | `core/AggregateRoot.ts` | Entity with domain event collection |
-| `Result<T>` | `result/Result.ts` | Explicit success/failure handling |
-| `DomainEvent` | `events/DomainEvent.ts` | Immutable domain event base class |
-| `IEventBus` | `events/IEventBus.ts` | Event bus contract for domain event dispatch |
-| `InMemoryEventBus` | `events/InMemoryEventBus.ts` | Deterministic in-process event bus |
-| `DomainError` | `errors/DomainError.ts` | Structured domain error base class |
-| `ValidationError` | `errors/ValidationError.ts` | Validation-specific domain error |
-| `Guard` | `validation/Guard.ts` | Shared validation helpers returning `Result` |
-| `Clock` | `time/Clock.ts` | Time abstraction interface |
-| `ManualClock` | `time/ManualClock.ts` | Deterministic clock for tests and simulation |
+| Component               | Path                         | Description                                   |
+| ----------------------- | ---------------------------- | --------------------------------------------- |
+| `Identifier<T>`         | `core/Identifier.ts`         | Strongly typed, immutable global identifiers  |
+| `Entity<TBrand>`        | `core/Entity.ts`             | Base class for identity-based domain objects  |
+| `ValueObject`           | `core/ValueObject.ts`        | Base class for immutable value-based equality |
+| `AggregateRoot<TBrand>` | `core/AggregateRoot.ts`      | Entity with domain event collection           |
+| `Result<T>`             | `result/Result.ts`           | Explicit success/failure handling             |
+| `DomainEvent`           | `events/DomainEvent.ts`      | Immutable domain event base class             |
+| `IEventBus`             | `events/IEventBus.ts`        | Event bus contract for domain event dispatch  |
+| `InMemoryEventBus`      | `events/InMemoryEventBus.ts` | Deterministic in-process event bus            |
+| `DomainError`           | `errors/DomainError.ts`      | Structured domain error base class            |
+| `ValidationError`       | `errors/ValidationError.ts`  | Validation-specific domain error              |
+| `Guard`                 | `validation/Guard.ts`        | Shared validation helpers returning `Result`  |
+| `Clock`                 | `time/Clock.ts`              | Time abstraction interface                    |
+| `ManualClock`           | `time/ManualClock.ts`        | Deterministic clock for tests and simulation  |
 
 ### Design decisions
 
@@ -268,13 +268,13 @@ Business aggregates and domain events.
 
 ### Company aggregate
 
-| Item | Path |
-|---|---|
-| Aggregate | `company/Company.ts` |
-| Identifiers | `company/CompanyId.ts` (`CompanyId`, `PlayerId`) |
-| Status enum | `company/CompanyStatus.ts` |
-| Domain event | `company/events/CompanyFounded.ts` |
-| Tests | `company/Company.test.ts` |
+| Item         | Path                                             |
+| ------------ | ------------------------------------------------ |
+| Aggregate    | `company/Company.ts`                             |
+| Identifiers  | `company/CompanyId.ts` (`CompanyId`, `PlayerId`) |
+| Status enum  | `company/CompanyStatus.ts`                       |
+| Domain event | `company/events/CompanyFounded.ts`               |
+| Tests        | `company/Company.test.ts`                        |
 
 **Behaviour:**
 
@@ -286,14 +286,14 @@ Business aggregates and domain events.
 
 ### Building aggregate
 
-| Item | Path |
-|---|---|
-| Aggregate | `building/Building.ts` |
-| Identifiers | `building/BuildingId.ts` (`BuildingId`, `BuildingTypeId`) |
-| Value object | `building/Position.ts` |
-| Status enum | `building/BuildingStatus.ts` |
+| Item         | Path                                                                                                      |
+| ------------ | --------------------------------------------------------------------------------------------------------- |
+| Aggregate    | `building/Building.ts`                                                                                    |
+| Identifiers  | `building/BuildingId.ts` (`BuildingId`, `BuildingTypeId`)                                                 |
+| Value object | `building/Position.ts`                                                                                    |
+| Status enum  | `building/BuildingStatus.ts`                                                                              |
 | Domain event | `building/events/BuildingPlaced.ts`, `BuildingConstructionStarted.ts`, `BuildingConstructionCompleted.ts` |
-| Tests | `building/Building.test.ts` |
+| Tests        | `building/Building.test.ts`                                                                               |
 
 **Behaviour:**
 
@@ -309,15 +309,15 @@ Business aggregates and domain events.
 
 ### Inventory aggregate
 
-| Item | Path |
-|---|---|
-| Aggregate | `inventory/Inventory.ts` |
-| Identifiers | `inventory/InventoryId.ts` |
-| Status enum | `inventory/InventoryStatus.ts` |
-| Item snapshot | `inventory/InventoryItem.ts` |
-| Domain event | `inventory/events/InventoryChanged.ts` |
-| Repository | `inventory/InventoryRepository.ts` |
-| Tests | `inventory/Inventory.test.ts` |
+| Item          | Path                                   |
+| ------------- | -------------------------------------- |
+| Aggregate     | `inventory/Inventory.ts`               |
+| Identifiers   | `inventory/InventoryId.ts`             |
+| Status enum   | `inventory/InventoryStatus.ts`         |
+| Item snapshot | `inventory/InventoryItem.ts`           |
+| Domain event  | `inventory/events/InventoryChanged.ts` |
+| Repository    | `inventory/InventoryRepository.ts`     |
+| Tests         | `inventory/Inventory.test.ts`          |
 
 **Behaviour:**
 
@@ -328,14 +328,14 @@ Business aggregates and domain events.
 
 ### Employee aggregate
 
-| Item | Path |
-|---|---|
-| Aggregate | `employee/Employee.ts` |
-| Identifiers | `employee/EmployeeId.ts` (`EmployeeId`, `EmployeeTypeId`) |
-| Status enum | `employee/EmployeeStatus.ts` |
+| Item          | Path                                                                                                     |
+| ------------- | -------------------------------------------------------------------------------------------------------- |
+| Aggregate     | `employee/Employee.ts`                                                                                   |
+| Identifiers   | `employee/EmployeeId.ts` (`EmployeeId`, `EmployeeTypeId`)                                                |
+| Status enum   | `employee/EmployeeStatus.ts`                                                                             |
 | Domain events | `employee/events/EmployeeHired.ts`, `EmployeeAssignedToBuilding.ts`, `EmployeeUnassignedFromBuilding.ts` |
-| Repository | `employee/EmployeeRepository.ts` |
-| Tests | `employee/Employee.test.ts` |
+| Repository    | `employee/EmployeeRepository.ts`                                                                         |
+| Tests         | `employee/Employee.test.ts`                                                                              |
 
 **Behaviour:**
 
@@ -348,14 +348,14 @@ Business aggregates and domain events.
 
 ### ProductionJob aggregate
 
-| Item | Path |
-|---|---|
-| Aggregate | `production/ProductionJob.ts` |
-| Identifiers | `production/ProductionJobId.ts`, `production/RecipeId.ts` |
-| Status enum | `production/ProductionJobStatus.ts` |
+| Item          | Path                                                               |
+| ------------- | ------------------------------------------------------------------ |
+| Aggregate     | `production/ProductionJob.ts`                                      |
+| Identifiers   | `production/ProductionJobId.ts`, `production/RecipeId.ts`          |
+| Status enum   | `production/ProductionJobStatus.ts`                                |
 | Domain events | `production/events/ProductionStarted.ts`, `ProductionCompleted.ts` |
-| Repository | `production/ProductionJobRepository.ts` |
-| Tests | `production/ProductionJob.test.ts` |
+| Repository    | `production/ProductionJobRepository.ts`                            |
+| Tests         | `production/ProductionJob.test.ts`                                 |
 
 **Behaviour:**
 
@@ -366,17 +366,17 @@ Business aggregates and domain events.
 
 ### FinanceAccount aggregate
 
-| Item | Path |
-|---|---|
-| Aggregate | `finance/FinanceAccount.ts` |
-| Identifiers | `finance/FinanceAccountId.ts`, `finance/FinanceTransactionId.ts` |
-| Transaction snapshot | `finance/FinanceTransaction.ts` |
-| Enums | `finance/FinanceTransactionType.ts`, `finance/FinanceTransactionDirection.ts` |
-| Constants | `finance/FinanceConstants.ts` (`STARTING_MONEY`), `finance/TaxConstants.ts` |
-| Tax | `finance/TaxCalculator.ts` |
-| Domain events | `finance/events/FinanceAccountCreated.ts`, `FinanceTransactionRecorded.ts` |
-| Repository | `finance/FinanceRepository.ts` |
-| Tests | `finance/FinanceAccount.test.ts` |
+| Item                 | Path                                                                          |
+| -------------------- | ----------------------------------------------------------------------------- |
+| Aggregate            | `finance/FinanceAccount.ts`                                                   |
+| Identifiers          | `finance/FinanceAccountId.ts`, `finance/FinanceTransactionId.ts`              |
+| Transaction snapshot | `finance/FinanceTransaction.ts`                                               |
+| Enums                | `finance/FinanceTransactionType.ts`, `finance/FinanceTransactionDirection.ts` |
+| Constants            | `finance/FinanceConstants.ts` (`STARTING_MONEY`), `finance/TaxConstants.ts`   |
+| Tax                  | `finance/TaxCalculator.ts`                                                    |
+| Domain events        | `finance/events/FinanceAccountCreated.ts`, `FinanceTransactionRecorded.ts`    |
+| Repository           | `finance/FinanceRepository.ts`                                                |
+| Tests                | `finance/FinanceAccount.test.ts`                                              |
 
 **Behaviour:**
 
@@ -389,13 +389,13 @@ Business aggregates and domain events.
 
 ### SupplyContract aggregate
 
-| Item | Path |
-|---|---|
-| Aggregate | `contract/SupplyContract.ts` |
-| Identifiers | `contract/SupplyContractId.ts` |
-| Constants | `contract/SupplyContractConstants.ts` |
-| Repository | `contract/SupplyContractRepository.ts` |
-| Tests | `contract/SupplyContract.test.ts` |
+| Item        | Path                                   |
+| ----------- | -------------------------------------- |
+| Aggregate   | `contract/SupplyContract.ts`           |
+| Identifiers | `contract/SupplyContractId.ts`         |
+| Constants   | `contract/SupplyContractConstants.ts`  |
+| Repository  | `contract/SupplyContractRepository.ts` |
+| Tests       | `contract/SupplyContract.test.ts`      |
 
 **Behaviour:**
 
@@ -406,17 +406,17 @@ Business aggregates and domain events.
 
 ### Market aggregate
 
-| Item | Path |
-|---|---|
-| Aggregate | `market/Market.ts` |
-| Identifiers | `market/MarketId.ts` |
-| Price snapshot | `market/ResourceMarketPrice.ts` |
-| Constants | `market/MarketConstants.ts` (`GLOBAL_MARKET_ID`) |
+| Item             | Path                                                                                                                                                                                                           |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Aggregate        | `market/Market.ts`                                                                                                                                                                                             |
+| Identifiers      | `market/MarketId.ts`                                                                                                                                                                                           |
+| Price snapshot   | `market/ResourceMarketPrice.ts`                                                                                                                                                                                |
+| Constants        | `market/MarketConstants.ts` (`GLOBAL_MARKET_ID`)                                                                                                                                                               |
 | Price simulation | `market/MarketPriceCalculator.ts`, `market/MarketPriceConstants.ts`, `market/MarketPressureCalculator.ts`, `market/MarketSupplyAggregator.ts`, `market/InflationCalculator.ts`, `market/InflationConstants.ts` |
-| Read projection | `read-models/projectMarketPrice.ts`, `read-models/EconomyReadModel.ts` |
-| Domain event | `market/events/MarketPriceChanged.ts` |
-| Repository | `market/MarketRepository.ts` |
-| Tests | `market/Market.test.ts` |
+| Read projection  | `read-models/projectMarketPrice.ts`, `read-models/EconomyReadModel.ts`                                                                                                                                         |
+| Domain event     | `market/events/MarketPriceChanged.ts`                                                                                                                                                                          |
+| Repository       | `market/MarketRepository.ts`                                                                                                                                                                                   |
+| Tests            | `market/Market.test.ts`                                                                                                                                                                                        |
 
 **Behaviour:**
 
@@ -429,14 +429,14 @@ Business aggregates and domain events.
 
 ### Shared value objects
 
-| Item | Path |
-|---|---|
-| `Money` | `shared/Money.ts` |
-| `Quantity` | `shared/Quantity.ts` |
-| `ResourceAmount` | `shared/ResourceAmount.ts` |
-| `ResourceTypeId` | `shared/ResourceTypeId.ts` |
-| `Capacity` | `shared/Capacity.ts` |
-| Tests | `shared/Money.test.ts`, `shared/Quantity.test.ts`, `shared/ResourceAmount.test.ts`, `shared/Capacity.test.ts` |
+| Item             | Path                                                                                                          |
+| ---------------- | ------------------------------------------------------------------------------------------------------------- |
+| `Money`          | `shared/Money.ts`                                                                                             |
+| `Quantity`       | `shared/Quantity.ts`                                                                                          |
+| `ResourceAmount` | `shared/ResourceAmount.ts`                                                                                    |
+| `ResourceTypeId` | `shared/ResourceTypeId.ts`                                                                                    |
+| `Capacity`       | `shared/Capacity.ts`                                                                                          |
+| Tests            | `shared/Money.test.ts`, `shared/Quantity.test.ts`, `shared/ResourceAmount.test.ts`, `shared/Capacity.test.ts` |
 
 **Behaviour:**
 
@@ -450,46 +450,46 @@ Business aggregates and domain events.
 
 ### Repository interfaces
 
-| Item | Path |
-|---|---|
-| `CompanyRepository` | `company/CompanyRepository.ts` |
-| `BuildingRepository` | `building/BuildingRepository.ts` |
-| `InventoryRepository` | `inventory/InventoryRepository.ts` |
-| `ProductionJobRepository` | `production/ProductionJobRepository.ts` |
-| `FinanceRepository` | `finance/FinanceRepository.ts` |
-| `MarketRepository` | `market/MarketRepository.ts` |
-| `SupplyContractRepository` | `contract/SupplyContractRepository.ts` |
-| `EmployeeRepository` | `employee/EmployeeRepository.ts` |
+| Item                       | Path                                    |
+| -------------------------- | --------------------------------------- |
+| `CompanyRepository`        | `company/CompanyRepository.ts`          |
+| `BuildingRepository`       | `building/BuildingRepository.ts`        |
+| `InventoryRepository`      | `inventory/InventoryRepository.ts`      |
+| `ProductionJobRepository`  | `production/ProductionJobRepository.ts` |
+| `FinanceRepository`        | `finance/FinanceRepository.ts`          |
+| `MarketRepository`         | `market/MarketRepository.ts`            |
+| `SupplyContractRepository` | `contract/SupplyContractRepository.ts`  |
+| `EmployeeRepository`       | `employee/EmployeeRepository.ts`        |
 
 Persistence contracts for aggregate roots. Implementations belong in Infrastructure.
 
 ### Domain services and ports
 
-| Item | Path |
-|---|---|
+| Item                           | Path                                       |
+| ------------------------------ | ------------------------------------------ |
 | `EmployeeAllocationCalculator` | `employee/EmployeeAllocationCalculator.ts` |
-| `EmployeeAllocationPort` | `employee/EmployeeAllocationPort.ts` |
-| `EmployeePayrollConstants` | `employee/EmployeePayrollConstants.ts` |
-| `EnergyBalancePort` | `energy/EnergyBalancePort.ts` |
+| `EmployeeAllocationPort`       | `employee/EmployeeAllocationPort.ts`       |
+| `EmployeePayrollConstants`     | `employee/EmployeePayrollConstants.ts`     |
+| `EnergyBalancePort`            | `energy/EnergyBalancePort.ts`              |
 
 ### Specifications and policies
 
-| Item | Path |
-|---|---|
-| `Specification<TCandidate, TContext>` | `specifications/Specification.ts` |
-| `AndSpecification` | `specifications/AndSpecification.ts` |
-| `BuildingSupportsRecipeSpecification` | `specifications/production/BuildingSupportsRecipeSpecification.ts` |
-| `RequiredResearchSpecification` | `specifications/research/RequiredResearchSpecification.ts` |
-| `RequiredMilestonesSpecification` | `specifications/research/RequiredMilestonesSpecification.ts` |
-| `BuildingPrerequisitesSpecification` | `specifications/building/BuildingPrerequisitesSpecification.ts` |
-| `EmployeePrerequisitesSpecification` | `specifications/employee/EmployeePrerequisitesSpecification.ts` |
-| `RequiredBuildingTypesSpecification` | `specifications/employee/RequiredBuildingTypesSpecification.ts` |
-| `ResourceListedOnMarketSpecification` | `specifications/market/ResourceListedOnMarketSpecification.ts` |
-| `Policy<TContext, TDecision>` | `policies/Policy.ts` |
-| `ConstructionCostPolicy` | `policies/building/ConstructionCostPolicy.ts` |
-| `InstantTradePricingPolicy` | `policies/market/InstantTradePricingPolicy.ts` |
-| `MarketFeePolicy` | `policies/market/MarketFeePolicy.ts` |
-| Tests | `specifications/**/*.test.ts`, `policies/**/*.test.ts`, `finance/TaxCalculator.test.ts`, `market/InflationCalculator.test.ts` |
+| Item                                  | Path                                                                                                                          |
+| ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `Specification<TCandidate, TContext>` | `specifications/Specification.ts`                                                                                             |
+| `AndSpecification`                    | `specifications/AndSpecification.ts`                                                                                          |
+| `BuildingSupportsRecipeSpecification` | `specifications/production/BuildingSupportsRecipeSpecification.ts`                                                            |
+| `RequiredResearchSpecification`       | `specifications/research/RequiredResearchSpecification.ts`                                                                    |
+| `RequiredMilestonesSpecification`     | `specifications/research/RequiredMilestonesSpecification.ts`                                                                  |
+| `BuildingPrerequisitesSpecification`  | `specifications/building/BuildingPrerequisitesSpecification.ts`                                                               |
+| `EmployeePrerequisitesSpecification`  | `specifications/employee/EmployeePrerequisitesSpecification.ts`                                                               |
+| `RequiredBuildingTypesSpecification`  | `specifications/employee/RequiredBuildingTypesSpecification.ts`                                                               |
+| `ResourceListedOnMarketSpecification` | `specifications/market/ResourceListedOnMarketSpecification.ts`                                                                |
+| `Policy<TContext, TDecision>`         | `policies/Policy.ts`                                                                                                          |
+| `ConstructionCostPolicy`              | `policies/building/ConstructionCostPolicy.ts`                                                                                 |
+| `InstantTradePricingPolicy`           | `policies/market/InstantTradePricingPolicy.ts`                                                                                |
+| `MarketFeePolicy`                     | `policies/market/MarketFeePolicy.ts`                                                                                          |
+| Tests                                 | `specifications/**/*.test.ts`, `policies/**/*.test.ts`, `finance/TaxCalculator.test.ts`, `market/InflationCalculator.test.ts` |
 
 **Behaviour:**
 
@@ -505,13 +505,13 @@ Persistence contracts for aggregate roots. Implementations belong in Infrastruct
 
 ### CompanyResearch aggregate
 
-| Item | Path |
-|---|---|
-| Aggregate | `research/CompanyResearch.ts` |
-| Identifiers | `research/CompanyResearchId.ts`, `research/TechnologyId.ts` |
-| Domain event | `research/events/TechnologyCompleted.ts` |
-| Repository | `research/CompanyResearchRepository.ts` |
-| Tests | `research/CompanyResearch.test.ts` |
+| Item         | Path                                                        |
+| ------------ | ----------------------------------------------------------- |
+| Aggregate    | `research/CompanyResearch.ts`                               |
+| Identifiers  | `research/CompanyResearchId.ts`, `research/TechnologyId.ts` |
+| Domain event | `research/events/TechnologyCompleted.ts`                    |
+| Repository   | `research/CompanyResearchRepository.ts`                     |
+| Tests        | `research/CompanyResearch.test.ts`                          |
 
 **Behaviour:**
 
@@ -522,14 +522,14 @@ Persistence contracts for aggregate roots. Implementations belong in Infrastruct
 
 ### ResearchJob aggregate
 
-| Item | Path |
-|---|---|
-| Aggregate | `research/ResearchJob.ts` |
-| Identifiers | `research/ResearchJobId.ts` |
-| Status | `research/ResearchJobStatus.ts` |
+| Item          | Path                                                         |
+| ------------- | ------------------------------------------------------------ |
+| Aggregate     | `research/ResearchJob.ts`                                    |
+| Identifiers   | `research/ResearchJobId.ts`                                  |
+| Status        | `research/ResearchJobStatus.ts`                              |
 | Domain events | `research/events/ResearchStarted.ts`, `ResearchCompleted.ts` |
-| Repository | `research/ResearchJobRepository.ts` |
-| Tests | `research/ResearchJob.test.ts` |
+| Repository    | `research/ResearchJobRepository.ts`                          |
+| Tests         | `research/ResearchJob.test.ts`                               |
 
 **Behaviour:**
 
@@ -539,13 +539,13 @@ Persistence contracts for aggregate roots. Implementations belong in Infrastruct
 
 ### CompanyMilestones aggregate
 
-| Item | Path |
-|---|---|
-| Aggregate | `milestone/CompanyMilestones.ts` |
-| Identifiers | `milestone/CompanyMilestonesId.ts`, `milestone/MilestoneId.ts` |
-| Domain event | `milestone/events/CompanyMilestoneReached.ts` |
-| Repository | `milestone/CompanyMilestonesRepository.ts` |
-| Tests | `milestone/CompanyMilestones.test.ts` |
+| Item         | Path                                                           |
+| ------------ | -------------------------------------------------------------- |
+| Aggregate    | `milestone/CompanyMilestones.ts`                               |
+| Identifiers  | `milestone/CompanyMilestonesId.ts`, `milestone/MilestoneId.ts` |
+| Domain event | `milestone/events/CompanyMilestoneReached.ts`                  |
+| Repository   | `milestone/CompanyMilestonesRepository.ts`                     |
+| Tests        | `milestone/CompanyMilestones.test.ts`                          |
 
 **Behaviour:**
 
@@ -561,19 +561,19 @@ Loads and validates static game content from `game-content/`.
 
 ### Shared
 
-| Item | Path |
-|---|---|
+| Item           | Path                         |
+| -------------- | ---------------------------- |
 | Content errors | `errors/ContentLoadError.ts` |
 
 ### ResourceType loader
 
-| Item | Path |
-|---|---|
-| Definition | `resource/ResourceTypeDefinition.ts` |
-| Validator | `resource/ResourceTypeValidator.ts` |
-| Registry | `resource/ResourceTypeRegistry.ts` |
-| Loader | `resource/ResourceTypeLoader.ts` |
-| Tests | `resource/ResourceTypeLoader.test.ts` |
+| Item       | Path                                  |
+| ---------- | ------------------------------------- |
+| Definition | `resource/ResourceTypeDefinition.ts`  |
+| Validator  | `resource/ResourceTypeValidator.ts`   |
+| Registry   | `resource/ResourceTypeRegistry.ts`    |
+| Loader     | `resource/ResourceTypeLoader.ts`      |
+| Tests      | `resource/ResourceTypeLoader.test.ts` |
 
 **Pipeline:** discover YAML files → parse → validate schema → check duplicate IDs → register
 
@@ -593,13 +593,13 @@ game-content/resources/
 
 ### BuildingType loader
 
-| Item | Path |
-|---|---|
-| Definition | `building/BuildingTypeDefinition.ts` |
-| Validator | `building/BuildingTypeValidator.ts` |
-| Registry | `building/BuildingTypeRegistry.ts` |
-| Loader | `building/BuildingTypeLoader.ts` |
-| Tests | `building/BuildingTypeLoader.test.ts` |
+| Item       | Path                                  |
+| ---------- | ------------------------------------- |
+| Definition | `building/BuildingTypeDefinition.ts`  |
+| Validator  | `building/BuildingTypeValidator.ts`   |
+| Registry   | `building/BuildingTypeRegistry.ts`    |
+| Loader     | `building/BuildingTypeLoader.ts`      |
+| Tests      | `building/BuildingTypeLoader.test.ts` |
 
 **Content files:**
 
@@ -613,13 +613,13 @@ game-content/buildings/
 
 ### Recipe loader
 
-| Item | Path |
-|---|---|
-| Definition | `recipe/RecipeDefinition.ts` |
-| Validator | `recipe/RecipeValidator.ts` |
-| Registry | `recipe/RecipeRegistry.ts` |
-| Loader | `recipe/RecipeLoader.ts` |
-| Tests | `recipe/RecipeLoader.test.ts` |
+| Item       | Path                          |
+| ---------- | ----------------------------- |
+| Definition | `recipe/RecipeDefinition.ts`  |
+| Validator  | `recipe/RecipeValidator.ts`   |
+| Registry   | `recipe/RecipeRegistry.ts`    |
+| Loader     | `recipe/RecipeLoader.ts`      |
+| Tests      | `recipe/RecipeLoader.test.ts` |
 
 **Content files:**
 
@@ -637,13 +637,13 @@ game-content/recipes/
 
 ### Technology loader
 
-| Item | Path |
-|---|---|
-| Definition | `research/TechnologyDefinition.ts` |
-| Validator | `research/TechnologyValidator.ts` |
-| Registry | `research/TechnologyRegistry.ts` |
-| Loader | `research/TechnologyLoader.ts` |
-| Tests | `research/TechnologyLoader.test.ts` |
+| Item       | Path                                |
+| ---------- | ----------------------------------- |
+| Definition | `research/TechnologyDefinition.ts`  |
+| Validator  | `research/TechnologyValidator.ts`   |
+| Registry   | `research/TechnologyRegistry.ts`    |
+| Loader     | `research/TechnologyLoader.ts`      |
+| Tests      | `research/TechnologyLoader.test.ts` |
 
 **Content files:**
 
@@ -660,13 +660,13 @@ game-content/research/
 
 ### Milestone loader
 
-| Item | Path |
-|---|---|
-| Definition | `milestone/MilestoneDefinition.ts` |
-| Validator | `milestone/MilestoneValidator.ts` |
-| Registry | `milestone/MilestoneRegistry.ts` |
-| Loader | `milestone/MilestoneLoader.ts` |
-| Tests | `milestone/MilestoneLoader.test.ts` |
+| Item       | Path                                |
+| ---------- | ----------------------------------- |
+| Definition | `milestone/MilestoneDefinition.ts`  |
+| Validator  | `milestone/MilestoneValidator.ts`   |
+| Registry   | `milestone/MilestoneRegistry.ts`    |
+| Loader     | `milestone/MilestoneLoader.ts`      |
+| Tests      | `milestone/MilestoneLoader.test.ts` |
 
 **Content files:**
 
@@ -685,14 +685,14 @@ game-content/milestones/
 
 ### Content validation orchestration
 
-| Item | Path |
-|---|---|
-| Orchestrator | `validateGameContent.ts` |
-| Building/recipe consistency | `validateBuildingRecipeConsistency.ts` |
-| Research reference validation | `validateResearchReferences.ts` |
-| Milestone reference validation | `validateMilestoneReferences.ts` |
-| CLI tool | `tools/validate-content.ts` |
-| Tests | `validateGameContent.test.ts`, `validateBuildingRecipeConsistency.test.ts` |
+| Item                           | Path                                                                       |
+| ------------------------------ | -------------------------------------------------------------------------- |
+| Orchestrator                   | `validateGameContent.ts`                                                   |
+| Building/recipe consistency    | `validateBuildingRecipeConsistency.ts`                                     |
+| Research reference validation  | `validateResearchReferences.ts`                                            |
+| Milestone reference validation | `validateMilestoneReferences.ts`                                           |
+| CLI tool                       | `tools/validate-content.ts`                                                |
+| Tests                          | `validateGameContent.test.ts`, `validateBuildingRecipeConsistency.test.ts` |
 
 Run with: `pnpm validate-content` (add `--strict` for bidirectional building/recipe checks)
 
@@ -702,15 +702,15 @@ Run with: `pnpm validate-content` (add `--strict` for bidirectional building/rec
 
 Deterministic simulation engine (first increment).
 
-| Item | Path |
-|---|---|
-| `SimulationEngine` | `engine/SimulationEngine.ts` |
-| `SimulationSystem` | `engine/SimulationSystem.ts` |
-| `TickContext` | `engine/TickContext.ts` |
-| `SimulationState` | `state/SimulationState.ts` |
-| `EventQueue` | `events/EventQueue.ts` |
-| `TickClock` | `time/TickClock.ts` |
-| Tests | `engine/SimulationEngine.test.ts`, `events/EventQueue.test.ts` |
+| Item               | Path                                                           |
+| ------------------ | -------------------------------------------------------------- |
+| `SimulationEngine` | `engine/SimulationEngine.ts`                                   |
+| `SimulationSystem` | `engine/SimulationSystem.ts`                                   |
+| `TickContext`      | `engine/TickContext.ts`                                        |
+| `SimulationState`  | `state/SimulationState.ts`                                     |
+| `EventQueue`       | `events/EventQueue.ts`                                         |
+| `TickClock`        | `time/TickClock.ts`                                            |
+| Tests              | `engine/SimulationEngine.test.ts`, `events/EventQueue.test.ts` |
 
 **Tick sequence:**
 
@@ -721,18 +721,18 @@ Deterministic simulation engine (first increment).
 
 **Simulation systems:**
 
-| Item | Path |
-|---|---|
-| `CompanySimulationSystem` | `systems/company/CompanySimulationSystem.ts` |
-| `BuildingSimulationSystem` | `systems/building/BuildingSimulationSystem.ts` |
-| `TransportSimulationSystem` | `systems/transport/TransportSimulationSystem.ts` |
+| Item                         | Path                                               |
+| ---------------------------- | -------------------------------------------------- |
+| `CompanySimulationSystem`    | `systems/company/CompanySimulationSystem.ts`       |
+| `BuildingSimulationSystem`   | `systems/building/BuildingSimulationSystem.ts`     |
+| `TransportSimulationSystem`  | `systems/transport/TransportSimulationSystem.ts`   |
 | `ProductionSimulationSystem` | `systems/production/ProductionSimulationSystem.ts` |
-| `ResearchSimulationSystem` | `systems/research/ResearchSimulationSystem.ts` |
-| `MarketSimulationSystem` | `systems/market/MarketSimulationSystem.ts` |
-| `MarketSupplyAggregator` | `domain/market/MarketSupplyAggregator.ts` |
-| `ContractSimulationSystem` | `systems/contract/ContractSimulationSystem.ts` |
-| `FinanceSimulationSystem` | `systems/finance/FinanceSimulationSystem.ts` |
-| Factory | `systems/createDefaultSimulationSystems.ts` |
+| `ResearchSimulationSystem`   | `systems/research/ResearchSimulationSystem.ts`     |
+| `MarketSimulationSystem`     | `systems/market/MarketSimulationSystem.ts`         |
+| `MarketSupplyAggregator`     | `domain/market/MarketSupplyAggregator.ts`          |
+| `ContractSimulationSystem`   | `systems/contract/ContractSimulationSystem.ts`     |
+| `FinanceSimulationSystem`    | `systems/finance/FinanceSimulationSystem.ts`       |
+| Factory                      | `systems/createDefaultSimulationSystems.ts`        |
 
 Default order: Company → Building → Transport → Production → Research → Market → Contract → Finance
 
@@ -756,52 +756,52 @@ Contract system fulfills active NPC supply contracts before finance processing; 
 
 Coordinates use cases between domain, infrastructure and simulation.
 
-| Item | Path |
-|---|---|
-| `ApplicationContext` | `bootstrap/ApplicationContext.ts` |
-| `bootstrapApplication` | `bootstrap/bootstrapApplication.ts` |
-| `CreateCompanyCommand` | `commands/CreateCompanyCommand.ts` |
-| `PlaceBuildingCommand` | `commands/PlaceBuildingCommand.ts` |
-| `CreateCompanyUseCase` | `use-cases/CreateCompanyUseCase.ts` |
-| `PlaceBuildingUseCase` | `use-cases/PlaceBuildingUseCase.ts` |
-| `ProductionInventoryService` | `services/ProductionInventoryService.ts` |
-| `MarketPriceSeeder` | `services/MarketPriceSeeder.ts` |
-| `MarketTradeService` | `services/MarketTradeService.ts` |
-| `StartProductionCommand` | `commands/StartProductionCommand.ts` |
-| `SellResourceCommand` | `commands/SellResourceCommand.ts` |
-| `BuyResourceCommand` | `commands/BuyResourceCommand.ts` |
-| `StartProductionUseCase` | `use-cases/StartProductionUseCase.ts` |
-| `SellResourceUseCase` | `use-cases/SellResourceUseCase.ts` |
-| `CompleteTechnologyCommand` | `commands/CompleteTechnologyCommand.ts` |
-| `CompleteTechnologyUseCase` | `use-cases/CompleteTechnologyUseCase.ts` |
-| `StartResearchCommand` | `commands/StartResearchCommand.ts` |
-| `StartResearchUseCase` | `use-cases/StartResearchUseCase.ts` |
-| `HireEmployeeCommand` | `commands/HireEmployeeCommand.ts` |
-| `AssignEmployeeCommand` | `commands/AssignEmployeeCommand.ts` |
-| `HireEmployeeUseCase` | `use-cases/HireEmployeeUseCase.ts` |
-| `AssignEmployeeUseCase` | `use-cases/AssignEmployeeUseCase.ts` |
-| `ResearchCompletionService` | `services/ResearchCompletionService.ts` |
-| `MilestoneEvaluationService` | `services/MilestoneEvaluationService.ts` |
-| `EnergyBalanceService` | `services/EnergyBalanceService.ts` |
-| `TransportLogisticsService` | `services/TransportLogisticsService.ts` |
-| `EmployeeAllocationService` | `services/EmployeeAllocationService.ts` |
-| `TickHistoryService` | `services/TickHistoryService.ts` |
-| `ListFinanceTransactionsQueryHandler` | `queries/ListFinanceTransactionsQueryHandler.ts` |
-| `GameSession` | `facade/GameSession.ts` |
-| `GameSessionDashboardBuilder` | `facade/GameSessionDashboardBuilder.ts` |
-| `SaveGameCommand` | `commands/SaveGameCommand.ts` |
-| `LoadGameCommand` | `commands/LoadGameCommand.ts` |
-| `SaveGameUseCase` | `use-cases/SaveGameUseCase.ts` |
-| `LoadGameUseCase` | `use-cases/LoadGameUseCase.ts` |
-| `restoreApplicationFromSnapshot` | `bootstrap/restoreApplicationFromSnapshot.ts` |
-| `GetCompanyQueryHandler` | `queries/GetCompanyQueryHandler.ts` |
-| `ListBuildingsQueryHandler` | `queries/ListBuildingsQueryHandler.ts` |
-| `GetInventoryQueryHandler` | `queries/GetInventoryQueryHandler.ts` |
-| `GetFinanceQueryHandler` | `queries/GetFinanceQueryHandler.ts` |
-| `GetMarketPricesQueryHandler` | `queries/GetMarketPricesQueryHandler.ts` |
-| Market dashboard charts | `apps/web/src/components/MarketSupplyDemandChart.tsx`, `MarketPressureHistoryChart.tsx`, `MarketPricesTable.tsx` |
-| Read models | `read-models/CompanyReadModel.ts`, `BuildingReadModel.ts`, `InventoryReadModel.ts`, `FinanceReadModel.ts`, `MarketPriceReadModel.ts`, `TickMetricsSnapshot.ts`, `FinanceTransactionReadModel.ts` |
-| Tests | `bootstrap/bootstrapApplication.test.ts`, `services/*.test.ts`, `queries/*.test.ts`, `use-cases/*.test.ts`, `facade/GameSession.test.ts` |
+| Item                                  | Path                                                                                                                                                                                             |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `ApplicationContext`                  | `bootstrap/ApplicationContext.ts`                                                                                                                                                                |
+| `bootstrapApplication`                | `bootstrap/bootstrapApplication.ts`                                                                                                                                                              |
+| `CreateCompanyCommand`                | `commands/CreateCompanyCommand.ts`                                                                                                                                                               |
+| `PlaceBuildingCommand`                | `commands/PlaceBuildingCommand.ts`                                                                                                                                                               |
+| `CreateCompanyUseCase`                | `use-cases/CreateCompanyUseCase.ts`                                                                                                                                                              |
+| `PlaceBuildingUseCase`                | `use-cases/PlaceBuildingUseCase.ts`                                                                                                                                                              |
+| `ProductionInventoryService`          | `services/ProductionInventoryService.ts`                                                                                                                                                         |
+| `MarketPriceSeeder`                   | `services/MarketPriceSeeder.ts`                                                                                                                                                                  |
+| `MarketTradeService`                  | `services/MarketTradeService.ts`                                                                                                                                                                 |
+| `StartProductionCommand`              | `commands/StartProductionCommand.ts`                                                                                                                                                             |
+| `SellResourceCommand`                 | `commands/SellResourceCommand.ts`                                                                                                                                                                |
+| `BuyResourceCommand`                  | `commands/BuyResourceCommand.ts`                                                                                                                                                                 |
+| `StartProductionUseCase`              | `use-cases/StartProductionUseCase.ts`                                                                                                                                                            |
+| `SellResourceUseCase`                 | `use-cases/SellResourceUseCase.ts`                                                                                                                                                               |
+| `CompleteTechnologyCommand`           | `commands/CompleteTechnologyCommand.ts`                                                                                                                                                          |
+| `CompleteTechnologyUseCase`           | `use-cases/CompleteTechnologyUseCase.ts`                                                                                                                                                         |
+| `StartResearchCommand`                | `commands/StartResearchCommand.ts`                                                                                                                                                               |
+| `StartResearchUseCase`                | `use-cases/StartResearchUseCase.ts`                                                                                                                                                              |
+| `HireEmployeeCommand`                 | `commands/HireEmployeeCommand.ts`                                                                                                                                                                |
+| `AssignEmployeeCommand`               | `commands/AssignEmployeeCommand.ts`                                                                                                                                                              |
+| `HireEmployeeUseCase`                 | `use-cases/HireEmployeeUseCase.ts`                                                                                                                                                               |
+| `AssignEmployeeUseCase`               | `use-cases/AssignEmployeeUseCase.ts`                                                                                                                                                             |
+| `ResearchCompletionService`           | `services/ResearchCompletionService.ts`                                                                                                                                                          |
+| `MilestoneEvaluationService`          | `services/MilestoneEvaluationService.ts`                                                                                                                                                         |
+| `EnergyBalanceService`                | `services/EnergyBalanceService.ts`                                                                                                                                                               |
+| `TransportLogisticsService`           | `services/TransportLogisticsService.ts`                                                                                                                                                          |
+| `EmployeeAllocationService`           | `services/EmployeeAllocationService.ts`                                                                                                                                                          |
+| `TickHistoryService`                  | `services/TickHistoryService.ts`                                                                                                                                                                 |
+| `ListFinanceTransactionsQueryHandler` | `queries/ListFinanceTransactionsQueryHandler.ts`                                                                                                                                                 |
+| `GameSession`                         | `facade/GameSession.ts`                                                                                                                                                                          |
+| `GameSessionDashboardBuilder`         | `facade/GameSessionDashboardBuilder.ts`                                                                                                                                                          |
+| `SaveGameCommand`                     | `commands/SaveGameCommand.ts`                                                                                                                                                                    |
+| `LoadGameCommand`                     | `commands/LoadGameCommand.ts`                                                                                                                                                                    |
+| `SaveGameUseCase`                     | `use-cases/SaveGameUseCase.ts`                                                                                                                                                                   |
+| `LoadGameUseCase`                     | `use-cases/LoadGameUseCase.ts`                                                                                                                                                                   |
+| `restoreApplicationFromSnapshot`      | `bootstrap/restoreApplicationFromSnapshot.ts`                                                                                                                                                    |
+| `GetCompanyQueryHandler`              | `queries/GetCompanyQueryHandler.ts`                                                                                                                                                              |
+| `ListBuildingsQueryHandler`           | `queries/ListBuildingsQueryHandler.ts`                                                                                                                                                           |
+| `GetInventoryQueryHandler`            | `queries/GetInventoryQueryHandler.ts`                                                                                                                                                            |
+| `GetFinanceQueryHandler`              | `queries/GetFinanceQueryHandler.ts`                                                                                                                                                              |
+| `GetMarketPricesQueryHandler`         | `queries/GetMarketPricesQueryHandler.ts`                                                                                                                                                         |
+| Market dashboard charts               | `apps/web/src/components/MarketSupplyDemandChart.tsx`, `MarketPressureHistoryChart.tsx`, `MarketPricesTable.tsx`                                                                                 |
+| Read models                           | `read-models/CompanyReadModel.ts`, `BuildingReadModel.ts`, `InventoryReadModel.ts`, `FinanceReadModel.ts`, `MarketPriceReadModel.ts`, `TickMetricsSnapshot.ts`, `FinanceTransactionReadModel.ts` |
+| Tests                                 | `bootstrap/bootstrapApplication.test.ts`, `services/*.test.ts`, `queries/*.test.ts`, `use-cases/*.test.ts`, `facade/GameSession.test.ts`                                                         |
 
 **Behaviour:**
 
@@ -833,35 +833,35 @@ Coordinates use cases between domain, infrastructure and simulation.
 
 ## Infrastructure Module (`src/infrastructure/`)
 
-| Item | Path |
-|---|---|
-| `InMemoryCompanyRepository` | `persistence/InMemoryCompanyRepository.ts` |
-| `InMemoryBuildingRepository` | `persistence/InMemoryBuildingRepository.ts` |
-| `InMemoryInventoryRepository` | `persistence/InMemoryInventoryRepository.ts` |
-| `InMemoryEmployeeRepository` | `persistence/InMemoryEmployeeRepository.ts` |
-| `InMemoryProductionJobRepository` | `persistence/InMemoryProductionJobRepository.ts` |
-| `InMemoryFinanceRepository` | `persistence/InMemoryFinanceRepository.ts` |
-| `InMemoryMarketRepository` | `persistence/InMemoryMarketRepository.ts` |
-| `GameSaveSnapshotV1` | `persistence/savegame/GameSaveSnapshotV1.ts` (incl. `employees`, optional `tickMetricsHistory`) |
-| `GameStateSerializer` | `persistence/savegame/GameStateSerializer.ts` |
-| `FileSavegameStore` | `persistence/savegame/FileSavegameStore.ts` |
-| NestJS API | `apps/api/` |
-| Dashboard WebSocket | `apps/api/src/dashboard/` (`/ws/v1/dashboard`) |
-| Next.js web app | `apps/web/` |
-| Tests | `persistence/InMemory*.test.ts`, `use-cases/SaveGameUseCase.test.ts`, `apps/api/src/**/*.test.ts` |
+| Item                              | Path                                                                                              |
+| --------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `InMemoryCompanyRepository`       | `persistence/InMemoryCompanyRepository.ts`                                                        |
+| `InMemoryBuildingRepository`      | `persistence/InMemoryBuildingRepository.ts`                                                       |
+| `InMemoryInventoryRepository`     | `persistence/InMemoryInventoryRepository.ts`                                                      |
+| `InMemoryEmployeeRepository`      | `persistence/InMemoryEmployeeRepository.ts`                                                       |
+| `InMemoryProductionJobRepository` | `persistence/InMemoryProductionJobRepository.ts`                                                  |
+| `InMemoryFinanceRepository`       | `persistence/InMemoryFinanceRepository.ts`                                                        |
+| `InMemoryMarketRepository`        | `persistence/InMemoryMarketRepository.ts`                                                         |
+| `GameSaveSnapshotV1`              | `persistence/savegame/GameSaveSnapshotV1.ts` (incl. `employees`, optional `tickMetricsHistory`)   |
+| `GameStateSerializer`             | `persistence/savegame/GameStateSerializer.ts`                                                     |
+| `FileSavegameStore`               | `persistence/savegame/FileSavegameStore.ts`                                                       |
+| NestJS API                        | `apps/api/`                                                                                       |
+| Dashboard WebSocket               | `apps/api/src/dashboard/` (`/ws/v1/dashboard`)                                                    |
+| Next.js web app                   | `apps/web/`                                                                                       |
+| Tests                             | `persistence/InMemory*.test.ts`, `use-cases/SaveGameUseCase.test.ts`, `apps/api/src/**/*.test.ts` |
 
 ---
 
 ## API Module (`apps/api/`)
 
-| Item | Path |
-|---|---|
-| Entry point | `src/main.ts` |
-| Root module | `src/app.module.ts` |
-| Game module | `src/game/game.module.ts` |
-| Session service | `src/game/game-session.service.ts` |
-| REST controller | `src/game/game.controller.ts` |
-| Path resolution | `src/config/project-paths.ts` |
+| Item                | Path                                 |
+| ------------------- | ------------------------------------ |
+| Entry point         | `src/main.ts`                        |
+| Root module         | `src/app.module.ts`                  |
+| Game module         | `src/game/game.module.ts`            |
+| Session service     | `src/game/game-session.service.ts`   |
+| REST controller     | `src/game/game.controller.ts`        |
+| Path resolution     | `src/config/project-paths.ts`        |
 | API envelope filter | `src/common/api-exception.filter.ts` |
 
 **Behaviour:**
@@ -873,40 +873,40 @@ Coordinates use cases between domain, infrastructure and simulation.
 
 **API routes:**
 
-| Method | Path | Action |
-|---|---|---|
-| GET | `/api/dashboard` | Aggregated session snapshot |
-| GET | `/api/dashboard/history` | Tick metrics history for charts (`fromTick`, `toTick`, `limit`) |
-| WS | `/ws/v1/dashboard` | Live refresh event `dashboard:refresh` after ticks and session mutations |
-| POST | `/api/session/new` | Start new game |
-| POST | `/api/session/save` | Persist to `saves/browser-session.json` |
-| POST | `/api/session/load` | Restore from save file |
-| POST | `/api/simulation/tick` | Advance one or more ticks (`{ count?: number }`) |
-| POST | `/api/buildings/place` | Place building |
-| POST | `/api/production/start` | Start recipe on building |
-| POST | `/api/research/start` | Start technology research |
-| POST | `/api/employees/hire` | Hire employee |
-| POST | `/api/employees/assign` | Assign employee to building |
-| POST | `/api/market/sell` | Sell resources |
-| POST | `/api/market/buy` | Buy resources |
+| Method | Path                     | Action                                                                   |
+| ------ | ------------------------ | ------------------------------------------------------------------------ |
+| GET    | `/api/dashboard`         | Aggregated session snapshot                                              |
+| GET    | `/api/dashboard/history` | Tick metrics history for charts (`fromTick`, `toTick`, `limit`)          |
+| WS     | `/ws/v1/dashboard`       | Live refresh event `dashboard:refresh` after ticks and session mutations |
+| POST   | `/api/session/new`       | Start new game                                                           |
+| POST   | `/api/session/save`      | Persist to `saves/browser-session.json`                                  |
+| POST   | `/api/session/load`      | Restore from save file                                                   |
+| POST   | `/api/simulation/tick`   | Advance one or more ticks (`{ count?: number }`)                         |
+| POST   | `/api/buildings/place`   | Place building                                                           |
+| POST   | `/api/production/start`  | Start recipe on building                                                 |
+| POST   | `/api/research/start`    | Start technology research                                                |
+| POST   | `/api/employees/hire`    | Hire employee                                                            |
+| POST   | `/api/employees/assign`  | Assign employee to building                                              |
+| POST   | `/api/market/sell`       | Sell resources                                                           |
+| POST   | `/api/market/buy`        | Buy resources                                                            |
 
 ---
 
 ## Web Module (`apps/web/`)
 
-| Item | Path |
-|---|---|
-| Next.js app | `src/app/page.tsx`, `src/app/layout.tsx` |
-| Dashboard shell | `src/components/DashboardShell.tsx` |
-| Detail panel | `src/components/DashboardDetailPanel.tsx` |
-| Tick history charts | `src/components/TickHistoryCharts.tsx` |
-| Inventory history chart | `src/components/InventoryHistoryChart.tsx` |
-| Energy history chart | `src/components/EnergyHistoryChart.tsx` |
+| Item                       | Path                                         |
+| -------------------------- | -------------------------------------------- |
+| Next.js app                | `src/app/page.tsx`, `src/app/layout.tsx`     |
+| Dashboard shell            | `src/components/DashboardShell.tsx`          |
+| Detail panel               | `src/components/DashboardDetailPanel.tsx`    |
+| Tick history charts        | `src/components/TickHistoryCharts.tsx`       |
+| Inventory history chart    | `src/components/InventoryHistoryChart.tsx`   |
+| Energy history chart       | `src/components/EnergyHistoryChart.tsx`      |
 | Market price history chart | `src/components/MarketPriceHistoryChart.tsx` |
-| Data table | `src/components/DataTable.tsx` |
-| Dashboard socket client | `src/lib/dashboard-socket.ts` |
-| API client | `src/lib/api.ts` |
-| Styles | `src/app/dashboard.css` |
+| Data table                 | `src/components/DataTable.tsx`               |
+| Dashboard socket client    | `src/lib/dashboard-socket.ts`                |
+| API client                 | `src/lib/api.ts`                             |
+| Styles                     | `src/app/dashboard.css`                      |
 
 **Behaviour:**
 
@@ -929,8 +929,8 @@ Coordinates use cases between domain, infrastructure and simulation.
 
 The active browser UI lives in `apps/web/`. This folder remains reserved for future shared UI assets and documentation.
 
-| Item | Path |
-|---|---|
+| Item          | Path        |
+| ------------- | ----------- |
 | Module readme | `readme.md` |
 
 **Behaviour:**
@@ -943,22 +943,22 @@ The active browser UI lives in `apps/web/`. This folder remains reserved for fut
 
 ## Tooling and Configuration
 
-| Change | Description |
-|---|---|
-| `vitest.config.ts` | Co-located tests under `src/**/*.test.ts` |
-| `package.json` | `packageManager: pnpm@11.3.0`, dependency `yaml` |
-| `pnpm-workspace.yaml` | `allowBuilds: esbuild: true` |
-| Git | Initial repository commit with foundation layer |
+| Change                | Description                                      |
+| --------------------- | ------------------------------------------------ |
+| `vitest.config.ts`    | Co-located tests under `src/**/*.test.ts`        |
+| `package.json`        | `packageManager: pnpm@11.3.0`, dependency `yaml` |
+| `pnpm-workspace.yaml` | `allowBuilds: esbuild: true`                     |
+| Git                   | Initial repository commit with foundation layer  |
 
 ---
 
 # Static vs Dynamic Model (DD-015)
 
 | Static definition (content) | Dynamic instance (domain) |
-|---|---|
-| `ResourceType` | Inventory item (planned) |
-| `BuildingType` | `Building` |
-| `Recipe` | `ProductionJob` |
+| --------------------------- | ------------------------- |
+| `ResourceType`              | Inventory item (planned)  |
+| `BuildingType`              | `Building`                |
+| `Recipe`                    | `ProductionJob`           |
 
 Content loaders produce immutable definitions. Domain aggregates represent player-specific state.
 
@@ -966,84 +966,84 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Test Coverage Summary
 
-| Module | Test file | Focus |
-|---|---|---|
-| Common / Identifier | `Identifier.test.ts` | Creation, validation, equality, immutability |
-| Common / Entity | `Entity.test.ts` | Identity, equality |
-| Common / ValueObject | `ValueObject.test.ts` | Structural equality |
-| Common / AggregateRoot | `AggregateRoot.test.ts` | Domain event collection |
-| Common / Result | `Result.test.ts` | ok/fail, map, flatMap, unwrap |
-| Common / Guard | `Guard.test.ts` | Null, empty string, negative checks |
-| Common / ManualClock | `ManualClock.test.ts` | Deterministic time control |
-| Common / EventBus | `InMemoryEventBus.test.ts` | Subscribe, publish, order |
-| Domain / Company | `Company.test.ts` | Creation, validation, events |
-| Domain / Building | `Building.test.ts` | Placement, construction lifecycle, validation, events |
-| Domain / Inventory | `Inventory.test.ts` | Quantities, reservations, removal, events |
-| Domain / Employee | `Employee.test.ts` | Hire, assign, unassign, validation, restore |
-| Domain / ProductionJob | `ProductionJob.test.ts` | Start, tick, completion |
-| Domain / FinanceAccount | `FinanceAccount.test.ts` | Credit, debit, reserve, transactions |
-| Domain / Market | `Market.test.ts`, `MarketPriceCalculator.test.ts` | Seed prices, update price, supply-demand formula |
-| Domain / CompanyResearch | `CompanyResearch.test.ts` | Create, complete technology |
-| Domain / Specifications | `RequiredResearchSpecification.test.ts`, `BuildingPrerequisitesSpecification.test.ts`, ... | Research eligibility, building prerequisites |
-| Application / CompleteTechnology | `CompleteTechnologyUseCase.test.ts` | Complete technology for company |
-| Application / StartResearch | `StartResearchUseCase.test.ts` | Timed research, milestone gate, cost debit, tech unlock |
-| Domain / ResearchJob | `ResearchJob.test.ts` | Create, start, tick completion |
-| Domain / CompanyMilestones | `CompanyMilestones.test.ts` | Create, complete milestone |
-| Application / MilestoneEvaluation | `MilestoneEvaluationService.test.ts` | First sale, profit threshold, production volume |
-| Domain / Policies | `ConstructionCostPolicy.test.ts`, `InstantTradePricingPolicy.test.ts` | Construction cost resolution, instant trade pricing |
-| Domain / Money | `Money.test.ts` | Amount, currency, validation |
-| Domain / Quantity | `Quantity.test.ts` | Non-negative values |
-| Domain / ResourceAmount | `ResourceAmount.test.ts` | Resource id + amount |
-| Domain / Capacity | `Capacity.test.ts` | Non-negative capacity limits |
-| Content / ResourceType | `ResourceTypeLoader.test.ts` | Load, validate, duplicates |
-| Content / BuildingType | `BuildingTypeLoader.test.ts` | Load, validate, duplicates |
-| Content / Recipe | `RecipeLoader.test.ts` | Load, reference validation |
-| Content / Consistency | `validateBuildingRecipeConsistency.test.ts` | Cross-registry checks |
-| Content / All | `validateGameContent.test.ts` | Full content pipeline |
-| Simulation / Engine | `SimulationEngine.test.ts` | Tick, determinism, pause |
-| Simulation / EventQueue | `EventQueue.test.ts` | Enqueue, drain, peek |
-| Simulation / Systems | `createDefaultSimulationSystems.test.ts`, `MarketSimulationSystem.test.ts`, `ContractSimulationSystem.test.ts` | Default pipeline order, dynamic prices, NPC contracts |
-| Simulation / Finance | `FinanceSimulationSystem.test.ts`, `TaxCalculator.test.ts` | Payroll and corporate tax debits |
-| Domain / Market | `MarketPriceCalculator.test.ts`, `InflationCalculator.test.ts`, `MarketFeePolicy.test.ts` | Price formula, inflation dampening, trade fees |
-| Domain / Contract | `SupplyContract.test.ts` | Starter contract defaults and fulfillment guard |
-| Simulation / Production | `ProductionSimulationSystem.test.ts` | Worker shortage and full staffing |
-| Application / EmployeeAllocation | `EmployeeAllocationService.test.ts` | Assigned count and recipe efficiency |
-| Domain / EmployeeAllocation | `EmployeeAllocationCalculator.test.ts` | Efficiency scaling and cap |
-| Infrastructure / Company repo | `InMemoryCompanyRepository.test.ts` | Save, find, ordering |
-| Infrastructure / Building repo | `InMemoryBuildingRepository.test.ts` | Save, find by company, under construction |
-| Application / GameSession | `GameSession.test.ts` | Dashboard facade, market buy, batch ticks, save/load, employees |
-| API / GameController | `apps/api/src/game/game.controller.test.ts` | NestJS route contract, validation envelope |
-| API / Project paths | `apps/api/src/config/project-paths.test.ts` | Monorepo root and static asset resolution |
-| Application / Bootstrap | `bootstrapApplication.test.ts` | Content load, wiring |
-| Application / CreateCompany | `CreateCompanyUseCase.test.ts` | Create, events, duplicates |
-| Application / PlaceBuilding | `PlaceBuildingUseCase.test.ts` | Place, construction time, cost debit, events, validation |
-| Application / HireEmployee | `HireEmployeeUseCase.test.ts` | Hire, recruitment debit, prerequisites, events |
-| Application / AssignEmployee | `AssignEmployeeUseCase.test.ts` | Assign, active building, duplicate assignment |
-| Application / StartProduction | `StartProductionUseCase.test.ts` | Active-building guard, milestone gate, input reservation, tick completion, inventory transfer |
-| Application / ProductionInventory | `ProductionInventoryService.test.ts` | Reserve, release, complete job inventory |
-| Application / GetCompany | `GetCompanyQueryHandler.test.ts` | Company read model, not found |
-| Application / ListBuildings | `ListBuildingsQueryHandler.test.ts` | Building list, empty company |
-| Application / GetInventory | `GetInventoryQueryHandler.test.ts` | Stock levels, available quantity |
-| Application / GetFinance | `GetFinanceQueryHandler.test.ts` | Starting balance, not found |
-| Application / GetMarketPrices | `GetMarketPricesQueryHandler.test.ts` | Seeded prices, not initialized |
-| Application / MarketPriceSeeder | `MarketPriceSeeder.test.ts` | Bootstrap seed, idempotent |
-| Application / MarketTrade | `MarketTradeService.test.ts` | Instant buy/sell, insufficient stock/cash |
-| Application / SaveGame | `SaveGameUseCase.test.ts` | Snapshot round-trip, pending event guard, tick metrics history |
-| Application / TickHistory | `TickHistoryService.test.ts` | Record, filter, ring buffer, save/restore |
-| Application / FinanceTransactions | `ListFinanceTransactionsQueryHandler.test.ts` | Ledger listing, newest first |
-| Application / SellBuyResource | `MarketTradeUseCases.test.ts` | Use case validation, trade flow |
-| Infrastructure / Finance repo | `InMemoryFinanceRepository.test.ts` | Save, find by company |
-| Infrastructure / Savegame | `GameStateSerializer.test.ts` | Snapshot parse/hydrate, employee round-trip, supply contracts + tax timestamps |
+| Module                            | Test file                                                                                                      | Focus                                                                                         |
+| --------------------------------- | -------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| Common / Identifier               | `Identifier.test.ts`                                                                                           | Creation, validation, equality, immutability                                                  |
+| Common / Entity                   | `Entity.test.ts`                                                                                               | Identity, equality                                                                            |
+| Common / ValueObject              | `ValueObject.test.ts`                                                                                          | Structural equality                                                                           |
+| Common / AggregateRoot            | `AggregateRoot.test.ts`                                                                                        | Domain event collection                                                                       |
+| Common / Result                   | `Result.test.ts`                                                                                               | ok/fail, map, flatMap, unwrap                                                                 |
+| Common / Guard                    | `Guard.test.ts`                                                                                                | Null, empty string, negative checks                                                           |
+| Common / ManualClock              | `ManualClock.test.ts`                                                                                          | Deterministic time control                                                                    |
+| Common / EventBus                 | `InMemoryEventBus.test.ts`                                                                                     | Subscribe, publish, order                                                                     |
+| Domain / Company                  | `Company.test.ts`                                                                                              | Creation, validation, events                                                                  |
+| Domain / Building                 | `Building.test.ts`                                                                                             | Placement, construction lifecycle, validation, events                                         |
+| Domain / Inventory                | `Inventory.test.ts`                                                                                            | Quantities, reservations, removal, events                                                     |
+| Domain / Employee                 | `Employee.test.ts`                                                                                             | Hire, assign, unassign, validation, restore                                                   |
+| Domain / ProductionJob            | `ProductionJob.test.ts`                                                                                        | Start, tick, completion                                                                       |
+| Domain / FinanceAccount           | `FinanceAccount.test.ts`                                                                                       | Credit, debit, reserve, transactions                                                          |
+| Domain / Market                   | `Market.test.ts`, `MarketPriceCalculator.test.ts`                                                              | Seed prices, update price, supply-demand formula                                              |
+| Domain / CompanyResearch          | `CompanyResearch.test.ts`                                                                                      | Create, complete technology                                                                   |
+| Domain / Specifications           | `RequiredResearchSpecification.test.ts`, `BuildingPrerequisitesSpecification.test.ts`, ...                     | Research eligibility, building prerequisites                                                  |
+| Application / CompleteTechnology  | `CompleteTechnologyUseCase.test.ts`                                                                            | Complete technology for company                                                               |
+| Application / StartResearch       | `StartResearchUseCase.test.ts`                                                                                 | Timed research, milestone gate, cost debit, tech unlock                                       |
+| Domain / ResearchJob              | `ResearchJob.test.ts`                                                                                          | Create, start, tick completion                                                                |
+| Domain / CompanyMilestones        | `CompanyMilestones.test.ts`                                                                                    | Create, complete milestone                                                                    |
+| Application / MilestoneEvaluation | `MilestoneEvaluationService.test.ts`                                                                           | First sale, profit threshold, production volume                                               |
+| Domain / Policies                 | `ConstructionCostPolicy.test.ts`, `InstantTradePricingPolicy.test.ts`                                          | Construction cost resolution, instant trade pricing                                           |
+| Domain / Money                    | `Money.test.ts`                                                                                                | Amount, currency, validation                                                                  |
+| Domain / Quantity                 | `Quantity.test.ts`                                                                                             | Non-negative values                                                                           |
+| Domain / ResourceAmount           | `ResourceAmount.test.ts`                                                                                       | Resource id + amount                                                                          |
+| Domain / Capacity                 | `Capacity.test.ts`                                                                                             | Non-negative capacity limits                                                                  |
+| Content / ResourceType            | `ResourceTypeLoader.test.ts`                                                                                   | Load, validate, duplicates                                                                    |
+| Content / BuildingType            | `BuildingTypeLoader.test.ts`                                                                                   | Load, validate, duplicates                                                                    |
+| Content / Recipe                  | `RecipeLoader.test.ts`                                                                                         | Load, reference validation                                                                    |
+| Content / Consistency             | `validateBuildingRecipeConsistency.test.ts`                                                                    | Cross-registry checks                                                                         |
+| Content / All                     | `validateGameContent.test.ts`                                                                                  | Full content pipeline                                                                         |
+| Simulation / Engine               | `SimulationEngine.test.ts`                                                                                     | Tick, determinism, pause                                                                      |
+| Simulation / EventQueue           | `EventQueue.test.ts`                                                                                           | Enqueue, drain, peek                                                                          |
+| Simulation / Systems              | `createDefaultSimulationSystems.test.ts`, `MarketSimulationSystem.test.ts`, `ContractSimulationSystem.test.ts` | Default pipeline order, dynamic prices, NPC contracts                                         |
+| Simulation / Finance              | `FinanceSimulationSystem.test.ts`, `TaxCalculator.test.ts`                                                     | Payroll and corporate tax debits                                                              |
+| Domain / Market                   | `MarketPriceCalculator.test.ts`, `InflationCalculator.test.ts`, `MarketFeePolicy.test.ts`                      | Price formula, inflation dampening, trade fees                                                |
+| Domain / Contract                 | `SupplyContract.test.ts`                                                                                       | Starter contract defaults and fulfillment guard                                               |
+| Simulation / Production           | `ProductionSimulationSystem.test.ts`                                                                           | Worker shortage and full staffing                                                             |
+| Application / EmployeeAllocation  | `EmployeeAllocationService.test.ts`                                                                            | Assigned count and recipe efficiency                                                          |
+| Domain / EmployeeAllocation       | `EmployeeAllocationCalculator.test.ts`                                                                         | Efficiency scaling and cap                                                                    |
+| Infrastructure / Company repo     | `InMemoryCompanyRepository.test.ts`                                                                            | Save, find, ordering                                                                          |
+| Infrastructure / Building repo    | `InMemoryBuildingRepository.test.ts`                                                                           | Save, find by company, under construction                                                     |
+| Application / GameSession         | `GameSession.test.ts`                                                                                          | Dashboard facade, market buy, batch ticks, save/load, employees                               |
+| API / GameController              | `apps/api/src/game/game.controller.test.ts`                                                                    | NestJS route contract, validation envelope                                                    |
+| API / Project paths               | `apps/api/src/config/project-paths.test.ts`                                                                    | Monorepo root and static asset resolution                                                     |
+| Application / Bootstrap           | `bootstrapApplication.test.ts`                                                                                 | Content load, wiring                                                                          |
+| Application / CreateCompany       | `CreateCompanyUseCase.test.ts`                                                                                 | Create, events, duplicates                                                                    |
+| Application / PlaceBuilding       | `PlaceBuildingUseCase.test.ts`                                                                                 | Place, construction time, cost debit, events, validation                                      |
+| Application / HireEmployee        | `HireEmployeeUseCase.test.ts`                                                                                  | Hire, recruitment debit, prerequisites, events                                                |
+| Application / AssignEmployee      | `AssignEmployeeUseCase.test.ts`                                                                                | Assign, active building, duplicate assignment                                                 |
+| Application / StartProduction     | `StartProductionUseCase.test.ts`                                                                               | Active-building guard, milestone gate, input reservation, tick completion, inventory transfer |
+| Application / ProductionInventory | `ProductionInventoryService.test.ts`                                                                           | Reserve, release, complete job inventory                                                      |
+| Application / GetCompany          | `GetCompanyQueryHandler.test.ts`                                                                               | Company read model, not found                                                                 |
+| Application / ListBuildings       | `ListBuildingsQueryHandler.test.ts`                                                                            | Building list, empty company                                                                  |
+| Application / GetInventory        | `GetInventoryQueryHandler.test.ts`                                                                             | Stock levels, available quantity                                                              |
+| Application / GetFinance          | `GetFinanceQueryHandler.test.ts`                                                                               | Starting balance, not found                                                                   |
+| Application / GetMarketPrices     | `GetMarketPricesQueryHandler.test.ts`                                                                          | Seeded prices, not initialized                                                                |
+| Application / MarketPriceSeeder   | `MarketPriceSeeder.test.ts`                                                                                    | Bootstrap seed, idempotent                                                                    |
+| Application / MarketTrade         | `MarketTradeService.test.ts`                                                                                   | Instant buy/sell, insufficient stock/cash                                                     |
+| Application / SaveGame            | `SaveGameUseCase.test.ts`                                                                                      | Snapshot round-trip, pending event guard, tick metrics history                                |
+| Application / TickHistory         | `TickHistoryService.test.ts`                                                                                   | Record, filter, ring buffer, save/restore                                                     |
+| Application / FinanceTransactions | `ListFinanceTransactionsQueryHandler.test.ts`                                                                  | Ledger listing, newest first                                                                  |
+| Application / SellBuyResource     | `MarketTradeUseCases.test.ts`                                                                                  | Use case validation, trade flow                                                               |
+| Infrastructure / Finance repo     | `InMemoryFinanceRepository.test.ts`                                                                            | Save, find by company                                                                         |
+| Infrastructure / Savegame         | `GameStateSerializer.test.ts`                                                                                  | Snapshot parse/hydrate, employee round-trip, supply contracts + tax timestamps                |
 
 ---
 
 **Progression (game-content):**
 
-| Milestone | Unlocks |
-|---|---|
-| `first_profit` | `warehouse` building |
-| `first_production` | `recipe_advanced_planks` |
-| `profit_100` | `basic_woodworking` research |
+| Milestone          | Unlocks                      |
+| ------------------ | ---------------------------- |
+| `first_profit`     | `warehouse` building         |
+| `first_production` | `recipe_advanced_planks`     |
+| `profit_100`       | `basic_woodworking` research |
 
 # Planned Next Steps
 

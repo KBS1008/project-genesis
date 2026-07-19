@@ -102,9 +102,7 @@ export class StartResearchUseCase {
     }
 
     if (!technology.enabled) {
-      return Result.fail(
-        new ValidationError(`Technology id "${technologyId.value}" is disabled.`),
-      );
+      return Result.fail(new ValidationError(`Technology id "${technologyId.value}" is disabled.`));
     }
 
     if (technology.researchDuration <= 0) {

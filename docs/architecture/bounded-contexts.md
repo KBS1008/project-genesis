@@ -80,18 +80,18 @@ Employees --> Production
 
 # Überblick
 
-| Context | Verantwortung |
-|----------|---------------|
-| World | Welt, Regionen, Simulationszeit |
-| Company | Unternehmen und Unternehmensentwicklung |
-| Production | Produktionsplanung und Fertigung |
-| Inventory | Lager und Ressourcenbestände |
-| Market | Angebot, Nachfrage und Preise |
-| Finance | Buchhaltung und Geldflüsse |
-| Research | Technologien und Freischaltungen |
-| Transport | Logistik und Warenbewegung |
-| Energy | Energieversorgung |
-| Employees | Mitarbeitende und Arbeitskraft |
+| Context    | Verantwortung                           |
+| ---------- | --------------------------------------- |
+| World      | Welt, Regionen, Simulationszeit         |
+| Company    | Unternehmen und Unternehmensentwicklung |
+| Production | Produktionsplanung und Fertigung        |
+| Inventory  | Lager und Ressourcenbestände            |
+| Market     | Angebot, Nachfrage und Preise           |
+| Finance    | Buchhaltung und Geldflüsse              |
+| Research   | Technologien und Freischaltungen        |
+| Transport  | Logistik und Warenbewegung              |
+| Energy     | Energieversorgung                       |
+| Employees  | Mitarbeitende und Arbeitskraft          |
 
 ---
 

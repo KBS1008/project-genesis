@@ -4,7 +4,7 @@
 **Phase:** 2 — Architecture Driven Development  
 **Task:** M4 Employees — Schritt 5 (Savegame Persistence)  
 **Date:** 2026-07-18  
-**Status:** Completed  
+**Status:** Completed
 
 ---
 
@@ -27,46 +27,46 @@ Vor Schritt 5 war `InMemoryEmployeeRepository` nach Load immer leer:
 
 ## Betroffene Module
 
-| Layer | Module |
-|---|---|
-| Application | `GameSaveSnapshotV1`, `GameStateSerializerPort`, `SaveGameUseCase`, `restoreApplicationFromSnapshot` |
-| Infrastructure | `GameStateSerializer` |
+| Layer          | Module                                                                                               |
+| -------------- | ---------------------------------------------------------------------------------------------------- |
+| Application    | `GameSaveSnapshotV1`, `GameStateSerializerPort`, `SaveGameUseCase`, `restoreApplicationFromSnapshot` |
+| Infrastructure | `GameStateSerializer`                                                                                |
 
 ---
 
 ## Persistierte Felder
 
-| Feld | Quelle |
-|---|---|
-| `id` | `Employee.getId()` |
-| `companyId` | `Employee.getCompanyId()` |
-| `employeeTypeId` | `Employee.getEmployeeTypeId()` |
-| `displayName` | `Employee.getDisplayName()` |
-| `salary` | Runtime-Wert aus Hire (Content-Kopie) |
-| `productivity` | Runtime-Wert aus Hire (Content-Kopie) |
-| `hiredAt` | `Employee.getHiredAt()` |
-| `status` | `Employee.getStatus()` |
+| Feld                 | Quelle                                       |
+| -------------------- | -------------------------------------------- |
+| `id`                 | `Employee.getId()`                           |
+| `companyId`          | `Employee.getCompanyId()`                    |
+| `employeeTypeId`     | `Employee.getEmployeeTypeId()`               |
+| `displayName`        | `Employee.getDisplayName()`                  |
+| `salary`             | Runtime-Wert aus Hire (Content-Kopie)        |
+| `productivity`       | Runtime-Wert aus Hire (Content-Kopie)        |
+| `hiredAt`            | `Employee.getHiredAt()`                      |
+| `status`             | `Employee.getStatus()`                       |
 | `assignedBuildingId` | Optional; `Employee.getAssignedBuildingId()` |
 
 ---
 
 ## Geänderte Dateien
 
-| Datei | Änderung |
-|---|---|
-| `src/application/persistence/GameSaveSnapshotV1.ts` | `GameSaveEmployeeSnapshotV1` + `employees[]` |
-| `src/application/ports/GameStateSerializerPort.ts` | `employeeRepository` auf Source/Target |
+| Datei                                                            | Änderung                                              |
+| ---------------------------------------------------------------- | ----------------------------------------------------- |
+| `src/application/persistence/GameSaveSnapshotV1.ts`              | `GameSaveEmployeeSnapshotV1` + `employees[]`          |
+| `src/application/ports/GameStateSerializerPort.ts`               | `employeeRepository` auf Source/Target                |
 | `src/infrastructure/persistence/savegame/GameStateSerializer.ts` | Serialize, Parse-Default, Hydrate, `#restoreEmployee` |
-| `src/application/use-cases/SaveGameUseCase.ts` | `employeeRepository` in Serialize-Deps |
-| `src/application/bootstrap/restoreApplicationFromSnapshot.ts` | `employeeRepository` an `hydrate` |
-| `docs/development/IMPLEMENTATION_PROGRESS.md` | Status aktualisiert |
+| `src/application/use-cases/SaveGameUseCase.ts`                   | `employeeRepository` in Serialize-Deps                |
+| `src/application/bootstrap/restoreApplicationFromSnapshot.ts`    | `employeeRepository` an `hydrate`                     |
+| `docs/development/IMPLEMENTATION_PROGRESS.md`                    | Status aktualisiert                                   |
 
 ---
 
 ## Neue / erweiterte Tests
 
-| Datei | Tests |
-|---|---|
+| Datei                         | Tests                                                                                                   |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------- |
 | `GameStateSerializer.test.ts` | Parse-Default `employees: []`, Hydrate assigned/unassigned, invalid building id, Round-Trip hire+assign |
 
 ---

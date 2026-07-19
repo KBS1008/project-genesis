@@ -4,7 +4,7 @@
 
 Version: 1.0
 
-------------------------------------------------------------------------
+---
 
 # Zweck
 
@@ -14,11 +14,11 @@ einer Company.
 Es speichert **keine einzelnen Kauf- oder Verkaufsaufträge**, sondern
 Referenzen und Statistiken.
 
-------------------------------------------------------------------------
+---
 
 # Grundprinzip
 
-``` text
+```text
 Company
     │
     ▼
@@ -29,11 +29,11 @@ Market
     └── Reputation
 ```
 
-------------------------------------------------------------------------
+---
 
 # Schema
 
-``` yaml
+```yaml
 id:
 companyId:
 marketStatus:
@@ -47,7 +47,7 @@ updatedAt:
 version:
 ```
 
-------------------------------------------------------------------------
+---
 
 # Feldbeschreibung
 
@@ -61,7 +61,7 @@ Referenz auf die Company.
 
 ## marketStatus
 
-``` text
+```text
 ACTIVE
 SUSPENDED
 LOCKED
@@ -73,7 +73,7 @@ Unternehmensruf am Markt.
 
 Bereich:
 
-``` text
+```text
 0 - 100
 ```
 
@@ -91,7 +91,7 @@ Version 1 kann die Historie zeitlich begrenzt werden.
 
 ## statistics
 
-``` yaml
+```yaml
 ordersCreated:
 ordersCompleted:
 totalBought:
@@ -103,7 +103,7 @@ highestTrade:
 
 ## settings
 
-``` yaml
+```yaml
 autoAcceptContracts:
 marketNotifications:
 favoriteResources:
@@ -121,11 +121,11 @@ UTC-Zeitpunkt der letzten Änderung.
 
 Schema-Version.
 
-------------------------------------------------------------------------
+---
 
 # Beziehungen
 
-``` text
+```text
 Market
 
 ├── gehört zu → Company
@@ -139,45 +139,45 @@ Market
 └── nutzt → Order Book
 ```
 
-------------------------------------------------------------------------
+---
 
 # Designregeln
 
--   Eine Company besitzt genau ein Market-Modul.
--   Marktpreise werden **nicht** im Market gespeichert.
--   Kauf- und Verkaufsaufträge liegen in `MarketOrder`.
--   Preisverläufe gehören zum `OrderBook`.
--   Handelsstatistiken werden kontinuierlich aktualisiert.
+- Eine Company besitzt genau ein Market-Modul.
+- Marktpreise werden **nicht** im Market gespeichert.
+- Kauf- und Verkaufsaufträge liegen in `MarketOrder`.
+- Preisverläufe gehören zum `OrderBook`.
+- Handelsstatistiken werden kontinuierlich aktualisiert.
 
-------------------------------------------------------------------------
+---
 
 # Erweiterbarkeit
 
 ## Version 2
 
--   Handelslizenz
--   Automatische Handelsregeln
--   Favorisierte Handelspartner
+- Handelslizenz
+- Automatische Handelsregeln
+- Favorisierte Handelspartner
 
 ## Version 3
 
--   Internationale Märkte
--   Börsenplätze
--   Unternehmensbewertungen
+- Internationale Märkte
+- Börsenplätze
+- Unternehmensbewertungen
 
-------------------------------------------------------------------------
+---
 
 # Definition of Done
 
 Das Market-Modul ist vollständig definiert, wenn:
 
--   Company verknüpft
--   Status gesetzt
--   Reputation initialisiert
--   Statistiken vorhanden
--   Einstellungen vorhanden
+- Company verknüpft
+- Status gesetzt
+- Reputation initialisiert
+- Statistiken vorhanden
+- Einstellungen vorhanden
 
-------------------------------------------------------------------------
+---
 
 # Leitsatz
 

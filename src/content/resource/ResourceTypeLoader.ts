@@ -11,7 +11,7 @@ import path from 'node:path';
 import { parse as parseYaml } from 'yaml';
 import { Result } from '../../common/result/Result.js';
 import { ContentLoadError } from '../errors/ContentLoadError.js';
-import { ResourceTypeDefinition } from './ResourceTypeDefinition.js';
+import type { ResourceTypeDefinition } from './ResourceTypeDefinition.js';
 import { ResourceTypeRegistry } from './ResourceTypeRegistry.js';
 import { validateResourceTypeDefinition } from './ResourceTypeValidator.js';
 
@@ -72,9 +72,7 @@ export class ResourceTypeLoader {
    *
    * @param filePath - Absolute or relative path to a YAML resource file.
    */
-  async loadFile(
-    filePath: string,
-  ): Promise<Result<ResourceTypeDefinition, ContentLoadError>> {
+  async loadFile(filePath: string): Promise<Result<ResourceTypeDefinition, ContentLoadError>> {
     let fileContents: string;
 
     try {

@@ -3,7 +3,7 @@ import { ResourceTypeDefinition } from '../../content/resource/ResourceTypeDefin
 import { ResourceTypeRegistry } from '../../content/resource/ResourceTypeRegistry.js';
 import { Market, createMarketId } from './Market.js';
 import { GLOBAL_MARKET_ID } from './MarketConstants.js';
-import { MarketPriceChanged } from './events/MarketPriceChanged.js';
+import type { MarketPriceChanged } from './events/MarketPriceChanged.js';
 
 function createRegistry(resources: ResourceTypeDefinition[]) {
   const registry = new ResourceTypeRegistry();
@@ -19,7 +19,9 @@ function createRegistry(resources: ResourceTypeDefinition[]) {
   return registry;
 }
 
-function createResource(overrides: Partial<ConstructorParameters<typeof ResourceTypeDefinition>[0]> = {}) {
+function createResource(
+  overrides: Partial<ConstructorParameters<typeof ResourceTypeDefinition>[0]> = {},
+) {
   return new ResourceTypeDefinition({
     id: 'wood',
     name: 'Holz',

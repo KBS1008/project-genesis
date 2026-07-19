@@ -282,9 +282,7 @@ export function validateEmployeeDefinition(
   filePath?: string,
 ): Result<EmployeeDefinition, ContentLoadError> {
   if (!isRecord(raw)) {
-    return Result.fail(
-      new ContentLoadError('Employee content must be an object.', { filePath }),
-    );
+    return Result.fail(new ContentLoadError('Employee content must be an object.', { filePath }));
   }
 
   const idResult = readString(raw, 'id', filePath);

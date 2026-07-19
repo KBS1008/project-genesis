@@ -19,12 +19,7 @@ export class BuildingConstructionCompleted extends DomainEvent {
    * @param companyId - Owning company identifier.
    * @param buildingTypeId - Building type identifier.
    */
-  constructor(
-    occurredAt: number,
-    buildingId: string,
-    companyId: string,
-    buildingTypeId: string,
-  ) {
+  constructor(occurredAt: number, buildingId: string, companyId: string, buildingTypeId: string) {
     super(occurredAt);
     this.buildingId = buildingId;
     this.companyId = companyId;

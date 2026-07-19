@@ -15,16 +15,16 @@ Ein Biome beschreibt eine charakteristische natürliche oder künstlich definier
 
 Biome können unter anderem folgende Eigenschaften definieren:
 
-* Klima
-* Temperatur
-* Niederschlag
-* Vegetation
-* Terrain
-* natürliche Ressourcen
-* Umweltbedingungen
-* Gefahren
-* Energiepotenzial
-* Bau- und Logistikbedingungen
+- Klima
+- Temperatur
+- Niederschlag
+- Vegetation
+- Terrain
+- natürliche Ressourcen
+- Umweltbedingungen
+- Gefahren
+- Energiepotenzial
+- Bau- und Logistikbedingungen
 
 Biome bilden einen wesentlichen Bestandteil der Weltdefinition und können von Szenarien, Karten und World-Generation-Systemen referenziert werden.
 
@@ -34,15 +34,15 @@ Der aktuelle Zustand einer konkreten Region gehört zum dynamischen Weltzustand.
 
 Das Schema dient als Grundlage für:
 
-* JSON-Assets
-* Asset Registry
-* Content Pipeline
-* World Generation
-* Map Generation
-* Validierung
-* Editor
-* Modding
-* Szenarien
+- JSON-Assets
+- Asset Registry
+- Content Pipeline
+- World Generation
+- Map Generation
+- Validierung
+- Editor
+- Modding
+- Szenarien
 
 ---
 
@@ -168,10 +168,10 @@ Das Biome definiert statische Parameter.
 
 Die tatsächliche Temperatur einer konkreten Region kann durch:
 
-* Jahreszeit
-* Wetter
-* Höhenlage
-* Simulation
+- Jahreszeit
+- Wetter
+- Höhenlage
+- Simulation
 
 verändert werden.
 
@@ -309,10 +309,10 @@ resources:
 
 Mögliche Parameter:
 
-* density
-* clustering
-* depth
-* accessibility
+- density
+- clustering
+- depth
+- accessibility
 
 ---
 
@@ -445,13 +445,13 @@ Diese Parameter können von Transport- und Logistiksystemen verwendet werden.
 
 Ein Biome darf referenzieren:
 
-* Resources
-* Buildings
-* Vehicles
-* Technologies
-* Effects
-* Hazards
-* Energy Types
+- Resources
+- Buildings
+- Vehicles
+- Technologies
+- Effects
+- Hazards
+- Energy Types
 
 Alle Referenzen erfolgen ausschließlich über Asset-IDs.
 
@@ -464,8 +464,7 @@ Anzeigenamen und Beschreibungen sollen über Lokalisierungsschlüssel referenzie
 Beispiel:
 
 ```yaml id="t7q2n4"
-localizationKey:
-  biome.temperate
+localizationKey: biome.temperate
 ```
 
 Die konkrete Lokalisierung wird außerhalb des Biome-Assets verwaltet.
@@ -476,23 +475,23 @@ Die konkrete Lokalisierung wird außerhalb des Biome-Assets verwaltet.
 
 Ein Biome ist gültig, wenn:
 
-* eine eindeutige Asset-ID vorhanden ist
-* die Version gültig ist
-* eine Kategorie definiert wurde
-* eine Climate-Definition vorhanden ist
-* eine Terrain-Definition vorhanden ist
-* Temperaturgrenzen konsistent sind
-* alle Ressourcenreferenzen gültig sind
-* alle Hazard-Definitionen gültig sind
-* alle Energiequellen gültige Typen besitzen
-* alle numerischen Modifikatoren innerhalb definierter Bereiche liegen
+- eine eindeutige Asset-ID vorhanden ist
+- die Version gültig ist
+- eine Kategorie definiert wurde
+- eine Climate-Definition vorhanden ist
+- eine Terrain-Definition vorhanden ist
+- Temperaturgrenzen konsistent sind
+- alle Ressourcenreferenzen gültig sind
+- alle Hazard-Definitionen gültig sind
+- alle Energiequellen gültige Typen besitzen
+- alle numerischen Modifikatoren innerhalb definierter Bereiche liegen
 
 Zusätzlich gilt:
 
-* `minimum` darf nicht größer als `maximum` sein
-* Dichten müssen ≥ 0 sein
-* relative Abundanzwerte müssen ≥ 0 sein
-* Potenzialwerte müssen innerhalb des definierten Wertebereichs liegen
+- `minimum` darf nicht größer als `maximum` sein
+- Dichten müssen ≥ 0 sein
+- relative Abundanzwerte müssen ≥ 0 sein
+- Potenzialwerte müssen innerhalb des definierten Wertebereichs liegen
 
 Ungültige Biome dürfen nicht registriert oder geladen werden.
 
@@ -504,18 +503,18 @@ Das Biome-Asset enthält ausschließlich statische Umweltparameter.
 
 Nicht Bestandteil dieses Schemas sind:
 
-* aktuelle Wetterlage
-* aktuelle Temperatur
-* aktuelle Niederschlagsmenge
-* aktuelle Ressourcenbestände
-* erschöpfte Ressourcen
-* aktuelle Vegetationsdichte
-* aktuelle Umweltverschmutzung
-* aktuelle Naturkatastrophen
-* aktuelle Gebäude
-* aktuelle Straßen
-* aktuelle Fahrzeuge
-* aktuelle Mitarbeiter
+- aktuelle Wetterlage
+- aktuelle Temperatur
+- aktuelle Niederschlagsmenge
+- aktuelle Ressourcenbestände
+- erschöpfte Ressourcen
+- aktuelle Vegetationsdichte
+- aktuelle Umweltverschmutzung
+- aktuelle Naturkatastrophen
+- aktuelle Gebäude
+- aktuelle Straßen
+- aktuelle Fahrzeuge
+- aktuelle Mitarbeiter
 
 Diese Daten gehören zum dynamischen Welt- und Spielzustand.
 
@@ -628,16 +627,16 @@ tags:
 
 Dieses Schema ist kompatibel mit:
 
-* ASSET_ID_SYSTEM.md
-* ASSET_VERSIONING.md
-* REGISTRY_SCHEMA.md
-* GLOBAL_ASSET_REGISTRY.md
-* CONTENT_PIPELINE.md
-* Resource.schema.md
-* Building.schema.md
-* Vehicle.schema.md
-* Technology.schema.md
-* Scenario.schema.md
+- ASSET_ID_SYSTEM.md
+- ASSET_VERSIONING.md
+- REGISTRY_SCHEMA.md
+- GLOBAL_ASSET_REGISTRY.md
+- CONTENT_PIPELINE.md
+- Resource.schema.md
+- Building.schema.md
+- Vehicle.schema.md
+- Technology.schema.md
+- Scenario.schema.md
 
 ---
 
@@ -645,23 +644,23 @@ Dieses Schema ist kompatibel mit:
 
 Geplante Erweiterungen:
 
-* Seasonal Effects
-* Dynamic Weather
-* Climate Change
-* Natural Disasters
-* Ecosystem Simulation
-* Resource Regeneration
-* Resource Depletion
-* Soil Quality
-* Water Availability
-* Pollution Propagation
-* Wildlife
-* Biodiversity
-* Terrain Generation Parameters
-* Procedural World Generation
-* Biome Transitions
-* Biome Compatibility Rules
-* Altitude Effects
-* Latitude Effects
-* Climate Zones
-* Seasonal Resource Production
+- Seasonal Effects
+- Dynamic Weather
+- Climate Change
+- Natural Disasters
+- Ecosystem Simulation
+- Resource Regeneration
+- Resource Depletion
+- Soil Quality
+- Water Availability
+- Pollution Propagation
+- Wildlife
+- Biodiversity
+- Terrain Generation Parameters
+- Procedural World Generation
+- Biome Transitions
+- Biome Compatibility Rules
+- Altitude Effects
+- Latitude Effects
+- Climate Zones
+- Seasonal Resource Production

@@ -12,9 +12,10 @@ könnte ein Spieler verschiedene Wege einschlagen:
 
                 Energie
                /       \
+
 Produktion ── Logistik ── Automatisierung
-               \       /
-             Management
+\ /
+Management
 
 Dadurch entstehen unterschiedliche Unternehmensprofile:
 

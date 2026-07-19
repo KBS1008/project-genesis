@@ -9,7 +9,7 @@ import path from 'node:path';
 import { parse as parseYaml } from 'yaml';
 import { Result } from '../../common/result/Result.js';
 import { ContentLoadError } from '../errors/ContentLoadError.js';
-import { MilestoneDefinition } from './MilestoneDefinition.js';
+import type { MilestoneDefinition } from './MilestoneDefinition.js';
 import { MilestoneRegistry } from './MilestoneRegistry.js';
 import { validateMilestoneDefinition } from './MilestoneValidator.js';
 

@@ -4,7 +4,7 @@
 **Phase:** 2 — Architecture Driven Development  
 **Task:** M5-2 Dashboard Preis-Trends / Supply & Demand  
 **Date:** 2026-07-18  
-**Status:** Completed  
+**Status:** Completed
 
 ---
 
@@ -16,27 +16,27 @@ Marktdynamik im Dashboard sichtbar machen: neben Preisverläufen auch Angebot, N
 
 ## Backend
 
-| Änderung | Details |
-|---|---|
-| `MarketPriceReadModel` | + `totalSupply`, `baselineDemand`, `pressureIndex`, `changeFromBase`, `changePercent`, `trend` |
-| `projectMarketPrice.ts` | Projektion aus Markt + Inventar |
-| `GetMarketPricesQueryHandler` | nutzt `inventoryRepository` + `MarketSupplyAggregator` |
-| `MarketPressureCalculator` | Druckindex & Trend (Domain) |
-| `MarketSupplyAggregator` | nach Domain verschoben (wiederverwendbar) |
-| `TickMarketPriceSnapshot` | + Supply/Demand/Druck für Chart-Historie |
-| Savegame v1 | optionale Felder in `tickMetricsHistory.marketPrices` (abwärtskompatibel) |
+| Änderung                      | Details                                                                                        |
+| ----------------------------- | ---------------------------------------------------------------------------------------------- |
+| `MarketPriceReadModel`        | + `totalSupply`, `baselineDemand`, `pressureIndex`, `changeFromBase`, `changePercent`, `trend` |
+| `projectMarketPrice.ts`       | Projektion aus Markt + Inventar                                                                |
+| `GetMarketPricesQueryHandler` | nutzt `inventoryRepository` + `MarketSupplyAggregator`                                         |
+| `MarketPressureCalculator`    | Druckindex & Trend (Domain)                                                                    |
+| `MarketSupplyAggregator`      | nach Domain verschoben (wiederverwendbar)                                                      |
+| `TickMarketPriceSnapshot`     | + Supply/Demand/Druck für Chart-Historie                                                       |
+| Savegame v1                   | optionale Felder in `tickMetricsHistory.marketPrices` (abwärtskompatibel)                      |
 
 ---
 
 ## Frontend
 
-| Komponente | Zweck |
-|---|---|
-| `MarketPricesTable` | Tabelle mit Preis, Δ Basis, Angebot, Nachfrage, Druck, Trend |
-| `MarketSupplyDemandChart` | Balkendiagramm Angebot vs. Nachfrage (aktueller Stand) |
+| Komponente                   | Zweck                                                        |
+| ---------------------------- | ------------------------------------------------------------ |
+| `MarketPricesTable`          | Tabelle mit Preis, Δ Basis, Angebot, Nachfrage, Druck, Trend |
+| `MarketSupplyDemandChart`    | Balkendiagramm Angebot vs. Nachfrage (aktueller Stand)       |
 | `MarketPressureHistoryChart` | Liniendiagramm Druckindex über Ticks (Referenzlinie bei 1,0) |
-| `MarketTrendBadge` | ▲/▼/→ Trend-Badge |
-| `DashboardShell` | Markt-Sektion + neue Charts eingebunden |
+| `MarketTrendBadge`           | ▲/▼/→ Trend-Badge                                            |
+| `DashboardShell`             | Markt-Sektion + neue Charts eingebunden                      |
 
 ---
 

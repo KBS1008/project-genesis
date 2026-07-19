@@ -4,7 +4,7 @@
 **Phase:** 2 — Architecture Driven Development  
 **Task:** M4 Employees — Schritt 1 (Content Layer)  
 **Date:** 2026-07-18  
-**Status:** Completed  
+**Status:** Completed
 
 ---
 
@@ -16,43 +16,43 @@ Einführung der statischen Employee-Content-Infrastruktur gemäß `docs/schemas/
 
 ## Betroffene Module
 
-| Layer | Module |
-|---|---|
-| Content | `EmployeeDefinition`, `EmployeeRegistry`, `EmployeeValidator`, `EmployeeLoader`, `validateEmployeeReferences` |
-| Content | `validateGameContent` (Load-Reihenfolge + `GameContentLoadResult`) |
-| Application | `bootstrapApplication` (Log-Kontext) |
-| Game Content | `game-content/employees/*.yaml` |
+| Layer        | Module                                                                                                        |
+| ------------ | ------------------------------------------------------------------------------------------------------------- |
+| Content      | `EmployeeDefinition`, `EmployeeRegistry`, `EmployeeValidator`, `EmployeeLoader`, `validateEmployeeReferences` |
+| Content      | `validateGameContent` (Load-Reihenfolge + `GameContentLoadResult`)                                            |
+| Application  | `bootstrapApplication` (Log-Kontext)                                                                          |
+| Game Content | `game-content/employees/*.yaml`                                                                               |
 
 ---
 
 ## Geänderte Dateien
 
-| Datei | Änderung |
-|---|---|
-| `src/content/validateGameContent.ts` | Employee-Load + Referenzvalidierung |
-| `src/application/bootstrap/bootstrapApplication.ts` | Log-Feld `employees` |
-| `src/content/validateGameContent.test.ts` | Erwartungen für Employee-Registry |
-| `docs/development/IMPLEMENTATION_PROGRESS.md` | Status aktualisiert |
+| Datei                                               | Änderung                            |
+| --------------------------------------------------- | ----------------------------------- |
+| `src/content/validateGameContent.ts`                | Employee-Load + Referenzvalidierung |
+| `src/application/bootstrap/bootstrapApplication.ts` | Log-Feld `employees`                |
+| `src/content/validateGameContent.test.ts`           | Erwartungen für Employee-Registry   |
+| `docs/development/IMPLEMENTATION_PROGRESS.md`       | Status aktualisiert                 |
 
 ---
 
 ## Neue Dateien
 
-| Datei | Beschreibung |
-|---|---|
-| `game-content/employees/employee_production_worker.yaml` | Produktionsmitarbeiter |
-| `game-content/employees/employee_engineer_basic.yaml` | Junior-Ingenieur |
-| `game-content/employees/employee_researcher_basic.yaml` | Forscher |
+| Datei                                                      | Beschreibung                         |
+| ---------------------------------------------------------- | ------------------------------------ |
+| `game-content/employees/employee_production_worker.yaml`   | Produktionsmitarbeiter               |
+| `game-content/employees/employee_engineer_basic.yaml`      | Junior-Ingenieur                     |
+| `game-content/employees/employee_researcher_basic.yaml`    | Forscher                             |
 | `game-content/employees/employee_administrator_basic.yaml` | Verwaltung (requires `headquarters`) |
-| `game-content/employees/employee_logistics_operator.yaml` | Logistik (requires `warehouse`) |
-| `src/content/employee/EmployeeDefinition.ts` | Typen + Immutable Definition |
-| `src/content/employee/EmployeeRegistry.ts` | Registry |
-| `src/content/employee/EmployeeValidator.ts` | Schema-Validierung |
-| `src/content/employee/EmployeeLoader.ts` | YAML-Loader |
-| `src/content/employee/EmployeeLoader.test.ts` | 5 Tests |
-| `src/content/validateEmployeeReferences.ts` | Cross-Reference-Validierung |
-| `src/content/validateEmployeeReferences.test.ts` | 2 Tests |
-| `docs/quality/EMPLOYEE_CONTENT_LAYER_REPORT.md` | Dieser Bericht |
+| `game-content/employees/employee_logistics_operator.yaml`  | Logistik (requires `warehouse`)      |
+| `src/content/employee/EmployeeDefinition.ts`               | Typen + Immutable Definition         |
+| `src/content/employee/EmployeeRegistry.ts`                 | Registry                             |
+| `src/content/employee/EmployeeValidator.ts`                | Schema-Validierung                   |
+| `src/content/employee/EmployeeLoader.ts`                   | YAML-Loader                          |
+| `src/content/employee/EmployeeLoader.test.ts`              | 5 Tests                              |
+| `src/content/validateEmployeeReferences.ts`                | Cross-Reference-Validierung          |
+| `src/content/validateEmployeeReferences.test.ts`           | 2 Tests                              |
+| `docs/quality/EMPLOYEE_CONTENT_LAYER_REPORT.md`            | Dieser Bericht                       |
 
 ---
 
@@ -64,11 +64,11 @@ Keine.
 
 ## Tests
 
-| Suite | Tests |
-|---|---|
-| `EmployeeLoader.test.ts` | Laden, Sortierung, Duplikate, ID/Cost-Validation |
-| `validateEmployeeReferences.test.ts` | Gültige/ungültige Building-Referenzen |
-| `validateGameContent.test.ts` | 5 Employee-Typen im offiziellen Content |
+| Suite                                | Tests                                            |
+| ------------------------------------ | ------------------------------------------------ |
+| `EmployeeLoader.test.ts`             | Laden, Sortierung, Duplikate, ID/Cost-Validation |
+| `validateEmployeeReferences.test.ts` | Gültige/ungültige Building-Referenzen            |
+| `validateGameContent.test.ts`        | 5 Employee-Typen im offiziellen Content          |
 
 ```text
 Test Files:  78 passed (+2)
@@ -89,13 +89,13 @@ Typecheck:   passed
 
 ## Offene Punkte
 
-| Punkt | Nächster Schritt |
-|---|---|
-| Domain `Employee`-Aggregat | Schritt 2 |
-| `HireEmployeeUseCase` | Schritt 2 |
-| `recipe.workers` in Simulation | Schritt 3 |
-| Savegame-Persistenz für Employees | Schritt 4 |
-| Trait-Registry (Schema: „Traits werden separat registriert“) | Später |
+| Punkt                                                        | Nächster Schritt |
+| ------------------------------------------------------------ | ---------------- |
+| Domain `Employee`-Aggregat                                   | Schritt 2        |
+| `HireEmployeeUseCase`                                        | Schritt 2        |
+| `recipe.workers` in Simulation                               | Schritt 3        |
+| Savegame-Persistenz für Employees                            | Schritt 4        |
+| Trait-Registry (Schema: „Traits werden separat registriert“) | Später           |
 
 ---
 

@@ -410,17 +410,17 @@ docs/
 
 # Wichtige Dokumente
 
-| Dokument | Zweck |
-|----------|------|
-| README.md | Projekteinstieg |
-| vision.md | Spielvision |
-| SAD.md | Softwarearchitektur |
-| DDD.md | Datenmodell |
-| decisions/ | Architekturentscheidungen |
-| game-design/ | Spielmechaniken |
-| schemas/ | Datenmodelle |
-| api/ | Schnittstellen |
-| simulation/ | Simulationslogik |
+| Dokument     | Zweck                     |
+| ------------ | ------------------------- |
+| README.md    | Projekteinstieg           |
+| vision.md    | Spielvision               |
+| SAD.md       | Softwarearchitektur       |
+| DDD.md       | Datenmodell               |
+| decisions/   | Architekturentscheidungen |
+| game-design/ | Spielmechaniken           |
+| schemas/     | Datenmodelle              |
+| api/         | Schnittstellen            |
+| simulation/  | Simulationslogik          |
 
 ---
 

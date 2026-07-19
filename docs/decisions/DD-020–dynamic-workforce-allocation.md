@@ -44,11 +44,11 @@ Die Auslastung beeinflusst unmittelbar die Effizienz des Gebäudes.
 
 # Beispiel
 
-| Gebäude | Bedarf | Zugewiesen | Auslastung | Effizienz |
-|----------|-------:|-----------:|-----------:|----------:|
-| Sägewerk | 10 | 10 | 100 % | 100 % |
-| Stahlwerk | 20 | 15 | 75 % | 75 % |
-| Labor | 8 | 10 | 125 % | 110 % (Obergrenze) |
+| Gebäude   | Bedarf | Zugewiesen | Auslastung |          Effizienz |
+| --------- | -----: | ---------: | ---------: | -----------------: |
+| Sägewerk  |     10 |         10 |      100 % |              100 % |
+| Stahlwerk |     20 |         15 |       75 % |               75 % |
+| Labor     |      8 |         10 |      125 % | 110 % (Obergrenze) |
 
 Eine Überbesetzung kann Vorteile bringen, ist jedoch durch eine maximale Effizienz begrenzt.
 

@@ -5,9 +5,7 @@
  */
 
 import { Result } from '../../common/result/Result.js';
-import {
-  BuildingCategory,
-} from '../building/BuildingTypeDefinition.js';
+import { BuildingCategory } from '../building/BuildingTypeDefinition.js';
 import { ContentLoadError } from '../errors/ContentLoadError.js';
 import {
   TransportRouteDefinition,

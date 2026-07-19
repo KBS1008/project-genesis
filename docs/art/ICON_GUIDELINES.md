@@ -476,15 +476,15 @@ Icons should always be generated as scalable vector graphics whenever possible.
 
 Before approving a new icon:
 
-| Question | Status |
-|-----------|--------|
-| Recognizable within one second? | □ |
-| Consistent with existing icons? | □ |
-| Readable at small size? | □ |
-| Uses the correct color category? | □ |
-| Scalable? | □ |
-| Follows the visual language? | □ |
-| Suitable for AI regeneration? | □ |
+| Question                         | Status |
+| -------------------------------- | ------ |
+| Recognizable within one second?  | □      |
+| Consistent with existing icons?  | □      |
+| Readable at small size?          | □      |
+| Uses the correct color category? | □      |
+| Scalable?                        | □      |
+| Follows the visual language?     | □      |
+| Suitable for AI regeneration?    | □      |
 
 ---
 

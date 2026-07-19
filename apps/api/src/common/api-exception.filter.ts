@@ -4,12 +4,7 @@
  * Normalizes NestJS HTTP exceptions to the browser shell JSON envelope.
  */
 
-import {
-  type ArgumentsHost,
-  Catch,
-  type ExceptionFilter,
-  HttpException,
-} from '@nestjs/common';
+import { type ArgumentsHost, Catch, type ExceptionFilter, HttpException } from '@nestjs/common';
 import type { Response } from 'express';
 
 /** Maps HTTP exceptions to `{ ok: false, error }` responses. */

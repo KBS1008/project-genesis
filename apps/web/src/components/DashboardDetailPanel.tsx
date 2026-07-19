@@ -167,7 +167,9 @@ function BuildingFocus({
   readonly onClear: () => void;
 }) {
   const relatedJobs = dashboard.productionJobs.filter((job) => job.buildingId === building.id);
-  const warehouse = dashboard.warehouseStorage.find((storage) => storage.buildingId === building.id);
+  const warehouse = dashboard.warehouseStorage.find(
+    (storage) => storage.buildingId === building.id,
+  );
 
   return (
     <DetailFocusCard
@@ -242,7 +244,9 @@ function ProductionFocus({
           ['Status', formatProductionStatus(job.status, job.awaitingTransport)],
           ['Fortschritt', formatProgress(job.progress)],
           ['Transporte aktiv', String(job.activeTransportCount)],
-          ...(job.awaitingTransport ? ([['Hinweis', 'Wartet auf Materialtransport']] as const) : []),
+          ...(job.awaitingTransport
+            ? ([['Hinweis', 'Wartet auf Materialtransport']] as const)
+            : []),
         ]}
       />
       {relatedTransports.length > 0 ? (
@@ -442,7 +446,10 @@ function LogisticsFocus({
             ['Einheiten im Lager', String(logistics.warehouseTotalUnits)],
             ...(logistics.warehouseStorageCapacity > 0
               ? ([
-                  ['Lagerkapazität', `${logistics.warehouseUsedCapacity}/${logistics.warehouseStorageCapacity}`],
+                  [
+                    'Lagerkapazität',
+                    `${logistics.warehouseUsedCapacity}/${logistics.warehouseStorageCapacity}`,
+                  ],
                   ['Freie Kapazität', String(logistics.warehouseAvailableCapacity)],
                 ] as const)
               : []),
@@ -521,11 +528,7 @@ function WarehouseFocus({
   );
 
   return (
-    <DetailFocusCard
-      title={storage.buildingName}
-      subtitle="Lagerhaus"
-      onClear={onClear}
-    >
+    <DetailFocusCard title={storage.buildingName} subtitle="Lagerhaus" onClear={onClear}>
       <KeyValuePanel
         entries={[
           ['Gebäude-ID', storage.buildingId],
@@ -596,10 +599,7 @@ function EmployeeFocus({
           ['Produktivität', employee.productivity.toFixed(2)],
           ['Eingestellt', String(employee.hiredAt)],
           ['Status', employee.status],
-          [
-            'Zugewiesen',
-            employee.assignedBuildingName ?? 'Noch keinem Gebäude zugewiesen',
-          ],
+          ['Zugewiesen', employee.assignedBuildingName ?? 'Noch keinem Gebäude zugewiesen'],
         ]}
       />
     </DetailFocusCard>
@@ -611,7 +611,11 @@ export function normalizeDetailSelection(
   dashboard: GameSessionDashboard | null,
   selection: DetailSelection,
 ): DetailSelection {
-  if (selection.kind === 'overview' || dashboard?.company === null || dashboard?.company === undefined) {
+  if (
+    selection.kind === 'overview' ||
+    dashboard?.company === null ||
+    dashboard?.company === undefined
+  ) {
     return { kind: 'overview' };
   }
 
@@ -792,7 +796,9 @@ export function DashboardDetailPanel({
         <p className="detail-hint">Zeile in einer Tabelle anklicken für Details.</p>
       ) : null}
 
-      <section className={`card detail-card${selection.kind !== 'overview' ? ' detail-card-compact' : ''}`}>
+      <section
+        className={`card detail-card${selection.kind !== 'overview' ? ' detail-card-compact' : ''}`}
+      >
         <h2>Firma</h2>
         {!dashboard?.company ? (
           <KeyValuePanel entries={[['Status', 'Kein aktives Spiel']]} />
@@ -821,8 +827,14 @@ export function DashboardDetailPanel({
           <KeyValuePanel
             entries={[
               ['Cash', formatCurrency(dashboard.finance.cashBalance, dashboard.finance.currency)],
-              ['Reserviert', formatCurrency(dashboard.finance.reservedCash, dashboard.finance.currency)],
-              ['Verfügbar', formatCurrency(dashboard.finance.availableCash, dashboard.finance.currency)],
+              [
+                'Reserviert',
+                formatCurrency(dashboard.finance.reservedCash, dashboard.finance.currency),
+              ],
+              [
+                'Verfügbar',
+                formatCurrency(dashboard.finance.availableCash, dashboard.finance.currency),
+              ],
             ]}
           />
         )}
@@ -866,9 +878,7 @@ export function DashboardDetailPanel({
               ],
               [
                 'Netz',
-                dashboard.energy.usesBaselineGrid
-                  ? 'Öffentliches Netz (30 MW)'
-                  : 'Eigenversorgung',
+                dashboard.energy.usesBaselineGrid ? 'Öffentliches Netz (30 MW)' : 'Eigenversorgung',
               ],
               [
                 'Status',
@@ -880,12 +890,16 @@ export function DashboardDetailPanel({
         )}
       </section>
 
-      <section className={`card detail-card${selection.kind !== 'overview' ? ' detail-card-compact' : ''}`}>
+      <section
+        className={`card detail-card${selection.kind !== 'overview' ? ' detail-card-compact' : ''}`}
+      >
         <h2>Marktpreise</h2>
         <div className="table-wrap">{renderMarketTable}</div>
       </section>
 
-      <section className={`card detail-card${selection.kind !== 'overview' ? ' detail-card-compact' : ''}`}>
+      <section
+        className={`card detail-card${selection.kind !== 'overview' ? ' detail-card-compact' : ''}`}
+      >
         <h2>Meilensteine</h2>
         <ul className="milestone-list">
           {(dashboard?.milestones ?? []).length === 0 ? (

@@ -137,7 +137,9 @@ describe('TransportLogisticsService integration', () => {
 
     expect(buyResult.ok).toBe(true);
 
-    const inventoryAfterBuy = context.inventoryRepository.findByCompanyId(requireCompanyId('company_001'));
+    const inventoryAfterBuy = context.inventoryRepository.findByCompanyId(
+      requireCompanyId('company_001'),
+    );
     expect(inventoryAfterBuy?.getAvailableQuantity(requireResourceTypeId('iron_ore'))).toBe(0);
 
     const warehouseStorage = context.buildingStorageRepository.findByBuildingId(
@@ -173,7 +175,8 @@ describe('TransportLogisticsService integration', () => {
     );
     expect(jobAfterTransport?.getStatus()).toBe(ProductionJobStatus.RUNNING);
 
-    const completedTransports = context.transportOrderRepository.findByProductionJobId('production_001');
+    const completedTransports =
+      context.transportOrderRepository.findByProductionJobId('production_001');
     expect(completedTransports[0]?.getStatus()).toBe(TransportOrderStatus.COMPLETED);
   });
 
@@ -234,7 +237,13 @@ describe('TransportLogisticsService integration', () => {
       });
     }
 
-    for (const buildingId of ['building_001', 'building_002', 'building_003', 'building_004', 'building_005']) {
+    for (const buildingId of [
+      'building_001',
+      'building_002',
+      'building_003',
+      'building_004',
+      'building_005',
+    ]) {
       completeBuildingConstruction({
         clock: context.clock,
         simulationEngine: context.simulationEngine,
@@ -282,8 +291,9 @@ describe('TransportLogisticsService integration', () => {
       expect(transportResult.ok).toBe(true);
     }
 
-    const allTransports = context.transportOrderRepository
-      .findByCompanyId(requireCompanyId('company_001'));
+    const allTransports = context.transportOrderRepository.findByCompanyId(
+      requireCompanyId('company_001'),
+    );
 
     expect(allTransports).toHaveLength(3);
 
@@ -368,7 +378,9 @@ describe('TransportLogisticsService integration', () => {
       buildingId: 'building_warehouse_001',
     });
 
-    const warehouse = context.buildingRepository.findById(requireBuildingId('building_warehouse_001'));
+    const warehouse = context.buildingRepository.findById(
+      requireBuildingId('building_warehouse_001'),
+    );
 
     expect(warehouse).toBeDefined();
 
@@ -396,8 +408,8 @@ describe('TransportLogisticsService integration', () => {
     });
 
     expect(buyResult.ok).toBe(false);
-    expect(context.transportLogisticsService.canDepositToWarehouse(requireCompanyId('company_001'), 5)).toBe(
-      false,
-    );
+    expect(
+      context.transportLogisticsService.canDepositToWarehouse(requireCompanyId('company_001'), 5),
+    ).toBe(false);
   });
 });

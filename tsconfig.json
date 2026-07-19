@@ -24,37 +24,21 @@
     "baseUrl": ".",
 
     "paths": {
-      "@application/*": [
-        "src/application/*"
-      ],
+      "@application/*": ["src/application/*"],
 
-      "@common/*": [
-        "src/common/*"
-      ],
+      "@common/*": ["src/common/*"],
 
-      "@content/*": [
-        "src/content/*"
-      ],
+      "@content/*": ["src/content/*"],
 
-      "@domain/*": [
-        "src/domain/*"
-      ],
+      "@domain/*": ["src/domain/*"],
 
-      "@infrastructure/*": [
-        "src/infrastructure/*"
-      ],
+      "@infrastructure/*": ["src/infrastructure/*"],
 
-      "@simulation/*": [
-        "src/simulation/*"
-      ],
+      "@simulation/*": ["src/simulation/*"],
 
-      "@ui/*": [
-        "src/ui/*"
-      ],
+      "@ui/*": ["src/ui/*"],
 
-      "@tests/*": [
-        "tests/*"
-      ]
+      "@tests/*": ["tests/*"]
     },
 
     /* ==========================================================
@@ -114,21 +98,10 @@
      * Types
      * ========================================================== */
 
-    "types": [
-      "node",
-      "vitest/globals"
-    ]
+    "types": ["node", "vitest/globals"]
   },
 
-  "include": [
-    "src",
-    "tests",
-    "tools"
-  ],
+  "include": ["src", "tests", "tools"],
 
-  "exclude": [
-    "dist",
-    "coverage",
-    "node_modules"
-  ]
+  "exclude": ["dist", "coverage", "node_modules"]
 }

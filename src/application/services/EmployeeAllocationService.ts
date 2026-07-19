@@ -37,9 +37,6 @@ export class EmployeeAllocationService implements EmployeeAllocationPort {
     const requiredWorkers = recipe?.workers ?? 0;
     const assignedWorkers = this.getAssignedWorkerCount(buildingId);
 
-    return EmployeeAllocationCalculator.computeWorkerEfficiency(
-      assignedWorkers,
-      requiredWorkers,
-    );
+    return EmployeeAllocationCalculator.computeWorkerEfficiency(assignedWorkers, requiredWorkers);
   }
 }

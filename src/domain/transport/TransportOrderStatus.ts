@@ -11,5 +11,4 @@ export const TransportOrderStatus = {
   CANCELLED: 'CANCELLED',
 } as const;
 
-export type TransportOrderStatus =
-  (typeof TransportOrderStatus)[keyof typeof TransportOrderStatus];
+export type TransportOrderStatus = (typeof TransportOrderStatus)[keyof typeof TransportOrderStatus];

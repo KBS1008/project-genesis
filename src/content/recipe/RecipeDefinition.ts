@@ -41,9 +41,7 @@ export type RecipeDefinitionProps = {
   readonly energy: number;
   readonly workers: number;
   readonly requiredResearch: readonly string[];
-  readonly requiredBuildings: readonly string[];
   readonly requiredMilestones: readonly string[];
-  readonly requiredResources: readonly string[];
   readonly maintenanceCost: number;
   readonly productionCost: number;
   readonly experience: number;
@@ -67,9 +65,7 @@ export class RecipeDefinition {
   readonly energy: number;
   readonly workers: number;
   readonly requiredResearch: readonly string[];
-  readonly requiredBuildings: readonly string[];
   readonly requiredMilestones: readonly string[];
-  readonly requiredResources: readonly string[];
   readonly maintenanceCost: number;
   readonly productionCost: number;
   readonly experience: number;
@@ -89,9 +85,7 @@ export class RecipeDefinition {
     this.energy = props.energy;
     this.workers = props.workers;
     this.requiredResearch = Object.freeze([...props.requiredResearch]);
-    this.requiredBuildings = Object.freeze([...props.requiredBuildings]);
     this.requiredMilestones = Object.freeze([...props.requiredMilestones]);
-    this.requiredResources = Object.freeze([...props.requiredResources]);
     this.maintenanceCost = props.maintenanceCost;
     this.productionCost = props.productionCost;
     this.experience = props.experience;

@@ -242,16 +242,16 @@ If aesthetics conflict with readability, readability always wins.
 
 Before approving a new asset, verify:
 
-| Question | Status |
-|-----------|--------|
-| Is the asset immediately understandable? | □ |
-| Does it follow the Visual Pillars? | □ |
-| Is visual hierarchy clear? | □ |
-| Is unnecessary decoration avoided? | □ |
-| Does it fit the established style? | □ |
-| Can it be reused? | □ |
-| Is it accessible? | □ |
-| Is it AI reproducible? | □ |
+| Question                                 | Status |
+| ---------------------------------------- | ------ |
+| Is the asset immediately understandable? | □      |
+| Does it follow the Visual Pillars?       | □      |
+| Is visual hierarchy clear?               | □      |
+| Is unnecessary decoration avoided?       | □      |
+| Does it fit the established style?       | □      |
+| Can it be reused?                        | □      |
+| Is it accessible?                        | □      |
+| Is it AI reproducible?                   | □      |
 
 Only assets passing all checks should become part of the official asset library.
 

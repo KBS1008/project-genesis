@@ -98,7 +98,10 @@ export class TransportOrder extends AggregateRoot<'TransportOrder'> {
       return Result.fail(new ValidationError('Transport duration must be greater than zero.'));
     }
 
-    const amountResult = Guard.againstNegative(params.amount, 'Transport amount must not be negative.');
+    const amountResult = Guard.againstNegative(
+      params.amount,
+      'Transport amount must not be negative.',
+    );
 
     if (!amountResult.ok) {
       return Result.fail(amountResult.error);
@@ -225,7 +228,9 @@ export class TransportOrder extends AggregateRoot<'TransportOrder'> {
     }
 
     if (this.#startTime === undefined) {
-      return Result.fail(new ValidationError('In-progress transport orders must have a start time.'));
+      return Result.fail(
+        new ValidationError('In-progress transport orders must have a start time.'),
+      );
     }
 
     const elapsed = clock.now() - this.#startTime;

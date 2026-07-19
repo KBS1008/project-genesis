@@ -112,7 +112,11 @@ export function DataTable<T extends string>({
     }
 
     return entries.filter(({ row }) =>
-      columns.some((column) => String(row[column.key] ?? '').toLowerCase().includes(query)),
+      columns.some((column) =>
+        String(row[column.key] ?? '')
+          .toLowerCase()
+          .includes(query),
+      ),
     );
   }, [columns, entries, searchQuery]);
 
@@ -196,84 +200,84 @@ export function DataTable<T extends string>({
       ) : (
         <div className="table-scroll">
           <table className="table-sticky">
-          <thead>
-            <tr>
-              {columns.map((column) => {
-                const isSorted = sortState?.key === column.key;
-                const direction = isSorted ? sortState.direction : null;
-                const isSortable = column.sortable !== false;
+            <thead>
+              <tr>
+                {columns.map((column) => {
+                  const isSorted = sortState?.key === column.key;
+                  const direction = isSorted ? sortState.direction : null;
+                  const isSortable = column.sortable !== false;
+
+                  return (
+                    <th
+                      key={column.key}
+                      className={column.numeric ? 'numeric' : undefined}
+                      aria-sort={
+                        isSortable
+                          ? isSorted
+                            ? direction === 'asc'
+                              ? 'ascending'
+                              : 'descending'
+                            : 'none'
+                          : undefined
+                      }
+                    >
+                      {isSortable ? (
+                        <button
+                          type="button"
+                          className={`table-sort-button${column.numeric ? ' numeric' : ''}`}
+                          onClick={() => handleSort(column.key)}
+                        >
+                          <span>{column.label}</span>
+                          <span className="table-sort-indicator" aria-hidden="true">
+                            {sortIndicator(isSorted ? direction : null)}
+                          </span>
+                        </button>
+                      ) : (
+                        column.label
+                      )}
+                    </th>
+                  );
+                })}
+              </tr>
+            </thead>
+            <tbody>
+              {visibleEntries.map(({ row, rowKey }) => {
+                const isSelected = selectedRowKey === rowKey;
 
                 return (
-                  <th
-                    key={column.key}
-                    className={column.numeric ? 'numeric' : undefined}
-                    aria-sort={
-                      isSortable
-                        ? isSorted
-                          ? direction === 'asc'
-                            ? 'ascending'
-                            : 'descending'
-                          : 'none'
+                  <tr
+                    key={rowKey}
+                    className={`${isSelectable ? 'table-row-selectable' : ''}${isSelected ? ' table-row-selected' : ''}`.trim()}
+                    tabIndex={isSelectable ? 0 : undefined}
+                    aria-selected={isSelectable ? isSelected : undefined}
+                    onClick={
+                      isSelectable
+                        ? () => {
+                            onRowSelect(rowKey);
+                          }
+                        : undefined
+                    }
+                    onKeyDown={
+                      isSelectable
+                        ? (event) => {
+                            if (event.key === 'Enter' || event.key === ' ') {
+                              event.preventDefault();
+                              onRowSelect(rowKey);
+                            }
+                          }
                         : undefined
                     }
                   >
-                    {isSortable ? (
-                      <button
-                        type="button"
-                        className={`table-sort-button${column.numeric ? ' numeric' : ''}`}
-                        onClick={() => handleSort(column.key)}
-                      >
-                        <span>{column.label}</span>
-                        <span className="table-sort-indicator" aria-hidden="true">
-                          {sortIndicator(isSorted ? direction : null)}
-                        </span>
-                      </button>
-                    ) : (
-                      column.label
-                    )}
-                  </th>
+                    {columns.map((column) => (
+                      <td key={column.key} className={column.numeric ? 'numeric' : undefined}>
+                        {renderCell?.(column.key, row) ?? row[column.key] ?? ''}
+                      </td>
+                    ))}
+                  </tr>
                 );
               })}
-            </tr>
-          </thead>
-          <tbody>
-            {visibleEntries.map(({ row, rowKey }) => {
-              const isSelected = selectedRowKey === rowKey;
-
-              return (
-                <tr
-                  key={rowKey}
-                  className={`${isSelectable ? 'table-row-selectable' : ''}${isSelected ? ' table-row-selected' : ''}`.trim()}
-                  tabIndex={isSelectable ? 0 : undefined}
-                  aria-selected={isSelectable ? isSelected : undefined}
-                  onClick={
-                    isSelectable
-                      ? () => {
-                          onRowSelect(rowKey);
-                        }
-                      : undefined
-                  }
-                  onKeyDown={
-                    isSelectable
-                      ? (event) => {
-                          if (event.key === 'Enter' || event.key === ' ') {
-                            event.preventDefault();
-                            onRowSelect(rowKey);
-                          }
-                        }
-                      : undefined
-                  }
-                >
-                  {columns.map((column) => (
-                    <td key={column.key} className={column.numeric ? 'numeric' : undefined}>
-                      {renderCell?.(column.key, row) ?? row[column.key] ?? ''}
-                    </td>
-                  ))}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+            </tbody>
+          </table>
         </div>
       )}
     </div>

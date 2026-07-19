@@ -11,7 +11,7 @@ import path from 'node:path';
 import { parse as parseYaml } from 'yaml';
 import { Result } from '../../common/result/Result.js';
 import { ContentLoadError } from '../errors/ContentLoadError.js';
-import { RecipeDefinition } from './RecipeDefinition.js';
+import type { RecipeDefinition } from './RecipeDefinition.js';
 import type { RecipeReferenceContext } from './RecipeReferenceContext.js';
 import { RecipeRegistry } from './RecipeRegistry.js';
 import { validateRecipeDefinition } from './RecipeValidator.js';

@@ -17,13 +17,13 @@ Alle Ressourcen müssen diesem Schema entsprechen.
 
 Das Schema dient als Grundlage für:
 
-* JSON-Assets
-* Asset Registry
-* Content Pipeline
-* Validierung
-* Savegames
-* Editor
-* Modding
+- JSON-Assets
+- Asset Registry
+- Content Pipeline
+- Validierung
+- Savegames
+- Editor
+- Modding
 
 ---
 
@@ -169,11 +169,11 @@ trading:
 
 Eine Ressource darf referenzieren:
 
-* Buildings
-* Recipes
-* Technologies
-* Scenarios
-* Effects
+- Buildings
+- Recipes
+- Technologies
+- Scenarios
+- Effects
 
 Referenzen erfolgen ausschließlich über Asset-IDs.
 
@@ -186,8 +186,7 @@ Texte werden ausschließlich über Lokalisierungsschlüssel referenziert.
 Beispiel:
 
 ```yaml
-localizationKey:
-  resource.iron_ore
+localizationKey: resource.iron_ore
 ```
 
 ---
@@ -196,13 +195,13 @@ localizationKey:
 
 Eine Ressource ist gültig, wenn:
 
-* eine eindeutige Asset-ID vorhanden ist
-* die Version gültig ist
-* eine Kategorie definiert wurde
-* Stackgröße > 0
-* Basiswert ≥ 0
-* Masse ≥ 0
-* sämtliche Referenzen existieren
+- eine eindeutige Asset-ID vorhanden ist
+- die Version gültig ist
+- eine Kategorie definiert wurde
+- Stackgröße > 0
+- Basiswert ≥ 0
+- Masse ≥ 0
+- sämtliche Referenzen existieren
 
 Ungültige Ressourcen dürfen nicht geladen werden.
 
@@ -271,11 +270,11 @@ tags:
 
 Dieses Schema ist kompatibel mit:
 
-* ASSET_ID_SYSTEM.md
-* ASSET_VERSIONING.md
-* REGISTRY_SCHEMA.md
-* GLOBAL_ASSET_REGISTRY.md
-* CONTENT_PIPELINE.md
+- ASSET_ID_SYSTEM.md
+- ASSET_VERSIONING.md
+- REGISTRY_SCHEMA.md
+- GLOBAL_ASSET_REGISTRY.md
+- CONTENT_PIPELINE.md
 
 ---
 
@@ -283,13 +282,13 @@ Dieses Schema ist kompatibel mit:
 
 Geplante Erweiterungen:
 
-* Qualitätsstufen
-* Reinheitsgrad
-* Verderblichkeit
-* Temperaturabhängigkeit
-* Feuchtigkeit
-* Recyclingfähigkeit
-* Herkunft (Origin Tracking)
-* Emissionsfaktor
-* Marktpreisschwankungen
-* Dynamische Rohstoffqualitäten
+- Qualitätsstufen
+- Reinheitsgrad
+- Verderblichkeit
+- Temperaturabhängigkeit
+- Feuchtigkeit
+- Recyclingfähigkeit
+- Herkunft (Origin Tracking)
+- Emissionsfaktor
+- Marktpreisschwankungen
+- Dynamische Rohstoffqualitäten

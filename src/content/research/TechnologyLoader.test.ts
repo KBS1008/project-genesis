@@ -38,7 +38,9 @@ describe('TechnologyLoader', () => {
 
   it('rejects duplicate technology ids across files', async () => {
     const registry = new TechnologyRegistry();
-    const loadResult = await loader.loadFile(path.join(fixturesDirectory, 'basic_woodworking.yaml'));
+    const loadResult = await loader.loadFile(
+      path.join(fixturesDirectory, 'basic_woodworking.yaml'),
+    );
 
     expect(loadResult.ok).toBe(true);
 

@@ -1,15 +1,11 @@
 import { ManualClock } from '../../common/time/ManualClock.js';
 import { createBuildingId } from '../building/Building.js';
 import { createCompanyId } from '../company/Company.js';
-import {
-  Employee,
-  createEmployeeId,
-  createEmployeeTypeId,
-} from './Employee.js';
+import { Employee, createEmployeeId, createEmployeeTypeId } from './Employee.js';
 import { EmployeeStatus } from './EmployeeStatus.js';
-import { EmployeeAssignedToBuilding } from './events/EmployeeAssignedToBuilding.js';
-import { EmployeeHired } from './events/EmployeeHired.js';
-import { EmployeeUnassignedFromBuilding } from './events/EmployeeUnassignedFromBuilding.js';
+import type { EmployeeAssignedToBuilding } from './events/EmployeeAssignedToBuilding.js';
+import type { EmployeeHired } from './events/EmployeeHired.js';
+import type { EmployeeUnassignedFromBuilding } from './events/EmployeeUnassignedFromBuilding.js';
 
 function requireEmployeeId(value: string) {
   const result = createEmployeeId(value);

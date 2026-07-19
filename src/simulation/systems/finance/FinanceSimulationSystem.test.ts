@@ -1,11 +1,14 @@
 import { ManualClock } from '../../../common/time/ManualClock.js';
 import { createCompanyId } from '../../../domain/company/Company.js';
-import { Employee, createEmployeeId, createEmployeeTypeId } from '../../../domain/employee/Employee.js';
+import {
+  Employee,
+  createEmployeeId,
+  createEmployeeTypeId,
+} from '../../../domain/employee/Employee.js';
 import { PAYROLL_INTERVAL_TICKS } from '../../../domain/employee/EmployeePayrollConstants.js';
 import { FinanceTransactionType } from '../../../domain/finance/FinanceTransactionType.js';
 import { STARTING_MONEY } from '../../../domain/finance/FinanceConstants.js';
-import { createFinanceAccountId } from '../../../domain/finance/FinanceAccount.js';
-import { FinanceAccount } from '../../../domain/finance/FinanceAccount.js';
+import { createFinanceAccountId, FinanceAccount } from '../../../domain/finance/FinanceAccount.js';
 import { InMemoryEmployeeRepository } from '../../../infrastructure/persistence/InMemoryEmployeeRepository.js';
 import { InMemoryFinanceRepository } from '../../../infrastructure/persistence/InMemoryFinanceRepository.js';
 import { TAX_INTERVAL_TICKS } from '../../../domain/finance/TaxConstants.js';

@@ -184,7 +184,9 @@ export class Market extends AggregateRoot<'Market'> {
     const existing = this.#prices.get(resourceId);
 
     if (existing === undefined) {
-      return Result.fail(new ValidationError(`Resource "${resourceId}" is not listed on the market.`));
+      return Result.fail(
+        new ValidationError(`Resource "${resourceId}" is not listed on the market.`),
+      );
     }
 
     const previousPrice = existing.lastPrice;

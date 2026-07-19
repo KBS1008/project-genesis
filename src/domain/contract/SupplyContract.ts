@@ -118,7 +118,10 @@ export class SupplyContract extends AggregateRoot<'SupplyContract'> {
     readonly lastFulfilledTick: number;
     readonly active: boolean;
   }): Result<SupplyContract, ValidationError> {
-    const amountResult = Guard.againstNegative(params.amount, 'Contract amount must not be negative.');
+    const amountResult = Guard.againstNegative(
+      params.amount,
+      'Contract amount must not be negative.',
+    );
 
     if (!amountResult.ok) {
       return Result.fail(amountResult.error);

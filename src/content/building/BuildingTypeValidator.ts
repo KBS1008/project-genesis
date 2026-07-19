@@ -148,10 +148,9 @@ function readGlobalIdArray(
   for (const entry of arrayResult.value) {
     if (!GLOBAL_ID_PATTERN.test(entry)) {
       return Result.fail(
-        new ContentLoadError(
-          `Building type field "${field}" contains invalid id "${entry}".`,
-          { ...contentContext(record, filePath) },
-        ),
+        new ContentLoadError(`Building type field "${field}" contains invalid id "${entry}".`, {
+          ...contentContext(record, filePath),
+        }),
       );
     }
   }

@@ -15,8 +15,7 @@
  * @typeParam TError - The type of the failure error. Defaults to {@link unknown}.
  */
 export type Result<TValue, TError = unknown> =
-  | { readonly ok: true; readonly value: TValue }
-  | { readonly ok: false; readonly error: TError };
+  { readonly ok: true; readonly value: TValue } | { readonly ok: false; readonly error: TError };
 
 /**
  * Represents a successful {@link Result}.

@@ -41,17 +41,17 @@ Code is finished when it is:
 
 Every implementation is evaluated against the following gates.
 
-| Gate | Required |
-|--------|----------|
-| Architecture | ✅ |
-| Documentation | ✅ |
-| Code Quality | ✅ |
-| Testing | ✅ |
-| Error Handling | ✅ |
-| Logging | ✅ |
-| Validation | ✅ |
-| Performance | ✅ |
-| Review | ✅ |
+| Gate           | Required |
+| -------------- | -------- |
+| Architecture   | ✅       |
+| Documentation  | ✅       |
+| Code Quality   | ✅       |
+| Testing        | ✅       |
+| Error Handling | ✅       |
+| Logging        | ✅       |
+| Validation     | ✅       |
+| Performance    | ✅       |
+| Review         | ✅       |
 
 Failure of one mandatory gate blocks completion.
 

@@ -280,10 +280,10 @@ Diese Entscheidung unterstützt:
 
 # Änderungsprotokoll
 
-| Version | Datum | Änderung |
-|----------|--------|----------|
-| 1.0.0 | 2026-07-03 | Erste Version |
-| 2.0.0 | 2026-07-03 | Überarbeitung gemäß aktueller Architektur |
+| Version | Datum      | Änderung                                  |
+| ------- | ---------- | ----------------------------------------- |
+| 1.0.0   | 2026-07-03 | Erste Version                             |
+| 2.0.0   | 2026-07-03 | Überarbeitung gemäß aktueller Architektur |
 
 ---
 

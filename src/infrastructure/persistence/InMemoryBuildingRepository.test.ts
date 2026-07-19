@@ -129,9 +129,10 @@ describe('InMemoryBuildingRepository', () => {
     repository.save(sawmillResult.value);
     repository.save(warehouseResult.value);
 
-    expect(
-      repository.findUnderConstruction().map((building) => building.getId().value),
-    ).toEqual(['building_001', 'building_002']);
+    expect(repository.findUnderConstruction().map((building) => building.getId().value)).toEqual([
+      'building_001',
+      'building_002',
+    ]);
     expect(repository.findUnderConstruction()[0]?.getStatus()).toBe(
       BuildingStatus.UNDER_CONSTRUCTION,
     );

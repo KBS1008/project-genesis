@@ -58,9 +58,7 @@ export class CompleteTechnologyUseCase {
     const technologyId = technologyIdResult.value;
 
     if (this.#companyRepository.findById(companyId) === undefined) {
-      return Result.fail(
-        new ValidationError(`Company id "${companyId.value}" was not found.`),
-      );
+      return Result.fail(new ValidationError(`Company id "${companyId.value}" was not found.`));
     }
 
     const technology = this.#gameContent.technologies.get(technologyId.value);
@@ -72,9 +70,7 @@ export class CompleteTechnologyUseCase {
     }
 
     if (!technology.enabled) {
-      return Result.fail(
-        new ValidationError(`Technology id "${technologyId.value}" is disabled.`),
-      );
+      return Result.fail(new ValidationError(`Technology id "${technologyId.value}" is disabled.`));
     }
 
     const companyResearch = this.#companyResearchRepository.findByCompanyId(companyId);

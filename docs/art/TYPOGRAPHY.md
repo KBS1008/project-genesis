@@ -93,12 +93,12 @@ Use for:
 
 Recommended weights:
 
-| Weight | Usage |
-|---------|-------|
-| 400 | Body text |
-| 500 | Labels |
-| 600 | Section headings |
-| 700 | Page titles |
+| Weight | Usage            |
+| ------ | ---------------- |
+| 400    | Body text        |
+| 500    | Labels           |
+| 600    | Section headings |
+| 700    | Page titles      |
 
 Avoid excessive variation.
 
@@ -110,18 +110,18 @@ The exact pixel values will later be defined in DESIGN_TOKENS.md.
 
 Recommended hierarchy:
 
-| Level | Usage |
-|---------|--------|
-| Display | Splash Screens |
-| H1 | Main Page Title |
-| H2 | Window Title |
-| H3 | Section Heading |
-| H4 | Group Heading |
-| Body Large | Primary Text |
-| Body | Standard Text |
-| Small | Secondary Information |
-| Caption | Helper Text |
-| Overline | Categories |
+| Level      | Usage                 |
+| ---------- | --------------------- |
+| Display    | Splash Screens        |
+| H1         | Main Page Title       |
+| H2         | Window Title          |
+| H3         | Section Heading       |
+| H4         | Group Heading         |
+| Body Large | Primary Text          |
+| Body       | Standard Text         |
+| Small      | Secondary Information |
+| Caption    | Helper Text           |
+| Overline   | Categories            |
 
 The scale should be modular and consistent.
 
@@ -377,14 +377,14 @@ Avoid:
 
 Every interface should answer:
 
-| Question | Status |
-|-----------|--------|
-| Is the text immediately readable? | □ |
-| Is hierarchy clear? | □ |
-| Is spacing sufficient? | □ |
-| Are numbers easy to compare? | □ |
-| Does typography support accessibility? | □ |
-| Does it follow the design system? | □ |
+| Question                               | Status |
+| -------------------------------------- | ------ |
+| Is the text immediately readable?      | □      |
+| Is hierarchy clear?                    | □      |
+| Is spacing sufficient?                 | □      |
+| Are numbers easy to compare?           | □      |
+| Does typography support accessibility? | □      |
+| Does it follow the design system?      | □      |
 
 ---
 

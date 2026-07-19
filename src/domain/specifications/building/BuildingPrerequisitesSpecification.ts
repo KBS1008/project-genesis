@@ -4,8 +4,8 @@
  * Checks building placement prerequisites for research and milestones.
  */
 
-import { ValidationError } from '../../../common/errors/ValidationError.js';
-import { Result } from '../../../common/result/Result.js';
+import type { ValidationError } from '../../../common/errors/ValidationError.js';
+import type { Result } from '../../../common/result/Result.js';
 import { AndSpecification } from '../AndSpecification.js';
 import type { Specification } from '../Specification.js';
 import { RequiredMilestonesSpecification } from '../research/RequiredMilestonesSpecification.js';
@@ -27,16 +27,14 @@ export type BuildingPrerequisitesContext = {
 /**
  * Verifies that a building type's research and milestone prerequisites are met.
  */
-export class BuildingPrerequisitesSpecification
-  implements Specification<BuildingPrerequisitesCandidate, BuildingPrerequisitesContext>
-{
+export class BuildingPrerequisitesSpecification implements Specification<
+  BuildingPrerequisitesCandidate,
+  BuildingPrerequisitesContext
+> {
   readonly #specification = new AndSpecification<
     BuildingPrerequisitesCandidate,
     BuildingPrerequisitesContext
-  >([
-    new RequiredResearchAdapterSpecification(),
-    new RequiredMilestonesAdapterSpecification(),
-  ]);
+  >([new RequiredResearchAdapterSpecification(), new RequiredMilestonesAdapterSpecification()]);
 
   isSatisfiedBy(
     candidate: BuildingPrerequisitesCandidate,
@@ -46,9 +44,10 @@ export class BuildingPrerequisitesSpecification
   }
 }
 
-class RequiredResearchAdapterSpecification
-  implements Specification<BuildingPrerequisitesCandidate, BuildingPrerequisitesContext>
-{
+class RequiredResearchAdapterSpecification implements Specification<
+  BuildingPrerequisitesCandidate,
+  BuildingPrerequisitesContext
+> {
   readonly #requiredResearchSpecification = new RequiredResearchSpecification();
 
   isSatisfiedBy(
@@ -67,9 +66,10 @@ class RequiredResearchAdapterSpecification
   }
 }
 
-class RequiredMilestonesAdapterSpecification
-  implements Specification<BuildingPrerequisitesCandidate, BuildingPrerequisitesContext>
-{
+class RequiredMilestonesAdapterSpecification implements Specification<
+  BuildingPrerequisitesCandidate,
+  BuildingPrerequisitesContext
+> {
   readonly #requiredMilestonesSpecification = new RequiredMilestonesSpecification();
 
   isSatisfiedBy(

@@ -195,12 +195,12 @@ Gebäude besitzen unterschiedliche Größen.
 
 Beispiele:
 
-| Gebäude | Größe |
-|---------|------|
-| Lager | 2x2 |
-| Mine | 3x3 |
-| Stahlwerk | 4x4 |
-| Kraftwerk | 5x5 |
+| Gebäude   | Größe |
+| --------- | ----- |
+| Lager     | 2x2   |
+| Mine      | 3x3   |
+| Stahlwerk | 4x4   |
+| Kraftwerk | 5x5   |
 
 Straßen verbinden alle Gebäude.
 

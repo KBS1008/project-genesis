@@ -49,7 +49,9 @@ describe('StartNewGameUseCase', () => {
 
     expect(finance?.getCashBalance()).toBe(STARTING_MONEY);
     expect(buildings).toHaveLength(NEW_GAME_STARTER_BUILDINGS.length);
-    expect(buildings.every((building) => building.getStatus() === BuildingStatus.ACTIVE)).toBe(true);
+    expect(buildings.every((building) => building.getStatus() === BuildingStatus.ACTIVE)).toBe(
+      true,
+    );
     expect(buildings.map((building) => building.getBuildingTypeId().value).sort()).toEqual(
       NEW_GAME_STARTER_BUILDINGS.map((entry) => entry.buildingTypeId).sort(),
     );
@@ -66,16 +68,15 @@ describe('StartNewGameUseCase', () => {
       ).toBe(true);
     }
 
-    const warehouse = buildings.find((building) => building.getBuildingTypeId().value === 'warehouse');
+    const warehouse = buildings.find(
+      (building) => building.getBuildingTypeId().value === 'warehouse',
+    );
 
     expect(warehouse).toBeDefined();
     expect(context.buildingStorageRepository.findByBuildingId(warehouse!.getId())).toBeDefined();
     expect(context.supplyContractRepository.findByCompanyId(companyId.value)).toHaveLength(1);
     expect(
-      context.supplyContractRepository
-        .findByCompanyId(companyId.value)[0]
-        ?.getId()
-        .value,
+      context.supplyContractRepository.findByCompanyId(companyId.value)[0]?.getId().value,
     ).toBe(STARTER_NPC_WOOD_CONTRACT_ID);
     expect(context.simulationEngine.hasPendingEvents()).toBe(false);
   });

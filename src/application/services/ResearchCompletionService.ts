@@ -4,11 +4,13 @@
  * Unlocks completed technologies when a research job finishes.
  */
 
-import { ValidationError } from '../../common/errors/ValidationError.js';
-import { Result } from '../../common/result/Result.js';
+import type { ValidationError } from '../../common/errors/ValidationError.js';
+import type { Result } from '../../common/result/Result.js';
 import type { ResearchJob } from '../../domain/research/ResearchJob.js';
-import { CompleteTechnologyUseCase } from '../use-cases/CompleteTechnologyUseCase.js';
-import type { CompleteTechnologyUseCaseDependencies } from '../use-cases/CompleteTechnologyUseCase.js';
+import {
+  CompleteTechnologyUseCase,
+  type CompleteTechnologyUseCaseDependencies,
+} from '../use-cases/CompleteTechnologyUseCase.js';
 
 /** Dependencies required by {@link ResearchCompletionService}. */
 export type ResearchCompletionServiceDependencies = CompleteTechnologyUseCaseDependencies;

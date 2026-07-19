@@ -10,7 +10,6 @@ Alle Kernsysteme der Wirtschaft basieren auf einem gemeinsamen Architekturprinzi
 | ---------- | ----------------- | ---------------------------- |
 | Inventory  | Inventory         | InventoryTransaction         |
 | Finance    | Finance           | FinanceTransaction           |
-| Production | ProductionJob     | ProductionEvent *(später)*   |
-| Research   | Research          | ResearchProgress *(später)*  |
-| Energy     | Energy            | EnergyTransaction *(später)* |
-
+| Production | ProductionJob     | ProductionEvent _(später)_   |
+| Research   | Research          | ResearchProgress _(später)_  |
+| Energy     | Energy            | EnergyTransaction _(später)_ |

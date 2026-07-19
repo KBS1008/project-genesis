@@ -44,7 +44,9 @@ describe('TransportRouteLoader', () => {
     expect(result.ok).toBe(true);
 
     if (result.ok) {
-      expect(result.value.getAll().map((route) => route.id)).toEqual(['route_storage_to_production']);
+      expect(result.value.getAll().map((route) => route.id)).toEqual([
+        'route_storage_to_production',
+      ]);
     }
   });
 

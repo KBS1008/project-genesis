@@ -52,18 +52,18 @@ Every graphical asset should follow these principles:
 
 # Recommended AI Tools
 
-| Purpose | Recommended Tool |
-|----------|------------------|
-| Concept Art | ChatGPT Image Generation, Midjourney |
-| UI Mockups | Figma AI, ChatGPT Image Generation |
-| Icons | ChatGPT Image Generation, Adobe Firefly |
-| Buildings | ChatGPT Image Generation, Midjourney |
-| Resource Icons | ChatGPT Image Generation |
-| Character Portraits | Midjourney |
-| Maps | ChatGPT Image Generation |
-| Logos | ChatGPT Image Generation, Adobe Firefly |
-| Textures | Adobe Firefly |
-| 3D Models (Future) | Meshy AI, Tripo AI |
+| Purpose             | Recommended Tool                        |
+| ------------------- | --------------------------------------- |
+| Concept Art         | ChatGPT Image Generation, Midjourney    |
+| UI Mockups          | Figma AI, ChatGPT Image Generation      |
+| Icons               | ChatGPT Image Generation, Adobe Firefly |
+| Buildings           | ChatGPT Image Generation, Midjourney    |
+| Resource Icons      | ChatGPT Image Generation                |
+| Character Portraits | Midjourney                              |
+| Maps                | ChatGPT Image Generation                |
+| Logos               | ChatGPT Image Generation, Adobe Firefly |
+| Textures            | Adobe Firefly                           |
+| 3D Models (Future)  | Meshy AI, Tripo AI                      |
 
 ---
 
@@ -463,23 +463,23 @@ Priority
 
 # Estimated Asset Count
 
-| Category | Estimated Assets |
-|-----------|-----------------:|
-| Branding | 10–20 |
-| World | 50–100 |
-| Buildings | 200–400 |
-| Resources | 300–500 |
-| Products | 300–600 |
-| Vehicles | 50–100 |
-| Population | 100–300 |
-| Research | 100–200 |
-| User Interface | 200–300 |
-| Dashboards | 50–100 |
-| Charts | 30–60 |
-| Infrastructure | 150–250 |
-| Effects | 50–100 |
-| NPCs | 100–300 |
-| Company Logos | Unlimited |
+| Category       | Estimated Assets |
+| -------------- | ---------------: |
+| Branding       |            10–20 |
+| World          |           50–100 |
+| Buildings      |          200–400 |
+| Resources      |          300–500 |
+| Products       |          300–600 |
+| Vehicles       |           50–100 |
+| Population     |          100–300 |
+| Research       |          100–200 |
+| User Interface |          200–300 |
+| Dashboards     |           50–100 |
+| Charts         |            30–60 |
+| Infrastructure |          150–250 |
+| Effects        |           50–100 |
+| NPCs           |          100–300 |
+| Company Logos  |        Unlimited |
 
 **Estimated Total:** **1,700–3,300 graphical assets**
 

@@ -5,7 +5,7 @@ import type { DomainEvent } from '../../common/events/DomainEvent.js';
 import { ManualClock } from '../../common/time/ManualClock.js';
 import { validateGameContent } from '../../content/validateGameContent.js';
 import { createCompanyId } from '../../domain/company/Company.js';
-import { CompanyMilestoneReached } from '../../domain/milestone/events/CompanyMilestoneReached.js';
+import type { CompanyMilestoneReached } from '../../domain/milestone/events/CompanyMilestoneReached.js';
 import { InMemoryBuildingRepository } from '../../infrastructure/persistence/InMemoryBuildingRepository.js';
 import { InMemoryCompanyRepository } from '../../infrastructure/persistence/InMemoryCompanyRepository.js';
 import { InMemoryCompanyMilestonesRepository } from '../../infrastructure/persistence/InMemoryCompanyMilestonesRepository.js';
@@ -186,11 +186,7 @@ describe('MilestoneEvaluationService', () => {
     inventory?.addQuantity('wood', 5, context.clock);
     context.inventoryRepository.save(inventory!);
 
-    const sellResult = context.marketTradeService.sell(
-      requireCompanyId('company_001'),
-      'wood',
-      2,
-    );
+    const sellResult = context.marketTradeService.sell(requireCompanyId('company_001'), 'wood', 2);
 
     expect(sellResult.ok).toBe(true);
 
@@ -224,11 +220,7 @@ describe('MilestoneEvaluationService', () => {
     inventory?.addQuantity('wood', 10, context.clock);
     context.inventoryRepository.save(inventory!);
 
-    const sellResult = context.marketTradeService.sell(
-      requireCompanyId('company_001'),
-      'wood',
-      4,
-    );
+    const sellResult = context.marketTradeService.sell(requireCompanyId('company_001'), 'wood', 4);
 
     expect(sellResult.ok).toBe(true);
 

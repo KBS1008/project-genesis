@@ -15,12 +15,12 @@ Alle Mitarbeiterdefinitionen müssen diesem Schema entsprechen.
 
 Das Schema dient als Grundlage für:
 
-* JSON-Dateien
-* Validierung
-* Asset Registry
-* Editor
-* Modding
-* Savegame-Kompatibilität
+- JSON-Dateien
+- Validierung
+- Asset Registry
+- Editor
+- Modding
+- Savegame-Kompatibilität
 
 ---
 
@@ -121,8 +121,7 @@ Texte werden nicht direkt gespeichert.
 Stattdessen:
 
 ```yaml
-localizationKey:
-  employee.engineer.basic
+localizationKey: employee.engineer.basic
 ```
 
 ---
@@ -131,10 +130,10 @@ localizationKey:
 
 Ein Employee darf referenzieren:
 
-* Research
-* Buildings
-* Traits
-* Technologies
+- Research
+- Buildings
+- Traits
+- Technologies
 
 Referenzen erfolgen ausschließlich über Asset-IDs.
 
@@ -144,12 +143,12 @@ Referenzen erfolgen ausschließlich über Asset-IDs.
 
 Erforderlich:
 
-* eindeutige ID
-* gültige Version
-* positiver Salary
-* positiver Cost
-* gültige Kategorie
-* gültige Referenzen
+- eindeutige ID
+- gültige Version
+- positiver Salary
+- positiver Cost
+- gültige Kategorie
+- gültige Referenzen
 
 Ungültige Assets dürfen nicht geladen werden.
 
@@ -208,11 +207,11 @@ tags:
 
 Dieses Schema ist kompatibel mit:
 
-* ASSET_ID_SYSTEM.md
-* ASSET_VERSIONING.md
-* REGISTRY_SCHEMA.md
-* GLOBAL_ASSET_REGISTRY.md
-* CONTENT_PIPELINE.md
+- ASSET_ID_SYSTEM.md
+- ASSET_VERSIONING.md
+- REGISTRY_SCHEMA.md
+- GLOBAL_ASSET_REGISTRY.md
+- CONTENT_PIPELINE.md
 
 ---
 
@@ -220,11 +219,11 @@ Dieses Schema ist kompatibel mit:
 
 Geplante Erweiterungen:
 
-* Experience-System
-* Skills
-* Ausbildung
-* Spezialisierungen
-* Gehaltsentwicklung
-* Zufriedenheit
-* KI-Verhalten
-* Persönlichkeitsprofile
+- Experience-System
+- Skills
+- Ausbildung
+- Spezialisierungen
+- Gehaltsentwicklung
+- Zufriedenheit
+- KI-Verhalten
+- Persönlichkeitsprofile

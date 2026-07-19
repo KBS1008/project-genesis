@@ -30,39 +30,39 @@ This register records the actual technical debt.
 
 # Status Definitions
 
-| Status | Meaning |
-|--------|---------|
-| Open | Debt identified |
-| Accepted | Debt intentionally accepted |
-| Scheduled | Resolution planned |
-| In Progress | Resolution underway |
-| Resolved | Resolution implemented |
-| Verified | Resolution confirmed |
-| Closed | Fully completed |
+| Status      | Meaning                     |
+| ----------- | --------------------------- |
+| Open        | Debt identified             |
+| Accepted    | Debt intentionally accepted |
+| Scheduled   | Resolution planned          |
+| In Progress | Resolution underway         |
+| Resolved    | Resolution implemented      |
+| Verified    | Resolution confirmed        |
+| Closed      | Fully completed             |
 
 ---
 
 # Priority Definitions
 
-| Priority | Meaning |
-|----------|---------|
-| Critical | Immediate action required |
-| High | Address before next major milestone |
-| Medium | Plan resolution |
-| Low | Address opportunistically |
-| Informational | No immediate action |
+| Priority      | Meaning                             |
+| ------------- | ----------------------------------- |
+| Critical      | Immediate action required           |
+| High          | Address before next major milestone |
+| Medium        | Plan resolution                     |
+| Low           | Address opportunistically           |
+| Informational | No immediate action                 |
 
 ---
 
 # Technical Debt Summary
 
-| Priority | Count |
-|----------|------:|
-| Critical | 0 |
-| High | 0 |
-| Medium | 0 |
-| Low | 0 |
-| Informational | 0 |
+| Priority      | Count |
+| ------------- | ----: |
+| Critical      |     0 |
+| High          |     0 |
+| Medium        |     0 |
+| Low           |     0 |
+| Informational |     0 |
 
 ---
 
@@ -78,9 +78,9 @@ It means that no specific debt item has yet been formally recorded in this regis
 
 # Debt Register
 
-| ID | Title | Category | Priority | Status | Target Milestone |
-|----|-------|----------|----------|--------|------------------|
-| — | No registered items | — | — | — | — |
+| ID  | Title               | Category | Priority | Status | Target Milestone |
+| --- | ------------------- | -------- | -------- | ------ | ---------------- |
+| —   | No registered items | —        | —        | —      | —                |
 
 ---
 

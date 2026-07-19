@@ -44,15 +44,15 @@ Es soll niemals nur einen optimalen Weg geben.
 
 Ein Spieler kann sich spezialisieren auf:
 
-* Rohstoffförderung
-* Energie
-* Landwirtschaft
-* Chemie
-* Schwerindustrie
-* Logistik
-* Forschung
-* Handel
-* Finanzwesen
+- Rohstoffförderung
+- Energie
+- Landwirtschaft
+- Chemie
+- Schwerindustrie
+- Logistik
+- Forschung
+- Handel
+- Finanzwesen
 
 Jede Spezialisierung soll wirtschaftlich erfolgreich sein.
 
@@ -84,13 +84,13 @@ Es gibt keine kostenlosen Rücksetzungen.
 
 Der Markt reagiert auf:
 
-* Angebot
-* Nachfrage
-* Produktionsengpässe
-* Energiepreise
-* Forschung
-* saisonale Ereignisse
-* globale Spielereignisse
+- Angebot
+- Nachfrage
+- Produktionsengpässe
+- Energiepreise
+- Forschung
+- saisonale Ereignisse
+- globale Spielereignisse
 
 Kein Preis ist dauerhaft fest.
 
@@ -102,11 +102,11 @@ Spieler, die komplexe Aufbauspiele mögen.
 
 Fans von:
 
-* Wirtschaftssimulationen
-* Produktionsketten
-* Optimierung
-* Handel
-* langfristiger Planung
+- Wirtschaftssimulationen
+- Produktionsketten
+- Optimierung
+- Handel
+- langfristiger Planung
 
 ---
 
@@ -158,16 +158,16 @@ Im späteren Spiel entstehen völlig neue Herausforderungen.
 
 Beispiele:
 
-* globale Lieferketten
-* internationale Handelsverträge
-* Energiekrisen
-* Umweltauflagen
-* Börsenhandel
-* Unternehmensfusionen
-* Patente
-* Forschungslabore
-* Raumfahrtindustrie
-* Hochtechnologie
+- globale Lieferketten
+- internationale Handelsverträge
+- Energiekrisen
+- Umweltauflagen
+- Börsenhandel
+- Unternehmensfusionen
+- Patente
+- Forschungslabore
+- Raumfahrtindustrie
+- Hochtechnologie
 
 Das Endgame besteht nicht aus immer größeren Zahlen, sondern aus immer komplexeren Entscheidungen.
 
@@ -191,11 +191,11 @@ Keine Pay-to-Win-Mechaniken.
 
 Mögliche Einnahmequellen:
 
-* kosmetische Designs
-* Premium-Statistiken
-* zusätzliche Unternehmenslogos
-* Komfortfunktionen
-* optionale Premium-Mitgliedschaft ohne spielerische Vorteile
+- kosmetische Designs
+- Premium-Statistiken
+- zusätzliche Unternehmenslogos
+- Komfortfunktionen
+- optionale Premium-Mitgliedschaft ohne spielerische Vorteile
 
 Spielerischer Fortschritt kann niemals gekauft werden.
 

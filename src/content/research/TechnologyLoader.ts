@@ -9,7 +9,7 @@ import path from 'node:path';
 import { parse as parseYaml } from 'yaml';
 import { Result } from '../../common/result/Result.js';
 import { ContentLoadError } from '../errors/ContentLoadError.js';
-import { TechnologyDefinition } from './TechnologyDefinition.js';
+import type { TechnologyDefinition } from './TechnologyDefinition.js';
 import { TechnologyRegistry } from './TechnologyRegistry.js';
 import { validateTechnologyDefinition } from './TechnologyValidator.js';
 

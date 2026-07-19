@@ -773,7 +773,10 @@ describe('GameStateSerializer', () => {
       expect(
         financeBefore
           ?.getTransactions()
-          .some((transaction) => transaction.transactionType === FinanceTransactionType.CONTRACT_PAYMENT),
+          .some(
+            (transaction) =>
+              transaction.transactionType === FinanceTransactionType.CONTRACT_PAYMENT,
+          ),
       ).toBe(true);
       expect(
         financeBefore

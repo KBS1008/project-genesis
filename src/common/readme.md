@@ -186,8 +186,8 @@ Time should always be abstracted.
 Never call:
 
 ```typescript
-Date.now()
-new Date()
+Date.now();
+new Date();
 ```
 
 directly inside business logic.

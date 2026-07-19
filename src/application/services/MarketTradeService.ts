@@ -15,9 +15,8 @@ import { FinanceTransactionType } from '../../domain/finance/FinanceTransactionT
 import type { FinanceRepository } from '../../domain/finance/FinanceRepository.js';
 import type { Inventory } from '../../domain/inventory/Inventory.js';
 import type { InventoryRepository } from '../../domain/inventory/InventoryRepository.js';
-import { createMarketId } from '../../domain/market/Market.js';
+import { createMarketId, type Market } from '../../domain/market/Market.js';
 import { GLOBAL_MARKET_ID } from '../../domain/market/MarketConstants.js';
-import type { Market } from '../../domain/market/Market.js';
 import type { MarketRepository } from '../../domain/market/MarketRepository.js';
 import { InstantTradePricingPolicy } from '../../domain/policies/market/InstantTradePricingPolicy.js';
 import { MarketFeePolicy } from '../../domain/policies/market/MarketFeePolicy.js';
@@ -152,12 +151,7 @@ export class MarketTradeService {
       return Result.fail(feeDebitResult.error);
     }
 
-    const volumeResult = market.updateLastPrice(
-      resourceId,
-      unitPrice,
-      tradeAmount,
-      this.#clock,
-    );
+    const volumeResult = market.updateLastPrice(resourceId, unitPrice, tradeAmount, this.#clock);
 
     if (!volumeResult.ok) {
       this.#refundMarketFee(finance, feeAmount);
@@ -257,12 +251,7 @@ export class MarketTradeService {
       return Result.fail(addResult.error);
     }
 
-    const volumeResult = market.updateLastPrice(
-      resourceId,
-      unitPrice,
-      tradeAmount,
-      this.#clock,
-    );
+    const volumeResult = market.updateLastPrice(resourceId, unitPrice, tradeAmount, this.#clock);
 
     if (!volumeResult.ok) {
       inventory.removeQuantity(resourceId, tradeAmount, this.#clock);

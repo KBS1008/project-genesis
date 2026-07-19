@@ -156,13 +156,13 @@ Examples:
 
 Technical debt is classified by severity.
 
-| Severity | Description |
-|----------|-------------|
-| Critical | Immediate risk to stability, data or architecture |
-| High | Significant long-term impact |
-| Medium | Manageable but should be addressed |
-| Low | Minor improvement opportunity |
-| Informational | Observation without immediate action |
+| Severity      | Description                                       |
+| ------------- | ------------------------------------------------- |
+| Critical      | Immediate risk to stability, data or architecture |
+| High          | Significant long-term impact                      |
+| Medium        | Manageable but should be addressed                |
+| Low           | Minor improvement opportunity                     |
+| Informational | Observation without immediate action              |
 
 ---
 
@@ -480,13 +480,13 @@ Technical debt does not automatically block completion.
 
 However:
 
-| Debt Level | Quality Gate Impact |
-|------------|---------------------|
-| Critical | Blocks completion |
-| High | Usually blocks milestone |
-| Medium | Must be documented |
-| Low | May be accepted |
-| Informational | No blocking effect |
+| Debt Level    | Quality Gate Impact      |
+| ------------- | ------------------------ |
+| Critical      | Blocks completion        |
+| High          | Usually blocks milestone |
+| Medium        | Must be documented       |
+| Low           | May be accepted          |
+| Informational | No blocking effect       |
 
 Any accepted debt must be recorded.
 

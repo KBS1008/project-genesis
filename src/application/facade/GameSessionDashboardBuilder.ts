@@ -467,10 +467,7 @@ export class GameSessionDashboardBuilder {
     );
   }
 
-  #readProductionHints(
-    input: DashboardHintInput,
-    companyId: string,
-  ): readonly ProductionHint[] {
+  #readProductionHints(input: DashboardHintInput, companyId: string): readonly ProductionHint[] {
     const hints: ProductionHint[] = [];
     const companyIdResult = createCompanyId(companyId);
 
@@ -815,9 +812,7 @@ export class GameSessionDashboardBuilder {
     const hasWoodPurchase = input.financeTransactions.some(
       (transaction) => transaction.transactionType === 'PURCHASE',
     );
-    const hasPlankProduction = input.productionJobs.some(
-      (job) => job.recipeId === 'recipe_planks',
-    );
+    const hasPlankProduction = input.productionJobs.some((job) => job.recipeId === 'recipe_planks');
     const hasPlankSale = input.financeTransactions.some(
       (transaction) => transaction.transactionType === 'SALE',
     );
@@ -865,7 +860,8 @@ export class GameSessionDashboardBuilder {
       Object.freeze({
         id: 'earn_profit',
         title: 'Ersten Gewinn erzielen',
-        description: 'Schließen Sie den ersten Verkauf ab und erreichen Sie den Meilenstein „First Profit“.',
+        description:
+          'Schließen Sie den ersten Verkauf ab und erreichen Sie den Meilenstein „First Profit“.',
         completed: hasFirstProfit,
       }),
       Object.freeze({

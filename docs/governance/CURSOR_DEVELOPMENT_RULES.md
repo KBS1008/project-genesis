@@ -15,11 +15,11 @@ Es dient als dauerhafte Arbeitsgrundlage für KI-gestützte Entwicklung (z. B. C
 
 Diese Regeln gelten für:
 
-* neue Features
-* Refactorings
-* Bugfixes
-* Optimierungen
-* Erweiterungen bestehender Systeme
+- neue Features
+- Refactorings
+- Bugfixes
+- Optimierungen
+- Erweiterungen bestehender Systeme
 
 ---
 
@@ -44,32 +44,32 @@ Vor jeder Implementierung sind die folgenden Dokumente als verbindliche Spezifik
 
 ## Architecture
 
-* ERROR_HANDLING_STRATEGY.md
-* RESULT_PATTERN.md
-* VALIDATION_STRATEGY.md
-* DEPENDENCY_RULES.md
-* PERFORMANCE_GUIDELINES.md
-* LOGGING_STRATEGY.md
-* TESTING_STRATEGY.md
-* NAMING_CONVENTIONS.md
+- ERROR_HANDLING_STRATEGY.md
+- RESULT_PATTERN.md
+- VALIDATION_STRATEGY.md
+- DEPENDENCY_RULES.md
+- PERFORMANCE_GUIDELINES.md
+- LOGGING_STRATEGY.md
+- TESTING_STRATEGY.md
+- NAMING_CONVENTIONS.md
 
 ## Governance
 
-* QUALITY_GATES.md
-* QUALITY_METRICS.md
-* TECHNICAL_DEBT_POLICY.md
-* AUDIT_PROCESS.md
+- QUALITY_GATES.md
+- QUALITY_METRICS.md
+- TECHNICAL_DEBT_POLICY.md
+- AUDIT_PROCESS.md
 
 ## Roadmap
 
-* PROJECT_ROADMAP.md
-* MILESTONE_PLAN.md
-* RELEASE_STRATEGY.md
+- PROJECT_ROADMAP.md
+- MILESTONE_PLAN.md
+- RELEASE_STRATEGY.md
 
 ## Audit
 
-* ARCHITECTURE_STANDARDS_SYNC.md
-* AUD-002_IMPLEMENTATION_AUDIT.md
+- ARCHITECTURE_STANDARDS_SYNC.md
+- AUD-002_IMPLEMENTATION_AUDIT.md
 
 ---
 
@@ -94,19 +94,19 @@ Vor jeder neuen Klasse ist zu prüfen, ob bereits eine geeignete Implementierung
 
 Insbesondere:
 
-* Interface
-* Port
-* Adapter
-* Repository
-* Domain Service
-* Application Service
-* Value Object
-* Result
-* Domain Error
-* Event
-* Validator
-* Mapper
-* Utility
+- Interface
+- Port
+- Adapter
+- Repository
+- Domain Service
+- Application Service
+- Value Object
+- Result
+- Domain Error
+- Event
+- Validator
+- Mapper
+- Utility
 
 Bestehende Lösungen sind zu bevorzugen.
 
@@ -120,11 +120,11 @@ Doppelte Implementierungen sind zu vermeiden.
 
 Enthält ausschließlich:
 
-* Business Rules
-* Entities
-* Value Objects
-* Domain Events
-* Domain Services
+- Business Rules
+- Entities
+- Value Objects
+- Domain Events
+- Domain Services
 
 Die Domain kennt keine Infrastruktur.
 
@@ -134,11 +134,11 @@ Die Domain kennt keine Infrastruktur.
 
 Verantwortlich für:
 
-* Use Cases
-* Orchestrierung
-* Ports
-* Commands
-* Queries
+- Use Cases
+- Orchestrierung
+- Ports
+- Commands
+- Queries
 
 Keine Geschäftslogik.
 
@@ -148,10 +148,10 @@ Keine Geschäftslogik.
 
 Implementiert:
 
-* Adapter
-* Persistence
-* Logging
-* externe Systeme
+- Adapter
+- Persistence
+- Logging
+- externe Systeme
 
 Keine fachlichen Entscheidungen.
 
@@ -161,9 +161,9 @@ Keine fachlichen Entscheidungen.
 
 Verantwortlich für:
 
-* UI
-* Eingaben
-* Darstellung
+- UI
+- Eingaben
+- Darstellung
 
 Keine Business Rules.
 
@@ -195,9 +195,9 @@ Erwartete Fehler werden über das Result Pattern behandelt.
 
 Beispiel:
 
-* Validation Errors
-* Domain Errors
-* Business Rule Violations
+- Validation Errors
+- Domain Errors
+- Business Rule Violations
 
 Unerwartete Fehler werden über die ProjectGenesisError-Hierarchie verarbeitet.
 
@@ -224,9 +224,9 @@ Ausschließlich strukturierte Logger verwenden.
 
 Nicht erlaubt:
 
-* console.log
-* Debug-Ausgaben im Produktionscode
-* unstrukturierte Logtexte
+- console.log
+- Debug-Ausgaben im Produktionscode
+- unstrukturierte Logtexte
 
 Log-Level müssen bewusst gewählt werden.
 
@@ -248,16 +248,16 @@ Jede Implementierung benötigt angemessene Tests.
 
 Mindestens:
 
-* Happy Path
-* Failure Path
-* Validation
-* Business Rules
+- Happy Path
+- Failure Path
+- Validation
+- Business Rules
 
 Bei Bedarf zusätzlich:
 
-* Integration Tests
-* Architekturtests
-* Regression Tests
+- Integration Tests
+- Architekturtests
+- Regression Tests
 
 Neue Funktionen ohne Tests gelten als unvollständig.
 
@@ -269,9 +269,9 @@ Optimierungen erfolgen ausschließlich nach Messung.
 
 Nicht zulässig:
 
-* Premature Optimization
-* versteckte Allokationen
-* unnötige Komplexität
+- Premature Optimization
+- versteckte Allokationen
+- unnötige Komplexität
 
 Lesbarkeit und Wartbarkeit besitzen Vorrang.
 
@@ -283,13 +283,13 @@ Alle neuen Elemente folgen den Naming Conventions.
 
 Insbesondere:
 
-* Klassen
-* Interfaces
-* Events
-* Commands
-* Repositories
-* Ports
-* Services
+- Klassen
+- Interfaces
+- Events
+- Commands
+- Repositories
+- Ports
+- Services
 
 Abweichungen sind zu vermeiden.
 
@@ -311,10 +311,10 @@ Neue technische Schulden sollen grundsätzlich vermieden werden.
 
 Falls technische Schulden unvermeidbar sind, müssen sie:
 
-* dokumentiert
-* begründet
-* priorisiert
-* im Technical Debt Register erfasst
+- dokumentiert
+- begründet
+- priorisiert
+- im Technical Debt Register erfasst
 
 werden.
 
@@ -324,16 +324,16 @@ werden.
 
 Vor Abschluss einer Aufgabe ist zu prüfen:
 
-* Architektur eingehalten
-* Dependency Rules eingehalten
-* Naming korrekt
-* Tests vorhanden
-* Logging korrekt
-* Validation korrekt
-* Result Pattern verwendet
-* Dokumentation aktuell
-* Keine unnötigen Duplikate
-* Keine offensichtlichen technischen Schulden
+- Architektur eingehalten
+- Dependency Rules eingehalten
+- Naming korrekt
+- Tests vorhanden
+- Logging korrekt
+- Validation korrekt
+- Result Pattern verwendet
+- Dokumentation aktuell
+- Keine unnötigen Duplikate
+- Keine offensichtlichen technischen Schulden
 
 ---
 
@@ -343,17 +343,17 @@ Nach jeder abgeschlossenen Aufgabe ist ein kurzer Bericht zu erstellen.
 
 Der Bericht enthält mindestens:
 
-* Ziel der Änderung
-* betroffene Module
-* geänderte Dateien
-* neue Dateien
-* gelöschte Dateien
-* Tests
-* Architekturentscheidungen
-* offene Punkte
-* bekannte Risiken
-* technische Schulden
-* Empfehlungen
+- Ziel der Änderung
+- betroffene Module
+- geänderte Dateien
+- neue Dateien
+- gelöschte Dateien
+- Tests
+- Architekturentscheidungen
+- offene Punkte
+- bekannte Risiken
+- technische Schulden
+- Empfehlungen
 
 ---
 
@@ -361,12 +361,12 @@ Der Bericht enthält mindestens:
 
 Eine Implementierung gilt als abgeschlossen, wenn:
 
-* Architekturstandards eingehalten sind
-* Tests erfolgreich sind
-* Dokumentation aktuell ist
-* keine Layerverletzungen bestehen
-* keine kritischen technischen Schulden entstanden sind
-* der Implementation Report erstellt wurde
+- Architekturstandards eingehalten sind
+- Tests erfolgreich sind
+- Dokumentation aktuell ist
+- keine Layerverletzungen bestehen
+- keine kritischen technischen Schulden entstanden sind
+- der Implementation Report erstellt wurde
 
 ---
 
@@ -376,9 +376,9 @@ Dieses Dokument ist Bestandteil der Projekt-Governance.
 
 Es wird nach:
 
-* größeren Refactorings
-* abgeschlossenen Audits
-* Architekturentscheidungen
-* Major Releases
+- größeren Refactorings
+- abgeschlossenen Audits
+- Architekturentscheidungen
+- Major Releases
 
 überprüft und bei Bedarf aktualisiert.

@@ -401,4 +401,3 @@ export function fetchDashboardHistory(
 export function buildNameMap(entries: readonly ContentNameEntry[]): ReadonlyMap<string, string> {
   return new Map(entries.map((entry) => [entry.id, entry.name]));
 }
-

@@ -13,10 +13,10 @@ Dieses Dokument dient als zentrale Übersicht über den Umsetzungsgrad der defin
 
 Es verbindet:
 
-* Architekturdokumentation
-* Implementierungsstand
-* Audit-Ergebnisse
-* zukünftige Verifikationsmaßnahmen
+- Architekturdokumentation
+- Implementierungsstand
+- Audit-Ergebnisse
+- zukünftige Verifikationsmaßnahmen
 
 Jede Änderung an den Architekturstandards oder wesentliche Implementierungsänderung sollte anschließend in diesem Dokument nachvollzogen werden.
 
@@ -30,16 +30,16 @@ Jede Änderung an den Architekturstandards oder wesentliche Implementierungsänd
 
 **Audit Scope:**
 
-* Architecture Standards
-* Coding Standards
-* Error Handling
-* Validation
-* Result Pattern
-* Dependency Rules
-* Naming
-* Testing
-* Logging
-* Performance
+- Architecture Standards
+- Coding Standards
+- Error Handling
+- Validation
+- Result Pattern
+- Dependency Rules
+- Naming
+- Testing
+- Logging
+- Performance
 
 ---
 
@@ -47,7 +47,7 @@ Jede Änderung an den Architekturstandards oder wesentliche Implementierungsänd
 
 | Rating                       | Count |
 | ---------------------------- | ----: |
-| ✅ A — Conform                | **6** |
+| ✅ A — Conform               | **6** |
 | 🟡 B — Verification Required | **2** |
 | 🟠 C — Architecture Drift    | **0** |
 | 🔴 D — Missing               | **0** |
@@ -62,13 +62,13 @@ Während des Audits konnten keine bestätigten Architekturverletzungen festgeste
 
 Die Architektur besitzt insbesondere eine konsistente Ausrichtung hinsichtlich:
 
-* Clean Architecture
-* Domain Driven Design
-* Result Pattern
-* Error Handling
-* Validation
-* Dependency Rules
-* Naming Conventions
+- Clean Architecture
+- Domain Driven Design
+- Result Pattern
+- Error Handling
+- Validation
+- Dependency Rules
+- Naming Conventions
 
 Offene Punkte betreffen ausschließlich die Verifikation bereits definierter Standards und nicht deren grundsätzliche Umsetzung.
 
@@ -78,14 +78,14 @@ Offene Punkte betreffen ausschließlich die Verifikation bereits definierter Sta
 
 | Standard           | Status | Bemerkung                    |
 | ------------------ | ------ | ---------------------------- |
-| Error Handling     | ✅ A    | Architektur konform          |
+| Error Handling     | ✅ A   | Architektur konform          |
 | Logging            | 🟡 B   | Implementierung verifizieren |
-| Result Pattern     | ✅ A    | Architektur konform          |
-| Validation         | ✅ A    | Architektur konform          |
+| Result Pattern     | ✅ A   | Architektur konform          |
+| Validation         | ✅ A   | Architektur konform          |
 | Testing            | 🟡 B   | Testlandschaft verifizieren  |
-| Performance        | ✅ A    | Architektur konform          |
-| Dependency Rules   | ✅ A    | Architektur konform          |
-| Naming Conventions | ✅ A    | Architektur konform          |
+| Performance        | ✅ A   | Architektur konform          |
+| Dependency Rules   | ✅ A   | Architektur konform          |
+| Naming Conventions | ✅ A   | Architektur konform          |
 
 ---
 
@@ -93,17 +93,17 @@ Offene Punkte betreffen ausschließlich die Verifikation bereits definierter Sta
 
 Folgende Architekturprinzipien konnten als konsistent bestätigt werden:
 
-* Clean Architecture
-* Layer Separation
-* Dependency Inversion
-* Result Pattern
-* Validation Strategy
-* Error Handling Strategy
-* Domain Isolation
-* Asset Architecture
-* Registry Architecture
-* Dokumentationsstruktur
-* Architektur-Governance
+- Clean Architecture
+- Layer Separation
+- Dependency Inversion
+- Result Pattern
+- Validation Strategy
+- Error Handling Strategy
+- Domain Isolation
+- Asset Architecture
+- Registry Architecture
+- Dokumentationsstruktur
+- Architektur-Governance
 
 ---
 
@@ -113,13 +113,13 @@ Folgende Architekturprinzipien konnten als konsistent bestätigt werden:
 
 Offene Punkte:
 
-* Logger-Abstraktion prüfen
-* strukturierte Logeinträge prüfen
-* Logging-Kategorien prüfen
-* Log-Level prüfen
-* Exception Logging prüfen
-* Context Logging prüfen
-* Replay-Unterstützung prüfen
+- Logger-Abstraktion prüfen
+- strukturierte Logeinträge prüfen
+- Logging-Kategorien prüfen
+- Log-Level prüfen
+- Exception Logging prüfen
+- Context Logging prüfen
+- Replay-Unterstützung prüfen
 
 ---
 
@@ -127,16 +127,16 @@ Offene Punkte:
 
 Offene Punkte:
 
-* Domain Tests
-* Result Tests
-* Validation Tests
-* Error Handling Tests
-* Repository Tests
-* Event Bus Tests
-* Determinism Tests
-* Integration Tests
-* Architecture Tests
-* CI-Testpipeline
+- Domain Tests
+- Result Tests
+- Validation Tests
+- Error Handling Tests
+- Repository Tests
+- Event Bus Tests
+- Determinism Tests
+- Integration Tests
+- Architecture Tests
+- CI-Testpipeline
 
 ---
 
@@ -146,10 +146,10 @@ Aktuell wurden keine kritischen Architekturabweichungen festgestellt.
 
 Es bestehen derzeit:
 
-* keine bestätigten Layer-Verletzungen
-* keine bestätigten Dependency-Verstöße
-* keine bestätigten Naming-Konflikte
-* keine bestätigten Architektur-Drifts
+- keine bestätigten Layer-Verletzungen
+- keine bestätigten Dependency-Verstöße
+- keine bestätigten Naming-Konflikte
+- keine bestätigten Architektur-Drifts
 
 Die verbleibenden Risiken beziehen sich ausschließlich auf fehlende Verifikation.
 
@@ -159,26 +159,26 @@ Die verbleibenden Risiken beziehen sich ausschließlich auf fehlende Verifikatio
 
 ## High Priority
 
-* Domain Architecture Audit
-* Simulation Architecture Audit
-* Asset Pipeline Audit
+- Domain Architecture Audit
+- Simulation Architecture Audit
+- Asset Pipeline Audit
 
 ---
 
 ## Medium Priority
 
-* AI Architecture Audit
-* Persistence Audit
-* Event Bus Audit
+- AI Architecture Audit
+- Persistence Audit
+- Event Bus Audit
 
 ---
 
 ## Future
 
-* Rendering Audit
-* Performance Audit
-* Save/Load Audit
-* Multiplayer Readiness Audit
+- Rendering Audit
+- Performance Audit
+- Save/Load Audit
+- Multiplayer Readiness Audit
 
 ---
 
@@ -186,23 +186,23 @@ Die verbleibenden Risiken beziehen sich ausschließlich auf fehlende Verifikatio
 
 ## Logging
 
-* Logger-Abstraktion
-* strukturierte Logs
-* Log-Level
-* Kategorien
-* Performance
-* Replay
+- Logger-Abstraktion
+- strukturierte Logs
+- Log-Level
+- Kategorien
+- Performance
+- Replay
 
 ---
 
 ## Testing
 
-* Unit Tests
-* Domain Tests
-* Integration Tests
-* Determinism Tests
-* Architecture Tests
-* CI Enforcement
+- Unit Tests
+- Domain Tests
+- Integration Tests
+- Determinism Tests
+- Architecture Tests
+- CI Enforcement
 
 ---
 
@@ -231,12 +231,12 @@ Die offenen Punkte betreffen ausschließlich die Verifikation bestehender Standa
 
 ## Version 2.0
 
-* Abschluss des ersten vollständigen Architecture Standards Verification Pass
-* Aktualisierte A/B/C/D-Bewertung
-* Konsolidierte Audit-Ergebnisse
-* Executive Summary ergänzt
-* Verifikationsmaßnahmen dokumentiert
-* Nächste Audit-Blöcke definiert
+- Abschluss des ersten vollständigen Architecture Standards Verification Pass
+- Aktualisierte A/B/C/D-Bewertung
+- Konsolidierte Audit-Ergebnisse
+- Executive Summary ergänzt
+- Verifikationsmaßnahmen dokumentiert
+- Nächste Audit-Blöcke definiert
 
 ---
 
@@ -244,8 +244,8 @@ Die offenen Punkte betreffen ausschließlich die Verifikation bestehender Standa
 
 Dieses Dokument sollte aktualisiert werden:
 
-* nach jedem abgeschlossenen Audit
-* nach größeren Refactorings
-* vor jedem Major Release
-* vor jedem Architektur-Review
-* spätestens nach jedem abgeschlossenen Meilenstein
+- nach jedem abgeschlossenen Audit
+- nach größeren Refactorings
+- vor jedem Major Release
+- vor jedem Architektur-Review
+- spätestens nach jedem abgeschlossenen Meilenstein

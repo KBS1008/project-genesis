@@ -363,16 +363,16 @@ When generating dashboard mockups with AI, prompts should specify:
 
 # Dashboard Review Checklist
 
-| Question | Status |
-|-----------|--------|
-| Is the dashboard purpose immediately clear? | □ |
-| Are KPIs easy to identify? | □ |
-| Are charts readable? | □ |
-| Is navigation intuitive? | □ |
-| Can users drill down into details? | □ |
-| Does the dashboard support filtering? | □ |
-| Is visual hierarchy clear? | □ |
-| Does it follow the UI Style Guide? | □ |
+| Question                                    | Status |
+| ------------------------------------------- | ------ |
+| Is the dashboard purpose immediately clear? | □      |
+| Are KPIs easy to identify?                  | □      |
+| Are charts readable?                        | □      |
+| Is navigation intuitive?                    | □      |
+| Can users drill down into details?          | □      |
+| Does the dashboard support filtering?       | □      |
+| Is visual hierarchy clear?                  | □      |
+| Does it follow the UI Style Guide?          | □      |
 
 ---
 

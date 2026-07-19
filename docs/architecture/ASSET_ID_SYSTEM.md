@@ -81,29 +81,29 @@ MAP-0001
 
 # Prefix Definitions
 
-| Prefix | Asset Type |
-|----------|------------------------|
-| BLD | Buildings |
-| RES | Resources |
-| VEH | Vehicles |
-| NPC | NPC Types |
-| EFF | Visual Effects |
-| MAP | Map Objects |
-| BIO | Biomes |
-| TEC | Technologies |
-| REC | Recipes |
-| ITM | Inventory Items |
-| UI | UI Assets |
-| ICO | Icons |
-| AUD | Audio Assets |
-| MUS | Music |
-| AMB | Ambient Sounds |
-| ANI | Animation Sets |
-| TXT | Localization Text |
-| SCR | Scenarios |
-| EVT | Game Events |
-| MIS | Missions |
-| TUT | Tutorials |
+| Prefix | Asset Type        |
+| ------ | ----------------- |
+| BLD    | Buildings         |
+| RES    | Resources         |
+| VEH    | Vehicles          |
+| NPC    | NPC Types         |
+| EFF    | Visual Effects    |
+| MAP    | Map Objects       |
+| BIO    | Biomes            |
+| TEC    | Technologies      |
+| REC    | Recipes           |
+| ITM    | Inventory Items   |
+| UI     | UI Assets         |
+| ICO    | Icons             |
+| AUD    | Audio Assets      |
+| MUS    | Music             |
+| AMB    | Ambient Sounds    |
+| ANI    | Animation Sets    |
+| TXT    | Localization Text |
+| SCR    | Scenarios         |
+| EVT    | Game Events       |
+| MIS    | Missions          |
+| TUT    | Tutorials         |
 
 New prefixes require an architecture review.
 
@@ -132,18 +132,18 @@ Leading zeros are mandatory.
 
 Reserved ranges reduce future conflicts.
 
-| Range | Usage |
-|---------|--------------------|
-| 0001–0999 | Core Game |
-| 1000–1999 | Expansion 1 |
-| 2000–2999 | Expansion 2 |
-| 3000–3999 | DLC |
-| 4000–4999 | Tutorial |
-| 5000–5999 | Scenario Assets |
+| Range     | Usage                 |
+| --------- | --------------------- |
+| 0001–0999 | Core Game             |
+| 1000–1999 | Expansion 1           |
+| 2000–2999 | Expansion 2           |
+| 3000–3999 | DLC                   |
+| 4000–4999 | Tutorial              |
+| 5000–5999 | Scenario Assets       |
 | 6000–6999 | Temporary Development |
-| 7000–7999 | Internal Testing |
-| 8000–8999 | Mod Support |
-| 9000–9999 | Reserved |
+| 7000–7999 | Internal Testing      |
+| 8000–8999 | Mod Support           |
+| 9000–9999 | Reserved              |
 
 ---
 

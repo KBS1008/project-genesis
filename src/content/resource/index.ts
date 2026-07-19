@@ -12,9 +12,7 @@ export {
   ResourceTypeDefinition,
 } from './ResourceTypeDefinition.js';
 
-export type {
-  ResourceTypeDefinitionProps,
-} from './ResourceTypeDefinition.js';
+export type { ResourceTypeDefinitionProps } from './ResourceTypeDefinition.js';
 
 export { ResourceTypeLoader } from './ResourceTypeLoader.js';
 export { ResourceTypeRegistry } from './ResourceTypeRegistry.js';

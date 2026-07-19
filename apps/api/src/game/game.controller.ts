@@ -50,9 +50,7 @@ export class GameController {
   /** Returns the aggregated dashboard snapshot. */
   @Get('dashboard')
   getDashboard() {
-    return toApiSuccess(
-      unwrapResult(this.gameSessionService.getSession().getDashboard()),
-    );
+    return toApiSuccess(unwrapResult(this.gameSessionService.getSession().getDashboard()));
   }
 
   /** Returns tick metrics history for dashboard charts. */

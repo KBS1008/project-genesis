@@ -463,16 +463,16 @@ When generating building concepts with AI, prompts should specify:
 
 # Building Review Checklist
 
-| Question | Status |
-|-----------|--------|
-| Is the building immediately recognizable? | □ |
-| Does it communicate its function? | □ |
-| Does it match its industry? | □ |
-| Does it fit the architectural language? | □ |
-| Are logistics connections obvious? | □ |
-| Does it integrate with the surrounding map? | □ |
-| Is the level of detail appropriate? | □ |
-| Can it evolve visually with technology? | □ |
+| Question                                    | Status |
+| ------------------------------------------- | ------ |
+| Is the building immediately recognizable?   | □      |
+| Does it communicate its function?           | □      |
+| Does it match its industry?                 | □      |
+| Does it fit the architectural language?     | □      |
+| Are logistics connections obvious?          | □      |
+| Does it integrate with the surrounding map? | □      |
+| Is the level of detail appropriate?         | □      |
+| Can it evolve visually with technology?     | □      |
 
 ---
 

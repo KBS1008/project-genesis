@@ -25,7 +25,10 @@ const LAYER_RULES: readonly LayerRule[] = [
   {
     layer: 'simulation',
     prefix: path.join(sourceRoot, 'simulation'),
-    forbiddenImportPrefixes: [path.join(sourceRoot, 'application'), path.join(sourceRoot, 'infrastructure')],
+    forbiddenImportPrefixes: [
+      path.join(sourceRoot, 'application'),
+      path.join(sourceRoot, 'infrastructure'),
+    ],
   },
 ];
 

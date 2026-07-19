@@ -6,10 +6,7 @@ import { TechnologyDefinition } from './research/TechnologyDefinition.js';
 import { TechnologyRegistry } from './research/TechnologyRegistry.js';
 import { validateEmployeeReferences } from './validateEmployeeReferences.js';
 
-function registerEmployee(
-  registry: EmployeeRegistry,
-  definition: EmployeeDefinition,
-): void {
+function registerEmployee(registry: EmployeeRegistry, definition: EmployeeDefinition): void {
   const result = registry.register(definition);
 
   if (!result.ok) {

@@ -12,7 +12,7 @@ import path from 'node:path';
 import { parse as parseYaml } from 'yaml';
 import { Result } from '../../common/result/Result.js';
 import { ContentLoadError } from '../errors/ContentLoadError.js';
-import { EmployeeDefinition } from './EmployeeDefinition.js';
+import type { EmployeeDefinition } from './EmployeeDefinition.js';
 import { EmployeeRegistry } from './EmployeeRegistry.js';
 import { validateEmployeeDefinition } from './EmployeeValidator.js';
 

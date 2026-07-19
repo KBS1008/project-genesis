@@ -285,16 +285,16 @@ Review report.
 
 Reusable variables include:
 
-| Variable | Description |
-|----------|-------------|
-| Asset ID | Registry identifier |
-| Category | Asset type |
-| Style Guide | Applicable guide |
-| Version | Asset version |
-| Biome | Environment |
-| Technology Tier | Unlock level |
-| Gameplay Role | Purpose |
-| Quality Level | Target quality |
+| Variable        | Description         |
+| --------------- | ------------------- |
+| Asset ID        | Registry identifier |
+| Category        | Asset type          |
+| Style Guide     | Applicable guide    |
+| Version         | Asset version       |
+| Biome           | Environment         |
+| Technology Tier | Unlock level        |
+| Gameplay Role   | Purpose             |
+| Quality Level   | Target quality      |
 
 Variables should be inserted automatically where possible.
 

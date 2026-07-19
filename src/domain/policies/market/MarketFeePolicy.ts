@@ -6,7 +6,7 @@
  * @see docs/gameplay/market.md
  */
 
-import { ValidationError } from '../../../common/errors/ValidationError.js';
+import type { ValidationError } from '../../../common/errors/ValidationError.js';
 import { Result } from '../../../common/result/Result.js';
 import { Guard } from '../../../common/validation/Guard.js';
 import {

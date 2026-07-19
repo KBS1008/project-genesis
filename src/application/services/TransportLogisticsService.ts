@@ -25,9 +25,7 @@ import type { ProductionJobRepository } from '../../domain/production/Production
 import { ProductionJobStatus } from '../../domain/production/ProductionJobStatus.js';
 import { TransportOrderStatus } from '../../domain/transport/TransportOrderStatus.js';
 import { createProductionJobId } from '../../domain/production/ProductionJob.js';
-import {
-  TransportOrder,
-} from '../../domain/transport/TransportOrder.js';
+import { TransportOrder } from '../../domain/transport/TransportOrder.js';
 import { createTransportOrderId } from '../../domain/transport/TransportOrderId.js';
 import type { TransportOrderRepository } from '../../domain/transport/TransportOrderRepository.js';
 import type { ProductionInventoryService } from './ProductionInventoryService.js';
@@ -83,20 +81,21 @@ export class TransportLogisticsService implements TransportLogisticsPort {
 
   /** Returns the first active warehouse for a company, if any. */
   findActiveWarehouse(companyId: CompanyId): Building | undefined {
-    return this.#buildingRepository
-      .findByCompanyId(companyId)
-      .find((building) => {
-        if (building.getStatus() !== BuildingStatus.ACTIVE) {
-          return false;
-        }
+    return this.#buildingRepository.findByCompanyId(companyId).find((building) => {
+      if (building.getStatus() !== BuildingStatus.ACTIVE) {
+        return false;
+      }
 
-        const buildingType = this.#gameContent.buildingTypes.get(building.getBuildingTypeId().value);
-        return buildingType?.category === BuildingCategory.STORAGE;
-      });
+      const buildingType = this.#gameContent.buildingTypes.get(building.getBuildingTypeId().value);
+      return buildingType?.category === BuildingCategory.STORAGE;
+    });
   }
 
   /** Resolves inbound warehouse→destination duration from content routes (fallback when unknown). */
-  resolveInboundTransportDurationTicks(companyId: CompanyId, destinationBuildingId: BuildingId): number {
+  resolveInboundTransportDurationTicks(
+    companyId: CompanyId,
+    destinationBuildingId: BuildingId,
+  ): number {
     const warehouse = this.findActiveWarehouse(companyId);
     const destination = this.#buildingRepository.findById(destinationBuildingId);
 
@@ -416,7 +415,10 @@ export class TransportLogisticsService implements TransportLogisticsPort {
       return Result.fail(new ValidationError(`Recipe "${job.getRecipeId().value}" was not found.`));
     }
 
-    const reserveResult = this.#productionInventoryService.reserveInputs(job.getCompanyId(), recipe);
+    const reserveResult = this.#productionInventoryService.reserveInputs(
+      job.getCompanyId(),
+      recipe,
+    );
 
     if (!reserveResult.ok) {
       return Result.fail(reserveResult.error);
@@ -462,7 +464,9 @@ export class TransportLogisticsService implements TransportLogisticsPort {
     sourceBuilding: Building,
     destinationBuilding: Building,
   ): Result<ResolvedTransportRoute, ValidationError> {
-    const sourceType = this.#gameContent.buildingTypes.get(sourceBuilding.getBuildingTypeId().value);
+    const sourceType = this.#gameContent.buildingTypes.get(
+      sourceBuilding.getBuildingTypeId().value,
+    );
     const destinationType = this.#gameContent.buildingTypes.get(
       destinationBuilding.getBuildingTypeId().value,
     );

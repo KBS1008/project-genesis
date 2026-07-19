@@ -438,11 +438,11 @@ The dashboard should focus on trends.
 
 Metrics should be classified as:
 
-| Status | Meaning |
-|--------|---------|
-| Green | Healthy |
+| Status | Meaning            |
+| ------ | ------------------ |
+| Green  | Healthy            |
 | Yellow | Requires attention |
-| Red | Requires action |
+| Red    | Requires action    |
 
 Status thresholds should be defined according to project maturity.
 

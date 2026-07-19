@@ -105,6 +105,7 @@ TransportRoute --> "*" Building
 
 Market --> "*" Resource
 ```
+
 # Aggregate Overview
 
 ```mermaid

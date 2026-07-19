@@ -30,7 +30,9 @@ function IndexTooltip({
   return (
     <div className="chart-tooltip">
       <span className="chart-tooltip-label">Tick {label}</span>
-      <strong>{value.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong>
+      <strong>
+        {value.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+      </strong>
     </div>
   );
 }
@@ -60,7 +62,8 @@ export function PriceIndexHistoryChart({
         <header className="chart-card-header">
           <h3>Preisindex</h3>
           <span className="chart-current-value">
-            {latest.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} (neutral 1,00)
+            {latest.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{' '}
+            (neutral 1,00)
           </span>
         </header>
         {points.length < 2 ? (

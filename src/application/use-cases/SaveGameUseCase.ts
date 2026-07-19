@@ -4,7 +4,7 @@
  * Persists the current in-memory game session as a deterministic snapshot.
  */
 
-import { ValidationError } from '../../common/errors/ValidationError.js';
+import type { ValidationError } from '../../common/errors/ValidationError.js';
 import type { PersistenceError } from '../../common/errors/PersistenceError.js';
 import { Result } from '../../common/result/Result.js';
 import type { ApplicationContext } from '../bootstrap/ApplicationContext.js';

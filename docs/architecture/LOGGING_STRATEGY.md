@@ -157,14 +157,14 @@ FATAL events should normally trigger controlled shutdown or recovery.
 
 # Log Level Guidelines
 
-| Level | Purpose | Production |
-|-------|---------|------------|
-| TRACE | Deep diagnostics | Usually disabled |
-| DEBUG | Development diagnostics | Configurable |
-| INFO | Normal operations | Enabled |
-| WARN | Recoverable problems | Enabled |
-| ERROR | Failed operations | Enabled |
-| FATAL | Critical failure | Always enabled |
+| Level | Purpose                 | Production       |
+| ----- | ----------------------- | ---------------- |
+| TRACE | Deep diagnostics        | Usually disabled |
+| DEBUG | Development diagnostics | Configurable     |
+| INFO  | Normal operations       | Enabled          |
+| WARN  | Recoverable problems    | Enabled          |
+| ERROR | Failed operations       | Enabled          |
+| FATAL | Critical failure        | Always enabled   |
 
 ---
 

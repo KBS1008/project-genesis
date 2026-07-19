@@ -4,7 +4,7 @@
 **Phase:** 2 — Architecture Driven Development  
 **Task:** Spielbeginn gemäß `core-gameplay.md`  
 **Date:** 2026-07-18  
-**Status:** Completed  
+**Status:** Completed
 
 ---
 
@@ -16,40 +16,40 @@ Neues Spiel (`startNewGame`) an die dokumentierte Kernspielschleife anbinden: St
 
 ## Betroffene Module
 
-| Layer | Module |
-|---|---|
-| Domain | `FinanceConstants` (Startkapital) |
+| Layer       | Module                                                        |
+| ----------- | ------------------------------------------------------------- |
+| Domain      | `FinanceConstants` (Startkapital)                             |
 | Application | `StartNewGameUseCase`, `NewGameSetupConstants`, `GameSession` |
-| Content | Neue Ressourcen- und Gebäudetypen |
-| Tests | Use-Case-, Facade- und API-Tests |
+| Content     | Neue Ressourcen- und Gebäudetypen                             |
+| Tests       | Use-Case-, Facade- und API-Tests                              |
 
 ---
 
 ## Geänderte Dateien
 
-| Datei | Änderung |
-|---|---|
-| `src/domain/finance/FinanceConstants.ts` | `STARTING_MONEY`: 250_000 → 100_000 |
-| `src/application/facade/GameSession.ts` | Delegation an `StartNewGameUseCase` |
-| `src/application/facade/GameSession.test.ts` | Erwartungen für Starter-Setup |
-| `apps/api/src/game/game.controller.test.ts` | Startkapital + Starter-Gebäude |
-| `docs/development/IMPLEMENTATION_PROGRESS.md` | Status aktualisiert |
+| Datei                                         | Änderung                            |
+| --------------------------------------------- | ----------------------------------- |
+| `src/domain/finance/FinanceConstants.ts`      | `STARTING_MONEY`: 250_000 → 100_000 |
+| `src/application/facade/GameSession.ts`       | Delegation an `StartNewGameUseCase` |
+| `src/application/facade/GameSession.test.ts`  | Erwartungen für Starter-Setup       |
+| `apps/api/src/game/game.controller.test.ts`   | Startkapital + Starter-Gebäude      |
+| `docs/development/IMPLEMENTATION_PROGRESS.md` | Status aktualisiert                 |
 
 ---
 
 ## Neue Dateien
 
-| Datei | Beschreibung |
-|---|---|
-| `src/application/use-cases/StartNewGameUseCase.ts` | Orchestriert Firmengründung + Starter-Setup |
-| `src/application/use-cases/StartNewGameUseCase.test.ts` | 3 Tests |
-| `src/application/commands/StartNewGameCommand.ts` | Command-Typ |
-| `src/application/new-game/NewGameSetupConstants.ts` | Starter-Gebäude, Ressourcen, Positionen |
-| `game-content/resources/stone.yaml` | Ressource Stein |
-| `game-content/buildings/headquarters.yaml` | Firmenzentrale |
-| `game-content/buildings/power_substation.yaml` | Umspannwerk |
-| `game-content/buildings/access_road.yaml` | Zufahrtsstraße |
-| `docs/quality/CORE_GAMEPLAY_START_REPORT.md` | Dieser Bericht |
+| Datei                                                   | Beschreibung                                |
+| ------------------------------------------------------- | ------------------------------------------- |
+| `src/application/use-cases/StartNewGameUseCase.ts`      | Orchestriert Firmengründung + Starter-Setup |
+| `src/application/use-cases/StartNewGameUseCase.test.ts` | 3 Tests                                     |
+| `src/application/commands/StartNewGameCommand.ts`       | Command-Typ                                 |
+| `src/application/new-game/NewGameSetupConstants.ts`     | Starter-Gebäude, Ressourcen, Positionen     |
+| `game-content/resources/stone.yaml`                     | Ressource Stein                             |
+| `game-content/buildings/headquarters.yaml`              | Firmenzentrale                              |
+| `game-content/buildings/power_substation.yaml`          | Umspannwerk                                 |
+| `game-content/buildings/access_road.yaml`               | Zufahrtsstraße                              |
+| `docs/quality/CORE_GAMEPLAY_START_REPORT.md`            | Dieser Bericht                              |
 
 ---
 
@@ -61,11 +61,11 @@ Keine.
 
 ## Tests
 
-| Suite | Tests |
-|---|---|
-| `StartNewGameUseCase.test.ts` | Happy Path, Duplicate Company, Missing Building Type |
-| `GameSession.test.ts` | Angepasst für 4 Starter-Gebäude, Energie, Lager-Logistik |
-| `game.controller.test.ts` | 100_000 Credits, 4 Gebäude nach Session-Start |
+| Suite                         | Tests                                                    |
+| ----------------------------- | -------------------------------------------------------- |
+| `StartNewGameUseCase.test.ts` | Happy Path, Duplicate Company, Missing Building Type     |
+| `GameSession.test.ts`         | Angepasst für 4 Starter-Gebäude, Energie, Lager-Logistik |
+| `game.controller.test.ts`     | 100_000 Credits, 4 Gebäude nach Session-Start            |
 
 ```text
 Test Files:  76 passed
@@ -87,24 +87,24 @@ Typecheck:   passed (root, api, web)
 
 ## Umsetzung vs. Dokumentation
 
-| `core-gameplay.md` | Umsetzung |
-|---|---|
-| 100.000 Credits | `STARTING_MONEY = 100_000` |
-| Firmenzentrale | `headquarters` @ (12, 12) |
-| Lager Level 1 | `warehouse` @ (8, 12) |
-| Umspannwerk | `power_substation` @ (16, 12) |
-| Zufahrtsstraße | `access_road` @ (12, 8) |
-| Holz, Stein, Eisen | `wood` 40, `stone` 15, `iron_ore` 10 |
-| 25×25 Startgebiet | Noch nicht modelliert (kein Grid-Aggregat) |
+| `core-gameplay.md` | Umsetzung                                  |
+| ------------------ | ------------------------------------------ |
+| 100.000 Credits    | `STARTING_MONEY = 100_000`                 |
+| Firmenzentrale     | `headquarters` @ (12, 12)                  |
+| Lager Level 1      | `warehouse` @ (8, 12)                      |
+| Umspannwerk        | `power_substation` @ (16, 12)              |
+| Zufahrtsstraße     | `access_road` @ (12, 8)                    |
+| Holz, Stein, Eisen | `wood` 40, `stone` 15, `iron_ore` 10       |
+| 25×25 Startgebiet  | Noch nicht modelliert (kein Grid-Aggregat) |
 
 ---
 
 ## Offene Punkte
 
-| Punkt | Priorität |
-|---|---|
-| Startgebiet 25×25 als Domain-/World-Modell | Medium |
-| Tutorial-Schritte (Erste Spielminute) | Medium |
+| Punkt                                                                                        | Priorität           |
+| -------------------------------------------------------------------------------------------- | ------------------- |
+| Startgebiet 25×25 als Domain-/World-Modell                                                   | Medium              |
+| Tutorial-Schritte (Erste Spielminute)                                                        | Medium              |
 | `warehouse`-Meilenstein `first_profit` vs. Starter-Lager — bewusst getrennt (Starter bypass) | Low (dokumentieren) |
 
 ---

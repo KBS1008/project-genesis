@@ -79,7 +79,11 @@ export class BuildingStorage {
     return this.#items.get(resourceId)?.reserved ?? 0;
   }
 
-  getLines(): readonly { readonly resourceId: string; readonly quantity: number; readonly reserved: number }[] {
+  getLines(): readonly {
+    readonly resourceId: string;
+    readonly quantity: number;
+    readonly reserved: number;
+  }[] {
     return Object.freeze(
       [...this.#items.entries()]
         .map(([resourceId, line]) =>
@@ -100,7 +104,10 @@ export class BuildingStorage {
       return Result.ok(undefined);
     }
 
-    if (this.#storageCapacity > 0 && this.getUsedCapacity() + amountResult.value > this.#storageCapacity) {
+    if (
+      this.#storageCapacity > 0 &&
+      this.getUsedCapacity() + amountResult.value > this.#storageCapacity
+    ) {
       return Result.fail(
         new ValidationError(
           `Warehouse storage capacity exceeded (${this.getUsedCapacity()}/${this.#storageCapacity}).`,
@@ -144,9 +151,15 @@ export class BuildingStorage {
 
     const line = this.#items.get(resourceId);
 
-    if (line === undefined || line.reserved < amountResult.value || line.quantity < amountResult.value) {
+    if (
+      line === undefined ||
+      line.reserved < amountResult.value ||
+      line.quantity < amountResult.value
+    ) {
       return Result.fail(
-        new ValidationError(`Cannot consume reserved resource "${resourceId}" from building storage.`),
+        new ValidationError(
+          `Cannot consume reserved resource "${resourceId}" from building storage.`,
+        ),
       );
     }
 
@@ -167,7 +180,11 @@ export class BuildingStorage {
     readonly buildingId: BuildingId;
     readonly companyId: CompanyId;
     readonly storageCapacity?: number;
-    readonly items: readonly { readonly resourceId: string; readonly quantity: number; readonly reserved: number }[];
+    readonly items: readonly {
+      readonly resourceId: string;
+      readonly quantity: number;
+      readonly reserved: number;
+    }[];
   }): BuildingStorage {
     const storage = new BuildingStorage(
       params.buildingId,

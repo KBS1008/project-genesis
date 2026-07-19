@@ -22,9 +22,10 @@ export type RequiredMilestonesContext = {
 /**
  * Verifies that all required milestones are completed.
  */
-export class RequiredMilestonesSpecification
-  implements Specification<RequiredMilestonesCandidate, RequiredMilestonesContext>
-{
+export class RequiredMilestonesSpecification implements Specification<
+  RequiredMilestonesCandidate,
+  RequiredMilestonesContext
+> {
   isSatisfiedBy(
     candidate: RequiredMilestonesCandidate,
     context: RequiredMilestonesContext,

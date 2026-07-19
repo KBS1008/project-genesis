@@ -16,16 +16,16 @@ Replace the fixed inbound transport duration with **content-derived route durati
 
 # Implemented
 
-| Area | Change |
-|---|---|
-| Content | `TransportRouteDefinition`, registry, loader, validator |
-| Content YAML | `game-content/logistics/route_storage_to_production.yaml` (`STORAGE → PRODUCTION`, 8 ticks) |
-| Validation | `validateTransportRouteReferences` wired into `validateGameContent` |
-| Domain policy | `TransportRouteDurationPolicy` — building-type pair → category pair → fallback (5 ticks) |
-| Application | `TransportLogisticsService` resolves duration on `createInboundTransports`; `resolveInboundTransportDurationTicks()` for hints |
-| Dashboard | Transport table shows `durationTicks`; detail panel + production hints use resolved duration |
-| API / read model | `TransportOrderSessionReadModel.durationTicks` |
-| Tests | Policy unit tests, loader tests, integration loop uses route duration (8) |
+| Area             | Change                                                                                                                         |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| Content          | `TransportRouteDefinition`, registry, loader, validator                                                                        |
+| Content YAML     | `game-content/logistics/route_storage_to_production.yaml` (`STORAGE → PRODUCTION`, 8 ticks)                                    |
+| Validation       | `validateTransportRouteReferences` wired into `validateGameContent`                                                            |
+| Domain policy    | `TransportRouteDurationPolicy` — building-type pair → category pair → fallback (5 ticks)                                       |
+| Application      | `TransportLogisticsService` resolves duration on `createInboundTransports`; `resolveInboundTransportDurationTicks()` for hints |
+| Dashboard        | Transport table shows `durationTicks`; detail panel + production hints use resolved duration                                   |
+| API / read model | `TransportOrderSessionReadModel.durationTicks`                                                                                 |
+| Tests            | Policy unit tests, loader tests, integration loop uses route duration (8)                                                      |
 
 ---
 

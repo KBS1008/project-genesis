@@ -9,7 +9,7 @@ import path from 'node:path';
 import { parse as parseYaml } from 'yaml';
 import { Result } from '../../common/result/Result.js';
 import { ContentLoadError } from '../errors/ContentLoadError.js';
-import { TransportRouteDefinition } from './TransportRouteDefinition.js';
+import type { TransportRouteDefinition } from './TransportRouteDefinition.js';
 import { TransportRouteRegistry } from './TransportRouteRegistry.js';
 import { validateTransportRouteDefinition } from './TransportRouteValidator.js';
 
@@ -62,9 +62,7 @@ export class TransportRouteLoader {
   }
 
   /** Loads and validates a single transport route file. */
-  async loadFile(
-    filePath: string,
-  ): Promise<Result<TransportRouteDefinition, ContentLoadError>> {
+  async loadFile(filePath: string): Promise<Result<TransportRouteDefinition, ContentLoadError>> {
     let fileContents: string;
 
     try {

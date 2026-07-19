@@ -355,22 +355,10 @@ export function validateRecipeDefinition(
     return Result.fail(requiredResearchResult.error);
   }
 
-  const requiredBuildingsResult = readGlobalIdArray(raw, 'requiredBuildings', filePath);
-
-  if (!requiredBuildingsResult.ok) {
-    return Result.fail(requiredBuildingsResult.error);
-  }
-
   const requiredMilestonesResult = readGlobalIdArray(raw, 'requiredMilestones', filePath);
 
   if (!requiredMilestonesResult.ok) {
     return Result.fail(requiredMilestonesResult.error);
-  }
-
-  const requiredResourcesResult = readGlobalIdArray(raw, 'requiredResources', filePath);
-
-  if (!requiredResourcesResult.ok) {
-    return Result.fail(requiredResourcesResult.error);
   }
 
   const maintenanceCostResult = readNumber(raw, 'maintenanceCost', filePath, { min: 0 });
@@ -416,9 +404,7 @@ export function validateRecipeDefinition(
     energy: energyResult.value,
     workers: workersResult.value,
     requiredResearch: requiredResearchResult.value,
-    requiredBuildings: requiredBuildingsResult.value,
     requiredMilestones: requiredMilestonesResult.value,
-    requiredResources: requiredResourcesResult.value,
     maintenanceCost: maintenanceCostResult.value,
     productionCost: productionCostResult.value,
     experience: experienceResult.value,

@@ -526,15 +526,15 @@ AI prompts should define:
 
 # Biome Review Checklist
 
-| Question | Status |
-|-----------|--------|
-| Is the biome immediately recognizable? | □ |
-| Does terrain support gameplay? | □ |
-| Are resources appropriate? | □ |
-| Is infrastructure believable? | □ |
-| Does vegetation fit naturally? | □ |
-| Is the biome visually consistent? | □ |
-| Can AI reproduce it reliably? | □ |
+| Question                               | Status |
+| -------------------------------------- | ------ |
+| Is the biome immediately recognizable? | □      |
+| Does terrain support gameplay?         | □      |
+| Are resources appropriate?             | □      |
+| Is infrastructure believable?          | □      |
+| Does vegetation fit naturally?         | □      |
+| Is the biome visually consistent?      | □      |
+| Can AI reproduce it reliably?          | □      |
 
 ---
 

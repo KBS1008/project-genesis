@@ -67,19 +67,19 @@ describe('GameSession', () => {
       expect(dashboardResult.value.company?.name).toBe('Browser Test Corp');
       expect(dashboardResult.value.finance?.cashBalance).toBe(STARTING_MONEY);
       expect(dashboardResult.value.buildings).toHaveLength(NEW_GAME_STARTER_BUILDINGS.length);
-      expect(dashboardResult.value.inventory?.items.some((item) => item.resourceId === 'wood')).toBe(
-        true,
-      );
-      expect(dashboardResult.value.inventory?.items.some((item) => item.resourceId === 'stone')).toBe(
-        true,
-      );
-      expect(dashboardResult.value.inventory?.items.some((item) => item.resourceId === 'iron_ore')).toBe(
-        true,
-      );
+      expect(
+        dashboardResult.value.inventory?.items.some((item) => item.resourceId === 'wood'),
+      ).toBe(true);
+      expect(
+        dashboardResult.value.inventory?.items.some((item) => item.resourceId === 'stone'),
+      ).toBe(true);
+      expect(
+        dashboardResult.value.inventory?.items.some((item) => item.resourceId === 'iron_ore'),
+      ).toBe(true);
       expect(dashboardResult.value.marketPrices.length).toBeGreaterThan(0);
-      expect(dashboardResult.value.hints.production.some((hint) => hint.recipeId === 'recipe_planks')).toBe(
-        false,
-      );
+      expect(
+        dashboardResult.value.hints.production.some((hint) => hint.recipeId === 'recipe_planks'),
+      ).toBe(false);
       expect(dashboardResult.value.tutorial?.activeStepId).toBe('build_sawmill');
       expect(dashboardResult.value.tutorial?.steps[0]?.completed).toBe(true);
       expect(dashboardResult.value.energy?.usesBaselineGrid).toBe(false);

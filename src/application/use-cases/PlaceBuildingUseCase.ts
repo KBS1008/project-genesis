@@ -91,15 +91,11 @@ export class PlaceBuildingUseCase {
     const companyId = companyIdResult.value;
 
     if (this.#companyRepository.findById(companyId) === undefined) {
-      return Result.fail(
-        new ValidationError(`Company id "${companyId.value}" was not found.`),
-      );
+      return Result.fail(new ValidationError(`Company id "${companyId.value}" was not found.`));
     }
 
     if (this.#buildingRepository.findById(buildingId) !== undefined) {
-      return Result.fail(
-        new ValidationError(`Building id "${buildingId.value}" already exists.`),
-      );
+      return Result.fail(new ValidationError(`Building id "${buildingId.value}" already exists.`));
     }
 
     const buildingType = this.#gameContent.buildingTypes.get(buildingTypeId.value);
@@ -184,7 +180,11 @@ export class PlaceBuildingUseCase {
     }
 
     const constructionCost = costResult.value.cost;
-    const debitResult = finance.debit(constructionCost, FinanceTransactionType.BUILDING_COST, this.#clock);
+    const debitResult = finance.debit(
+      constructionCost,
+      FinanceTransactionType.BUILDING_COST,
+      this.#clock,
+    );
 
     if (!debitResult.ok) {
       return Result.fail(debitResult.error);

@@ -57,16 +57,16 @@ Refactore die Lösung sauber.
 Projektstruktur
 
 apps/
-    client/
-    server/
-    admin/
+client/
+server/
+admin/
 
 packages/
-    shared/
-    database/
-    config/
-    ui/
-    types/
+shared/
+database/
+config/
+ui/
+types/
 
 ---
 
@@ -288,8 +288,8 @@ if
 Schlecht
 
 if(a){
- if(b){
-  if(c){
+if(b){
+if(c){
 
 Gut
 

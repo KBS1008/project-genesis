@@ -484,16 +484,16 @@ All generated interfaces should comply with this document.
 
 Every new screen should answer:
 
-| Question | Status |
-|-----------|--------|
-| Is the purpose immediately clear? | □ |
-| Is navigation intuitive? | □ |
-| Is hierarchy obvious? | □ |
-| Is spacing consistent? | □ |
-| Are actions clearly identifiable? | □ |
-| Does it follow the Art Direction? | □ |
-| Does it support accessibility? | □ |
-| Is unnecessary decoration avoided? | □ |
+| Question                           | Status |
+| ---------------------------------- | ------ |
+| Is the purpose immediately clear?  | □      |
+| Is navigation intuitive?           | □      |
+| Is hierarchy obvious?              | □      |
+| Is spacing consistent?             | □      |
+| Are actions clearly identifiable?  | □      |
+| Does it follow the Art Direction?  | □      |
+| Does it support accessibility?     | □      |
+| Is unnecessary decoration avoided? | □      |
 
 ---
 

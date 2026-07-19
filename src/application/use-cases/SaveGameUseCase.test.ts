@@ -102,7 +102,9 @@ describe('SaveGameUseCase', () => {
       const building = restored.buildingRepository.findById(buildingId.value);
 
       expect(restored.clock.now()).toBe(context.clock.now());
-      expect(restored.simulationEngine.state.tickNumber).toBe(context.simulationEngine.state.tickNumber);
+      expect(restored.simulationEngine.state.tickNumber).toBe(
+        context.simulationEngine.state.tickNumber,
+      );
       expect(finance?.getCashBalance()).toBe(STARTING_MONEY - 5000);
       expect(building?.getName()).toBe('Northern Sawmill');
       expect(building?.getPosition().x).toBe(2);

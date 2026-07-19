@@ -15,27 +15,27 @@ Recipes beschreiben statische Produktions- und Verarbeitungsdefinitionen.
 
 Sie definieren insbesondere:
 
-* benötigte Eingangsressourcen
-* erzeugte Ausgangsressourcen
-* Produktionsmenge
-* Produktionszeit
-* benötigte Gebäude
-* benötigte Mitarbeiter
-* Energiebedarf
-* optionale Voraussetzungen
+- benötigte Eingangsressourcen
+- erzeugte Ausgangsressourcen
+- Produktionsmenge
+- Produktionszeit
+- benötigte Gebäude
+- benötigte Mitarbeiter
+- Energiebedarf
+- optionale Voraussetzungen
 
 Die tatsächliche Ausführung eines Recipes gehört zur Domain- und Simulationsebene.
 
 Das Schema dient als Grundlage für:
 
-* JSON-Assets
-* Asset Registry
-* Content Pipeline
-* Validierung
-* Produktionssystem
-* Editor
-* Modding
-* Savegame-Kompatibilität
+- JSON-Assets
+- Asset Registry
+- Content Pipeline
+- Validierung
+- Produktionssystem
+- Editor
+- Modding
+- Savegame-Kompatibilität
 
 ---
 
@@ -297,12 +297,12 @@ Qualitätsberechnungen und deren Auswirkungen gehören zur Domain-/Simulationseb
 
 Ein Recipe darf referenzieren:
 
-* Resources
-* Buildings
-* Employees
-* Technologies
-* Research
-* Effects
+- Resources
+- Buildings
+- Employees
+- Technologies
+- Research
+- Effects
 
 Alle Referenzen erfolgen ausschließlich über Asset-IDs.
 
@@ -315,8 +315,7 @@ Anzeigenamen und Beschreibungen sollen über Lokalisierungsschlüssel referenzie
 Beispiel:
 
 ```yaml id="b2v6n9"
-localizationKey:
-  recipe.steel
+localizationKey: recipe.steel
 ```
 
 Die konkrete Lokalisierung wird außerhalb des Recipe-Assets verwaltet.
@@ -327,15 +326,15 @@ Die konkrete Lokalisierung wird außerhalb des Recipe-Assets verwaltet.
 
 Ein Recipe ist gültig, wenn:
 
-* eine eindeutige Asset-ID vorhanden ist
-* die Version gültig ist
-* eine Kategorie definiert wurde
-* die Produktionsdauer größer als 0 ist
-* mindestens ein Input oder Output vorhanden ist
-* alle Input-Mengen größer als 0 sind
-* alle Output-Mengen größer als 0 sind
-* alle Ressourcenreferenzen gültig sind
-* alle Gebäude-, Mitarbeiter- und Technologie-Referenzen gültig sind
+- eine eindeutige Asset-ID vorhanden ist
+- die Version gültig ist
+- eine Kategorie definiert wurde
+- die Produktionsdauer größer als 0 ist
+- mindestens ein Input oder Output vorhanden ist
+- alle Input-Mengen größer als 0 sind
+- alle Output-Mengen größer als 0 sind
+- alle Ressourcenreferenzen gültig sind
+- alle Gebäude-, Mitarbeiter- und Technologie-Referenzen gültig sind
 
 Ein Recipe darf keine zirkulären oder ungültigen Referenzen enthalten.
 
@@ -386,15 +385,15 @@ Das Recipe-Asset enthält ausschließlich statische Produktionsdefinitionen.
 
 Nicht Bestandteil dieses Schemas sind:
 
-* aktueller Produktionsfortschritt
-* aktuelle Produktionscharge
-* reservierte Ressourcen
-* tatsächlich verbrauchte Ressourcen
-* aktuell zugewiesene Mitarbeiter
-* aktueller Energieverbrauch
-* Produktionsfehler
-* Produktionshistorie
-* aktuelle Produktionskapazität
+- aktueller Produktionsfortschritt
+- aktuelle Produktionscharge
+- reservierte Ressourcen
+- tatsächlich verbrauchte Ressourcen
+- aktuell zugewiesene Mitarbeiter
+- aktueller Energieverbrauch
+- Produktionsfehler
+- Produktionshistorie
+- aktuelle Produktionskapazität
 
 Diese Daten gehören zum dynamischen Spielzustand.
 
@@ -466,15 +465,15 @@ tags:
 
 Dieses Schema ist kompatibel mit:
 
-* ASSET_ID_SYSTEM.md
-* ASSET_VERSIONING.md
-* REGISTRY_SCHEMA.md
-* GLOBAL_ASSET_REGISTRY.md
-* CONTENT_PIPELINE.md
-* Employee.schema.md
-* Vehicle.schema.md
-* Resource.schema.md
-* Building.schema.md
+- ASSET_ID_SYSTEM.md
+- ASSET_VERSIONING.md
+- REGISTRY_SCHEMA.md
+- GLOBAL_ASSET_REGISTRY.md
+- CONTENT_PIPELINE.md
+- Employee.schema.md
+- Vehicle.schema.md
+- Resource.schema.md
+- Building.schema.md
 
 ---
 
@@ -482,19 +481,19 @@ Dieses Schema ist kompatibel mit:
 
 Geplante Erweiterungen:
 
-* Produktionsvarianten
-* alternative Input-Ressourcen
-* Rezept-Substitution
-* Batch Production
-* Produktionsqualität
-* Ausschuss
-* Recycling
-* Nebenprodukte
-* dynamische Produktionsmodifikatoren
-* Produktionsketten
-* Multi-Stage Recipes
-* Machine Requirements
-* Skill Requirements
-* Recipe Unlocks
-* Tech Tree Integration
-* Recipe Upgrades
+- Produktionsvarianten
+- alternative Input-Ressourcen
+- Rezept-Substitution
+- Batch Production
+- Produktionsqualität
+- Ausschuss
+- Recycling
+- Nebenprodukte
+- dynamische Produktionsmodifikatoren
+- Produktionsketten
+- Multi-Stage Recipes
+- Machine Requirements
+- Skill Requirements
+- Recipe Unlocks
+- Tech Tree Integration
+- Recipe Upgrades

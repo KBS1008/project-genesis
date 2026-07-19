@@ -1,9 +1,6 @@
 import { ManualClock } from '../../common/time/ManualClock.js';
 import { createCompanyId } from '../../domain/company/Company.js';
-import {
-  FinanceAccount,
-  createFinanceAccountId,
-} from '../../domain/finance/FinanceAccount.js';
+import { FinanceAccount, createFinanceAccountId } from '../../domain/finance/FinanceAccount.js';
 import { InMemoryFinanceRepository } from './InMemoryFinanceRepository.js';
 
 function requireFinanceAccountId(value: string) {

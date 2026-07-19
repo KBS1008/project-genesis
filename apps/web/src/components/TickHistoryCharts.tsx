@@ -115,9 +115,7 @@ function MetricLineChart({
                 tickLine={false}
                 width={48}
                 tickFormatter={(value: number) =>
-                  config.key === 'availableCash'
-                    ? `${Math.round(value / 1000)}k`
-                    : String(value)
+                  config.key === 'availableCash' ? `${Math.round(value / 1000)}k` : String(value)
                 }
               />
               <Tooltip
@@ -148,11 +146,7 @@ function MetricLineChart({
 }
 
 /** Line charts for cash, energy reserve and active transports over simulation ticks. */
-export function TickHistoryCharts({
-  points,
-}: {
-  readonly points: readonly TickMetricsSnapshot[];
-}) {
+export function TickHistoryCharts({ points }: { readonly points: readonly TickMetricsSnapshot[] }) {
   if (points.length === 0) {
     return null;
   }

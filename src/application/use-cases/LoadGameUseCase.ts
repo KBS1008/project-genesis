@@ -5,7 +5,7 @@
  */
 
 import { Result } from '../../common/result/Result.js';
-import { ContentLoadError } from '../../content/errors/ContentLoadError.js';
+import type { ContentLoadError } from '../../content/errors/ContentLoadError.js';
 import type { PersistenceError } from '../../common/errors/PersistenceError.js';
 import type { ApplicationContext } from '../bootstrap/ApplicationContext.js';
 import { restoreApplicationFromSnapshot } from '../bootstrap/restoreApplicationFromSnapshot.js';

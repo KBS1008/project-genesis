@@ -217,14 +217,14 @@ An approved asset:
 
 # Review Roles
 
-| Role | Responsibility |
-|------|----------------|
-| Designer | Visual quality |
-| Technical Artist | Technical correctness |
-| Gameplay Designer | Gameplay consistency |
-| Architect | Architecture compliance |
-| QA | Validation |
-| AI Reviewer | Prompt reproducibility |
+| Role              | Responsibility          |
+| ----------------- | ----------------------- |
+| Designer          | Visual quality          |
+| Technical Artist  | Technical correctness   |
+| Gameplay Designer | Gameplay consistency    |
+| Architect         | Architecture compliance |
+| QA                | Validation              |
+| AI Reviewer       | Prompt reproducibility  |
 
 One person may fulfill multiple roles in small teams.
 
@@ -288,14 +288,14 @@ Every asset should answer "Yes" to the following questions:
 
 # Approval Status
 
-| Status | Meaning |
-|---------|----------|
-| Draft | Work in progress |
-| Review | Awaiting review |
-| Approved | Ready for implementation |
-| Implemented | In the game |
-| Deprecated | No longer maintained |
-| Archived | Historical only |
+| Status      | Meaning                  |
+| ----------- | ------------------------ |
+| Draft       | Work in progress         |
+| Review      | Awaiting review          |
+| Approved    | Ready for implementation |
+| Implemented | In the game              |
+| Deprecated  | No longer maintained     |
+| Archived    | Historical only          |
 
 ---
 

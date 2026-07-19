@@ -4,8 +4,8 @@
  * Checks employee hiring prerequisites for research and buildings.
  */
 
-import { ValidationError } from '../../../common/errors/ValidationError.js';
-import { Result } from '../../../common/result/Result.js';
+import type { ValidationError } from '../../../common/errors/ValidationError.js';
+import type { Result } from '../../../common/result/Result.js';
 import { AndSpecification } from '../AndSpecification.js';
 import type { Specification } from '../Specification.js';
 import { RequiredResearchSpecification } from '../research/RequiredResearchSpecification.js';
@@ -30,16 +30,14 @@ export type EmployeePrerequisitesContext = {
 /**
  * Verifies that an employee type's research and building prerequisites are met.
  */
-export class EmployeePrerequisitesSpecification
-  implements Specification<EmployeePrerequisitesCandidate, EmployeePrerequisitesContext>
-{
+export class EmployeePrerequisitesSpecification implements Specification<
+  EmployeePrerequisitesCandidate,
+  EmployeePrerequisitesContext
+> {
   readonly #specification = new AndSpecification<
     EmployeePrerequisitesCandidate,
     EmployeePrerequisitesContext
-  >([
-    new RequiredResearchAdapterSpecification(),
-    new RequiredBuildingTypesAdapterSpecification(),
-  ]);
+  >([new RequiredResearchAdapterSpecification(), new RequiredBuildingTypesAdapterSpecification()]);
 
   isSatisfiedBy(
     candidate: EmployeePrerequisitesCandidate,
@@ -49,9 +47,10 @@ export class EmployeePrerequisitesSpecification
   }
 }
 
-class RequiredResearchAdapterSpecification
-  implements Specification<EmployeePrerequisitesCandidate, EmployeePrerequisitesContext>
-{
+class RequiredResearchAdapterSpecification implements Specification<
+  EmployeePrerequisitesCandidate,
+  EmployeePrerequisitesContext
+> {
   readonly #requiredResearchSpecification = new RequiredResearchSpecification();
 
   isSatisfiedBy(
@@ -70,9 +69,10 @@ class RequiredResearchAdapterSpecification
   }
 }
 
-class RequiredBuildingTypesAdapterSpecification
-  implements Specification<EmployeePrerequisitesCandidate, EmployeePrerequisitesContext>
-{
+class RequiredBuildingTypesAdapterSpecification implements Specification<
+  EmployeePrerequisitesCandidate,
+  EmployeePrerequisitesContext
+> {
   readonly #requiredBuildingTypesSpecification = new RequiredBuildingTypesSpecification();
 
   isSatisfiedBy(

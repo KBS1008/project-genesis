@@ -6,17 +6,13 @@
 
 import { ValidationError } from '../../common/errors/ValidationError.js';
 import { Result } from '../../common/result/Result.js';
-import { createCompanyId } from '../../domain/company/Company.js';
-import type { Company } from '../../domain/company/Company.js';
+import { createCompanyId, type Company } from '../../domain/company/Company.js';
 import type { ApplicationContext } from '../bootstrap/ApplicationContext.js';
 import type { CompanyReadModel } from '../read-models/CompanyReadModel.js';
 import type { GetCompanyQuery } from './GetCompanyQuery.js';
 
 /** Dependencies required by {@link GetCompanyQueryHandler}. */
-export type GetCompanyQueryHandlerDependencies = Pick<
-  ApplicationContext,
-  'companyRepository'
->;
+export type GetCompanyQueryHandlerDependencies = Pick<ApplicationContext, 'companyRepository'>;
 
 /**
  * Returns a read model for one company.

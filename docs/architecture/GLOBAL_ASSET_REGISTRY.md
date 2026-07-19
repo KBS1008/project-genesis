@@ -142,18 +142,18 @@ Each file contains one asset category.
 
 Every registry entry should contain:
 
-| Field | Required |
-|---------|----------|
-| Asset ID | ✓ |
-| Internal Name | ✓ |
-| Display Name | ✓ |
-| Category | ✓ |
-| Version | ✓ |
-| Lifecycle | ✓ |
-| Dependencies | ✓ |
-| Tags | ✓ |
-| Created | ✓ |
-| Updated | ✓ |
+| Field         | Required |
+| ------------- | -------- |
+| Asset ID      | ✓        |
+| Internal Name | ✓        |
+| Display Name  | ✓        |
+| Category      | ✓        |
+| Version       | ✓        |
+| Lifecycle     | ✓        |
+| Dependencies  | ✓        |
+| Tags          | ✓        |
+| Created       | ✓        |
+| Updated       | ✓        |
 
 Optional fields may be added without breaking compatibility.
 
@@ -169,15 +169,8 @@ Optional fields may be added without breaking compatibility.
   "category": "Building",
   "version": "1.2.0",
   "status": "Implemented",
-  "dependencies": [
-    "RES-3002",
-    "EFF-1005"
-  ],
-  "tags": [
-    "industry",
-    "steel",
-    "production"
-  ]
+  "dependencies": ["RES-3002", "EFF-1005"],
+  "tags": ["industry", "steel", "production"]
 }
 ```
 

@@ -16,10 +16,7 @@ describe('EventQueue', () => {
   it('enqueues and drains events in order', () => {
     const queue = new EventQueue();
 
-    queue.enqueue([
-      new QueuedEvent(1, 'first'),
-      new QueuedEvent(2, 'second'),
-    ]);
+    queue.enqueue([new QueuedEvent(1, 'first'), new QueuedEvent(2, 'second')]);
 
     const drained = queue.drain();
 

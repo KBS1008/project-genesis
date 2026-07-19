@@ -146,14 +146,14 @@ The canonical conceptual structure is:
 
 ```typescript
 type Result<T, E> =
-    | {
-        success: true
-        value: T
-      }
-    | {
-        success: false
-        error: E
-      }
+  | {
+      success: true;
+      value: T;
+    }
+  | {
+      success: false;
+      error: E;
+    };
 ```
 
 The exact implementation may vary.

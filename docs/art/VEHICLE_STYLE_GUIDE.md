@@ -346,15 +346,15 @@ AI prompts should define:
 
 # Vehicle Review Checklist
 
-| Question | Status |
-|-----------|--------|
-| Recognizable within one second? | □ |
-| Correct transport category? | □ |
-| Cargo type obvious? | □ |
-| Fits the visual language? | □ |
-| Proper scale? | □ |
-| Supports animation? | □ |
-| AI reproducible? | □ |
+| Question                        | Status |
+| ------------------------------- | ------ |
+| Recognizable within one second? | □      |
+| Correct transport category?     | □      |
+| Cargo type obvious?             | □      |
+| Fits the visual language?       | □      |
+| Proper scale?                   | □      |
+| Supports animation?             | □      |
+| AI reproducible?                | □      |
 
 ---
 

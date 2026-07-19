@@ -5,7 +5,7 @@
  */
 
 import { AggregateRoot } from '../../common/core/AggregateRoot.js';
-import { ValidationError } from '../../common/errors/ValidationError.js';
+import type { ValidationError } from '../../common/errors/ValidationError.js';
 import { Result } from '../../common/result/Result.js';
 import type { Clock } from '../../common/time/Clock.js';
 import type { CompanyId } from '../company/CompanyId.js';
@@ -117,10 +117,7 @@ export class CompanyResearch extends AggregateRoot<'CompanyResearch'> {
   /**
    * Marks a technology as permanently completed for the company.
    */
-  completeTechnology(
-    technologyId: TechnologyId,
-    clock: Clock,
-  ): Result<void, ValidationError> {
+  completeTechnology(technologyId: TechnologyId, clock: Clock): Result<void, ValidationError> {
     if (this.#completedTechnologies.has(technologyId.value)) {
       return Result.ok(undefined);
     }

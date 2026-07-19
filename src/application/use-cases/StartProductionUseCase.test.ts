@@ -4,8 +4,8 @@ import { InMemoryEventBus } from '../../common/events/InMemoryEventBus.js';
 import type { DomainEvent } from '../../common/events/DomainEvent.js';
 import { ManualClock } from '../../common/time/ManualClock.js';
 import { validateGameContent } from '../../content/validateGameContent.js';
-import { ProductionCompleted } from '../../domain/production/events/ProductionCompleted.js';
-import { ProductionStarted } from '../../domain/production/events/ProductionStarted.js';
+import type { ProductionCompleted } from '../../domain/production/events/ProductionCompleted.js';
+import type { ProductionStarted } from '../../domain/production/events/ProductionStarted.js';
 import { createCompanyId } from '../../domain/company/Company.js';
 import { createMilestoneId } from '../../domain/milestone/MilestoneId.js';
 import { InMemoryBuildingRepository } from '../../infrastructure/persistence/InMemoryBuildingRepository.js';
@@ -174,10 +174,7 @@ function requireCompanyId(value: string) {
   return result.value;
 }
 
-function grantFirstProfit(
-  context: Awaited<ReturnType<typeof createContext>>,
-  companyId: string,
-) {
+function grantFirstProfit(context: Awaited<ReturnType<typeof createContext>>, companyId: string) {
   const companyIdResult = createCompanyId(companyId);
 
   if (!companyIdResult.ok) {
@@ -227,10 +224,7 @@ function grantMilestone(
   context.companyMilestonesRepository.save(milestones);
 }
 
-function activateBuilding(
-  context: Awaited<ReturnType<typeof createContext>>,
-  buildingId: string,
-) {
+function activateBuilding(context: Awaited<ReturnType<typeof createContext>>, buildingId: string) {
   completeBuildingConstruction({
     clock: context.clock,
     simulationEngine: context.simulationEngine,

@@ -13,7 +13,7 @@ The NPC Library is the master catalog of all non-player character types used thr
 
 NPCs represent the human workforce behind the economy. They operate buildings, transport goods, conduct research, maintain infrastructure and provide public services.
 
-This document complements NPC_STYLE_GUIDE.md by defining *which* NPC types exist rather than *how* they should appear.
+This document complements NPC_STYLE_GUIDE.md by defining _which_ NPC types exist rather than _how_ they should appear.
 
 ---
 
@@ -54,16 +54,16 @@ Identifiers are permanent and must never be reused.
 
 Every NPC follows the standard asset lifecycle.
 
-| Status | Description |
-|---------|-------------|
-| Planned | Defined but not implemented |
-| Concept | Concept artwork available |
-| Prompt Ready | AI prompt completed |
-| Generated | Initial asset generated |
-| Reviewed | Design review completed |
-| Approved | Ready for implementation |
-| Implemented | Available in the game |
-| Deprecated | Removed from development |
+| Status       | Description                 |
+| ------------ | --------------------------- |
+| Planned      | Defined but not implemented |
+| Concept      | Concept artwork available   |
+| Prompt Ready | AI prompt completed         |
+| Generated    | Initial asset generated     |
+| Reviewed     | Design review completed     |
+| Approved     | Ready for implementation    |
+| Implemented  | Available in the game       |
+| Deprecated   | Removed from development    |
 
 ---
 
@@ -71,18 +71,18 @@ Every NPC follows the standard asset lifecycle.
 
 Every NPC should define:
 
-| Field | Description |
-|--------|-------------|
-| ID | Permanent identifier |
-| Internal Name | Development identifier |
-| Display Name | Player-facing name |
-| Category | Profession group |
-| Workplace | Typical workplace |
-| Technology Tier | Unlock level |
-| Required Education | Skill level |
-| Animation Set | Assigned animation package |
-| Equipment | Typical tools or clothing |
-| Status | Lifecycle status |
+| Field              | Description                |
+| ------------------ | -------------------------- |
+| ID                 | Permanent identifier       |
+| Internal Name      | Development identifier     |
+| Display Name       | Player-facing name         |
+| Category           | Profession group           |
+| Workplace          | Typical workplace          |
+| Technology Tier    | Unlock level               |
+| Required Education | Skill level                |
+| Animation Set      | Assigned animation package |
+| Equipment          | Typical tools or clothing  |
+| Status             | Lifecycle status           |
 
 ---
 
@@ -105,106 +105,106 @@ NPCs are organized into:
 
 # Industrial Workers
 
-| ID | NPC | Workplace | Tier | Status |
-|----|------|-----------|------|--------|
-| NPC-1001 | Factory Worker | Manufacturing | I | Planned |
-| NPC-1002 | Machine Operator | Manufacturing | II | Planned |
-| NPC-1003 | Assembly Technician | Manufacturing | II | Planned |
-| NPC-1004 | Production Supervisor | Manufacturing | III | Planned |
+| ID       | NPC                   | Workplace     | Tier | Status  |
+| -------- | --------------------- | ------------- | ---- | ------- |
+| NPC-1001 | Factory Worker        | Manufacturing | I    | Planned |
+| NPC-1002 | Machine Operator      | Manufacturing | II   | Planned |
+| NPC-1003 | Assembly Technician   | Manufacturing | II   | Planned |
+| NPC-1004 | Production Supervisor | Manufacturing | III  | Planned |
 
 ---
 
 # Logistics Personnel
 
-| ID | NPC | Workplace | Tier | Status |
-|----|------|-----------|------|--------|
-| NPC-2001 | Truck Driver | Logistics | I | Planned |
-| NPC-2002 | Warehouse Worker | Warehouse | I | Planned |
-| NPC-2003 | Forklift Operator | Warehouse | II | Planned |
-| NPC-2004 | Logistics Coordinator | Distribution Center | III | Planned |
+| ID       | NPC                   | Workplace           | Tier | Status  |
+| -------- | --------------------- | ------------------- | ---- | ------- |
+| NPC-2001 | Truck Driver          | Logistics           | I    | Planned |
+| NPC-2002 | Warehouse Worker      | Warehouse           | I    | Planned |
+| NPC-2003 | Forklift Operator     | Warehouse           | II   | Planned |
+| NPC-2004 | Logistics Coordinator | Distribution Center | III  | Planned |
 
 ---
 
 # Construction Workers
 
-| ID | NPC | Workplace | Tier | Status |
-|----|------|-----------|------|--------|
-| NPC-3001 | Construction Worker | Construction Site | I | Planned |
-| NPC-3002 | Crane Operator | Construction Site | II | Planned |
-| NPC-3003 | Site Engineer | Construction Site | III | Planned |
-| NPC-3004 | Construction Manager | Construction Site | IV | Planned |
+| ID       | NPC                  | Workplace         | Tier | Status  |
+| -------- | -------------------- | ----------------- | ---- | ------- |
+| NPC-3001 | Construction Worker  | Construction Site | I    | Planned |
+| NPC-3002 | Crane Operator       | Construction Site | II   | Planned |
+| NPC-3003 | Site Engineer        | Construction Site | III  | Planned |
+| NPC-3004 | Construction Manager | Construction Site | IV   | Planned |
 
 ---
 
 # Engineers
 
-| ID | NPC | Workplace | Tier | Status |
-|----|------|-----------|------|--------|
-| NPC-4001 | Mechanical Engineer | Factory | III | Planned |
-| NPC-4002 | Electrical Engineer | Power Plant | III | Planned |
-| NPC-4003 | Process Engineer | Chemical Plant | IV | Planned |
+| ID       | NPC                 | Workplace      | Tier | Status  |
+| -------- | ------------------- | -------------- | ---- | ------- |
+| NPC-4001 | Mechanical Engineer | Factory        | III  | Planned |
+| NPC-4002 | Electrical Engineer | Power Plant    | III  | Planned |
+| NPC-4003 | Process Engineer    | Chemical Plant | IV   | Planned |
 
 ---
 
 # Scientists
 
-| ID | NPC | Workplace | Tier | Status |
-|----|------|-----------|------|--------|
-| NPC-5001 | Research Scientist | Laboratory | III | Planned |
-| NPC-5002 | Senior Researcher | Innovation Center | IV | Planned |
-| NPC-5003 | Chief Scientist | Research Campus | V | Planned |
+| ID       | NPC                | Workplace         | Tier | Status  |
+| -------- | ------------------ | ----------------- | ---- | ------- |
+| NPC-5001 | Research Scientist | Laboratory        | III  | Planned |
+| NPC-5002 | Senior Researcher  | Innovation Center | IV   | Planned |
+| NPC-5003 | Chief Scientist    | Research Campus   | V    | Planned |
 
 ---
 
 # Office Employees
 
-| ID | NPC | Workplace | Tier | Status |
-|----|------|-----------|------|--------|
-| NPC-6001 | Office Clerk | Office | I | Planned |
-| NPC-6002 | Accountant | Headquarters | II | Planned |
-| NPC-6003 | Financial Analyst | Finance Center | III | Planned |
-| NPC-6004 | Human Resources Manager | Headquarters | III | Planned |
+| ID       | NPC                     | Workplace      | Tier | Status  |
+| -------- | ----------------------- | -------------- | ---- | ------- |
+| NPC-6001 | Office Clerk            | Office         | I    | Planned |
+| NPC-6002 | Accountant              | Headquarters   | II   | Planned |
+| NPC-6003 | Financial Analyst       | Finance Center | III  | Planned |
+| NPC-6004 | Human Resources Manager | Headquarters   | III  | Planned |
 
 ---
 
 # Agriculture
 
-| ID | NPC | Workplace | Tier | Status |
-|----|------|-----------|------|--------|
-| NPC-7001 | Farmer | Farm | I | Planned |
-| NPC-7002 | Livestock Specialist | Farm | II | Planned |
-| NPC-7003 | Agronomist | Agricultural Center | III | Planned |
+| ID       | NPC                  | Workplace           | Tier | Status  |
+| -------- | -------------------- | ------------------- | ---- | ------- |
+| NPC-7001 | Farmer               | Farm                | I    | Planned |
+| NPC-7002 | Livestock Specialist | Farm                | II   | Planned |
+| NPC-7003 | Agronomist           | Agricultural Center | III  | Planned |
 
 ---
 
 # Public Services
 
-| ID | NPC | Workplace | Tier | Status |
-|----|------|-----------|------|--------|
-| NPC-8001 | Firefighter | Fire Station | I | Planned |
-| NPC-8002 | Police Officer | Police Station | I | Planned |
-| NPC-8003 | Paramedic | Hospital | II | Planned |
-| NPC-8004 | Maintenance Technician | Utility Services | II | Planned |
+| ID       | NPC                    | Workplace        | Tier | Status  |
+| -------- | ---------------------- | ---------------- | ---- | ------- |
+| NPC-8001 | Firefighter            | Fire Station     | I    | Planned |
+| NPC-8002 | Police Officer         | Police Station   | I    | Planned |
+| NPC-8003 | Paramedic              | Hospital         | II   | Planned |
+| NPC-8004 | Maintenance Technician | Utility Services | II   | Planned |
 
 ---
 
 # Executives
 
-| ID | NPC | Workplace | Tier | Status |
-|----|------|-----------|------|--------|
-| NPC-9001 | Operations Manager | Headquarters | III | Planned |
-| NPC-9002 | Plant Director | Industrial Complex | IV | Planned |
-| NPC-9003 | Chief Executive Officer | Headquarters | V | Planned |
+| ID       | NPC                     | Workplace          | Tier | Status  |
+| -------- | ----------------------- | ------------------ | ---- | ------- |
+| NPC-9001 | Operations Manager      | Headquarters       | III  | Planned |
+| NPC-9002 | Plant Director          | Industrial Complex | IV   | Planned |
+| NPC-9003 | Chief Executive Officer | Headquarters       | V    | Planned |
 
 ---
 
 # Visitors
 
-| ID | NPC | Workplace | Tier | Status |
-|----|------|-----------|------|--------|
-| NPC-9501 | Visitor | Public Buildings | I | Planned |
-| NPC-9502 | Investor | Headquarters | IV | Planned |
-| NPC-9503 | Government Inspector | Various | IV | Planned |
+| ID       | NPC                  | Workplace        | Tier | Status  |
+| -------- | -------------------- | ---------------- | ---- | ------- |
+| NPC-9501 | Visitor              | Public Buildings | I    | Planned |
+| NPC-9502 | Investor             | Headquarters     | IV   | Planned |
+| NPC-9503 | Government Inspector | Various          | IV   | Planned |
 
 ---
 

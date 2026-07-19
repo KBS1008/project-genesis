@@ -15,9 +15,7 @@ duration: 60
 energy: 12
 workers: 2
 requiredResearch: []
-requiredBuildings: []
 requiredMilestones: []
-requiredResources: []
 maintenanceCost: 2
 productionCost: 1
 experience: 5

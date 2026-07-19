@@ -244,7 +244,10 @@ function KpiStrip({
           <strong className="kpi-value">{(kpis.corporateTaxRate * 100).toFixed(0)} %</strong>
           <span className="kpi-trend">
             {kpis.taxPaymentBlocked
-              ? trendLabel('down', `${kpis.pendingTaxAmount.toLocaleString('de-DE')} GC offen · Kasse zu niedrig`)
+              ? trendLabel(
+                  'down',
+                  `${kpis.pendingTaxAmount.toLocaleString('de-DE')} GC offen · Kasse zu niedrig`,
+                )
               : `${kpis.activeContractCount} aktiv · alle ${kpis.taxIntervalTicks} Ticks`}
           </span>
         </div>
@@ -264,9 +267,15 @@ function OverviewStrip({
     return null;
   }
 
-  const runningProduction = dashboard.productionJobs.filter((job) => job.status === 'RUNNING').length;
-  const waitingProduction = dashboard.productionJobs.filter((job) => job.status === 'WAITING').length;
-  const activeResearch = dashboard.researchJobs.filter((job) => job.status === 'IN_PROGRESS').length;
+  const runningProduction = dashboard.productionJobs.filter(
+    (job) => job.status === 'RUNNING',
+  ).length;
+  const waitingProduction = dashboard.productionJobs.filter(
+    (job) => job.status === 'WAITING',
+  ).length;
+  const activeResearch = dashboard.researchJobs.filter(
+    (job) => job.status === 'IN_PROGRESS',
+  ).length;
   const activeTransport = dashboard.logistics?.activeTransportCount ?? 0;
   const queuedTransport = dashboard.logistics?.queuedTransportCount ?? 0;
   const completedMilestones = dashboard.completedMilestones.length;
@@ -285,9 +294,7 @@ function OverviewStrip({
         <span className="overview-label">Mitarbeiter</span>
         <strong className="overview-value">{dashboard.employees.length}</strong>
         <span className="overview-hint">
-          {assignedEmployees > 0
-            ? `${assignedEmployees} zugewiesen`
-            : 'Noch keine Zuweisungen'}
+          {assignedEmployees > 0 ? `${assignedEmployees} zugewiesen` : 'Noch keine Zuweisungen'}
         </span>
       </article>
       <article className="overview-card">
@@ -302,7 +309,11 @@ function OverviewStrip({
         <strong className="overview-value">{activeResearch}</strong>
         <span className="overview-hint">{dashboard.completedResearch.length} abgeschlossen</span>
       </article>
-      <button type="button" className="overview-card overview-card-button" onClick={onSelectLogistics}>
+      <button
+        type="button"
+        className="overview-card overview-card-button"
+        onClick={onSelectLogistics}
+      >
         <span className="overview-label">Transport</span>
         <strong className="overview-value">{activeTransport}</strong>
         <span className="overview-hint">
@@ -339,7 +350,11 @@ function LogisticsBanner({
   }
 
   return (
-    <button type="button" className="logistics-banner logistics-banner-button" onClick={onSelectLogistics}>
+    <button
+      type="button"
+      className="logistics-banner logistics-banner-button"
+      onClick={onSelectLogistics}
+    >
       {message}
     </button>
   );
@@ -371,13 +386,7 @@ function HintButton({
   );
 }
 
-function Toast({
-  message,
-  tone,
-}: {
-  readonly message: string;
-  readonly tone: StatusTone;
-}) {
+function Toast({ message, tone }: { readonly message: string; readonly tone: StatusTone }) {
   if (message.length === 0) {
     return null;
   }
@@ -860,8 +869,7 @@ export function DashboardShell() {
   const hints = dashboard?.hints;
   const buildingCount = dashboard?.buildings.length ?? 0;
 
-  const labelResource = (resourceId: string) =>
-    nameMaps.resources.get(resourceId) ?? resourceId;
+  const labelResource = (resourceId: string) => nameMaps.resources.get(resourceId) ?? resourceId;
   const labelBuilding = (buildingTypeId: string) =>
     nameMaps.buildings.get(buildingTypeId) ?? buildingTypeId;
   const labelRecipe = (recipeId: string) => nameMaps.recipes.get(recipeId) ?? recipeId;
@@ -940,7 +948,9 @@ export function DashboardShell() {
               {dashboard?.simulationTime ?? '—'}
             </p>
           ) : (
-            <p className="header-subtitle">Starten Sie eine neue Session, um das Spiel zu beginnen.</p>
+            <p className="header-subtitle">
+              Starten Sie eine neue Session, um das Spiel zu beginnen.
+            </p>
           )}
         </div>
         <div className="header-actions">
@@ -1009,7 +1019,9 @@ export function DashboardShell() {
             <Toast message={statusMessage} tone={statusTone} />
           </div>
 
-          {hasGame ? <OverviewStrip dashboard={dashboard} onSelectLogistics={selectLogisticsDetail} /> : null}
+          {hasGame ? (
+            <OverviewStrip dashboard={dashboard} onSelectLogistics={selectLogisticsDetail} />
+          ) : null}
 
           {hasGame ? <TutorialPanel tutorial={dashboard?.tutorial} /> : null}
 
@@ -1042,7 +1054,10 @@ export function DashboardShell() {
                 <>
                   <section className="card card-loading">
                     <div className="skeleton-block" style={{ width: '40%' }} />
-                    <div className="skeleton-block" style={{ width: '70%', marginTop: '0.75rem' }} />
+                    <div
+                      className="skeleton-block"
+                      style={{ width: '70%', marginTop: '0.75rem' }}
+                    />
                   </section>
                   <section className="card card-loading">
                     <div className="skeleton-block" style={{ width: '55%' }} />
@@ -1093,7 +1108,11 @@ export function DashboardShell() {
                               (entry) => entry.name === row.name && entry.status === row.status,
                             );
 
-                            return building ? <ConstructionStatus building={building} /> : row.status;
+                            return building ? (
+                              <ConstructionStatus building={building} />
+                            ) : (
+                              row.status
+                            );
                           }}
                         />
                       )}
@@ -1141,21 +1160,25 @@ export function DashboardShell() {
                     </div>
                   </section>
 
-                  <section className={`card${dashboard?.economy?.taxPaymentBlocked ? ' card-warning' : ''}`}>
+                  <section
+                    className={`card${dashboard?.economy?.taxPaymentBlocked ? ' card-warning' : ''}`}
+                  >
                     <div className="section-header">
                       <h2>Wirtschaft</h2>
                       <p>
-                        Unternehmenssteuer {(dashboard?.economy?.corporateTaxRate ?? 0.05) * 100} % alle{' '}
-                        {dashboard?.economy?.taxIntervalTicks ?? 30} Ticks · Preisindex{' '}
-                        {(dashboard?.economy?.priceIndex ?? 1).toFixed(2)} (neutral 1,00). Lieferverträge
-                        entnehmen Ressourcen nur aus dem Standort-Inventar, nicht aus Lagerhaus-Beständen.
+                        Unternehmenssteuer {(dashboard?.economy?.corporateTaxRate ?? 0.05) * 100} %
+                        alle {dashboard?.economy?.taxIntervalTicks ?? 30} Ticks · Preisindex{' '}
+                        {(dashboard?.economy?.priceIndex ?? 1).toFixed(2)} (neutral 1,00).
+                        Lieferverträge entnehmen Ressourcen nur aus dem Standort-Inventar, nicht aus
+                        Lagerhaus-Beständen.
                       </p>
                     </div>
                     {dashboard?.economy?.taxPaymentBlocked ? (
                       <p className="empty-state kv-value-warning" role="status">
                         <strong>Steuer offen:</strong>{' '}
-                        {dashboard.economy.pendingTaxAmount.toLocaleString('de-DE')} GC fällig, aber die Kasse
-                        reicht nicht — die Abbuchung wird übersprungen, bis genug Cash vorhanden ist.
+                        {dashboard.economy.pendingTaxAmount.toLocaleString('de-DE')} GC fällig, aber
+                        die Kasse reicht nicht — die Abbuchung wird übersprungen, bis genug Cash
+                        vorhanden ist.
                       </p>
                     ) : null}
                     <div className="table-wrap">
@@ -1193,7 +1216,10 @@ export function DashboardShell() {
                   <section className="card">
                     <div className="section-header">
                       <h2>Markt</h2>
-                      <p>Preise, Angebot, Nachfrage und Trend je Ressource. Handelsgebühr: 2&nbsp;% (min. 1 GC) pro Transaktion.</p>
+                      <p>
+                        Preise, Angebot, Nachfrage und Trend je Ressource. Handelsgebühr: 2&nbsp;%
+                        (min. 1 GC) pro Transaktion.
+                      </p>
                     </div>
                     <div className="table-wrap">
                       {!dashboard?.company ? (
@@ -1394,7 +1420,9 @@ export function DashboardShell() {
                     <section className="card">
                       <div className="section-header">
                         <h2>Inventar (Standort)</h2>
-                        <p>Material direkt an Produktionsgebäuden — bereit für sofortige Nutzung.</p>
+                        <p>
+                          Material direkt an Produktionsgebäuden — bereit für sofortige Nutzung.
+                        </p>
                       </div>
                       <div className="table-wrap">
                         {!dashboard?.inventory ? (
@@ -1426,7 +1454,9 @@ export function DashboardShell() {
                     <section className="card">
                       <div className="section-header">
                         <h2>Lagerhaus</h2>
-                        <p>Marktkäufe landen hier. Transport bringt Material zum Produktionsstandort.</p>
+                        <p>
+                          Marktkäufe landen hier. Transport bringt Material zum Produktionsstandort.
+                        </p>
                       </div>
                       <div className="table-wrap">
                         {!dashboard?.company ? (

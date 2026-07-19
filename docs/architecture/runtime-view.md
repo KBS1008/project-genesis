@@ -56,6 +56,7 @@ Events --> Persistence
 Persistence --> PostTick
 PostTick --> End
 ```
+
 # Tick-Zyklus
 
 Ein Simulationstick besteht aus den folgenden Phasen:
@@ -557,7 +558,7 @@ Die Runtime View unterstützt:
 
 # Änderungsprotokoll
 
-| Version | Datum | Änderung |
-|----------|--------|----------|
-| 1.0.0 | 2026-07-06 | Initiale Runtime View |
-| 1.1.0 | 2026-07-06 | Einführung eines expliziten Tick-Lifecycles mit sechs Phasen, Validierungsschritt, Debugging-Strategie und erweiterten Laufzeitregeln |
+| Version | Datum      | Änderung                                                                                                                              |
+| ------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| 1.0.0   | 2026-07-06 | Initiale Runtime View                                                                                                                 |
+| 1.1.0   | 2026-07-06 | Einführung eines expliziten Tick-Lifecycles mit sechs Phasen, Validierungsschritt, Debugging-Strategie und erweiterten Laufzeitregeln |

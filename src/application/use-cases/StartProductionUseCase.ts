@@ -8,10 +8,7 @@ import { ValidationError } from '../../common/errors/ValidationError.js';
 import { Result } from '../../common/result/Result.js';
 import { createBuildingId } from '../../domain/building/Building.js';
 import type { ProductionJobId } from '../../domain/production/ProductionJobId.js';
-import {
-  ProductionJob,
-  createProductionJobId,
-} from '../../domain/production/ProductionJob.js';
+import { ProductionJob, createProductionJobId } from '../../domain/production/ProductionJob.js';
 import { createRecipeId } from '../../domain/production/RecipeId.js';
 import { BuildingStatus } from '../../domain/building/BuildingStatus.js';
 import { BuildingSupportsRecipeSpecification } from '../../domain/specifications/production/BuildingSupportsRecipeSpecification.js';
@@ -140,7 +137,9 @@ export class StartProductionUseCase {
       return Result.fail(supportsRecipeResult.error);
     }
 
-    const companyResearch = this.#companyResearchRepository.findByCompanyId(building.getCompanyId());
+    const companyResearch = this.#companyResearchRepository.findByCompanyId(
+      building.getCompanyId(),
+    );
 
     if (companyResearch === undefined) {
       return Result.fail(
@@ -164,7 +163,9 @@ export class StartProductionUseCase {
       return Result.fail(requiredResearchResult.error);
     }
 
-    const companyMilestones = this.#companyMilestonesRepository.findByCompanyId(building.getCompanyId());
+    const companyMilestones = this.#companyMilestonesRepository.findByCompanyId(
+      building.getCompanyId(),
+    );
 
     if (companyMilestones === undefined) {
       return Result.fail(
@@ -223,7 +224,13 @@ export class StartProductionUseCase {
 
     const job = jobResult.value;
 
-    if (this.#transportLogisticsService.needsInboundTransport(building.getCompanyId(), inventory, recipe)) {
+    if (
+      this.#transportLogisticsService.needsInboundTransport(
+        building.getCompanyId(),
+        inventory,
+        recipe,
+      )
+    ) {
       const transportResult = this.#transportLogisticsService.createInboundTransports({
         companyId: building.getCompanyId(),
         destinationBuilding: building,
@@ -246,7 +253,9 @@ export class StartProductionUseCase {
       !this.#transportLogisticsService.canFulfillFromWarehouse(building.getCompanyId(), recipe)
     ) {
       return Result.fail(
-        new ValidationError('Insufficient resources. Buy materials or wait for warehouse delivery.'),
+        new ValidationError(
+          'Insufficient resources. Buy materials or wait for warehouse delivery.',
+        ),
       );
     }
 

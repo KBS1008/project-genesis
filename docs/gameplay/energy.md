@@ -95,12 +95,12 @@ Jedes Gebäude besitzt einen definierten Energiebedarf.
 
 Beispiele
 
-| Gebäude | Verbrauch |
-|----------|----------:|
-| Sägewerk | 40 MW |
-| Mine | 80 MW |
-| Forschung | 30 MW |
-| Lager | 10 MW |
+| Gebäude   | Verbrauch |
+| --------- | --------: |
+| Sägewerk  |     40 MW |
+| Mine      |     80 MW |
+| Forschung |     30 MW |
+| Lager     |     10 MW |
 
 Die tatsächlichen Werte werden im Balancing festgelegt.
 

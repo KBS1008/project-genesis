@@ -6,17 +6,10 @@
 
 import { ValidationError } from '../../common/errors/ValidationError.js';
 import { Result } from '../../common/result/Result.js';
-import {
-  Company,
-  createCompanyId,
-  createPlayerId,
-} from '../../domain/company/Company.js';
+import { Company, createCompanyId, createPlayerId } from '../../domain/company/Company.js';
 import type { CompanyId } from '../../domain/company/CompanyId.js';
 import { Inventory, createInventoryId } from '../../domain/inventory/Inventory.js';
-import {
-  FinanceAccount,
-  createFinanceAccountId,
-} from '../../domain/finance/FinanceAccount.js';
+import { FinanceAccount, createFinanceAccountId } from '../../domain/finance/FinanceAccount.js';
 import { CompanyResearch } from '../../domain/research/CompanyResearch.js';
 import { createCompanyResearchId } from '../../domain/research/CompanyResearchId.js';
 import { CompanyMilestones } from '../../domain/milestone/CompanyMilestones.js';
@@ -82,9 +75,7 @@ export class CreateCompanyUseCase {
     const companyId = companyIdResult.value;
 
     if (this.#companyRepository.findById(companyId) !== undefined) {
-      return Result.fail(
-        new ValidationError(`Company id "${companyId.value}" already exists.`),
-      );
+      return Result.fail(new ValidationError(`Company id "${companyId.value}" already exists.`));
     }
 
     const companyResult = Company.create({

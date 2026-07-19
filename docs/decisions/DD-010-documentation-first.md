@@ -323,10 +323,10 @@ Diese Risiken werden durch regelmäßige Reviews und die Verpflichtung zur gemei
 
 # Änderungsprotokoll
 
-| Version | Datum | Änderung |
-|----------|--------|----------|
-| 1.0.0 | 2026-07-03 | Erste Version |
-| 2.0.0 | 2026-07-03 | Vollständige Überarbeitung entsprechend der aktuellen Projektstruktur |
+| Version | Datum      | Änderung                                                              |
+| ------- | ---------- | --------------------------------------------------------------------- |
+| 1.0.0   | 2026-07-03 | Erste Version                                                         |
+| 2.0.0   | 2026-07-03 | Vollständige Überarbeitung entsprechend der aktuellen Projektstruktur |
 
 ---
 

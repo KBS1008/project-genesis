@@ -252,14 +252,9 @@ export class Employee extends AggregateRoot<'Employee'> {
    *
    * An employee can be assigned to at most one building at a time.
    */
-  assignToBuilding(
-    buildingId: BuildingId,
-    clock: Clock,
-  ): Result<void, ValidationError> {
+  assignToBuilding(buildingId: BuildingId, clock: Clock): Result<void, ValidationError> {
     if (this.#assignedBuildingId !== undefined) {
-      return Result.fail(
-        new ValidationError('Employee is already assigned to a building.'),
-      );
+      return Result.fail(new ValidationError('Employee is already assigned to a building.'));
     }
 
     this.#assignedBuildingId = buildingId;
@@ -283,9 +278,7 @@ export class Employee extends AggregateRoot<'Employee'> {
     const assignedBuildingId = this.#assignedBuildingId;
 
     if (assignedBuildingId === undefined) {
-      return Result.fail(
-        new ValidationError('Employee is not assigned to a building.'),
-      );
+      return Result.fail(new ValidationError('Employee is not assigned to a building.'));
     }
 
     this.#assignedBuildingId = undefined;
@@ -315,9 +308,7 @@ export function createEmployeeId(rawValue: string): Result<EmployeeId, Validatio
 }
 
 /** Creates a validated employee type identifier from a raw string. */
-export function createEmployeeTypeId(
-  rawValue: string,
-): Result<EmployeeTypeId, ValidationError> {
+export function createEmployeeTypeId(rawValue: string): Result<EmployeeTypeId, ValidationError> {
   const result = Identifier.create<EmployeeTypeId>(rawValue);
 
   if (!result.ok) {

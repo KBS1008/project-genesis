@@ -234,13 +234,13 @@ Der Mod Loader integriert diese Inhalte in die Content Registry.
 
 # Trennung von Verantwortung
 
-| Bereich | Inhalt |
-|----------|--------|
-| docs/ | Architektur und Spezifikationen |
-| game-content/ | Gameplay-Daten |
-| src/ | Anwendungscode |
-| tests/ | Tests |
-| tools/ | Entwicklungswerkzeuge |
+| Bereich       | Inhalt                          |
+| ------------- | ------------------------------- |
+| docs/         | Architektur und Spezifikationen |
+| game-content/ | Gameplay-Daten                  |
+| src/          | Anwendungscode                  |
+| tests/        | Tests                           |
+| tools/        | Entwicklungswerkzeuge           |
 
 ---
 
@@ -342,10 +342,10 @@ Diese Risiken werden durch klare Konventionen, Validierung und automatisierte Te
 
 # Änderungsprotokoll
 
-| Version | Datum | Änderung |
-|----------|--------|----------|
-| 1.0.0 | 2026-07-03 | Erste Version |
-| 2.0.0 | 2026-07-06 | Aktualisierung auf die neue Repository-Struktur (`docs/gameplay`, `docs/schemas`, `game-content`) und Überarbeitung der Dokumentation |
+| Version | Datum      | Änderung                                                                                                                              |
+| ------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| 1.0.0   | 2026-07-03 | Erste Version                                                                                                                         |
+| 2.0.0   | 2026-07-06 | Aktualisierung auf die neue Repository-Struktur (`docs/gameplay`, `docs/schemas`, `game-content`) und Überarbeitung der Dokumentation |
 
 ---
 

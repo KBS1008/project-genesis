@@ -43,10 +43,10 @@ The report serves as the project's long-term quality history.
 
 # Review History
 
-| Review | Date | Result |
-|---------|------|--------|
-| AUD-001 | 2026-07 | Completed |
-| AUD-003 (M5 Economy) | 2026-07-18 | Completed — see `docs/quality/M5_ECONOMY_AUDIT_REPORT.md` |
+| Review                 | Date       | Result                                                            |
+| ---------------------- | ---------- | ----------------------------------------------------------------- |
+| AUD-001                | 2026-07    | Completed                                                         |
+| AUD-003 (M5 Economy)   | 2026-07-18 | Completed — see `docs/quality/M5_ECONOMY_AUDIT_REPORT.md`         |
 | AUD-004 (M6 Logistics) | 2026-07-19 | Completed — see `docs/quality/M6_LOGISTICS_GATE_REVIEW_REPORT.md` |
 
 Future reviews:
@@ -63,16 +63,16 @@ Future reviews:
 
 # Current Overall Rating
 
-| Area | Rating |
-|-------|--------|
-| Architecture | ⭐⭐⭐⭐⭐ |
-| Domain Model | ⭐⭐⭐⭐⭐ |
+| Area               | Rating     |
+| ------------------ | ---------- |
+| Architecture       | ⭐⭐⭐⭐⭐ |
+| Domain Model       | ⭐⭐⭐⭐⭐ |
 | Clean Architecture | ⭐⭐⭐⭐⭐ |
-| Simulation | ⭐⭐⭐⭐⭐ |
-| Documentation | ⭐⭐⭐⭐⭐ |
-| Gameplay | ⭐⭐⭐⭐⭐ |
-| Maintainability | ⭐⭐⭐⭐⭐ |
-| Extensibility | ⭐⭐⭐⭐⭐ |
+| Simulation         | ⭐⭐⭐⭐⭐ |
+| Documentation      | ⭐⭐⭐⭐⭐ |
+| Gameplay           | ⭐⭐⭐⭐⭐ |
+| Maintainability    | ⭐⭐⭐⭐⭐ |
+| Extensibility      | ⭐⭐⭐⭐⭐ |
 
 Overall Quality
 
@@ -138,16 +138,16 @@ These are roadmap items, not architectural deficiencies.
 
 Status
 
-| Document | Status |
-|-----------|--------|
-| ERROR_HANDLING_STRATEGY | ✅ |
-| LOGGING_STRATEGY | Planned |
-| RESULT_PATTERN | Planned |
-| VALIDATION_STRATEGY | Planned |
-| TESTING_STRATEGY | Planned |
-| PERFORMANCE_GUIDELINES | Planned |
-| DEPENDENCY_RULES | Planned |
-| NAMING_CONVENTIONS | Planned |
+| Document                | Status  |
+| ----------------------- | ------- |
+| ERROR_HANDLING_STRATEGY | ✅      |
+| LOGGING_STRATEGY        | Planned |
+| RESULT_PATTERN          | Planned |
+| VALIDATION_STRATEGY     | Planned |
+| TESTING_STRATEGY        | Planned |
+| PERFORMANCE_GUIDELINES  | Planned |
+| DEPENDENCY_RULES        | Planned |
+| NAMING_CONVENTIONS      | Planned |
 
 ---
 
@@ -173,12 +173,12 @@ Minor improvements identified during audits.
 
 # Risks
 
-| Priority | Topic |
-|-----------|-------|
-| Medium | Logging strategy |
-| Medium | Validation framework |
-| Low | Performance monitoring |
-| Low | Metrics collection |
+| Priority | Topic                  |
+| -------- | ---------------------- |
+| Medium   | Logging strategy       |
+| Medium   | Validation framework   |
+| Low      | Performance monitoring |
+| Low      | Metrics collection     |
 
 ---
 

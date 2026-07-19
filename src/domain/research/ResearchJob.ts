@@ -102,20 +102,18 @@ export class ResearchJob extends AggregateRoot<'ResearchJob'> {
     }
 
     return Result.ok(
-      new ResearchJob(
-        {
-          id: params.id,
-          companyId: params.companyId,
-          technologyId: params.technologyId,
-          duration: durationResult.value,
-          cost: costResult.value,
-          createdAt: params.clock.now(),
-          status: ResearchJobStatus.WAITING,
-          progress: 0,
-          startTime: undefined,
-          endTime: undefined,
-        },
-      ),
+      new ResearchJob({
+        id: params.id,
+        companyId: params.companyId,
+        technologyId: params.technologyId,
+        duration: durationResult.value,
+        cost: costResult.value,
+        createdAt: params.clock.now(),
+        status: ResearchJobStatus.WAITING,
+        progress: 0,
+        startTime: undefined,
+        endTime: undefined,
+      }),
     );
   }
 

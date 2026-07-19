@@ -93,15 +93,15 @@ Die Architektur verfolgt folgende Ziele:
 
 # 3. Qualitätsziele
 
-| Ziel | Priorität |
-|-------|-----------|
-| Wartbarkeit | Sehr hoch |
-| Erweiterbarkeit | Sehr hoch |
-| Performance | Hoch |
-| Skalierbarkeit | Hoch |
-| Testbarkeit | Hoch |
-| Sicherheit | Hoch |
-| Benutzerfreundlichkeit | Mittel |
+| Ziel                   | Priorität |
+| ---------------------- | --------- |
+| Wartbarkeit            | Sehr hoch |
+| Erweiterbarkeit        | Sehr hoch |
+| Performance            | Hoch      |
+| Skalierbarkeit         | Hoch      |
+| Testbarkeit            | Hoch      |
+| Sicherheit             | Hoch      |
+| Benutzerfreundlichkeit | Mittel    |
 
 ---
 
@@ -483,23 +483,23 @@ Gegenmaßnahmen:
 
 # 20. Glossar
 
-| Begriff | Bedeutung |
-|----------|-----------|
-| Tick | Simulationszyklus |
-| Company | Unternehmen eines Spielers |
-| Building | Gebäude |
-| Recipe | Produktionsrezept |
-| Inventory | Lagerbestand |
+| Begriff       | Bedeutung                            |
+| ------------- | ------------------------------------ |
+| Tick          | Simulationszyklus                    |
+| Company       | Unternehmen eines Spielers           |
+| Building      | Gebäude                              |
+| Recipe        | Produktionsrezept                    |
+| Inventory     | Lagerbestand                         |
 | Company Score | Kennzahl für Unternehmensentwicklung |
-| ADR | Architecture Decision Record |
+| ADR           | Architecture Decision Record         |
 
 ---
 
 # Änderungsprotokoll
 
-| Version | Datum | Änderung |
-|----------|--------|----------|
-| 1.0.0 | 2026-07-03 | Initiale Version |
+| Version | Datum      | Änderung         |
+| ------- | ---------- | ---------------- |
+| 1.0.0   | 2026-07-03 | Initiale Version |
 
 ---
 

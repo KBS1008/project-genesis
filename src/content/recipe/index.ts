@@ -6,10 +6,7 @@
 
 export { RecipeCategory, RecipeDefinition } from './RecipeDefinition.js';
 
-export type {
-  RecipeDefinitionProps,
-  RecipeResourceAmount,
-} from './RecipeDefinition.js';
+export type { RecipeDefinitionProps, RecipeResourceAmount } from './RecipeDefinition.js';
 
 export type { RecipeReferenceContext } from './RecipeReferenceContext.js';
 export { RecipeLoader } from './RecipeLoader.js';

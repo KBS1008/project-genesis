@@ -52,14 +52,14 @@ Humans approve decisions.
 
 The workflow distinguishes between functional AI roles rather than specific products.
 
-| Role | Responsibility |
-|--------|----------------|
-| Planning AI | Requirements, architecture, documentation |
-| Implementation AI | Source code generation |
-| Visual AI | Concept art, icons, textures, UI |
-| Review AI | Code review, documentation review |
-| QA AI | Testing and validation |
-| Automation AI | Registry generation, documentation synchronization |
+| Role              | Responsibility                                     |
+| ----------------- | -------------------------------------------------- |
+| Planning AI       | Requirements, architecture, documentation          |
+| Implementation AI | Source code generation                             |
+| Visual AI         | Concept art, icons, textures, UI                   |
+| Review AI         | Code review, documentation review                  |
+| QA AI             | Testing and validation                             |
+| Automation AI     | Registry generation, documentation synchronization |
 
 One AI system may perform multiple roles.
 

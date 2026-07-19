@@ -85,13 +85,13 @@ Avoid:
 
 Use colors consistently.
 
-| Meaning | Example |
-|---------|---------|
-| Blue | Neutral / Primary |
-| Green | Positive |
-| Orange | Warning |
-| Red | Critical / Negative |
-| Gray | Secondary / Historical |
+| Meaning | Example                |
+| ------- | ---------------------- |
+| Blue    | Neutral / Primary      |
+| Green   | Positive               |
+| Orange  | Warning                |
+| Red     | Critical / Negative    |
+| Gray    | Secondary / Historical |
 
 Never use color as the sole means of conveying meaning.
 
@@ -449,16 +449,16 @@ When generating chart concepts with AI, prompts should include:
 
 # Chart Review Checklist
 
-| Question | Status |
-|-----------|--------|
-| Is the chart immediately understandable? | □ |
-| Is the correct chart type used? | □ |
-| Are colors meaningful and consistent? | □ |
-| Is the visual hierarchy clear? | □ |
-| Are labels concise? | □ |
-| Does the chart support interaction where needed? | □ |
-| Is accessibility considered? | □ |
-| Does it follow the design system? | □ |
+| Question                                         | Status |
+| ------------------------------------------------ | ------ |
+| Is the chart immediately understandable?         | □      |
+| Is the correct chart type used?                  | □      |
+| Are colors meaningful and consistent?            | □      |
+| Is the visual hierarchy clear?                   | □      |
+| Are labels concise?                              | □      |
+| Does the chart support interaction where needed? | □      |
+| Is accessibility considered?                     | □      |
+| Does it follow the design system?                | □      |
 
 ---
 

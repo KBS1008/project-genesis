@@ -12,5 +12,4 @@ export const ProductionJobStatus = {
   CANCELLED: 'CANCELLED',
 } as const;
 
-export type ProductionJobStatus =
-  (typeof ProductionJobStatus)[keyof typeof ProductionJobStatus];
+export type ProductionJobStatus = (typeof ProductionJobStatus)[keyof typeof ProductionJobStatus];

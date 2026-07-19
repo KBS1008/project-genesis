@@ -383,15 +383,15 @@ AI prompts should specify:
 
 # Effect Review Checklist
 
-| Question | Status |
-|-----------|--------|
-| Does the effect communicate useful information? | □ |
-| Is it immediately understandable? | □ |
-| Does it avoid distracting the player? | □ |
-| Is it performant? | □ |
-| Does it fit the industrial visual language? | □ |
-| Is accessibility considered? | □ |
-| Can it be reproduced consistently with AI? | □ |
+| Question                                        | Status |
+| ----------------------------------------------- | ------ |
+| Does the effect communicate useful information? | □      |
+| Is it immediately understandable?               | □      |
+| Does it avoid distracting the player?           | □      |
+| Is it performant?                               | □      |
+| Does it fit the industrial visual language?     | □      |
+| Is accessibility considered?                    | □      |
+| Can it be reproduced consistently with AI?      | □      |
 
 ---
 

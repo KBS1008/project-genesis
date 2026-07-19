@@ -9,7 +9,7 @@
  * @see docs/decisions/DD-027-Event-Driven-Simulation-Architecture.md
  */
 
-import { DomainEvent } from '../events/DomainEvent.js';
+import type { DomainEvent } from '../events/DomainEvent.js';
 import { Entity } from './Entity.js';
 import type { Identifier } from './Identifier.js';
 

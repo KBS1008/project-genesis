@@ -52,13 +52,15 @@ export class FileSavegameStore implements SavegameStore {
       const parseResult = this.#serializer.parse(parsed);
 
       if (!parseResult.ok) {
-        return Result.mapError(parseResult, (validationError) =>
-          new PersistenceError({
-            errorCode: PersistenceErrorCode.INVALID_SNAPSHOT,
-            message: validationError.message,
-            cause: validationError,
-            context: { filePath },
-          }),
+        return Result.mapError(
+          parseResult,
+          (validationError) =>
+            new PersistenceError({
+              errorCode: PersistenceErrorCode.INVALID_SNAPSHOT,
+              message: validationError.message,
+              cause: validationError,
+              context: { filePath },
+            }),
         );
       }
 

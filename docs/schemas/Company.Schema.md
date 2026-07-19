@@ -226,10 +226,9 @@ Liste aller Gebäude.
 
 ```yaml
 buildingIds:
+  - BUILDING-001
 
-- BUILDING-001
-
-- BUILDING-002
+  - BUILDING-002
 ```
 
 ---
@@ -328,15 +327,13 @@ energyNetworkId: ENERGY-000001
 marketProfileId: MARKET-000001
 
 buildingIds:
-
-- BUILDING-000001
+  - BUILDING-000001
 
 employeeIds: []
 
 contractIds: []
 
 statistics:
-
   totalRevenue: 0
 
   totalExpenses: 0
@@ -354,7 +351,6 @@ statistics:
   energyConsumed: 0
 
 settings:
-
   autoResearch: false
 
   autoRepair: false

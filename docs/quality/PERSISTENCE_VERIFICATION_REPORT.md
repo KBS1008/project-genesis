@@ -4,7 +4,7 @@
 **Phase:** 2 — Architecture Driven Development  
 **Task:** TD-004 — Save/Load Persistenz-Verifikation  
 **Date:** 2026-07-18  
-**Status:** Completed  
+**Status:** Completed
 
 ---
 
@@ -16,11 +16,11 @@ Absicherung der Save/Load-Persistenz durch dedizierte Tests für `GameStateSeria
 
 ## Betroffene Module
 
-| Layer | Module |
-|---|---|
+| Layer          | Module                                                                    |
+| -------------- | ------------------------------------------------------------------------- |
 | Infrastructure | `GameStateSerializer`, `FileSavegameStore` (indirekt via LoadGameUseCase) |
-| Application | `LoadGameUseCase`, `restoreApplicationFromSnapshot` (indirekt) |
-| Application | `SaveGameUseCase` (bestehender Integrationstest unverändert) |
+| Application    | `LoadGameUseCase`, `restoreApplicationFromSnapshot` (indirekt)            |
+| Application    | `SaveGameUseCase` (bestehender Integrationstest unverändert)              |
 
 ---
 
@@ -32,11 +32,11 @@ Keine Produktionsdateien geändert.
 
 ## Neue Dateien
 
-| Datei | Beschreibung |
-|---|---|
+| Datei                                                                 | Beschreibung                                    |
+| --------------------------------------------------------------------- | ----------------------------------------------- |
 | `src/infrastructure/persistence/savegame/GameStateSerializer.test.ts` | 11 Tests: serialize, parse, hydrate, Round-Trip |
-| `src/application/use-cases/LoadGameUseCase.test.ts` | 6 Tests: Happy Path + Failure Paths |
-| `docs/quality/PERSISTENCE_VERIFICATION_REPORT.md` | Dieser Bericht |
+| `src/application/use-cases/LoadGameUseCase.test.ts`                   | 6 Tests: Happy Path + Failure Paths             |
+| `docs/quality/PERSISTENCE_VERIFICATION_REPORT.md`                     | Dieser Bericht                                  |
 
 ---
 
@@ -50,21 +50,21 @@ Keine.
 
 ### GameStateSerializer (11 Tests)
 
-| Kategorie | Tests |
-|---|---|
-| Happy Path | Round-Trip über JSON; Tick-Metrics-Serialisierung; Building-Restore |
+| Kategorie    | Tests                                                                       |
+| ------------ | --------------------------------------------------------------------------- |
+| Happy Path   | Round-Trip über JSON; Tick-Metrics-Serialisierung; Building-Restore         |
 | Failure Path | Pending-Events-Guard; ungültige Payloads; ungültige Building-ID bei Hydrate |
-| Validation | Schema-Version; fehlende Metadaten; Default-Arrays |
-| Domain Rules | PLANNED + zero duration → ACTIVE; Tick-History-Restore |
+| Validation   | Schema-Version; fehlende Metadaten; Default-Arrays                          |
+| Domain Rules | PLANNED + zero duration → ACTIVE; Tick-History-Restore                      |
 
 ### LoadGameUseCase (6 Tests)
 
-| Kategorie | Tests |
-|---|---|
-| Happy Path | Gültige Savegame-Datei laden und Context wiederherstellen |
+| Kategorie    | Tests                                                     |
+| ------------ | --------------------------------------------------------- |
+| Happy Path   | Gültige Savegame-Datei laden und Context wiederherstellen |
 | Failure Path | Datei nicht gefunden; ungültiges JSON; unsupported Schema |
-| Validation | Hydrate-Fehler (leere Building-ID) |
-| Integration | ContentLoadError bei ungültigem Content-Root |
+| Validation   | Hydrate-Fehler (leere Building-ID)                        |
+| Integration  | ContentLoadError bei ungültigem Content-Root              |
 
 ### Testergebnis
 
@@ -89,21 +89,21 @@ Tests liegen co-located bei der Implementierung gemäß `TESTING_STRATEGY.md`.
 
 ## Offene Punkte
 
-| Punkt | Priorität |
-|---|---|
-| `ResearchCompletionService` ohne dedizierte Tests | Medium |
-| `FileSavegameStore` ohne eigenständige Unit-Tests | Low (indirekt via LoadGameUseCase abgedeckt) |
-| `@vitest/coverage-v8` nicht installiert | Low |
-| Formaler TD-004-Eintrag im `TECHNICAL_DEBT_REGISTER.md` | Medium |
+| Punkt                                                   | Priorität                                    |
+| ------------------------------------------------------- | -------------------------------------------- |
+| `ResearchCompletionService` ohne dedizierte Tests       | Medium                                       |
+| `FileSavegameStore` ohne eigenständige Unit-Tests       | Low (indirekt via LoadGameUseCase abgedeckt) |
+| `@vitest/coverage-v8` nicht installiert                 | Low                                          |
+| Formaler TD-004-Eintrag im `TECHNICAL_DEBT_REGISTER.md` | Medium                                       |
 
 ---
 
 ## Technische Schulden
 
-| ID | Status | Anmerkung |
-|---|---|---|
-| TD-004 | **Teilweise geschlossen** | Serializer + LoadGameUseCase abgedeckt; Coverage-Tooling fehlt weiterhin |
-| TD-002 | Offen | `GameStateSerializer` Monolith (~900 Zeilen) — keine Refactoring-Aufgabe in diesem Task |
+| ID     | Status                    | Anmerkung                                                                               |
+| ------ | ------------------------- | --------------------------------------------------------------------------------------- |
+| TD-004 | **Teilweise geschlossen** | Serializer + LoadGameUseCase abgedeckt; Coverage-Tooling fehlt weiterhin                |
+| TD-002 | Offen                     | `GameStateSerializer` Monolith (~900 Zeilen) — keine Refactoring-Aufgabe in diesem Task |
 
 Neue technische Schulden: **keine**.
 

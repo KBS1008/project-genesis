@@ -48,8 +48,7 @@ function MarketTooltip({
       <span className="chart-tooltip-label">Tick {label}</span>
       {payload.map((entry) => (
         <strong key={entry.name} style={{ color: entry.color }}>
-          {labelResource(String(entry.name ?? ''))}:{' '}
-          {(entry.value ?? 0).toLocaleString('de-DE')} GC
+          {labelResource(String(entry.name ?? ''))}: {(entry.value ?? 0).toLocaleString('de-DE')} GC
         </strong>
       ))}
     </div>
@@ -102,7 +101,9 @@ export function MarketPriceHistoryChart({
               {resourceIds
                 .slice(0, 3)
                 .map((resourceId) => {
-                  const price = latest.marketPrices.find((entry) => entry.resourceId === resourceId);
+                  const price = latest.marketPrices.find(
+                    (entry) => entry.resourceId === resourceId,
+                  );
                   return `${labelResource(resourceId)} ${(price?.lastPrice ?? 0).toLocaleString('de-DE')} GC`;
                 })
                 .join(' · ')}

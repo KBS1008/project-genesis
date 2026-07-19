@@ -38,7 +38,10 @@ describe('RecipeLoader', () => {
 
   it('loads valid recipe fixtures with reference validation', async () => {
     const references = await loadReferenceContext();
-    const result = await recipeLoader.loadFromDirectory(path.join(fixturesRoot, 'recipes'), references);
+    const result = await recipeLoader.loadFromDirectory(
+      path.join(fixturesRoot, 'recipes'),
+      references,
+    );
 
     expect(result.ok).toBe(true);
 
@@ -69,9 +72,7 @@ describe('RecipeLoader', () => {
         energy: 0,
         workers: 0,
         requiredResearch: [],
-        requiredBuildings: [],
         requiredMilestones: [],
-        requiredResources: [],
         maintenanceCost: 0,
         productionCost: 0,
         experience: 0,
@@ -102,9 +103,7 @@ describe('RecipeLoader', () => {
         energy: 0,
         workers: 0,
         requiredResearch: [],
-        requiredBuildings: [],
         requiredMilestones: [],
-        requiredResources: [],
         maintenanceCost: 0,
         productionCost: 0,
         experience: 0,

@@ -9,7 +9,6 @@ import type { PersistenceError } from '../../common/errors/PersistenceError.js';
 import { Result } from '../../common/result/Result.js';
 import { bootstrapApplication } from '../bootstrap/bootstrapApplication.js';
 import type { ApplicationContext } from '../bootstrap/ApplicationContext.js';
-import { CreateCompanyUseCase } from '../use-cases/CreateCompanyUseCase.js';
 import { StartNewGameUseCase } from '../use-cases/StartNewGameUseCase.js';
 import { NEW_GAME_STARTER_BUILDINGS } from '../new-game/NewGameSetupConstants.js';
 import { PlaceBuildingUseCase } from '../use-cases/PlaceBuildingUseCase.js';
@@ -40,10 +39,7 @@ import type {
   EmployeeSessionReadModel,
 } from './GameSessionDashboard.js';
 import { GameSessionDashboardBuilder } from './GameSessionDashboardBuilder.js';
-import type {
-  DashboardTickHistory,
-  TickHistoryQuery,
-} from '../read-models/TickMetricsSnapshot.js';
+import type { DashboardTickHistory, TickHistoryQuery } from '../read-models/TickMetricsSnapshot.js';
 
 /** Options for creating a {@link GameSession}. */
 export type CreateGameSessionOptions = {
@@ -101,7 +97,6 @@ const MAX_TICK_BATCH = 500;
  */
 export class GameSession {
   #context: ApplicationContext;
-  #createCompany!: CreateCompanyUseCase;
   #startNewGame!: StartNewGameUseCase;
   #placeBuilding!: PlaceBuildingUseCase;
   #sellResource!: SellResourceUseCase;
@@ -523,7 +518,6 @@ export class GameSession {
   }
 
   #wireUseCases(): void {
-    this.#createCompany = new CreateCompanyUseCase(this.#context);
     this.#startNewGame = new StartNewGameUseCase(this.#context);
     this.#placeBuilding = new PlaceBuildingUseCase(this.#context);
     this.#sellResource = new SellResourceUseCase(this.#context);
@@ -773,33 +767,32 @@ export class GameSession {
     );
 
     return Object.freeze(
-      this.#context.transportOrderRepository
-        .findByCompanyId(companyIdResult.value)
-        .map((order) => {
-          const recipeId = recipeByJobId.get(order.getProductionJobId())?.recipeId ?? null;
-          const recipe = recipeId === null ? undefined : this.#context.gameContent.recipes.get(recipeId);
+      this.#context.transportOrderRepository.findByCompanyId(companyIdResult.value).map((order) => {
+        const recipeId = recipeByJobId.get(order.getProductionJobId())?.recipeId ?? null;
+        const recipe =
+          recipeId === null ? undefined : this.#context.gameContent.recipes.get(recipeId);
 
-          return Object.freeze({
-            id: order.getId().value,
-            resourceId: order.getResourceId(),
-            amount: order.getAmount(),
-            status: order.getStatus(),
-            progress: order.getProgress(),
-            sourceBuildingId: order.getSourceBuildingId().value,
-            sourceBuildingName:
-              buildingNameById.get(order.getSourceBuildingId().value) ??
-              order.getSourceBuildingId().value,
-            destinationBuildingId: order.getDestinationBuildingId().value,
-            destinationBuildingName:
-              buildingNameById.get(order.getDestinationBuildingId().value) ??
-              order.getDestinationBuildingId().value,
-            productionJobId: order.getProductionJobId(),
-            recipeId,
-            recipeName: recipe?.name ?? null,
-            durationTicks: order.getDuration(),
-            routeId: order.getRouteId(),
-          });
-        }),
+        return Object.freeze({
+          id: order.getId().value,
+          resourceId: order.getResourceId(),
+          amount: order.getAmount(),
+          status: order.getStatus(),
+          progress: order.getProgress(),
+          sourceBuildingId: order.getSourceBuildingId().value,
+          sourceBuildingName:
+            buildingNameById.get(order.getSourceBuildingId().value) ??
+            order.getSourceBuildingId().value,
+          destinationBuildingId: order.getDestinationBuildingId().value,
+          destinationBuildingName:
+            buildingNameById.get(order.getDestinationBuildingId().value) ??
+            order.getDestinationBuildingId().value,
+          productionJobId: order.getProductionJobId(),
+          recipeId,
+          recipeName: recipe?.name ?? null,
+          durationTicks: order.getDuration(),
+          routeId: order.getRouteId(),
+        });
+      }),
     );
   }
 
@@ -811,16 +804,14 @@ export class GameSession {
     }
 
     return Object.freeze(
-      this.#context.researchJobRepository
-        .findByCompanyId(companyIdResult.value)
-        .map((job) =>
-          Object.freeze({
-            id: job.getId().value,
-            technologyId: job.getTechnologyId().value,
-            status: job.getStatus(),
-            progress: job.getProgress(),
-          }),
-        ),
+      this.#context.researchJobRepository.findByCompanyId(companyIdResult.value).map((job) =>
+        Object.freeze({
+          id: job.getId().value,
+          technologyId: job.getTechnologyId().value,
+          status: job.getStatus(),
+          progress: job.getProgress(),
+        }),
+      ),
     );
   }
 
@@ -837,26 +828,24 @@ export class GameSession {
     const buildingNameById = new Map(buildings.map((building) => [building.id, building.name]));
 
     return Object.freeze(
-      this.#context.employeeRepository
-        .findByCompanyId(companyIdResult.value)
-        .map((employee) => {
-          const assignedBuildingId = employee.getAssignedBuildingId()?.value ?? null;
+      this.#context.employeeRepository.findByCompanyId(companyIdResult.value).map((employee) => {
+        const assignedBuildingId = employee.getAssignedBuildingId()?.value ?? null;
 
-          return Object.freeze({
-            id: employee.getId().value,
-            employeeTypeId: employee.getEmployeeTypeId().value,
-            displayName: employee.getDisplayName(),
-            salary: employee.getSalary(),
-            productivity: employee.getProductivity(),
-            hiredAt: employee.getHiredAt(),
-            status: employee.getStatus(),
-            assignedBuildingId,
-            assignedBuildingName:
-              assignedBuildingId === null
-                ? null
-                : (buildingNameById.get(assignedBuildingId) ?? assignedBuildingId),
-          });
-        }),
+        return Object.freeze({
+          id: employee.getId().value,
+          employeeTypeId: employee.getEmployeeTypeId().value,
+          displayName: employee.getDisplayName(),
+          salary: employee.getSalary(),
+          productivity: employee.getProductivity(),
+          hiredAt: employee.getHiredAt(),
+          status: employee.getStatus(),
+          assignedBuildingId,
+          assignedBuildingName:
+            assignedBuildingId === null
+              ? null
+              : (buildingNameById.get(assignedBuildingId) ?? assignedBuildingId),
+        });
+      }),
     );
   }
 

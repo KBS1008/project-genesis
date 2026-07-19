@@ -19,12 +19,7 @@ export class ResearchStarted extends DomainEvent {
    * @param companyId - Owning company identifier.
    * @param technologyId - Technology being researched.
    */
-  constructor(
-    occurredAt: number,
-    jobId: string,
-    companyId: string,
-    technologyId: string,
-  ) {
+  constructor(occurredAt: number, jobId: string, companyId: string, technologyId: string) {
     super(occurredAt);
     this.jobId = jobId;
     this.companyId = companyId;

@@ -38,7 +38,9 @@ export class GetMarketPricesQueryHandler {
   /**
    * Executes the get-market-prices query.
    */
-  execute(_query: GetMarketPricesQuery = {}): Result<readonly MarketPriceReadModel[], ValidationError> {
+  execute(
+    _query: GetMarketPricesQuery = {},
+  ): Result<readonly MarketPriceReadModel[], ValidationError> {
     const marketIdResult = createMarketId(GLOBAL_MARKET_ID);
 
     if (!marketIdResult.ok) {
@@ -55,12 +57,11 @@ export class GetMarketPricesQueryHandler {
 
     return Result.ok(
       Object.freeze(
-        market.getPrices().map((price) =>
-          projectMarketPrice(
-            price,
-            aggregateResourceSupply(inventories, price.resourceId.value),
+        market
+          .getPrices()
+          .map((price) =>
+            projectMarketPrice(price, aggregateResourceSupply(inventories, price.resourceId.value)),
           ),
-        ),
       ),
     );
   }

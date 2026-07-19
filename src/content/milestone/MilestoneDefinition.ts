@@ -11,8 +11,7 @@ export const MilestoneTriggerType = {
   PROFIT_THRESHOLD: 'PROFIT_THRESHOLD',
 } as const;
 
-export type MilestoneTriggerType =
-  (typeof MilestoneTriggerType)[keyof typeof MilestoneTriggerType];
+export type MilestoneTriggerType = (typeof MilestoneTriggerType)[keyof typeof MilestoneTriggerType];
 
 /** Trigger configuration for the first market sale. */
 export type FirstSaleMilestoneTriggerDefinition = {

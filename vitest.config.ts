@@ -12,14 +12,10 @@ export default defineConfig({
       'src/**/*.test.ts',
       'src/**/*.spec.ts',
       'apps/**/*.test.ts',
-      'apps/**/*.spec.ts'
+      'apps/**/*.spec.ts',
     ],
 
-    exclude: [
-      'node_modules',
-      'dist',
-      'coverage'
-    ],
+    exclude: ['node_modules', 'dist', 'coverage'],
 
     // ------------------------------------------------------------
     // Environment
@@ -38,20 +34,13 @@ export default defineConfig({
 
       provider: 'v8',
 
-      reporter: [
-        'text',
-        'html'
-      ],
+      reporter: ['text', 'html'],
 
       reportsDirectory: './coverage',
 
-      include: [
-        'src/**/*.ts'
-      ],
+      include: ['src/**/*.ts'],
 
-      exclude: [
-        'src/**/*.d.ts'
-      ]
+      exclude: ['src/**/*.d.ts'],
     },
 
     // ------------------------------------------------------------
@@ -76,6 +65,6 @@ export default defineConfig({
 
     restoreMocks: true,
 
-    mockReset: true
-  }
+    mockReset: true,
+  },
 });

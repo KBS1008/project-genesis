@@ -43,7 +43,9 @@ describe('CompleteTechnologyUseCase', () => {
 
     expect(result.ok).toBe(true);
 
-    const research = context.companyResearchRepository.findByCompanyId(requireCompanyId('company_001'));
+    const research = context.companyResearchRepository.findByCompanyId(
+      requireCompanyId('company_001'),
+    );
 
     expect(research?.hasCompletedTechnology('basic_woodworking')).toBe(true);
   });

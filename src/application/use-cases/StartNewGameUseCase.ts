@@ -19,10 +19,7 @@ import { BuildingStatus } from '../../domain/building/BuildingStatus.js';
 import { Position } from '../../domain/building/Position.js';
 import { createCompanyId } from '../../domain/company/Company.js';
 import type { CompanyId } from '../../domain/company/CompanyId.js';
-import {
-  SupplyContract,
-  createSupplyContractId,
-} from '../../domain/contract/SupplyContract.js';
+import { SupplyContract, createSupplyContractId } from '../../domain/contract/SupplyContract.js';
 import { STARTER_NPC_WOOD_CONTRACT_ID } from '../../domain/contract/SupplyContractConstants.js';
 import type { ApplicationContext } from '../bootstrap/ApplicationContext.js';
 import type { StartNewGameCommand } from '../commands/StartNewGameCommand.js';
@@ -54,7 +51,6 @@ export type StartNewGameUseCaseDependencies = Pick<
  */
 export class StartNewGameUseCase {
   readonly #clock: StartNewGameUseCaseDependencies['clock'];
-  readonly #companyRepository: StartNewGameUseCaseDependencies['companyRepository'];
   readonly #buildingRepository: StartNewGameUseCaseDependencies['buildingRepository'];
   readonly #inventoryRepository: StartNewGameUseCaseDependencies['inventoryRepository'];
   readonly #simulationEngine: StartNewGameUseCaseDependencies['simulationEngine'];
@@ -68,7 +64,6 @@ export class StartNewGameUseCase {
    */
   constructor(dependencies: StartNewGameUseCaseDependencies) {
     this.#clock = dependencies.clock;
-    this.#companyRepository = dependencies.companyRepository;
     this.#buildingRepository = dependencies.buildingRepository;
     this.#inventoryRepository = dependencies.inventoryRepository;
     this.#simulationEngine = dependencies.simulationEngine;
@@ -166,9 +161,7 @@ export class StartNewGameUseCase {
     const buildingTypeId = buildingTypeIdResult.value;
 
     if (this.#buildingRepository.findById(buildingId) !== undefined) {
-      return Result.fail(
-        new ValidationError(`Building id "${buildingId.value}" already exists.`),
-      );
+      return Result.fail(new ValidationError(`Building id "${buildingId.value}" already exists.`));
     }
 
     const buildingType = this.#gameContent.buildingTypes.get(buildingTypeId.value);

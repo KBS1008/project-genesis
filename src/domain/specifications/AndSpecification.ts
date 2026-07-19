@@ -21,10 +21,7 @@ export class AndSpecification<TCandidate, TContext> implements Specification<TCa
     this.#specifications = specifications;
   }
 
-  isSatisfiedBy(
-    candidate: TCandidate,
-    context: TContext,
-  ): Result<void, ValidationError> {
+  isSatisfiedBy(candidate: TCandidate, context: TContext): Result<void, ValidationError> {
     for (const specification of this.#specifications) {
       const result = specification.isSatisfiedBy(candidate, context);
 

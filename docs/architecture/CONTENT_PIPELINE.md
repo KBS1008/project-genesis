@@ -272,16 +272,16 @@ Released assets remain traceable through their Asset IDs.
 
 Every phase ends with a decision gate.
 
-| Gate | Question |
-|------|----------|
-| G1 | Is the idea approved? |
-| G2 | Is the specification complete? |
-| G3 | Are dependencies resolved? |
-| G4 | Does validation pass? |
-| G5 | Has the review been approved? |
-| G6 | Is implementation complete? |
-| G7 | Are all tests successful? |
-| G8 | Is the asset ready for release? |
+| Gate | Question                        |
+| ---- | ------------------------------- |
+| G1   | Is the idea approved?           |
+| G2   | Is the specification complete?  |
+| G3   | Are dependencies resolved?      |
+| G4   | Does validation pass?           |
+| G5   | Has the review been approved?   |
+| G6   | Is implementation complete?     |
+| G7   | Are all tests successful?       |
+| G8   | Is the asset ready for release? |
 
 No gate may be skipped.
 

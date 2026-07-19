@@ -4,7 +4,7 @@
 **Phase:** 2 — Architecture Driven Development  
 **Task:** M5-1 Dynamic Prices (Supply & Demand)  
 **Date:** 2026-07-18  
-**Status:** Completed  
+**Status:** Completed
 
 ---
 
@@ -16,13 +16,13 @@ Dynamische Marktpreise einführen: Preise reagieren deterministisch auf Angebot 
 
 ## Umsetzung
 
-| Schicht | Artefakt | Zweck |
-|---|---|---|
-| Domain | `MarketPriceConstants.ts` | Intervalle, Baseline-Demand, Min/Max-Ratios |
-| Domain | `MarketPriceCalculator.ts` | Reine Preisberechnung aus Supply/Demand |
-| Simulation | `MarketSupplyAggregator.ts` | Summiert verfügbares Inventar aller Companies |
-| Simulation | `MarketSimulationSystem.ts` | Preis-Updates alle 10 Ticks, Events enqueuen |
-| Wiring | `SimulationSystemDependencies`, Bootstrap, Restore | `inventoryRepository` an Market-System |
+| Schicht    | Artefakt                                           | Zweck                                         |
+| ---------- | -------------------------------------------------- | --------------------------------------------- |
+| Domain     | `MarketPriceConstants.ts`                          | Intervalle, Baseline-Demand, Min/Max-Ratios   |
+| Domain     | `MarketPriceCalculator.ts`                         | Reine Preisberechnung aus Supply/Demand       |
+| Simulation | `MarketSupplyAggregator.ts`                        | Summiert verfügbares Inventar aller Companies |
+| Simulation | `MarketSimulationSystem.ts`                        | Preis-Updates alle 10 Ticks, Events enqueuen  |
+| Wiring     | `SimulationSystemDependencies`, Bootstrap, Restore | `inventoryRepository` an Market-System        |
 
 ### Preisformel (deterministisch)
 
@@ -43,9 +43,9 @@ Instant-Kauf/-Verkauf nutzt weiterhin `lastPrice` über `InstantTradePricingPoli
 
 ## Tests
 
-| Test | Abdeckung |
-|---|---|
-| `MarketPriceCalculator.test.ts` | Stabil, steigend, fallend, Min/Max-Clamping |
+| Test                             | Abdeckung                                       |
+| -------------------------------- | ----------------------------------------------- |
+| `MarketPriceCalculator.test.ts`  | Stabil, steigend, fallend, Min/Max-Clamping     |
 | `MarketSimulationSystem.test.ts` | Hohes/niedriges Angebot, Intervall-Skip, Events |
 
 **Ergebnis:** 396 Tests grün, Typecheck grün.

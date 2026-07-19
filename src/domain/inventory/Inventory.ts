@@ -166,12 +166,11 @@ export class Inventory extends AggregateRoot<'Inventory'> {
    * @param amount - Non-negative amount to add.
    * @param clock - Clock providing deterministic event time.
    */
-  addQuantity(
-    resourceId: string,
-    amount: number,
-    clock: Clock,
-  ): Result<void, ValidationError> {
-    const amountResult = Guard.againstNegative(amount, 'Added inventory amount must not be negative.');
+  addQuantity(resourceId: string, amount: number, clock: Clock): Result<void, ValidationError> {
+    const amountResult = Guard.againstNegative(
+      amount,
+      'Added inventory amount must not be negative.',
+    );
 
     if (!amountResult.ok) {
       return Result.fail(amountResult.error);
@@ -210,12 +209,11 @@ export class Inventory extends AggregateRoot<'Inventory'> {
    * @param amount - Non-negative amount to reserve.
    * @param clock - Clock providing deterministic event time.
    */
-  reserveQuantity(
-    resourceId: string,
-    amount: number,
-    clock: Clock,
-  ): Result<void, ValidationError> {
-    const amountResult = Guard.againstNegative(amount, 'Reserved inventory amount must not be negative.');
+  reserveQuantity(resourceId: string, amount: number, clock: Clock): Result<void, ValidationError> {
+    const amountResult = Guard.againstNegative(
+      amount,
+      'Reserved inventory amount must not be negative.',
+    );
 
     if (!amountResult.ok) {
       return Result.fail(amountResult.error);
@@ -257,11 +255,7 @@ export class Inventory extends AggregateRoot<'Inventory'> {
   /**
    * Removes available quantity from stock without affecting reservations.
    */
-  removeQuantity(
-    resourceId: string,
-    amount: number,
-    clock: Clock,
-  ): Result<void, ValidationError> {
+  removeQuantity(resourceId: string, amount: number, clock: Clock): Result<void, ValidationError> {
     const amountResult = Guard.againstNegative(
       amount,
       'Removed inventory amount must not be negative.',
@@ -313,11 +307,7 @@ export class Inventory extends AggregateRoot<'Inventory'> {
   /**
    * Releases previously reserved quantity without changing total stock.
    */
-  releaseReserved(
-    resourceId: string,
-    amount: number,
-    clock: Clock,
-  ): Result<void, ValidationError> {
+  releaseReserved(resourceId: string, amount: number, clock: Clock): Result<void, ValidationError> {
     const amountResult = Guard.againstNegative(
       amount,
       'Released inventory amount must not be negative.',
@@ -363,11 +353,7 @@ export class Inventory extends AggregateRoot<'Inventory'> {
   /**
    * Consumes previously reserved quantity from stock.
    */
-  consumeReserved(
-    resourceId: string,
-    amount: number,
-    clock: Clock,
-  ): Result<void, ValidationError> {
+  consumeReserved(resourceId: string, amount: number, clock: Clock): Result<void, ValidationError> {
     const amountResult = Guard.againstNegative(
       amount,
       'Consumed inventory amount must not be negative.',

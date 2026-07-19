@@ -15,12 +15,7 @@ export class EmployeeAssignedToBuilding extends DomainEvent {
   readonly companyId: string;
   readonly buildingId: string;
 
-  constructor(
-    occurredAt: number,
-    employeeId: string,
-    companyId: string,
-    buildingId: string,
-  ) {
+  constructor(occurredAt: number, employeeId: string, companyId: string, buildingId: string) {
     super(occurredAt);
     this.employeeId = employeeId;
     this.companyId = companyId;

@@ -143,8 +143,8 @@ Time progression should always be controlled through an abstract clock.
 Never use:
 
 ```typescript
-Date.now()
-new Date()
+Date.now();
+new Date();
 ```
 
 inside simulation logic.

@@ -54,9 +54,7 @@ export const Guard = {
     options: GuardValidationOptions = {},
   ): Result<TValue, ValidationError> {
     if (value === null || value === undefined) {
-      return Result.fail(
-        createValidationError(message, options, 'required', value),
-      );
+      return Result.fail(createValidationError(message, options, 'required', value));
     }
 
     return Result.ok(value);

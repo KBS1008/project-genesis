@@ -11,7 +11,7 @@ import path from 'node:path';
 import { parse as parseYaml } from 'yaml';
 import { Result } from '../../common/result/Result.js';
 import { ContentLoadError } from '../errors/ContentLoadError.js';
-import { BuildingTypeDefinition } from './BuildingTypeDefinition.js';
+import type { BuildingTypeDefinition } from './BuildingTypeDefinition.js';
 import { BuildingTypeRegistry } from './BuildingTypeRegistry.js';
 import { validateBuildingTypeDefinition } from './BuildingTypeValidator.js';
 
@@ -72,9 +72,7 @@ export class BuildingTypeLoader {
    *
    * @param filePath - Absolute or relative path to a YAML building type file.
    */
-  async loadFile(
-    filePath: string,
-  ): Promise<Result<BuildingTypeDefinition, ContentLoadError>> {
+  async loadFile(filePath: string): Promise<Result<BuildingTypeDefinition, ContentLoadError>> {
     let fileContents: string;
 
     try {

@@ -41,12 +41,10 @@ describe('ResourceAmount', () => {
       const differentResource = ResourceAmount.create('iron_ore', 10);
 
       expect(left.ok && right.ok && left.value.equals(right.value)).toBe(true);
-      expect(
-        left.ok && differentAmount.ok && left.value.equals(differentAmount.value),
-      ).toBe(false);
-      expect(
-        left.ok && differentResource.ok && left.value.equals(differentResource.value),
-      ).toBe(false);
+      expect(left.ok && differentAmount.ok && left.value.equals(differentAmount.value)).toBe(false);
+      expect(left.ok && differentResource.ok && left.value.equals(differentResource.value)).toBe(
+        false,
+      );
     });
   });
 });

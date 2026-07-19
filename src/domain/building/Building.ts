@@ -20,7 +20,7 @@ import { Guard } from '../../common/validation/Guard.js';
 import type { CompanyId } from '../company/CompanyId.js';
 import type { BuildingId, BuildingTypeId } from './BuildingId.js';
 import { BuildingStatus } from './BuildingStatus.js';
-import { Position } from './Position.js';
+import type { Position } from './Position.js';
 import { BuildingConstructionCompleted } from './events/BuildingConstructionCompleted.js';
 import { BuildingConstructionStarted } from './events/BuildingConstructionStarted.js';
 import { BuildingPlaced } from './events/BuildingPlaced.js';
@@ -142,22 +142,20 @@ export class Building extends AggregateRoot<'Building'> {
     const createdAt = params.clock.now();
 
     return Result.ok(
-      new Building(
-        {
-          id: params.id,
-          buildingTypeId: params.buildingTypeId,
-          companyId: params.companyId,
-          name: trimmedNameResult.value,
-          position: params.position,
-          level: 1,
-          createdAt,
-          status: BuildingStatus.PLANNED,
-          constructionDuration: 0,
-          constructionProgress: 0,
-          constructionStartTime: undefined,
-          constructionEndTime: undefined,
-        },
-      ),
+      new Building({
+        id: params.id,
+        buildingTypeId: params.buildingTypeId,
+        companyId: params.companyId,
+        name: trimmedNameResult.value,
+        position: params.position,
+        level: 1,
+        createdAt,
+        status: BuildingStatus.PLANNED,
+        constructionDuration: 0,
+        constructionProgress: 0,
+        constructionStartTime: undefined,
+        constructionEndTime: undefined,
+      }),
     );
   }
 
@@ -331,7 +329,9 @@ export class Building extends AggregateRoot<'Building'> {
     }
 
     if (this.#constructionStartTime === undefined) {
-      return Result.fail(new ValidationError('Building under construction is missing a start time.'));
+      return Result.fail(
+        new ValidationError('Building under construction is missing a start time.'),
+      );
     }
 
     const elapsed = clock.now() - this.#constructionStartTime;

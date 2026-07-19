@@ -7,7 +7,11 @@
 import { ValidationError } from '../../../common/errors/ValidationError.js';
 import { Result } from '../../../common/result/Result.js';
 import type { ManualClock } from '../../../common/time/ManualClock.js';
-import { Building, createBuildingId, createBuildingTypeId } from '../../../domain/building/Building.js';
+import {
+  Building,
+  createBuildingId,
+  createBuildingTypeId,
+} from '../../../domain/building/Building.js';
 import { BuildingStatus } from '../../../domain/building/BuildingStatus.js';
 import { Position } from '../../../domain/building/Position.js';
 import type { BuildingRepository } from '../../../domain/building/BuildingRepository.js';
@@ -21,17 +25,14 @@ import {
   createFinanceTransactionId,
 } from '../../../domain/finance/FinanceAccount.js';
 import type { FinanceRepository } from '../../../domain/finance/FinanceRepository.js';
-import { FinanceTransactionDirection } from '../../../domain/finance/FinanceTransactionDirection.js';
+import type { FinanceTransactionDirection } from '../../../domain/finance/FinanceTransactionDirection.js';
 import type { FinanceTransaction } from '../../../domain/finance/FinanceTransaction.js';
-import { FinanceTransactionType } from '../../../domain/finance/FinanceTransactionType.js';
+import type { FinanceTransactionType } from '../../../domain/finance/FinanceTransactionType.js';
 import { Inventory, createInventoryId } from '../../../domain/inventory/Inventory.js';
 import type { InventoryRepository } from '../../../domain/inventory/InventoryRepository.js';
 import { Market, createMarketId } from '../../../domain/market/Market.js';
 import type { MarketRepository } from '../../../domain/market/MarketRepository.js';
-import {
-  ProductionJob,
-  createProductionJobId,
-} from '../../../domain/production/ProductionJob.js';
+import { ProductionJob, createProductionJobId } from '../../../domain/production/ProductionJob.js';
 import type { ProductionJobRepository } from '../../../domain/production/ProductionJobRepository.js';
 import type { ResearchJobRepository } from '../../../domain/research/ResearchJobRepository.js';
 import type { CompanyResearchRepository } from '../../../domain/research/CompanyResearchRepository.js';
@@ -43,21 +44,16 @@ import {
   createEmployeeId,
   createEmployeeTypeId,
 } from '../../../domain/employee/Employee.js';
-import { EmployeeStatus } from '../../../domain/employee/EmployeeStatus.js';
+import type { EmployeeStatus } from '../../../domain/employee/EmployeeStatus.js';
 import { CompanyMilestones } from '../../../domain/milestone/CompanyMilestones.js';
 import { createCompanyMilestonesId } from '../../../domain/milestone/CompanyMilestonesId.js';
-import {
-  ResearchJob,
-  createResearchJobId,
-} from '../../../domain/research/ResearchJob.js';
+import { ResearchJob, createResearchJobId } from '../../../domain/research/ResearchJob.js';
 import { createTechnologyId } from '../../../domain/research/TechnologyId.js';
 import { createRecipeId } from '../../../domain/production/RecipeId.js';
 import { createResourceTypeId } from '../../../domain/shared/ResourceTypeId.js';
-import {
-  TransportOrder,
-} from '../../../domain/transport/TransportOrder.js';
+import { TransportOrder } from '../../../domain/transport/TransportOrder.js';
 import { createTransportOrderId } from '../../../domain/transport/TransportOrderId.js';
-import { TransportOrderStatus } from '../../../domain/transport/TransportOrderStatus.js';
+import type { TransportOrderStatus } from '../../../domain/transport/TransportOrderStatus.js';
 import type { TransportOrderRepository } from '../../../domain/transport/TransportOrderRepository.js';
 import {
   SupplyContract,
@@ -259,50 +255,46 @@ export class GameStateSerializer implements GameStateSerializerPort {
           ),
         ),
         buildingStorages: Object.freeze(
-          source.companyRepository
-            .findAll()
-            .flatMap((company) =>
-              source.buildingStorageRepository.findByCompanyId(company.getId()).map((storage) =>
-                Object.freeze({
-                  buildingId: storage.getBuildingId().value,
-                  companyId: storage.getCompanyId().value,
-                  storageCapacity: storage.getStorageCapacity(),
-                  items: Object.freeze(
-                    storage.getLines().map((line) =>
-                      Object.freeze({
-                        resourceId: line.resourceId,
-                        quantity: line.quantity,
-                        reserved: line.reserved,
-                      }),
-                    ),
+          source.companyRepository.findAll().flatMap((company) =>
+            source.buildingStorageRepository.findByCompanyId(company.getId()).map((storage) =>
+              Object.freeze({
+                buildingId: storage.getBuildingId().value,
+                companyId: storage.getCompanyId().value,
+                storageCapacity: storage.getStorageCapacity(),
+                items: Object.freeze(
+                  storage.getLines().map((line) =>
+                    Object.freeze({
+                      resourceId: line.resourceId,
+                      quantity: line.quantity,
+                      reserved: line.reserved,
+                    }),
                   ),
-                }),
-              ),
+                ),
+              }),
             ),
+          ),
         ),
         transportOrders: Object.freeze(
-          source.companyRepository
-            .findAll()
-            .flatMap((company) =>
-              source.transportOrderRepository.findByCompanyId(company.getId()).map((order) =>
-                Object.freeze({
-                  id: order.getId().value,
-                  companyId: order.getCompanyId().value,
-                  sourceBuildingId: order.getSourceBuildingId().value,
-                  destinationBuildingId: order.getDestinationBuildingId().value,
-                  resourceId: order.getResourceId(),
-                  amount: order.getAmount(),
-                  duration: order.getDuration(),
-                  ...(order.getRouteId() !== null ? { routeId: order.getRouteId() } : {}),
-                  productionJobId: order.getProductionJobId(),
-                  createdAt: order.getCreatedAt(),
-                  status: order.getStatus(),
-                  startTime: order.getStartTime(),
-                  endTime: order.getEndTime(),
-                  progress: order.getProgress(),
-                }),
-              ),
+          source.companyRepository.findAll().flatMap((company) =>
+            source.transportOrderRepository.findByCompanyId(company.getId()).map((order) =>
+              Object.freeze({
+                id: order.getId().value,
+                companyId: order.getCompanyId().value,
+                sourceBuildingId: order.getSourceBuildingId().value,
+                destinationBuildingId: order.getDestinationBuildingId().value,
+                resourceId: order.getResourceId(),
+                amount: order.getAmount(),
+                duration: order.getDuration(),
+                ...(order.getRouteId() !== null ? { routeId: order.getRouteId() } : {}),
+                productionJobId: order.getProductionJobId(),
+                createdAt: order.getCreatedAt(),
+                status: order.getStatus(),
+                startTime: order.getStartTime(),
+                endTime: order.getEndTime(),
+                progress: order.getProgress(),
+              }),
             ),
+          ),
         ),
         employees: Object.freeze(
           source.employeeRepository.findAll().map((employee) =>

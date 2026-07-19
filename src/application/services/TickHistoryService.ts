@@ -4,10 +4,7 @@
  * In-memory ring buffer of per-tick dashboard metrics for chart history.
  */
 
-import type {
-  TickHistoryQuery,
-  TickMetricsSnapshot,
-} from '../read-models/TickMetricsSnapshot.js';
+import type { TickHistoryQuery, TickMetricsSnapshot } from '../read-models/TickMetricsSnapshot.js';
 
 const DEFAULT_MAX_POINTS = 500;
 const DEFAULT_QUERY_LIMIT = 200;

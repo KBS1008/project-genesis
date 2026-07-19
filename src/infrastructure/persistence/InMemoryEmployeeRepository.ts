@@ -35,9 +35,7 @@ export class InMemoryEmployeeRepository implements EmployeeRepository {
   findByBuildingId(buildingId: BuildingId): readonly Employee[] {
     return Object.freeze(
       [...this.#employees.values()]
-        .filter(
-          (employee) => employee.getAssignedBuildingId()?.value === buildingId.value,
-        )
+        .filter((employee) => employee.getAssignedBuildingId()?.value === buildingId.value)
         .sort((left, right) => left.getId().value.localeCompare(right.getId().value)),
     );
   }

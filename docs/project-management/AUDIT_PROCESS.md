@@ -364,14 +364,14 @@ Each relevant document should receive a compliance status.
 
 Use the following classifications:
 
-| Status | Meaning |
-|--------|---------|
-| 🟢 Implemented | Requirement is implemented |
-| 🟡 Partial | Requirement is partially implemented |
-| 🔵 Prepared | Architecture supports future implementation |
-| ⚪ Planned | Requirement is documented but not implemented |
-| 🔴 Non-Compliant | Implementation contradicts the requirement |
-| ⚫ Obsolete | Document or requirement is no longer valid |
+| Status           | Meaning                                       |
+| ---------------- | --------------------------------------------- |
+| 🟢 Implemented   | Requirement is implemented                    |
+| 🟡 Partial       | Requirement is partially implemented          |
+| 🔵 Prepared      | Architecture supports future implementation   |
+| ⚪ Planned       | Requirement is documented but not implemented |
+| 🔴 Non-Compliant | Implementation contradicts the requirement    |
+| ⚫ Obsolete      | Document or requirement is no longer valid    |
 
 ---
 
@@ -379,13 +379,13 @@ Use the following classifications:
 
 Every significant finding should be assigned a priority.
 
-| Priority | Meaning |
-|----------|---------|
-| Critical | Immediate action required |
-| High | Action required before next major milestone |
-| Medium | Action should be planned |
-| Low | Improvement opportunity |
-| Informational | No action required |
+| Priority      | Meaning                                     |
+| ------------- | ------------------------------------------- |
+| Critical      | Immediate action required                   |
+| High          | Action required before next major milestone |
+| Medium        | Action should be planned                    |
+| Low           | Improvement opportunity                     |
+| Informational | No action required                          |
 
 ---
 
@@ -495,13 +495,13 @@ The summary should include:
 
 The following scoring system may be used.
 
-| Score | Meaning |
-|-------|---------|
-| 10 | Excellent |
-| 9 | Very strong |
-| 8 | Good |
-| 7 | Acceptable |
-| 6 | Needs improvement |
+| Score      | Meaning              |
+| ---------- | -------------------- |
+| 10         | Excellent            |
+| 9          | Very strong          |
+| 8          | Good                 |
+| 7          | Acceptable           |
+| 6          | Needs improvement    |
 | 5 or below | Significant concerns |
 
 Scores should always be supported by evidence.
@@ -567,15 +567,15 @@ Audit findings requiring action must be tracked.
 
 Recommended fields:
 
-| Field | Description |
-|-------|-------------|
-| Finding ID | Unique audit reference |
-| Priority | Critical / High / Medium / Low |
-| Action | Required change |
-| Owner | Responsible person or agent |
-| Target Milestone | Planned completion |
-| Status | Open / In Progress / Completed |
-| Verification | Follow-up result |
+| Field            | Description                    |
+| ---------------- | ------------------------------ |
+| Finding ID       | Unique audit reference         |
+| Priority         | Critical / High / Medium / Low |
+| Action           | Required change                |
+| Owner            | Responsible person or agent    |
+| Target Milestone | Planned completion             |
+| Status           | Open / In Progress / Completed |
+| Verification     | Follow-up result               |
 
 ---
 
@@ -634,12 +634,12 @@ AI-generated audit conclusions should distinguish between:
 
 Findings should distinguish evidence quality.
 
-| Level | Meaning |
-|-------|---------|
-| Verified | Directly confirmed by source or test |
-| Supported | Multiple indicators support the conclusion |
-| Inferred | Conclusion based on architecture or indirect evidence |
-| Unknown | Evidence insufficient |
+| Level     | Meaning                                               |
+| --------- | ----------------------------------------------------- |
+| Verified  | Directly confirmed by source or test                  |
+| Supported | Multiple indicators support the conclusion            |
+| Inferred  | Conclusion based on architecture or indirect evidence |
+| Unknown   | Evidence insufficient                                 |
 
 The distinction is important for maintaining audit accuracy.
 
@@ -677,8 +677,8 @@ Final comprehensive audit.
 
 # Audit History
 
-| Audit | Scope | Status |
-|-------|-------|--------|
+| Audit   | Scope                                          | Status    |
+| ------- | ---------------------------------------------- | --------- |
 | AUD-001 | Architecture, Implementation and Documentation | Completed |
 
 Future audits:

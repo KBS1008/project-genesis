@@ -2,20 +2,10 @@ import { DomainError } from './DomainError.js';
 import { ErrorCategory } from './ErrorCategory.js';
 import { ErrorSeverity } from './ErrorSeverity.js';
 import { ProjectGenesisError } from './ProjectGenesisError.js';
-import {
-  ValidationError,
-  ValidationErrors,
-  ValidationErrorCode,
-} from './ValidationError.js';
+import { ValidationError, ValidationErrors, ValidationErrorCode } from './ValidationError.js';
 import { ApplicationError } from './ApplicationError.js';
-import {
-  InfrastructureError,
-  InfrastructureErrorCode,
-} from './InfrastructureError.js';
-import {
-  PersistenceError,
-  PersistenceErrorCode,
-} from './PersistenceError.js';
+import { InfrastructureError, InfrastructureErrorCode } from './InfrastructureError.js';
+import { PersistenceError, PersistenceErrorCode } from './PersistenceError.js';
 
 describe('ProjectGenesisError', () => {
   it('stores structured error metadata', () => {

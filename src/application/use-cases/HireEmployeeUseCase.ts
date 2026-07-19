@@ -92,9 +92,7 @@ export class HireEmployeeUseCase {
     }
 
     if (this.#employeeRepository.findById(employeeId) !== undefined) {
-      return Result.fail(
-        new ValidationError(`Employee id "${employeeId.value}" already exists.`),
-      );
+      return Result.fail(new ValidationError(`Employee id "${employeeId.value}" already exists.`));
     }
 
     const employeeType = this.#gameContent.employees.get(employeeTypeId.value);

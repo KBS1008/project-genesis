@@ -88,7 +88,10 @@ export class FinanceAccount extends AggregateRoot<'FinanceAccount'> {
     }
 
     const currency = params.currency ?? DEFAULT_CURRENCY;
-    const currencyResult = Guard.againstEmptyString(currency, 'Finance currency must not be empty.');
+    const currencyResult = Guard.againstEmptyString(
+      currency,
+      'Finance currency must not be empty.',
+    );
 
     if (!currencyResult.ok) {
       return Result.fail(currencyResult.error);
@@ -330,7 +333,10 @@ export class FinanceAccount extends AggregateRoot<'FinanceAccount'> {
    * Reserves available cash for downstream spending flows.
    */
   reserveCash(amount: number, clock: Clock): Result<void, ValidationError> {
-    const amountResult = Guard.againstNegative(amount, 'Reserved cash amount must not be negative.');
+    const amountResult = Guard.againstNegative(
+      amount,
+      'Reserved cash amount must not be negative.',
+    );
 
     if (!amountResult.ok) {
       return Result.fail(amountResult.error);
@@ -401,7 +407,10 @@ export class FinanceAccount extends AggregateRoot<'FinanceAccount'> {
     transactionType: FinanceTransactionType,
     clock: Clock,
   ): Result<void, ValidationError> {
-    const amountResult = Guard.againstNegative(amount, 'Consumed cash amount must not be negative.');
+    const amountResult = Guard.againstNegative(
+      amount,
+      'Consumed cash amount must not be negative.',
+    );
 
     if (!amountResult.ok) {
       return Result.fail(amountResult.error);
@@ -411,10 +420,7 @@ export class FinanceAccount extends AggregateRoot<'FinanceAccount'> {
       return Result.ok(undefined);
     }
 
-    if (
-      this.#reservedCash < amountResult.value ||
-      this.#cashBalance < amountResult.value
-    ) {
+    if (this.#reservedCash < amountResult.value || this.#cashBalance < amountResult.value) {
       return Result.fail(new ValidationError('Cannot consume more cash than reserved.'));
     }
 

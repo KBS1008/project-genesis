@@ -4,8 +4,8 @@ import { createCompanyId } from '../company/Company.js';
 import { createRecipeId } from './RecipeId.js';
 import { ProductionJob, createProductionJobId } from './ProductionJob.js';
 import { ProductionJobStatus } from './ProductionJobStatus.js';
-import { ProductionCompleted } from './events/ProductionCompleted.js';
-import { ProductionStarted } from './events/ProductionStarted.js';
+import type { ProductionCompleted } from './events/ProductionCompleted.js';
+import type { ProductionStarted } from './events/ProductionStarted.js';
 
 function requireProductionJobId(value: string) {
   const result = createProductionJobId(value);

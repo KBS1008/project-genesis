@@ -12,5 +12,4 @@ export const ResearchJobStatus = {
   CANCELLED: 'CANCELLED',
 } as const;
 
-export type ResearchJobStatus =
-  (typeof ResearchJobStatus)[keyof typeof ResearchJobStatus];
+export type ResearchJobStatus = (typeof ResearchJobStatus)[keyof typeof ResearchJobStatus];

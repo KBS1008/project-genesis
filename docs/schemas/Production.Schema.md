@@ -223,8 +223,7 @@ Beispiel
 
 ```yaml
 conditions:
-
-- STORAGE_BELOW_500
+  - STORAGE_BELOW_500
 ```
 
 ---

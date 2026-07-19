@@ -13,15 +13,15 @@
 
 M6 ist **freigegeben** und als Meilenstein **abgeschlossen**.
 
-| Kriterium | Ergebnis |
-|---|---|
-| Exit: Goods transported successfully | ✅ Erfüllt |
-| Exit: Routing operational | ✅ Erfüllt |
-| Exit: Performance acceptable | ✅ Erfüllt (abstract network, DD-022) |
-| Deliverables M6-1 … M6-3 | ✅ Erfüllt |
-| Deliverable „Vehicles“ | ✅ **DD-022 V1 waiver** (keine Sim-Entities; Schema/Art-Docs) |
-| Tests / Typecheck | ✅ 417 / grün (Gate-Run 2026-07-19) |
-| Dokumentation | ✅ Step reports + Progress-Matrix |
+| Kriterium                            | Ergebnis                                                      |
+| ------------------------------------ | ------------------------------------------------------------- |
+| Exit: Goods transported successfully | ✅ Erfüllt                                                    |
+| Exit: Routing operational            | ✅ Erfüllt                                                    |
+| Exit: Performance acceptable         | ✅ Erfüllt (abstract network, DD-022)                         |
+| Deliverables M6-1 … M6-3             | ✅ Erfüllt                                                    |
+| Deliverable „Vehicles“               | ✅ **DD-022 V1 waiver** (keine Sim-Entities; Schema/Art-Docs) |
+| Tests / Typecheck                    | ✅ 417 / grün (Gate-Run 2026-07-19)                           |
+| Dokumentation                        | ✅ Step reports + Progress-Matrix                             |
 
 **Gesamtbewertung M6:** **8.5 / 10** — solide Logistik-Basis; bewusst ohne Fahrzeuge.
 
@@ -31,23 +31,23 @@ M6 ist **freigegeben** und als Meilenstein **abgeschlossen**.
 
 # Exit Criteria
 
-| Exit criterion | Evidence | Status |
-|---|---|---|
-| Goods transported successfully | `TransportLogisticsService.test.ts` — market → warehouse → production; savegame transport snapshots | ✅ |
-| Routing operational | Content routes (`game-content/logistics/`), `TransportRouteDurationPolicy`, dashboard duration | ✅ |
-| Performance acceptable | No vehicle/pathfinding sim; O(orders) dispatch per tick; test suite ~19s | ✅ |
+| Exit criterion                 | Evidence                                                                                            | Status |
+| ------------------------------ | --------------------------------------------------------------------------------------------------- | ------ |
+| Goods transported successfully | `TransportLogisticsService.test.ts` — market → warehouse → production; savegame transport snapshots | ✅     |
+| Routing operational            | Content routes (`game-content/logistics/`), `TransportRouteDurationPolicy`, dashboard duration      | ✅     |
+| Performance acceptable         | No vehicle/pathfinding sim; O(orders) dispatch per tick; test suite ~19s                            | ✅     |
 
 ---
 
 # Deliverable Compliance
 
-| Deliverable | Soll (MILESTONE_PLAN) | Ist | Evidence |
-|---|---|---|---|
-| Capacities | Lager-/Netz-Grenzen | ✅ M6-1 | `M6_LOGISTICS_CAPACITIES_REPORT.md`, `storageCapacity` |
-| Warehouses | Lagerhaus-Integration | ✅ Phase 1 | `BuildingStorage`, inbound transport, dashboard |
-| Transport Routes | Content-basierte Dauer | ✅ M6-2 | `M6_LOGISTICS_ROUTES_REPORT.md`, route YAML |
-| Networks | Durchsatz / Queue | ✅ M6-3 | `M6_LOGISTICS_NETWORK_REPORT.md`, FIFO + `throughputCapacity` |
-| Vehicles | Milestone-Plan nennt Fahrzeuge | ✅ **Waiver** | DD-022 V1: keine Sim-Entities; `Vehicle.schema.md`, art library docs only |
+| Deliverable      | Soll (MILESTONE_PLAN)          | Ist           | Evidence                                                                  |
+| ---------------- | ------------------------------ | ------------- | ------------------------------------------------------------------------- |
+| Capacities       | Lager-/Netz-Grenzen            | ✅ M6-1       | `M6_LOGISTICS_CAPACITIES_REPORT.md`, `storageCapacity`                    |
+| Warehouses       | Lagerhaus-Integration          | ✅ Phase 1    | `BuildingStorage`, inbound transport, dashboard                           |
+| Transport Routes | Content-basierte Dauer         | ✅ M6-2       | `M6_LOGISTICS_ROUTES_REPORT.md`, route YAML                               |
+| Networks         | Durchsatz / Queue              | ✅ M6-3       | `M6_LOGISTICS_NETWORK_REPORT.md`, FIFO + `throughputCapacity`             |
+| Vehicles         | Milestone-Plan nennt Fahrzeuge | ✅ **Waiver** | DD-022 V1: keine Sim-Entities; `Vehicle.schema.md`, art library docs only |
 
 ### DD-022 V1 Waiver — Vehicles (O-05)
 
@@ -61,23 +61,23 @@ Per **DD-022 Version 1** simuliert Project Genesis **keine einzelnen Fahrzeuge**
 
 # Step Summary
 
-| Step | Focus | Report |
-|---|---|---|
+| Step | Focus                                               | Report                              |
+| ---- | --------------------------------------------------- | ----------------------------------- |
 | M6-1 | Warehouse `storageCapacity`, enforcement, dashboard | `M6_LOGISTICS_CAPACITIES_REPORT.md` |
-| M6-2 | Route content, duration policy, UI duration | `M6_LOGISTICS_ROUTES_REPORT.md` |
-| M6-3 | `throughputCapacity`, WAITING queue, FIFO dispatch | `M6_LOGISTICS_NETWORK_REPORT.md` |
+| M6-2 | Route content, duration policy, UI duration         | `M6_LOGISTICS_ROUTES_REPORT.md`     |
+| M6-3 | `throughputCapacity`, WAITING queue, FIFO dispatch  | `M6_LOGISTICS_NETWORK_REPORT.md`    |
 
 ---
 
 # Evidence (Gate Run)
 
-| Prüfung | Ergebnis |
-|---|---|
-| `pnpm test` | 417 passed (99 files) |
-| Architecture dependency rules | grün |
-| Transport integration | Normal + overload queue tests |
-| Savegame | `routeId`, `WAITING`, optional `startTime` on transport orders |
-| DD-022 alignment | No vehicle entities in `src/` simulation |
+| Prüfung                       | Ergebnis                                                       |
+| ----------------------------- | -------------------------------------------------------------- |
+| `pnpm test`                   | 417 passed (99 files)                                          |
+| Architecture dependency rules | grün                                                           |
+| Transport integration         | Normal + overload queue tests                                  |
+| Savegame                      | `routeId`, `WAITING`, optional `startTime` on transport orders |
+| DD-022 alignment              | No vehicle entities in `src/` simulation                       |
 
 ---
 
@@ -85,12 +85,12 @@ Per **DD-022 Version 1** simuliert Project Genesis **keine einzelnen Fahrzeuge**
 
 Documented in `M6_LOGISTICS_NETWORK_REPORT.md`:
 
-| ID | Topic | Target |
-|---|---|---|
-| O-01 | `TransportCapacityPort` (fleet / logistics buildings) | Post-M6 / M10+ |
-| O-02 | Second route + multi-route isolation test | M10 or M6.x polish |
-| O-03 | Transport priority (beyond FIFO) | M6.x / M9 |
-| O-04 | Vehicle visualization (DD-022 V3) | M9+ / M11 |
+| ID   | Topic                                                 | Target             |
+| ---- | ----------------------------------------------------- | ------------------ |
+| O-01 | `TransportCapacityPort` (fleet / logistics buildings) | Post-M6 / M10+     |
+| O-02 | Second route + multi-route isolation test             | M10 or M6.x polish |
+| O-03 | Transport priority (beyond FIFO)                      | M6.x / M9          |
+| O-04 | Vehicle visualization (DD-022 V3)                     | M9+ / M11          |
 
 ---
 

@@ -146,9 +146,7 @@ export function validateResourceTypeDefinition(
   filePath?: string,
 ): Result<ResourceTypeDefinition, ContentLoadError> {
   if (!isRecord(raw)) {
-    return Result.fail(
-      new ContentLoadError('Resource content must be an object.', { filePath }),
-    );
+    return Result.fail(new ContentLoadError('Resource content must be an object.', { filePath }));
   }
 
   const idResult = readString(raw, 'id', filePath);

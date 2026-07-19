@@ -5,7 +5,7 @@
  */
 
 import { ValueObject } from '../../common/core/ValueObject.js';
-import { ValidationError } from '../../common/errors/ValidationError.js';
+import type { ValidationError } from '../../common/errors/ValidationError.js';
 import { Result } from '../../common/result/Result.js';
 import { Guard } from '../../common/validation/Guard.js';
 

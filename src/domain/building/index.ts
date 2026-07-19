@@ -4,11 +4,7 @@
  * Building bounded context exports.
  */
 
-export {
-  Building,
-  createBuildingId,
-  createBuildingTypeId,
-} from './Building.js';
+export { Building, createBuildingId, createBuildingTypeId } from './Building.js';
 
 export type { CreateBuildingParams } from './Building.js';
 export type { BuildingId, BuildingTypeId } from './BuildingId.js';

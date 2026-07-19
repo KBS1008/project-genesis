@@ -49,7 +49,10 @@ export class ProductionSimulationSystem implements SimulationSystem {
     for (const job of this.#productionJobRepository.findRunning()) {
       if (
         this.#energyBalanceService !== undefined &&
-        !this.#energyBalanceService.canAffordRecipeEnergy(job.getCompanyId(), job.getRecipeId().value)
+        !this.#energyBalanceService.canAffordRecipeEnergy(
+          job.getCompanyId(),
+          job.getRecipeId().value,
+        )
       ) {
         continue;
       }

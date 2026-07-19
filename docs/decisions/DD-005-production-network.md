@@ -342,10 +342,10 @@ Diese Risiken werden durch Validierung, deterministische Berechnung und spätere
 
 # Änderungsprotokoll
 
-| Version | Datum | Änderung |
-|----------|--------|----------|
-| 1.0.0 | 2026-07-03 | Erste Version |
-| 2.0.0 | 2026-07-03 | Überarbeitung entsprechend der aktuellen Architektur |
+| Version | Datum      | Änderung                                             |
+| ------- | ---------- | ---------------------------------------------------- |
+| 1.0.0   | 2026-07-03 | Erste Version                                        |
+| 2.0.0   | 2026-07-03 | Überarbeitung entsprechend der aktuellen Architektur |
 
 ---
 

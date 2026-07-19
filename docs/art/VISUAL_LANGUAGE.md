@@ -85,14 +85,14 @@ Rounded corners should communicate approachability without appearing playful.
 
 Recommended corner radius categories:
 
-| Usage | Radius |
-|--------|--------|
-| Buttons | Small |
-| Panels | Medium |
-| Dialogs | Medium |
-| Cards | Medium |
-| Icons | Minimal |
-| Charts | None unless required |
+| Usage   | Radius               |
+| ------- | -------------------- |
+| Buttons | Small                |
+| Panels  | Medium               |
+| Dialogs | Medium               |
+| Cards   | Medium               |
+| Icons   | Minimal              |
+| Charts  | None unless required |
 
 Exact values will later be defined in DESIGN_TOKENS.md.
 
@@ -427,15 +427,15 @@ Assets generated without these constraints should not become part of the officia
 
 Every asset should answer:
 
-| Question | Status |
-|-----------|--------|
-| Does it follow the visual language? | □ |
-| Is the geometry consistent? | □ |
-| Is the perspective correct? | □ |
-| Is lighting consistent? | □ |
-| Is the level of detail appropriate? | □ |
-| Are colors used consistently? | □ |
-| Does it integrate with existing assets? | □ |
+| Question                                | Status |
+| --------------------------------------- | ------ |
+| Does it follow the visual language?     | □      |
+| Is the geometry consistent?             | □      |
+| Is the perspective correct?             | □      |
+| Is lighting consistent?                 | □      |
+| Is the level of detail appropriate?     | □      |
+| Are colors used consistently?           | □      |
+| Does it integrate with existing assets? | □      |
 
 ---
 

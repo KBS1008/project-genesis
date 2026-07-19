@@ -16,16 +16,16 @@ Enforce finite warehouse storage capacity from building content and surface util
 
 # Implemented
 
-| Area | Change |
-|---|---|
-| Content | `storageCapacity: 500` on `warehouse.yaml` (game + fixtures) |
-| Content loader | `BuildingTypeDefinition.storageCapacity`; required ≥ 1 for `STORAGE` category |
-| Domain | `BuildingStorage` tracks capacity, rejects overflow on deposit |
-| Application | `TransportLogisticsService.ensureStorageForBuilding` syncs capacity; `canDepositToWarehouse()` |
-| Market UX | Buy hints disabled when warehouse full |
-| Dashboard | KPI capacity ratio, logistics banner, warehouse drill-down |
-| Savegame | Optional `storageCapacity` on `buildingStorages[]` snapshots |
-| Tests | `BuildingStorage.test.ts`, capacity integration test, loader assertion |
+| Area           | Change                                                                                         |
+| -------------- | ---------------------------------------------------------------------------------------------- |
+| Content        | `storageCapacity: 500` on `warehouse.yaml` (game + fixtures)                                   |
+| Content loader | `BuildingTypeDefinition.storageCapacity`; required ≥ 1 for `STORAGE` category                  |
+| Domain         | `BuildingStorage` tracks capacity, rejects overflow on deposit                                 |
+| Application    | `TransportLogisticsService.ensureStorageForBuilding` syncs capacity; `canDepositToWarehouse()` |
+| Market UX      | Buy hints disabled when warehouse full                                                         |
+| Dashboard      | KPI capacity ratio, logistics banner, warehouse drill-down                                     |
+| Savegame       | Optional `storageCapacity` on `buildingStorages[]` snapshots                                   |
+| Tests          | `BuildingStorage.test.ts`, capacity integration test, loader assertion                         |
 
 ---
 

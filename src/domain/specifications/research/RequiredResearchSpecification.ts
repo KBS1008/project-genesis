@@ -22,9 +22,10 @@ export type RequiredResearchContext = {
 /**
  * Verifies that all required technologies are completed.
  */
-export class RequiredResearchSpecification
-  implements Specification<RequiredResearchCandidate, RequiredResearchContext>
-{
+export class RequiredResearchSpecification implements Specification<
+  RequiredResearchCandidate,
+  RequiredResearchContext
+> {
   isSatisfiedBy(
     candidate: RequiredResearchCandidate,
     context: RequiredResearchContext,

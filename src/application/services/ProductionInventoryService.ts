@@ -45,10 +45,7 @@ export class ProductionInventoryService {
   /**
    * Reserves recipe inputs in the company inventory.
    */
-  reserveInputs(
-    companyId: CompanyId,
-    recipe: RecipeDefinition,
-  ): Result<void, ValidationError> {
+  reserveInputs(companyId: CompanyId, recipe: RecipeDefinition): Result<void, ValidationError> {
     const inventoryResult = this.#findInventory(companyId);
 
     if (!inventoryResult.ok) {
@@ -78,10 +75,7 @@ export class ProductionInventoryService {
   /**
    * Releases previously reserved recipe inputs without consuming stock.
    */
-  releaseInputs(
-    companyId: CompanyId,
-    recipe: RecipeDefinition,
-  ): Result<void, ValidationError> {
+  releaseInputs(companyId: CompanyId, recipe: RecipeDefinition): Result<void, ValidationError> {
     const inventoryResult = this.#findInventory(companyId);
 
     if (!inventoryResult.ok) {

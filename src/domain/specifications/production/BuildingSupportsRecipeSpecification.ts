@@ -22,9 +22,10 @@ export type BuildingSupportsRecipeContext = {
 /**
  * Verifies that a recipe may run on a building type.
  */
-export class BuildingSupportsRecipeSpecification
-  implements Specification<BuildingSupportsRecipeCandidate, BuildingSupportsRecipeContext>
-{
+export class BuildingSupportsRecipeSpecification implements Specification<
+  BuildingSupportsRecipeCandidate,
+  BuildingSupportsRecipeContext
+> {
   isSatisfiedBy(
     candidate: BuildingSupportsRecipeCandidate,
     context: BuildingSupportsRecipeContext,

@@ -80,18 +80,18 @@ Every registry entry follows the same base schema.
 
 # Required Fields
 
-| Field | Type | Required |
-|---------|------|----------|
-| assetId | string | ✓ |
-| internalName | string | ✓ |
-| displayName | string | ✓ |
-| category | string | ✓ |
-| version | string | ✓ |
-| status | string | ✓ |
-| tags | array | ✓ |
-| dependencies | array | ✓ |
-| created | string (ISO-8601) | ✓ |
-| updated | string (ISO-8601) | ✓ |
+| Field        | Type              | Required |
+| ------------ | ----------------- | -------- |
+| assetId      | string            | ✓        |
+| internalName | string            | ✓        |
+| displayName  | string            | ✓        |
+| category     | string            | ✓        |
+| version      | string            | ✓        |
+| status       | string            | ✓        |
+| tags         | array             | ✓        |
+| dependencies | array             | ✓        |
+| created      | string (ISO-8601) | ✓        |
+| updated      | string (ISO-8601) | ✓        |
 
 ---
 
@@ -99,19 +99,19 @@ Every registry entry follows the same base schema.
 
 Optional metadata may include:
 
-| Field | Type |
-|---------|------|
-| description | string |
-| author | string |
-| source | string |
-| localizationKey | string |
-| thumbnail | string |
-| previewImage | string |
-| icon | string |
-| notes | string |
-| deprecated | boolean |
-| replacement | string |
-| customProperties | object |
+| Field            | Type    |
+| ---------------- | ------- |
+| description      | string  |
+| author           | string  |
+| source           | string  |
+| localizationKey  | string  |
+| thumbnail        | string  |
+| previewImage     | string  |
+| icon             | string  |
+| notes            | string  |
+| deprecated       | boolean |
+| replacement      | string  |
+| customProperties | object  |
 
 Unknown optional fields must not invalidate the schema.
 
@@ -260,19 +260,13 @@ Dependencies always reference Asset IDs.
 Correct
 
 ```json
-[
-  "RES-1004",
-  "EFF-1002"
-]
+["RES-1004", "EFF-1002"]
 ```
 
 Incorrect
 
 ```json
-[
-  "Iron Ore",
-  "Smoke"
-]
+["Iron Ore", "Smoke"]
 ```
 
 ---
@@ -355,14 +349,8 @@ The registry must never duplicate relationship data.
   "category": "Building",
   "version": "1.2.0",
   "status": "Implemented",
-  "tags": [
-    "Industry",
-    "Steel"
-  ],
-  "dependencies": [
-    "RES-1004",
-    "EFF-1005"
-  ],
+  "tags": ["Industry", "Steel"],
+  "dependencies": ["RES-1004", "EFF-1005"],
   "created": "2026-06-01T09:00:00Z",
   "updated": "2026-07-15T14:30:00Z"
 }

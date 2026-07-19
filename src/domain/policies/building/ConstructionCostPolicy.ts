@@ -24,7 +24,10 @@ export type ConstructionCostDecision = {
 /**
  * Determines the construction cost for a building type placement.
  */
-export class ConstructionCostPolicy implements Policy<ConstructionCostContext, ConstructionCostDecision> {
+export class ConstructionCostPolicy implements Policy<
+  ConstructionCostContext,
+  ConstructionCostDecision
+> {
   evaluate(context: ConstructionCostContext): Result<ConstructionCostDecision, ValidationError> {
     if (!context.enabled) {
       return Result.fail(

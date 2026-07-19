@@ -225,23 +225,23 @@ Verwendung für:
 
 # Auswahlmatrix
 
-| Aufgabe | Technologie |
-|----------|-------------|
-| Benutzer | Prisma |
-| Login | Prisma |
-| Unternehmen | Prisma |
-| Gebäude | Prisma |
-| Forschung | Prisma |
-| Konfiguration | Prisma |
-| Migrationen | Prisma |
-| Tick-System | Kysely |
-| Produktion | Kysely |
-| Markt | Kysely |
-| Energie | Kysely |
-| Transport | Kysely |
-| Statistiken | Kysely |
-| Batch-Updates | Kysely |
-| Reporting | Kysely |
+| Aufgabe       | Technologie |
+| ------------- | ----------- |
+| Benutzer      | Prisma      |
+| Login         | Prisma      |
+| Unternehmen   | Prisma      |
+| Gebäude       | Prisma      |
+| Forschung     | Prisma      |
+| Konfiguration | Prisma      |
+| Migrationen   | Prisma      |
+| Tick-System   | Kysely      |
+| Produktion    | Kysely      |
+| Markt         | Kysely      |
+| Energie       | Kysely      |
+| Transport     | Kysely      |
+| Statistiken   | Kysely      |
+| Batch-Updates | Kysely      |
+| Reporting     | Kysely      |
 
 ---
 
@@ -441,10 +441,10 @@ Diese Risiken werden durch Code Reviews, Architekturregeln und automatisierte Te
 
 # Änderungsprotokoll
 
-| Version | Datum | Änderung |
-|----------|--------|----------|
-| 1.0.0 | 2026-07-03 | Erste Version |
-| 1.1.0 | 2026-07-03 | Repository Layer ergänzt, Architekturdiagramme erweitert, Auswahlmatrix und Entwicklungsregeln hinzugefügt |
+| Version | Datum      | Änderung                                                                                                   |
+| ------- | ---------- | ---------------------------------------------------------------------------------------------------------- |
+| 1.0.0   | 2026-07-03 | Erste Version                                                                                              |
+| 1.1.0   | 2026-07-03 | Repository Layer ergänzt, Architekturdiagramme erweitert, Auswahlmatrix und Entwicklungsregeln hinzugefügt |
 
 ---
 

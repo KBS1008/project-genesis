@@ -4,7 +4,7 @@
 **Phase:** 2 — Architecture Driven Development  
 **Task:** M5-3 Marktgebühren (`MARKET_FEE`)  
 **Date:** 2026-07-18  
-**Status:** Completed  
+**Status:** Completed
 
 ---
 
@@ -16,12 +16,12 @@ Marktgebühren als Geldsenke einführen: Jeder Sofortkauf und -verkauf erzeugt e
 
 ## Umsetzung
 
-| Schicht | Artefakt | Zweck |
-|---|---|---|
-| Domain | `MarketPriceConstants.ts` | `MARKET_TRADE_FEE_RATE = 0.02`, `MARKET_TRADE_FEE_MINIMUM = 1` |
-| Domain | `MarketFeePolicy.ts` | Berechnet Gebühr aus Handelswert |
-| Application | `MarketTradeService.ts` | Bucht Gebühr bei Buy/Sell, Rollback bei Fehlern |
-| Dashboard | `GameSessionDashboardBuilder` | Kauf-Hints berücksichtigen Gebühr |
+| Schicht     | Artefakt                      | Zweck                                                          |
+| ----------- | ----------------------------- | -------------------------------------------------------------- |
+| Domain      | `MarketPriceConstants.ts`     | `MARKET_TRADE_FEE_RATE = 0.02`, `MARKET_TRADE_FEE_MINIMUM = 1` |
+| Domain      | `MarketFeePolicy.ts`          | Berechnet Gebühr aus Handelswert                               |
+| Application | `MarketTradeService.ts`       | Bucht Gebühr bei Buy/Sell, Rollback bei Fehlern                |
+| Dashboard   | `GameSessionDashboardBuilder` | Kauf-Hints berücksichtigen Gebühr                              |
 
 ### Gebührenformel
 
@@ -29,8 +29,8 @@ Marktgebühren als Geldsenke einführen: Jeder Sofortkauf und -verkauf erzeugt e
 fee = max(1, round(tradeValue × 0.02))
 ```
 
-- **Verkauf:** `SALE`-Gutschrift, dann `MARKET_FEE`-Belastung → Netto = Handelswert − Gebühr  
-- **Kauf:** `PURCHASE`-Belastung, dann `MARKET_FEE`-Belastung → Gesamtkosten = Handelswert + Gebühr  
+- **Verkauf:** `SALE`-Gutschrift, dann `MARKET_FEE`-Belastung → Netto = Handelswert − Gebühr
+- **Kauf:** `PURCHASE`-Belastung, dann `MARKET_FEE`-Belastung → Gesamtkosten = Handelswert + Gebühr
 
 `MarketTradeResult` enthält jetzt `feeAmount` und `netAmount`.
 
@@ -38,9 +38,9 @@ fee = max(1, round(tradeValue × 0.02))
 
 ## Tests
 
-| Test | Abdeckung |
-|---|---|
-| `MarketFeePolicy.test.ts` | Minimum, Prozentsatz, Validierung |
+| Test                         | Abdeckung                                                           |
+| ---------------------------- | ------------------------------------------------------------------- |
+| `MarketFeePolicy.test.ts`    | Minimum, Prozentsatz, Validierung                                   |
 | `MarketTradeService.test.ts` | Sell/Buy mit Gebühr, Ledger-Einträge, unzureichendes Cash inkl. Fee |
 
 ---

@@ -447,15 +447,15 @@ AI prompts should specify:
 
 # Map Review Checklist
 
-| Question | Status |
-|-----------|--------|
-| Is the terrain immediately understandable? | □ |
-| Are logistics routes clearly visible? | □ |
-| Are industrial zones recognizable? | □ |
-| Is the map readable at every zoom level? | □ |
-| Does vegetation support rather than obstruct gameplay? | □ |
-| Does the environment match the visual language? | □ |
-| Is the map AI reproducible? | □ |
+| Question                                               | Status |
+| ------------------------------------------------------ | ------ |
+| Is the terrain immediately understandable?             | □      |
+| Are logistics routes clearly visible?                  | □      |
+| Are industrial zones recognizable?                     | □      |
+| Is the map readable at every zoom level?               | □      |
+| Does vegetation support rather than obstruct gameplay? | □      |
+| Does the environment match the visual language?        | □      |
+| Is the map AI reproducible?                            | □      |
 
 ---
 

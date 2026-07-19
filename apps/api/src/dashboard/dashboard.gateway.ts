@@ -4,10 +4,7 @@
  * WebSocket gateway for live dashboard refresh notifications.
  */
 
-import {
-  WebSocketGateway,
-  WebSocketServer,
-} from '@nestjs/websockets';
+import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import type { Server } from 'socket.io';
 
 /** Payload emitted when the dashboard should refresh. */

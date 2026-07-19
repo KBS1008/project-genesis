@@ -10,7 +10,7 @@ import { BuildingTypeLoader } from './building/BuildingTypeLoader.js';
 import type { BuildingTypeRegistry } from './building/BuildingTypeRegistry.js';
 import { EmployeeLoader } from './employee/EmployeeLoader.js';
 import type { EmployeeRegistry } from './employee/EmployeeRegistry.js';
-import { ContentLoadError } from './errors/ContentLoadError.js';
+import type { ContentLoadError } from './errors/ContentLoadError.js';
 import { MilestoneLoader } from './milestone/MilestoneLoader.js';
 import type { MilestoneRegistry } from './milestone/MilestoneRegistry.js';
 import { RecipeLoader } from './recipe/RecipeLoader.js';

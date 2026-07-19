@@ -7,9 +7,9 @@ import { validateGameContent } from '../../content/validateGameContent.js';
 import { createCompanyId } from '../../domain/company/Company.js';
 import { createMilestoneId } from '../../domain/milestone/MilestoneId.js';
 import { STARTING_MONEY } from '../../domain/finance/FinanceConstants.js';
-import { ResearchCompleted } from '../../domain/research/events/ResearchCompleted.js';
-import { ResearchStarted } from '../../domain/research/events/ResearchStarted.js';
-import { TechnologyCompleted } from '../../domain/research/events/TechnologyCompleted.js';
+import type { ResearchCompleted } from '../../domain/research/events/ResearchCompleted.js';
+import type { ResearchStarted } from '../../domain/research/events/ResearchStarted.js';
+import type { TechnologyCompleted } from '../../domain/research/events/TechnologyCompleted.js';
 import { InMemoryBuildingRepository } from '../../infrastructure/persistence/InMemoryBuildingRepository.js';
 import { InMemoryCompanyRepository } from '../../infrastructure/persistence/InMemoryCompanyRepository.js';
 import { InMemoryCompanyResearchRepository } from '../../infrastructure/persistence/InMemoryCompanyResearchRepository.js';
@@ -186,7 +186,9 @@ describe('StartResearchUseCase', () => {
     });
     grantMilestone(context, 'company_001', 'profit_100');
 
-    const financeBefore = context.financeRepository.findByCompanyId(requireCompanyId('company_001'));
+    const financeBefore = context.financeRepository.findByCompanyId(
+      requireCompanyId('company_001'),
+    );
     expect(financeBefore?.getCashBalance()).toBe(STARTING_MONEY);
 
     const result = startResearch.execute({
@@ -197,19 +199,25 @@ describe('StartResearchUseCase', () => {
 
     expect(result.ok).toBe(true);
 
-    const financeAfterStart = context.financeRepository.findByCompanyId(requireCompanyId('company_001'));
+    const financeAfterStart = context.financeRepository.findByCompanyId(
+      requireCompanyId('company_001'),
+    );
     expect(financeAfterStart?.getCashBalance()).toBe(STARTING_MONEY - 1000);
 
     context.simulationEngine.tick();
     expect(started).toEqual(['research_job_001']);
 
-    const research = context.companyResearchRepository.findByCompanyId(requireCompanyId('company_001'));
+    const research = context.companyResearchRepository.findByCompanyId(
+      requireCompanyId('company_001'),
+    );
     expect(research?.hasCompletedTechnology('basic_woodworking')).toBe(false);
 
     context.clock.advance(60);
     context.simulationEngine.tick();
 
-    const researchAfter = context.companyResearchRepository.findByCompanyId(requireCompanyId('company_001'));
+    const researchAfter = context.companyResearchRepository.findByCompanyId(
+      requireCompanyId('company_001'),
+    );
 
     expect(completed).toEqual(['research_job_001']);
     expect(technologyCompleted).toEqual(['basic_woodworking']);

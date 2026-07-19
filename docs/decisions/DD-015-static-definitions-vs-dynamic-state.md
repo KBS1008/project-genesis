@@ -4,14 +4,14 @@ Mit diesem Dokument sollten wir eine weitere Architekturregel festschreiben, die
 
 Wir trennen konsequent zwischen statischen Definitionen und dynamischem Spielzustand:
 
-Statische Definition	Dynamischer Zustand
-ResourceType	InventoryItem
-BuildingType	Building
-Recipe	ProductionJob
-ResearchType	ResearchProgress
-EmployeeType	Employee
-ContractType	Contract
-VehicleType	Vehicle
+Statische Definition Dynamischer Zustand
+ResourceType InventoryItem
+BuildingType Building
+Recipe ProductionJob
+ResearchType ResearchProgress
+EmployeeType Employee
+ContractType Contract
+VehicleType Vehicle
 
 Diese Trennung ist extrem wertvoll:
 

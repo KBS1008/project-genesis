@@ -15,13 +15,13 @@ Alle Fahrzeugdefinitionen müssen diesem Schema entsprechen.
 
 Das Schema dient als Grundlage für:
 
-* JSON-Assets
-* Asset Registry
-* Validierung
-* Content Pipeline
-* Editor
-* Modding
-* Savegame-Kompatibilität
+- JSON-Assets
+- Asset Registry
+- Validierung
+- Content Pipeline
+- Editor
+- Modding
+- Savegame-Kompatibilität
 
 ---
 
@@ -160,11 +160,11 @@ requirements:
 
 Ein Vehicle darf referenzieren:
 
-* Resources
-* Buildings
-* Research
-* Technologies
-* Effects
+- Resources
+- Buildings
+- Research
+- Technologies
+- Effects
 
 Referenzen erfolgen ausschließlich über Asset-IDs.
 
@@ -177,8 +177,7 @@ Texte werden nicht direkt gespeichert.
 Beispiel:
 
 ```yaml
-localizationKey:
-  vehicle.truck.small
+localizationKey: vehicle.truck.small
 ```
 
 ---
@@ -187,13 +186,13 @@ localizationKey:
 
 Ein gültiges Vehicle muss:
 
-* eine eindeutige ID besitzen
-* eine gültige Version besitzen
-* eine definierte Kategorie besitzen
-* positive Kosten besitzen
-* eine Geschwindigkeit ≥ 0 besitzen
-* eine Kapazität ≥ 0 besitzen
-* ausschließlich gültige Asset-Referenzen verwenden
+- eine eindeutige ID besitzen
+- eine gültige Version besitzen
+- eine definierte Kategorie besitzen
+- positive Kosten besitzen
+- eine Geschwindigkeit ≥ 0 besitzen
+- eine Kapazität ≥ 0 besitzen
+- ausschließlich gültige Asset-Referenzen verwenden
 
 Ungültige Fahrzeuge dürfen nicht registriert oder geladen werden.
 
@@ -261,11 +260,11 @@ tags:
 
 Dieses Schema ist kompatibel mit:
 
-* ASSET_ID_SYSTEM.md
-* ASSET_VERSIONING.md
-* REGISTRY_SCHEMA.md
-* GLOBAL_ASSET_REGISTRY.md
-* CONTENT_PIPELINE.md
+- ASSET_ID_SYSTEM.md
+- ASSET_VERSIONING.md
+- REGISTRY_SCHEMA.md
+- GLOBAL_ASSET_REGISTRY.md
+- CONTENT_PIPELINE.md
 
 ---
 
@@ -273,12 +272,12 @@ Dieses Schema ist kompatibel mit:
 
 Geplante Erweiterungen:
 
-* Fahrerzuweisung
-* Wartungsintervalle
-* Verschleißmodell
-* Kraftstoffpreise
-* Batteriemanagement
-* KI-Fahrverhalten
-* Modulare Fahrzeug-Upgrades
-* Emissionssystem
-* Individuelle Lackierungen
+- Fahrerzuweisung
+- Wartungsintervalle
+- Verschleißmodell
+- Kraftstoffpreise
+- Batteriemanagement
+- KI-Fahrverhalten
+- Modulare Fahrzeug-Upgrades
+- Emissionssystem
+- Individuelle Lackierungen

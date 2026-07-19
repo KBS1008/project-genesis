@@ -284,12 +284,12 @@ Unexpected errors should terminate the current operation and be logged with maxi
 
 Every error has a severity.
 
-| Level | Description |
-|--------|-------------|
-| Debug | Development only |
-| Info | Informational |
-| Warning | Recoverable |
-| Error | Operation failed |
+| Level    | Description               |
+| -------- | ------------------------- |
+| Debug    | Development only          |
+| Info     | Informational             |
+| Warning  | Recoverable               |
+| Error    | Operation failed          |
 | Critical | System stability affected |
 
 Severity determines logging behavior.
@@ -321,7 +321,7 @@ Exceptions should only be used for truly exceptional situations.
 Avoid:
 
 ```typescript
-throw new Error("Something failed")
+throw new Error('Something failed');
 ```
 
 Preferred:
@@ -339,9 +339,9 @@ All thrown errors must be typed.
 Errors should never be written directly using:
 
 ```typescript
-console.log()
+console.log();
 
-console.error()
+console.error();
 ```
 
 Use the centralized logging service.

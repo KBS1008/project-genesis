@@ -15,8 +15,7 @@ Related Documents:
   - architecture/DDD.md
   - architecture/architecture-overview.md
 
-Purpose:
-  Central index of all Architecture Decision Records (ADRs).
+Purpose: Central index of all Architecture Decision Records (ADRs).
 ---
 
 # DD-000 – Architecture Decision Index
@@ -31,57 +30,57 @@ Die ADRs dokumentieren alle langfristigen Architekturentscheidungen und bilden g
 
 # Kategorien
 
-| Kürzel | Beschreibung |
-|---------|--------------|
-| 🏛 | Core Architecture |
-| 🎮 | Gameplay |
-| 📦 | Data Model |
-| ⚙ | Runtime / Simulation |
-| 💾 | Persistence |
-| 🚀 | Infrastructure |
+| Kürzel | Beschreibung         |
+| ------ | -------------------- |
+| 🏛      | Core Architecture    |
+| 🎮     | Gameplay             |
+| 📦     | Data Model           |
+| ⚙      | Runtime / Simulation |
+| 💾     | Persistence          |
+| 🚀     | Infrastructure       |
 
 ---
 
 # Architekturentscheidungen
 
-| ID | Kategorie | Titel | Status | Core |
-|----|-----------|-------|--------|------|
-| DD-000 | 🏛 | Architecture Decision Index | Living | ⭐ |
-| DD-001 | 🎮 | Resource Graph | Accepted | |
-| DD-002 | 🎮 | Production Chain Architecture | Accepted | |
-| DD-003 | 🏛 | Global Identifiers | Accepted | ⭐ |
-| DD-004 | 📦 | Common Schema | Accepted | ⭐ |
-| DD-005 | 🎮 | Production Network | Accepted | |
-| DD-006 | ⚙ | Economic Simulation | Accepted | ⭐ |
-| DD-007 | 🏛 | Region-Ready Architecture | Accepted | |
-| DD-008 | 🏛 | No Magic Numbers | Accepted | ⭐ |
-| DD-009 | ⚙ | Deterministic Simulation | Accepted | ⭐ |
-| DD-010 | 🏛 | Documentation First | Accepted | ⭐ |
-| DD-011 | 🎮 | *(reserved)* | Planned | |
-| DD-012 | 🎮 | *(reserved)* | Planned | |
-| DD-013 | 🎮 | *(reserved)* | Planned | |
-| DD-014 | 🎮 | *(reserved)* | Planned | |
-| DD-015 | 🎮 | *(reserved)* | Planned | |
-| DD-016 | 🎮 | *(reserved)* | Planned | |
-| DD-017 | 🎮 | *(reserved)* | Planned | |
-| DD-018 | 🎮 | Recipe System Architecture | Accepted | |
-| DD-019 | 🎮 | Employee Simulation Model | Accepted | |
-| DD-020 | 🎮 | Energy as a Resource | Accepted | |
-| DD-021 | ⚙ | Unified Building Capacity Model | Accepted | ⭐ |
-| DD-022 | ⚙ | Logistics Network Architecture | Accepted | |
-| DD-023 | 🎮 | Company Progression System | Accepted | |
-| DD-024 | 🏛 | Data-Driven Game Configuration | Accepted | ⭐ |
-| DD-025 | 💾 | Content Validation Pipeline | Accepted | |
-| DD-026 | 🚀 | Hybrid Data Access Strategy | Accepted | ⭐ |
-| DD-027 | ⚙ | Event-Driven Simulation Architecture | Accepted | ⭐ |
-| DD-028 | ⚙ | CQRS Lite | Accepted | ⭐ |
-| DD-029 | 🚀 | Dependency Injection Strategy | Accepted | |
-| DD-030 | 🏛 | Configuration-Driven Game Content | Accepted | ⭐ |
-| DD-031 | 🏛 | Game Content Organization | Accepted | ⭐ |
-| DD-032 | ⚙ | Deterministic Tick Processing | Accepted | ⭐ |
-| DD-033 | 💾 | Savegame and Persistence Strategy | Accepted | ⭐ |
-| DD-034 | 🚀 | Configuration Management | Accepted | |
-| DD-035 | 🚀 | Error Handling Strategy | Accepted | |
+| ID     | Kategorie | Titel                                | Status   | Core |
+| ------ | --------- | ------------------------------------ | -------- | ---- |
+| DD-000 | 🏛         | Architecture Decision Index          | Living   | ⭐   |
+| DD-001 | 🎮        | Resource Graph                       | Accepted |      |
+| DD-002 | 🎮        | Production Chain Architecture        | Accepted |      |
+| DD-003 | 🏛         | Global Identifiers                   | Accepted | ⭐   |
+| DD-004 | 📦        | Common Schema                        | Accepted | ⭐   |
+| DD-005 | 🎮        | Production Network                   | Accepted |      |
+| DD-006 | ⚙         | Economic Simulation                  | Accepted | ⭐   |
+| DD-007 | 🏛         | Region-Ready Architecture            | Accepted |      |
+| DD-008 | 🏛         | No Magic Numbers                     | Accepted | ⭐   |
+| DD-009 | ⚙         | Deterministic Simulation             | Accepted | ⭐   |
+| DD-010 | 🏛         | Documentation First                  | Accepted | ⭐   |
+| DD-011 | 🎮        | _(reserved)_                         | Planned  |      |
+| DD-012 | 🎮        | _(reserved)_                         | Planned  |      |
+| DD-013 | 🎮        | _(reserved)_                         | Planned  |      |
+| DD-014 | 🎮        | _(reserved)_                         | Planned  |      |
+| DD-015 | 🎮        | _(reserved)_                         | Planned  |      |
+| DD-016 | 🎮        | _(reserved)_                         | Planned  |      |
+| DD-017 | 🎮        | _(reserved)_                         | Planned  |      |
+| DD-018 | 🎮        | Recipe System Architecture           | Accepted |      |
+| DD-019 | 🎮        | Employee Simulation Model            | Accepted |      |
+| DD-020 | 🎮        | Energy as a Resource                 | Accepted |      |
+| DD-021 | ⚙         | Unified Building Capacity Model      | Accepted | ⭐   |
+| DD-022 | ⚙         | Logistics Network Architecture       | Accepted |      |
+| DD-023 | 🎮        | Company Progression System           | Accepted |      |
+| DD-024 | 🏛         | Data-Driven Game Configuration       | Accepted | ⭐   |
+| DD-025 | 💾        | Content Validation Pipeline          | Accepted |      |
+| DD-026 | 🚀        | Hybrid Data Access Strategy          | Accepted | ⭐   |
+| DD-027 | ⚙         | Event-Driven Simulation Architecture | Accepted | ⭐   |
+| DD-028 | ⚙         | CQRS Lite                            | Accepted | ⭐   |
+| DD-029 | 🚀        | Dependency Injection Strategy        | Accepted |      |
+| DD-030 | 🏛         | Configuration-Driven Game Content    | Accepted | ⭐   |
+| DD-031 | 🏛         | Game Content Organization            | Accepted | ⭐   |
+| DD-032 | ⚙         | Deterministic Tick Processing        | Accepted | ⭐   |
+| DD-033 | 💾        | Savegame and Persistence Strategy    | Accepted | ⭐   |
+| DD-034 | 🚀        | Configuration Management             | Accepted |      |
+| DD-035 | 🚀        | Error Handling Strategy              | Accepted |      |
 
 ---
 
@@ -127,8 +126,8 @@ Einmal akzeptierte ADRs bleiben Bestandteil der Projekthistorie. Änderungen erf
 
 # Änderungsprotokoll
 
-| Version | Datum | Änderung |
-|----------|--------|----------|
-| 1.0.0 | 2026-07-03 | Initiale Version |
-| 2.0.0 | 2026-07-03 | Erweiterung um DD-035 |
-| 3.0.0 | 2026-07-03 | Überarbeitung mit Kategorien, Core Decisions und Lebenszyklus |
+| Version | Datum      | Änderung                                                      |
+| ------- | ---------- | ------------------------------------------------------------- |
+| 1.0.0   | 2026-07-03 | Initiale Version                                              |
+| 2.0.0   | 2026-07-03 | Erweiterung um DD-035                                         |
+| 3.0.0   | 2026-07-03 | Überarbeitung mit Kategorien, Core Decisions und Lebenszyklus |

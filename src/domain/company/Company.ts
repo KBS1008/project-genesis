@@ -54,12 +54,7 @@ export class Company extends AggregateRoot<'Company'> {
 
     if (!restoring) {
       this.addDomainEvent(
-        new CompanyFounded(
-          params.foundedAt,
-          params.id.value,
-          params.ownerId.value,
-          params.name,
-        ),
+        new CompanyFounded(params.foundedAt, params.id.value, params.ownerId.value, params.name),
       );
     }
   }
@@ -90,15 +85,13 @@ export class Company extends AggregateRoot<'Company'> {
     const foundedAt = params.clock.now();
 
     return Result.ok(
-      new Company(
-        {
-          id: params.id,
-          name: trimmedNameResult.value,
-          ownerId: params.ownerId,
-          foundedAt,
-          status: CompanyStatus.ACTIVE,
-        },
-      ),
+      new Company({
+        id: params.id,
+        name: trimmedNameResult.value,
+        ownerId: params.ownerId,
+        foundedAt,
+        status: CompanyStatus.ACTIVE,
+      }),
     );
   }
 

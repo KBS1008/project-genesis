@@ -67,8 +67,8 @@ export function EnergyHistoryChart({
           {latest !== undefined ? (
             <span className="chart-current-value">
               Erzeugung {latest.energyGeneration.toFixed(1)} MW · Verbrauch{' '}
-              {latest.energyConsumption.toFixed(1)} MW · Reserve{' '}
-              {latest.energyReserve.toFixed(1)} MW
+              {latest.energyConsumption.toFixed(1)} MW · Reserve {latest.energyReserve.toFixed(1)}{' '}
+              MW
             </span>
           ) : null}
         </header>

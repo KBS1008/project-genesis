@@ -123,12 +123,12 @@ describe('ContractSimulationSystem', () => {
     const updatedInventory = inventoryRepository.findByCompanyId(companyId);
     const updatedFinance = financeRepository.findByCompanyId(companyId);
     const woodQuantity =
-      updatedInventory
-        ?.getItems()
-        .find((item) => item.resourceId.value === 'wood')?.quantity ?? 0;
+      updatedInventory?.getItems().find((item) => item.resourceId.value === 'wood')?.quantity ?? 0;
 
     expect(woodQuantity).toBe(20 - STARTER_NPC_WOOD_CONTRACT_AMOUNT);
-    expect(updatedFinance?.getCashBalance()).toBe(STARTING_MONEY + STARTER_NPC_WOOD_CONTRACT_PAYMENT);
+    expect(updatedFinance?.getCashBalance()).toBe(
+      STARTING_MONEY + STARTER_NPC_WOOD_CONTRACT_PAYMENT,
+    );
     expect(updatedFinance?.getTransactions().at(-1)?.transactionType).toBe(
       FinanceTransactionType.CONTRACT_PAYMENT,
     );

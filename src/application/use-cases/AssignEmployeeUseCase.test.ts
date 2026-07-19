@@ -4,7 +4,7 @@ import { InMemoryEventBus } from '../../common/events/InMemoryEventBus.js';
 import type { DomainEvent } from '../../common/events/DomainEvent.js';
 import { ManualClock } from '../../common/time/ManualClock.js';
 import { validateGameContent } from '../../content/validateGameContent.js';
-import { EmployeeAssignedToBuilding } from '../../domain/employee/events/EmployeeAssignedToBuilding.js';
+import type { EmployeeAssignedToBuilding } from '../../domain/employee/events/EmployeeAssignedToBuilding.js';
 import { InMemoryBuildingRepository } from '../../infrastructure/persistence/InMemoryBuildingRepository.js';
 import { InMemoryCompanyRepository } from '../../infrastructure/persistence/InMemoryCompanyRepository.js';
 import { InMemoryCompanyResearchRepository } from '../../infrastructure/persistence/InMemoryCompanyResearchRepository.js';
@@ -232,8 +232,15 @@ describe('AssignEmployeeUseCase', () => {
   });
 
   it('rejects assignment when the employee is already assigned', async () => {
-    const { assignEmployee, clock, createCompany, hireEmployee, placeBuilding, simulationEngine, buildingRepository } =
-      await createContext();
+    const {
+      assignEmployee,
+      clock,
+      createCompany,
+      hireEmployee,
+      placeBuilding,
+      simulationEngine,
+      buildingRepository,
+    } = await createContext();
 
     createCompany.execute({
       companyId: 'company_001',
@@ -292,8 +299,16 @@ describe('AssignEmployeeUseCase', () => {
   });
 
   it('enqueues EmployeeAssignedToBuilding events for the next simulation tick', async () => {
-    const { assignEmployee, clock, createCompany, eventBus, hireEmployee, placeBuilding, simulationEngine, buildingRepository } =
-      await createContext();
+    const {
+      assignEmployee,
+      clock,
+      createCompany,
+      eventBus,
+      hireEmployee,
+      placeBuilding,
+      simulationEngine,
+      buildingRepository,
+    } = await createContext();
     const received: string[] = [];
 
     eventBus.subscribe('EmployeeAssignedToBuilding', (event) => {

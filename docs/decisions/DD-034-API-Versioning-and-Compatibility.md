@@ -232,7 +232,7 @@ Beispiel:
 
 ```json
 {
-  "data": { },
+  "data": {},
   "meta": {
     "apiVersion": "v1"
   }
@@ -472,9 +472,9 @@ Diese Risiken werden durch API-Governance, Code Reviews und automatisierte Tests
 
 # Änderungsprotokoll
 
-| Version | Datum | Änderung |
-|----------|--------|----------|
-| 1.0.0 | 2026-07-03 | Initiale Version |
+| Version | Datum      | Änderung         |
+| ------- | ---------- | ---------------- |
+| 1.0.0   | 2026-07-03 | Initiale Version |
 
 ---
 

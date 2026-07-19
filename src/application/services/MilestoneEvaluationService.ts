@@ -10,13 +10,13 @@ import { createCompanyId } from '../../domain/company/Company.js';
 import { FinanceTransactionDirection } from '../../domain/finance/FinanceTransactionDirection.js';
 import { FinanceTransactionType } from '../../domain/finance/FinanceTransactionType.js';
 import type { FinanceRepository } from '../../domain/finance/FinanceRepository.js';
-import { FinanceTransactionRecorded } from '../../domain/finance/events/FinanceTransactionRecorded.js';
+import type { FinanceTransactionRecorded } from '../../domain/finance/events/FinanceTransactionRecorded.js';
 import type { CompanyMilestones } from '../../domain/milestone/CompanyMilestones.js';
 import type { CompanyMilestonesRepository } from '../../domain/milestone/CompanyMilestonesRepository.js';
 import { createMilestoneId } from '../../domain/milestone/MilestoneId.js';
 import type { ProductionJobRepository } from '../../domain/production/ProductionJobRepository.js';
 import { ProductionJobStatus } from '../../domain/production/ProductionJobStatus.js';
-import { ProductionCompleted } from '../../domain/production/events/ProductionCompleted.js';
+import type { ProductionCompleted } from '../../domain/production/events/ProductionCompleted.js';
 import type { MilestoneRegistry } from '../../content/milestone/MilestoneRegistry.js';
 import {
   MilestoneTriggerType,
@@ -136,10 +136,7 @@ export class MilestoneEvaluationService {
         continue;
       }
 
-      const completedCount = this.#countFinishedProduction(
-        companyId,
-        milestone.trigger.recipeId,
-      );
+      const completedCount = this.#countFinishedProduction(companyId, milestone.trigger.recipeId);
 
       if (completedCount >= milestone.trigger.count) {
         this.#tryCompleteMilestone(companyMilestones, milestone);
