@@ -61,4 +61,90 @@ describe('Money', () => {
       );
     });
   });
+
+  describe('add and subtract', () => {
+    it('adds two money values with the same currency', () => {
+      const left = Money.create(100, 'GC');
+      const right = Money.create(25, 'GC');
+
+      expect(left.ok && right.ok).toBe(true);
+
+      if (!left.ok || !right.ok) {
+        return;
+      }
+
+      const sumResult = left.value.add(right.value);
+
+      expect(sumResult.ok).toBe(true);
+
+      if (sumResult.ok) {
+        expect(sumResult.value.amount).toBe(125);
+      }
+    });
+
+    it('rejects addition when currencies differ', () => {
+      const left = Money.create(100, 'GC');
+      const right = Money.create(25, 'EUR');
+
+      expect(left.ok && right.ok).toBe(true);
+
+      if (!left.ok || !right.ok) {
+        return;
+      }
+
+      const sumResult = left.value.add(right.value);
+
+      expect(sumResult.ok).toBe(false);
+    });
+
+    it('subtracts two money values with the same currency', () => {
+      const left = Money.create(100, 'GC');
+      const right = Money.create(30, 'GC');
+
+      expect(left.ok && right.ok).toBe(true);
+
+      if (!left.ok || !right.ok) {
+        return;
+      }
+
+      const differenceResult = left.value.subtract(right.value);
+
+      expect(differenceResult.ok).toBe(true);
+
+      if (differenceResult.ok) {
+        expect(differenceResult.value.amount).toBe(70);
+      }
+    });
+
+    it('rejects subtraction that would become negative', () => {
+      const left = Money.create(20, 'GC');
+      const right = Money.create(30, 'GC');
+
+      expect(left.ok && right.ok).toBe(true);
+
+      if (!left.ok || !right.ok) {
+        return;
+      }
+
+      const differenceResult = left.value.subtract(right.value);
+
+      expect(differenceResult.ok).toBe(false);
+    });
+  });
+
+  describe('compare', () => {
+    it('compares amounts with the same currency', () => {
+      const larger = Money.create(100, 'GC');
+      const smaller = Money.create(40, 'GC');
+
+      expect(larger.ok && smaller.ok).toBe(true);
+
+      if (!larger.ok || !smaller.ok) {
+        return;
+      }
+
+      expect(larger.value.isGreaterThanOrEqual(smaller.value)).toBe(true);
+      expect(smaller.value.isLessThan(larger.value)).toBe(true);
+    });
+  });
 });

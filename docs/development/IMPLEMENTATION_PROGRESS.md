@@ -36,9 +36,9 @@ Update this document whenever a meaningful implementation milestone is completed
 | M4 Core Gameplay                 | Completed                                                                                                                                                             |
 | M5 Economy                       | Completed                                                                                                                                                             |
 | M6 Logistics                     | ✅ Completed (Gate AUD-004, 2026-07-19)                                                                                                                               |
-| Phase 1 Core Domain              | 🟡 In Progress — P1-01 to P1-03 completed; see `PHASE1_CORE_DOMAIN_PLAN.md`                                                                                            |
+| Phase 1 Core Domain              | 🟡 In Progress — P1-01 to P1-05 completed; see `PHASE1_CORE_DOMAIN_PLAN.md`                                                                                            |
 
-**Tests:** 446 (run `pnpm test` for current count)
+**Tests:** 453 (run `pnpm test` for current count)
 
 ---
 

@@ -5,7 +5,7 @@
  */
 
 import { ValueObject } from '../../common/core/ValueObject.js';
-import type { ValidationError } from '../../common/errors/ValidationError.js';
+import { ValidationError } from '../../common/errors/ValidationError.js';
 import { Result } from '../../common/result/Result.js';
 import { Guard } from '../../common/validation/Guard.js';
 
@@ -54,6 +54,58 @@ export class Money extends ValueObject {
   /** Returns a zero amount in the default currency. */
   static zero(currency: string = DEFAULT_CURRENCY): Result<Money, ValidationError> {
     return Money.create(0, currency);
+  }
+
+  /**
+   * Adds another money value with the same currency.
+   */
+  add(other: Money): Result<Money, ValidationError> {
+    const currencyCheck = this.#assertSameCurrency(other);
+
+    if (!currencyCheck.ok) {
+      return Result.fail(currencyCheck.error);
+    }
+
+    return Money.create(this.amount + other.amount, this.currency);
+  }
+
+  /**
+   * Subtracts another money value with the same currency.
+   */
+  subtract(other: Money): Result<Money, ValidationError> {
+    const currencyCheck = this.#assertSameCurrency(other);
+
+    if (!currencyCheck.ok) {
+      return Result.fail(currencyCheck.error);
+    }
+
+    if (this.amount < other.amount) {
+      return Result.fail(new ValidationError('Money subtraction would result in a negative amount.'));
+    }
+
+    return Money.create(this.amount - other.amount, this.currency);
+  }
+
+  /** Returns whether this amount is greater than or equal to another amount in the same currency. */
+  isGreaterThanOrEqual(other: Money): boolean {
+    return this.currency === other.currency && this.amount >= other.amount;
+  }
+
+  /** Returns whether this amount is less than another amount in the same currency. */
+  isLessThan(other: Money): boolean {
+    return this.currency === other.currency && this.amount < other.amount;
+  }
+
+  #assertSameCurrency(other: Money): Result<void, ValidationError> {
+    if (this.currency !== other.currency) {
+      return Result.fail(
+        new ValidationError(
+          `Money currency mismatch: expected "${this.currency}" but received "${other.currency}".`,
+        ),
+      );
+    }
+
+    return Result.ok(undefined);
   }
 
   protected getEqualityComponents(): readonly unknown[] {

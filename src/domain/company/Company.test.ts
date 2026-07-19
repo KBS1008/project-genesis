@@ -118,6 +118,44 @@ describe('Company', () => {
     });
   });
 
+  describe('restore', () => {
+    it('rehydrates a company with a persisted lifecycle status', () => {
+      const restoreResult = Company.restore({
+        id: requireCompanyId('company_001'),
+        name: 'Genesis Industries',
+        ownerId: requirePlayerId('player_001'),
+        foundedAt: 500,
+        status: CompanyStatus.VACATION,
+      });
+
+      expect(restoreResult.ok).toBe(true);
+
+      if (restoreResult.ok) {
+        const company = restoreResult.value;
+
+        expect(company.getStatus()).toBe(CompanyStatus.VACATION);
+        expect(company.getFoundedAt()).toBe(500);
+        expect(company.pullDomainEvents()).toHaveLength(0);
+      }
+    });
+
+    it('preserves terminal lifecycle statuses without transition methods', () => {
+      const restoreResult = Company.restore({
+        id: requireCompanyId('company_002'),
+        name: 'Closed Corp',
+        ownerId: requirePlayerId('player_001'),
+        foundedAt: 900,
+        status: CompanyStatus.LIQUIDATED,
+      });
+
+      expect(restoreResult.ok).toBe(true);
+
+      if (restoreResult.ok) {
+        expect(restoreResult.value.getStatus()).toBe(CompanyStatus.LIQUIDATED);
+      }
+    });
+  });
+
   describe('identifier helpers', () => {
     it('creates validated company identifiers', () => {
       const result = createCompanyId('company_001');

@@ -5,6 +5,10 @@
  *
  * A company is the central economic unit controlled by a player.
  *
+ * Phase 1 scope: identity and lifecycle metadata only (`create`, `restore`, read
+ * accessors). Status transitions and per-tick company rules are deferred to M7+.
+ * See `src/domain/company/README.md`.
+ *
  * @see docs/schemas/Company.Schema.md
  * @see docs/architecture/domain-model.md
  */
