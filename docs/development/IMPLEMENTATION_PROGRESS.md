@@ -4,7 +4,7 @@ Version: 1.0.0
 
 Status: Active
 
-Last Updated: 2026-07-18
+Last Updated: 2026-07-19
 
 ---
 
@@ -36,8 +36,9 @@ Update this document whenever a meaningful implementation milestone is completed
 | M4 Core Gameplay                 | Completed                                                                                                                                                             |
 | M5 Economy                       | Completed                                                                                                                                                             |
 | M6 Logistics                     | ✅ Completed (Gate AUD-004, 2026-07-19)                                                                                                                               |
+| Phase 1 Core Domain              | 🟡 In Progress — P1-01 completed (TransportOrder domain + repository tests); see `PHASE1_CORE_DOMAIN_PLAN.md`                                                         |
 
-**Tests:** 417 (run `pnpm test` for current count)
+**Tests:** 431 (run `pnpm test` for current count)
 
 ---
 
