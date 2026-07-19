@@ -262,7 +262,9 @@ Implement transportation.
 
 ### Status
 
-🟡 In Progress (M6-1–M6-3 completed 2026-07-18; gate review pending)
+✅ Completed (Gate review 2026-07-19 — see `docs/quality/M6_LOGISTICS_GATE_REVIEW_REPORT.md`)
+
+**Note:** Deliverable „Vehicles“ closed per **DD-022 V1** (abstract network only; schema/art docs, no sim entities).
 
 ---
 

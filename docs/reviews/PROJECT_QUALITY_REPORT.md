@@ -47,6 +47,7 @@ The report serves as the project's long-term quality history.
 |---------|------|--------|
 | AUD-001 | 2026-07 | Completed |
 | AUD-003 (M5 Economy) | 2026-07-18 | Completed — see `docs/quality/M5_ECONOMY_AUDIT_REPORT.md` |
+| AUD-004 (M6 Logistics) | 2026-07-19 | Completed — see `docs/quality/M6_LOGISTICS_GATE_REVIEW_REPORT.md` |
 
 Future reviews:
 
