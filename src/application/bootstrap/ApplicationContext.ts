@@ -26,6 +26,8 @@ import type { TickHistoryService } from '../services/TickHistoryService.js';
 import type { TransportOrderRepository } from '../../domain/transport/TransportOrderRepository.js';
 import type { WorldRepository } from '../../domain/world/WorldRepository.js';
 import type { RegionRepository } from '../../domain/region/RegionRepository.js';
+import type { CityRepository } from '../../domain/city/CityRepository.js';
+import type { WorldMapRepository } from '../../domain/world/WorldMapRepository.js';
 import type { GameContentLoadResult } from '../../content/validateGameContent.js';
 import type { ManualClock } from '../../common/time/ManualClock.js';
 import type { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
@@ -52,6 +54,8 @@ export type ApplicationContext = {
   readonly supplyContractRepository: SupplyContractRepository;
   readonly worldRepository: WorldRepository;
   readonly regionRepository: RegionRepository;
+  readonly cityRepository: CityRepository;
+  readonly worldMapRepository: WorldMapRepository;
   readonly productionInventoryService: ProductionInventoryService;
   readonly marketTradeService: MarketTradeService;
   readonly energyBalanceService: EnergyBalanceService;

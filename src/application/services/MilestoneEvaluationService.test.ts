@@ -20,6 +20,7 @@ import { InMemoryResearchJobRepository } from '../../infrastructure/persistence/
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
 import { createDefaultSimulationSystems } from '../../simulation/systems/createDefaultSimulationSystems.js';
 import { createTransportTestServices } from '../../../tests/helpers/createTransportTestServices.js';
+import { bootstrapWorldFromContent } from '../../../tests/helpers/bootstrapWorldFromContent.js';
 import { completeBuildingConstruction } from '../../../tests/helpers/completeBuildingConstruction.js';
 import { CreateCompanyUseCase } from '../use-cases/CreateCompanyUseCase.js';
 import { PlaceBuildingUseCase } from '../use-cases/PlaceBuildingUseCase.js';
@@ -49,6 +50,8 @@ async function createContext() {
   if (!contentResult.ok) {
     throw new Error(contentResult.error.message);
   }
+
+  const { regionRepository } = bootstrapWorldFromContent(contentResult.value);
 
   const clock = new ManualClock(100);
   const companyRepository = new InMemoryCompanyRepository();
@@ -164,6 +167,7 @@ async function createContext() {
     productionInventoryService,
     productionJobRepository,
     companyResearchRepository,
+    regionRepository,
   };
 }
 

@@ -1,5 +1,6 @@
 import { ManualClock } from '../../common/time/ManualClock.js';
 import { createCompanyId } from '../../domain/company/Company.js';
+import { createRegionId } from '../../domain/region/RegionId.js';
 import {
   Building,
   createBuildingId,
@@ -39,6 +40,16 @@ function requireBuildingTypeId(value: string) {
   return result.value;
 }
 
+function requireRegionId(value = 'region_default') {
+  const result = createRegionId(value);
+
+  if (!result.ok) {
+    throw new Error(result.error.message);
+  }
+
+  return result.value;
+}
+
 describe('InMemoryBuildingRepository', () => {
   it('saves and retrieves buildings by id', () => {
     const repository = new InMemoryBuildingRepository();
@@ -47,6 +58,7 @@ describe('InMemoryBuildingRepository', () => {
       id: requireBuildingId('building_001'),
       buildingTypeId: requireBuildingTypeId('sawmill'),
       companyId: requireCompanyId('company_001'),
+      regionId: requireRegionId(),
       name: 'Northern Sawmill',
       position: new Position(2, 3),
       clock,
@@ -72,6 +84,7 @@ describe('InMemoryBuildingRepository', () => {
       id: requireBuildingId('building_002'),
       buildingTypeId: requireBuildingTypeId('warehouse'),
       companyId,
+      regionId: requireRegionId(),
       name: 'Warehouse B',
       position: new Position(1, 1),
       clock,
@@ -80,6 +93,7 @@ describe('InMemoryBuildingRepository', () => {
       id: requireBuildingId('building_001'),
       buildingTypeId: requireBuildingTypeId('sawmill'),
       companyId,
+      regionId: requireRegionId(),
       name: 'Sawmill A',
       position: new Position(0, 0),
       clock,
@@ -97,6 +111,47 @@ describe('InMemoryBuildingRepository', () => {
     );
   });
 
+  it('returns buildings for a region in deterministic id order', () => {
+    const repository = new InMemoryBuildingRepository();
+    const clock = new ManualClock(100);
+    const companyId = requireCompanyId('company_001');
+    const defaultRegionId = requireRegionId('region_default');
+    const eastRegionId = requireRegionId('region_east');
+
+    const defaultBuildingResult = Building.create({
+      id: requireBuildingId('building_002'),
+      buildingTypeId: requireBuildingTypeId('warehouse'),
+      companyId,
+      regionId: defaultRegionId,
+      name: 'Warehouse Default',
+      position: new Position(1, 1),
+      clock,
+    });
+    const eastBuildingResult = Building.create({
+      id: requireBuildingId('building_001'),
+      buildingTypeId: requireBuildingTypeId('sawmill'),
+      companyId,
+      regionId: eastRegionId,
+      name: 'Sawmill East',
+      position: new Position(0, 0),
+      clock,
+    });
+
+    if (!defaultBuildingResult.ok || !eastBuildingResult.ok) {
+      throw new Error('Expected valid buildings.');
+    }
+
+    repository.save(defaultBuildingResult.value);
+    repository.save(eastBuildingResult.value);
+
+    expect(
+      repository.findByRegionId(defaultRegionId).map((building) => building.getId().value),
+    ).toEqual(['building_002']);
+    expect(repository.findByRegionId(eastRegionId).map((building) => building.getId().value)).toEqual(
+      ['building_001'],
+    );
+  });
+
   it('returns buildings under construction in deterministic id order', () => {
     const repository = new InMemoryBuildingRepository();
     const clock = new ManualClock(100);
@@ -106,6 +161,7 @@ describe('InMemoryBuildingRepository', () => {
       id: requireBuildingId('building_002'),
       buildingTypeId: requireBuildingTypeId('sawmill'),
       companyId,
+      regionId: requireRegionId(),
       name: 'Sawmill B',
       position: new Position(1, 1),
       clock,
@@ -114,6 +170,7 @@ describe('InMemoryBuildingRepository', () => {
       id: requireBuildingId('building_001'),
       buildingTypeId: requireBuildingTypeId('warehouse'),
       companyId,
+      regionId: requireRegionId(),
       name: 'Warehouse A',
       position: new Position(0, 0),
       clock,

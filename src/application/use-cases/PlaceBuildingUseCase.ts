@@ -19,6 +19,7 @@ import { ConstructionCostPolicy } from '../../domain/policies/building/Construct
 import { BuildingPrerequisitesSpecification } from '../../domain/specifications/building/BuildingPrerequisitesSpecification.js';
 import type { ApplicationContext } from '../bootstrap/ApplicationContext.js';
 import type { PlaceBuildingCommand } from '../commands/PlaceBuildingCommand.js';
+import { resolveBuildingRegionId } from '../services/BuildingRegionPlacement.js';
 
 /** Dependencies required by {@link PlaceBuildingUseCase}. */
 export type PlaceBuildingUseCaseDependencies = Pick<
@@ -29,6 +30,7 @@ export type PlaceBuildingUseCaseDependencies = Pick<
   | 'financeRepository'
   | 'companyResearchRepository'
   | 'companyMilestonesRepository'
+  | 'regionRepository'
   | 'simulationEngine'
   | 'gameContent'
 >;
@@ -43,6 +45,7 @@ export class PlaceBuildingUseCase {
   readonly #financeRepository: PlaceBuildingUseCaseDependencies['financeRepository'];
   readonly #companyResearchRepository: PlaceBuildingUseCaseDependencies['companyResearchRepository'];
   readonly #companyMilestonesRepository: PlaceBuildingUseCaseDependencies['companyMilestonesRepository'];
+  readonly #regionRepository: PlaceBuildingUseCaseDependencies['regionRepository'];
   readonly #simulationEngine: PlaceBuildingUseCaseDependencies['simulationEngine'];
   readonly #gameContent: PlaceBuildingUseCaseDependencies['gameContent'];
   readonly #constructionCostPolicy = new ConstructionCostPolicy();
@@ -58,6 +61,7 @@ export class PlaceBuildingUseCase {
     this.#financeRepository = dependencies.financeRepository;
     this.#companyResearchRepository = dependencies.companyResearchRepository;
     this.#companyMilestonesRepository = dependencies.companyMilestonesRepository;
+    this.#regionRepository = dependencies.regionRepository;
     this.#simulationEngine = dependencies.simulationEngine;
     this.#gameContent = dependencies.gameContent;
   }
@@ -156,10 +160,17 @@ export class PlaceBuildingUseCase {
       );
     }
 
+    const regionIdResult = resolveBuildingRegionId(this.#regionRepository, command.regionId);
+
+    if (!regionIdResult.ok) {
+      return Result.fail(regionIdResult.error);
+    }
+
     const buildingResult = Building.create({
       id: buildingId,
       buildingTypeId,
       companyId,
+      regionId: regionIdResult.value,
       name: command.name,
       position: new Position(command.x, command.y),
       clock: this.#clock,

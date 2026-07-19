@@ -19,6 +19,7 @@ import { InMemoryResearchJobRepository } from '../../infrastructure/persistence/
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
 import { createDefaultSimulationSystems } from '../../simulation/systems/createDefaultSimulationSystems.js';
 import { createTransportTestServices } from '../../../tests/helpers/createTransportTestServices.js';
+import { bootstrapWorldFromContent } from '../../../tests/helpers/bootstrapWorldFromContent.js';
 import { ProductionInventoryService } from '../services/ProductionInventoryService.js';
 import { completeBuildingConstruction } from '../../../tests/helpers/completeBuildingConstruction.js';
 import { CreateCompanyUseCase } from './CreateCompanyUseCase.js';
@@ -35,6 +36,8 @@ async function createContext(clock = new ManualClock(100)) {
   if (!contentResult.ok) {
     throw new Error(contentResult.error.message);
   }
+
+  const { regionRepository } = bootstrapWorldFromContent(contentResult.value);
 
   const companyRepository = new InMemoryCompanyRepository();
   const buildingRepository = new InMemoryBuildingRepository();
@@ -106,6 +109,7 @@ async function createContext(clock = new ManualClock(100)) {
     financeRepository,
     companyResearchRepository,
     companyMilestonesRepository,
+    regionRepository,
     simulationEngine,
     gameContent: contentResult.value,
   });

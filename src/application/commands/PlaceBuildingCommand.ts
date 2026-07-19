@@ -12,4 +12,5 @@ export type PlaceBuildingCommand = {
   readonly name: string;
   readonly x: number;
   readonly y: number;
+  readonly regionId?: string;
 };

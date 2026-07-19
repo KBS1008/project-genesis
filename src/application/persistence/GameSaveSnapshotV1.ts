@@ -31,6 +31,7 @@ export type GameSaveBuildingSnapshotV1 = {
   readonly id: string;
   readonly buildingTypeId: string;
   readonly companyId: string;
+  readonly regionId?: string;
   readonly name: string;
   readonly position: { readonly x: number; readonly y: number };
   readonly level: number;

@@ -26,6 +26,8 @@ import { InMemoryEmployeeRepository } from '../../infrastructure/persistence/InM
 import { InMemorySupplyContractRepository } from '../../infrastructure/persistence/InMemorySupplyContractRepository.js';
 import { InMemoryWorldRepository } from '../../infrastructure/persistence/InMemoryWorldRepository.js';
 import { InMemoryRegionRepository } from '../../infrastructure/persistence/InMemoryRegionRepository.js';
+import { InMemoryCityRepository } from '../../infrastructure/persistence/InMemoryCityRepository.js';
+import { InMemoryWorldMapRepository } from '../../infrastructure/persistence/InMemoryWorldMapRepository.js';
 import { GameStateSerializer } from '../../infrastructure/persistence/savegame/GameStateSerializer.js';
 import { FileSavegameStore } from '../../infrastructure/persistence/savegame/FileSavegameStore.js';
 import { ConsoleLogger } from '../../infrastructure/logging/ConsoleLogger.js';
@@ -76,6 +78,8 @@ export async function restoreApplicationFromSnapshot(
   const supplyContractRepository = new InMemorySupplyContractRepository();
   const worldRepository = new InMemoryWorldRepository();
   const regionRepository = new InMemoryRegionRepository();
+  const cityRepository = new InMemoryCityRepository();
+  const worldMapRepository = new InMemoryWorldMapRepository();
   const tickHistoryService = new TickHistoryService();
   const gameStateSerializer = new GameStateSerializer();
   const savegameStore = new FileSavegameStore();
@@ -105,6 +109,8 @@ export async function restoreApplicationFromSnapshot(
   const worldBootstrapService = new WorldBootstrapService({
     worldRepository,
     regionRepository,
+    cityRepository,
+    worldMapRepository,
   });
   const bootstrapWorldResult = worldBootstrapService.bootstrap(contentResult.value);
 
@@ -235,6 +241,8 @@ export async function restoreApplicationFromSnapshot(
     supplyContractRepository,
     worldRepository,
     regionRepository,
+    cityRepository,
+    worldMapRepository,
     productionInventoryService,
     marketTradeService,
     energyBalanceService,

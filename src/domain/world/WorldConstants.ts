@@ -12,3 +12,6 @@ export const DEFAULT_WORLD_ID = 'world_default';
 
 /** Default region id from official starter content. */
 export const DEFAULT_REGION_ID = 'region_default';
+
+/** Default world map id from official starter content. */
+export const DEFAULT_MAP_ID = 'map_world_default';

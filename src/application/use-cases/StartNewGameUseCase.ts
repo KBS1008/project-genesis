@@ -29,6 +29,7 @@ import {
   type NewGameStarterBuilding,
 } from '../new-game/NewGameSetupConstants.js';
 import { CreateCompanyUseCase } from './CreateCompanyUseCase.js';
+import { resolveBuildingRegionId } from '../services/BuildingRegionPlacement.js';
 
 /** Dependencies required by {@link StartNewGameUseCase}. */
 export type StartNewGameUseCaseDependencies = Pick<
@@ -42,6 +43,7 @@ export type StartNewGameUseCaseDependencies = Pick<
   | 'companyMilestonesRepository'
   | 'simulationEngine'
   | 'gameContent'
+  | 'regionRepository'
   | 'transportLogisticsService'
   | 'supplyContractRepository'
 >;
@@ -55,6 +57,7 @@ export class StartNewGameUseCase {
   readonly #inventoryRepository: StartNewGameUseCaseDependencies['inventoryRepository'];
   readonly #simulationEngine: StartNewGameUseCaseDependencies['simulationEngine'];
   readonly #gameContent: StartNewGameUseCaseDependencies['gameContent'];
+  readonly #regionRepository: StartNewGameUseCaseDependencies['regionRepository'];
   readonly #transportLogisticsService: StartNewGameUseCaseDependencies['transportLogisticsService'];
   readonly #supplyContractRepository: StartNewGameUseCaseDependencies['supplyContractRepository'];
   readonly #createCompany: CreateCompanyUseCase;
@@ -68,6 +71,7 @@ export class StartNewGameUseCase {
     this.#inventoryRepository = dependencies.inventoryRepository;
     this.#simulationEngine = dependencies.simulationEngine;
     this.#gameContent = dependencies.gameContent;
+    this.#regionRepository = dependencies.regionRepository;
     this.#transportLogisticsService = dependencies.transportLogisticsService;
     this.#supplyContractRepository = dependencies.supplyContractRepository;
     this.#createCompany = new CreateCompanyUseCase(dependencies);
@@ -178,10 +182,17 @@ export class StartNewGameUseCase {
       );
     }
 
+    const regionIdResult = resolveBuildingRegionId(this.#regionRepository);
+
+    if (!regionIdResult.ok) {
+      return Result.fail(regionIdResult.error);
+    }
+
     const buildingResult = Building.create({
       id: buildingId,
       buildingTypeId,
       companyId,
+      regionId: regionIdResult.value,
       name: starterBuilding.name,
       position: new Position(starterBuilding.x, starterBuilding.y),
       clock: this.#clock,

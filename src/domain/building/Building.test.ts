@@ -1,5 +1,6 @@
 import { ManualClock } from '../../common/time/ManualClock.js';
 import { createCompanyId } from '../company/Company.js';
+import { createRegionId } from '../region/RegionId.js';
 import { Building, createBuildingId, createBuildingTypeId } from './Building.js';
 import { BuildingStatus } from './BuildingStatus.js';
 import { Position } from './Position.js';
@@ -37,6 +38,16 @@ function requireCompanyId(value: string) {
   return result.value;
 }
 
+function requireRegionId(value = 'region_default') {
+  const result = createRegionId(value);
+
+  if (!result.ok) {
+    throw new Error(result.error.message);
+  }
+
+  return result.value;
+}
+
 describe('Building', () => {
   describe('create', () => {
     it('creates a building in planned status', () => {
@@ -45,6 +56,7 @@ describe('Building', () => {
         id: requireBuildingId('building_001'),
         buildingTypeId: requireBuildingTypeId('sawmill'),
         companyId: requireCompanyId('company_001'),
+        regionId: requireRegionId(),
         name: 'Northern Sawmill',
         position: new Position(12, 7),
         clock,
@@ -58,6 +70,7 @@ describe('Building', () => {
         expect(building.getId().value).toBe('building_001');
         expect(building.getBuildingTypeId().value).toBe('sawmill');
         expect(building.getCompanyId().value).toBe('company_001');
+        expect(building.getRegionId().value).toBe('region_default');
         expect(building.getName()).toBe('Northern Sawmill');
         expect(building.getPosition().equals(new Position(12, 7))).toBe(true);
         expect(building.getLevel()).toBe(1);
@@ -71,6 +84,7 @@ describe('Building', () => {
         id: requireBuildingId('building_001'),
         buildingTypeId: requireBuildingTypeId('sawmill'),
         companyId: requireCompanyId('company_001'),
+        regionId: requireRegionId(),
         name: '',
         position: new Position(0, 0),
         clock: new ManualClock(),
@@ -84,6 +98,7 @@ describe('Building', () => {
         id: requireBuildingId('building_001'),
         buildingTypeId: requireBuildingTypeId('sawmill'),
         companyId: requireCompanyId('company_001'),
+        regionId: requireRegionId(),
         name: 'Northern Sawmill',
         position: new Position(-1, 0),
         clock: new ManualClock(),
@@ -102,6 +117,7 @@ describe('Building', () => {
         id: requireBuildingId('building_001'),
         buildingTypeId: requireBuildingTypeId('sawmill'),
         companyId: requireCompanyId('company_001'),
+        regionId: requireRegionId(),
         name: 'Northern Sawmill',
         position: new Position(12, 7),
         clock,
@@ -119,6 +135,7 @@ describe('Building', () => {
         expect(event.occurredAt).toBe(300);
         expect(event.buildingId).toBe('building_001');
         expect(event.companyId).toBe('company_001');
+        expect(event.regionId).toBe('region_default');
         expect(event.buildingTypeId).toBe('sawmill');
         expect(event.x).toBe(12);
         expect(event.y).toBe(7);
@@ -133,6 +150,7 @@ describe('Building', () => {
         id: requireBuildingId('building_001'),
         buildingTypeId: requireBuildingTypeId('sawmill'),
         companyId: requireCompanyId('company_001'),
+        regionId: requireRegionId(),
         name: 'Northern Sawmill',
         position: new Position(0, 0),
         clock,
@@ -167,6 +185,7 @@ describe('Building', () => {
         id: requireBuildingId('building_001'),
         buildingTypeId: requireBuildingTypeId('sawmill'),
         companyId: requireCompanyId('company_001'),
+        regionId: requireRegionId(),
         name: 'Northern Sawmill',
         position: new Position(0, 0),
         clock,
@@ -198,6 +217,7 @@ describe('Building', () => {
         id: requireBuildingId('building_001'),
         buildingTypeId: requireBuildingTypeId('sawmill'),
         companyId: requireCompanyId('company_001'),
+        regionId: requireRegionId(),
         name: 'Northern Sawmill',
         position: new Position(0, 0),
         clock,

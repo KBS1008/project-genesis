@@ -15,6 +15,8 @@ import {
 import { BuildingStatus } from '../../../domain/building/BuildingStatus.js';
 import { Position } from '../../../domain/building/Position.js';
 import type { BuildingRepository } from '../../../domain/building/BuildingRepository.js';
+import { createRegionId } from '../../../domain/region/RegionId.js';
+import { DEFAULT_REGION_ID } from '../../../domain/world/WorldConstants.js';
 import { BuildingStorage } from '../../../domain/building/BuildingStorage.js';
 import type { BuildingStorageRepository } from '../../../domain/building/BuildingStorageRepository.js';
 import { Company, createCompanyId, createPlayerId } from '../../../domain/company/Company.js';
@@ -119,6 +121,7 @@ export class GameStateSerializer implements GameStateSerializerPort {
               id: building.getId().value,
               buildingTypeId: building.getBuildingTypeId().value,
               companyId: building.getCompanyId().value,
+              regionId: building.getRegionId().value,
               name: building.getName(),
               position: Object.freeze({
                 x: building.getPosition().x,
@@ -636,10 +639,17 @@ export class GameStateSerializer implements GameStateSerializerPort {
       return companyIdResult;
     }
 
+    const regionIdResult = createRegionId(snapshot.regionId ?? DEFAULT_REGION_ID);
+
+    if (!regionIdResult.ok) {
+      return regionIdResult;
+    }
+
     return Building.restore({
       id: idResult.value,
       buildingTypeId: buildingTypeIdResult.value,
       companyId: companyIdResult.value,
+      regionId: regionIdResult.value,
       name: snapshot.name,
       position: new Position(snapshot.position.x, snapshot.position.y),
       level: snapshot.level,

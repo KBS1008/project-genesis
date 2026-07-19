@@ -13,6 +13,7 @@ export class BuildingPlaced extends DomainEvent {
   readonly eventName = 'BuildingPlaced';
   readonly buildingId: string;
   readonly companyId: string;
+  readonly regionId: string;
   readonly buildingTypeId: string;
   readonly x: number;
   readonly y: number;
@@ -21,6 +22,7 @@ export class BuildingPlaced extends DomainEvent {
    * @param occurredAt - Simulation time when the building was placed.
    * @param buildingId - The placed building's identifier value.
    * @param companyId - The owning company's identifier value.
+   * @param regionId - The region owning the building's spatial context.
    * @param buildingTypeId - The static building type identifier value.
    * @param x - Horizontal grid coordinate.
    * @param y - Vertical grid coordinate.
@@ -29,6 +31,7 @@ export class BuildingPlaced extends DomainEvent {
     occurredAt: number,
     buildingId: string,
     companyId: string,
+    regionId: string,
     buildingTypeId: string,
     x: number,
     y: number,
@@ -36,6 +39,7 @@ export class BuildingPlaced extends DomainEvent {
     super(occurredAt);
     this.buildingId = buildingId;
     this.companyId = companyId;
+    this.regionId = regionId;
     this.buildingTypeId = buildingTypeId;
     this.x = x;
     this.y = y;

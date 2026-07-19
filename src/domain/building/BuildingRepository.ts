@@ -7,6 +7,7 @@
  */
 
 import type { CompanyId } from '../company/CompanyId.js';
+import type { RegionId } from '../region/RegionId.js';
 import type { Building } from './Building.js';
 import type { BuildingId } from './BuildingId.js';
 
@@ -22,6 +23,9 @@ export interface BuildingRepository {
 
   /** Returns all buildings owned by a company in deterministic id order. */
   findByCompanyId(companyId: CompanyId): readonly Building[];
+
+  /** Returns all buildings in a region in deterministic id order. */
+  findByRegionId(regionId: RegionId): readonly Building[];
 
   /** Returns all buildings under construction in deterministic id order. */
   findUnderConstruction(): readonly Building[];

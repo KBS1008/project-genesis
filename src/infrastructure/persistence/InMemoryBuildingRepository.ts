@@ -5,6 +5,7 @@
  */
 
 import type { CompanyId } from '../../domain/company/CompanyId.js';
+import type { RegionId } from '../../domain/region/RegionId.js';
 import type { BuildingRepository } from '../../domain/building/BuildingRepository.js';
 import type { Building } from '../../domain/building/Building.js';
 import { BuildingStatus } from '../../domain/building/BuildingStatus.js';
@@ -28,6 +29,14 @@ export class InMemoryBuildingRepository implements BuildingRepository {
     return Object.freeze(
       [...this.#buildings.values()]
         .filter((building) => building.getCompanyId().value === companyId.value)
+        .sort((left, right) => left.getId().value.localeCompare(right.getId().value)),
+    );
+  }
+
+  findByRegionId(regionId: RegionId): readonly Building[] {
+    return Object.freeze(
+      [...this.#buildings.values()]
+        .filter((building) => building.getRegionId().equals(regionId))
         .sort((left, right) => left.getId().value.localeCompare(right.getId().value)),
     );
   }

@@ -52,6 +52,9 @@ describe('StartNewGameUseCase', () => {
     expect(buildings.every((building) => building.getStatus() === BuildingStatus.ACTIVE)).toBe(
       true,
     );
+    expect(buildings.every((building) => building.getRegionId().value === 'region_default')).toBe(
+      true,
+    );
     expect(buildings.map((building) => building.getBuildingTypeId().value).sort()).toEqual(
       NEW_GAME_STARTER_BUILDINGS.map((entry) => entry.buildingTypeId).sort(),
     );

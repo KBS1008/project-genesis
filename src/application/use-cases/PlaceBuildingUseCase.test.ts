@@ -26,6 +26,7 @@ import { InMemoryResearchJobRepository } from '../../infrastructure/persistence/
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
 import { createDefaultSimulationSystems } from '../../simulation/systems/createDefaultSimulationSystems.js';
 import { createTransportTestServices } from '../../../tests/helpers/createTransportTestServices.js';
+import { bootstrapWorldFromContent } from '../../../tests/helpers/bootstrapWorldFromContent.js';
 import { completeBuildingConstruction } from '../../../tests/helpers/completeBuildingConstruction.js';
 import { CreateCompanyUseCase } from './CreateCompanyUseCase.js';
 import { PlaceBuildingUseCase } from './PlaceBuildingUseCase.js';
@@ -60,6 +61,8 @@ async function createContext(clock = new ManualClock(100)) {
   if (!contentResult.ok) {
     throw new Error(contentResult.error.message);
   }
+
+  const { regionRepository } = bootstrapWorldFromContent(contentResult.value);
 
   const companyRepository = new InMemoryCompanyRepository();
   const buildingRepository = new InMemoryBuildingRepository();
@@ -131,6 +134,7 @@ async function createContext(clock = new ManualClock(100)) {
     financeRepository,
     companyResearchRepository,
     companyMilestonesRepository,
+    regionRepository,
     simulationEngine,
     gameContent: contentResult.value,
   });
@@ -199,6 +203,7 @@ describe('PlaceBuildingUseCase', () => {
     if (result.ok) {
       const building = buildingRepository.findById(result.value);
       expect(building?.getName()).toBe('Northern Sawmill');
+      expect(building?.getRegionId().value).toBe('region_default');
       expect(building?.getPosition().x).toBe(2);
       expect(building?.getPosition().y).toBe(3);
       expect(building?.getStatus()).toBe(BuildingStatus.UNDER_CONSTRUCTION);
@@ -444,5 +449,27 @@ describe('PlaceBuildingUseCase', () => {
     });
 
     expect(allowedResult.ok).toBe(true);
+  });
+
+  it('rejects placement in an unknown region', async () => {
+    const { createCompany, placeBuilding } = await createContext();
+
+    createCompany.execute({
+      companyId: 'company_001',
+      name: 'Genesis Industries',
+      ownerId: 'player_001',
+    });
+
+    const result = placeBuilding.execute({
+      buildingId: 'building_001',
+      buildingTypeId: 'sawmill',
+      companyId: 'company_001',
+      name: 'Northern Sawmill',
+      x: 0,
+      y: 0,
+      regionId: 'region_missing',
+    });
+
+    expect(result.ok).toBe(false);
   });
 });

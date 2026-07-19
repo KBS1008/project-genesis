@@ -18,6 +18,7 @@ import { Result } from '../../common/result/Result.js';
 import type { Clock } from '../../common/time/Clock.js';
 import { Guard } from '../../common/validation/Guard.js';
 import type { CompanyId } from '../company/CompanyId.js';
+import type { RegionId } from '../region/RegionId.js';
 import type { BuildingId, BuildingTypeId } from './BuildingId.js';
 import { BuildingStatus } from './BuildingStatus.js';
 import type { Position } from './Position.js';
@@ -36,6 +37,7 @@ export type CreateBuildingParams = {
   readonly id: BuildingId;
   readonly buildingTypeId: BuildingTypeId;
   readonly companyId: CompanyId;
+  readonly regionId: RegionId;
   readonly name: string;
   readonly position: Position;
   readonly clock: Clock;
@@ -47,6 +49,7 @@ export type CreateBuildingParams = {
 export class Building extends AggregateRoot<'Building'> {
   readonly #buildingTypeId: BuildingTypeId;
   readonly #companyId: CompanyId;
+  readonly #regionId: RegionId;
   readonly #name: string;
   readonly #position: Position;
   readonly #level: number;
@@ -62,6 +65,7 @@ export class Building extends AggregateRoot<'Building'> {
       id: BuildingId;
       buildingTypeId: BuildingTypeId;
       companyId: CompanyId;
+      regionId: RegionId;
       name: string;
       position: Position;
       level: number;
@@ -77,6 +81,7 @@ export class Building extends AggregateRoot<'Building'> {
     super(params.id);
     this.#buildingTypeId = params.buildingTypeId;
     this.#companyId = params.companyId;
+    this.#regionId = params.regionId;
     this.#name = params.name;
     this.#position = params.position;
     this.#level = params.level;
@@ -93,6 +98,7 @@ export class Building extends AggregateRoot<'Building'> {
           params.createdAt,
           params.id.value,
           params.companyId.value,
+          params.regionId.value,
           params.buildingTypeId.value,
           params.position.x,
           params.position.y,
@@ -146,6 +152,7 @@ export class Building extends AggregateRoot<'Building'> {
         id: params.id,
         buildingTypeId: params.buildingTypeId,
         companyId: params.companyId,
+        regionId: params.regionId,
         name: trimmedNameResult.value,
         position: params.position,
         level: 1,
@@ -166,6 +173,7 @@ export class Building extends AggregateRoot<'Building'> {
     readonly id: BuildingId;
     readonly buildingTypeId: BuildingTypeId;
     readonly companyId: CompanyId;
+    readonly regionId: RegionId;
     readonly name: string;
     readonly position: Position;
     readonly level: number;
@@ -207,6 +215,7 @@ export class Building extends AggregateRoot<'Building'> {
           id: params.id,
           buildingTypeId: params.buildingTypeId,
           companyId: params.companyId,
+          regionId: params.regionId,
           name: nameResult.value,
           position: params.position,
           level: levelResult.value,
@@ -230,6 +239,11 @@ export class Building extends AggregateRoot<'Building'> {
   /** The owning company identifier. */
   getCompanyId(): CompanyId {
     return this.#companyId;
+  }
+
+  /** The region that owns this building's spatial context. */
+  getRegionId(): RegionId {
+    return this.#regionId;
   }
 
   /** The building display name. */

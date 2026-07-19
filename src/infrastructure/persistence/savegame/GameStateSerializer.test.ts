@@ -416,6 +416,59 @@ describe('GameStateSerializer', () => {
       expect(building?.getStatus()).toBe(BuildingStatus.ACTIVE);
     });
 
+    it('assigns default region when snapshot omits regionId', () => {
+      const parseResult = serializer.parse(
+        createMinimalSnapshot({
+          companies: Object.freeze([
+            Object.freeze({
+              id: 'company_001',
+              name: 'Genesis Industries',
+              ownerId: 'player_001',
+              foundedAt: 0,
+              status: 'ACTIVE',
+            }),
+          ]),
+          buildings: Object.freeze([
+            Object.freeze({
+              id: 'building_001',
+              buildingTypeId: 'warehouse',
+              companyId: 'company_001',
+              name: 'Starter Warehouse',
+              position: Object.freeze({ x: 1, y: 1 }),
+              level: 1,
+              createdAt: 0,
+              status: BuildingStatus.ACTIVE,
+              constructionDuration: 0,
+              constructionProgress: 100,
+              constructionStartTime: undefined,
+              constructionEndTime: 0,
+            }),
+          ]),
+        }),
+      );
+
+      expect(parseResult.ok).toBe(true);
+
+      if (!parseResult.ok) {
+        return;
+      }
+
+      const target = createEmptyHydrateTarget();
+      const hydrateResult = serializer.hydrate(parseResult.value, target);
+
+      expect(hydrateResult.ok).toBe(true);
+
+      const buildingId = createBuildingId('building_001');
+
+      if (!buildingId.ok) {
+        throw new Error(buildingId.error.message);
+      }
+
+      const building = target.buildingRepository.findById(buildingId.value);
+
+      expect(building?.getRegionId().value).toBe('region_default');
+    });
+
     it('restores tick metrics history into the target history service', () => {
       const parseResult = serializer.parse(
         createMinimalSnapshot({
@@ -712,6 +765,7 @@ describe('GameStateSerializer', () => {
       );
       expect(finance?.getCashBalance()).toBe(STARTING_MONEY - 5000);
       expect(building?.getName()).toBe('Northern Sawmill');
+      expect(building?.getRegionId().value).toBe('region_default');
       expect(building?.getPosition().x).toBe(2);
       expect(building?.getPosition().y).toBe(3);
       expect(building?.getStatus()).toBe(BuildingStatus.UNDER_CONSTRUCTION);

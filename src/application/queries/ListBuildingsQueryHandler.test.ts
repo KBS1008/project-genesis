@@ -9,6 +9,7 @@ import { InMemoryInventoryRepository } from '../../infrastructure/persistence/In
 import { ManualClock } from '../../common/time/ManualClock.js';
 import { InMemoryEventBus } from '../../common/events/InMemoryEventBus.js';
 import { validateGameContent } from '../../content/validateGameContent.js';
+import { bootstrapWorldFromContent } from '../../../tests/helpers/bootstrapWorldFromContent.js';
 import { createCompanyId } from '../../domain/company/Company.js';
 import { createMilestoneId } from '../../domain/milestone/MilestoneId.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
@@ -25,6 +26,8 @@ async function createContext(clock = new ManualClock(100)) {
   if (!contentResult.ok) {
     throw new Error(contentResult.error.message);
   }
+
+  const { regionRepository } = bootstrapWorldFromContent(contentResult.value);
 
   const companyRepository = new InMemoryCompanyRepository();
   const buildingRepository = new InMemoryBuildingRepository();
@@ -50,6 +53,7 @@ async function createContext(clock = new ManualClock(100)) {
     financeRepository,
     companyResearchRepository,
     companyMilestonesRepository,
+    regionRepository,
     simulationEngine,
     gameContent: contentResult.value,
   });

@@ -64,6 +64,7 @@ function mapBuilding(building: Building): BuildingReadModel {
     id: building.getId().value,
     buildingTypeId: building.getBuildingTypeId().value,
     companyId: building.getCompanyId().value,
+    regionId: building.getRegionId().value,
     name: building.getName(),
     x: position.x,
     y: position.y,

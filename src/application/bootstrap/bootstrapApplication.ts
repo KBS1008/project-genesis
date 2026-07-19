@@ -24,8 +24,12 @@ import type { EmployeeRepository } from '../../domain/employee/EmployeeRepositor
 import type { SupplyContractRepository } from '../../domain/contract/SupplyContractRepository.js';
 import type { WorldRepository } from '../../domain/world/WorldRepository.js';
 import type { RegionRepository } from '../../domain/region/RegionRepository.js';
+import type { CityRepository } from '../../domain/city/CityRepository.js';
+import type { WorldMapRepository } from '../../domain/world/WorldMapRepository.js';
 import { InMemoryWorldRepository } from '../../infrastructure/persistence/InMemoryWorldRepository.js';
 import { InMemoryRegionRepository } from '../../infrastructure/persistence/InMemoryRegionRepository.js';
+import { InMemoryCityRepository } from '../../infrastructure/persistence/InMemoryCityRepository.js';
+import { InMemoryWorldMapRepository } from '../../infrastructure/persistence/InMemoryWorldMapRepository.js';
 import { InMemoryBuildingRepository } from '../../infrastructure/persistence/InMemoryBuildingRepository.js';
 import { InMemoryBuildingStorageRepository } from '../../infrastructure/persistence/InMemoryBuildingStorageRepository.js';
 import { InMemoryTransportOrderRepository } from '../../infrastructure/persistence/InMemoryTransportOrderRepository.js';
@@ -77,6 +81,8 @@ export type BootstrapOptions = {
   readonly supplyContractRepository?: SupplyContractRepository;
   readonly worldRepository?: WorldRepository;
   readonly regionRepository?: RegionRepository;
+  readonly cityRepository?: CityRepository;
+  readonly worldMapRepository?: WorldMapRepository;
 };
 
 /**
@@ -115,6 +121,8 @@ export async function bootstrapApplication(
     options.supplyContractRepository ?? new InMemorySupplyContractRepository();
   const worldRepository = options.worldRepository ?? new InMemoryWorldRepository();
   const regionRepository = options.regionRepository ?? new InMemoryRegionRepository();
+  const cityRepository = options.cityRepository ?? new InMemoryCityRepository();
+  const worldMapRepository = options.worldMapRepository ?? new InMemoryWorldMapRepository();
   const clock = new ManualClock(0);
   const eventBus = new InMemoryEventBus();
 
@@ -147,6 +155,8 @@ export async function bootstrapApplication(
   const worldBootstrapService = new WorldBootstrapService({
     worldRepository,
     regionRepository,
+    cityRepository,
+    worldMapRepository,
   });
   const bootstrapWorldResult = worldBootstrapService.bootstrap(contentResult.value);
 
@@ -252,6 +262,8 @@ export async function bootstrapApplication(
     recipes: contentResult.value.recipes.size,
     worlds: contentResult.value.worlds.size,
     regions: contentResult.value.regions.size,
+    cities: contentResult.value.cities.size,
+    maps: contentResult.value.maps.size,
     tickNumber: simulationEngine.state.tickNumber,
   });
 
@@ -274,6 +286,8 @@ export async function bootstrapApplication(
     supplyContractRepository,
     worldRepository,
     regionRepository,
+    cityRepository,
+    worldMapRepository,
     productionInventoryService,
     marketTradeService,
     energyBalanceService,
