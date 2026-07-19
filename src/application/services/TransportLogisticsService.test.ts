@@ -118,6 +118,7 @@ describe('TransportLogisticsService integration', () => {
       name: 'Steel Smelter',
       x: 2,
       y: 0,
+      regionId: 'region_east',
     });
 
     for (const buildingId of ['building_001', 'building_002', 'building_003']) {
@@ -234,6 +235,7 @@ describe('TransportLogisticsService integration', () => {
         name,
         x,
         y: 0,
+        regionId: 'region_east',
       });
     }
 

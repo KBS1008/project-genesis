@@ -306,6 +306,44 @@ describe('StartProductionUseCase', () => {
     expect(result.ok).toBe(false);
   });
 
+  it('rejects production when recipe inputs are not regionally available', async () => {
+    const context = await createContext();
+    const createCompany = new CreateCompanyUseCase(context);
+    const placeBuilding = new PlaceBuildingUseCase(context);
+    const startProduction = new StartProductionUseCase(context);
+
+    createCompany.execute({
+      companyId: 'company_001',
+      name: 'Genesis Industries',
+      ownerId: 'player_001',
+    });
+    addWoodStock(context, 'company_001', 10);
+
+    placeBuilding.execute({
+      buildingId: 'building_001',
+      buildingTypeId: 'sawmill',
+      companyId: 'company_001',
+      name: 'Eastern Sawmill',
+      x: 0,
+      y: 0,
+      regionId: 'region_east',
+    });
+    activateBuilding(context, 'building_001');
+
+    const result = startProduction.execute({
+      jobId: 'job_001',
+      buildingId: 'building_001',
+      recipeId: 'recipe_planks',
+    });
+
+    expect(result.ok).toBe(false);
+
+    if (!result.ok) {
+      expect(result.error.message).toContain('wood');
+      expect(result.error.message).toContain('region_east');
+    }
+  });
+
   it('publishes production events and transfers inventory when the job completes', async () => {
     const context = await createContext();
     const createCompany = new CreateCompanyUseCase(context);

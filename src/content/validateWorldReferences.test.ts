@@ -153,4 +153,41 @@ describe('validateWorldReferences', () => {
 
     expect(result.ok).toBe(false);
   });
+
+  it('rejects unknown resource types in regionalResources', () => {
+    const graph = createValidWorldGraph();
+
+    void graph.regions.register(
+      new RegionDefinition({
+        id: 'region_bad_resources',
+        name: 'Bad Resources Region',
+        description: 'Region with invalid resource reference.',
+        worldId: 'world_test',
+        biomeId: 'biome_test',
+        mapPosition: { x: 1, y: 0 },
+        neighborRegionIds: [],
+        cityIds: [],
+        regionalResources: [
+          {
+            resourceTypeId: 'missing_resource',
+            available: true,
+            extractionModifier: 1,
+          },
+        ],
+        enabled: true,
+        version: 1,
+      }),
+    );
+
+    const result = validateWorldReferences(
+      graph.worlds,
+      graph.regions,
+      graph.biomes,
+      graph.maps,
+      graph.cities,
+      graph.resourceTypes,
+    );
+
+    expect(result.ok).toBe(false);
+  });
 });

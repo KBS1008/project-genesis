@@ -14,6 +14,7 @@ import { BuildingStatus } from '../../domain/building/BuildingStatus.js';
 import { BuildingSupportsRecipeSpecification } from '../../domain/specifications/production/BuildingSupportsRecipeSpecification.js';
 import { RequiredResearchSpecification } from '../../domain/specifications/research/RequiredResearchSpecification.js';
 import { RequiredMilestonesSpecification } from '../../domain/specifications/research/RequiredMilestonesSpecification.js';
+import { RegionalResourceAvailabilityPolicy } from '../../domain/policies/world/RegionalResourceAvailabilityPolicy.js';
 import type { ApplicationContext } from '../bootstrap/ApplicationContext.js';
 import type { StartProductionCommand } from '../commands/StartProductionCommand.js';
 
@@ -22,6 +23,7 @@ export type StartProductionUseCaseDependencies = Pick<
   ApplicationContext,
   | 'clock'
   | 'buildingRepository'
+  | 'regionRepository'
   | 'productionJobRepository'
   | 'simulationEngine'
   | 'gameContent'
@@ -39,6 +41,7 @@ export type StartProductionUseCaseDependencies = Pick<
 export class StartProductionUseCase {
   readonly #clock: StartProductionUseCaseDependencies['clock'];
   readonly #buildingRepository: StartProductionUseCaseDependencies['buildingRepository'];
+  readonly #regionRepository: StartProductionUseCaseDependencies['regionRepository'];
   readonly #productionJobRepository: StartProductionUseCaseDependencies['productionJobRepository'];
   readonly #simulationEngine: StartProductionUseCaseDependencies['simulationEngine'];
   readonly #gameContent: StartProductionUseCaseDependencies['gameContent'];
@@ -58,6 +61,7 @@ export class StartProductionUseCase {
   constructor(dependencies: StartProductionUseCaseDependencies) {
     this.#clock = dependencies.clock;
     this.#buildingRepository = dependencies.buildingRepository;
+    this.#regionRepository = dependencies.regionRepository;
     this.#productionJobRepository = dependencies.productionJobRepository;
     this.#simulationEngine = dependencies.simulationEngine;
     this.#gameContent = dependencies.gameContent;
@@ -121,6 +125,25 @@ export class StartProductionUseCase {
 
     if (!recipe.enabled) {
       return Result.fail(new ValidationError(`Recipe id "${recipeId.value}" is disabled.`));
+    }
+
+    const region = this.#regionRepository.findById(building.getRegionId());
+
+    if (region === undefined) {
+      return Result.fail(
+        new ValidationError(
+          `Region id "${building.getRegionId().value}" for building "${buildingId.value}" was not found.`,
+        ),
+      );
+    }
+
+    const regionalResourcesResult = RegionalResourceAvailabilityPolicy.validateRecipeInputs(
+      region,
+      recipe.inputs,
+    );
+
+    if (!regionalResourcesResult.ok) {
+      return Result.fail(regionalResourcesResult.error);
     }
 
     const supportsRecipeResult = this.#buildingSupportsRecipeSpecification.isSatisfiedBy(
