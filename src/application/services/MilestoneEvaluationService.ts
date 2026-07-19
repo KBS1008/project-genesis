@@ -14,16 +14,15 @@ import type { FinanceTransactionRecorded } from '../../domain/finance/events/Fin
 import type { CompanyMilestones } from '../../domain/milestone/CompanyMilestones.js';
 import type { CompanyMilestonesRepository } from '../../domain/milestone/CompanyMilestonesRepository.js';
 import { createMilestoneId } from '../../domain/milestone/MilestoneId.js';
+import { MilestoneTriggerType } from '../../domain/milestone/MilestoneTrigger.js';
+import { MilestoneTriggerPolicy } from '../../domain/policies/milestone/MilestoneTriggerPolicy.js';
 import type { ProductionJobRepository } from '../../domain/production/ProductionJobRepository.js';
 import { ProductionJobStatus } from '../../domain/production/ProductionJobStatus.js';
 import type { ProductionCompleted } from '../../domain/production/events/ProductionCompleted.js';
 import type { MilestoneRegistry } from '../../content/milestone/MilestoneRegistry.js';
-import {
-  MilestoneTriggerType,
-  type MilestoneDefinition,
-} from '../../content/milestone/MilestoneDefinition.js';
 import type { ManualClock } from '../../common/time/ManualClock.js';
 import type { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
+import { toMilestoneEvaluationCandidate } from '../mappers/MilestoneDefinitionMapper.js';
 
 /** Dependencies required by {@link MilestoneEvaluationService}. */
 export type MilestoneEvaluationServiceDependencies = {
@@ -104,20 +103,14 @@ export class MilestoneEvaluationService {
     const saleRevenue = this.#sumSaleRevenue(companyId);
 
     for (const milestone of this.#milestones.getAll()) {
-      if (!milestone.enabled) {
-        continue;
-      }
-
-      if (milestone.trigger.type === MilestoneTriggerType.FIRST_SALE) {
-        this.#tryCompleteMilestone(companyMilestones, milestone);
-        continue;
-      }
+      const candidate = toMilestoneEvaluationCandidate(milestone);
 
       if (
-        milestone.trigger.type === MilestoneTriggerType.PROFIT_THRESHOLD &&
-        saleRevenue >= milestone.trigger.amount
+        MilestoneTriggerPolicy.isFinanceTriggerMet(candidate, {
+          cumulativeSaleRevenue: saleRevenue,
+        })
       ) {
-        this.#tryCompleteMilestone(companyMilestones, milestone);
+        this.#tryCompleteMilestone(companyMilestones, candidate.milestoneId);
       }
     }
 
@@ -132,14 +125,23 @@ export class MilestoneEvaluationService {
     }
 
     for (const milestone of this.#milestones.getAll()) {
-      if (!milestone.enabled || milestone.trigger.type !== MilestoneTriggerType.PRODUCTION_VOLUME) {
+      const candidate = toMilestoneEvaluationCandidate(milestone);
+
+      if (candidate.trigger.type !== MilestoneTriggerType.PRODUCTION_VOLUME) {
         continue;
       }
 
-      const completedCount = this.#countFinishedProduction(companyId, milestone.trigger.recipeId);
+      const finishedProductionCount = this.#countFinishedProduction(
+        companyId,
+        candidate.trigger.recipeId,
+      );
 
-      if (completedCount >= milestone.trigger.count) {
-        this.#tryCompleteMilestone(companyMilestones, milestone);
+      if (
+        MilestoneTriggerPolicy.isProductionTriggerMet(candidate, {
+          finishedProductionCount,
+        })
+      ) {
+        this.#tryCompleteMilestone(companyMilestones, candidate.milestoneId);
       }
     }
 
@@ -157,15 +159,12 @@ export class MilestoneEvaluationService {
     this.#simulationEngine.enqueueEvents(events);
   }
 
-  #tryCompleteMilestone(
-    companyMilestones: CompanyMilestones,
-    milestone: MilestoneDefinition,
-  ): void {
-    if (companyMilestones.hasCompletedMilestone(milestone.id)) {
+  #tryCompleteMilestone(companyMilestones: CompanyMilestones, milestoneId: string): void {
+    if (companyMilestones.hasCompletedMilestone(milestoneId)) {
       return;
     }
 
-    const milestoneIdResult = createMilestoneId(milestone.id);
+    const milestoneIdResult = createMilestoneId(milestoneId);
 
     if (!milestoneIdResult.ok) {
       return;
