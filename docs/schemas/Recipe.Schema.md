@@ -1,503 +1,500 @@
-# Recipe Schema
+# Recipe.schema.md
 
-> Definiert das Datenmodell eines Produktionsrezepts.
-
-Version: 1.0
-
----
-
-# Zweck
-
-Ein Rezept beschreibt **wie** ein Produkt hergestellt wird.
-
-Gebäude produzieren keine Produkte.
-
-Gebäude stellen lediglich Produktionskapazität bereit.
-
-Das Rezept definiert:
-
-- benötigte Rohstoffe
-- erzeugte Produkte
-- Produktionsdauer
-- Energiebedarf
-- Mitarbeiterbedarf
-- Voraussetzungen
-
-Dadurch kann jedes Gebäude mehrere Rezepte ausführen.
+**Version:** 1.0
+**Status:** Active
+**Asset Type:** Recipe
+**Schema Version:** 1
 
 ---
 
-# Grundprinzip
+# Purpose
 
-```
-Gebäude
+Dieses Dokument definiert das kanonische Schema für alle Recipe-Assets in Project Genesis.
 
-↓
+Recipes beschreiben statische Produktions- und Verarbeitungsdefinitionen.
 
-Rezept auswählen
+Sie definieren insbesondere:
 
-↓
+* benötigte Eingangsressourcen
+* erzeugte Ausgangsressourcen
+* Produktionsmenge
+* Produktionszeit
+* benötigte Gebäude
+* benötigte Mitarbeiter
+* Energiebedarf
+* optionale Voraussetzungen
 
-Input prüfen
+Die tatsächliche Ausführung eines Recipes gehört zur Domain- und Simulationsebene.
 
-↓
+Das Schema dient als Grundlage für:
 
-Produktion starten
-
-↓
-
-Produktionszeit
-
-↓
-
-Output erzeugen
-```
-
----
-
-# Schema
-
-```yaml
-id:
-
-name:
-
-description:
-
-version:
-
-category:
-
-buildingTypes:
-
-inputs:
-
-outputs:
-
-duration:
-
-energy:
-
-workers:
-
-requiredResearch:
-
-requiredBuildings:
-
-requiredMilestones:
-
-requiredResources:
-
-maintenanceCost:
-
-productionCost:
-
-experience:
-
-tags:
-
-enabled:
-```
+* JSON-Assets
+* Asset Registry
+* Content Pipeline
+* Validierung
+* Produktionssystem
+* Editor
+* Modding
+* Savegame-Kompatibilität
 
 ---
 
-# Feldbeschreibung
+# Asset Identity
 
-## id
+Jedes Recipe besitzt eine eindeutige Asset-ID.
 
-Eindeutige technische ID.
-
-Beispiel
+Beispiele:
 
 ```text
-RECIPE_PLANKS
+recipe.steel
+recipe.copper_wire
+recipe.plastic_components
+recipe.electric_motor
+recipe.fuel
 ```
 
+Die Asset-ID bleibt über die gesamte Lebensdauer eines Assets stabil.
+
 ---
 
-## name
+# Required Fields
 
-Anzeigename.
+| Feld        | Typ     | Beschreibung                 |
+| ----------- | ------- | ---------------------------- |
+| id          | string  | Eindeutige Asset-ID          |
+| version     | integer | Asset-Version                |
+| displayName | string  | Anzeigename                  |
+| category    | string  | Rezeptkategorie              |
+| description | string  | Beschreibung                 |
+| duration    | number  | Produktionsdauer             |
+| inputs      | object  | Benötigte Eingangsressourcen |
+| outputs     | object  | Erzeugte Ausgangsressourcen  |
 
-```text
-Bretter herstellen
+---
+
+# Optional Fields
+
+| Feld                 | Typ    |
+| -------------------- | ------ |
+| icon                 | string |
+| localizationKey      | string |
+| tags                 | array  |
+| requirements         | object |
+| buildingRequirements | object |
+| workforce            | object |
+| energy               | object |
+| byproducts           | object |
+| quality              | object |
+| productionModifiers  | object |
+
+---
+
+# Recipe Categories
+
+Empfohlene Kategorien:
+
+```yaml id="h5cs17"
+processing
+manufacturing
+assembly
+refining
+chemical
+energy
+food
+construction
+recycling
+special
 ```
 
----
-
-## description
-
-Beschreibung für UI.
+Neue Kategorien können projektspezifisch ergänzt werden.
 
 ---
 
-## version
+# Duration
 
-Versionsnummer des Rezepts.
-
-Ermöglicht spätere Änderungen ohne Datenverlust.
-
----
-
-## category
-
-Mögliche Kategorien:
-
-```text
-WOOD
-
-METAL
-
-CHEMICAL
-
-FOOD
-
-ENERGY
-
-ELECTRONICS
-
-TEXTILE
-
-LOGISTICS
-```
-
----
-
-## buildingTypes
-
-Liste erlaubter Gebäude.
-
-Beispiel
-
-```yaml
-buildingTypes:
-
-- SAWMILL
-```
-
-Ein Rezept kann später von mehreren Gebäuden unterstützt werden.
-
----
-
-## inputs
-
-Liste aller Eingangsprodukte.
-
-Beispiel
-
-```yaml
-inputs:
-
-- resource: WOOD
-  amount: 10
-
-- resource: WATER
-  amount: 5
-```
-
----
-
-## outputs
-
-Liste aller erzeugten Produkte.
-
-```yaml
-outputs:
-
-- resource: PLANKS
-  amount: 20
-```
-
----
-
-## duration
-
-Produktionszeit.
-
-Einheit:
-
-Sekunden
-
-Beispiel
-
-```yaml
-duration: 60
-```
-
----
-
-## energy
-
-Benötigte Energie.
-
-Einheit:
-
-kWh pro Produktionszyklus
-
-```yaml
-energy: 12
-```
-
----
-
-## workers
-
-Benötigte Mitarbeiter.
-
-```yaml
-workers: 2
-```
-
----
-
-## requiredResearch
-
-Notwendige Forschung.
-
-```yaml
-requiredResearch:
-
-- RESEARCH_ADVANCED_SAWING
-```
-
----
-
-## requiredBuildings
-
-Weitere Voraussetzungen.
-
-Beispiel
-
-```yaml
-requiredBuildings:
-
-- WAREHOUSE_LEVEL_2
-```
-
----
-
-## requiredMilestones
-
-Freischaltung über Meilensteine.
-
-```yaml
-requiredMilestones:
-
-- FIRST_1000_PLANKS
-```
-
----
-
-## requiredResources
-
-Besondere Verbrauchsmaterialien.
-
-Optional.
-
----
-
-## maintenanceCost
-
-Wartungskosten pro Produktionszyklus.
-
-```yaml
-maintenanceCost: 3
-```
-
----
-
-## productionCost
-
-Zusätzliche Produktionskosten.
+Die Produktionsdauer wird als numerischer Wert definiert.
 
 Beispiel:
 
-Chemikalien
-
-Werkzeuge
-
-Schmierstoffe
-
----
-
-## experience
-
-Unternehmenserfahrung.
-
-Version 1
-
-Optional.
-
----
-
-## tags
-
-Freie Tags.
-
-Beispiel
-
-```yaml
-tags:
-
-- WOOD
-
-- BASIC
-
-- EARLY_GAME
+```yaml id="xk5cm3"
+duration: 30
 ```
 
+Die Einheit muss mit der zentralen Zeitdefinition der Simulation übereinstimmen.
+
+Das Recipe definiert keine eigene Zeitlogik.
+
+Die Simulation bestimmt, wie die Dauer in Simulations-Ticks oder Zeitintervalle übersetzt wird.
+
 ---
 
-## enabled
+# Inputs
 
-Aktiviert oder deaktiviert Rezept.
+Eingangsressourcen werden über Asset-IDs referenziert.
+
+Beispiel:
+
+```yaml id="c5t0j7"
+inputs:
+  resource.iron_ore: 100
+  resource.coal: 20
+```
+
+Die angegebenen Werte definieren die benötigte Menge pro Produktionszyklus.
+
+Alle Ressourcenreferenzen müssen gültige Resource-Assets sein.
 
 ---
 
-# Vollständiges Beispiel
+# Outputs
 
-```yaml
-id: RECIPE_PLANKS
+Ausgangsressourcen werden über Asset-IDs definiert.
 
-name: Bretter herstellen
+Beispiel:
 
-description: Verarbeitung von Holz zu Brettern.
+```yaml id="y6t9oc"
+outputs:
+  resource.steel: 80
+```
+
+Die angegebenen Werte definieren die Produktionsmenge pro vollständigem Produktionszyklus.
+
+---
+
+# Byproducts
+
+Ein Recipe kann optionale Nebenprodukte erzeugen.
+
+Beispiel:
+
+```yaml id="dr3k0m"
+byproducts:
+  resource.slag: 10
+```
+
+Nebenprodukte werden genauso wie reguläre Outputs über Asset-IDs referenziert.
+
+---
+
+# Building Requirements
+
+Ein Recipe kann auf bestimmte Gebäude oder Gebäudekategorien beschränkt sein.
+
+Beispiel:
+
+```yaml id="n0t7j1"
+buildingRequirements:
+  buildings:
+    - building.smelter
+
+  categories:
+    - production
+```
+
+Die tatsächliche Prüfung, ob ein Gebäude aktuell verfügbar und betriebsbereit ist, erfolgt in der Domain-/Simulationsebene.
+
+---
+
+# Workforce
+
+Ein Recipe kann Anforderungen an Mitarbeiter definieren.
+
+Beispiel:
+
+```yaml id="g8y0l3"
+workforce:
+  minimum: 1
+
+  requiredEmployees:
+    - employee.engineer.basic
+```
+
+Mitarbeiterreferenzen erfolgen ausschließlich über Asset-IDs.
+
+Die tatsächliche Zuweisung von Mitarbeitern gehört zum dynamischen Spielzustand.
+
+---
+
+# Energy
+
+Ein Recipe kann einen Energiebedarf definieren.
+
+Beispiel:
+
+```yaml id="t7p4k2"
+energy:
+  consumption:
+    resource: resource.electricity
+    amount: 50
+```
+
+Die tatsächliche Verfügbarkeit und Bilanzierung der Energie wird durch das Energy-System der Domain/Simulation bestimmt.
+
+---
+
+# Requirements
+
+Ein Recipe kann allgemeine Voraussetzungen besitzen.
+
+Beispiel:
+
+```yaml id="p3s9m6"
+requirements:
+  research:
+    - technology.basic_metallurgy
+
+  buildings:
+    - building.smelter
+```
+
+Alle Referenzen erfolgen ausschließlich über Asset-IDs.
+
+---
+
+# Production Modifiers
+
+Optional können statische Modifikatoren definiert werden.
+
+Beispiel:
+
+```yaml id="v4j2r8"
+productionModifiers:
+  temperature:
+    optimal: 1200
+    tolerance: 100
+
+  efficiency:
+    base: 1.0
+```
+
+Solche Werte definieren ausschließlich statische Parameter.
+
+Die Berechnung der tatsächlichen Produktionsleistung erfolgt in der Domain-/Simulationsebene.
+
+---
+
+# Quality
+
+Recipes können optionale Qualitätsdefinitionen besitzen.
+
+Beispiel:
+
+```yaml id="m1w8q5"
+quality:
+  enabled: true
+
+  baseQuality: 1.0
+
+  minimum: 0.5
+  maximum: 1.5
+```
+
+Qualitätsberechnungen und deren Auswirkungen gehören zur Domain-/Simulationsebene.
+
+---
+
+# Asset References
+
+Ein Recipe darf referenzieren:
+
+* Resources
+* Buildings
+* Employees
+* Technologies
+* Research
+* Effects
+
+Alle Referenzen erfolgen ausschließlich über Asset-IDs.
+
+---
+
+# Localization
+
+Anzeigenamen und Beschreibungen sollen über Lokalisierungsschlüssel referenziert werden.
+
+Beispiel:
+
+```yaml id="b2v6n9"
+localizationKey:
+  recipe.steel
+```
+
+Die konkrete Lokalisierung wird außerhalb des Recipe-Assets verwaltet.
+
+---
+
+# Validation Rules
+
+Ein Recipe ist gültig, wenn:
+
+* eine eindeutige Asset-ID vorhanden ist
+* die Version gültig ist
+* eine Kategorie definiert wurde
+* die Produktionsdauer größer als 0 ist
+* mindestens ein Input oder Output vorhanden ist
+* alle Input-Mengen größer als 0 sind
+* alle Output-Mengen größer als 0 sind
+* alle Ressourcenreferenzen gültig sind
+* alle Gebäude-, Mitarbeiter- und Technologie-Referenzen gültig sind
+
+Ein Recipe darf keine zirkulären oder ungültigen Referenzen enthalten.
+
+Ungültige Recipes dürfen nicht registriert oder geladen werden.
+
+---
+
+# Production Cycle
+
+Ein Recipe beschreibt einen vollständigen Produktionszyklus.
+
+Beispiel:
+
+```yaml id="f5n3d7"
+duration: 30
+
+inputs:
+  resource.iron_ore: 100
+  resource.coal: 20
+
+outputs:
+  resource.steel: 80
+```
+
+Die Simulation interpretiert dies als:
+
+```text
+Start Production
+        ↓
+Inputs prüfen
+        ↓
+Inputs reservieren / verbrauchen
+        ↓
+Production läuft
+        ↓
+Duration erreicht
+        ↓
+Outputs erzeugen
+```
+
+Die konkrete Prozesssteuerung gehört nicht zum Asset-Schema.
+
+---
+
+# Runtime State Separation
+
+Das Recipe-Asset enthält ausschließlich statische Produktionsdefinitionen.
+
+Nicht Bestandteil dieses Schemas sind:
+
+* aktueller Produktionsfortschritt
+* aktuelle Produktionscharge
+* reservierte Ressourcen
+* tatsächlich verbrauchte Ressourcen
+* aktuell zugewiesene Mitarbeiter
+* aktueller Energieverbrauch
+* Produktionsfehler
+* Produktionshistorie
+* aktuelle Produktionskapazität
+
+Diese Daten gehören zum dynamischen Spielzustand.
+
+---
+
+# Versioning
+
+Schemaänderungen erhöhen die Schema-Version.
+
+Änderungen an einzelnen Recipe-Assets erhöhen deren Asset-Version.
+
+Die Asset-ID bleibt unverändert.
+
+---
+
+# Example
+
+```yaml id="n8q2s4"
+id: recipe.steel
 
 version: 1
 
-category: WOOD
+displayName: Steel Production
 
-buildingTypes:
+category: processing
 
-  - SAWMILL
+description: Processes iron ore and coal into steel.
+
+duration: 30
 
 inputs:
-
-  - resource: WOOD
-    amount: 10
+  resource.iron_ore: 100
+  resource.coal: 20
 
 outputs:
+  resource.steel: 80
 
-  - resource: PLANKS
-    amount: 20
+byproducts:
+  resource.slag: 10
 
-duration: 60
+buildingRequirements:
+  buildings:
+    - building.smelter
 
-energy: 12
+workforce:
+  minimum: 1
 
-workers: 2
+  requiredEmployees:
+    - employee.engineer.basic
 
-requiredResearch: []
+energy:
+  consumption:
+    resource: resource.electricity
+    amount: 50
 
-requiredBuildings: []
-
-requiredMilestones: []
-
-requiredResources: []
-
-maintenanceCost: 2
-
-productionCost: 1
-
-experience: 5
+requirements:
+  research:
+    - technology.basic_metallurgy
 
 tags:
-
-  - BASIC
-
-  - WOOD
-
-enabled: true
+  - production
+  - metallurgy
+  - steel
 ```
 
 ---
 
-# Designregeln
+# Compatibility
 
-✔ Jedes Rezept besitzt mindestens einen Input.
+Dieses Schema ist kompatibel mit:
 
-✔ Jedes Rezept besitzt mindestens einen Output.
-
-✔ Produktionsdauer ist immer größer als 0.
-
-✔ Ressourcen werden niemals negativ.
-
-✔ Ein Rezept kennt keine Preise.
-
-✔ Ein Rezept kennt keinen Markt.
-
-✔ Ein Rezept kennt keinen Spieler.
-
-✔ Ein Rezept kennt kein Gebäudeobjekt.
-
-Nur den Gebäudetyp.
+* ASSET_ID_SYSTEM.md
+* ASSET_VERSIONING.md
+* REGISTRY_SCHEMA.md
+* GLOBAL_ASSET_REGISTRY.md
+* CONTENT_PIPELINE.md
+* Employee.schema.md
+* Vehicle.schema.md
+* Resource.schema.md
+* Building.schema.md
 
 ---
 
-# Balancing
+# Future Extensions
 
-Rezepte definieren ausschließlich Produktionsparameter.
+Geplante Erweiterungen:
 
-Preisbildung erfolgt ausschließlich durch den Markt.
-
-Gebäude definieren Kapazität.
-
-Mitarbeiter definieren Effizienz.
-
-Forschung erweitert Rezepte.
-
-Automatisierung steuert die Nutzung.
-
----
-
-# Versionierung
-
-Rezepte dürfen später erweitert werden.
-
-Neue Felder müssen optional sein.
-
-Bestehende Spielstände dürfen niemals ungültig werden.
-
----
-
-# Beziehungen
-
-```
-Recipe
-
-├── benötigt → Resources
-
-├── produziert → Resources
-
-├── läuft in → BuildingType
-
-├── benötigt → Research
-
-├── erzeugt → Events
-
-├── verbraucht → Energy
-
-└── wird genutzt von → ProductionQueue
-```
-
----
-
-# Definition of Done
-
-Ein Rezept ist vollständig definiert, wenn:
-
-- alle Eingaben bekannt sind
-- alle Ausgaben bekannt sind
-- Dauer definiert ist
-- Energie definiert ist
-- Mitarbeiter definiert sind
-- Voraussetzungen definiert sind
-- Version gesetzt ist
-
----
-
-# Leitsatz
-
-> "Gebäude stellen Kapazität bereit. Rezepte erschaffen Wert."
-
-Das Rezept ist die kleinste wirtschaftliche Einheit in Project Genesis.
+* Produktionsvarianten
+* alternative Input-Ressourcen
+* Rezept-Substitution
+* Batch Production
+* Produktionsqualität
+* Ausschuss
+* Recycling
+* Nebenprodukte
+* dynamische Produktionsmodifikatoren
+* Produktionsketten
+* Multi-Stage Recipes
+* Machine Requirements
+* Skill Requirements
+* Recipe Unlocks
+* Tech Tree Integration
+* Recipe Upgrades

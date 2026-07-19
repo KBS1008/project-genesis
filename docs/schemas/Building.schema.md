@@ -1,583 +1,542 @@
-# Building Schema
+# Building.schema.md
 
-> Definiert das Datenmodell aller Gebäude in Project Genesis.
-
-Version: 1.0
-
----
-
-# Zweck
-
-Gebäude bilden die physische Infrastruktur eines Unternehmens.
-
-Ein Gebäude besitzt keine wirtschaftliche Logik.
-
-Es stellt lediglich Kapazität, Funktionen und Eigenschaften bereit.
-
-Die eigentliche Produktion wird vollständig durch Rezepte definiert.
+**Version:** 1.0
+**Status:** Active
+**Asset Type:** Building
+**Schema Version:** 1
 
 ---
 
-# Grundprinzip
+# Purpose
 
+Dieses Dokument definiert das kanonische Schema für alle Gebäude-Assets in Project Genesis.
+
+Gebäude bilden einen zentralen Bestandteil der Spielwelt und können unter anderem folgende Funktionen erfüllen:
+
+* Produktion
+* Lagerung
+* Energieversorgung
+* Transport und Logistik
+* Forschung
+* Verwaltung
+* Personalversorgung
+* Infrastruktur
+
+Alle statischen Gebäudedefinitionen müssen diesem Schema entsprechen.
+
+Das Schema dient als Grundlage für:
+
+* JSON-Assets
+* Asset Registry
+* Content Pipeline
+* Validierung
+* Editor
+* Modding
+* Savegame-Kompatibilität
+
+---
+
+# Asset Identity
+
+Jedes Gebäude besitzt eine eindeutige Asset-ID.
+
+Beispiele:
+
+```text
+building.iron_mine
+building.smelter
+building.warehouse
+building.power_plant
+building.research_lab
+building.vehicle_depot
 ```
-Gebäude
 
-↓
-
-stellt Kapazität bereit
-
-↓
-
-führt Rezepte aus
-
-↓
-
-erzeugt Produktion
-
-↓
-
-Produkte gelangen ins Lager
-```
+Die Asset-ID bleibt über die gesamte Lebensdauer eines Assets stabil.
 
 ---
 
-# Schema
+# Required Fields
+
+| Feld             | Typ     | Beschreibung             |
+| ---------------- | ------- | ------------------------ |
+| id               | string  | Eindeutige Asset-ID      |
+| version          | integer | Asset-Version            |
+| displayName      | string  | Anzeigename              |
+| category         | string  | Gebäudekategorie         |
+| buildingType     | string  | Konkreter Gebäudetyp     |
+| description      | string  | Beschreibung             |
+| constructionCost | object  | Baukosten                |
+| constructionTime | number  | Bauzeit                  |
+| maintenanceCost  | number  | Laufende Wartungskosten  |
+| footprint        | object  | Platzbedarf des Gebäudes |
+
+---
+
+# Optional Fields
+
+| Feld            | Typ    |
+| --------------- | ------ |
+| icon            | string |
+| model           | string |
+| localizationKey | string |
+| tags            | array  |
+| requirements    | object |
+| workforce       | object |
+| production      | object |
+| storage         | object |
+| energy          | object |
+| logistics       | object |
+| research        | object |
+| upgrades        | array  |
+
+---
+
+# Building Categories
+
+Empfohlene Kategorien:
 
 ```yaml
-id:
+production
+storage
+energy
+logistics
+transport
+research
+administration
+residential
+infrastructure
+special
+```
 
-buildingType:
+Neue Kategorien können projektspezifisch ergänzt werden.
 
-playerId:
+---
 
-name:
+# Building Type
 
-status:
+Der `buildingType` beschreibt die konkrete fachliche Funktion.
 
-level:
+Beispiele:
 
-position:
+```yaml
+buildingType: mine
+buildingType: smelter
+buildingType: warehouse
+buildingType: power_plant
+buildingType: research_lab
+buildingType: vehicle_depot
+```
 
-rotation:
+Die Kategorie beschreibt die übergeordnete Einordnung.
 
-health:
+Der `buildingType` beschreibt die konkrete Funktion.
 
-efficiency:
+---
 
-productionLines:
+# Construction Cost
 
-installedModules:
+Baukosten werden über Ressourcen-Asset-IDs definiert.
 
-connectedRoads:
+Beispiel:
 
-connectedPower:
+```yaml
+constructionCost:
+  resource.iron_ore: 500
+  resource.steel: 200
+  resource.copper: 50
+```
 
+Alle Ressourcenreferenzen müssen gültige Asset-IDs sein.
+
+---
+
+# Footprint
+
+Der Platzbedarf wird über ein standardisiertes Footprint-Objekt definiert.
+
+Beispiel:
+
+```yaml
+footprint:
+  width: 4
+  height: 3
+```
+
+Die Einheiten entsprechen den im Spiel definierten Welt- oder Grid-Einheiten.
+
+---
+
+# Workforce
+
+Ein Gebäude kann Mitarbeiter benötigen.
+
+Beispiel:
+
+```yaml
+workforce:
+  required:
+    - employee.engineer.basic
+    - employee.logistics.operator
+
+  minimum: 2
+  maximum: 10
+```
+
+Mitarbeiter werden ausschließlich über Asset-IDs referenziert.
+
+Die tatsächliche Mitarbeiterzuweisung gehört zum dynamischen Spielzustand und nicht zum Asset.
+
+---
+
+# Production
+
+Produktionsgebäude können Produktionsrezepte referenzieren.
+
+Beispiel:
+
+```yaml
+production:
+  recipes:
+    - recipe.steel
+
+  inputResources:
+    - resource.iron_ore
+    - resource.coal
+
+  outputResources:
+    - resource.steel
+```
+
+Die eigentliche Produktionslogik wird durch das Domain-Modell und die Production-/Recipe-Systeme implementiert.
+
+Das Building-Asset definiert lediglich die statischen Fähigkeiten.
+
+---
+
+# Storage
+
+Gebäude können Lagerkapazitäten bereitstellen.
+
+Beispiel:
+
+```yaml
 storage:
+  capacity: 5000
 
-maintenance:
+  allowedCategories:
+    - raw_material
+    - processed_material
 
-construction:
-
-upgrades:
-
-statistics:
-
-createdAt:
-
-updatedAt:
+  allowedResources:
+    - resource.iron_ore
+    - resource.steel
 ```
 
----
-
-# Feldbeschreibung
-
-## id
-
-Eindeutige Gebäude-ID.
-
-Beispiel
-
-```text
-BUILDING-00001234
-```
+Alle Ressourcenreferenzen müssen gültige Asset-IDs sein.
 
 ---
 
-## buildingType
+# Energy
 
-Technischer Gebäudetyp.
+Gebäude können Energie verbrauchen oder erzeugen.
 
-Beispiele
-
-```text
-SAWMILL
-
-IRON_MINE
-
-WAREHOUSE
-
-POWER_PLANT
-
-HEADQUARTERS
-```
-
----
-
-## playerId
-
-Besitzer des Gebäudes.
-
----
-
-## name
-
-Individueller Name.
-
-Beispiel
-
-```text
-Sägewerk Nord
-```
-
----
-
-## status
-
-Mögliche Zustände
-
-```text
-PLANNED
-
-UNDER_CONSTRUCTION
-
-ACTIVE
-
-PAUSED
-
-BLOCKED
-
-MAINTENANCE
-
-DAMAGED
-
-DEMOLISHED
-```
-
----
-
-## level
-
-Aktuelle Ausbaustufe.
-
-Version 1
-
-Standard:
-
-```text
-1
-```
-
----
-
-## position
-
-Koordinaten auf dem Grundstück.
+Beispiel für Energieverbrauch:
 
 ```yaml
-x: 12
-
-y: 7
+energy:
+  consumption:
+    amount: 100
+    resource: resource.electricity
 ```
 
----
-
-## rotation
-
-Gebäudeausrichtung.
-
-```text
-0°
-
-90°
-
-180°
-
-270°
-```
-
----
-
-## health
-
-Gebäudezustand.
-
-Bereich
-
-```text
-0 - 100
-```
-
-100 = neuwertig
-
----
-
-## efficiency
-
-Aktuelle Produktionseffizienz.
-
-Bereich
-
-```text
-0.0 - 1.5
-```
-
-1.0 = Normalleistung
-
----
-
-## productionLines
-
-Liste der Produktionslinien.
-
-Beispiel
+Beispiel für Energieerzeugung:
 
 ```yaml
-productionLines:
-
-- LINE-001
-
-- LINE-002
+energy:
+  production:
+    amount: 500
+    resource: resource.electricity
 ```
 
-Version 1
-
-Maximal:
-
-```text
-1
-```
+Die tatsächliche Energieverteilung und Bilanzierung gehört zur Domain-/Simulationsebene.
 
 ---
 
-## installedModules
+# Logistics
 
-Installierte Erweiterungen.
+Logistikgebäude können Transport- oder Umschlagfunktionen bereitstellen.
 
-Beispiele
-
-```text
-SPEED_MODULE
-
-ENERGY_MODULE
-
-QUALITY_MODULE
-
-AI_CONTROLLER
-```
-
----
-
-## connectedRoads
-
-Angeschlossene Straßen.
-
-Spätere Version.
-
----
-
-## connectedPower
-
-Stromnetz.
-
-Version 1
-
-Boolean
+Beispiel:
 
 ```yaml
-true
+logistics:
+  loadingCapacity: 500
+  unloadingCapacity: 500
+
+  supportedVehicles:
+    - vehicle.truck.small
+    - vehicle.truck.large
 ```
 
----
-
-## storage
-
-Internes Gebäudelager.
-
-Version 1
-
-Optional.
+Fahrzeugreferenzen erfolgen ausschließlich über Asset-IDs.
 
 ---
 
-## maintenance
+# Research
+
+Forschungsgebäude können Forschungssysteme unterstützen.
+
+Beispiel:
 
 ```yaml
-lastMaintenance:
+research:
+  enabled: true
 
-nextMaintenance:
-
-maintenanceLevel:
+  researchCategories:
+    - engineering
+    - logistics
 ```
+
+Konkrete Forschungsinhalte werden über Technology- oder Research-Assets definiert.
 
 ---
 
-## construction
+# Requirements
+
+Gebäude können Voraussetzungen für die Errichtung besitzen.
+
+Beispiel:
 
 ```yaml
-startedAt:
+requirements:
+  research:
+    - technology.basic_engineering
 
-finishedAt:
+  buildings:
+    - building.vehicle_depot
 
-constructionTime:
+  resources:
+    - resource.steel
 ```
+
+Alle Referenzen müssen gültige Asset-IDs sein.
 
 ---
 
-## upgrades
+# Maintenance
 
-Installierte Verbesserungen.
+Wartungskosten werden als statische Asset-Eigenschaft definiert.
+
+Beispiel:
+
+```yaml
+maintenanceCost:
+  resource.money: 250
+```
+
+Dynamische Wartungszustände wie:
+
+* Verschleiß
+* Beschädigung
+* Reparaturfortschritt
+
+gehören zum laufenden Spielzustand und nicht zum Asset.
+
+---
+
+# Upgrades
+
+Gebäude können optionale Erweiterungen unterstützen.
+
+Beispiel:
 
 ```yaml
 upgrades:
-
-- UPGRADE_SPEED_1
-
-- UPGRADE_STORAGE_1
+  - building_upgrade.storage_expansion
+  - building_upgrade.energy_efficiency
 ```
 
+Upgrades werden über eigene Asset-IDs referenziert.
+
 ---
 
-## statistics
+# Asset References
 
-Gesammelte Kennzahlen.
+Ein Building darf referenzieren:
 
-Beispiel
+* Resources
+* Employees
+* Vehicles
+* Recipes
+* Technologies
+* Research
+* Building Upgrades
+* Effects
+
+Alle Referenzen erfolgen ausschließlich über Asset-IDs.
+
+---
+
+# Localization
+
+Anzeigenamen und beschreibende Texte sollen über Lokalisierungsschlüssel referenziert werden.
+
+Beispiel:
 
 ```yaml
-statistics:
-
-totalProduced:
-
-totalConsumed:
-
-operatingHours:
-
-energyUsed:
-
-maintenanceCost:
+localizationKey:
+  building.smelter
 ```
 
----
-
-# Gebäudetypen
-
-Version 1
-
-## Produktion
-
-- SAWMILL
-- STONE_QUARRY
-- IRON_MINE
-- STEEL_MILL
-- FARM
+Die konkrete Lokalisierung wird außerhalb des Building-Assets verwaltet.
 
 ---
 
-## Energie
+# Validation Rules
 
-- COAL_POWER_PLANT
-- SOLAR_PLANT
+Ein Gebäude ist gültig, wenn:
 
----
+* eine eindeutige Asset-ID vorhanden ist
+* die Version gültig ist
+* eine Kategorie definiert wurde
+* ein Building Type definiert wurde
+* Baukosten gültig sind
+* Bauzeit größer oder gleich 0 ist
+* Wartungskosten gültig sind
+* Footprint-Dimensionen größer als 0 sind
+* sämtliche Asset-Referenzen gültig sind
 
-## Lager
-
-- WAREHOUSE
-
----
-
-## Infrastruktur
-
-- ROAD
-- POWER_SUBSTATION
+Ungültige Gebäude dürfen nicht registriert oder geladen werden.
 
 ---
 
-## Verwaltung
+# Separation of Static and Runtime Data
 
-- HEADQUARTERS
-- RESEARCH_CENTER
+Das Building-Asset enthält ausschließlich statische Definitionen.
+
+Nicht Bestandteil dieses Schemas sind:
+
+* aktuelles Gebäudelevel
+* aktueller Zustand
+* Beschädigung
+* Reparaturfortschritt
+* Produktionsfortschritt
+* aktueller Lagerbestand
+* aktuell zugewiesene Mitarbeiter
+* aktuell zugewiesene Fahrzeuge
+* temporäre Effekte
+
+Diese Daten gehören zum dynamischen Spielzustand und werden durch die Domain-/Application-/Savegame-Systeme verwaltet.
 
 ---
 
-# Gebäudeeigenschaften
+# Versioning
 
-Jeder Gebäudetyp definiert zusätzlich:
+Schemaänderungen erhöhen die Schema-Version.
+
+Änderungen an einzelnen Building-Assets erhöhen deren Asset-Version.
+
+Die Asset-ID bleibt unverändert.
+
+---
+
+# Example
 
 ```yaml
-size:
+id: building.smelter
 
-energyUsage:
+version: 1
 
-maintenanceCost:
+displayName: Steel Smelter
+
+category: production
+
+buildingType: smelter
+
+description: Processes raw materials into refined steel.
 
 constructionCost:
-
-constructionTime:
-
-allowedRecipes:
-
-maxProductionLines:
-
-requiredResearch:
-
-requiredMilestones:
-```
-
----
-
-# Beispiel
-
-```yaml
-buildingType: SAWMILL
-
-size:
-
-width: 3
-
-height: 3
-
-energyUsage: 10
-
-maintenanceCost: 5
-
-constructionCost: 5000
+  resource.iron_ore: 500
+  resource.steel: 200
+  resource.copper: 50
 
 constructionTime: 120
 
-allowedRecipes:
+maintenanceCost:
+  resource.money: 250
 
-- RECIPE_PLANKS
+footprint:
+  width: 4
+  height: 3
 
-- RECIPE_BEAMS
+workforce:
+  required:
+    - employee.engineer.basic
 
-maxProductionLines: 1
+  minimum: 2
+  maximum: 10
+
+production:
+  recipes:
+    - recipe.steel
+
+  inputResources:
+    - resource.iron_ore
+    - resource.coal
+
+  outputResources:
+    - resource.steel
+
+energy:
+  consumption:
+    amount: 100
+    resource: resource.electricity
+
+requirements:
+  research:
+    - technology.basic_engineering
+
+tags:
+  - production
+  - metallurgy
+  - industry
 ```
 
 ---
 
-# Lebenszyklus
+# Compatibility
 
-```
-Planung
+Dieses Schema ist kompatibel mit:
 
-↓
-
-Bau
-
-↓
-
-Aktiv
-
-↓
-
-Produktion
-
-↓
-
-Wartung
-
-↓
-
-Modernisierung
-
-↓
-
-Abriss
-```
+* ASSET_ID_SYSTEM.md
+* ASSET_VERSIONING.md
+* REGISTRY_SCHEMA.md
+* GLOBAL_ASSET_REGISTRY.md
+* CONTENT_PIPELINE.md
+* Employee.schema.md
+* Vehicle.schema.md
+* Resource.schema.md
 
 ---
 
-# Beziehungen
+# Future Extensions
 
-```
-Building
+Geplante Erweiterungen:
 
-├── gehört zu → Player
-
-├── besitzt → Production Queue
-
-├── führt aus → Production Job
-
-├── erlaubt → Recipes
-
-├── verbraucht → Energy
-
-├── erzeugt → Events
-
-├── besitzt → Modules
-
-└── steht auf → Grundstück
-```
-
----
-
-# Designregeln
-
-✔ Ein Gebäude besitzt genau einen Besitzer.
-
-✔ Ein Gebäude besitzt genau einen Typ.
-
-✔ Ein Gebäude besitzt genau eine Position.
-
-✔ Ein Gebäude besitzt maximal eine aktive Warteschlange.
-
-✔ Gebäude enthalten keine Produktionsrezepte.
-
-✔ Gebäude kennen keine Marktpreise.
-
-✔ Gebäude kennen keine Spielerlogik.
-
-✔ Gebäude kennen keine Wirtschaftslogik.
-
----
-
-# Definition of Done
-
-Ein Gebäude ist vollständig definiert, wenn:
-
-- Typ festgelegt
-- Position gesetzt
-- Besitzer bekannt
-- Status gesetzt
-- Energie definiert
-- Produktionslinien erstellt
-- Wartung definiert
-- Upgrades möglich
-
----
-
-# Erweiterbarkeit
-
-Version 2
-
-- Mehrere Produktionslinien
-- Gebäudemodule
-- Fabrikverbünde
-- Cluster
-
-Version 3
-
-- Spezialisierte Gebäude
-- Regionale Varianten
-- KI-gesteuerte Fabriken
-- Wartungsroboter
-
----
-
-# Leitsatz
-
-> "Gebäude sind die Infrastruktur des Unternehmens – nicht seine Intelligenz."
-
-Gebäude stellen Kapazität bereit. Rezepte, Forschung und Automatisierung bestimmen ihre Leistungsfähigkeit.
+* Building Levels
+* modulare Gebäude
+* Produktionslinien
+* Gebäudestatus
+* Wartungszyklen
+* Verschleißsystem
+* Umweltbelastung
+* Emissionen
+* Heat Management
+* Wasserverbrauch
+* Abfallproduktion
+* Mitarbeiterzufriedenheit
+* Gebäudesynergien
+* Upgrade-System
+* dynamische Produktionskapazität
+* Building Effects
+* Zonen und Standortanforderungen
