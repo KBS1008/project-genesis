@@ -14,6 +14,8 @@ export class TransportCompleted extends DomainEvent {
   readonly resourceId: string;
   readonly amount: number;
   readonly productionJobId: string;
+  readonly sourceRegionId: string;
+  readonly destinationRegionId: string;
 
   constructor(
     occurredAt: number,
@@ -24,6 +26,8 @@ export class TransportCompleted extends DomainEvent {
     resourceId: string,
     amount: number,
     productionJobId: string,
+    sourceRegionId: string,
+    destinationRegionId: string,
   ) {
     super(occurredAt);
     this.transportOrderId = transportOrderId;
@@ -33,6 +37,8 @@ export class TransportCompleted extends DomainEvent {
     this.resourceId = resourceId;
     this.amount = amount;
     this.productionJobId = productionJobId;
+    this.sourceRegionId = sourceRegionId;
+    this.destinationRegionId = destinationRegionId;
     this.freeze();
   }
 }

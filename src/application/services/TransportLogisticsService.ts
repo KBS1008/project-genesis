@@ -23,7 +23,12 @@ import type { Inventory } from '../../domain/inventory/Inventory.js';
 import type { InventoryRepository } from '../../domain/inventory/InventoryRepository.js';
 import type { ProductionJobRepository } from '../../domain/production/ProductionJobRepository.js';
 import { ProductionJobStatus } from '../../domain/production/ProductionJobStatus.js';
+import { RegionConnectivityPolicy } from '../../domain/policies/world/RegionConnectivityPolicy.js';
+import type { RegionRepository } from '../../domain/region/RegionRepository.js';
 import { TransportOrderStatus } from '../../domain/transport/TransportOrderStatus.js';
+import { DEFAULT_MAP_ID } from '../../domain/world/WorldConstants.js';
+import type { WorldMapRepository } from '../../domain/world/WorldMapRepository.js';
+import { createWorldMapId } from '../../domain/world/WorldMapId.js';
 import { createProductionJobId } from '../../domain/production/ProductionJob.js';
 import { TransportOrder } from '../../domain/transport/TransportOrder.js';
 import { createTransportOrderId } from '../../domain/transport/TransportOrderId.js';
@@ -36,6 +41,7 @@ import {
   TransportRouteDurationPolicy,
   type ResolvedTransportRoute,
 } from '../../domain/policies/transport/TransportRouteDurationPolicy.js';
+import { RegionalTransportRoutePolicy } from '../../domain/policies/transport/RegionalTransportRoutePolicy.js';
 import { TransportNetworkThroughputPolicy } from '../../domain/policies/transport/TransportNetworkThroughputPolicy.js';
 
 /** Documented fallback when no content route matches a building pair. */
@@ -44,6 +50,8 @@ export const DEFAULT_TRANSPORT_DURATION = FALLBACK_TRANSPORT_DURATION_TICKS;
 export type TransportLogisticsServiceDependencies = {
   readonly clock: Clock;
   readonly buildingRepository: BuildingRepository;
+  readonly regionRepository: RegionRepository;
+  readonly worldMapRepository: WorldMapRepository;
   readonly buildingStorageRepository: BuildingStorageRepository;
   readonly transportOrderRepository: TransportOrderRepository;
   readonly productionJobRepository: ProductionJobRepository;
@@ -59,6 +67,8 @@ export type TransportLogisticsServiceDependencies = {
 export class TransportLogisticsService implements TransportLogisticsPort {
   readonly #clock: TransportLogisticsServiceDependencies['clock'];
   readonly #buildingRepository: TransportLogisticsServiceDependencies['buildingRepository'];
+  readonly #regionRepository: TransportLogisticsServiceDependencies['regionRepository'];
+  readonly #worldMapRepository: TransportLogisticsServiceDependencies['worldMapRepository'];
   readonly #buildingStorageRepository: TransportLogisticsServiceDependencies['buildingStorageRepository'];
   readonly #transportOrderRepository: TransportLogisticsServiceDependencies['transportOrderRepository'];
   readonly #productionJobRepository: TransportLogisticsServiceDependencies['productionJobRepository'];
@@ -70,6 +80,8 @@ export class TransportLogisticsService implements TransportLogisticsPort {
   constructor(dependencies: TransportLogisticsServiceDependencies) {
     this.#clock = dependencies.clock;
     this.#buildingRepository = dependencies.buildingRepository;
+    this.#regionRepository = dependencies.regionRepository;
+    this.#worldMapRepository = dependencies.worldMapRepository;
     this.#buildingStorageRepository = dependencies.buildingStorageRepository;
     this.#transportOrderRepository = dependencies.transportOrderRepository;
     this.#productionJobRepository = dependencies.productionJobRepository;
@@ -297,6 +309,8 @@ export class TransportLogisticsService implements TransportLogisticsPort {
         duration: resolvedRoute.durationTicks,
         routeId: resolvedRoute.routeId,
         productionJobId: params.productionJobId,
+        sourceRegionId: warehouse.getRegionId().value,
+        destinationRegionId: params.destinationBuilding.getRegionId().value,
         clock: this.#clock,
       });
 
@@ -319,7 +333,31 @@ export class TransportLogisticsService implements TransportLogisticsPort {
   /** Promotes waiting transport orders when abstract route throughput allows. */
   dispatchPendingTransports(): void {
     const orderSnapshots = this.#collectThroughputSnapshots();
-    const waitingOrders = this.#transportOrderRepository.findWaiting();
+    const waitingOrders = [...this.#transportOrderRepository.findWaiting()].sort((left, right) => {
+      const routeCompare = (left.getRouteId() ?? '').localeCompare(right.getRouteId() ?? '');
+
+      if (routeCompare !== 0) {
+        return routeCompare;
+      }
+
+      const sourceRegionCompare = left
+        .getSourceRegionId()
+        .localeCompare(right.getSourceRegionId());
+
+      if (sourceRegionCompare !== 0) {
+        return sourceRegionCompare;
+      }
+
+      const destinationRegionCompare = left
+        .getDestinationRegionId()
+        .localeCompare(right.getDestinationRegionId());
+
+      if (destinationRegionCompare !== 0) {
+        return destinationRegionCompare;
+      }
+
+      return left.getCreatedAt() - right.getCreatedAt();
+    });
 
     for (const order of waitingOrders) {
       const throughputCapacity = this.#resolveThroughputCapacity(order.getRouteId());
@@ -455,7 +493,8 @@ export class TransportLogisticsService implements TransportLogisticsPort {
       return FALLBACK_TRANSPORT_THROUGHPUT_CAPACITY;
     }
 
-    const route = this.#gameContent.transportRoutes.get(routeId);
+    const baseRouteId = routeId.includes('::') ? routeId.split('::')[0] : routeId;
+    const route = this.#gameContent.transportRoutes.get(baseRouteId);
 
     return route?.throughputCapacity ?? FALLBACK_TRANSPORT_THROUGHPUT_CAPACITY;
   }
@@ -477,15 +516,84 @@ export class TransportLogisticsService implements TransportLogisticsPort {
       );
     }
 
-    return Result.ok(
-      TransportRouteDurationPolicy.resolve({
-        routes: this.#gameContent.transportRoutes.getAll(),
-        sourceBuildingTypeId: sourceBuilding.getBuildingTypeId().value,
-        destinationBuildingTypeId: destinationBuilding.getBuildingTypeId().value,
-        sourceCategory: sourceType.category,
-        destinationCategory: destinationType.category,
-      }),
-    );
+    const sourceRegion = this.#regionRepository.findById(sourceBuilding.getRegionId());
+    const destinationRegion = this.#regionRepository.findById(destinationBuilding.getRegionId());
+
+    if (sourceRegion === undefined) {
+      return Result.fail(
+        new ValidationError(
+          `Region id "${sourceBuilding.getRegionId().value}" for source building was not found.`,
+        ),
+      );
+    }
+
+    if (destinationRegion === undefined) {
+      return Result.fail(
+        new ValidationError(
+          `Region id "${destinationBuilding.getRegionId().value}" for destination building was not found.`,
+        ),
+      );
+    }
+
+    const baseRoute = TransportRouteDurationPolicy.resolve({
+      routes: this.#gameContent.transportRoutes.getAll(),
+      sourceBuildingTypeId: sourceBuilding.getBuildingTypeId().value,
+      destinationBuildingTypeId: destinationBuilding.getBuildingTypeId().value,
+      sourceCategory: sourceType.category,
+      destinationCategory: destinationType.category,
+    });
+
+    const mapDistanceResult = this.#resolveMapDistance(sourceBuilding, destinationBuilding);
+
+    if (!mapDistanceResult.ok) {
+      return mapDistanceResult;
+    }
+
+    return RegionalTransportRoutePolicy.resolve({
+      baseRoute,
+      sourceRegionId: sourceRegion.getId().value,
+      destinationRegionId: destinationRegion.getId().value,
+      mapDistance: mapDistanceResult.value,
+      sourceTransportDurationModifier: this.#resolveTransportDurationModifier(
+        sourceRegion.getBiomeId(),
+      ),
+      destinationTransportDurationModifier: this.#resolveTransportDurationModifier(
+        destinationRegion.getBiomeId(),
+      ),
+    });
+  }
+
+  #resolveMapDistance(
+    sourceBuilding: Building,
+    destinationBuilding: Building,
+  ): Result<number, ValidationError> {
+    if (sourceBuilding.getRegionId().equals(destinationBuilding.getRegionId())) {
+      return Result.ok(0);
+    }
+
+    const mapIdResult = createWorldMapId(DEFAULT_MAP_ID);
+
+    if (!mapIdResult.ok) {
+      return Result.fail(mapIdResult.error);
+    }
+
+    const worldMap = this.#worldMapRepository.findById(mapIdResult.value);
+
+    if (worldMap === undefined) {
+      return Result.fail(
+        new ValidationError(`Default world map "${DEFAULT_MAP_ID}" was not bootstrapped.`),
+      );
+    }
+
+    return RegionConnectivityPolicy.resolveDistance({
+      map: worldMap,
+      fromRegionId: sourceBuilding.getRegionId(),
+      toRegionId: destinationBuilding.getRegionId(),
+    });
+  }
+
+  #resolveTransportDurationModifier(biomeId: string): number {
+    return this.#gameContent.biomes.get(biomeId)?.transportDurationModifier ?? 1;
   }
 
   #resolveTransportDuration(

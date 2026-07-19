@@ -152,6 +152,8 @@ export async function restoreApplicationFromSnapshot(
   const transportLogisticsService = new TransportLogisticsService({
     clock,
     buildingRepository,
+    regionRepository,
+    worldMapRepository,
     buildingStorageRepository,
     transportOrderRepository,
     productionJobRepository,

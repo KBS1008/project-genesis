@@ -8,6 +8,8 @@ import type { GameContentLoadResult } from '../../src/content/validateGameConten
 import type { BuildingRepository } from '../../src/domain/building/BuildingRepository.js';
 import type { InventoryRepository } from '../../src/domain/inventory/InventoryRepository.js';
 import type { ProductionJobRepository } from '../../src/domain/production/ProductionJobRepository.js';
+import type { RegionRepository } from '../../src/domain/region/RegionRepository.js';
+import type { WorldMapRepository } from '../../src/domain/world/WorldMapRepository.js';
 import { TransportLogisticsService } from '../../src/application/services/TransportLogisticsService.js';
 import type { ProductionInventoryService } from '../../src/application/services/ProductionInventoryService.js';
 import { InMemoryBuildingStorageRepository } from '../../src/infrastructure/persistence/InMemoryBuildingStorageRepository.js';
@@ -22,6 +24,8 @@ export type TransportTestServices = {
 export function createTransportTestServices(options: {
   readonly clock: ManualClock;
   readonly buildingRepository: BuildingRepository;
+  readonly regionRepository: RegionRepository;
+  readonly worldMapRepository: WorldMapRepository;
   readonly productionJobRepository: ProductionJobRepository;
   readonly inventoryRepository: InventoryRepository;
   readonly productionInventoryService: ProductionInventoryService;
@@ -33,6 +37,8 @@ export function createTransportTestServices(options: {
   const transportLogisticsService = new TransportLogisticsService({
     clock: options.clock,
     buildingRepository: options.buildingRepository,
+    regionRepository: options.regionRepository,
+    worldMapRepository: options.worldMapRepository,
     buildingStorageRepository,
     transportOrderRepository,
     productionJobRepository: options.productionJobRepository,

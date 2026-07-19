@@ -47,6 +47,8 @@ function createValidOrder(clock = new ManualClock(100)) {
     duration: 5,
     routeId: 'route_storage_to_production',
     productionJobId: 'production_job_001',
+    sourceRegionId: 'region_default',
+    destinationRegionId: 'region_default',
     clock,
   });
 
@@ -90,6 +92,8 @@ describe('TransportOrder', () => {
         duration: 0,
         routeId: null,
         productionJobId: 'production_job_001',
+        sourceRegionId: 'region_default',
+        destinationRegionId: 'region_default',
         clock: new ManualClock(),
       });
 
@@ -107,6 +111,8 @@ describe('TransportOrder', () => {
         duration: 5,
         routeId: null,
         productionJobId: 'production_job_001',
+        sourceRegionId: 'region_default',
+        destinationRegionId: 'region_default',
         clock: new ManualClock(),
       });
 
@@ -189,6 +195,8 @@ describe('TransportOrder', () => {
         expect(events[0].companyId).toBe('company_001');
         expect(events[0].resourceId).toBe('wood');
         expect(events[0].amount).toBe(10);
+        expect(events[0].sourceRegionId).toBe('region_default');
+        expect(events[0].destinationRegionId).toBe('region_default');
       }
     });
 

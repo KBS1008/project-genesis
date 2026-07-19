@@ -30,6 +30,8 @@ export type CreateTransportOrderParams = {
   readonly duration: number;
   readonly routeId: string | null;
   readonly productionJobId: string;
+  readonly sourceRegionId: string;
+  readonly destinationRegionId: string;
   readonly clock: Clock;
 };
 
@@ -42,6 +44,8 @@ export class TransportOrder extends AggregateRoot<'TransportOrder'> {
   readonly #duration: number;
   readonly #routeId: string | null;
   readonly #productionJobId: string;
+  readonly #sourceRegionId: string;
+  readonly #destinationRegionId: string;
   readonly #createdAt: number;
   #status: TransportOrderStatus;
   #startTime: number | undefined;
@@ -59,6 +63,8 @@ export class TransportOrder extends AggregateRoot<'TransportOrder'> {
       duration: number;
       routeId: string | null;
       productionJobId: string;
+      sourceRegionId: string;
+      destinationRegionId: string;
       createdAt: number;
       status: TransportOrderStatus;
       startTime: number | undefined;
@@ -76,6 +82,8 @@ export class TransportOrder extends AggregateRoot<'TransportOrder'> {
     this.#duration = params.duration;
     this.#routeId = params.routeId;
     this.#productionJobId = params.productionJobId;
+    this.#sourceRegionId = params.sourceRegionId;
+    this.#destinationRegionId = params.destinationRegionId;
     this.#createdAt = params.createdAt;
     this.#status = params.status;
     this.#startTime = params.startTime;
@@ -124,6 +132,8 @@ export class TransportOrder extends AggregateRoot<'TransportOrder'> {
         duration: durationResult.value,
         routeId: params.routeId,
         productionJobId: params.productionJobId,
+        sourceRegionId: params.sourceRegionId,
+        destinationRegionId: params.destinationRegionId,
         createdAt,
         status: TransportOrderStatus.WAITING,
         startTime: undefined,
@@ -143,6 +153,8 @@ export class TransportOrder extends AggregateRoot<'TransportOrder'> {
     readonly duration: number;
     readonly routeId?: string | null;
     readonly productionJobId: string;
+    readonly sourceRegionId?: string;
+    readonly destinationRegionId?: string;
     readonly createdAt: number;
     readonly status: TransportOrderStatus;
     readonly startTime: number | undefined;
@@ -153,6 +165,8 @@ export class TransportOrder extends AggregateRoot<'TransportOrder'> {
       {
         ...params,
         routeId: params.routeId ?? null,
+        sourceRegionId: params.sourceRegionId ?? '',
+        destinationRegionId: params.destinationRegionId ?? '',
       },
       true,
     );
@@ -188,6 +202,14 @@ export class TransportOrder extends AggregateRoot<'TransportOrder'> {
 
   getProductionJobId(): string {
     return this.#productionJobId;
+  }
+
+  getSourceRegionId(): string {
+    return this.#sourceRegionId;
+  }
+
+  getDestinationRegionId(): string {
+    return this.#destinationRegionId;
   }
 
   getStatus(): TransportOrderStatus {
@@ -251,6 +273,8 @@ export class TransportOrder extends AggregateRoot<'TransportOrder'> {
           this.#resourceId,
           this.#amount,
           this.#productionJobId,
+          this.#sourceRegionId,
+          this.#destinationRegionId,
         ),
       );
 

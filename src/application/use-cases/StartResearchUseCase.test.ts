@@ -26,6 +26,7 @@ import { ResearchCompletionService } from '../services/ResearchCompletionService
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
 import { createDefaultSimulationSystems } from '../../simulation/systems/createDefaultSimulationSystems.js';
 import { createTransportTestServices } from '../../../tests/helpers/createTransportTestServices.js';
+import { bootstrapWorldFromContent } from '../../../tests/helpers/bootstrapWorldFromContent.js';
 import { ProductionInventoryService } from '../services/ProductionInventoryService.js';
 import { CreateCompanyUseCase } from './CreateCompanyUseCase.js';
 import { StartResearchUseCase } from './StartResearchUseCase.js';
@@ -39,6 +40,8 @@ async function createContext() {
   if (!contentResult.ok) {
     throw new Error(contentResult.error.message);
   }
+
+  const { regionRepository, worldMapRepository } = bootstrapWorldFromContent(contentResult.value);
 
   const clock = new ManualClock(100);
   const companyRepository = new InMemoryCompanyRepository();
@@ -71,6 +74,8 @@ async function createContext() {
   const transport = createTransportTestServices({
     clock,
     buildingRepository,
+    regionRepository,
+    worldMapRepository,
     productionJobRepository,
     inventoryRepository,
     productionInventoryService,

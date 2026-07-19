@@ -163,9 +163,13 @@ describe('TransportLogisticsService integration', () => {
 
     const transports = context.transportOrderRepository.findByProductionJobId('production_001');
     expect(transports).toHaveLength(1);
-    expect(transports[0]?.getRouteId()).toBe('route_storage_to_production');
+    expect(transports[0]?.getRouteId()).toBe(
+      'route_storage_to_production::region_default->region_east',
+    );
     expect(transports[0]?.getStatus()).toBe(TransportOrderStatus.IN_PROGRESS);
-    expect(transports[0]?.getDuration()).toBe(8);
+    expect(transports[0]?.getDuration()).toBe(10);
+    expect(transports[0]?.getSourceRegionId()).toBe('region_default');
+    expect(transports[0]?.getDestinationRegionId()).toBe('region_east');
 
     for (let tick = 0; tick < transports[0]!.getDuration(); tick += 1) {
       context.simulationEngine.tick();
@@ -309,7 +313,7 @@ describe('TransportLogisticsService integration', () => {
     expect(inProgress).toHaveLength(2);
     expect(waiting).toHaveLength(1);
 
-    for (let tick = 0; tick < 8; tick += 1) {
+    for (let tick = 0; tick < 10; tick += 1) {
       context.simulationEngine.tick();
     }
 
@@ -340,6 +344,144 @@ describe('TransportLogisticsService integration', () => {
     expect(
       afterPromotion.filter((order) => order.getStatus() === TransportOrderStatus.IN_PROGRESS),
     ).toHaveLength(1);
+  });
+
+  it('keeps throughput queues isolated per cross-region route', async () => {
+    const bootstrapResult = await bootstrapApplication({ gameContentRoot });
+
+    expect(bootstrapResult.ok).toBe(true);
+
+    if (!bootstrapResult.ok) {
+      return;
+    }
+
+    const context = bootstrapResult.value;
+    const createCompany = new CreateCompanyUseCase(context);
+    const placeBuilding = new PlaceBuildingUseCase(context);
+    const buyResource = new BuyResourceUseCase(context);
+
+    createCompany.execute({
+      companyId: 'company_001',
+      name: 'Route Isolation Co',
+      ownerId: 'player_001',
+    });
+
+    grantMilestone(context, 'company_001', 'first_profit');
+    grantMilestone(context, 'company_001', 'first_production');
+
+    placeBuilding.execute({
+      buildingId: 'building_001',
+      buildingTypeId: 'warehouse',
+      companyId: 'company_001',
+      name: 'Central Warehouse',
+      x: 0,
+      y: 0,
+    });
+    placeBuilding.execute({
+      buildingId: 'building_002',
+      buildingTypeId: 'smelter',
+      companyId: 'company_001',
+      name: 'East Smelter',
+      x: 1,
+      y: 0,
+      regionId: 'region_east',
+    });
+    placeBuilding.execute({
+      buildingId: 'building_003',
+      buildingTypeId: 'smelter',
+      companyId: 'company_001',
+      name: 'North Smelter',
+      x: 2,
+      y: 0,
+      regionId: 'region_north',
+    });
+
+    for (const buildingId of ['building_001', 'building_002', 'building_003']) {
+      completeBuildingConstruction({
+        clock: context.clock,
+        simulationEngine: context.simulationEngine,
+        buildingRepository: context.buildingRepository,
+        buildingId,
+      });
+    }
+
+    const buyResult = buyResource.execute({
+      companyId: 'company_001',
+      resourceId: 'iron_ore',
+      amount: 30,
+    });
+
+    expect(buyResult.ok).toBe(true);
+
+    const recipe = context.gameContent.recipes.get('recipe_steel');
+
+    expect(recipe).toBeDefined();
+
+    if (recipe === undefined) {
+      return;
+    }
+
+    const eastBuilding = context.buildingRepository.findById(requireBuildingId('building_002'));
+    const northBuilding = context.buildingRepository.findById(requireBuildingId('building_003'));
+
+    expect(eastBuilding).toBeDefined();
+    expect(northBuilding).toBeDefined();
+
+    if (eastBuilding === undefined || northBuilding === undefined) {
+      return;
+    }
+
+    for (const [jobId, building] of [
+      ['production_east_1', eastBuilding],
+      ['production_east_2', eastBuilding],
+      ['production_east_3', eastBuilding],
+    ] as const) {
+      const transportResult = context.transportLogisticsService.createInboundTransports({
+        companyId: requireCompanyId('company_001'),
+        destinationBuilding: building,
+        recipe,
+        productionJobId: jobId,
+      });
+
+      expect(transportResult.ok).toBe(true);
+    }
+
+    const northTransportResult = context.transportLogisticsService.createInboundTransports({
+      companyId: requireCompanyId('company_001'),
+      destinationBuilding: northBuilding,
+      recipe,
+      productionJobId: 'production_north_1',
+    });
+
+    expect(northTransportResult.ok).toBe(true);
+
+    const allTransports = context.transportOrderRepository.findByCompanyId(
+      requireCompanyId('company_001'),
+    );
+
+    expect(allTransports).toHaveLength(4);
+
+    const eastRouteId = 'route_storage_to_production::region_default->region_east';
+    const northRouteId = 'route_storage_to_production::region_default->region_north';
+
+    const eastInProgress = allTransports.filter(
+      (order) =>
+        order.getRouteId() === eastRouteId &&
+        order.getStatus() === TransportOrderStatus.IN_PROGRESS,
+    );
+    const eastWaiting = allTransports.filter(
+      (order) =>
+        order.getRouteId() === eastRouteId && order.getStatus() === TransportOrderStatus.WAITING,
+    );
+    const northInProgress = allTransports.filter(
+      (order) =>
+        order.getRouteId() === northRouteId &&
+        order.getStatus() === TransportOrderStatus.IN_PROGRESS,
+    );
+
+    expect(eastInProgress).toHaveLength(2);
+    expect(eastWaiting).toHaveLength(1);
+    expect(northInProgress).toHaveLength(1);
   });
 
   it('rejects market deposits when warehouse storage capacity is full', async () => {

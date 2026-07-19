@@ -51,6 +51,8 @@ function createOrder(
     duration: 5,
     routeId: 'route_storage_to_production',
     productionJobId,
+    sourceRegionId: 'region_default',
+    destinationRegionId: 'region_default',
     clock,
   });
 

@@ -165,6 +165,8 @@ export type GameSaveTransportOrderSnapshotV1 = {
   readonly duration: number;
   readonly routeId?: string | null;
   readonly productionJobId: string;
+  readonly sourceRegionId?: string;
+  readonly destinationRegionId?: string;
   readonly createdAt: number;
   readonly status: string;
   readonly startTime: number | undefined;

@@ -62,7 +62,7 @@ async function createContext(clock = new ManualClock(100)) {
     throw new Error(contentResult.error.message);
   }
 
-  const { regionRepository } = bootstrapWorldFromContent(contentResult.value);
+  const { regionRepository, worldMapRepository } = bootstrapWorldFromContent(contentResult.value);
 
   const companyRepository = new InMemoryCompanyRepository();
   const buildingRepository = new InMemoryBuildingRepository();
@@ -92,6 +92,8 @@ async function createContext(clock = new ManualClock(100)) {
   const transport = createTransportTestServices({
     clock,
     buildingRepository,
+    regionRepository,
+    worldMapRepository,
     productionJobRepository,
     inventoryRepository,
     productionInventoryService,
