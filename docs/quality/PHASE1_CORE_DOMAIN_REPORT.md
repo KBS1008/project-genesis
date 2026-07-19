@@ -12,13 +12,13 @@
 
 Phase 1 Core Domain ist **freigegeben** und **abgeschlossen**.
 
-| Kriterium | Ergebnis |
-| --- | --- |
-| Work Packages P1-01 … P1-06 | ✅ Erfüllt |
-| Quality Gates (lint, typecheck, test) | ✅ Grün |
-| Domain ohne `src/content/`-Imports (Produktionscode) | ✅ Erfüllt |
-| Keine Regression vs. Baseline 417 | ✅ 472 Tests |
-| Savegame-Roundtrip nach P1-04 | ✅ `GameStateSerializer.test.ts` grün |
+| Kriterium                                            | Ergebnis                              |
+| ---------------------------------------------------- | ------------------------------------- |
+| Work Packages P1-01 … P1-06                          | ✅ Erfüllt                            |
+| Quality Gates (lint, typecheck, test)                | ✅ Grün                               |
+| Domain ohne `src/content/`-Imports (Produktionscode) | ✅ Erfüllt                            |
+| Keine Regression vs. Baseline 417                    | ✅ 472 Tests                          |
+| Savegame-Roundtrip nach P1-04                        | ✅ `GameStateSerializer.test.ts` grün |
 
 **Test-Delta:** 417 → **472** (+55)  
 **Empfehlung:** Mit **M7 World Simulation** (World/Region-Domain) starten.
@@ -27,14 +27,14 @@ Phase 1 Core Domain ist **freigegeben** und **abgeschlossen**.
 
 # Work Package Summary
 
-| WP | Focus | Key deliverables | Status |
-| --- | --- | --- | --- |
-| P1-01 | Logistics domain tests | `TransportOrder.test.ts`, `InMemoryTransportOrderRepository.test.ts` | ✅ |
-| P1-02 | Milestone domain extraction | `MilestoneTriggerPolicy`, `MilestoneDefinitionMapper`, Service-Refactor | ✅ |
-| P1-03 | Research test coverage | `ResearchCompletionService.test.ts`, `CompanyResearch` edge cases | ✅ |
-| P1-04 | Money VO consistency | `Money.add/subtract/compare`, `FinanceAccount` internal `Money` | ✅ |
-| P1-05 | Company domain clarification | `src/domain/company/README.md`, `CompanySimulationSystem` stub docs | ✅ |
-| P1-06 | Repository test coverage | Research, Milestones, CompanyResearch repo tests; Company/Inventory erweitert | ✅ |
+| WP    | Focus                        | Key deliverables                                                              | Status |
+| ----- | ---------------------------- | ----------------------------------------------------------------------------- | ------ |
+| P1-01 | Logistics domain tests       | `TransportOrder.test.ts`, `InMemoryTransportOrderRepository.test.ts`          | ✅     |
+| P1-02 | Milestone domain extraction  | `MilestoneTriggerPolicy`, `MilestoneDefinitionMapper`, Service-Refactor       | ✅     |
+| P1-03 | Research test coverage       | `ResearchCompletionService.test.ts`, `CompanyResearch` edge cases             | ✅     |
+| P1-04 | Money VO consistency         | `Money.add/subtract/compare`, `FinanceAccount` internal `Money`               | ✅     |
+| P1-05 | Company domain clarification | `src/domain/company/README.md`, `CompanySimulationSystem` stub docs           | ✅     |
+| P1-06 | Repository test coverage     | Research, Milestones, CompanyResearch repo tests; Company/Inventory erweitert | ✅     |
 
 ---
 
@@ -81,13 +81,13 @@ Phase 1 Core Domain ist **freigegeben** und **abgeschlossen**.
 
 # Gate Evidence
 
-| Prüfung | Ergebnis |
-| --- | --- |
-| `pnpm test` | 472 passed (106 files) |
-| `pnpm lint` | 0 errors (29 pre-existing warnings) |
-| `pnpm typecheck` | grün |
-| Domain import audit (`src/domain/**/*.ts`, excl. tests) | 0 content imports |
-| Domain test note | `Market.test.ts` imports content fixtures (pre-existing; not production domain) |
+| Prüfung                                                 | Ergebnis                                                                        |
+| ------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `pnpm test`                                             | 472 passed (106 files)                                                          |
+| `pnpm lint`                                             | 0 errors (29 pre-existing warnings)                                             |
+| `pnpm typecheck`                                        | grün                                                                            |
+| Domain import audit (`src/domain/**/*.ts`, excl. tests) | 0 content imports                                                               |
+| Domain test note                                        | `Market.test.ts` imports content fixtures (pre-existing; not production domain) |
 
 ---
 
@@ -102,13 +102,13 @@ Phase 1 Core Domain ist **freigegeben** und **abgeschlossen**.
 
 # Remaining Gaps (consciously M7+)
 
-| Gap | Rationale |
-| --- | --- |
-| `CompanyStatus` transition methods | Deferred — no bankruptcy/vacation gameplay in Phase 1 |
-| `CompanySimulationSystem` business rules | Stub/no-op until domain services exist |
-| World / Region aggregates | Out of Phase 1 scope |
-| Vehicle entities | DD-022 V1 waiver continues |
-| Full `domain-model.md` coverage | Phase 1 hardened existing M4–M6 core, not full model |
+| Gap                                      | Rationale                                             |
+| ---------------------------------------- | ----------------------------------------------------- |
+| `CompanyStatus` transition methods       | Deferred — no bankruptcy/vacation gameplay in Phase 1 |
+| `CompanySimulationSystem` business rules | Stub/no-op until domain services exist                |
+| World / Region aggregates                | Out of Phase 1 scope                                  |
+| Vehicle entities                         | DD-022 V1 waiver continues                            |
+| Full `domain-model.md` coverage          | Phase 1 hardened existing M4–M6 core, not full model  |
 
 ---
 

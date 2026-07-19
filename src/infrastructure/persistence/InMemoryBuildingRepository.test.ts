@@ -147,9 +147,9 @@ describe('InMemoryBuildingRepository', () => {
     expect(
       repository.findByRegionId(defaultRegionId).map((building) => building.getId().value),
     ).toEqual(['building_002']);
-    expect(repository.findByRegionId(eastRegionId).map((building) => building.getId().value)).toEqual(
-      ['building_001'],
-    );
+    expect(
+      repository.findByRegionId(eastRegionId).map((building) => building.getId().value),
+    ).toEqual(['building_001']);
   });
 
   it('returns buildings under construction in deterministic id order', () => {

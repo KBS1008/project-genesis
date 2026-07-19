@@ -17,16 +17,16 @@ Biomes provide construction and transport modifiers consumed by policies in late
 
 # Required Fields
 
-| Field | Type | Description |
-| --- | --- | --- |
-| `id` | string | Global identifier (`^[a-z0-9_]+$`) |
-| `name` | string | Display name |
-| `description` | string | Biome description |
-| `category` | string | Biome category label |
-| `constructionCostModifier` | number | Construction cost multiplier (minimum 0.01) |
-| `transportDurationModifier` | number | Transport duration multiplier (minimum 0.01) |
-| `enabled` | boolean | Whether the biome is active |
-| `version` | number | Content schema version (minimum 1) |
+| Field                       | Type    | Description                                  |
+| --------------------------- | ------- | -------------------------------------------- |
+| `id`                        | string  | Global identifier (`^[a-z0-9_]+$`)           |
+| `name`                      | string  | Display name                                 |
+| `description`               | string  | Biome description                            |
+| `category`                  | string  | Biome category label                         |
+| `constructionCostModifier`  | number  | Construction cost multiplier (minimum 0.01)  |
+| `transportDurationModifier` | number  | Transport duration multiplier (minimum 0.01) |
+| `enabled`                   | boolean | Whether the biome is active                  |
+| `version`                   | number  | Content schema version (minimum 1)           |
 
 ---
 

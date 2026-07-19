@@ -16,7 +16,8 @@ import { BuildingStatus } from '../../../domain/building/BuildingStatus.js';
 import { Position } from '../../../domain/building/Position.js';
 import type { BuildingRepository } from '../../../domain/building/BuildingRepository.js';
 import { createRegionId } from '../../../domain/region/RegionId.js';
-import { DEFAULT_REGION_ID } from '../../../domain/world/WorldConstants.js';
+import { GLOBAL_MARKET_ID } from '../../../domain/market/MarketConstants.js';
+import { DEFAULT_REGION_ID, DEFAULT_WORLD_ID } from '../../../domain/world/WorldConstants.js';
 import { BuildingStorage } from '../../../domain/building/BuildingStorage.js';
 import type { BuildingStorageRepository } from '../../../domain/building/BuildingStorageRepository.js';
 import { Company, createCompanyId, createPlayerId } from '../../../domain/company/Company.js';
@@ -72,10 +73,15 @@ import type {
 import type { SimulationEngine } from '../../../simulation/engine/SimulationEngine.js';
 import { SimulationState } from '../../../simulation/state/SimulationState.js';
 import {
-  GAME_SAVE_SCHEMA_VERSION,
+  GAME_SAVE_SCHEMA_VERSION as GAME_SAVE_SCHEMA_VERSION_V1,
   type GameSaveSnapshotV1,
   type GameSaveSupplyContractSnapshotV1,
 } from '../../../application/persistence/GameSaveSnapshotV1.js';
+import {
+  GAME_SAVE_SCHEMA_VERSION,
+  type GameSaveSnapshotV2,
+} from '../../../application/persistence/GameSaveSnapshotV2.js';
+import { migrateGameSaveSnapshotV1ToV2 } from '../../../application/persistence/migrateGameSaveSnapshotV1ToV2.js';
 
 export type { GameStateSource, GameStateTarget, RestoredSimulationMetadata };
 
@@ -83,7 +89,7 @@ export type { GameStateSource, GameStateTarget, RestoredSimulationMetadata };
  * Converts live repositories into a versioned save snapshot.
  */
 export class GameStateSerializer implements GameStateSerializerPort {
-  serialize(source: GameStateSource): Result<GameSaveSnapshotV1, ValidationError> {
+  serialize(source: GameStateSource): Result<GameSaveSnapshotV2, ValidationError> {
     if (source.simulationEngine.hasPendingEvents()) {
       return Result.fail(
         new ValidationError(
@@ -93,11 +99,27 @@ export class GameStateSerializer implements GameStateSerializerPort {
     }
 
     const tickMetricsHistory = this.#serializeTickMetricsHistory(source.tickHistoryService);
+    const activeWorldId = this.#resolveActiveWorldId(source);
+    const hasGlobalMarket = source.marketRepository
+      .findAll()
+      .some((market) => market.getId().value === GLOBAL_MARKET_ID);
+    const marketRegionMappings = hasGlobalMarket
+      ? Object.freeze([
+          Object.freeze({
+            marketId: GLOBAL_MARKET_ID,
+            regionId: DEFAULT_REGION_ID,
+          }),
+        ])
+      : Object.freeze([]);
 
     return Result.ok(
       Object.freeze({
         schemaVersion: GAME_SAVE_SCHEMA_VERSION,
         savedAtUtc: new Date().toISOString(),
+        world: Object.freeze({
+          activeWorldId,
+        }),
+        marketRegionMappings,
         simulation: Object.freeze({
           clockTime: source.clock.now(),
           tickNumber: source.simulationEngine.state.tickNumber,
@@ -339,7 +361,7 @@ export class GameStateSerializer implements GameStateSerializerPort {
 
   #serializeTickMetricsHistory(
     tickHistoryService: TickHistorySnapshotProvider,
-  ): GameSaveSnapshotV1['tickMetricsHistory'] {
+  ): GameSaveSnapshotV2['tickMetricsHistory'] {
     const companyId = tickHistoryService.getCompanyId();
     const points = tickHistoryService.exportForSave();
 
@@ -379,40 +401,97 @@ export class GameStateSerializer implements GameStateSerializerPort {
     });
   }
 
-  parse(raw: unknown): Result<GameSaveSnapshotV1, ValidationError> {
+  parse(raw: unknown): Result<GameSaveSnapshotV2, ValidationError> {
     if (typeof raw !== 'object' || raw === null) {
       return Result.fail(new ValidationError('Savegame payload must be a JSON object.'));
     }
 
-    const candidate = raw as Partial<GameSaveSnapshotV1>;
+    const record = raw as Record<string, unknown>;
+    const schemaVersion = record['schemaVersion'];
 
-    if (candidate.schemaVersion !== GAME_SAVE_SCHEMA_VERSION) {
+    if (schemaVersion === GAME_SAVE_SCHEMA_VERSION_V1) {
+      const v1Result = this.#parseV1(raw as Partial<GameSaveSnapshotV1>);
+
+      if (!v1Result.ok) {
+        return v1Result;
+      }
+
+      return Result.ok(migrateGameSaveSnapshotV1ToV2(v1Result.value));
+    }
+
+    if (schemaVersion !== GAME_SAVE_SCHEMA_VERSION) {
       return Result.fail(
         new ValidationError(
-          `Unsupported savegame schema version "${String(candidate.schemaVersion)}".`,
+          `Unsupported savegame schema version "${String(schemaVersion)}".`,
         ),
       );
     }
 
-    if (typeof candidate.savedAtUtc !== 'string' || candidate.simulation === undefined) {
+    return this.#parseV2(raw as Partial<GameSaveSnapshotV2>);
+  }
+
+  #parseV1(raw: Partial<GameSaveSnapshotV1>): Result<GameSaveSnapshotV1, ValidationError> {
+    if (typeof raw.savedAtUtc !== 'string' || raw.simulation === undefined) {
       return Result.fail(new ValidationError('Savegame payload is missing required metadata.'));
     }
 
     return Result.ok({
-      ...candidate,
-      researchJobs: candidate.researchJobs ?? [],
-      companyResearch: candidate.companyResearch ?? [],
-      companyMilestones: candidate.companyMilestones ?? [],
-      buildingStorages: candidate.buildingStorages ?? [],
-      transportOrders: candidate.transportOrders ?? [],
-      employees: candidate.employees ?? [],
-      supplyContracts: candidate.supplyContracts ?? [],
-      tickMetricsHistory: candidate.tickMetricsHistory,
+      ...raw,
+      schemaVersion: GAME_SAVE_SCHEMA_VERSION_V1,
+      researchJobs: raw.researchJobs ?? [],
+      companyResearch: raw.companyResearch ?? [],
+      companyMilestones: raw.companyMilestones ?? [],
+      buildingStorages: raw.buildingStorages ?? [],
+      transportOrders: raw.transportOrders ?? [],
+      employees: raw.employees ?? [],
+      supplyContracts: raw.supplyContracts ?? [],
+      tickMetricsHistory: raw.tickMetricsHistory,
     } as GameSaveSnapshotV1);
   }
 
+  #parseV2(raw: Partial<GameSaveSnapshotV2>): Result<GameSaveSnapshotV2, ValidationError> {
+    if (
+      typeof raw.savedAtUtc !== 'string' ||
+      raw.simulation === undefined ||
+      raw.world === undefined ||
+      typeof raw.world.activeWorldId !== 'string'
+    ) {
+      return Result.fail(new ValidationError('Savegame payload is missing required metadata.'));
+    }
+
+    return Result.ok({
+      ...raw,
+      schemaVersion: GAME_SAVE_SCHEMA_VERSION,
+      world: raw.world,
+      marketRegionMappings: raw.marketRegionMappings ?? [],
+      researchJobs: raw.researchJobs ?? [],
+      companyResearch: raw.companyResearch ?? [],
+      companyMilestones: raw.companyMilestones ?? [],
+      buildingStorages: raw.buildingStorages ?? [],
+      transportOrders: raw.transportOrders ?? [],
+      employees: raw.employees ?? [],
+      supplyContracts: raw.supplyContracts ?? [],
+      tickMetricsHistory: raw.tickMetricsHistory,
+    } as GameSaveSnapshotV2);
+  }
+
+  #resolveActiveWorldId(source: GameStateSource): string {
+    const worlds = source.worldRepository.findAll();
+    const preferredWorld = worlds.find((world) => world.getId().value === DEFAULT_WORLD_ID);
+
+    if (preferredWorld !== undefined) {
+      return preferredWorld.getId().value;
+    }
+
+    if (worlds.length > 0) {
+      return worlds[0]!.getId().value;
+    }
+
+    return DEFAULT_WORLD_ID;
+  }
+
   hydrate(
-    snapshot: GameSaveSnapshotV1,
+    snapshot: GameSaveSnapshotV2,
     target: GameStateTarget,
   ): Result<RestoredSimulationMetadata, ValidationError> {
     for (const companySnapshot of snapshot.companies) {
@@ -560,7 +639,7 @@ export class GameStateSerializer implements GameStateSerializerPort {
   }
 
   #restoreTickMetricsHistory(
-    snapshot: GameSaveSnapshotV1,
+    snapshot: GameSaveSnapshotV2,
     tickHistoryService: TickHistorySnapshotProvider,
   ): void {
     const history = snapshot.tickMetricsHistory;
@@ -622,7 +701,7 @@ export class GameStateSerializer implements GameStateSerializerPort {
     });
   }
 
-  #restoreBuilding(snapshot: GameSaveSnapshotV1['buildings'][number]) {
+  #restoreBuilding(snapshot: GameSaveSnapshotV2['buildings'][number]) {
     const idResult = createBuildingId(snapshot.id);
 
     if (!idResult.ok) {
@@ -641,7 +720,7 @@ export class GameStateSerializer implements GameStateSerializerPort {
       return companyIdResult;
     }
 
-    const regionIdResult = createRegionId(snapshot.regionId ?? DEFAULT_REGION_ID);
+    const regionIdResult = createRegionId(snapshot.regionId);
 
     if (!regionIdResult.ok) {
       return regionIdResult;
@@ -664,7 +743,7 @@ export class GameStateSerializer implements GameStateSerializerPort {
     });
   }
 
-  #resolveBuildingStatus(snapshot: GameSaveSnapshotV1['buildings'][number]): BuildingStatus {
+  #resolveBuildingStatus(snapshot: GameSaveSnapshotV2['buildings'][number]): BuildingStatus {
     const duration = snapshot.constructionDuration ?? 0;
     const status = snapshot.status as BuildingStatus;
 
@@ -1012,7 +1091,7 @@ export class GameStateSerializer implements GameStateSerializerPort {
     );
   }
 
-  #restoreTransportOrder(snapshot: GameSaveSnapshotV1['transportOrders'][number]) {
+  #restoreTransportOrder(snapshot: GameSaveSnapshotV2['transportOrders'][number]) {
     const idResult = createTransportOrderId(snapshot.id);
 
     if (!idResult.ok) {

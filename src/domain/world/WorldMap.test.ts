@@ -21,12 +21,12 @@ describe('WorldMap', () => {
     expect(result.ok).toBe(true);
 
     if (result.ok) {
-      expect(result.value.getRegionPlacements().map((placement) => placement.regionId.value)).toEqual([
-        'region_default',
-        'region_east',
-        'region_north',
+      expect(
+        result.value.getRegionPlacements().map((placement) => placement.regionId.value),
+      ).toEqual(['region_default', 'region_east', 'region_north']);
+      expect(result.value.getConnections().map((connection) => connection.distance)).toEqual([
+        2, 2, 3,
       ]);
-      expect(result.value.getConnections().map((connection) => connection.distance)).toEqual([2, 2, 3]);
 
       const defaultRegionId = createRegionId('region_default');
 

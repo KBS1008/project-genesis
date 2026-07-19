@@ -17,13 +17,13 @@ A world groups regions into one playable simulation space. Worlds are loaded via
 
 # Required Fields
 
-| Field | Type | Description |
-| --- | --- | --- |
-| `id` | string | Global identifier (`^[a-z0-9_]+$`) |
-| `name` | string | Display name |
+| Field       | Type     | Description                                            |
+| ----------- | -------- | ------------------------------------------------------ |
+| `id`        | string   | Global identifier (`^[a-z0-9_]+$`)                     |
+| `name`      | string   | Display name                                           |
 | `regionIds` | string[] | Unique, sorted region references (validated post-load) |
-| `enabled` | boolean | Whether the world is active |
-| `version` | number | Content schema version (minimum 1) |
+| `enabled`   | boolean  | Whether the world is active                            |
+| `version`   | number   | Content schema version (minimum 1)                     |
 
 ---
 

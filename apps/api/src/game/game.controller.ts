@@ -11,6 +11,7 @@ import {
   Get,
   HttpCode,
   Inject,
+  Param,
   Post,
   Query,
 } from '@nestjs/common';
@@ -96,6 +97,24 @@ export class GameController {
 
     return toApiSuccess(
       unwrapResult(this.gameSessionService.getSession().getTickHistory(historyQuery)),
+    );
+  }
+
+  /** Returns bootstrapped world overview data. */
+  @Get('world/overview')
+  getWorldOverview() {
+    return toApiSuccess(unwrapResult(this.gameSessionService.getSession().getWorldOverview()));
+  }
+
+  /** Returns one region with resources and cities. */
+  @Get('world/regions/:regionId')
+  getRegionDetails(@Param('regionId') regionId: string) {
+    if (regionId === undefined || regionId.length === 0) {
+      throw new BadRequestException('regionId is required.');
+    }
+
+    return toApiSuccess(
+      unwrapResult(this.gameSessionService.getSession().getRegionDetails(regionId)),
     );
   }
 

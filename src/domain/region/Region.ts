@@ -5,7 +5,7 @@
  */
 
 import { Entity } from '../../common/core/Entity.js';
-import { ValidationError } from '../../common/errors/ValidationError.js';
+import type { ValidationError } from '../../common/errors/ValidationError.js';
 import { Result } from '../../common/result/Result.js';
 import { createWorldId, type WorldId } from '../world/WorldId.js';
 import { createCityId, type CityId } from './CityId.js';

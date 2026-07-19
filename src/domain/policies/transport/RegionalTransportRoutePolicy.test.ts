@@ -43,9 +43,7 @@ describe('RegionalTransportRoutePolicy', () => {
     expect(result.ok).toBe(true);
 
     if (result.ok) {
-      expect(result.value.routeId).toBe(
-        'route_storage_to_production::region_default->region_east',
-      );
+      expect(result.value.routeId).toBe('route_storage_to_production::region_default->region_east');
       expect(result.value.durationTicks).toBe(10);
     }
   });

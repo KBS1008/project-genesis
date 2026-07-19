@@ -20,9 +20,7 @@ const WORLD_FILE_PATTERN = /\.(ya?ml)$/i;
  */
 export class WorldLoader {
   /** Loads all YAML world files from the given directory. */
-  async loadFromDirectory(
-    directoryPath: string,
-  ): Promise<Result<WorldRegistry, ContentLoadError>> {
+  async loadFromDirectory(directoryPath: string): Promise<Result<WorldRegistry, ContentLoadError>> {
     const registry = new WorldRegistry();
 
     let entries: string[];

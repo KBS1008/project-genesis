@@ -107,25 +107,19 @@ export async function validateGameContent(
     return Result.fail(resourceTypesResult.error);
   }
 
-  const biomesResult = await biomeLoader.loadFromDirectory(
-    path.join(gameContentRoot, 'biomes'),
-  );
+  const biomesResult = await biomeLoader.loadFromDirectory(path.join(gameContentRoot, 'biomes'));
 
   if (!biomesResult.ok) {
     return Result.fail(biomesResult.error);
   }
 
-  const worldsResult = await worldLoader.loadFromDirectory(
-    path.join(gameContentRoot, 'worlds'),
-  );
+  const worldsResult = await worldLoader.loadFromDirectory(path.join(gameContentRoot, 'worlds'));
 
   if (!worldsResult.ok) {
     return Result.fail(worldsResult.error);
   }
 
-  const regionsResult = await regionLoader.loadFromDirectory(
-    path.join(gameContentRoot, 'regions'),
-  );
+  const regionsResult = await regionLoader.loadFromDirectory(path.join(gameContentRoot, 'regions'));
 
   if (!regionsResult.ok) {
     return Result.fail(regionsResult.error);
@@ -137,9 +131,7 @@ export async function validateGameContent(
     return Result.fail(mapsResult.error);
   }
 
-  const citiesResult = await cityLoader.loadFromDirectory(
-    path.join(gameContentRoot, 'cities'),
-  );
+  const citiesResult = await cityLoader.loadFromDirectory(path.join(gameContentRoot, 'cities'));
 
   if (!citiesResult.ok) {
     return Result.fail(citiesResult.error);

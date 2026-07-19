@@ -36,7 +36,11 @@ export type CreateWorldMapParams = {
 export type WorldMapContentSeed = {
   readonly id: string;
   readonly name: string;
-  readonly regions: readonly { readonly regionId: string; readonly x: number; readonly y: number }[];
+  readonly regions: readonly {
+    readonly regionId: string;
+    readonly x: number;
+    readonly y: number;
+  }[];
   readonly connections: readonly {
     readonly fromRegionId: string;
     readonly toRegionId: string;
@@ -182,8 +186,7 @@ export class WorldMap extends Entity<'WorldMap'> {
       (connection) =>
         (connection.fromRegionId.equals(fromRegionId) &&
           connection.toRegionId.equals(toRegionId)) ||
-        (connection.fromRegionId.equals(toRegionId) &&
-          connection.toRegionId.equals(fromRegionId)),
+        (connection.fromRegionId.equals(toRegionId) && connection.toRegionId.equals(fromRegionId)),
     );
   }
 }

@@ -2,7 +2,11 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { validateGameContent } from '../../content/validateGameContent.js';
 import { createRegionId } from '../../domain/region/RegionId.js';
-import { DEFAULT_MAP_ID, DEFAULT_REGION_ID, DEFAULT_WORLD_ID } from '../../domain/world/WorldConstants.js';
+import {
+  DEFAULT_MAP_ID,
+  DEFAULT_REGION_ID,
+  DEFAULT_WORLD_ID,
+} from '../../domain/world/WorldConstants.js';
 import { createWorldId } from '../../domain/world/WorldId.js';
 import { createWorldMapId } from '../../domain/world/WorldMapId.js';
 import { InMemoryCityRepository } from '../../infrastructure/persistence/InMemoryCityRepository.js';
@@ -104,7 +108,7 @@ describe('WorldBootstrapService', () => {
             version: 1,
           },
         ],
-      },
+      } as unknown as typeof contentResult.value.worlds,
     };
 
     const { service } = createService();

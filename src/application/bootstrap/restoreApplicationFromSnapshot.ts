@@ -31,7 +31,8 @@ import { InMemoryWorldMapRepository } from '../../infrastructure/persistence/InM
 import { GameStateSerializer } from '../../infrastructure/persistence/savegame/GameStateSerializer.js';
 import { FileSavegameStore } from '../../infrastructure/persistence/savegame/FileSavegameStore.js';
 import { ConsoleLogger } from '../../infrastructure/logging/ConsoleLogger.js';
-import type { GameSaveSnapshotV1 } from '../persistence/GameSaveSnapshotV1.js';
+import type { GameSaveSnapshotV2 } from '../persistence/GameSaveSnapshotV2.js';
+import { validateSnapshotWorldGraph } from '../persistence/validateSnapshotWorldGraph.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
 import { createDefaultSimulationSystems } from '../../simulation/systems/createDefaultSimulationSystems.js';
 import { MarketTradeService } from '../services/MarketTradeService.js';
@@ -48,7 +49,7 @@ import type { ApplicationContext } from './ApplicationContext.js';
 /** Options for restoring an application session. */
 export type RestoreApplicationOptions = {
   readonly gameContentRoot: string;
-  readonly snapshot: GameSaveSnapshotV1;
+  readonly snapshot: GameSaveSnapshotV2;
 };
 
 /**
@@ -116,6 +117,16 @@ export async function restoreApplicationFromSnapshot(
 
   if (!bootstrapWorldResult.ok) {
     return Result.fail(bootstrapWorldResult.error);
+  }
+
+  const worldGraphValidation = validateSnapshotWorldGraph(
+    options.snapshot,
+    worldRepository,
+    regionRepository,
+  );
+
+  if (!worldGraphValidation.ok) {
+    return Result.fail(worldGraphValidation.error);
   }
 
   const clock = new ManualClock(0);

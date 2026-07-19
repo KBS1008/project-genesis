@@ -4,7 +4,7 @@
 **Date:** 2026-07-19  
 **Baseline:** Phase 1 complete (`5835930`), M6 closed (AUD-004)  
 **Plan:** `docs/project-management/M7_WORLD_SIMULATION_PLAN.md`  
-**Status:** Audit complete — **no implementation in this step**
+**Status:** Audit complete — **M7 closed (AUD-005, 2026-07-19)**
 
 ---
 
@@ -37,12 +37,12 @@ Accepted ADRs (`DD-007`, `DD-032`) and gameplay docs (`world.md`, `domain-model.
 
 ## Simulation engine (keep)
 
-| Component | Path |
-| --- | --- |
-| Simulation engine | `src/simulation/engine/SimulationEngine.ts` |
-| Tick context / state | `src/simulation/engine/TickContext.ts`, `SimulationState.ts` |
-| System pipeline factory | `src/simulation/systems/createDefaultSimulationSystems.ts` |
-| Pipeline order test | `src/simulation/systems/createDefaultSimulationSystems.test.ts` |
+| Component               | Path                                                            |
+| ----------------------- | --------------------------------------------------------------- |
+| Simulation engine       | `src/simulation/engine/SimulationEngine.ts`                     |
+| Tick context / state    | `src/simulation/engine/TickContext.ts`, `SimulationState.ts`    |
+| System pipeline factory | `src/simulation/systems/createDefaultSimulationSystems.ts`      |
+| Pipeline order test     | `src/simulation/systems/createDefaultSimulationSystems.test.ts` |
 
 **Authoritative system order** (line 23 comment + test):
 
@@ -54,55 +54,55 @@ Do **not** create a second engine or per-region duplicate systems in v1.
 
 ## Spatial model today (company-local)
 
-| Component | Path | Notes |
-| --- | --- | --- |
-| Position VO | `src/domain/building/Position.ts` | x/y only |
-| Building aggregate | `src/domain/building/Building.ts` | No `regionId` |
-| Place building | `src/application/use-cases/PlaceBuildingUseCase.ts` | Validates position, not region |
-| Starter layout | `src/application/new-game/NewGameSetupConstants.ts` | Hard-coded x/y |
+| Component          | Path                                                | Notes                          |
+| ------------------ | --------------------------------------------------- | ------------------------------ |
+| Position VO        | `src/domain/building/Position.ts`                   | x/y only                       |
+| Building aggregate | `src/domain/building/Building.ts`                   | No `regionId`                  |
+| Place building     | `src/application/use-cases/PlaceBuildingUseCase.ts` | Validates position, not region |
+| Starter layout     | `src/application/new-game/NewGameSetupConstants.ts` | Hard-coded x/y                 |
 
 ## Market (global v1 baseline)
 
-| Component | Path |
-| --- | --- |
+| Component        | Path                                                     |
+| ---------------- | -------------------------------------------------------- |
 | Global market ID | `src/domain/market/MarketConstants.ts` (`market_global`) |
-| Market aggregate | `src/domain/market/Market.ts` |
-| Market seeder | `src/application/services/MarketPriceSeeder.ts` |
+| Market aggregate | `src/domain/market/Market.ts`                            |
+| Market seeder    | `src/application/services/MarketPriceSeeder.ts`          |
 
 ## Transport (M6 — extend, do not replace)
 
-| Component | Path |
-| --- | --- |
-| Route content | `src/content/logistics/TransportRouteDefinition.ts`, `game-content/logistics/` |
-| Duration policy | `src/domain/policies/transport/TransportRouteDurationPolicy.ts` |
-| Throughput policy | `src/domain/policies/transport/TransportNetworkThroughputPolicy.ts` |
-| Transport orders | `src/domain/transport/TransportOrder.ts` |
-| Logistics service | `src/application/services/TransportLogisticsService.ts` |
+| Component         | Path                                                                           |
+| ----------------- | ------------------------------------------------------------------------------ |
+| Route content     | `src/content/logistics/TransportRouteDefinition.ts`, `game-content/logistics/` |
+| Duration policy   | `src/domain/policies/transport/TransportRouteDurationPolicy.ts`                |
+| Throughput policy | `src/domain/policies/transport/TransportNetworkThroughputPolicy.ts`            |
+| Transport orders  | `src/domain/transport/TransportOrder.ts`                                       |
+| Logistics service | `src/application/services/TransportLogisticsService.ts`                        |
 
 ## Content pipeline (pattern to copy)
 
-| Component | Path |
-| --- | --- |
-| Orchestrator | `src/content/validateGameContent.ts` |
-| Load result type | `GameContentLoadResult` (7 registries today) |
+| Component        | Path                                                                                                                                                               |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Orchestrator     | `src/content/validateGameContent.ts`                                                                                                                               |
+| Load result type | `GameContentLoadResult` (7 registries today)                                                                                                                       |
 | Cross-validators | `validateEmployeeReferences`, `validateResearchReferences`, `validateMilestoneReferences`, `validateBuildingRecipeConsistency`, `validateTransportRouteReferences` |
-| Implemented dirs | `game-content/{resources,milestones,research,buildings,employees,recipes,logistics}/` |
+| Implemented dirs | `game-content/{resources,milestones,research,buildings,employees,recipes,logistics}/`                                                                              |
 
 ## Persistence
 
-| Component | Path |
-| --- | --- |
-| Save schema v1 | `src/application/persistence/GameSaveSnapshotV1.ts` |
-| Serializer | `src/infrastructure/persistence/savegame/GameStateSerializer.ts` |
-| Restore | `src/application/bootstrap/restoreApplicationFromSnapshot.ts` |
-| Version gate | `parse()` rejects `schemaVersion !== 1` |
+| Component      | Path                                                             |
+| -------------- | ---------------------------------------------------------------- |
+| Save schema v1 | `src/application/persistence/GameSaveSnapshotV1.ts`              |
+| Serializer     | `src/infrastructure/persistence/savegame/GameStateSerializer.ts` |
+| Restore        | `src/application/bootstrap/restoreApplicationFromSnapshot.ts`    |
+| Version gate   | `parse()` rejects `schemaVersion !== 1`                          |
 
 ## Phase 1 / M7 prep notes in code
 
-| Location | Statement |
-| --- | --- |
-| `src/domain/company/README.md` | World/region deferred to M7+ |
-| `src/simulation/systems/company/CompanySimulationSystem.ts` | Documented no-op stub |
+| Location                                                    | Statement                    |
+| ----------------------------------------------------------- | ---------------------------- |
+| `src/domain/company/README.md`                              | World/region deferred to M7+ |
+| `src/simulation/systems/company/CompanySimulationSystem.ts` | Documented no-op stub        |
 
 ---
 
@@ -167,19 +167,19 @@ No types in `src/domain/`:
 
 # 3. Must Extend (existing files — targeted changes)
 
-| Area | Files |
-| --- | --- |
-| Building | `Building.ts`, `BuildingRepository.ts`, `InMemoryBuildingRepository.ts`, `PlaceBuildingUseCase.ts`, `StartNewGameUseCase.ts` |
-| Company | `Company.ts` (optional home region), save snapshot types |
-| Market | `Market.ts`, `MarketConstants.ts`, seeder/trade — map `market_global` → default region |
-| Transport content | `TransportRouteDefinition.ts`, validator — optional inter-region endpoints |
-| Transport policy | `TransportRouteDurationPolicy.ts` — map distance/biome modifiers |
-| Transport runtime | `TransportLogisticsService.ts` — cross-region rules via building regions |
-| Content bootstrap | `validateGameContent.ts`, `GameContentLoadResult`, new validators |
-| Application bootstrap | `bootstrapApplication.ts`, `restoreApplicationFromSnapshot.ts`, `ApplicationContext.ts` |
-| Savegame | `GameSaveSnapshotV1.ts` → V2, `GameStateSerializer.ts` |
-| Simulation | `createDefaultSimulationSystems.ts` — only if world system justified |
-| Docs | `src/content/readme.md` (lists non-existent `world/`, `regions/` dirs) |
+| Area                  | Files                                                                                                                        |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| Building              | `Building.ts`, `BuildingRepository.ts`, `InMemoryBuildingRepository.ts`, `PlaceBuildingUseCase.ts`, `StartNewGameUseCase.ts` |
+| Company               | `Company.ts` (optional home region), save snapshot types                                                                     |
+| Market                | `Market.ts`, `MarketConstants.ts`, seeder/trade — map `market_global` → default region                                       |
+| Transport content     | `TransportRouteDefinition.ts`, validator — optional inter-region endpoints                                                   |
+| Transport policy      | `TransportRouteDurationPolicy.ts` — map distance/biome modifiers                                                             |
+| Transport runtime     | `TransportLogisticsService.ts` — cross-region rules via building regions                                                     |
+| Content bootstrap     | `validateGameContent.ts`, `GameContentLoadResult`, new validators                                                            |
+| Application bootstrap | `bootstrapApplication.ts`, `restoreApplicationFromSnapshot.ts`, `ApplicationContext.ts`                                      |
+| Savegame              | `GameSaveSnapshotV1.ts` → V2, `GameStateSerializer.ts`                                                                       |
+| Simulation            | `createDefaultSimulationSystems.ts` — only if world system justified                                                         |
+| Docs                  | `src/content/readme.md` (lists non-existent `world/`, `regions/` dirs)                                                       |
 
 **Do not duplicate `regionId`** on ProductionJob, TransportOrder, etc. when derivable from Building (per M7 plan §6).
 
@@ -187,17 +187,17 @@ No types in `src/domain/`:
 
 # 4. Outdated or Contradictory (docs vs code)
 
-| Source | Says | Code reality | Resolution |
-| --- | --- | --- | --- |
-| `DD-007-region-ready.md` §Implementierung | `src/world/Region.ts`, `game-content/regions/` exist | **Zero files** | Implement M7 plan layout under `src/domain/world/` (or equivalent), not blind copy of DD-007 paths |
-| `DD-007` | Every spatial object has `regionId` | No region fields | M7-3 adds to Building (+ market mapping) |
-| `world.md` | Per-region markets | Single `market_global` | v1: map global market to default region; regional markets later |
-| `domain-model.md` | World/Region aggregates | Not in `src/domain/` | Implement minimal subset in M7-2 |
-| `Biome.schema.md` | Climate, wildlife, hazards | Over-scoped for M7 v1 | Minimal biome: category + construction/logistics modifiers only |
-| `Scenario.schema.md` | `world.biome`, `world.map` | No scenario loader | Out of M7 unless required for acceptance |
-| `src/content/readme.md` | `game-content/world/`, `regions/` | Directories absent | Fix when M7-1 lands |
-| `validateGameContent.ts` header comment | 6 load steps | 7 loads + 5 cross-validators | Update comment in M7-1 |
-| DD-007 §Simulation vs DD-032 vs factory | Different per-region order prose | Single global pipeline | **Factory order is authoritative**; region loops inside systems, not duplicate systems |
+| Source                                    | Says                                                 | Code reality                 | Resolution                                                                                         |
+| ----------------------------------------- | ---------------------------------------------------- | ---------------------------- | -------------------------------------------------------------------------------------------------- |
+| `DD-007-region-ready.md` §Implementierung | `src/world/Region.ts`, `game-content/regions/` exist | **Zero files**               | Implement M7 plan layout under `src/domain/world/` (or equivalent), not blind copy of DD-007 paths |
+| `DD-007`                                  | Every spatial object has `regionId`                  | No region fields             | M7-3 adds to Building (+ market mapping)                                                           |
+| `world.md`                                | Per-region markets                                   | Single `market_global`       | v1: map global market to default region; regional markets later                                    |
+| `domain-model.md`                         | World/Region aggregates                              | Not in `src/domain/`         | Implement minimal subset in M7-2                                                                   |
+| `Biome.schema.md`                         | Climate, wildlife, hazards                           | Over-scoped for M7 v1        | Minimal biome: category + construction/logistics modifiers only                                    |
+| `Scenario.schema.md`                      | `world.biome`, `world.map`                           | No scenario loader           | Out of M7 unless required for acceptance                                                           |
+| `src/content/readme.md`                   | `game-content/world/`, `regions/`                    | Directories absent           | Fix when M7-1 lands                                                                                |
+| `validateGameContent.ts` header comment   | 6 load steps                                         | 7 loads + 5 cross-validators | Update comment in M7-1                                                                             |
+| DD-007 §Simulation vs DD-032 vs factory   | Different per-region order prose                     | Single global pipeline       | **Factory order is authoritative**; region loops inside systems, not duplicate systems             |
 
 **Authority stack** (when docs conflict):
 
@@ -230,7 +230,7 @@ These are **minimal** contracts — no speculative fields.
 ```yaml
 id: string
 name: string
-regionIds: string[]      # sorted unique refs
+regionIds: string[] # sorted unique refs
 enabled: boolean
 version: number
 ```
@@ -243,10 +243,10 @@ name: string
 description: string
 worldId: string
 biomeId: string
-mapPosition: { x: number, y: number }   # embedded in region OR via MapDefinition — pick one in M7-1
+mapPosition: { x: number, y: number } # embedded in region OR via MapDefinition — pick one in M7-1
 neighborRegionIds: string[]
 cityIds: string[]
-regionalResources: RegionalResourceEntry[]   # Option A embedded, avoids separate asset type
+regionalResources: RegionalResourceEntry[] # Option A embedded, avoids separate asset type
 enabled: boolean
 version: number
 ```
@@ -258,8 +258,8 @@ id: string
 name: string
 description: string
 category: string
-constructionCostModifier: number    # e.g. 1.0 default
-transportDurationModifier: number   # e.g. 1.0 default
+constructionCostModifier: number # e.g. 1.0 default
+transportDurationModifier: number # e.g. 1.0 default
 enabled: boolean
 version: number
 ```
@@ -283,7 +283,7 @@ version: number
 id: string
 name: string
 regionId: string
-category: string          # e.g. MARKET_HUB, INDUSTRIAL
+category: string # e.g. MARKET_HUB, INDUSTRIAL
 enabled: boolean
 version: number
 ```
@@ -320,13 +320,13 @@ Constants may re-export these IDs from a single module (e.g. `WorldConstants.ts`
 
 ## Savegame
 
-| Item | Decision |
-| --- | --- |
-| New version | `GAME_SAVE_SCHEMA_VERSION = 2` |
-| v1 compatibility | Migrate in `GameStateSerializer.parse()` only |
-| v1 rule | Assign `world.default` + `region.default` to all buildings and map `market_global` to default region |
-| Validation | After migration, validate all region refs against loaded content |
-| Forbidden | `regionId ?? 'default'` outside migration/bootstrap |
+| Item             | Decision                                                                                             |
+| ---------------- | ---------------------------------------------------------------------------------------------------- |
+| New version      | `GAME_SAVE_SCHEMA_VERSION = 2`                                                                       |
+| v1 compatibility | Migrate in `GameStateSerializer.parse()` only                                                        |
+| v1 rule          | Assign `world.default` + `region.default` to all buildings and map `market_global` to default region |
+| Validation       | After migration, validate all region refs against loaded content                                     |
+| Forbidden        | `regionId ?? 'default'` outside migration/bootstrap                                                  |
 
 ## New games
 
@@ -378,30 +378,30 @@ Load order proposal:
 
 # 10. Work Package Readiness
 
-| WP | Blockers cleared by M7-0 | Next action |
-| --- | --- | --- |
-| M7-0 | ✅ This document | User/plan approval |
-| M7-1 | Contracts above | Implement loaders + starter YAML |
-| M7-2 | M7-1 | Domain IDs + bootstrap |
-| M7-3 | M7-2 | Building.regionId |
-| M7-4 | M7-1, M7-2 | Map + cities |
-| M7-5 | M7-1, M7-2 | Option A queries |
-| M7-6 | M7-3, M7-4 | Transport + region ordering |
-| M7-7 | M7-3 field shapes | Save V2 + migration |
-| M7-8 | M7-7 | Read models / minimal API |
-| M7-9 | All | Gate report |
+| WP   | Blockers cleared by M7-0 | Next action                      |
+| ---- | ------------------------ | -------------------------------- |
+| M7-0 | ✅ This document         | User/plan approval               |
+| M7-1 | Contracts above          | Implement loaders + starter YAML |
+| M7-2 | M7-1                     | Domain IDs + bootstrap           |
+| M7-3 | M7-2                     | Building.regionId                |
+| M7-4 | M7-1, M7-2               | Map + cities                     |
+| M7-5 | M7-1, M7-2               | Option A queries                 |
+| M7-6 | M7-3, M7-4               | Transport + region ordering      |
+| M7-7 | M7-3 field shapes        | Save V2 + migration              |
+| M7-8 | M7-7                     | Read models / minimal API        |
+| M7-9 | All                      | Gate report                      |
 
 ---
 
 # 11. M7-0 Exit Criteria
 
-| Criterion | Status |
-| --- | --- |
-| Gap plan with present / missing / extend / contradictions / out-of-scope | ✅ |
-| v1 contracts decided (no speculative fields) | ✅ |
-| Default world/region migration strategy documented | ✅ |
-| References exact existing files | ✅ |
-| No code changes in M7-0 | ✅ |
+| Criterion                                                                | Status |
+| ------------------------------------------------------------------------ | ------ |
+| Gap plan with present / missing / extend / contradictions / out-of-scope | ✅     |
+| v1 contracts decided (no speculative fields)                             | ✅     |
+| Default world/region migration strategy documented                       | ✅     |
+| References exact existing files                                          | ✅     |
+| No code changes in M7-0                                                  | ✅     |
 
 ---
 

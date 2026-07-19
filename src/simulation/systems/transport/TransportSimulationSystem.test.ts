@@ -1,5 +1,4 @@
 import { ManualClock } from '../../../common/time/ManualClock.js';
-import { InMemoryEventBus } from '../../../common/events/InMemoryEventBus.js';
 import { createBuildingId } from '../../../domain/building/Building.js';
 import { createCompanyId } from '../../../domain/company/Company.js';
 import { TransportOrderStatus } from '../../../domain/transport/TransportOrderStatus.js';
@@ -15,42 +14,11 @@ class StubTransportLogisticsService implements TransportLogisticsPort {
   completeTransportOrder(): ReturnType<TransportLogisticsPort['completeTransportOrder']> {
     return { ok: true, value: undefined } as never;
   }
-
-  resolveInboundTransportDurationTicks(): number {
-    return 1;
-  }
-
-  ensureStorageForBuilding(): void {}
-
-  canDepositToWarehouse(): boolean {
-    return true;
-  }
-
-  depositMarketPurchase(): ReturnType<TransportLogisticsPort['depositMarketPurchase']> {
-    return { ok: true, value: undefined } as never;
-  }
-
-  canFulfillFromGlobal(): boolean {
-    return false;
-  }
-
-  canFulfillFromWarehouse(): boolean {
-    return false;
-  }
-
-  needsInboundTransport(): boolean {
-    return false;
-  }
-
-  createInboundTransports(): ReturnType<TransportLogisticsPort['createInboundTransports']> {
-    return { ok: true, value: undefined } as never;
-  }
 }
 
 describe('TransportSimulationSystem', () => {
   it('ticks in-progress transport orders in deterministic region order', () => {
     const clock = new ManualClock(100);
-    const eventBus = new InMemoryEventBus();
     const transportOrderRepository = new InMemoryTransportOrderRepository();
     const companyIdResult = createCompanyId('company_001');
     const sourceBuildingIdResult = createBuildingId('building_source');
@@ -105,17 +73,15 @@ describe('TransportSimulationSystem', () => {
       transportOrderRepository,
       transportLogisticsService: new StubTransportLogisticsService(),
       enqueueEvents: (events) => {
-        eventBus.publish(events);
-
         for (const event of events) {
           if (event.eventName === 'TransportCompleted') {
-            processed.push((event as { transportOrderId: string }).transportOrderId);
+            processed.push((event as unknown as { transportOrderId: string }).transportOrderId);
           }
         }
       },
     });
 
-    system.execute({ clock, eventBus, tickNumber: 1 });
+    system.execute({ clock, tickNumber: 1 });
 
     expect(processed).toEqual(['transport_a', 'transport_m', 'transport_z']);
     expect(transportOrderRepository.findInProgress()).toHaveLength(0);

@@ -36,11 +36,7 @@ function requireBuildingId(value: string) {
   return result.value;
 }
 
-function createOrder(
-  id: string,
-  clock: ManualClock,
-  productionJobId: string,
-): TransportOrder {
+function createOrder(id: string, clock: ManualClock, productionJobId: string): TransportOrder {
   const result = TransportOrder.create({
     id: requireTransportOrderId(id),
     companyId: requireCompanyId('company_001'),
@@ -134,9 +130,7 @@ describe('InMemoryTransportOrderRepository', () => {
     repository.save(otherJob);
 
     expect(
-      repository
-        .findByProductionJobId('production_job_shared')
-        .map((order) => order.getId().value),
+      repository.findByProductionJobId('production_job_shared').map((order) => order.getId().value),
     ).toEqual(['transport_001', 'transport_002']);
   });
 });

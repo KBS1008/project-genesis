@@ -20,9 +20,10 @@ import type { CompanyMilestonesRepository } from '../../domain/milestone/Company
 import type { EmployeeRepository } from '../../domain/employee/EmployeeRepository.js';
 import type { SupplyContractRepository } from '../../domain/contract/SupplyContractRepository.js';
 import type { TransportOrderRepository } from '../../domain/transport/TransportOrderRepository.js';
+import type { WorldRepository } from '../../domain/world/WorldRepository.js';
 import type { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
 import type { SimulationState } from '../../simulation/state/SimulationState.js';
-import type { GameSaveSnapshotV1 } from '../persistence/GameSaveSnapshotV1.js';
+import type { GameSaveSnapshotV2 } from '../persistence/GameSaveSnapshotV2.js';
 import type { TickHistorySnapshotProvider } from './TickHistorySnapshotProvider.js';
 
 /** Repositories and runtime state used to build a save snapshot. */
@@ -43,6 +44,7 @@ export type GameStateSource = {
   readonly employeeRepository: EmployeeRepository;
   readonly supplyContractRepository: SupplyContractRepository;
   readonly tickHistoryService: TickHistorySnapshotProvider;
+  readonly worldRepository: WorldRepository;
 };
 
 /** Repositories populated during snapshot restore. */
@@ -72,10 +74,10 @@ export type RestoredSimulationMetadata = {
 
 /** Serializes and restores deterministic game snapshots. */
 export interface GameStateSerializerPort {
-  serialize(source: GameStateSource): Result<GameSaveSnapshotV1, ValidationError>;
-  parse(raw: unknown): Result<GameSaveSnapshotV1, ValidationError>;
+  serialize(source: GameStateSource): Result<GameSaveSnapshotV2, ValidationError>;
+  parse(raw: unknown): Result<GameSaveSnapshotV2, ValidationError>;
   hydrate(
-    snapshot: GameSaveSnapshotV1,
+    snapshot: GameSaveSnapshotV2,
     target: GameStateTarget,
   ): Result<RestoredSimulationMetadata, ValidationError>;
 }

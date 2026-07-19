@@ -291,7 +291,9 @@ Create the game world.
 
 ### Status
 
-⚪ Planned
+✅ Completed (Gate review 2026-07-19 — see `docs/quality/M7_WORLD_SIMULATION_GATE_REVIEW_REPORT.md`)
+
+**Note:** Abstract map only (no pathfinding/UI). Global market mapped to default region until regional markets (M8+).
 
 ---
 

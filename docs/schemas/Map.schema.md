@@ -17,34 +17,34 @@ Maps describe region positions and inter-region connections. There is no tile gr
 
 # Required Fields
 
-| Field | Type | Description |
-| --- | --- | --- |
-| `id` | string | Global identifier (`^[a-z0-9_]+$`) |
-| `name` | string | Display name |
-| `regions` | array | Region placements on the abstract map |
-| `connections` | array | Inter-region connections |
-| `enabled` | boolean | Whether the map is active |
-| `version` | number | Content schema version (minimum 1) |
+| Field         | Type    | Description                           |
+| ------------- | ------- | ------------------------------------- |
+| `id`          | string  | Global identifier (`^[a-z0-9_]+$`)    |
+| `name`        | string  | Display name                          |
+| `regions`     | array   | Region placements on the abstract map |
+| `connections` | array   | Inter-region connections              |
+| `enabled`     | boolean | Whether the map is active             |
+| `version`     | number  | Content schema version (minimum 1)    |
 
 ---
 
 # Region Placement
 
-| Field | Type | Description |
-| --- | --- | --- |
+| Field      | Type   | Description      |
+| ---------- | ------ | ---------------- |
 | `regionId` | string | Region reference |
-| `x` | number | Map x coordinate |
-| `y` | number | Map y coordinate |
+| `x`        | number | Map x coordinate |
+| `y`        | number | Map y coordinate |
 
 ---
 
 # Connection
 
-| Field | Type | Description |
-| --- | --- | --- |
-| `fromRegionId` | string | Source region |
-| `toRegionId` | string | Destination region (must differ from source) |
-| `distance` | number | Abstract distance (minimum 1) |
+| Field          | Type   | Description                                  |
+| -------------- | ------ | -------------------------------------------- |
+| `fromRegionId` | string | Source region                                |
+| `toRegionId`   | string | Destination region (must differ from source) |
+| `distance`     | number | Abstract distance (minimum 1)                |
 
 ---
 

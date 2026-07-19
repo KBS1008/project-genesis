@@ -53,7 +53,9 @@ export class RegionalResourceAvailabilityPolicy {
     region: Region,
     inputs: readonly RegionalResourceRecipeInput[],
   ): Result<void, ValidationError> {
-    for (const input of [...inputs].sort((left, right) => left.resource.localeCompare(right.resource))) {
+    for (const input of [...inputs].sort((left, right) =>
+      left.resource.localeCompare(right.resource),
+    )) {
       const availabilityResult = this.resolveAvailability(region, input.resource);
 
       if (!availabilityResult.ok) {

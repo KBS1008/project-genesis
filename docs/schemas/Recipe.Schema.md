@@ -108,26 +108,26 @@ Dateien werden in deterministisch sortierter Dateinamenreihenfolge geladen.
 
 Der aktuelle `RecipeDefinition`-Contract enthält folgende Felder:
 
-| Feld | Typ | Erforderlich | Beschreibung |
-| --- | --- | :---: | --- |
-| `id` | string | Ja | Nicht leer, globales ID-Format |
-| `name` | string | Ja | Nicht leer |
-| `description` | string | Ja | Nicht leer |
-| `version` | number | Ja | `>= 1` |
-| `category` | enum | Ja | Unterstützte Recipe-Kategorie |
-| `buildingTypes` | string[] | Ja | Mindestens ein Eintrag |
-| `inputs` | object[] | Ja | Mindestens ein Eintrag |
-| `outputs` | object[] | Ja | Mindestens ein Eintrag |
-| `duration` | number | Ja | `>= 1` |
-| `energy` | number | Ja | `>= 0` |
-| `workers` | number | Ja | `>= 0` |
-| `requiredResearch` | string[] | Ja | Gültige IDs |
-| `requiredMilestones` | string[] | Ja | Gültige IDs |
-| `maintenanceCost` | number | Ja | `>= 0` |
-| `productionCost` | number | Ja | `>= 0` |
-| `experience` | number | Ja | `>= 0` |
-| `tags` | string[] | Ja | Array von Strings |
-| `enabled` | boolean | Ja | Boolean |
+| Feld                 | Typ      | Erforderlich | Beschreibung                   |
+| -------------------- | -------- | :----------: | ------------------------------ |
+| `id`                 | string   |      Ja      | Nicht leer, globales ID-Format |
+| `name`               | string   |      Ja      | Nicht leer                     |
+| `description`        | string   |      Ja      | Nicht leer                     |
+| `version`            | number   |      Ja      | `>= 1`                         |
+| `category`           | enum     |      Ja      | Unterstützte Recipe-Kategorie  |
+| `buildingTypes`      | string[] |      Ja      | Mindestens ein Eintrag         |
+| `inputs`             | object[] |      Ja      | Mindestens ein Eintrag         |
+| `outputs`            | object[] |      Ja      | Mindestens ein Eintrag         |
+| `duration`           | number   |      Ja      | `>= 1`                         |
+| `energy`             | number   |      Ja      | `>= 0`                         |
+| `workers`            | number   |      Ja      | `>= 0`                         |
+| `requiredResearch`   | string[] |      Ja      | Gültige IDs                    |
+| `requiredMilestones` | string[] |      Ja      | Gültige IDs                    |
+| `maintenanceCost`    | number   |      Ja      | `>= 0`                         |
+| `productionCost`     | number   |      Ja      | `>= 0`                         |
+| `experience`         | number   |      Ja      | `>= 0`                         |
+| `tags`               | string[] |      Ja      | Array von Strings              |
+| `enabled`            | boolean  |      Ja      | Boolean                        |
 
 Alle Felder sind im aktuellen Validator verpflichtend.
 

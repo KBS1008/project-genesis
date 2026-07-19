@@ -7,7 +7,9 @@ import { createCompanyId } from '../../../domain/company/Company.js';
 import { STARTING_MONEY } from '../../../domain/finance/FinanceConstants.js';
 import { FinanceTransactionType } from '../../../domain/finance/FinanceTransactionType.js';
 import { STARTER_NPC_WOOD_CONTRACT_ID } from '../../../domain/contract/SupplyContractConstants.js';
-import { GAME_SAVE_SCHEMA_VERSION } from '../../../application/persistence/GameSaveSnapshotV1.js';
+import { GAME_SAVE_SCHEMA_VERSION as GAME_SAVE_SCHEMA_VERSION_V1 } from '../../../application/persistence/GameSaveSnapshotV1.js';
+import { GAME_SAVE_SCHEMA_VERSION } from '../../../application/persistence/GameSaveSnapshotV2.js';
+import { DEFAULT_REGION_ID, DEFAULT_WORLD_ID } from '../../../domain/world/WorldConstants.js';
 import { bootstrapApplication } from '../../../application/bootstrap/bootstrapApplication.js';
 import { TickHistoryService } from '../../../application/services/TickHistoryService.js';
 import { CreateCompanyUseCase } from '../../../application/use-cases/CreateCompanyUseCase.js';
@@ -32,6 +34,7 @@ import { AssignEmployeeUseCase } from '../../../application/use-cases/AssignEmpl
 import { completeBuildingConstruction } from '../../../../tests/helpers/completeBuildingConstruction.js';
 import { EmployeeStatus } from '../../../domain/employee/EmployeeStatus.js';
 import { createEmployeeId } from '../../../domain/employee/Employee.js';
+import { TransportOrderStatus } from '../../../domain/transport/TransportOrderStatus.js';
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const gameContentRoot = path.resolve(testDirectory, '../../../../game-content');
@@ -69,6 +72,10 @@ function createMinimalSnapshot(overrides: Record<string, unknown> = {}) {
   return {
     schemaVersion: GAME_SAVE_SCHEMA_VERSION,
     savedAtUtc: '2026-07-18T12:00:00.000Z',
+    world: Object.freeze({
+      activeWorldId: DEFAULT_WORLD_ID,
+    }),
+    marketRegionMappings: Object.freeze([]),
     simulation: Object.freeze({
       clockTime: 0,
       tickNumber: 0,
@@ -123,6 +130,7 @@ describe('GameStateSerializer', () => {
         employeeRepository: context.employeeRepository,
         supplyContractRepository: context.supplyContractRepository,
         tickHistoryService: context.tickHistoryService,
+        worldRepository: context.worldRepository,
       });
 
       expect(serializeResult.ok).toBe(false);
@@ -186,6 +194,7 @@ describe('GameStateSerializer', () => {
         employeeRepository: context.employeeRepository,
         supplyContractRepository: context.supplyContractRepository,
         tickHistoryService: context.tickHistoryService,
+        worldRepository: context.worldRepository,
       });
 
       expect(serializeResult.ok).toBe(true);
@@ -251,6 +260,7 @@ describe('GameStateSerializer', () => {
         employeeRepository: context.employeeRepository,
         supplyContractRepository: context.supplyContractRepository,
         tickHistoryService: context.tickHistoryService,
+        worldRepository: context.worldRepository,
       });
 
       expect(serializeResult.ok).toBe(true);
@@ -315,6 +325,8 @@ describe('GameStateSerializer', () => {
         return;
       }
 
+      expect(parseResult.value.world.activeWorldId).toBe(DEFAULT_WORLD_ID);
+      expect(parseResult.value.marketRegionMappings).toEqual([]);
       expect(parseResult.value.researchJobs).toEqual([]);
       expect(parseResult.value.companyResearch).toEqual([]);
       expect(parseResult.value.companyMilestones).toEqual([]);
@@ -322,6 +334,59 @@ describe('GameStateSerializer', () => {
       expect(parseResult.value.transportOrders).toEqual([]);
       expect(parseResult.value.employees).toEqual([]);
       expect(parseResult.value.supplyContracts).toEqual([]);
+    });
+
+    it('migrates v1 snapshots to v2 with default world and region ownership', () => {
+      const parseResult = serializer.parse(
+        createMinimalSnapshot({
+          schemaVersion: GAME_SAVE_SCHEMA_VERSION_V1,
+          world: undefined,
+          marketRegionMappings: undefined,
+          buildings: Object.freeze([
+            Object.freeze({
+              id: 'building_001',
+              buildingTypeId: 'sawmill',
+              companyId: 'company_001',
+              name: 'Legacy Sawmill',
+              position: Object.freeze({ x: 1, y: 2 }),
+              level: 1,
+              createdAt: 0,
+              status: BuildingStatus.ACTIVE,
+              constructionDuration: 0,
+              constructionProgress: 0,
+            }),
+          ]),
+          transportOrders: Object.freeze([
+            Object.freeze({
+              id: 'transport_001',
+              companyId: 'company_001',
+              sourceBuildingId: 'building_001',
+              destinationBuildingId: 'building_001',
+              resourceId: 'resource_wood',
+              amount: 10,
+              duration: 5,
+              productionJobId: 'production_001',
+              createdAt: 0,
+              status: TransportOrderStatus.WAITING,
+              startTime: undefined,
+              endTime: undefined,
+              progress: 0,
+            }),
+          ]),
+        }),
+      );
+
+      expect(parseResult.ok).toBe(true);
+
+      if (!parseResult.ok) {
+        return;
+      }
+
+      expect(parseResult.value.schemaVersion).toBe(GAME_SAVE_SCHEMA_VERSION);
+      expect(parseResult.value.world.activeWorldId).toBe(DEFAULT_WORLD_ID);
+      expect(parseResult.value.buildings[0]?.regionId).toBe(DEFAULT_REGION_ID);
+      expect(parseResult.value.transportOrders[0]?.sourceRegionId).toBe(DEFAULT_REGION_ID);
+      expect(parseResult.value.transportOrders[0]?.destinationRegionId).toBe(DEFAULT_REGION_ID);
     });
   });
 
@@ -376,6 +441,7 @@ describe('GameStateSerializer', () => {
               id: 'building_001',
               buildingTypeId: 'warehouse',
               companyId: 'company_001',
+              regionId: DEFAULT_REGION_ID,
               name: 'Starter Warehouse',
               position: Object.freeze({ x: 1, y: 1 }),
               level: 1,
@@ -416,9 +482,12 @@ describe('GameStateSerializer', () => {
       expect(building?.getStatus()).toBe(BuildingStatus.ACTIVE);
     });
 
-    it('assigns default region when snapshot omits regionId', () => {
+    it('assigns default region when legacy v1 snapshot omits regionId', () => {
       const parseResult = serializer.parse(
         createMinimalSnapshot({
+          schemaVersion: GAME_SAVE_SCHEMA_VERSION_V1,
+          world: undefined,
+          marketRegionMappings: undefined,
           companies: Object.freeze([
             Object.freeze({
               id: 'company_001',
@@ -433,6 +502,7 @@ describe('GameStateSerializer', () => {
               id: 'building_001',
               buildingTypeId: 'warehouse',
               companyId: 'company_001',
+              regionId: DEFAULT_REGION_ID,
               name: 'Starter Warehouse',
               position: Object.freeze({ x: 1, y: 1 }),
               level: 1,
@@ -551,6 +621,7 @@ describe('GameStateSerializer', () => {
               id: 'building_001',
               buildingTypeId: 'warehouse',
               companyId: 'company_001',
+              regionId: DEFAULT_REGION_ID,
               name: 'Starter Warehouse',
               position: Object.freeze({ x: 1, y: 1 }),
               level: 1,
@@ -724,6 +795,7 @@ describe('GameStateSerializer', () => {
         employeeRepository: sourceContext.employeeRepository,
         supplyContractRepository: sourceContext.supplyContractRepository,
         tickHistoryService: sourceContext.tickHistoryService,
+        worldRepository: sourceContext.worldRepository,
       });
 
       expect(serializeResult.ok).toBe(true);
@@ -857,6 +929,7 @@ describe('GameStateSerializer', () => {
         employeeRepository: sourceContext.employeeRepository,
         supplyContractRepository: sourceContext.supplyContractRepository,
         tickHistoryService: sourceContext.tickHistoryService,
+        worldRepository: sourceContext.worldRepository,
       });
 
       expect(serializeResult.ok).toBe(true);
@@ -985,6 +1058,7 @@ describe('GameStateSerializer', () => {
         employeeRepository: sourceContext.employeeRepository,
         supplyContractRepository: sourceContext.supplyContractRepository,
         tickHistoryService: sourceContext.tickHistoryService,
+        worldRepository: sourceContext.worldRepository,
       });
 
       expect(serializeResult.ok).toBe(true);

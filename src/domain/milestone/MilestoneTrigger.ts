@@ -33,9 +33,7 @@ export type ProfitThresholdMilestoneTrigger = {
 
 /** Trigger configuration for automatic milestone detection. */
 export type MilestoneTrigger =
-  | FirstSaleMilestoneTrigger
-  | ProductionVolumeMilestoneTrigger
-  | ProfitThresholdMilestoneTrigger;
+  FirstSaleMilestoneTrigger | ProductionVolumeMilestoneTrigger | ProfitThresholdMilestoneTrigger;
 
 /** Milestone metadata required for trigger evaluation. */
 export type MilestoneEvaluationCandidate = {

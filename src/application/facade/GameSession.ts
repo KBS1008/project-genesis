@@ -26,6 +26,8 @@ import { GetInventoryQueryHandler } from '../queries/GetInventoryQueryHandler.js
 import { GetFinanceQueryHandler } from '../queries/GetFinanceQueryHandler.js';
 import { ListFinanceTransactionsQueryHandler } from '../queries/ListFinanceTransactionsQueryHandler.js';
 import { GetMarketPricesQueryHandler } from '../queries/GetMarketPricesQueryHandler.js';
+import { GetWorldOverviewQueryHandler } from '../queries/GetWorldOverviewQueryHandler.js';
+import { GetRegionDetailsQueryHandler } from '../queries/GetRegionDetailsQueryHandler.js';
 import { createCompanyId } from '../../domain/company/Company.js';
 import { ProductionJobStatus } from '../../domain/production/ProductionJobStatus.js';
 import { TransportOrderStatus } from '../../domain/transport/TransportOrderStatus.js';
@@ -40,6 +42,8 @@ import type {
 } from './GameSessionDashboard.js';
 import { GameSessionDashboardBuilder } from './GameSessionDashboardBuilder.js';
 import type { DashboardTickHistory, TickHistoryQuery } from '../read-models/TickMetricsSnapshot.js';
+import type { WorldOverviewReadModel } from '../read-models/WorldOverviewReadModel.js';
+import type { RegionDetailsReadModel } from '../read-models/RegionDetailsReadModel.js';
 
 /** Options for creating a {@link GameSession}. */
 export type CreateGameSessionOptions = {
@@ -113,6 +117,8 @@ export class GameSession {
   #getFinance!: GetFinanceQueryHandler;
   #listFinanceTransactions!: ListFinanceTransactionsQueryHandler;
   #getMarketPrices!: GetMarketPricesQueryHandler;
+  #getWorldOverview!: GetWorldOverviewQueryHandler;
+  #getRegionDetails!: GetRegionDetailsQueryHandler;
   #dashboardBuilder!: GameSessionDashboardBuilder;
   readonly #gameContentRoot: string;
   readonly #savePath: string;
@@ -313,6 +319,16 @@ export class GameSession {
         points: this.#context.tickHistoryService.getHistory(query),
       }),
     );
+  }
+
+  /** Returns bootstrapped world overview data. */
+  getWorldOverview(): Result<WorldOverviewReadModel, ValidationError> {
+    return this.#getWorldOverview.execute();
+  }
+
+  /** Returns one region with resources and cities. */
+  getRegionDetails(regionId: string): Result<RegionDetailsReadModel, ValidationError> {
+    return this.#getRegionDetails.execute({ regionId });
   }
 
   /** Advances the simulation by one or more ticks. */
@@ -534,6 +550,8 @@ export class GameSession {
     this.#getFinance = new GetFinanceQueryHandler(this.#context);
     this.#listFinanceTransactions = new ListFinanceTransactionsQueryHandler(this.#context);
     this.#getMarketPrices = new GetMarketPricesQueryHandler(this.#context);
+    this.#getWorldOverview = new GetWorldOverviewQueryHandler(this.#context);
+    this.#getRegionDetails = new GetRegionDetailsQueryHandler(this.#context);
     this.#dashboardBuilder = new GameSessionDashboardBuilder(
       this.#context,
       this.#context.energyBalanceService,

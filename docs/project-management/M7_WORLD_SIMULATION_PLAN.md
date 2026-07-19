@@ -178,7 +178,7 @@ Existing saves and tests must receive a deterministic default region through an 
 No scattered fallback such as:
 
 ```ts
-regionId ?? 'default'
+regionId ?? 'default';
 ```
 
 may be introduced throughout the codebase.
@@ -892,6 +892,8 @@ Exit criteria:
 - all M7 acceptance criteria pass,
 - M8 is unblocked,
 - no M8 behavior was implemented accidentally.
+
+**Status:** ✅ Completed (2026-07-19) — `docs/quality/M7_WORLD_SIMULATION_GATE_REVIEW_REPORT.md` (AUD-005)
 
 ---
 

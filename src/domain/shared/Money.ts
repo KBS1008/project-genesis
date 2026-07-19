@@ -80,7 +80,9 @@ export class Money extends ValueObject {
     }
 
     if (this.amount < other.amount) {
-      return Result.fail(new ValidationError('Money subtraction would result in a negative amount.'));
+      return Result.fail(
+        new ValidationError('Money subtraction would result in a negative amount.'),
+      );
     }
 
     return Money.create(this.amount - other.amount, this.currency);

@@ -30,7 +30,9 @@ export class TransportSimulationSystem implements SimulationSystem {
   execute(context: TickContext): void {
     this.#transportLogisticsService.dispatchPendingTransports();
 
-    for (const order of this.#sortInProgressOrders(this.#transportOrderRepository.findInProgress())) {
+    for (const order of this.#sortInProgressOrders(
+      this.#transportOrderRepository.findInProgress(),
+    )) {
       const tickResult = order.tick(context.clock);
 
       if (!tickResult.ok) {

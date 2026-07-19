@@ -54,9 +54,7 @@ describe('InMemoryCompanyMilestonesRepository', () => {
   it('returns undefined when a milestone module id was not found', () => {
     const repository = new InMemoryCompanyMilestonesRepository();
 
-    expect(
-      repository.findById(requireCompanyMilestonesId('milestones_missing')),
-    ).toBeUndefined();
+    expect(repository.findById(requireCompanyMilestonesId('milestones_missing'))).toBeUndefined();
   });
 
   it('finds the milestone module owned by a company', () => {

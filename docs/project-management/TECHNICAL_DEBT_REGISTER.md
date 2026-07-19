@@ -8,7 +8,7 @@
 
 **Status:** Active
 
-**Last Updated:** 2026-07-18
+**Last Updated:** 2026-07-19
 
 ---
 
@@ -60,27 +60,174 @@ This register records the actual technical debt.
 | ------------- | ----: |
 | Critical      |     0 |
 | High          |     0 |
-| Medium        |     0 |
-| Low           |     0 |
-| Informational |     0 |
+| Medium        |     2 |
+| Low           |     3 |
+| Informational |     1 |
 
 ---
 
 # Active Technical Debt
 
-No confirmed technical debt items are currently registered.
-
-This does not mean that no technical debt exists.
-
-It means that no specific debt item has yet been formally recorded in this register.
+Six non-blocking items deferred from M7 gate review (AUD-005). None block M8 start.
 
 ---
 
 # Debt Register
 
+| ID        | Title                              | Category      | Priority | Status   | Target Milestone |
+| --------- | ---------------------------------- | ------------- | -------- | -------- | ---------------- |
+| TD-M7-01  | Per-region markets                 | Architecture  | Medium   | Accepted | M8+              |
+| TD-M7-02  | Full map UI                        | UI            | Low      | Open     | M9               |
+| TD-M7-03  | Resource depletion simulation      | Domain        | Low      | Open     | M10+             |
+| TD-M7-04  | Scenario-based world selection     | Content       | Low      | Open     | M10              |
+| TD-M7-05  | InfrastructureDefinition platform  | Architecture  | Medium   | Accepted | Deferred         |
+| TD-M7-06  | Company home/default region        | Domain        | Info     | Open     | M8 polish        |
+
+---
+
+## TD-M7-01 – Per-region markets
+
+**Category:** Architecture
+
+**Priority:** Medium
+
+**Status:** Accepted
+
+**Date Identified:** 2026-07-19
+
+**Identified By:** M7 gate review (AUD-005)
+
+**Related Audit:** `docs/quality/M7_WORLD_SIMULATION_GATE_REVIEW_REPORT.md`
+
+**Related Decision:** DD-007 (regional markets aspirational); M7 v1 maps `market_global` → `region_default`
+
+**Affected Systems:** Market aggregate, save V2 `marketRegionMappings`, trade services
+
+### Description
+
+M7 v1 keeps a single global market. Save V2 records a mapping from `market_global` to the default region only. Per-region market aggregates and regional price discovery are not implemented.
+
+### Origin
+
+Introduced intentionally in M7-5/M7-7 to avoid scope creep into M8 economy behaviour.
+
+### Reason
+
+Regional markets require NPC/competitor pricing logic planned for M8. Global market preserves M4–M6 gameplay.
+
+---
+
+## TD-M7-02 – Full map UI
+
+**Category:** UI
+
+**Priority:** Low
+
+**Status:** Open
+
+**Date Identified:** 2026-07-19
+
+**Identified By:** M7 gate review (AUD-005)
+
+**Related Audit:** `docs/quality/M7_WORLD_SIMULATION_GATE_REVIEW_REPORT.md`
+
+**Affected Systems:** Dashboard, M9 window model
+
+### Description
+
+World data is queryable via application read models and minimal REST endpoints (`GET api/world/overview`, `GET api/world/regions/:id`). No visual map, editor, or pathfinding UI exists.
+
+### Origin
+
+Explicit M7 non-goal per `M7_WORLD_SIMULATION_PLAN.md` §19.
+
+---
+
+## TD-M7-03 – Resource depletion simulation
+
+**Category:** Domain
+
+**Priority:** Low
+
+**Status:** Open
+
+**Date Identified:** 2026-07-19
+
+**Identified By:** M7 gate review (AUD-005)
+
+**Affected Systems:** Regional resources (Option A flags only)
+
+### Description
+
+Regional resources use Option A: static availability flags and extraction modifiers without depletion or regeneration state.
+
+---
+
+## TD-M7-04 – Scenario-based world selection
+
+**Category:** Content
+
+**Priority:** Low
+
+**Status:** Open
+
+**Date Identified:** 2026-07-19
+
+**Identified By:** M7 gate review (AUD-005)
+
+**Affected Systems:** `StartNewGameUseCase`, scenario loader (not implemented)
+
+### Description
+
+New games always bootstrap `world_default` / `region_default`. Scenario content referencing alternate worlds is documented but not loaded.
+
+---
+
+## TD-M7-05 – InfrastructureDefinition platform
+
+**Category:** Architecture
+
+**Priority:** Medium
+
+**Status:** Accepted
+
+**Date Identified:** 2026-07-19
+
+**Identified By:** M7-0 gap audit
+
+**Affected Systems:** Transport/construction policies
+
+### Description
+
+No standalone infrastructure content type. M7 uses biome modifiers and map connection distance for transport duration instead of a generic infrastructure registry.
+
+---
+
+## TD-M7-06 – Company home/default region
+
+**Category:** Domain
+
+**Priority:** Informational
+
+**Status:** Open
+
+**Date Identified:** 2026-07-19
+
+**Identified By:** M7-0 gap audit
+
+**Affected Systems:** Company aggregate, new-game setup
+
+### Description
+
+Buildings have required `regionId`; companies do not yet track an optional home region for UI or AI expansion (M8).
+
+---
+
+# Debt Register (template reference)
+
 | ID  | Title               | Category | Priority | Status | Target Milestone |
 | --- | ------------------- | -------- | -------- | ------ | ---------------- |
-| —   | No registered items | —        | —        | —      | —                |
+| —   | See active items above | —     | —        | —      | —                |
 
 ---
 

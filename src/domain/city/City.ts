@@ -7,7 +7,7 @@
 import { Entity } from '../../common/core/Entity.js';
 import { ValidationError } from '../../common/errors/ValidationError.js';
 import { Result } from '../../common/result/Result.js';
-import { CityCategory, isCityCategory } from './CityCategory.js';
+import { isCityCategory, type CityCategory } from './CityCategory.js';
 import { createCityId, type CityId } from '../region/CityId.js';
 import { createRegionId, type RegionId } from '../region/RegionId.js';
 

@@ -98,9 +98,9 @@ describe('InMemoryCompanyResearchRepository', () => {
     repository.save(restored);
 
     expect(
-      repository.findById(requireCompanyResearchId('research_company_001'))?.hasCompletedTechnology(
-        'basic_woodworking',
-      ),
+      repository
+        .findById(requireCompanyResearchId('research_company_001'))
+        ?.hasCompletedTechnology('basic_woodworking'),
     ).toBe(false);
   });
 });

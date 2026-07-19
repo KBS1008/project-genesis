@@ -17,14 +17,14 @@ Cities are infrastructure nodes bound to a region. They support later read model
 
 # Required Fields
 
-| Field | Type | Description |
-| --- | --- | --- |
-| `id` | string | Global identifier (`^[a-z0-9_]+$`) |
-| `name` | string | Display name |
-| `regionId` | string | Parent region reference |
-| `category` | string | One of `MARKET_HUB`, `INDUSTRIAL` |
-| `enabled` | boolean | Whether the city is active |
-| `version` | number | Content schema version (minimum 1) |
+| Field      | Type    | Description                        |
+| ---------- | ------- | ---------------------------------- |
+| `id`       | string  | Global identifier (`^[a-z0-9_]+$`) |
+| `name`     | string  | Display name                       |
+| `regionId` | string  | Parent region reference            |
+| `category` | string  | One of `MARKET_HUB`, `INDUSTRIAL`  |
+| `enabled`  | boolean | Whether the city is active         |
+| `version`  | number  | Content schema version (minimum 1) |
 
 ---
 

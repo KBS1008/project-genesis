@@ -209,10 +209,9 @@ export function validateWorldReferences(
 
     if (region !== undefined && !region.cityIds.includes(city.id)) {
       return Result.fail(
-        new ContentLoadError(
-          `City "${city.id}" is not listed in region "${region.id}" cityIds.`,
-          { contentId: city.id },
-        ),
+        new ContentLoadError(`City "${city.id}" is not listed in region "${region.id}" cityIds.`, {
+          contentId: city.id,
+        }),
       );
     }
   }

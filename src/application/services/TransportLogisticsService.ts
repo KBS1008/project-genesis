@@ -340,9 +340,7 @@ export class TransportLogisticsService implements TransportLogisticsPort {
         return routeCompare;
       }
 
-      const sourceRegionCompare = left
-        .getSourceRegionId()
-        .localeCompare(right.getSourceRegionId());
+      const sourceRegionCompare = left.getSourceRegionId().localeCompare(right.getSourceRegionId());
 
       if (sourceRegionCompare !== 0) {
         return sourceRegionCompare;
@@ -493,7 +491,7 @@ export class TransportLogisticsService implements TransportLogisticsPort {
       return FALLBACK_TRANSPORT_THROUGHPUT_CAPACITY;
     }
 
-    const baseRouteId = routeId.includes('::') ? routeId.split('::')[0] : routeId;
+    const baseRouteId = routeId.includes('::') ? (routeId.split('::')[0] ?? routeId) : routeId;
     const route = this.#gameContent.transportRoutes.get(baseRouteId);
 
     return route?.throughputCapacity ?? FALLBACK_TRANSPORT_THROUGHPUT_CAPACITY;

@@ -24,7 +24,10 @@ describe('ListCitiesQueryHandler', () => {
     expect(result.ok).toBe(true);
 
     if (result.ok) {
-      expect(result.value.map((city) => city.id)).toEqual(['city_industrial_hub', 'city_port_harbor']);
+      expect(result.value.map((city) => city.id)).toEqual([
+        'city_industrial_hub',
+        'city_port_harbor',
+      ]);
     }
   });
 

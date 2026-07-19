@@ -17,29 +17,29 @@ Regions belong to a world, reference a biome, embed regional resource availabili
 
 # Required Fields
 
-| Field | Type | Description |
-| --- | --- | --- |
-| `id` | string | Global identifier (`^[a-z0-9_]+$`) |
-| `name` | string | Display name |
-| `description` | string | Region description |
-| `worldId` | string | Parent world reference |
-| `biomeId` | string | Biome reference |
-| `mapPosition` | object | `{ x: number, y: number }` layout coordinates |
-| `neighborRegionIds` | string[] | Adjacent regions (unique, sorted) |
-| `cityIds` | string[] | Cities in this region (unique, sorted) |
-| `regionalResources` | array | Regional resource availability entries |
-| `enabled` | boolean | Whether the region is active |
-| `version` | number | Content schema version (minimum 1) |
+| Field               | Type     | Description                                   |
+| ------------------- | -------- | --------------------------------------------- |
+| `id`                | string   | Global identifier (`^[a-z0-9_]+$`)            |
+| `name`              | string   | Display name                                  |
+| `description`       | string   | Region description                            |
+| `worldId`           | string   | Parent world reference                        |
+| `biomeId`           | string   | Biome reference                               |
+| `mapPosition`       | object   | `{ x: number, y: number }` layout coordinates |
+| `neighborRegionIds` | string[] | Adjacent regions (unique, sorted)             |
+| `cityIds`           | string[] | Cities in this region (unique, sorted)        |
+| `regionalResources` | array    | Regional resource availability entries        |
+| `enabled`           | boolean  | Whether the region is active                  |
+| `version`           | number   | Content schema version (minimum 1)            |
 
 ---
 
 # Regional Resource Entry
 
-| Field | Type | Description |
-| --- | --- | --- |
-| `resourceTypeId` | string | Resource type reference |
-| `available` | boolean | Whether the resource is available in this region |
-| `extractionModifier` | number | Multiplier (minimum 0.01) |
+| Field                | Type    | Description                                      |
+| -------------------- | ------- | ------------------------------------------------ |
+| `resourceTypeId`     | string  | Resource type reference                          |
+| `available`          | boolean | Whether the resource is available in this region |
+| `extractionModifier` | number  | Multiplier (minimum 0.01)                        |
 
 Option A: availability only — no depletion or regeneration state in v1.
 

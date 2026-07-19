@@ -8,10 +8,10 @@
 
 import type { PersistenceError } from '../../common/errors/PersistenceError.js';
 import type { Result } from '../../common/result/Result.js';
-import type { GameSaveSnapshotV1 } from '../persistence/GameSaveSnapshotV1.js';
+import type { GameSaveSnapshotV2 } from '../persistence/GameSaveSnapshotV2.js';
 
 /** Reads and writes versioned savegame snapshots. */
 export interface SavegameStore {
-  save(filePath: string, snapshot: GameSaveSnapshotV1): Promise<Result<void, PersistenceError>>;
-  load(filePath: string): Promise<Result<GameSaveSnapshotV1, PersistenceError>>;
+  save(filePath: string, snapshot: GameSaveSnapshotV2): Promise<Result<void, PersistenceError>>;
+  load(filePath: string): Promise<Result<GameSaveSnapshotV2, PersistenceError>>;
 }

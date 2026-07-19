@@ -7,7 +7,7 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import type { SavegameStore } from '../../../application/ports/SavegameStore.js';
-import type { GameSaveSnapshotV1 } from '../../../application/persistence/GameSaveSnapshotV1.js';
+import type { GameSaveSnapshotV2 } from '../../../application/persistence/GameSaveSnapshotV2.js';
 import { PersistenceError, PersistenceErrorCode } from '../../../common/errors/PersistenceError.js';
 import { Result } from '../../../common/result/Result.js';
 import { GameStateSerializer } from './GameStateSerializer.js';
@@ -23,7 +23,7 @@ export class FileSavegameStore implements SavegameStore {
    */
   async save(
     filePath: string,
-    snapshot: GameSaveSnapshotV1,
+    snapshot: GameSaveSnapshotV2,
   ): Promise<Result<void, PersistenceError>> {
     try {
       await mkdir(path.dirname(filePath), { recursive: true });
@@ -45,7 +45,7 @@ export class FileSavegameStore implements SavegameStore {
   /**
    * Reads and validates a snapshot from disk.
    */
-  async load(filePath: string): Promise<Result<GameSaveSnapshotV1, PersistenceError>> {
+  async load(filePath: string): Promise<Result<GameSaveSnapshotV2, PersistenceError>> {
     try {
       const contents = await readFile(filePath, 'utf8');
       const parsed: unknown = JSON.parse(contents);

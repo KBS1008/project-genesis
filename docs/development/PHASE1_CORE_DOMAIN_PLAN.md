@@ -44,15 +44,15 @@ M8+ – NPC Economy, UI, Content Expansion, …
 
 **Beziehung zu offiziellen Milestones (`MILESTONE_PLAN.md`):**
 
-| Milestone | Status | Relevanz für Phase 1 |
-| --- | --- | --- |
-| M1 Foundation | ✅ | Voraussetzung |
-| M2 Architecture | ✅ | Voraussetzung |
-| M3 Governance | 🟡 | Parallel (Doku, Gates) |
-| M4 Core Gameplay | ✅ | Liefert Domain-Basis |
-| M5 Economy | ✅ | Liefert Finance/Market |
-| M6 Logistics | ✅ | Liefert Transport |
-| M7 World Simulation | ⚪ | **Explizit außerhalb** von Phase 1 |
+| Milestone           | Status | Relevanz für Phase 1               |
+| ------------------- | ------ | ---------------------------------- |
+| M1 Foundation       | ✅     | Voraussetzung                      |
+| M2 Architecture     | ✅     | Voraussetzung                      |
+| M3 Governance       | 🟡     | Parallel (Doku, Gates)             |
+| M4 Core Gameplay    | ✅     | Liefert Domain-Basis               |
+| M5 Economy          | ✅     | Liefert Finance/Market             |
+| M6 Logistics        | ✅     | Liefert Transport                  |
+| M7 World Simulation | ⚪     | **Explizit außerhalb** von Phase 1 |
 
 Phase 1 ist ein **Domänen-Härtungs-Workstream** zwischen M6-Abschluss und M7-Start.
 
@@ -79,16 +79,16 @@ Content-Schemas und Cross-Registry-Validierung sind die verbindliche Referenz f�
 
 Phase 1 umfasst ausschließlich:
 
-| Bereich | Domain-Modul |
-| --- | --- |
-| Company | `src/domain/company/` |
-| Inventory | `src/domain/inventory/` + `src/domain/shared/` (Quantity, ResourceAmount, Capacity) |
-| Money | `src/domain/shared/Money.ts` + `src/domain/finance/` |
-| Building | `src/domain/building/` |
-| Production | `src/domain/production/` |
-| Logistics | `src/domain/transport/` (+ `BuildingStorage`) |
-| Research | `src/domain/research/` |
-| Milestones | `src/domain/milestone/` |
+| Bereich    | Domain-Modul                                                                        |
+| ---------- | ----------------------------------------------------------------------------------- |
+| Company    | `src/domain/company/`                                                               |
+| Inventory  | `src/domain/inventory/` + `src/domain/shared/` (Quantity, ResourceAmount, Capacity) |
+| Money      | `src/domain/shared/Money.ts` + `src/domain/finance/`                                |
+| Building   | `src/domain/building/`                                                              |
+| Production | `src/domain/production/`                                                            |
+| Logistics  | `src/domain/transport/` (+ `BuildingStorage`)                                       |
+| Research   | `src/domain/research/`                                                              |
+| Milestones | `src/domain/milestone/`                                                             |
 
 Erlaubte begleitende Änderungen:
 
@@ -144,16 +144,16 @@ Vor jeder Umsetzung gelten:
 
 # Ausgangslage – Domain-Reife (Audit 2026-07-19)
 
-| Bereich | Aggregate / VO | Repository | Domain-Tests | Hauptrisiko |
-| --- | --- | --- | --- | --- |
-| Company | ✅ `Company` | ✅ | 7 | Minimaler Lifecycle; Simulation-Stub |
-| Inventory | ✅ `Inventory` + VOs | ✅ | 7 (+ shared) | Kein dediziertes Warehouse-Aggregate (bewusst) |
-| Money | ⚠️ `Money` + `FinanceAccount` | ✅ | 11 | VO nicht durchgängig in Finance |
-| Building | ✅ `Building`, `BuildingStorage` | ✅ | 12 | Kein Upgrade/Demolish |
-| Production | ✅ `ProductionJob` | ✅ | 5 | Recipe nur in Content (DD-015-konform) |
-| Logistics | ✅ `TransportOrder` | ✅ | **0 Domain** | Größte Testlücke |
-| Research | ✅ `CompanyResearch`, `ResearchJob` | ✅ | 5 | Completion-Service ohne Test |
-| Milestone | ✅ `CompanyMilestones` | ✅ | 2 | Trigger-Logik in Application + Content-Import |
+| Bereich    | Aggregate / VO                      | Repository | Domain-Tests | Hauptrisiko                                    |
+| ---------- | ----------------------------------- | ---------- | ------------ | ---------------------------------------------- |
+| Company    | ✅ `Company`                        | ✅         | 7            | Minimaler Lifecycle; Simulation-Stub           |
+| Inventory  | ✅ `Inventory` + VOs                | ✅         | 7 (+ shared) | Kein dediziertes Warehouse-Aggregate (bewusst) |
+| Money      | ⚠️ `Money` + `FinanceAccount`       | ✅         | 11           | VO nicht durchgängig in Finance                |
+| Building   | ✅ `Building`, `BuildingStorage`    | ✅         | 12           | Kein Upgrade/Demolish                          |
+| Production | ✅ `ProductionJob`                  | ✅         | 5            | Recipe nur in Content (DD-015-konform)         |
+| Logistics  | ✅ `TransportOrder`                 | ✅         | **0 Domain** | Größte Testlücke                               |
+| Research   | ✅ `CompanyResearch`, `ResearchJob` | ✅         | 5            | Completion-Service ohne Test                   |
+| Milestone  | ✅ `CompanyMilestones`              | ✅         | 2            | Trigger-Logik in Application + Content-Import  |
 
 **Querschnitt positiv:**
 
@@ -212,10 +212,10 @@ Phase 1 Gate Review
 
 ### Deliverables
 
-| Artefakt | Pfad (neu/ergänzt) |
-| --- | --- |
-| Domain-Unit-Tests | `src/domain/transport/TransportOrder.test.ts` |
-| Repository-Tests | `src/infrastructure/persistence/InMemoryTransportOrderRepository.test.ts` |
+| Artefakt          | Pfad (neu/ergänzt)                                                        |
+| ----------------- | ------------------------------------------------------------------------- |
+| Domain-Unit-Tests | `src/domain/transport/TransportOrder.test.ts`                             |
+| Repository-Tests  | `src/infrastructure/persistence/InMemoryTransportOrderRepository.test.ts` |
 
 ### Testfokus (Minimum)
 
@@ -262,12 +262,12 @@ CompanyMilestones Aggregate (markiert erreicht)
 
 ### Deliverables
 
-| Artefakt | Beschreibung |
-| --- | --- |
+| Artefakt                         | Beschreibung                                                                                                                                 |
+| -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
 | Domain Policy oder Specification | z. B. `MilestoneTriggerPolicy` oder pro Trigger eine Specification unter `src/domain/milestone/` oder `src/domain/specifications/milestone/` |
-| Port (optional) | Schmaler Read-Port für Milestone-Metadaten, falls nötig — **kein** direkter Registry-Import in Domain |
-| Refactor Application | `MilestoneEvaluationService` delegiert an Domain |
-| Tests | Domain-Tests für jede Trigger-Variante; bestehende Service-Tests angepasst |
+| Port (optional)                  | Schmaler Read-Port für Milestone-Metadaten, falls nötig — **kein** direkter Registry-Import in Domain                                        |
+| Refactor Application             | `MilestoneEvaluationService` delegiert an Domain                                                                                             |
+| Tests                            | Domain-Tests für jede Trigger-Variante; bestehende Service-Tests angepasst                                                                   |
 
 ### Exit Criteria
 
@@ -290,9 +290,9 @@ DD-015 (Static vs Dynamic), DD-029 (Modular Monolith), Clean Architecture
 
 ### Deliverables
 
-| Artefakt | Pfad |
-| --- | --- |
-| Service-Unit-Tests | `src/application/services/ResearchCompletionService.test.ts` |
+| Artefakt                  | Pfad                                                                                     |
+| ------------------------- | ---------------------------------------------------------------------------------------- |
+| Service-Unit-Tests        | `src/application/services/ResearchCompletionService.test.ts`                             |
 | Optional Domain-Ergänzung | Tests für `CompanyResearch.completeTechnology()` Edge Cases in `CompanyResearch.test.ts` |
 
 ### Exit Criteria
@@ -316,11 +316,11 @@ DD-015 (Static vs Dynamic), DD-029 (Modular Monolith), Clean Architecture
 
 ### Deliverables
 
-| Artefakt | Beschreibung |
-| --- | --- |
-| Refactor `FinanceAccount` | Saldo und Beträge über `Money` (add/subtract/compare) |
-| Erweiterung `Money` | Nur falls für FinanceAccount nötig (minimale API) |
-| Tests | `FinanceAccount.test.ts` und `Money.test.ts` angepasst/ergänzt |
+| Artefakt                  | Beschreibung                                                   |
+| ------------------------- | -------------------------------------------------------------- |
+| Refactor `FinanceAccount` | Saldo und Beträge über `Money` (add/subtract/compare)          |
+| Erweiterung `Money`       | Nur falls für FinanceAccount nötig (minimale API)              |
+| Tests                     | `FinanceAccount.test.ts` und `Money.test.ts` angepasst/ergänzt |
 
 ### Exit Criteria
 
@@ -346,11 +346,11 @@ Mittlerer Refactor-Touch in Application/Savegame-Serialisierung — vor Merge Sa
 
 ### Deliverables
 
-| Artefakt | Beschreibung |
-| --- | --- |
-| Domain-Kommentar / README-Abschnitt | In `src/domain/company/` oder `IMPLEMENTATION_PROGRESS` |
-| Stub-Klarstellung | `CompanySimulationSystem.ts` — Intent-Kommentar, kein neues Gameplay |
-| Optional | 1–2 Tests für `CompanyStatus`-Invarianten, falls fehlend |
+| Artefakt                            | Beschreibung                                                         |
+| ----------------------------------- | -------------------------------------------------------------------- |
+| Domain-Kommentar / README-Abschnitt | In `src/domain/company/` oder `IMPLEMENTATION_PROGRESS`              |
+| Stub-Klarstellung                   | `CompanySimulationSystem.ts` — Intent-Kommentar, kein neues Gameplay |
+| Optional                            | 1–2 Tests für `CompanyStatus`-Invarianten, falls fehlend             |
 
 ### Exit Criteria
 
@@ -367,14 +367,14 @@ Mittlerer Refactor-Touch in Application/Savegame-Serialisierung — vor Merge Sa
 
 ### Deliverables
 
-| Repository | Testdatei | Status Audit |
-| --- | --- | --- |
-| `InMemoryTransportOrderRepository` | neu | fehlend |
-| `InMemoryCompanyResearchRepository` | neu | fehlend |
-| `InMemoryResearchJobRepository` | neu | fehlend |
-| `InMemoryCompanyMilestonesRepository` | neu | fehlend |
-| `InMemoryCompanyRepository` | vorhanden (2 Tests) | optional erweitern |
-| `InMemoryInventoryRepository` | vorhanden (1 Test) | optional erweitern |
+| Repository                            | Testdatei           | Status Audit       |
+| ------------------------------------- | ------------------- | ------------------ |
+| `InMemoryTransportOrderRepository`    | neu                 | fehlend            |
+| `InMemoryCompanyResearchRepository`   | neu                 | fehlend            |
+| `InMemoryResearchJobRepository`       | neu                 | fehlend            |
+| `InMemoryCompanyMilestonesRepository` | neu                 | fehlend            |
+| `InMemoryCompanyRepository`           | vorhanden (2 Tests) | optional erweitern |
+| `InMemoryInventoryRepository`         | vorhanden (1 Test)  | optional erweitern |
 
 ### Exit Criteria
 
@@ -398,25 +398,25 @@ pnpm validate-content --strict
 
 Zusätzlich:
 
-| Gate | Kriterium |
-| --- | --- |
-| Architecture | `tests/architecture/dependency-rules.test.ts` grün |
-| Domain purity | Kein neuer `src/content/`-Import in `src/domain/` |
-| No scope creep | Keine Out-of-Scope-Features |
-| Tests | Neues Verhalten mit Unit-Tests abgedeckt |
-| Docs | `IMPLEMENTATION_PROGRESS.md` nach WP-Abschluss |
+| Gate           | Kriterium                                          |
+| -------------- | -------------------------------------------------- |
+| Architecture   | `tests/architecture/dependency-rules.test.ts` grün |
+| Domain purity  | Kein neuer `src/content/`-Import in `src/domain/`  |
+| No scope creep | Keine Out-of-Scope-Features                        |
+| Tests          | Neues Verhalten mit Unit-Tests abgedeckt           |
+| Docs           | `IMPLEMENTATION_PROGRESS.md` nach WP-Abschluss     |
 
 ---
 
 # Dokumentations-Updates (geplant)
 
-| Work Package | Dokument |
-| --- | --- |
-| P1-01 | `IMPLEMENTATION_PROGRESS.md` (Logistics Tests) |
-| P1-02 | `IMPLEMENTATION_PROGRESS.md`; optional `domain-model.md`-Hinweis Milestone |
-| P1-04 | `IMPLEMENTATION_PROGRESS.md` (Money VO) |
-| P1-05 | `src/domain/company/` README oder Progress-Doc |
-| Phase 1 Abschluss | `docs/quality/PHASE1_CORE_DOMAIN_REPORT.md` |
+| Work Package      | Dokument                                                                   |
+| ----------------- | -------------------------------------------------------------------------- |
+| P1-01             | `IMPLEMENTATION_PROGRESS.md` (Logistics Tests)                             |
+| P1-02             | `IMPLEMENTATION_PROGRESS.md`; optional `domain-model.md`-Hinweis Milestone |
+| P1-04             | `IMPLEMENTATION_PROGRESS.md` (Money VO)                                    |
+| P1-05             | `src/domain/company/` README oder Progress-Doc                             |
+| Phase 1 Abschluss | `docs/quality/PHASE1_CORE_DOMAIN_REPORT.md`                                |
 
 **Nicht** automatisch ändern: Content-Schema-Dokumentation.
 
@@ -424,12 +424,12 @@ Zusätzlich:
 
 # Risiken und Mitigationen
 
-| Risiko | Mitigation |
-| --- | --- |
-| P1-02 vergrößert Diff in Application | Kleine Schritte; Service-Tests als Regression |
-| P1-04 bricht Savegame | `GameStateSerializer.test.ts` vor/nach Refactor |
-| Verwechslung Phase 1 vs M7 | Out-of-Scope-Liste in jedem PR referenzieren |
-| Content-Änderung „nur schnell“ | Baseline-Regel: STOP bei Content-Touch ohne Fehlernachweis |
+| Risiko                               | Mitigation                                                 |
+| ------------------------------------ | ---------------------------------------------------------- |
+| P1-02 vergrößert Diff in Application | Kleine Schritte; Service-Tests als Regression              |
+| P1-04 bricht Savegame                | `GameStateSerializer.test.ts` vor/nach Refactor            |
+| Verwechslung Phase 1 vs M7           | Out-of-Scope-Liste in jedem PR referenzieren               |
+| Content-Änderung „nur schnell“       | Baseline-Regel: STOP bei Content-Touch ohne Fehlernachweis |
 
 ---
 

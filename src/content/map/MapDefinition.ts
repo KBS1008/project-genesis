@@ -42,9 +42,7 @@ export class MapDefinition {
   constructor(props: MapDefinitionProps) {
     this.id = props.id;
     this.name = props.name;
-    this.regions = Object.freeze(
-      props.regions.map((placement) => Object.freeze({ ...placement })),
-    );
+    this.regions = Object.freeze(props.regions.map((placement) => Object.freeze({ ...placement })));
     this.connections = Object.freeze(
       props.connections.map((connection) => Object.freeze({ ...connection })),
     );

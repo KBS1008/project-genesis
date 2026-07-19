@@ -20,9 +20,7 @@ const BIOME_FILE_PATTERN = /\.(ya?ml)$/i;
  */
 export class BiomeLoader {
   /** Loads all YAML biome files from the given directory. */
-  async loadFromDirectory(
-    directoryPath: string,
-  ): Promise<Result<BiomeRegistry, ContentLoadError>> {
+  async loadFromDirectory(directoryPath: string): Promise<Result<BiomeRegistry, ContentLoadError>> {
     const registry = new BiomeRegistry();
 
     let entries: string[];

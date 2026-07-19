@@ -9,7 +9,9 @@ import { createBuildingId } from '../../domain/building/Building.js';
 import { BuildingStatus } from '../../domain/building/BuildingStatus.js';
 import { createCompanyId } from '../../domain/company/Company.js';
 import { STARTING_MONEY } from '../../domain/finance/FinanceConstants.js';
-import { GAME_SAVE_SCHEMA_VERSION } from '../persistence/GameSaveSnapshotV1.js';
+import { GAME_SAVE_SCHEMA_VERSION as GAME_SAVE_SCHEMA_VERSION_V1 } from '../persistence/GameSaveSnapshotV1.js';
+import { GAME_SAVE_SCHEMA_VERSION } from '../persistence/GameSaveSnapshotV2.js';
+import { DEFAULT_REGION_ID, DEFAULT_WORLD_ID } from '../../domain/world/WorldConstants.js';
 import { bootstrapApplication } from '../bootstrap/bootstrapApplication.js';
 import { FileSavegameStore } from '../../infrastructure/persistence/savegame/FileSavegameStore.js';
 import { CreateCompanyUseCase } from './CreateCompanyUseCase.js';
@@ -197,6 +199,162 @@ describe('LoadGameUseCase', () => {
     }
   });
 
+  it('loads a legacy v1 savegame and migrates world metadata', async () => {
+    const tempDirectory = await mkdtemp(path.join(tmpdir(), 'genesis-load-v1-'));
+    const savePath = path.join(tempDirectory, 'legacy-v1.json');
+
+    try {
+      await writeFile(
+        savePath,
+        JSON.stringify(
+          {
+            schemaVersion: GAME_SAVE_SCHEMA_VERSION_V1,
+            savedAtUtc: '2026-07-18T12:00:00.000Z',
+            simulation: {
+              clockTime: 0,
+              tickNumber: 0,
+              paused: false,
+              tickDuration: 1,
+            },
+            companies: [
+              {
+                id: 'company_001',
+                name: 'Genesis Industries',
+                ownerId: 'player_001',
+                foundedAt: 0,
+                status: 'active',
+              },
+            ],
+            buildings: [
+              {
+                id: 'building_001',
+                buildingTypeId: 'sawmill',
+                companyId: 'company_001',
+                name: 'Legacy Sawmill',
+                position: { x: 2, y: 3 },
+                level: 1,
+                createdAt: 0,
+                status: BuildingStatus.ACTIVE,
+                constructionDuration: 0,
+                constructionProgress: 0,
+              },
+            ],
+            inventories: [],
+            financeAccounts: [],
+            markets: [],
+            productionJobs: [],
+            researchJobs: [],
+            companyResearch: [],
+            companyMilestones: [],
+            buildingStorages: [],
+            transportOrders: [],
+            employees: [],
+          },
+          null,
+          2,
+        ),
+        'utf8',
+      );
+
+      const loadGame = new LoadGameUseCase({ savegameStore: new FileSavegameStore() });
+      const loadResult = await loadGame.execute({
+        filePath: savePath,
+        gameContentRoot,
+      });
+
+      expect(loadResult.ok).toBe(true);
+
+      if (!loadResult.ok) {
+        return;
+      }
+
+      const buildingId = createBuildingId('building_001');
+
+      if (!buildingId.ok) {
+        throw new Error(buildingId.error.message);
+      }
+
+      const building = loadResult.value.buildingRepository.findById(buildingId.value);
+
+      expect(building?.getRegionId().value).toBe(DEFAULT_REGION_ID);
+    } finally {
+      await rm(tempDirectory, { recursive: true, force: true });
+    }
+  });
+
+  it('returns ValidationError when snapshot references an unknown region', async () => {
+    const tempDirectory = await mkdtemp(path.join(tmpdir(), 'genesis-load-unknown-region-'));
+    const savePath = path.join(tempDirectory, 'unknown-region.json');
+
+    try {
+      await writeFile(
+        savePath,
+        JSON.stringify(
+          {
+            schemaVersion: GAME_SAVE_SCHEMA_VERSION,
+            savedAtUtc: '2026-07-18T12:00:00.000Z',
+            world: {
+              activeWorldId: DEFAULT_WORLD_ID,
+            },
+            marketRegionMappings: [],
+            simulation: {
+              clockTime: 0,
+              tickNumber: 0,
+              paused: false,
+              tickDuration: 1,
+            },
+            companies: [],
+            buildings: [
+              {
+                id: 'building_001',
+                buildingTypeId: 'sawmill',
+                companyId: 'company_001',
+                regionId: 'region_unknown',
+                name: 'Orphan Building',
+                position: { x: 0, y: 0 },
+                level: 1,
+                createdAt: 0,
+                status: BuildingStatus.ACTIVE,
+                constructionDuration: 0,
+                constructionProgress: 0,
+              },
+            ],
+            inventories: [],
+            financeAccounts: [],
+            markets: [],
+            productionJobs: [],
+            researchJobs: [],
+            companyResearch: [],
+            companyMilestones: [],
+            buildingStorages: [],
+            transportOrders: [],
+            employees: [],
+          },
+          null,
+          2,
+        ),
+        'utf8',
+      );
+
+      const loadGame = new LoadGameUseCase({ savegameStore: new FileSavegameStore() });
+      const loadResult = await loadGame.execute({
+        filePath: savePath,
+        gameContentRoot,
+      });
+
+      expect(loadResult.ok).toBe(false);
+
+      if (loadResult.ok) {
+        return;
+      }
+
+      expect(loadResult.error).toBeInstanceOf(ValidationError);
+      expect(loadResult.error.message).toContain('region_unknown');
+    } finally {
+      await rm(tempDirectory, { recursive: true, force: true });
+    }
+  });
+
   it('returns ValidationError when snapshot hydration fails', async () => {
     const tempDirectory = await mkdtemp(path.join(tmpdir(), 'genesis-load-hydrate-'));
     const savePath = path.join(tempDirectory, 'invalid-building-id.json');
@@ -208,6 +366,10 @@ describe('LoadGameUseCase', () => {
           {
             schemaVersion: GAME_SAVE_SCHEMA_VERSION,
             savedAtUtc: '2026-07-18T12:00:00.000Z',
+            world: {
+              activeWorldId: DEFAULT_WORLD_ID,
+            },
+            marketRegionMappings: [],
             simulation: {
               clockTime: 0,
               tickNumber: 0,
@@ -220,6 +382,7 @@ describe('LoadGameUseCase', () => {
                 id: '',
                 buildingTypeId: 'sawmill',
                 companyId: 'company_001',
+                regionId: DEFAULT_REGION_ID,
                 name: 'Broken Building',
                 position: { x: 0, y: 0 },
                 level: 1,
@@ -238,6 +401,7 @@ describe('LoadGameUseCase', () => {
             companyMilestones: [],
             buildingStorages: [],
             transportOrders: [],
+            employees: [],
           },
           null,
           2,

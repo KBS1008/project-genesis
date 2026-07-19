@@ -33,12 +33,14 @@ Update this document whenever a meaningful implementation milestone is completed
 | UI                               | Partial (Next.js dashboard per DASHBOARD_STYLE_GUIDE: layout, charts, drill-down, tutorial checklist, outline KPI icons, auto-dismiss toasts, live WebSocket refresh) |
 | Energy system                    | Partial (balance service, production gating, baseline grid)                                                                                                           |
 | Transport / logistics            | ✅ M6 completed — capacities, route durations, throughput queue (DD-022)                                                                                              |
+| World simulation                 | ✅ M7 completed — regions, map, biomes, cities, regional resources, save V2 (AUD-005)                                                                               |
 | M4 Core Gameplay                 | Completed                                                                                                                                                             |
 | M5 Economy                       | Completed                                                                                                                                                             |
 | M6 Logistics                     | ✅ Completed (Gate AUD-004, 2026-07-19)                                                                                                                               |
-| Phase 1 Core Domain              | ✅ Completed (Gate 2026-07-19) — see `PHASE1_CORE_DOMAIN_REPORT.md`                                                                                                  |
+| M7 World Simulation              | ✅ Completed (Gate AUD-005, 2026-07-19)                                                                                                                               |
+| Phase 1 Core Domain              | ✅ Completed (Gate 2026-07-19) — see `PHASE1_CORE_DOMAIN_REPORT.md`                                                                                                   |
 
-**Tests:** 472 (run `pnpm test` for current count)
+**Tests:** 528 (run `pnpm test` for current count)
 
 ---
 
@@ -46,18 +48,18 @@ Update this document whenever a meaningful implementation milestone is completed
 
 Trackable estimate of progress toward **Release 1.0** (`MILESTONE_PLAN.md`).
 
-**Last calculated:** 2026-07-19 · **Commit:** `33c97ea`
+**Last calculated:** 2026-07-19 · **Commit:** `ee34e8b` (+ M7-7/8 working tree)
 
 ## Summary
 
 | Metric                         |    Value | Notes                                                     |
 | ------------------------------ | -------: | --------------------------------------------------------- |
-| **Release progress (primary)** | **53 %** | Average of milestone completion % (see below)             |
-| Deliverable work invested      |     62 % | Average including partial pre-work (e.g. dashboard in M9) |
-| Playable prototype readiness   |    ~78 % | M1–M6 core; not a release metric                          |
-| Milestones completed           |   5 / 12 | M1, M2, M4, M5, M6                                        |
+| **Release progress (primary)** | **69 %** | Average of milestone completion % (see below)             |
+| Deliverable work invested      |     68 % | Average including partial pre-work (e.g. dashboard in M9) |
+| Playable prototype readiness   |    ~82 % | M1–M7 core; not a release metric                          |
+| Milestones completed           |   6 / 12 | M1, M2, M4, M5, M6, M7                                    |
 | Milestones in progress         |   1 / 12 | M3                                                        |
-| Tests                          |      417 | `pnpm test`                                               |
+| Tests                          |      528 | `pnpm test`                                               |
 
 **Primary formula:**
 
@@ -77,13 +79,13 @@ Update deliverable rows when a step ships; set milestone % to the **average of i
 | M4  | Core Gameplay          | ✅ Completed   |      100 |     8,3 % |        8,3 % |
 | M5  | Economy                | ✅ Completed   |      100 |     8,3 % |        8,3 % |
 | M6  | Logistics              | ✅ Completed   |      100 |     8,3 % |        8,3 % |
-| M7  | World Simulation       | ⚪ Planned     |        0 |     8,3 % |          0 % |
+| M7  | World Simulation       | ✅ Completed   |      100 |     8,3 % |        8,3 % |
 | M8  | NPC Economy            | ⚪ Planned     |        0 |     8,3 % |          0 % |
 | M9  | User Interface         | ⚪ Planned*    |       35 |     8,3 % |        2,9 % |
 | M10 | Content Expansion      | ⚪ Planned     |       10 |     8,3 % |        0,8 % |
 | M11 | Polish                 | ⚪ Planned     |        0 |     8,3 % |          0 % |
 | M12 | Release                | ⚪ Planned     |        0 |     8,3 % |          0 % |
-|     | **Total**              |                | **53 %** | **100 %** |     **53 %** |
+|     | **Total**              |                | **69 %** | **100 %** |     **69 %** |
 
 \*M9 is officially planned; dashboard, charts, tutorial and WebSocket from M4/M5 count as pre-work in the deliverable matrix below.
 
@@ -154,23 +156,25 @@ Update deliverable rows when a step ships; set milestone % to the **average of i
 | **Milestone average (gate)** | **100** | Gate review `M6_LOGISTICS_GATE_REVIEW_REPORT.md`                    |
 | **Deliverable average**      | **100** |                                                                     |
 
-### M7 – World Simulation ⚪ (0 %)
+### M7 – World Simulation ✅ (100 %)
 
-| Deliverable             |     % | Next step                  |
-| ----------------------- | ----: | -------------------------- |
-| Regions / map / biomes  |     0 | Not started                |
-| Infrastructure / cities |     0 | Not started                |
-| Regional resources      |     0 | Not started                |
-| **Milestone average**   | **0** | Unblocked — M6 gate passed |
+| Deliverable             |     % | Evidence                                                                 |
+| ----------------------- | ----: | ------------------------------------------------------------------------ |
+| Regions / map / biomes  |     100 | M7-1–M7-4: content loaders, `WorldBootstrapService`, queries, policies   |
+| Infrastructure / cities |     100 | Cities + map connectivity; biome/route modifiers (no infra platform)       |
+| Regional resources      |     100 | M7-5 Option A; `GetRegionalResourcesQuery`, production eligibility       |
+| Transport integration   |     100 | M7-6 cross-region routes, deterministic ordering                         |
+| Persistence / queries   |     100 | M7-7 save V2 + migration; M7-8 overview/region queries + minimal API     |
+| **Milestone average (gate)** | **100** | Gate review `M7_WORLD_SIMULATION_GATE_REVIEW_REPORT.md` (AUD-005)   |
 
 ### M8 – NPC Economy ⚪ (0 %)
 
 | Deliverable                    |     % | Next step     |
 | ------------------------------ | ----: | ------------- |
-| AI companies / expansion       |     0 | Not started   |
+| AI companies / expansion       |     0 | **Unblocked** — start M8 |
 | Market behaviour / competition |     0 | Not started   |
 | Bankruptcy / long-term sim     |     0 | Not started   |
-| **Milestone average**          | **0** | Blocked on M7 |
+| **Milestone average**          | **0** | M7 gate passed |
 
 ### M9 – User Interface ⚪ (35 % milestone · 49 % deliverable work)
 
@@ -1048,7 +1052,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Planned Next Steps
 
-1. **M7 – World Simulation:** regions, map, biomes, regional resources
+1. **M8 – NPC Economy:** AI companies, market behaviour, competition (see `M8_ECONOMY_SIMULATION_PLAN.md`)
 2. Session/auth model for multi-user API access
 3. Full tick log / replay per DD-033 (beyond metrics ring buffer)
 
@@ -1056,6 +1060,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Recently Completed (2026-07)
 
+- **M7 World Simulation completed (AUD-005):** regions, map, biomes, cities, regional resources, cross-region transport, save V2 + migration, world queries/API (`docs/quality/M7_WORLD_SIMULATION_GATE_REVIEW_REPORT.md`)
 - **M6 Logistics completed (AUD-004):** capacities, transport routes, network throughput queue; DD-022 V1 vehicle waiver (`docs/quality/M6_LOGISTICS_GATE_REVIEW_REPORT.md`)
 - **M5 Economy completed:** dynamic prices, dashboard supply/demand, market fees, taxes, NPC contracts, inflation dampening (reports in `docs/quality/M5_ECONOMY_*`)
 - M5 audit follow-ups: supply-contract savegame test, schema docs, tutorial economy steps, price-index chart

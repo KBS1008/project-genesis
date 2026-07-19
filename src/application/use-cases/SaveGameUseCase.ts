@@ -31,6 +31,7 @@ export type SaveGameUseCaseDependencies = Pick<
   | 'employeeRepository'
   | 'supplyContractRepository'
   | 'tickHistoryService'
+  | 'worldRepository'
 > & {
   readonly savegameStore: SavegameStore;
   readonly gameStateSerializer: GameStateSerializerPort;
@@ -56,6 +57,7 @@ export class SaveGameUseCase {
   readonly #employeeRepository: SaveGameUseCaseDependencies['employeeRepository'];
   readonly #supplyContractRepository: SaveGameUseCaseDependencies['supplyContractRepository'];
   readonly #tickHistoryService: SaveGameUseCaseDependencies['tickHistoryService'];
+  readonly #worldRepository: SaveGameUseCaseDependencies['worldRepository'];
   readonly #savegameStore: SavegameStore;
   readonly #serializer: GameStateSerializerPort;
 
@@ -79,6 +81,7 @@ export class SaveGameUseCase {
     this.#employeeRepository = dependencies.employeeRepository;
     this.#supplyContractRepository = dependencies.supplyContractRepository;
     this.#tickHistoryService = dependencies.tickHistoryService;
+    this.#worldRepository = dependencies.worldRepository;
     this.#savegameStore = dependencies.savegameStore;
     this.#serializer = dependencies.gameStateSerializer;
   }
@@ -106,6 +109,7 @@ export class SaveGameUseCase {
       employeeRepository: this.#employeeRepository,
       supplyContractRepository: this.#supplyContractRepository,
       tickHistoryService: this.#tickHistoryService,
+      worldRepository: this.#worldRepository,
     });
 
     if (!snapshotResult.ok) {
