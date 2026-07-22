@@ -108,8 +108,8 @@ The implementation **extends** existing aggregates and use cases rather than int
 | `MarketTradeService` | `src/application/services/MarketTradeService.ts` | Regional market selection + legacy fallback |
 | `MarketSimulationSystem` | `src/simulation/systems/market/MarketSimulationSystem.ts` | Iterates all regional markets |
 | `GetMarketPricesQueryHandler` | `src/application/queries/GetMarketPricesQueryHandler.ts` | Regional pricing |
-| `GameStateSerializer` | `src/infrastructure/persistence/savegame/GameStateSerializer.ts` | Regional market snapshots + `priceHistory` |
-| `GameSaveSnapshotV1` | `src/application/persistence/GameSaveSnapshotV1.ts` | Regional market fields |
+| `GameStateSerializer` | `src/infrastructure/persistence/savegame/GameStateSerializer.ts` | ⚠️ Writes M8 market fields under V2 — **Phase 8 must move to V3** (see `M8_PHASE_8_PERSISTENCE_DECISION.md`) |
+| `GameSaveSnapshotV1` | `src/application/persistence/GameSaveSnapshotV1.ts` | ⚠️ M8 fields added to V1 types — **revert in Phase 8**; frozen contract: `GameSaveSnapshotV1.schema.md` |
 | `BuyResourceUseCase` / `SellResourceUseCase` | Regional `regionId` on commands | Extended |
 | `CreateCompanyUseCase` | Autonomous flag + brain bootstrap | Extended |
 | `CreateCompanyCommand` | `autonomous`, `strategyDefinitionId` | Extended |
@@ -488,13 +488,22 @@ No O(n³) patterns identified. Scale risk is **multi-company × multi-region** o
 
 # Technical Debt
 
+Registered in `docs/project-management/TECHNICAL_DEBT_REGISTER.md` as **TD-M8-01 … TD-M8-06**.
+
+| ID | Item | Severity | Phase 8 blocker? |
+|----|------|----------|----------------|
+| TD-M8-01 | `STABILIZE_LIQUIDITY` goal without decision | Medium | **No** |
+| TD-M8-02 | `REDUCE_COSTS` never generated | Medium | **No** |
+| TD-M8-03 | `EXPAND_REGION` decision type not executed | Low | **No** |
+| TD-M8-04 | Expansion primary region only | Medium | **No** |
+| TD-M8-05 | `StartNewGameUseCase` seeds no NPC companies | Medium | **No** |
+| TD-M8-06 | Unused `MarketSupplyAggregator.ts` | Low | **No** |
+
+These items must be **resolved or explicitly waived** before the **final M8 gate** (Phase 9). They do **not** block Savegame V3 implementation.
+
 | Item | Severity |
 |------|----------|
-| Unused `MarketSupplyAggregator.ts` | Low — remove or document |
-| `EXPAND_REGION` decision type unused | Low — align domain enum with `PLACE_BUILDING` or implement handler |
-| `STABILIZE_LIQUIDITY` / `REDUCE_COSTS` dead goal paths | Medium — functional completeness |
 | `ProjectGenesisError` uses `Date.now()` | Low — acceptable for error metadata |
-| Strategy ADR date placeholder | Low — documentation hygiene |
 | `companyBrainRepository` optional on `CreateCompanyUseCase` | Low — tests omit it; autonomous path requires explicit wiring |
 
 ---
@@ -516,9 +525,9 @@ No O(n³) patterns identified. Scale risk is **multi-company × multi-region** o
 3. ~~**Finalize DD-037 metadata** (date, cross-links).~~ Done (2026-07-22).
 4. ~~**Define `GameSaveSnapshotV3` contract**~~ — ✅ `docs/schemas/GameSaveSnapshotV3.schema.md` (2026-07-22)
 5. **Add save/load integration tests** for brain state in Phase 8.
-6. **Wire orphan goals** (`STABILIZE_LIQUIDITY`) or remove from goal planner until decisions exist.
-7. **Plan NPC seeding strategy** — content-driven competitor companies for integration/determinism tests.
-8. **Remove or deprecate** unused `MarketSupplyAggregator.ts`.
+6. **Phase 9 — close TD-M8-01 … TD-M8-06** (orphan goals, NPC seeding, expansion depth, dead code); not required before V3.
+7. **Plan NPC seeding strategy** — content-driven competitor companies for integration/determinism tests (TD-M8-05).
+8. **Remove or deprecate** unused `MarketSupplyAggregator.ts` (TD-M8-06).
 9. **Add execution tests** for non-trade decision types from planning output (building, production, research).
 
 ---
@@ -529,4 +538,6 @@ Phases 1–7 implement the M8 architecture as specified in ADRs and the implemen
 
 Known gaps (brain persistence, documentation drift, partial financial/expansion depth, no default NPC session) are **expected next-phase work** or **functional refinements**, not architectural blockers.
 
-**READY FOR PHASE 8**
+**Persistence caveat:** M8 Phases 1–7 extended `GameSaveSnapshotV1` market types while still emitting `schemaVersion: 2`. Phase 8 is approved only after reverting V1/V2 to frozen contracts and introducing full M8 state in V3 (`M8_PHASE_8_PERSISTENCE_DECISION.md`).
+
+**READY FOR PHASE 8** (under persistence conditions documented above)

@@ -3,6 +3,9 @@
  *
  * Version 2 savegame snapshot schema with world and region ownership metadata.
  *
+ * **Frozen contract:** docs/schemas/GameSaveSnapshotV2.schema.md (commit 03dc747).
+ * `markets[]` uses the V1 global market shape. Regional market economics and price history are V3-only.
+ *
  * @see docs/decisions/DD-033-Savegame-and-Persistence-Strategy.md
  */
 

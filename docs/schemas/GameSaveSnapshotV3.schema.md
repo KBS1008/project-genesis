@@ -19,6 +19,8 @@ DD-033 describes persistence architecture. This document specifies the **exact f
 
 V3 extends V2. It does not replace earlier versions. Migration remains centralized in the serializer.
 
+**Out of scope for Phase 8:** functional AI gaps (orphan goals, NPC seeding, cross-region expansion, unused legacy aggregators). These are tracked as **TD-M8-01 … TD-M8-06** and must be closed before the final M8 gate, not before V3 implementation.
+
 ---
 
 # Version Chain
@@ -29,9 +31,11 @@ V1 ──migrate──► V2 ──migrate──► V3
 
 | Version | Introduced by | Primary addition |
 | ------- | ------------- | ---------------- |
-| 1       | M4/M5         | Core aggregates, optional regional fields |
-| 2       | M7            | `world`, required building/transport regions, `marketRegionMappings` |
-| 3       | M8 Phase 8    | `companyBrains[]`, normalized `regionalMarkets[]` |
+| 1       | M4/M5         | Core aggregates, **global** `markets[]` (see frozen V1 contract) |
+| 2       | M7            | `world`, `marketRegionMappings`, required building/transport regions |
+| 3       | M8 Phase 8    | `companyBrains[]`, `regionalMarkets[]` (full M8 market + brain state) |
+
+**Frozen historical contracts:** `GameSaveSnapshotV1.schema.md`, `GameSaveSnapshotV2.schema.md` — must not be semantically extended.
 
 Direct load into V3 without sequential migration is **not supported**.
 
@@ -64,6 +68,21 @@ GameSaveSnapshotV3
 ```
 
 **Breaking rename (V2 → V3):** top-level `markets` becomes `regionalMarkets`. No other top-level keys are removed.
+
+---
+
+# Remediation — V1 type pollution (Phase 8 prerequisite)
+
+M8 Phases 1–7 (`ba627fa`) incorrectly added M8 fields to `GameSaveSnapshotV1` market types while still emitting `schemaVersion: 2`. That violates the versioning rule in DD-033.
+
+**Phase 8 must:**
+
+1. Revert `GameSaveSnapshotV1.ts` market types to the frozen V1 contract (`03dc747`).
+2. Define all M8 market/brain fields in `GameSaveSnapshotV3.ts` only.
+3. Emit `schemaVersion: 3` for new saves.
+4. Implement `migrateGameSaveSnapshotV2ToV3` — promote transitional V2 files that already contain extra market keys into `regionalMarkets[]`; do not treat those keys as authoritative V2 semantics.
+
+See `docs/architecture/reviews/M8_PHASE_8_PERSISTENCE_DECISION.md`.
 
 ---
 

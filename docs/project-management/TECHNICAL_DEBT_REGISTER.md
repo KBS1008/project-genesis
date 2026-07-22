@@ -8,7 +8,7 @@
 
 **Status:** Active
 
-**Last Updated:** 2026-07-19
+**Last Updated:** 2026-07-22
 
 ---
 
@@ -60,15 +60,26 @@ This register records the actual technical debt.
 | ------------- | ----: |
 | Critical      |     0 |
 | High          |     0 |
-| Medium        |     2 |
-| Low           |     3 |
+| Medium        |     5 |
+| Low           |     5 |
 | Informational |     1 |
 
 ---
 
 # Active Technical Debt
 
-Six non-blocking items deferred from M7 gate review (AUD-005). None block M8 start.
+Six M7 items deferred from gate review (AUD-005). **TD-M7-01 resolved** in M8 (regional markets shipped).
+
+Six **M8 planning/economy gaps** registered after Gate 2 (2026-07-22). These are **not Phase 8 (Savegame V3) blockers** but must be closed before the **final M8 gate** (Phase 9).
+
+---
+
+# M8 Phase Boundaries (Gate 2, 2026-07-22)
+
+| Scope | Blocker? | Notes |
+| ----- | -------- | ----- |
+| **Phase 8 — Savegame V3** | — | Brain + regional market persistence only; functional AI gaps below do **not** block |
+| **Phase 9 — Final M8 gate** | — | TD-M8-01 … TD-M8-06 must be resolved or explicitly waived in gate report |
 
 ---
 
@@ -76,12 +87,18 @@ Six non-blocking items deferred from M7 gate review (AUD-005). None block M8 sta
 
 | ID        | Title                              | Category      | Priority | Status   | Target Milestone |
 | --------- | ---------------------------------- | ------------- | -------- | -------- | ---------------- |
-| TD-M7-01  | Per-region markets                 | Architecture  | Medium   | Accepted | M8+              |
+| TD-M7-01  | Per-region markets                 | Architecture  | Medium   | Resolved | M8 (Phase 3)     |
 | TD-M7-02  | Full map UI                        | UI            | Low      | Open     | M9               |
 | TD-M7-03  | Resource depletion simulation      | Domain        | Low      | Open     | M10+             |
 | TD-M7-04  | Scenario-based world selection     | Content       | Low      | Open     | M10              |
 | TD-M7-05  | InfrastructureDefinition platform  | Architecture  | Medium   | Accepted | Deferred         |
 | TD-M7-06  | Company home/default region        | Domain        | Info     | Open     | M8 polish        |
+| TD-M8-01  | STABILIZE_LIQUIDITY orphan goal    | Simulation    | Medium   | Accepted | M8 Phase 9       |
+| TD-M8-02  | REDUCE_COSTS never generated       | Simulation    | Medium   | Accepted | M8 Phase 9       |
+| TD-M8-03  | EXPAND_REGION decision not executed| Domain        | Low      | Accepted | M8 Phase 9       |
+| TD-M8-04  | Expansion primary region only      | Simulation    | Medium   | Accepted | M8 Phase 9       |
+| TD-M8-05  | StartNewGame seeds no NPC companies| Application   | Medium   | Accepted | M8 Phase 9       |
+| TD-M8-06  | Unused MarketSupplyAggregator      | Code          | Low      | Accepted | M8 Phase 9       |
 
 ---
 
@@ -91,29 +108,29 @@ Six non-blocking items deferred from M7 gate review (AUD-005). None block M8 sta
 
 **Priority:** Medium
 
-**Status:** Accepted
+**Status:** Resolved
 
 **Date Identified:** 2026-07-19
 
+**Date Resolved:** 2026-07-22
+
 **Identified By:** M7 gate review (AUD-005)
+
+**Resolved By:** M8 Phase 3 (regional markets, `MarketRegionalSupplyAggregator`, save V1 regional fields)
 
 **Related Audit:** `docs/quality/M7_WORLD_SIMULATION_GATE_REVIEW_REPORT.md`
 
-**Related Decision:** DD-007 (regional markets aspirational); M7 v1 maps `market_global` → `region_default`
+**Related Decision:** DD-018 Amendment (regional market architecture)
 
-**Affected Systems:** Market aggregate, save V2 `marketRegionMappings`, trade services
+**Affected Systems:** Market aggregate, save V1/V2 `markets[]`, `MarketPriceSeeder`, `MarketSimulationSystem`
 
 ### Description
 
-M7 v1 keeps a single global market. Save V2 records a mapping from `market_global` to the default region only. Per-region market aggregates and regional price discovery are not implemented.
+~~M7 v1 keeps a single global market.~~ **Resolved in M8:** one regional market per enabled region; legacy `market_global` fallback retained for migrated saves only.
 
-### Origin
+### Verification
 
-Introduced intentionally in M7-5/M7-7 to avoid scope creep into M8 economy behaviour.
-
-### Reason
-
-Regional markets require NPC/competitor pricing logic planned for M8. Global market preserves M4–M6 gameplay.
+Regional markets implemented; Gate 2 review passed Phases 1–7. See `docs/architecture/reviews/M8_IMPLEMENTATION_GATE_2_REPORT.md`.
 
 ---
 
@@ -219,7 +236,165 @@ No standalone infrastructure content type. M7 uses biome modifiers and map conne
 
 ### Description
 
-Buildings have required `regionId`; companies do not yet track an optional home region for UI or AI expansion (M8).
+Buildings have required `regionId`; companies do not yet track an optional home region for UI or AI expansion. M8 expansion planning places buildings in the **primary region only** (see TD-M8-04).
+
+---
+
+## TD-M8-01 – STABILIZE_LIQUIDITY orphan goal
+
+**Category:** Simulation
+
+**Priority:** Medium
+
+**Status:** Accepted
+
+**Date Identified:** 2026-07-22
+
+**Identified By:** M8 Implementation Gate 2 review
+
+**Related Audit:** `docs/architecture/reviews/M8_IMPLEMENTATION_GATE_2_REPORT.md`
+
+**Affected Systems:** `CompanyGoalPlanner`, `CompanyDecisionPlanner`, `GoalKind.STABILIZE_LIQUIDITY`
+
+### Description
+
+`STABILIZE_LIQUIDITY` goals can be created during planning, but no matching decision is enqueued or executed.
+
+### Phase boundary
+
+**Does not block Phase 8 (Savegame V3).** Must be wired or removed before final M8 gate.
+
+### Resolution Strategy
+
+Add liquidity decisions (e.g. sell resources, defer expansion) or stop generating the goal until handlers exist.
+
+---
+
+## TD-M8-02 – REDUCE_COSTS never generated
+
+**Category:** Simulation
+
+**Priority:** Medium
+
+**Status:** Accepted
+
+**Date Identified:** 2026-07-22
+
+**Identified By:** M8 Implementation Gate 2 review
+
+**Affected Systems:** `GoalKind.REDUCE_COSTS`, `CompanyGoalPlanner`
+
+### Description
+
+`REDUCE_COSTS` is defined in the domain enum but never produced by the goal planner.
+
+### Phase boundary
+
+**Does not block Phase 8.** Resolve in Phase 9 (implement generation + decisions, or remove from enum).
+
+---
+
+## TD-M8-03 – EXPAND_REGION decision not executed
+
+**Category:** Domain
+
+**Priority:** Low
+
+**Status:** Accepted
+
+**Date Identified:** 2026-07-22
+
+**Identified By:** M8 Implementation Gate 2 review
+
+**Affected Systems:** `CompanyDecisionType.EXPAND_REGION`, `CompanyDecisionExecutionService`
+
+### Description
+
+`EXPAND_REGION` exists as a decision type and snapshot payload variant, but execution routes expansion through `PLACE_BUILDING` only. No handler calls an expand-region use case.
+
+### Phase boundary
+
+**Does not block Phase 8** (decision type may appear in saved queues). Align domain model and execution before final gate.
+
+### Resolution Strategy
+
+Implement execution path or remove unused type in favour of `PLACE_BUILDING` only.
+
+---
+
+## TD-M8-04 – Expansion primary region only
+
+**Category:** Simulation
+
+**Priority:** Medium
+
+**Status:** Accepted
+
+**Date Identified:** 2026-07-22
+
+**Identified By:** M8 Implementation Gate 2 review
+
+**Affected Systems:** `CompanyPlanningAnalyser`, `CompanyDecisionPlanner`, cross-region world model
+
+### Description
+
+Regional expansion goals and building placement decisions target the company's primary region only. Cross-region expansion is not modeled in planning.
+
+### Phase boundary
+
+**Does not block Phase 8.** Required for full M8 economy behaviour before final gate.
+
+---
+
+## TD-M8-05 – StartNewGame seeds no NPC companies
+
+**Category:** Application
+
+**Priority:** Medium
+
+**Status:** Accepted
+
+**Date Identified:** 2026-07-22
+
+**Identified By:** M8 Implementation Gate 2 review
+
+**Affected Systems:** `StartNewGameUseCase`, `CreateCompanyUseCase` (`autonomous: true`)
+
+### Description
+
+New games create a single player company only. Autonomous NPC companies and brains require explicit `CreateCompany` with `autonomous: true`.
+
+### Phase boundary
+
+**Does not block Phase 8** (empty `companyBrains[]` is valid in V3). Seed competing NPCs before final M8 gate or document as M9 world bootstrap.
+
+### Resolution Strategy
+
+Extend `StartNewGameUseCase` or add dedicated world-bootstrap step with content-driven NPC roster.
+
+---
+
+## TD-M8-06 – Unused MarketSupplyAggregator
+
+**Category:** Code
+
+**Priority:** Low
+
+**Status:** Accepted
+
+**Date Identified:** 2026-07-22
+
+**Identified By:** M8 Implementation Gate 2 review
+
+**Affected Systems:** `src/domain/market/MarketSupplyAggregator.ts`, `MarketRegionalSupplyAggregator.ts`
+
+### Description
+
+Legacy global-inventory `MarketSupplyAggregator` is unused; `MarketRegionalSupplyAggregator` is authoritative for regional price simulation.
+
+### Phase boundary
+
+**Does not block Phase 8.** Remove or mark deprecated before final gate.
 
 ---
 
@@ -473,21 +648,21 @@ The reason must remain documented.
 
 # Current Register Status
 
-As of the current audit baseline:
+As of 2026-07-22 (post Gate 2):
 
 ```text
 Critical Debt: 0
 
 High Debt: 0
 
-Medium Debt: 0
+Medium Debt: 5  (TD-M7-05, TD-M8-01, TD-M8-02, TD-M8-04, TD-M8-05)
 
-Low Debt: 0
+Low Debt: 5     (TD-M7-02, TD-M7-03, TD-M7-04, TD-M8-03, TD-M8-06)
 
-Informational Debt: 0
+Informational Debt: 1  (TD-M7-06)
 ```
 
-Future audits and reviews must update this section.
+M8 Phase 8 may proceed while TD-M8-* items remain open.
 
 ---
 

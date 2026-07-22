@@ -513,9 +513,15 @@ It does not replace previous savegame versions.
 
 Backward compatibility remains mandatory.
 
-**Concrete contract:** `docs/schemas/GameSaveSnapshotV3.schema.md` (field definitions, ordering rules, v2→v3 migration).
+**Concrete contracts:**
+
+- Frozen: `docs/schemas/GameSaveSnapshotV1.schema.md`, `GameSaveSnapshotV2.schema.md`
+- V3 implementation: `docs/schemas/GameSaveSnapshotV3.schema.md`
+- Phase 8 decision: `docs/architecture/reviews/M8_PHASE_8_PERSISTENCE_DECISION.md`
 
 Migration shall occur exclusively through the central serializer.
+
+**Rule:** V1 and V2 types must not receive retroactive semantic extensions. M8 runtime state is introduced only in V3.
 
 ---
 

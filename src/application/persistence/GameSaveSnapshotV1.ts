@@ -3,6 +3,9 @@
  *
  * Version 1 savegame snapshot schema for deterministic session restore.
  *
+ * **Frozen contract:** docs/schemas/GameSaveSnapshotV1.schema.md (commit 03dc747).
+ * M8 market extensions in this file are technical debt — revert in Phase 8; M8 state belongs in V3 only.
+ *
  * @see docs/decisions/DD-033-Savegame-and-Persistence-Strategy.md
  */
 

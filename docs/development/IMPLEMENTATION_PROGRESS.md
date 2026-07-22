@@ -28,7 +28,7 @@ Update this document whenever a meaningful implementation milestone is completed
 | Domain specifications & policies | Partial (foundation + production/market/employee rules)                                                                                                               |
 | Content loaders                  | Partial (ResourceType, BuildingType, Recipe, Technology, Milestone, Employee, TransportRoute, **StrategyDefinition**)                                              |
 | Simulation                       | Partial (SimulationEngine, systems pipeline incl. regional market, company planning/execution, contracts, payroll, tax, inflation dampening)                          |
-| Infrastructure                   | Partial (in-memory repositories incl. **CompanyBrain**, JSON savegames incl. regional markets + price history, employees, supply contracts, tick metrics history)   |
+| Infrastructure                   | Partial (in-memory repositories incl. **CompanyBrain**, JSON savegames V2 on disk — **M8 market/brain state pending V3**; employees, supply contracts, tick metrics history)   |
 | Application layer                | Implemented (bootstrap, use cases, queries, dashboard facade, tutorial progress)                                                                                      |
 | UI                               | Partial (Next.js dashboard per DASHBOARD_STYLE_GUIDE: layout, charts, drill-down, tutorial checklist, outline KPI icons, auto-dismiss toasts, live WebSocket refresh) |
 | Energy system                    | Partial (balance service, production gating, baseline grid)                                                                                                           |
@@ -38,7 +38,7 @@ Update this document whenever a meaningful implementation milestone is completed
 | M5 Economy                       | Completed                                                                                                                                                             |
 | M6 Logistics                     | ✅ Completed (Gate AUD-004, 2026-07-19)                                                                                                                               |
 | M7 World Simulation              | ✅ Completed (Gate AUD-005, 2026-07-19)                                                                                                                               |
-| M8 NPC Economy                   | 🟡 In Progress (~78 %) — Phases 1–7 complete; Gate 2 passed (`M8_IMPLEMENTATION_GATE_2_REPORT.md`); Phase 8 persistence open                                          |
+| M8 NPC Economy                   | 🟡 In Progress (~78 %) — Phases 1–7 complete; Phase 8 approved per `M8_PHASE_8_PERSISTENCE_DECISION.md` |
 | Phase 1 Core Domain              | ✅ Completed (Gate 2026-07-19) — see `PHASE1_CORE_DOMAIN_REPORT.md`                                                                                                   |
 
 **Tests:** 559 (run `pnpm test` for current count)
@@ -182,6 +182,19 @@ Update deliverable rows when a step ships; set milestone % to the **average of i
 | Brain persistence V3 (M8-7)         |       0 | **Next:** implement per `docs/schemas/GameSaveSnapshotV3.schema.md` |
 | Gate review / test matrix (M8-8/9)  |      50 | Gate 2 report ✅; 559 tests; brain save/load tests pending               |
 | **Milestone average (gate)**        |  **78** | Gate 2: `M8_IMPLEMENTATION_GATE_2_REPORT.md` — READY FOR PHASE 8           |
+
+### M8 known gaps (not Phase 8 blockers)
+
+Registered as **TD-M8-01 … TD-M8-06** in `docs/project-management/TECHNICAL_DEBT_REGISTER.md`. Close before **final M8 gate** (Phase 9); do **not** block Savegame V3.
+
+| ID       | Gap |
+| -------- | --- |
+| TD-M8-01 | `STABILIZE_LIQUIDITY` goal without decision |
+| TD-M8-02 | `REDUCE_COSTS` never generated |
+| TD-M8-03 | `EXPAND_REGION` decision type not executed |
+| TD-M8-04 | Expansion limited to primary region |
+| TD-M8-05 | `StartNewGameUseCase` seeds no NPC companies |
+| TD-M8-06 | Unused `MarketSupplyAggregator.ts` |
 
 ### M9 – User Interface ⚪ (35 % milestone · 49 % deliverable work)
 
@@ -931,7 +944,9 @@ Coordinates use cases between domain, infrastructure and simulation.
 | `InMemoryFinanceRepository`       | `persistence/InMemoryFinanceRepository.ts`                                                        |
 | `InMemoryMarketRepository`        | `persistence/InMemoryMarketRepository.ts`                                                         |
 | `InMemoryCompanyBrainRepository`  | `persistence/InMemoryCompanyBrainRepository.ts`                                                     |
-| `GameSaveSnapshotV1`              | `persistence/savegame/GameSaveSnapshotV1.ts` (incl. regional markets + `priceHistory`; brain pending V3) |
+| `GameSaveSnapshotV1`              | `persistence/savegame/GameSaveSnapshotV1.ts` (frozen contract — revert M8 market extensions in Phase 8) |
+| `GameSaveSnapshotV2`              | `persistence/savegame/GameSaveSnapshotV2.ts` (M7 world layer; markets[] = global V1 shape) |
+| `GameSaveSnapshotV3`              | **Phase 8** — `docs/schemas/GameSaveSnapshotV3.schema.md` |
 | `GameStateSerializer`             | `persistence/savegame/GameStateSerializer.ts`                                                     |
 | `FileSavegameStore`               | `persistence/savegame/FileSavegameStore.ts`                                                       |
 | NestJS API                        | `apps/api/`                                                                                       |
@@ -1140,8 +1155,8 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Planned Next Steps
 
-1. **M8 Phase 8 — Persistence V3:** implement `GameSaveSnapshotV3` per `docs/schemas/GameSaveSnapshotV3.schema.md` (brain + regional markets, v2→v3 migration, save/load integration tests)
-2. **M8 Phase 9 — Testing & closure:** full test matrix, determinism replay, `M8_IMPLEMENTATION_REPORT.md`; optional: `STABILIZE_LIQUIDITY` goal wiring, default NPC seed in `StartNewGameUseCase`
+1. **M8 Phase 8 — Persistence V3:** per `M8_PHASE_8_PERSISTENCE_DECISION.md` — revert V1 market extensions, implement V3-only brain/regional markets, v2→v3 migration, round-trip + chain migration + determinism tests
+2. **M8 Phase 9 — Testing & closure:** full test matrix, determinism replay, `M8_IMPLEMENTATION_REPORT.md`; resolve **TD-M8-01 … TD-M8-06** (see `TECHNICAL_DEBT_REGISTER.md`) before final gate
 3. Session/auth model for multi-user API access
 4. Full tick log / replay per DD-033 (beyond metrics ring buffer)
 
@@ -1198,6 +1213,9 @@ When completing an implementation task:
 # Related Documents
 
 - `docs/development/CURSOR_IMPLEMENTATION_GUIDE.md`
+- `docs/architecture/reviews/M8_PHASE_8_PERSISTENCE_DECISION.md`
+- `docs/schemas/GameSaveSnapshotV1.schema.md`
+- `docs/schemas/GameSaveSnapshotV2.schema.md`
 - `docs/schemas/GameSaveSnapshotV3.schema.md`
 - `docs/project-management/M8_ECONOMY_SIMULATION_PLAN.md`
 - `docs/decisions/DD-000-decision-index.md`
