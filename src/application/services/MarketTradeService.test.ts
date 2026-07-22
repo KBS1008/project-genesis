@@ -7,7 +7,8 @@ import { createCompanyId } from '../../domain/company/Company.js';
 import { STARTING_MONEY } from '../../domain/finance/FinanceConstants.js';
 import { FinanceTransactionType } from '../../domain/finance/FinanceTransactionType.js';
 import { createMarketId } from '../../domain/market/Market.js';
-import { GLOBAL_MARKET_ID } from '../../domain/market/MarketConstants.js';
+import { createRegionalMarketId } from '../../domain/market/MarketConstants.js';
+import { DEFAULT_REGION_ID } from '../../domain/world/WorldConstants.js';
 import { InMemoryCompanyRepository } from '../../infrastructure/persistence/InMemoryCompanyRepository.js';
 import { InMemoryCompanyResearchRepository } from '../../infrastructure/persistence/InMemoryCompanyResearchRepository.js';
 import { InMemoryCompanyMilestonesRepository } from '../../infrastructure/persistence/InMemoryCompanyMilestonesRepository.js';
@@ -59,7 +60,10 @@ async function createTradeContext() {
   const eventBus = new InMemoryEventBus();
   const simulationEngine = new SimulationEngine({ clock, eventBus });
 
-  new MarketPriceSeeder({ marketRepository, clock }).seed(contentResult.value.resourceTypes);
+  new MarketPriceSeeder({ marketRepository, clock }).seed(
+    contentResult.value.resourceTypes,
+    contentResult.value.regions,
+  );
 
   const createCompany = new CreateCompanyUseCase({
     clock,
@@ -127,7 +131,7 @@ describe('MarketTradeService', () => {
 
     const inventory = inventoryRepository.findByCompanyId(requireCompanyId('company_001'));
     const finance = financeRepository.findByCompanyId(requireCompanyId('company_001'));
-    const market = marketRepository.findById(requireMarketId(GLOBAL_MARKET_ID));
+    const market = marketRepository.findByRegionId(DEFAULT_REGION_ID);
     const wood = inventory?.getItems().find((item) => item.resourceId.value === 'wood');
     const feeTransactions =
       finance

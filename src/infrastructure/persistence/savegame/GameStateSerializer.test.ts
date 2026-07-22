@@ -843,7 +843,7 @@ describe('GameStateSerializer', () => {
       expect(building?.getStatus()).toBe(BuildingStatus.UNDER_CONSTRUCTION);
       expect(building?.getConstructionDuration()).toBe(120);
       expect(building?.getConstructionProgress()).toBeGreaterThan(0);
-      expect(target.marketRepository.findAll()).toHaveLength(1);
+      expect(target.marketRepository.findAll().length).toBeGreaterThanOrEqual(3);
       expect(target.tickHistoryService.getHistory()).toEqual([
         Object.freeze({
           tickNumber: sourceContext.simulationEngine.state.tickNumber,

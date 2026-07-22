@@ -9,4 +9,5 @@ export type BuyResourceCommand = {
   readonly companyId: string;
   readonly resourceId: string;
   readonly amount: number;
+  readonly regionId?: string;
 };

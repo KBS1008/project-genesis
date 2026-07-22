@@ -1,17 +1,19 @@
-import { InMemoryEventBus } from '../../common/events/InMemoryEventBus.js';
-import { ManualClock } from '../../common/time/ManualClock.js';
-import type { CompanyFounded } from '../../domain/company/events/CompanyFounded.js';
+import { InMemoryCompanyBrainRepository } from '../../infrastructure/persistence/InMemoryCompanyBrainRepository.js';
 import { InMemoryCompanyRepository } from '../../infrastructure/persistence/InMemoryCompanyRepository.js';
 import { InMemoryCompanyResearchRepository } from '../../infrastructure/persistence/InMemoryCompanyResearchRepository.js';
 import { InMemoryCompanyMilestonesRepository } from '../../infrastructure/persistence/InMemoryCompanyMilestonesRepository.js';
 import { InMemoryFinanceRepository } from '../../infrastructure/persistence/InMemoryFinanceRepository.js';
 import { InMemoryInventoryRepository } from '../../infrastructure/persistence/InMemoryInventoryRepository.js';
+import { InMemoryEventBus } from '../../common/events/InMemoryEventBus.js';
+import { ManualClock } from '../../common/time/ManualClock.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
+import type { CompanyFounded } from '../../domain/company/events/CompanyFounded.js';
 import { STARTING_MONEY } from '../../domain/finance/FinanceConstants.js';
 import { CreateCompanyUseCase } from './CreateCompanyUseCase.js';
 
 function createUseCase(clock = new ManualClock(100)) {
   const companyRepository = new InMemoryCompanyRepository();
+  const companyBrainRepository = new InMemoryCompanyBrainRepository();
   const inventoryRepository = new InMemoryInventoryRepository();
   const financeRepository = new InMemoryFinanceRepository();
   const companyResearchRepository = new InMemoryCompanyResearchRepository();
@@ -26,11 +28,13 @@ function createUseCase(clock = new ManualClock(100)) {
     companyResearchRepository,
     companyMilestonesRepository,
     simulationEngine,
+    companyBrainRepository,
   });
 
   return {
     clock,
     companyRepository,
+    companyBrainRepository,
     inventoryRepository,
     financeRepository,
     companyResearchRepository,
@@ -70,6 +74,24 @@ describe('CreateCompanyUseCase', () => {
       expect(finance?.getAvailableCash()).toBe(STARTING_MONEY);
       expect(companyResearchRepository.findByCompanyId(result.value)).toBeDefined();
       expect(companyMilestonesRepository.findByCompanyId(result.value)).toBeDefined();
+    }
+  });
+
+  it('bootstraps a company brain for autonomous companies', () => {
+    const { companyBrainRepository, useCase } = createUseCase();
+
+    const result = useCase.execute({
+      companyId: 'company_npc_001',
+      name: 'Autonomous Corp',
+      ownerId: 'npc_001',
+      autonomous: true,
+      strategyDefinitionId: 'strategy_balanced',
+    });
+
+    expect(result.ok).toBe(true);
+
+    if (result.ok) {
+      expect(companyBrainRepository.findByCompanyId(result.value)).toBeDefined();
     }
   });
 

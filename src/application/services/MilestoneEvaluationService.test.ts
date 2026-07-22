@@ -97,6 +97,7 @@ async function createContext() {
     systems: createDefaultSimulationSystems({
       companyRepository,
       buildingRepository,
+      buildingStorageRepository: transport.buildingStorageRepository,
       transportOrderRepository: transport.transportOrderRepository,
       transportLogisticsService: transport.transportLogisticsService,
       productionJobRepository,
@@ -113,7 +114,10 @@ async function createContext() {
     }),
   });
 
-  new MarketPriceSeeder({ marketRepository, clock }).seed(contentResult.value.resourceTypes);
+  new MarketPriceSeeder({ marketRepository, clock }).seed(
+    contentResult.value.resourceTypes,
+    contentResult.value.regions,
+  );
 
   new MilestoneEvaluationService({
     eventBus,

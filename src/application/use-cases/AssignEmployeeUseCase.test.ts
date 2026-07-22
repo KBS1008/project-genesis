@@ -82,6 +82,7 @@ async function createContext(clock = new ManualClock(100)) {
     systems: createDefaultSimulationSystems({
       companyRepository,
       buildingRepository,
+      buildingStorageRepository: transport.buildingStorageRepository,
       transportOrderRepository: transport.transportOrderRepository,
       transportLogisticsService: transport.transportLogisticsService,
       productionJobRepository,

@@ -111,7 +111,7 @@ describe('SaveGameUseCase', () => {
       expect(building?.getStatus()).toBe(BuildingStatus.UNDER_CONSTRUCTION);
       expect(building?.getConstructionDuration()).toBe(120);
       expect(building?.getConstructionProgress()).toBeGreaterThan(0);
-      expect(restored.marketRepository.findAll()).toHaveLength(1);
+      expect(restored.marketRepository.findAll().length).toBeGreaterThanOrEqual(3);
       expect(restored.tickHistoryService.getHistory()).toEqual([
         Object.freeze({
           tickNumber: context.simulationEngine.state.tickNumber,

@@ -15,6 +15,9 @@ export { createDefaultSimulationSystems } from './systems/createDefaultSimulatio
 export type { SimulationSystemDependencies } from './systems/SimulationSystemDependencies.js';
 export { BuildingSimulationSystem } from './systems/building/BuildingSimulationSystem.js';
 export { CompanySimulationSystem } from './systems/company/CompanySimulationSystem.js';
+export type { CompanySimulationSystemDependencies } from './systems/company/CompanySimulationSystem.js';
+export { CompanyPlanningSystem } from './systems/company/CompanyPlanningSystem.js';
+export type { CompanyPlanningSystemDependencies } from './systems/company/CompanyPlanningSystem.js';
 export { FinanceSimulationSystem } from './systems/finance/FinanceSimulationSystem.js';
 export { MarketSimulationSystem } from './systems/market/MarketSimulationSystem.js';
 export { ProductionSimulationSystem } from './systems/production/ProductionSimulationSystem.js';

@@ -1,0 +1,13 @@
+id: strategy_trading
+name: Trading
+description: Focuses on market participation and liquidity management.
+profile: TRADING
+weights:
+  expansionWeight: 30
+  productionWeight: 25
+  tradingWeight: 90
+  researchWeight: 20
+  riskTolerance: 55
+  liquidityPreference: 80
+enabled: true
+version: 1

@@ -15,6 +15,7 @@ import { InMemoryBuildingRepository } from '../../infrastructure/persistence/InM
 import { InMemoryBuildingStorageRepository } from '../../infrastructure/persistence/InMemoryBuildingStorageRepository.js';
 import { InMemoryTransportOrderRepository } from '../../infrastructure/persistence/InMemoryTransportOrderRepository.js';
 import { InMemoryCompanyRepository } from '../../infrastructure/persistence/InMemoryCompanyRepository.js';
+import { InMemoryCompanyBrainRepository } from '../../infrastructure/persistence/InMemoryCompanyBrainRepository.js';
 import { InMemoryFinanceRepository } from '../../infrastructure/persistence/InMemoryFinanceRepository.js';
 import { InMemoryInventoryRepository } from '../../infrastructure/persistence/InMemoryInventoryRepository.js';
 import { InMemoryMarketRepository } from '../../infrastructure/persistence/InMemoryMarketRepository.js';
@@ -36,6 +37,10 @@ import { validateSnapshotWorldGraph } from '../persistence/validateSnapshotWorld
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
 import { createDefaultSimulationSystems } from '../../simulation/systems/createDefaultSimulationSystems.js';
 import { MarketTradeService } from '../services/MarketTradeService.js';
+import { CompanyDecisionExecutionService } from '../services/CompanyDecisionExecutionService.js';
+import type { CompanyDecisionExecutionPort } from '../../domain/brain/CompanyDecisionExecutionPort.js';
+import type { CompanyPlanningPort } from '../../domain/brain/CompanyPlanningPort.js';
+import { CompanyPlanningPipeline } from '../planning/CompanyPlanningPipeline.js';
 import { ProductionInventoryService } from '../services/ProductionInventoryService.js';
 import { ResearchCompletionService } from '../services/ResearchCompletionService.js';
 import { MilestoneEvaluationService } from '../services/MilestoneEvaluationService.js';
@@ -65,6 +70,7 @@ export async function restoreApplicationFromSnapshot(
   }
 
   const companyRepository = new InMemoryCompanyRepository();
+  const companyBrainRepository = new InMemoryCompanyBrainRepository();
   const buildingRepository = new InMemoryBuildingRepository();
   const buildingStorageRepository = new InMemoryBuildingStorageRepository();
   const transportOrderRepository = new InMemoryTransportOrderRepository();
@@ -183,6 +189,21 @@ export async function restoreApplicationFromSnapshot(
     transportLogisticsService,
   });
 
+  let companyDecisionExecutionService: CompanyDecisionExecutionService;
+  let companyPlanningPipeline: CompanyPlanningPipeline;
+
+  const companyPlanningPort: CompanyPlanningPort = {
+    run(companyId, tickNumber) {
+      companyPlanningPipeline.run(companyId, tickNumber);
+    },
+  };
+
+  const companyDecisionExecutionPort: CompanyDecisionExecutionPort = {
+    executePendingDecisions(companyId) {
+      companyDecisionExecutionService.executePendingDecisions(companyId);
+    },
+  };
+
   let researchCompletionService: ResearchCompletionService;
 
   simulationEngine = new SimulationEngine({
@@ -193,6 +214,7 @@ export async function restoreApplicationFromSnapshot(
     systems: createDefaultSimulationSystems({
       companyRepository,
       buildingRepository,
+      buildingStorageRepository,
       transportOrderRepository,
       transportLogisticsService,
       productionJobRepository,
@@ -202,6 +224,9 @@ export async function restoreApplicationFromSnapshot(
       marketRepository,
       supplyContractRepository,
       employeeRepository,
+      companyBrainRepository,
+      companyPlanningPort,
+      companyDecisionExecutionPort,
       enqueueEvents,
       onProductionJobCompleted: (job) => {
         productionInventoryService.completeJob(job);
@@ -225,6 +250,43 @@ export async function restoreApplicationFromSnapshot(
     gameContent: contentResult.value,
   });
 
+  companyDecisionExecutionService = new CompanyDecisionExecutionService({
+    companyBrainRepository,
+    companyRepository,
+    marketTradeService,
+    clock,
+    buildingRepository,
+    financeRepository,
+    companyResearchRepository,
+    companyMilestonesRepository,
+    regionRepository,
+    simulationEngine,
+    gameContent: contentResult.value,
+    productionJobRepository,
+    researchJobRepository,
+    productionInventoryService,
+    energyBalanceService,
+    inventoryRepository,
+    transportLogisticsService,
+    enqueueEvents,
+  });
+
+  companyPlanningPipeline = new CompanyPlanningPipeline({
+    inventoryRepository,
+    financeRepository,
+    buildingRepository,
+    marketRepository,
+    productionJobRepository,
+    companyResearchRepository,
+    companyMilestonesRepository,
+    researchJobRepository,
+    companyBrainRepository,
+    strategies: contentResult.value.strategies,
+    gameContent: contentResult.value,
+    clock,
+    enqueueEvents,
+  });
+
   new MilestoneEvaluationService({
     eventBus,
     clock,
@@ -240,6 +302,7 @@ export async function restoreApplicationFromSnapshot(
     eventBus,
     simulationEngine,
     companyRepository,
+    companyBrainRepository,
     buildingRepository,
     buildingStorageRepository,
     transportOrderRepository,
@@ -258,6 +321,8 @@ export async function restoreApplicationFromSnapshot(
     worldMapRepository,
     productionInventoryService,
     marketTradeService,
+    companyDecisionExecutionService,
+    companyPlanningPipeline,
     energyBalanceService,
     transportLogisticsService,
     tickHistoryService,

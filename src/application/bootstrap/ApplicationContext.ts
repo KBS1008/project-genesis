@@ -9,6 +9,7 @@ import type { Logger } from '../../common/logging/Logger.js';
 import type { BuildingRepository } from '../../domain/building/BuildingRepository.js';
 import type { BuildingStorageRepository } from '../../domain/building/BuildingStorageRepository.js';
 import type { CompanyRepository } from '../../domain/company/CompanyRepository.js';
+import type { CompanyBrainRepository } from '../../domain/brain/CompanyBrainRepository.js';
 import type { InventoryRepository } from '../../domain/inventory/InventoryRepository.js';
 import type { FinanceRepository } from '../../domain/finance/FinanceRepository.js';
 import type { MarketRepository } from '../../domain/market/MarketRepository.js';
@@ -20,6 +21,8 @@ import type { EmployeeRepository } from '../../domain/employee/EmployeeRepositor
 import type { SupplyContractRepository } from '../../domain/contract/SupplyContractRepository.js';
 import type { ProductionInventoryService } from '../services/ProductionInventoryService.js';
 import type { MarketTradeService } from '../services/MarketTradeService.js';
+import type { CompanyDecisionExecutionService } from '../services/CompanyDecisionExecutionService.js';
+import type { CompanyPlanningPipeline } from '../planning/CompanyPlanningPipeline.js';
 import type { EnergyBalanceService } from '../services/EnergyBalanceService.js';
 import type { TransportLogisticsService } from '../services/TransportLogisticsService.js';
 import type { TickHistoryService } from '../services/TickHistoryService.js';
@@ -40,6 +43,7 @@ export type ApplicationContext = {
   readonly eventBus: IEventBus;
   readonly simulationEngine: SimulationEngine;
   readonly companyRepository: CompanyRepository;
+  readonly companyBrainRepository: CompanyBrainRepository;
   readonly buildingRepository: BuildingRepository;
   readonly buildingStorageRepository: BuildingStorageRepository;
   readonly transportOrderRepository: TransportOrderRepository;
@@ -58,6 +62,8 @@ export type ApplicationContext = {
   readonly worldMapRepository: WorldMapRepository;
   readonly productionInventoryService: ProductionInventoryService;
   readonly marketTradeService: MarketTradeService;
+  readonly companyDecisionExecutionService: CompanyDecisionExecutionService;
+  readonly companyPlanningPipeline: CompanyPlanningPipeline;
   readonly energyBalanceService: EnergyBalanceService;
   readonly transportLogisticsService: TransportLogisticsService;
   readonly tickHistoryService: TickHistoryService;

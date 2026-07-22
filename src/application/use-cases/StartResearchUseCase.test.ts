@@ -89,6 +89,7 @@ async function createContext() {
     systems: createDefaultSimulationSystems({
       companyRepository,
       buildingRepository,
+      buildingStorageRepository: transport.buildingStorageRepository,
       transportOrderRepository: transport.transportOrderRepository,
       transportLogisticsService: transport.transportLogisticsService,
       productionJobRepository,

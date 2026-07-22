@@ -2,48 +2,17 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ManualClock } from '../../common/time/ManualClock.js';
 import { validateGameContent } from '../../content/validateGameContent.js';
-import { createCompanyId } from '../../domain/company/Company.js';
-import { createInventoryId, Inventory } from '../../domain/inventory/Inventory.js';
 import { MARKET_BASELINE_DEMAND } from '../../domain/market/MarketPriceConstants.js';
-import { createMarketId } from '../../domain/market/Market.js';
-import { GLOBAL_MARKET_ID } from '../../domain/market/MarketConstants.js';
-import { InMemoryInventoryRepository } from '../../infrastructure/persistence/InMemoryInventoryRepository.js';
+import { createRegionalMarketId } from '../../domain/market/MarketConstants.js';
+import { DEFAULT_REGION_ID } from '../../domain/world/WorldConstants.js';
+import { InMemoryBuildingRepository } from '../../infrastructure/persistence/InMemoryBuildingRepository.js';
+import { InMemoryBuildingStorageRepository } from '../../infrastructure/persistence/InMemoryBuildingStorageRepository.js';
 import { InMemoryMarketRepository } from '../../infrastructure/persistence/InMemoryMarketRepository.js';
 import { MarketPriceSeeder } from '../services/MarketPriceSeeder.js';
 import { GetMarketPricesQueryHandler } from './GetMarketPricesQueryHandler.js';
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const gameContentRoot = path.resolve(testDirectory, '../../../game-content');
-
-function requireCompanyId(value: string) {
-  const result = createCompanyId(value);
-
-  if (!result.ok) {
-    throw new Error(result.error.message);
-  }
-
-  return result.value;
-}
-
-function requireInventoryId(value: string) {
-  const result = createInventoryId(value);
-
-  if (!result.ok) {
-    throw new Error(result.error.message);
-  }
-
-  return result.value;
-}
-
-function requireMarketId(value: string) {
-  const result = createMarketId(value);
-
-  if (!result.ok) {
-    throw new Error(result.error.message);
-  }
-
-  return result.value;
-}
 
 async function createSeededContext() {
   const contentResult = await validateGameContent(gameContentRoot);
@@ -54,14 +23,18 @@ async function createSeededContext() {
 
   const clock = new ManualClock(100);
   const marketRepository = new InMemoryMarketRepository();
-  const inventoryRepository = new InMemoryInventoryRepository();
+  const buildingRepository = new InMemoryBuildingRepository();
+  const buildingStorageRepository = new InMemoryBuildingStorageRepository();
   const seeder = new MarketPriceSeeder({ marketRepository, clock });
-  seeder.seed(contentResult.value.resourceTypes);
+  seeder.seed(contentResult.value.resourceTypes, contentResult.value.regions);
 
   return {
-    getMarketPrices: new GetMarketPricesQueryHandler({ marketRepository, inventoryRepository }),
+    getMarketPrices: new GetMarketPricesQueryHandler({
+      marketRepository,
+      buildingRepository,
+      buildingStorageRepository,
+    }),
     marketRepository,
-    inventoryRepository,
     clock,
   };
 }
@@ -93,34 +66,21 @@ describe('GetMarketPricesQueryHandler', () => {
     }
   });
 
-  it('includes aggregate inventory supply in market projections', async () => {
-    const { getMarketPrices, inventoryRepository, clock } = await createSeededContext();
-    const inventoryResult = Inventory.create({
-      id: requireInventoryId('inventory_001'),
-      companyId: requireCompanyId('company_001'),
-      clock,
-    });
+  it('uses regional building storage for supply projections', async () => {
+    const { getMarketPrices } = await createSeededContext();
 
-    expect(inventoryResult.ok).toBe(true);
-
-    if (!inventoryResult.ok) {
-      return;
-    }
-
-    inventoryResult.value.addQuantity('wood', 100, clock);
-    inventoryRepository.save(inventoryResult.value);
-
-    const result = getMarketPrices.execute({});
+    const result = getMarketPrices.execute({ regionId: DEFAULT_REGION_ID });
     const wood = result.ok ? result.value.find((price) => price.resourceId === 'wood') : undefined;
 
-    expect(wood?.totalSupply).toBe(100);
-    expect(wood?.pressureIndex).toBe(0.5);
+    expect(wood?.totalSupply).toBe(0);
+    expect(wood?.pressureIndex).toBe(50);
   });
 
   it('rejects queries when the market was not initialized', () => {
     const getMarketPrices = new GetMarketPricesQueryHandler({
       marketRepository: new InMemoryMarketRepository(),
-      inventoryRepository: new InMemoryInventoryRepository(),
+      buildingRepository: new InMemoryBuildingRepository(),
+      buildingStorageRepository: new InMemoryBuildingStorageRepository(),
     });
 
     const result = getMarketPrices.execute({});
@@ -130,10 +90,13 @@ describe('GetMarketPricesQueryHandler', () => {
 });
 
 describe('InMemoryMarketRepository', () => {
-  it('persists a market aggregate by id', async () => {
+  it('persists regional market aggregates by region id', async () => {
     const { marketRepository } = await createSeededContext();
 
-    expect(marketRepository.findById(requireMarketId(GLOBAL_MARKET_ID))).toBeDefined();
-    expect(marketRepository.findAll()).toHaveLength(1);
+    expect(marketRepository.findByRegionId(DEFAULT_REGION_ID)).toBeDefined();
+    expect(marketRepository.findAll().length).toBeGreaterThanOrEqual(3);
+    expect(marketRepository.findByRegionId(DEFAULT_REGION_ID)?.getId().value).toBe(
+      createRegionalMarketId(DEFAULT_REGION_ID),
+    );
   });
 });

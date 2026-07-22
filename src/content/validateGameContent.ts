@@ -21,6 +21,8 @@ import { MapLoader } from './map/MapLoader.js';
 import type { MapRegistry } from './map/MapRegistry.js';
 import { MilestoneLoader } from './milestone/MilestoneLoader.js';
 import type { MilestoneRegistry } from './milestone/MilestoneRegistry.js';
+import { StrategyLoader } from './strategy/StrategyLoader.js';
+import type { StrategyRegistry } from './strategy/StrategyRegistry.js';
 import { RecipeLoader } from './recipe/RecipeLoader.js';
 import type { RecipeRegistry } from './recipe/RecipeRegistry.js';
 import { RegionLoader } from './region/RegionLoader.js';
@@ -58,6 +60,7 @@ export type GameContentLoadResult = {
   readonly employees: EmployeeRegistry;
   readonly recipes: RecipeRegistry;
   readonly transportRoutes: TransportRouteRegistry;
+  readonly strategies: StrategyRegistry;
 };
 
 /**
@@ -98,6 +101,7 @@ export async function validateGameContent(
   const employeeLoader = new EmployeeLoader();
   const recipeLoader = new RecipeLoader();
   const transportRouteLoader = new TransportRouteLoader();
+  const strategyLoader = new StrategyLoader();
 
   const resourceTypesResult = await resourceLoader.loadFromDirectory(
     path.join(gameContentRoot, 'resources'),
@@ -189,6 +193,14 @@ export async function validateGameContent(
     return Result.fail(transportRoutesResult.error);
   }
 
+  const strategiesResult = await strategyLoader.loadFromDirectory(
+    path.join(gameContentRoot, 'strategies'),
+  );
+
+  if (!strategiesResult.ok) {
+    return Result.fail(strategiesResult.error);
+  }
+
   const worldReferencesResult = validateWorldReferences(
     worldsResult.value,
     regionsResult.value,
@@ -265,5 +277,6 @@ export async function validateGameContent(
     employees: employeesResult.value,
     recipes: recipesResult.value,
     transportRoutes: transportRoutesResult.value,
+    strategies: strategiesResult.value,
   });
 }

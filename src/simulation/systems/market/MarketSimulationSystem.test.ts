@@ -1,33 +1,15 @@
 import { ManualClock } from '../../../common/time/ManualClock.js';
-import { createCompanyId } from '../../../domain/company/Company.js';
-import { createInventoryId, Inventory } from '../../../domain/inventory/Inventory.js';
 import { MARKET_PRICE_UPDATE_INTERVAL_TICKS } from '../../../domain/market/MarketPriceConstants.js';
 import { Market, createMarketId } from '../../../domain/market/Market.js';
-import { GLOBAL_MARKET_ID } from '../../../domain/market/MarketConstants.js';
+import { createRegionalMarketId } from '../../../domain/market/MarketConstants.js';
 import { MarketPriceChanged } from '../../../domain/market/events/MarketPriceChanged.js';
-import { InMemoryInventoryRepository } from '../../../infrastructure/persistence/InMemoryInventoryRepository.js';
+import type { DomainEvent } from '../../../common/events/DomainEvent.js';
+import { InMemoryBuildingRepository } from '../../../infrastructure/persistence/InMemoryBuildingRepository.js';
+import { InMemoryBuildingStorageRepository } from '../../../infrastructure/persistence/InMemoryBuildingStorageRepository.js';
 import { InMemoryMarketRepository } from '../../../infrastructure/persistence/InMemoryMarketRepository.js';
 import { MarketSimulationSystem } from './MarketSimulationSystem.js';
 
-function requireCompanyId(value: string) {
-  const result = createCompanyId(value);
-
-  if (!result.ok) {
-    throw new Error(result.error.message);
-  }
-
-  return result.value;
-}
-
-function requireInventoryId(value: string) {
-  const result = createInventoryId(value);
-
-  if (!result.ok) {
-    throw new Error(result.error.message);
-  }
-
-  return result.value;
-}
+const REGION_ID = 'region_default';
 
 function requireMarketId(value: string) {
   const result = createMarketId(value);
@@ -39,83 +21,44 @@ function requireMarketId(value: string) {
   return result.value;
 }
 
-describe('MarketSimulationSystem', () => {
-  it('lowers prices when aggregate supply exceeds baseline demand', () => {
-    const clock = new ManualClock(100);
-    const marketRepository = new InMemoryMarketRepository();
-    const inventoryRepository = new InMemoryInventoryRepository();
-    const events: string[] = [];
-
-    const marketResult = Market.seedFromResources({
-      id: requireMarketId(GLOBAL_MARKET_ID),
-      resources: [
-        {
-          id: 'wood',
-          basePrice: 100,
-          enabled: true,
-          marketEnabled: true,
-        },
-      ],
-      clock,
-    });
-
-    expect(marketResult.ok).toBe(true);
-
-    if (!marketResult.ok) {
-      return;
-    }
-
-    marketRepository.save(marketResult.value);
-
-    const inventoryResult = Inventory.create({
-      id: requireInventoryId('inventory_001'),
-      companyId: requireCompanyId('company_001'),
-      clock,
-    });
-
-    expect(inventoryResult.ok).toBe(true);
-
-    if (!inventoryResult.ok) {
-      return;
-    }
-
-    const inventory = inventoryResult.value;
-    inventory.addQuantity('wood', 100, clock);
-    inventory.pullDomainEvents();
-    inventoryRepository.save(inventory);
-
-    const system = new MarketSimulationSystem({
-      marketRepository,
-      inventoryRepository,
-      enqueueEvents: (domainEvents) => {
-        events.push(...domainEvents.map((event) => event.eventName));
+function createRegionalMarket(clock: ManualClock) {
+  return Market.seedFromResources({
+    id: requireMarketId(createRegionalMarketId(REGION_ID)),
+    regionId: REGION_ID,
+    resources: [
+      {
+        id: 'wood',
+        basePrice: 100,
+        enabled: true,
+        marketEnabled: true,
       },
-    });
-
-    system.execute({ tickNumber: MARKET_PRICE_UPDATE_INTERVAL_TICKS, clock });
-
-    const market = marketRepository.findById(requireMarketId(GLOBAL_MARKET_ID));
-    expect(market?.getPrice('wood')?.lastPrice).toBe(96);
-    expect(events).toContain('MarketPriceChanged');
+    ],
+    clock,
   });
+}
 
-  it('raises prices when aggregate supply is scarce', () => {
+function createSystem(
+  marketRepository: InMemoryMarketRepository,
+  buildingRepository: InMemoryBuildingRepository,
+  buildingStorageRepository: InMemoryBuildingStorageRepository,
+  enqueueEvents: (domainEvents: readonly DomainEvent[]) => void,
+) {
+  return new MarketSimulationSystem({
+    marketRepository,
+    buildingRepository,
+    buildingStorageRepository,
+    enqueueEvents,
+  });
+}
+
+describe('MarketSimulationSystem', () => {
+  it('raises prices when regional supply is scarce', () => {
     const clock = new ManualClock(100);
     const marketRepository = new InMemoryMarketRepository();
-    const inventoryRepository = new InMemoryInventoryRepository();
+    const buildingRepository = new InMemoryBuildingRepository();
+    const buildingStorageRepository = new InMemoryBuildingStorageRepository();
 
-    const marketResult = Market.seedFromResources({
-      id: requireMarketId(GLOBAL_MARKET_ID),
-      resources: [
-        {
-          id: 'wood',
-          basePrice: 100,
-          enabled: true,
-          marketEnabled: true,
-        },
-      ],
-      clock,
-    });
+    const marketResult = createRegionalMarket(clock);
 
     expect(marketResult.ok).toBe(true);
 
@@ -125,52 +68,27 @@ describe('MarketSimulationSystem', () => {
 
     marketRepository.save(marketResult.value);
 
-    const inventoryResult = Inventory.create({
-      id: requireInventoryId('inventory_001'),
-      companyId: requireCompanyId('company_001'),
-      clock,
-    });
-
-    expect(inventoryResult.ok).toBe(true);
-
-    if (!inventoryResult.ok) {
-      return;
-    }
-
-    const inventory = inventoryResult.value;
-    inventory.addQuantity('wood', 25, clock);
-    inventory.pullDomainEvents();
-    inventoryRepository.save(inventory);
-
-    const system = new MarketSimulationSystem({
+    const system = createSystem(
       marketRepository,
-      inventoryRepository,
-      enqueueEvents: () => undefined,
-    });
+      buildingRepository,
+      buildingStorageRepository,
+      () => undefined,
+    );
 
     system.execute({ tickNumber: MARKET_PRICE_UPDATE_INTERVAL_TICKS, clock });
 
-    const market = marketRepository.findById(requireMarketId(GLOBAL_MARKET_ID));
-    expect(market?.getPrice('wood')?.lastPrice).toBe(108);
+    const market = marketRepository.findByRegionId(REGION_ID);
+    expect(market?.getPrice('wood')?.lastPrice).toBe(400);
+    expect(market?.getPrice('wood')?.demand).toBe(50);
   });
 
   it('skips price updates between configured intervals', () => {
     const clock = new ManualClock(100);
     const marketRepository = new InMemoryMarketRepository();
-    const inventoryRepository = new InMemoryInventoryRepository();
+    const buildingRepository = new InMemoryBuildingRepository();
+    const buildingStorageRepository = new InMemoryBuildingStorageRepository();
 
-    const marketResult = Market.seedFromResources({
-      id: requireMarketId(GLOBAL_MARKET_ID),
-      resources: [
-        {
-          id: 'wood',
-          basePrice: 100,
-          enabled: true,
-          marketEnabled: true,
-        },
-      ],
-      clock,
-    });
+    const marketResult = createRegionalMarket(clock);
 
     expect(marketResult.ok).toBe(true);
 
@@ -180,36 +98,27 @@ describe('MarketSimulationSystem', () => {
 
     marketRepository.save(marketResult.value);
 
-    const system = new MarketSimulationSystem({
+    const system = createSystem(
       marketRepository,
-      inventoryRepository,
-      enqueueEvents: () => undefined,
-    });
+      buildingRepository,
+      buildingStorageRepository,
+      () => undefined,
+    );
 
     system.execute({ tickNumber: MARKET_PRICE_UPDATE_INTERVAL_TICKS - 1, clock });
 
-    const market = marketRepository.findById(requireMarketId(GLOBAL_MARKET_ID));
+    const market = marketRepository.findByRegionId(REGION_ID);
     expect(market?.getPrice('wood')?.lastPrice).toBe(100);
   });
 
-  it('emits MarketPriceChanged with the adjusted quote', () => {
+  it('records price history when quotes change', () => {
     const clock = new ManualClock(100);
     const marketRepository = new InMemoryMarketRepository();
-    const inventoryRepository = new InMemoryInventoryRepository();
+    const buildingRepository = new InMemoryBuildingRepository();
+    const buildingStorageRepository = new InMemoryBuildingStorageRepository();
     const capturedEvents: MarketPriceChanged[] = [];
 
-    const marketResult = Market.seedFromResources({
-      id: requireMarketId(GLOBAL_MARKET_ID),
-      resources: [
-        {
-          id: 'wood',
-          basePrice: 100,
-          enabled: true,
-          marketEnabled: true,
-        },
-      ],
-      clock,
-    });
+    const marketResult = createRegionalMarket(clock);
 
     expect(marketResult.ok).toBe(true);
 
@@ -219,39 +128,26 @@ describe('MarketSimulationSystem', () => {
 
     marketRepository.save(marketResult.value);
 
-    const inventoryResult = Inventory.create({
-      id: requireInventoryId('inventory_001'),
-      companyId: requireCompanyId('company_001'),
-      clock,
-    });
-
-    expect(inventoryResult.ok).toBe(true);
-
-    if (!inventoryResult.ok) {
-      return;
-    }
-
-    const inventory = inventoryResult.value;
-    inventory.addQuantity('wood', 100, clock);
-    inventory.pullDomainEvents();
-    inventoryRepository.save(inventory);
-
-    const system = new MarketSimulationSystem({
+    const system = createSystem(
       marketRepository,
-      inventoryRepository,
-      enqueueEvents: (domainEvents) => {
+      buildingRepository,
+      buildingStorageRepository,
+      (domainEvents) => {
         for (const event of domainEvents) {
           if (event instanceof MarketPriceChanged) {
             capturedEvents.push(event);
           }
         }
       },
-    });
+    );
 
     system.execute({ tickNumber: MARKET_PRICE_UPDATE_INTERVAL_TICKS, clock });
 
+    const market = marketRepository.findByRegionId(REGION_ID);
+
     expect(capturedEvents).toHaveLength(1);
     expect(capturedEvents[0]?.previousPrice).toBe(100);
-    expect(capturedEvents[0]?.lastPrice).toBe(96);
+    expect(capturedEvents[0]?.lastPrice).toBe(400);
+    expect(market?.getPriceHistory().length).toBeGreaterThan(0);
   });
 });

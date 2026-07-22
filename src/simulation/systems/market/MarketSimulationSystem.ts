@@ -1,11 +1,12 @@
 /**
  * @module @simulation/systems/market/MarketSimulationSystem
  *
- * Processes market price tick work each simulation step.
+ * Processes regional market price tick work each simulation step.
  */
 
 import type { DomainEvent } from '../../../common/events/DomainEvent.js';
-import type { InventoryRepository } from '../../../domain/inventory/InventoryRepository.js';
+import type { BuildingRepository } from '../../../domain/building/BuildingRepository.js';
+import type { BuildingStorageRepository } from '../../../domain/building/BuildingStorageRepository.js';
 import {
   MARKET_BASELINE_DEMAND,
   MARKET_PRICE_ADJUSTMENT_RATE,
@@ -13,28 +14,30 @@ import {
 } from '../../../domain/market/MarketPriceConstants.js';
 import { InflationCalculator } from '../../../domain/market/InflationCalculator.js';
 import { MarketPriceCalculator } from '../../../domain/market/MarketPriceCalculator.js';
+import { aggregateRegionalResourceSupply } from '../../../domain/market/MarketRegionalSupplyAggregator.js';
 import type { MarketRepository } from '../../../domain/market/MarketRepository.js';
 import type { SimulationSystem } from '../../engine/SimulationSystem.js';
 import type { TickContext } from '../../engine/TickContext.js';
-import { aggregateResourceSupply } from '../../../domain/market/MarketSupplyAggregator.js';
 
 /** Dependencies for {@link MarketSimulationSystem}. */
 export type MarketSimulationSystemDependencies = {
   readonly marketRepository: MarketRepository;
-  readonly inventoryRepository: InventoryRepository;
+  readonly buildingRepository: BuildingRepository;
+  readonly buildingStorageRepository: BuildingStorageRepository;
   readonly enqueueEvents: (events: readonly DomainEvent[]) => void;
   readonly baselineDemand?: number;
 };
 
 /**
- * Visits the global market during each simulation tick.
+ * Visits all regional markets during each simulation tick.
  *
  * Applies deterministic supply-and-demand price adjustments on configured intervals.
  */
 export class MarketSimulationSystem implements SimulationSystem {
   readonly name = 'Market';
   readonly #marketRepository: MarketRepository;
-  readonly #inventoryRepository: InventoryRepository;
+  readonly #buildingRepository: BuildingRepository;
+  readonly #buildingStorageRepository: BuildingStorageRepository;
   readonly #enqueueEvents: (events: readonly DomainEvent[]) => void;
   readonly #baselineDemand: number;
 
@@ -43,7 +46,8 @@ export class MarketSimulationSystem implements SimulationSystem {
    */
   constructor(dependencies: MarketSimulationSystemDependencies) {
     this.#marketRepository = dependencies.marketRepository;
-    this.#inventoryRepository = dependencies.inventoryRepository;
+    this.#buildingRepository = dependencies.buildingRepository;
+    this.#buildingStorageRepository = dependencies.buildingStorageRepository;
     this.#enqueueEvents = dependencies.enqueueEvents;
     this.#baselineDemand = dependencies.baselineDemand ?? MARKET_BASELINE_DEMAND;
   }
@@ -53,22 +57,38 @@ export class MarketSimulationSystem implements SimulationSystem {
       return;
     }
 
-    const inventories = this.#inventoryRepository.findAll();
+    const buildings = this.#buildingRepository.findAll();
+    const buildingStorages = buildings.flatMap((building) => {
+      const storage = this.#buildingStorageRepository.findByBuildingId(building.getId());
+
+      return storage === undefined ? [] : [storage];
+    });
 
     for (const market of this.#marketRepository.findAll()) {
       let changed = false;
+      const regionId = market.getRegionId();
       const priceIndex = InflationCalculator.computePriceIndexFromMarketPrices(market.getPrices());
       const adjustmentRate =
         MARKET_PRICE_ADJUSTMENT_RATE * InflationCalculator.computeAdjustmentMultiplier(priceIndex);
 
       for (const priceEntry of market.getPrices()) {
         const resourceId = priceEntry.resourceId.value;
-        const totalSupply = aggregateResourceSupply(inventories, resourceId);
+        const regionalSupply = aggregateRegionalResourceSupply(
+          buildings,
+          buildingStorages,
+          regionId,
+          resourceId,
+        );
+        const totalSupply = regionalSupply;
+        const totalDemand = this.#baselineDemand;
+
+        market.updateSupplyDemand(resourceId, totalSupply, totalDemand, context.clock);
+
         const nextPrice = MarketPriceCalculator.computeNextPrice({
           lastPrice: priceEntry.lastPrice,
           basePrice: priceEntry.basePrice,
           totalSupply,
-          baselineDemand: this.#baselineDemand,
+          baselineDemand: totalDemand,
           adjustmentRate,
         });
 

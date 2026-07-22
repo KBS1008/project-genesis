@@ -1,0 +1,13 @@
+id: strategy_manufacturer
+name: Manufacturer
+description: Prioritises production chains and operational efficiency.
+profile: MANUFACTURER
+weights:
+  expansionWeight: 35
+  productionWeight: 85
+  tradingWeight: 40
+  researchWeight: 45
+  riskTolerance: 40
+  liquidityPreference: 55
+enabled: true
+version: 1

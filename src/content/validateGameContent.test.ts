@@ -31,6 +31,8 @@ describe('validateGameContent', () => {
       expect(result.value.transportRoutes.size).toBeGreaterThanOrEqual(1);
       expect(result.value.transportRoutes.has('route_storage_to_production')).toBe(true);
       expect(result.value.employees.has('employee_production_worker')).toBe(true);
+      expect(result.value.strategies.size).toBeGreaterThanOrEqual(5);
+      expect(result.value.strategies.has('strategy_balanced')).toBe(true);
     }
   });
 

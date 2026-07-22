@@ -80,6 +80,7 @@ describe('Market', () => {
 
     const result = Market.seedFromResources({
       id: requireMarketId(GLOBAL_MARKET_ID),
+      regionId: 'region_default',
       resources: registry.getAll().map((resource) => ({
         id: resource.id,
         basePrice: resource.basePrice,
@@ -105,6 +106,7 @@ describe('Market', () => {
     const clock = new ManualClock(100);
     const marketResult = Market.seedFromResources({
       id: requireMarketId(GLOBAL_MARKET_ID),
+      regionId: 'region_default',
       resources: [
         {
           id: 'wood',

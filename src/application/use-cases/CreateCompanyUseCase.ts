@@ -14,8 +14,10 @@ import { CompanyResearch } from '../../domain/research/CompanyResearch.js';
 import { createCompanyResearchId } from '../../domain/research/CompanyResearchId.js';
 import { CompanyMilestones } from '../../domain/milestone/CompanyMilestones.js';
 import { createCompanyMilestonesId } from '../../domain/milestone/CompanyMilestonesId.js';
+import type { CompanyBrainRepository } from '../../domain/brain/CompanyBrainRepository.js';
 import type { ApplicationContext } from '../bootstrap/ApplicationContext.js';
 import type { CreateCompanyCommand } from '../commands/CreateCompanyCommand.js';
+import { CompanyBrainBootstrapService } from '../services/CompanyBrainBootstrapService.js';
 
 /** Dependencies required by {@link CreateCompanyUseCase}. */
 export type CreateCompanyUseCaseDependencies = Pick<
@@ -27,8 +29,9 @@ export type CreateCompanyUseCaseDependencies = Pick<
   | 'companyResearchRepository'
   | 'companyMilestonesRepository'
   | 'simulationEngine'
->;
-
+> & {
+  readonly companyBrainRepository?: CompanyBrainRepository;
+};
 /**
  * Creates a company aggregate and persists it.
  */
@@ -40,6 +43,7 @@ export class CreateCompanyUseCase {
   readonly #companyResearchRepository: CreateCompanyUseCaseDependencies['companyResearchRepository'];
   readonly #companyMilestonesRepository: CreateCompanyUseCaseDependencies['companyMilestonesRepository'];
   readonly #simulationEngine: CreateCompanyUseCaseDependencies['simulationEngine'];
+  readonly #companyBrainBootstrapService: CompanyBrainBootstrapService | undefined;
 
   /**
    * @param dependencies - Application services required for company creation.
@@ -52,6 +56,13 @@ export class CreateCompanyUseCase {
     this.#companyResearchRepository = dependencies.companyResearchRepository;
     this.#companyMilestonesRepository = dependencies.companyMilestonesRepository;
     this.#simulationEngine = dependencies.simulationEngine;
+    this.#companyBrainBootstrapService =
+      dependencies.companyBrainRepository === undefined
+        ? undefined
+        : new CompanyBrainBootstrapService({
+            companyBrainRepository: dependencies.companyBrainRepository,
+            clock: dependencies.clock,
+          });
   }
 
   /**
@@ -189,6 +200,27 @@ export class CreateCompanyUseCase {
     }
 
     this.#companyMilestonesRepository.save(companyMilestonesResult.value);
+
+    if (command.autonomous === true) {
+      if (this.#companyBrainBootstrapService === undefined) {
+        return Result.fail(
+          new ValidationError(
+            'Autonomous companies require a company brain repository during creation.',
+          ),
+        );
+      }
+
+      const bootstrapResult = this.#companyBrainBootstrapService.bootstrap({
+        companyId,
+        ...(command.strategyDefinitionId !== undefined
+          ? { strategyDefinitionId: command.strategyDefinitionId }
+          : {}),
+      });
+
+      if (!bootstrapResult.ok) {
+        return Result.fail(bootstrapResult.error);
+      }
+    }
 
     return Result.ok(companyId);
   }

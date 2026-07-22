@@ -6,6 +6,7 @@
 
 import type { Market } from '../../domain/market/Market.js';
 import type { MarketId } from '../../domain/market/MarketId.js';
+import { createRegionalMarketId } from '../../domain/market/MarketConstants.js';
 import type { MarketRepository } from '../../domain/market/MarketRepository.js';
 
 /**
@@ -20,6 +21,10 @@ export class InMemoryMarketRepository implements MarketRepository {
 
   findById(id: MarketId): Market | undefined {
     return this.#markets.get(id.value);
+  }
+
+  findByRegionId(regionId: string): Market | undefined {
+    return this.#markets.get(createRegionalMarketId(regionId));
   }
 
   findAll(): readonly Market[] {

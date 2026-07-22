@@ -16,8 +16,9 @@ import type { FinanceRepository } from '../../domain/finance/FinanceRepository.j
 import type { Inventory } from '../../domain/inventory/Inventory.js';
 import type { InventoryRepository } from '../../domain/inventory/InventoryRepository.js';
 import { createMarketId, type Market } from '../../domain/market/Market.js';
-import { GLOBAL_MARKET_ID } from '../../domain/market/MarketConstants.js';
+import { createRegionalMarketId, GLOBAL_MARKET_ID } from '../../domain/market/MarketConstants.js';
 import type { MarketRepository } from '../../domain/market/MarketRepository.js';
+import { DEFAULT_REGION_ID } from '../../domain/world/WorldConstants.js';
 import { InstantTradePricingPolicy } from '../../domain/policies/market/InstantTradePricingPolicy.js';
 import { MarketFeePolicy } from '../../domain/policies/market/MarketFeePolicy.js';
 import { ResourceListedOnMarketSpecification } from '../../domain/specifications/market/ResourceListedOnMarketSpecification.js';
@@ -78,6 +79,7 @@ export class MarketTradeService {
     companyId: CompanyId,
     resourceId: string,
     amount: number,
+    regionId: string = DEFAULT_REGION_ID,
   ): Result<MarketTradeResult, ValidationError> {
     const amountResult = this.#validateTradeAmount(amount);
 
@@ -91,7 +93,7 @@ export class MarketTradeService {
       return Result.fail(resourceIdResult.error);
     }
 
-    const marketResult = this.#findMarket();
+    const marketResult = this.#findMarket(regionId);
 
     if (!marketResult.ok) {
       return Result.fail(marketResult.error);
@@ -178,6 +180,7 @@ export class MarketTradeService {
     companyId: CompanyId,
     resourceId: string,
     amount: number,
+    regionId: string = DEFAULT_REGION_ID,
   ): Result<MarketTradeResult, ValidationError> {
     const amountResult = this.#validateTradeAmount(amount);
 
@@ -191,7 +194,7 @@ export class MarketTradeService {
       return Result.fail(resourceIdResult.error);
     }
 
-    const marketResult = this.#findMarket();
+    const marketResult = this.#findMarket(regionId);
 
     if (!marketResult.ok) {
       return Result.fail(marketResult.error);
@@ -350,20 +353,36 @@ export class MarketTradeService {
     return Result.ok(amountResult.value);
   }
 
-  #findMarket(): Result<Market, ValidationError> {
-    const marketIdResult = createMarketId(GLOBAL_MARKET_ID);
+  #findMarket(regionId: string): Result<Market, ValidationError> {
+    const regionalMarketIdResult = createMarketId(createRegionalMarketId(regionId));
 
-    if (!marketIdResult.ok) {
-      return Result.fail(marketIdResult.error);
+    if (!regionalMarketIdResult.ok) {
+      return Result.fail(regionalMarketIdResult.error);
     }
 
-    const market = this.#marketRepository.findById(marketIdResult.value);
+    const regionalMarket = this.#marketRepository.findById(regionalMarketIdResult.value);
 
-    if (market === undefined) {
-      return Result.fail(new ValidationError('Global market prices were not initialized.'));
+    if (regionalMarket !== undefined) {
+      return Result.ok(regionalMarket);
     }
 
-    return Result.ok(market);
+    if (regionId === DEFAULT_REGION_ID) {
+      const legacyMarketIdResult = createMarketId(GLOBAL_MARKET_ID);
+
+      if (!legacyMarketIdResult.ok) {
+        return Result.fail(legacyMarketIdResult.error);
+      }
+
+      const legacyMarket = this.#marketRepository.findById(legacyMarketIdResult.value);
+
+      if (legacyMarket !== undefined) {
+        return Result.ok(legacyMarket);
+      }
+    }
+
+    return Result.fail(
+      new ValidationError(`Regional market prices for "${regionId}" were not initialized.`),
+    );
   }
 
   #findInventory(companyId: CompanyId): Result<Inventory, ValidationError> {

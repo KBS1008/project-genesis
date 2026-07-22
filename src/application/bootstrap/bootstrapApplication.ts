@@ -14,6 +14,7 @@ import type { BuildingRepository } from '../../domain/building/BuildingRepositor
 import type { BuildingStorageRepository } from '../../domain/building/BuildingStorageRepository.js';
 import type { TransportOrderRepository } from '../../domain/transport/TransportOrderRepository.js';
 import type { CompanyRepository } from '../../domain/company/CompanyRepository.js';
+import type { CompanyBrainRepository } from '../../domain/brain/CompanyBrainRepository.js';
 import type { InventoryRepository } from '../../domain/inventory/InventoryRepository.js';
 import type { FinanceRepository } from '../../domain/finance/FinanceRepository.js';
 import type { ProductionJobRepository } from '../../domain/production/ProductionJobRepository.js';
@@ -34,6 +35,7 @@ import { InMemoryBuildingRepository } from '../../infrastructure/persistence/InM
 import { InMemoryBuildingStorageRepository } from '../../infrastructure/persistence/InMemoryBuildingStorageRepository.js';
 import { InMemoryTransportOrderRepository } from '../../infrastructure/persistence/InMemoryTransportOrderRepository.js';
 import { InMemoryCompanyRepository } from '../../infrastructure/persistence/InMemoryCompanyRepository.js';
+import { InMemoryCompanyBrainRepository } from '../../infrastructure/persistence/InMemoryCompanyBrainRepository.js';
 import { InMemoryCompanyResearchRepository } from '../../infrastructure/persistence/InMemoryCompanyResearchRepository.js';
 import { InMemoryCompanyMilestonesRepository } from '../../infrastructure/persistence/InMemoryCompanyMilestonesRepository.js';
 import { InMemoryInventoryRepository } from '../../infrastructure/persistence/InMemoryInventoryRepository.js';
@@ -47,6 +49,10 @@ import { InMemorySupplyContractRepository } from '../../infrastructure/persisten
 import { MarketPriceSeeder } from '../services/MarketPriceSeeder.js';
 import { WorldBootstrapService } from '../services/WorldBootstrapService.js';
 import { MarketTradeService } from '../services/MarketTradeService.js';
+import { CompanyDecisionExecutionService } from '../services/CompanyDecisionExecutionService.js';
+import type { CompanyDecisionExecutionPort } from '../../domain/brain/CompanyDecisionExecutionPort.js';
+import type { CompanyPlanningPort } from '../../domain/brain/CompanyPlanningPort.js';
+import { CompanyPlanningPipeline } from '../planning/CompanyPlanningPipeline.js';
 import { ProductionInventoryService } from '../services/ProductionInventoryService.js';
 import { ResearchCompletionService } from '../services/ResearchCompletionService.js';
 import { MilestoneEvaluationService } from '../services/MilestoneEvaluationService.js';
@@ -67,6 +73,7 @@ export type BootstrapOptions = {
   readonly gameContentRoot: string;
   readonly strictContent?: boolean;
   readonly companyRepository?: CompanyRepository;
+  readonly companyBrainRepository?: CompanyBrainRepository;
   readonly buildingRepository?: BuildingRepository;
   readonly buildingStorageRepository?: BuildingStorageRepository;
   readonly transportOrderRepository?: TransportOrderRepository;
@@ -100,6 +107,8 @@ export async function bootstrapApplication(
   }
 
   const companyRepository = options.companyRepository ?? new InMemoryCompanyRepository();
+  const companyBrainRepository =
+    options.companyBrainRepository ?? new InMemoryCompanyBrainRepository();
   const buildingRepository = options.buildingRepository ?? new InMemoryBuildingRepository();
   const buildingStorageRepository =
     options.buildingStorageRepository ?? new InMemoryBuildingStorageRepository();
@@ -142,12 +151,15 @@ export async function bootstrapApplication(
     marketRepository,
     clock,
   });
-  const seedMarketResult = marketPriceSeeder.seed(contentResult.value.resourceTypes);
+  const seedMarketResult = marketPriceSeeder.seed(
+    contentResult.value.resourceTypes,
+    contentResult.value.regions,
+  );
 
   if (!seedMarketResult.ok) {
     return Result.fail(
       new ContentLoadError(seedMarketResult.error.message, {
-        contentId: 'market_global',
+        contentId: 'market_regional',
       }),
     );
   }
@@ -202,6 +214,21 @@ export async function bootstrapApplication(
     transportLogisticsService,
   });
 
+  let companyDecisionExecutionService: CompanyDecisionExecutionService;
+  let companyPlanningPipeline: CompanyPlanningPipeline;
+
+  const companyPlanningPort: CompanyPlanningPort = {
+    run(companyId, tickNumber) {
+      companyPlanningPipeline.run(companyId, tickNumber);
+    },
+  };
+
+  const companyDecisionExecutionPort: CompanyDecisionExecutionPort = {
+    executePendingDecisions(companyId) {
+      companyDecisionExecutionService.executePendingDecisions(companyId);
+    },
+  };
+
   let researchCompletionService: ResearchCompletionService;
 
   simulationEngine = new SimulationEngine({
@@ -210,6 +237,7 @@ export async function bootstrapApplication(
     systems: createDefaultSimulationSystems({
       companyRepository,
       buildingRepository,
+      buildingStorageRepository,
       transportOrderRepository,
       transportLogisticsService,
       productionJobRepository,
@@ -219,6 +247,9 @@ export async function bootstrapApplication(
       marketRepository,
       supplyContractRepository,
       employeeRepository,
+      companyBrainRepository,
+      companyPlanningPort,
+      companyDecisionExecutionPort,
       enqueueEvents,
       onProductionJobCompleted: (job) => {
         productionInventoryService.completeJob(job);
@@ -240,6 +271,43 @@ export async function bootstrapApplication(
     companyResearchRepository,
     simulationEngine,
     gameContent: contentResult.value,
+  });
+
+  companyDecisionExecutionService = new CompanyDecisionExecutionService({
+    companyBrainRepository,
+    companyRepository,
+    marketTradeService,
+    clock,
+    buildingRepository,
+    financeRepository,
+    companyResearchRepository,
+    companyMilestonesRepository,
+    regionRepository,
+    simulationEngine,
+    gameContent: contentResult.value,
+    productionJobRepository,
+    researchJobRepository,
+    productionInventoryService,
+    energyBalanceService,
+    inventoryRepository,
+    transportLogisticsService,
+    enqueueEvents,
+  });
+
+  companyPlanningPipeline = new CompanyPlanningPipeline({
+    inventoryRepository,
+    financeRepository,
+    buildingRepository,
+    marketRepository,
+    productionJobRepository,
+    companyResearchRepository,
+    companyMilestonesRepository,
+    researchJobRepository,
+    companyBrainRepository,
+    strategies: contentResult.value.strategies,
+    gameContent: contentResult.value,
+    clock,
+    enqueueEvents,
   });
 
   new MilestoneEvaluationService({
@@ -274,6 +342,7 @@ export async function bootstrapApplication(
     eventBus,
     simulationEngine,
     companyRepository,
+    companyBrainRepository,
     buildingRepository,
     buildingStorageRepository,
     transportOrderRepository,
@@ -292,6 +361,8 @@ export async function bootstrapApplication(
     worldMapRepository,
     productionInventoryService,
     marketTradeService,
+    companyDecisionExecutionService,
+    companyPlanningPipeline,
     energyBalanceService,
     transportLogisticsService,
     tickHistoryService,

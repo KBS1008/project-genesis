@@ -1,0 +1,13 @@
+id: strategy_conservative
+name: Conservative
+description: Maintains liquidity and avoids risky investments.
+profile: CONSERVATIVE
+weights:
+  expansionWeight: 25
+  productionWeight: 45
+  tradingWeight: 35
+  researchWeight: 30
+  riskTolerance: 20
+  liquidityPreference: 90
+enabled: true
+version: 1

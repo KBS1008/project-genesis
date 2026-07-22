@@ -4,6 +4,21 @@
  * Application layer exports.
  */
 
+export { CompanyBrainBootstrapService } from './services/CompanyBrainBootstrapService.js';
+export type { CompanyBrainBootstrapServiceDependencies } from './services/CompanyBrainBootstrapService.js';
+export { CompanyDecisionExecutionService } from './services/CompanyDecisionExecutionService.js';
+export type {
+  CompanyDecisionExecutionServiceDependencies,
+  CompanyDecisionExecutionResult,
+} from './services/CompanyDecisionExecutionService.js';
+export { DECISION_EXECUTION_MAX_PER_RUN } from './services/CompanyDecisionExecutionService.js';
+export { CompanyPlanningPipeline } from './planning/CompanyPlanningPipeline.js';
+export type {
+  CompanyPlanningPipelineDependencies,
+  CompanyPlanningResult,
+} from './planning/CompanyPlanningPipeline.js';
+export { CompanyPlanningObserver } from './planning/CompanyPlanningObserver.js';
+export type { CompanyPlanningObserverDependencies } from './planning/CompanyPlanningObserver.js';
 export type { ApplicationContext } from './bootstrap/ApplicationContext.js';
 export { bootstrapApplication } from './bootstrap/bootstrapApplication.js';
 export type { BootstrapOptions } from './bootstrap/bootstrapApplication.js';

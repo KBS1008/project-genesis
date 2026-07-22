@@ -9,6 +9,7 @@
 import type { SimulationSystem } from '../engine/SimulationSystem.js';
 import { BuildingSimulationSystem } from './building/BuildingSimulationSystem.js';
 import { CompanySimulationSystem } from './company/CompanySimulationSystem.js';
+import { CompanyPlanningSystem } from './company/CompanyPlanningSystem.js';
 import { ContractSimulationSystem } from './contract/ContractSimulationSystem.js';
 import { FinanceSimulationSystem } from './finance/FinanceSimulationSystem.js';
 import { MarketSimulationSystem } from './market/MarketSimulationSystem.js';
@@ -20,13 +21,21 @@ import type { SimulationSystemDependencies } from './SimulationSystemDependencie
 /**
  * Creates the default simulation systems in deterministic runtime order.
  *
- * Order: Company → Building → Transport → Production → Research → Market → Contract → Finance
+ * Order: Company → Building → Transport → Production → Research → Market → CompanyPlanning → Contract → Finance
  */
 export function createDefaultSimulationSystems(
   dependencies: SimulationSystemDependencies,
 ): readonly SimulationSystem[] {
   return Object.freeze([
-    new CompanySimulationSystem(dependencies.companyRepository),
+    new CompanySimulationSystem({
+      companyRepository: dependencies.companyRepository,
+      ...(dependencies.companyBrainRepository !== undefined
+        ? { companyBrainRepository: dependencies.companyBrainRepository }
+        : {}),
+      ...(dependencies.companyDecisionExecutionPort !== undefined
+        ? { companyDecisionExecutionPort: dependencies.companyDecisionExecutionPort }
+        : {}),
+    }),
     new BuildingSimulationSystem({
       buildingRepository: dependencies.buildingRepository,
       enqueueEvents: dependencies.enqueueEvents,
@@ -61,8 +70,18 @@ export function createDefaultSimulationSystems(
     }),
     new MarketSimulationSystem({
       marketRepository: dependencies.marketRepository,
-      inventoryRepository: dependencies.inventoryRepository,
+      buildingRepository: dependencies.buildingRepository,
+      buildingStorageRepository: dependencies.buildingStorageRepository,
       enqueueEvents: dependencies.enqueueEvents,
+    }),
+    new CompanyPlanningSystem({
+      companyRepository: dependencies.companyRepository,
+      ...(dependencies.companyBrainRepository !== undefined
+        ? { companyBrainRepository: dependencies.companyBrainRepository }
+        : {}),
+      ...(dependencies.companyPlanningPort !== undefined
+        ? { companyPlanningPort: dependencies.companyPlanningPort }
+        : {}),
     }),
     new ContractSimulationSystem({
       supplyContractRepository: dependencies.supplyContractRepository,

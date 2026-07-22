@@ -213,6 +213,7 @@ export class GameStateSerializer implements GameStateSerializerPort {
             Object.freeze({
               id: market.getId().value,
               createdAt: market.getCreatedAt(),
+              regionId: market.getRegionId(),
               prices: Object.freeze(
                 market.getPrices().map((price) =>
                   Object.freeze({
@@ -221,6 +222,22 @@ export class GameStateSerializer implements GameStateSerializerPort {
                     lastPrice: price.lastPrice,
                     tradeVolume: price.tradeVolume,
                     updatedAt: price.updatedAt,
+                    supply: price.supply,
+                    demand: price.demand,
+                    liquidity: price.liquidity,
+                  }),
+                ),
+              ),
+              priceHistory: Object.freeze(
+                market.getPriceHistory().map((entry) =>
+                  Object.freeze({
+                    tick: entry.tick,
+                    resourceId: entry.resourceId,
+                    price: entry.price,
+                    tradeVolume: entry.tradeVolume,
+                    supply: entry.supply,
+                    demand: entry.demand,
+                    liquidity: entry.liquidity,
                   }),
                 ),
               ),
@@ -941,14 +958,27 @@ export class GameStateSerializer implements GameStateSerializerPort {
           lastPrice: priceSnapshot.lastPrice,
           tradeVolume: priceSnapshot.tradeVolume,
           updatedAt: priceSnapshot.updatedAt,
+          supply: priceSnapshot.supply ?? 0,
+          demand: priceSnapshot.demand ?? 0,
+          liquidity: priceSnapshot.liquidity ?? 1,
         }),
       );
     }
 
+    const regionId =
+      snapshot.regionId ??
+      (snapshot.id === GLOBAL_MARKET_ID
+        ? DEFAULT_REGION_ID
+        : snapshot.id.startsWith('market_')
+          ? snapshot.id.slice('market_'.length)
+          : DEFAULT_REGION_ID);
+
     return Market.restore({
       id: idResult.value,
+      regionId,
       createdAt: snapshot.createdAt,
       prices,
+      ...(snapshot.priceHistory !== undefined ? { priceHistory: snapshot.priceHistory } : {}),
     });
   }
 

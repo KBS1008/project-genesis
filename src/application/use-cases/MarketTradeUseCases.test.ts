@@ -48,7 +48,10 @@ async function createContext() {
   const eventBus = new InMemoryEventBus();
   const simulationEngine = new SimulationEngine({ clock, eventBus });
 
-  new MarketPriceSeeder({ marketRepository, clock }).seed(contentResult.value.resourceTypes);
+  new MarketPriceSeeder({ marketRepository, clock }).seed(
+    contentResult.value.resourceTypes,
+    contentResult.value.regions,
+  );
 
   const createCompany = new CreateCompanyUseCase({
     clock,

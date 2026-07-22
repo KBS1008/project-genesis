@@ -1,0 +1,13 @@
+id: strategy_balanced
+name: Balanced
+description: Evenly weights production, trading, research, and expansion.
+profile: BALANCED
+weights:
+  expansionWeight: 50
+  productionWeight: 50
+  tradingWeight: 50
+  researchWeight: 50
+  riskTolerance: 50
+  liquidityPreference: 50
+enabled: true
+version: 1

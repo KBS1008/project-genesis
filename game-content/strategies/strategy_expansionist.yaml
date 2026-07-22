@@ -1,0 +1,13 @@
+id: strategy_expansionist
+name: Expansionist
+description: Aggressively pursues regional growth and infrastructure investment.
+profile: EXPANSIONIST
+weights:
+  expansionWeight: 90
+  productionWeight: 55
+  tradingWeight: 45
+  researchWeight: 35
+  riskTolerance: 70
+  liquidityPreference: 35
+enabled: true
+version: 1

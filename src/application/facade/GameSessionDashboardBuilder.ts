@@ -13,8 +13,9 @@ import { MarketFeePolicy } from '../../domain/policies/market/MarketFeePolicy.js
 import { CORPORATE_TAX_RATE, TAX_INTERVAL_TICKS } from '../../domain/finance/TaxConstants.js';
 import { TaxCalculator } from '../../domain/finance/TaxCalculator.js';
 import { InflationCalculator } from '../../domain/market/InflationCalculator.js';
-import { GLOBAL_MARKET_ID } from '../../domain/market/MarketConstants.js';
+import { createRegionalMarketId, GLOBAL_MARKET_ID } from '../../domain/market/MarketConstants.js';
 import { createMarketId } from '../../domain/market/Market.js';
+import { DEFAULT_REGION_ID } from '../../domain/world/WorldConstants.js';
 import type { EconomyReadModel } from '../read-models/EconomyReadModel.js';
 import { EmployeePrerequisitesSpecification } from '../../domain/specifications/employee/EmployeePrerequisitesSpecification.js';
 import { ProductionJobStatus } from '../../domain/production/ProductionJobStatus.js';
@@ -268,13 +269,23 @@ export class GameSessionDashboardBuilder {
       return null;
     }
 
-    const marketIdResult = createMarketId(GLOBAL_MARKET_ID);
+    const marketIdResult = createMarketId(createRegionalMarketId(DEFAULT_REGION_ID));
 
     if (!marketIdResult.ok) {
       return null;
     }
 
-    const market = this.#context.marketRepository.findById(marketIdResult.value);
+    let market = this.#context.marketRepository.findById(marketIdResult.value);
+
+    if (market === undefined) {
+      const legacyMarketIdResult = createMarketId(GLOBAL_MARKET_ID);
+
+      if (!legacyMarketIdResult.ok) {
+        return null;
+      }
+
+      market = this.#context.marketRepository.findById(legacyMarketIdResult.value);
+    }
     const priceIndex =
       market === undefined
         ? 1

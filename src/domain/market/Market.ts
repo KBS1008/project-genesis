@@ -1,9 +1,10 @@
 /**
  * @module @domain/market/Market
  *
- * Market aggregate holding global resource price snapshots.
+ * Regional market aggregate holding resource price snapshots, liquidity and history.
  *
  * @see docs/gameplay/market.md
+ * @see docs/architecture/decisions/DD-018 – Economy & Market Architecture.md
  */
 
 import { AggregateRoot } from '../../common/core/AggregateRoot.js';
@@ -14,6 +15,12 @@ import type { Clock } from '../../common/time/Clock.js';
 import { Guard } from '../../common/validation/Guard.js';
 import { createResourceTypeId } from '../shared/ResourceTypeId.js';
 import type { MarketId } from './MarketId.js';
+import {
+  createMarketPriceHistoryEntry,
+  MARKET_PRICE_HISTORY_LIMIT,
+  type MarketPriceHistoryEntry,
+} from './MarketPriceHistoryEntry.js';
+import { computeMarketRegionalStatistics } from './MarketRegionalStatistics.js';
 import type { ResourceMarketPrice } from './ResourceMarketPrice.js';
 import { MarketPriceChanged } from './events/MarketPriceChanged.js';
 
@@ -28,30 +35,41 @@ export type MarketResourceSeed = {
 /** Parameters required to seed a market from static resource content. */
 export type SeedMarketParams = {
   readonly id: MarketId;
+  readonly regionId: string;
   readonly resources: readonly MarketResourceSeed[];
   readonly clock: Clock;
+  readonly initialLiquidity?: number;
 };
 
 /**
- * Global market aggregate root tracking resource prices.
+ * Regional market aggregate root tracking resource prices and economic indicators.
  */
 export class Market extends AggregateRoot<'Market'> {
+  readonly #regionId: string;
   readonly #createdAt: number;
   readonly #prices = new Map<string, ResourceMarketPrice>();
+  readonly #priceHistory: MarketPriceHistoryEntry[] = [];
 
   private constructor(
     params: {
       id: MarketId;
+      regionId: string;
       createdAt: number;
       prices: readonly ResourceMarketPrice[];
+      priceHistory: readonly MarketPriceHistoryEntry[];
     },
     restoring = false,
   ) {
     super(params.id);
+    this.#regionId = params.regionId;
     this.#createdAt = params.createdAt;
 
     for (const price of params.prices) {
       this.#prices.set(price.resourceId.value, price);
+    }
+
+    for (const entry of params.priceHistory) {
+      this.#priceHistory.push(entry);
     }
 
     void restoring;
@@ -61,8 +79,24 @@ export class Market extends AggregateRoot<'Market'> {
    * Seeds market prices from enabled, market-enabled resource definitions.
    */
   static seedFromResources(params: SeedMarketParams): Result<Market, ValidationError> {
+    const regionIdResult = Guard.againstEmptyString(
+      params.regionId,
+      'Market region id must not be empty.',
+    );
+
+    if (!regionIdResult.ok) {
+      return Result.fail(regionIdResult.error);
+    }
+
     const createdAt = params.clock.now();
-    const market = new Market({ id: params.id, createdAt, prices: [] });
+    const initialLiquidity = params.initialLiquidity ?? 1;
+    const market = new Market({
+      id: params.id,
+      regionId: regionIdResult.value,
+      createdAt,
+      prices: [],
+      priceHistory: [],
+    });
 
     for (const resource of params.resources) {
       if (!resource.enabled || !resource.marketEnabled) {
@@ -81,6 +115,9 @@ export class Market extends AggregateRoot<'Market'> {
         lastPrice: resource.basePrice,
         tradeVolume: 0,
         updatedAt: createdAt,
+        supply: 0,
+        demand: 0,
+        liquidity: initialLiquidity,
       });
 
       market.#prices.set(resource.id, priceEntry);
@@ -94,35 +131,34 @@ export class Market extends AggregateRoot<'Market'> {
    */
   static restore(params: {
     readonly id: MarketId;
+    readonly regionId: string;
     readonly createdAt: number;
     readonly prices: readonly ResourceMarketPrice[];
+    readonly priceHistory?: readonly MarketPriceHistoryEntry[];
   }): Result<Market, ValidationError> {
+    const regionIdResult = Guard.againstEmptyString(
+      params.regionId,
+      'Market region id must not be empty.',
+    );
+
+    if (!regionIdResult.ok) {
+      return Result.fail(regionIdResult.error);
+    }
+
     for (const price of params.prices) {
-      const basePriceResult = Guard.againstNegative(
-        price.basePrice,
-        'Market base price must not be negative.',
-      );
+      const validationResults = [
+        Guard.againstNegative(price.basePrice, 'Market base price must not be negative.'),
+        Guard.againstNegative(price.lastPrice, 'Market price must not be negative.'),
+        Guard.againstNegative(price.tradeVolume, 'Trade volume must not be negative.'),
+        Guard.againstNegative(price.supply, 'Market supply must not be negative.'),
+        Guard.againstNegative(price.demand, 'Market demand must not be negative.'),
+        Guard.againstNegative(price.liquidity, 'Market liquidity must not be negative.'),
+      ];
 
-      if (!basePriceResult.ok) {
-        return Result.fail(basePriceResult.error);
-      }
-
-      const lastPriceResult = Guard.againstNegative(
-        price.lastPrice,
-        'Market price must not be negative.',
-      );
-
-      if (!lastPriceResult.ok) {
-        return Result.fail(lastPriceResult.error);
-      }
-
-      const volumeResult = Guard.againstNegative(
-        price.tradeVolume,
-        'Trade volume must not be negative.',
-      );
-
-      if (!volumeResult.ok) {
-        return Result.fail(volumeResult.error);
+      for (const validationResult of validationResults) {
+        if (!validationResult.ok) {
+          return Result.fail(validationResult.error);
+        }
       }
     }
 
@@ -130,12 +166,19 @@ export class Market extends AggregateRoot<'Market'> {
       new Market(
         {
           id: params.id,
+          regionId: regionIdResult.value,
           createdAt: params.createdAt,
           prices: params.prices,
+          priceHistory: params.priceHistory ?? [],
         },
         true,
       ),
     );
+  }
+
+  /** The world region owning this market. */
+  getRegionId(): string {
+    return this.#regionId;
   }
 
   /** Simulation time when the market was created. */
@@ -152,9 +195,66 @@ export class Market extends AggregateRoot<'Market'> {
     );
   }
 
+  /** Returns price history in deterministic tick then resource id order. */
+  getPriceHistory(): readonly MarketPriceHistoryEntry[] {
+    return Object.freeze(
+      [...this.#priceHistory].sort((left, right) => {
+        if (left.tick !== right.tick) {
+          return left.tick - right.tick;
+        }
+
+        return left.resourceId.localeCompare(right.resourceId);
+      }),
+    );
+  }
+
+  /** Returns aggregated regional market statistics. */
+  getRegionalStatistics() {
+    return computeMarketRegionalStatistics(this.#regionId, this.getPrices());
+  }
+
   /** Returns one resource price or undefined when the resource is not listed. */
   getPrice(resourceId: string): ResourceMarketPrice | undefined {
     return this.#prices.get(resourceId);
+  }
+
+  /**
+   * Updates regional supply and demand indicators for one resource.
+   */
+  updateSupplyDemand(
+    resourceId: string,
+    supply: number,
+    demand: number,
+    clock: Clock,
+  ): Result<void, ValidationError> {
+    const supplyResult = Guard.againstNegative(supply, 'Market supply must not be negative.');
+    const demandResult = Guard.againstNegative(demand, 'Market demand must not be negative.');
+
+    if (!supplyResult.ok) {
+      return Result.fail(supplyResult.error);
+    }
+
+    if (!demandResult.ok) {
+      return Result.fail(demandResult.error);
+    }
+
+    const existing = this.#prices.get(resourceId);
+
+    if (existing === undefined) {
+      return Result.fail(
+        new ValidationError(`Resource "${resourceId}" is not listed on the market.`),
+      );
+    }
+
+    const nextEntry: ResourceMarketPrice = Object.freeze({
+      ...existing,
+      supply: supplyResult.value,
+      demand: demandResult.value,
+      updatedAt: clock.now(),
+    });
+
+    this.#prices.set(resourceId, nextEntry);
+    return Result.ok(undefined);
   }
 
   /**
@@ -190,15 +290,21 @@ export class Market extends AggregateRoot<'Market'> {
     }
 
     const previousPrice = existing.lastPrice;
+    const nextTradeVolume = existing.tradeVolume + volumeResult.value;
+    const nextLiquidity = this.#computeLiquidity(existing.liquidity, volumeResult.value);
     const nextEntry: ResourceMarketPrice = Object.freeze({
       resourceId: existing.resourceId,
       basePrice: existing.basePrice,
       lastPrice: priceResult.value,
-      tradeVolume: existing.tradeVolume + volumeResult.value,
+      tradeVolume: nextTradeVolume,
       updatedAt: clock.now(),
+      supply: existing.supply,
+      demand: existing.demand,
+      liquidity: nextLiquidity,
     });
 
     this.#prices.set(resourceId, nextEntry);
+    this.#appendHistory(clock.now(), nextEntry);
 
     if (previousPrice !== nextEntry.lastPrice || volumeResult.value > 0) {
       this.addDomainEvent(
@@ -214,6 +320,32 @@ export class Market extends AggregateRoot<'Market'> {
     }
 
     return Result.ok(undefined);
+  }
+
+  #computeLiquidity(currentLiquidity: number, tradeVolumeDelta: number): number {
+    if (tradeVolumeDelta === 0) {
+      return currentLiquidity;
+    }
+
+    return Math.min(100, currentLiquidity + tradeVolumeDelta * 0.1);
+  }
+
+  #appendHistory(tick: number, priceEntry: ResourceMarketPrice): void {
+    this.#priceHistory.push(
+      createMarketPriceHistoryEntry({
+        tick,
+        resourceId: priceEntry.resourceId.value,
+        price: priceEntry.lastPrice,
+        tradeVolume: priceEntry.tradeVolume,
+        supply: priceEntry.supply,
+        demand: priceEntry.demand,
+        liquidity: priceEntry.liquidity,
+      }),
+    );
+
+    if (this.#priceHistory.length > MARKET_PRICE_HISTORY_LIMIT) {
+      this.#priceHistory.splice(0, this.#priceHistory.length - MARKET_PRICE_HISTORY_LIMIT);
+    }
   }
 }
 

@@ -17,6 +17,9 @@ export interface MarketRepository {
   /** Returns a market by id, or undefined when not found. */
   findById(id: MarketId): Market | undefined;
 
+  /** Returns the market for a world region, if one exists. */
+  findByRegionId(regionId: string): Market | undefined;
+
   /** Returns all markets in deterministic id order. */
   findAll(): readonly Market[];
 }

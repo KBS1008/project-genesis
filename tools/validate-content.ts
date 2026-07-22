@@ -38,9 +38,10 @@ if (!result.ok) {
   process.exit(1);
 }
 
-const { resourceTypes, buildingTypes, recipes } = result.value;
+const { resourceTypes, buildingTypes, recipes, strategies } = result.value;
 
 console.log('Content validation succeeded.');
 console.log(`Resources: ${resourceTypes.size}`);
 console.log(`Building types: ${buildingTypes.size}`);
 console.log(`Recipes: ${recipes.size}`);
+console.log(`Strategies: ${strategies.size}`);

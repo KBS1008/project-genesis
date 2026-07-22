@@ -7,6 +7,7 @@
 import { ValidationError } from '../../common/errors/ValidationError.js';
 import { Result } from '../../common/result/Result.js';
 import { createCompanyId } from '../../domain/company/Company.js';
+import { DEFAULT_REGION_ID } from '../../domain/world/WorldConstants.js';
 import type { ApplicationContext } from '../bootstrap/ApplicationContext.js';
 import type { SellResourceCommand } from '../commands/SellResourceCommand.js';
 import type { MarketTradeResult } from '../services/MarketTradeService.js';
@@ -48,6 +49,11 @@ export class SellResourceUseCase {
       return Result.fail(new ValidationError(`Company id "${companyId.value}" was not found.`));
     }
 
-    return this.#marketTradeService.sell(companyId, command.resourceId, command.amount);
+    return this.#marketTradeService.sell(
+      companyId,
+      command.resourceId,
+      command.amount,
+      command.regionId ?? DEFAULT_REGION_ID,
+    );
   }
 }

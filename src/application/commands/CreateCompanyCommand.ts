@@ -9,4 +9,6 @@ export type CreateCompanyCommand = {
   readonly companyId: string;
   readonly name: string;
   readonly ownerId: string;
+  readonly autonomous?: boolean;
+  readonly strategyDefinitionId?: string;
 };

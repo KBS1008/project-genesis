@@ -13,4 +13,7 @@ export type ResourceMarketPrice = {
   readonly lastPrice: number;
   readonly tradeVolume: number;
   readonly updatedAt: number;
+  readonly supply: number;
+  readonly demand: number;
+  readonly liquidity: number;
 };

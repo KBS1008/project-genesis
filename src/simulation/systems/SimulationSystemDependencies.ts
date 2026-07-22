@@ -6,6 +6,7 @@
 
 import type { DomainEvent } from '../../common/events/DomainEvent.js';
 import type { BuildingRepository } from '../../domain/building/BuildingRepository.js';
+import type { BuildingStorageRepository } from '../../domain/building/BuildingStorageRepository.js';
 import type { CompanyRepository } from '../../domain/company/CompanyRepository.js';
 import type { FinanceRepository } from '../../domain/finance/FinanceRepository.js';
 import type { InventoryRepository } from '../../domain/inventory/InventoryRepository.js';
@@ -19,6 +20,9 @@ import type { EmployeeAllocationPort } from '../../domain/employee/EmployeeAlloc
 import type { EmployeeRepository } from '../../domain/employee/EmployeeRepository.js';
 import type { TransportLogisticsPort } from '../../domain/transport/TransportLogisticsPort.js';
 import type { TransportOrderRepository } from '../../domain/transport/TransportOrderRepository.js';
+import type { CompanyBrainRepository } from '../../domain/brain/CompanyBrainRepository.js';
+import type { CompanyPlanningPort } from '../../domain/brain/CompanyPlanningPort.js';
+import type { CompanyDecisionExecutionPort } from '../../domain/brain/CompanyDecisionExecutionPort.js';
 import type { SupplyContractRepository } from '../../domain/contract/SupplyContractRepository.js';
 import type { Building } from '../../domain/building/Building.js';
 
@@ -26,6 +30,7 @@ import type { Building } from '../../domain/building/Building.js';
 export type SimulationSystemDependencies = {
   readonly companyRepository: CompanyRepository;
   readonly buildingRepository: BuildingRepository;
+  readonly buildingStorageRepository: BuildingStorageRepository;
   readonly transportOrderRepository: TransportOrderRepository;
   readonly transportLogisticsService: TransportLogisticsPort;
   readonly productionJobRepository: ProductionJobRepository;
@@ -35,6 +40,9 @@ export type SimulationSystemDependencies = {
   readonly marketRepository: MarketRepository;
   readonly supplyContractRepository: SupplyContractRepository;
   readonly employeeRepository: EmployeeRepository;
+  readonly companyBrainRepository?: CompanyBrainRepository;
+  readonly companyPlanningPort?: CompanyPlanningPort;
+  readonly companyDecisionExecutionPort?: CompanyDecisionExecutionPort;
   readonly enqueueEvents: (events: readonly DomainEvent[]) => void;
   readonly onProductionJobCompleted?: ProductionJobCompletedHandler;
   readonly onResearchJobCompleted?: ResearchJobCompletedHandler;
