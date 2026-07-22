@@ -78,10 +78,19 @@ import {
   type GameSaveSupplyContractSnapshotV1,
 } from '../../../application/persistence/GameSaveSnapshotV1.js';
 import {
-  GAME_SAVE_SCHEMA_VERSION,
+  GAME_SAVE_SCHEMA_VERSION as GAME_SAVE_SCHEMA_VERSION_V2,
   type GameSaveSnapshotV2,
 } from '../../../application/persistence/GameSaveSnapshotV2.js';
 import { migrateGameSaveSnapshotV1ToV2 } from '../../../application/persistence/migrateGameSaveSnapshotV1ToV2.js';
+import { migrateGameSaveSnapshotV2ToV3 } from '../../../application/persistence/migrateGameSaveSnapshotV2ToV3.js';
+import { restoreCompanyBrain, serializeCompanyBrains } from '../../../application/persistence/companyBrainSnapshotMapper.js';
+import { serializeRegionalMarkets } from '../../../application/persistence/regionalMarketSnapshotMapper.js';
+import { orderGameSaveSnapshotV3 } from '../../../application/persistence/orderGameSaveSnapshotV3.js';
+import {
+  GAME_SAVE_SCHEMA_VERSION,
+  type GameSaveRegionalMarketSnapshotV3,
+  type GameSaveSnapshotV3,
+} from '../../../application/persistence/GameSaveSnapshotV3.js';
 
 export type { GameStateSource, GameStateTarget, RestoredSimulationMetadata };
 
@@ -89,7 +98,7 @@ export type { GameStateSource, GameStateTarget, RestoredSimulationMetadata };
  * Converts live repositories into a versioned save snapshot.
  */
 export class GameStateSerializer implements GameStateSerializerPort {
-  serialize(source: GameStateSource): Result<GameSaveSnapshotV2, ValidationError> {
+  serialize(source: GameStateSource): Result<GameSaveSnapshotV3, ValidationError> {
     if (source.simulationEngine.hasPendingEvents()) {
       return Result.fail(
         new ValidationError(
@@ -113,30 +122,33 @@ export class GameStateSerializer implements GameStateSerializerPort {
       : Object.freeze([]);
 
     return Result.ok(
-      Object.freeze({
-        schemaVersion: GAME_SAVE_SCHEMA_VERSION,
-        savedAtUtc: new Date().toISOString(),
-        world: Object.freeze({
-          activeWorldId,
-        }),
-        marketRegionMappings,
-        simulation: Object.freeze({
-          clockTime: source.clock.now(),
-          tickNumber: source.simulationEngine.state.tickNumber,
-          paused: source.simulationEngine.state.paused,
-          tickDuration: 1,
-        }),
-        companies: Object.freeze(
-          source.companyRepository.findAll().map((company) =>
-            Object.freeze({
-              id: company.getId().value,
-              name: company.getName(),
-              ownerId: company.getOwnerId().value,
-              foundedAt: company.getFoundedAt(),
-              status: company.getStatus(),
-            }),
+      orderGameSaveSnapshotV3(
+        Object.freeze({
+          schemaVersion: GAME_SAVE_SCHEMA_VERSION,
+          savedAtUtc: new Date().toISOString(),
+          world: Object.freeze({
+            activeWorldId,
+          }),
+          marketRegionMappings,
+          simulation: Object.freeze({
+            clockTime: source.clock.now(),
+            tickNumber: source.simulationEngine.state.tickNumber,
+            paused: source.simulationEngine.state.paused,
+            tickDuration: 1,
+          }),
+          companies: Object.freeze(
+            source.companyRepository.findAll().map((company) =>
+              Object.freeze({
+                id: company.getId().value,
+                name: company.getName(),
+                ownerId: company.getOwnerId().value,
+                foundedAt: company.getFoundedAt(),
+                status: company.getStatus(),
+              }),
+            ),
           ),
-        ),
+          companyBrains: serializeCompanyBrains(source.companyBrainRepository),
+          regionalMarkets: serializeRegionalMarkets(source.marketRepository),
         buildings: Object.freeze(
           source.buildingRepository.findAll().map((building) =>
             Object.freeze({
@@ -202,42 +214,6 @@ export class GameStateSerializer implements GameStateSerializerPort {
                     balanceAfter: transaction.balanceAfter,
                     reservedCashDelta: transaction.reservedCashDelta,
                     timestamp: transaction.timestamp,
-                  }),
-                ),
-              ),
-            }),
-          ),
-        ),
-        markets: Object.freeze(
-          source.marketRepository.findAll().map((market) =>
-            Object.freeze({
-              id: market.getId().value,
-              createdAt: market.getCreatedAt(),
-              regionId: market.getRegionId(),
-              prices: Object.freeze(
-                market.getPrices().map((price) =>
-                  Object.freeze({
-                    resourceId: price.resourceId.value,
-                    basePrice: price.basePrice,
-                    lastPrice: price.lastPrice,
-                    tradeVolume: price.tradeVolume,
-                    updatedAt: price.updatedAt,
-                    supply: price.supply,
-                    demand: price.demand,
-                    liquidity: price.liquidity,
-                  }),
-                ),
-              ),
-              priceHistory: Object.freeze(
-                market.getPriceHistory().map((entry) =>
-                  Object.freeze({
-                    tick: entry.tick,
-                    resourceId: entry.resourceId,
-                    price: entry.price,
-                    tradeVolume: entry.tradeVolume,
-                    supply: entry.supply,
-                    demand: entry.demand,
-                    liquidity: entry.liquidity,
                   }),
                 ),
               ),
@@ -372,13 +348,14 @@ export class GameStateSerializer implements GameStateSerializerPort {
           ),
         ),
         ...(tickMetricsHistory !== undefined ? { tickMetricsHistory } : {}),
-      }),
+        }),
+      ),
     );
   }
 
   #serializeTickMetricsHistory(
     tickHistoryService: TickHistorySnapshotProvider,
-  ): GameSaveSnapshotV2['tickMetricsHistory'] {
+  ): GameSaveSnapshotV3['tickMetricsHistory'] {
     const companyId = tickHistoryService.getCompanyId();
     const points = tickHistoryService.exportForSave();
 
@@ -418,7 +395,7 @@ export class GameStateSerializer implements GameStateSerializerPort {
     });
   }
 
-  parse(raw: unknown): Result<GameSaveSnapshotV2, ValidationError> {
+  parse(raw: unknown): Result<GameSaveSnapshotV3, ValidationError> {
     if (typeof raw !== 'object' || raw === null) {
       return Result.fail(new ValidationError('Savegame payload must be a JSON object.'));
     }
@@ -433,7 +410,17 @@ export class GameStateSerializer implements GameStateSerializerPort {
         return v1Result;
       }
 
-      return Result.ok(migrateGameSaveSnapshotV1ToV2(v1Result.value));
+      return Result.ok(migrateGameSaveSnapshotV2ToV3(migrateGameSaveSnapshotV1ToV2(v1Result.value)));
+    }
+
+    if (schemaVersion === GAME_SAVE_SCHEMA_VERSION_V2) {
+      const v2Result = this.#parseV2(raw as Partial<GameSaveSnapshotV2>);
+
+      if (!v2Result.ok) {
+        return v2Result;
+      }
+
+      return Result.ok(migrateGameSaveSnapshotV2ToV3(v2Result.value));
     }
 
     if (schemaVersion !== GAME_SAVE_SCHEMA_VERSION) {
@@ -444,7 +431,7 @@ export class GameStateSerializer implements GameStateSerializerPort {
       );
     }
 
-    return this.#parseV2(raw as Partial<GameSaveSnapshotV2>);
+    return this.#parseV3(raw as Partial<GameSaveSnapshotV3>);
   }
 
   #parseV1(raw: Partial<GameSaveSnapshotV1>): Result<GameSaveSnapshotV1, ValidationError> {
@@ -455,6 +442,7 @@ export class GameStateSerializer implements GameStateSerializerPort {
     return Result.ok({
       ...raw,
       schemaVersion: GAME_SAVE_SCHEMA_VERSION_V1,
+      markets: raw.markets ?? [],
       researchJobs: raw.researchJobs ?? [],
       companyResearch: raw.companyResearch ?? [],
       companyMilestones: raw.companyMilestones ?? [],
@@ -478,7 +466,7 @@ export class GameStateSerializer implements GameStateSerializerPort {
 
     return Result.ok({
       ...raw,
-      schemaVersion: GAME_SAVE_SCHEMA_VERSION,
+      schemaVersion: GAME_SAVE_SCHEMA_VERSION_V2,
       world: raw.world,
       marketRegionMappings: raw.marketRegionMappings ?? [],
       researchJobs: raw.researchJobs ?? [],
@@ -490,6 +478,38 @@ export class GameStateSerializer implements GameStateSerializerPort {
       supplyContracts: raw.supplyContracts ?? [],
       tickMetricsHistory: raw.tickMetricsHistory,
     } as GameSaveSnapshotV2);
+  }
+
+  #parseV3(raw: Partial<GameSaveSnapshotV3>): Result<GameSaveSnapshotV3, ValidationError> {
+    if (
+      typeof raw.savedAtUtc !== 'string' ||
+      raw.simulation === undefined ||
+      raw.world === undefined ||
+      typeof raw.world.activeWorldId !== 'string' ||
+      raw.regionalMarkets === undefined ||
+      raw.companyBrains === undefined
+    ) {
+      return Result.fail(new ValidationError('Savegame payload is missing required metadata.'));
+    }
+
+    return Result.ok(
+      orderGameSaveSnapshotV3({
+        ...raw,
+        schemaVersion: GAME_SAVE_SCHEMA_VERSION,
+        world: raw.world,
+        marketRegionMappings: raw.marketRegionMappings ?? [],
+        companyBrains: raw.companyBrains ?? [],
+        regionalMarkets: raw.regionalMarkets ?? [],
+        researchJobs: raw.researchJobs ?? [],
+        companyResearch: raw.companyResearch ?? [],
+        companyMilestones: raw.companyMilestones ?? [],
+        buildingStorages: raw.buildingStorages ?? [],
+        transportOrders: raw.transportOrders ?? [],
+        employees: raw.employees ?? [],
+        supplyContracts: raw.supplyContracts ?? [],
+        tickMetricsHistory: raw.tickMetricsHistory,
+      } as GameSaveSnapshotV3),
+    );
   }
 
   #resolveActiveWorldId(source: GameStateSource): string {
@@ -508,7 +528,7 @@ export class GameStateSerializer implements GameStateSerializerPort {
   }
 
   hydrate(
-    snapshot: GameSaveSnapshotV2,
+    snapshot: GameSaveSnapshotV3,
     target: GameStateTarget,
   ): Result<RestoredSimulationMetadata, ValidationError> {
     for (const companySnapshot of snapshot.companies) {
@@ -561,14 +581,24 @@ export class GameStateSerializer implements GameStateSerializerPort {
       target.financeRepository.save(restoreResult.value);
     }
 
-    for (const marketSnapshot of snapshot.markets) {
-      const restoreResult = this.#restoreMarket(marketSnapshot);
+    for (const marketSnapshot of snapshot.regionalMarkets) {
+      const restoreResult = this.#restoreRegionalMarket(marketSnapshot);
 
       if (!restoreResult.ok) {
         return Result.fail(restoreResult.error);
       }
 
       target.marketRepository.save(restoreResult.value);
+    }
+
+    for (const brainSnapshot of snapshot.companyBrains) {
+      const restoreResult = restoreCompanyBrain(brainSnapshot);
+
+      if (!restoreResult.ok) {
+        return Result.fail(restoreResult.error);
+      }
+
+      target.companyBrainRepository.save(restoreResult.value);
     }
 
     for (const jobSnapshot of snapshot.productionJobs) {
@@ -656,7 +686,7 @@ export class GameStateSerializer implements GameStateSerializerPort {
   }
 
   #restoreTickMetricsHistory(
-    snapshot: GameSaveSnapshotV2,
+    snapshot: GameSaveSnapshotV3,
     tickHistoryService: TickHistorySnapshotProvider,
   ): void {
     const history = snapshot.tickMetricsHistory;
@@ -935,7 +965,7 @@ export class GameStateSerializer implements GameStateSerializerPort {
     });
   }
 
-  #restoreMarket(snapshot: GameSaveSnapshotV1['markets'][number]) {
+  #restoreRegionalMarket(snapshot: GameSaveRegionalMarketSnapshotV3) {
     const idResult = createMarketId(snapshot.id);
 
     if (!idResult.ok) {
@@ -958,27 +988,19 @@ export class GameStateSerializer implements GameStateSerializerPort {
           lastPrice: priceSnapshot.lastPrice,
           tradeVolume: priceSnapshot.tradeVolume,
           updatedAt: priceSnapshot.updatedAt,
-          supply: priceSnapshot.supply ?? 0,
-          demand: priceSnapshot.demand ?? 0,
-          liquidity: priceSnapshot.liquidity ?? 1,
+          supply: priceSnapshot.supply,
+          demand: priceSnapshot.demand,
+          liquidity: priceSnapshot.liquidity,
         }),
       );
     }
 
-    const regionId =
-      snapshot.regionId ??
-      (snapshot.id === GLOBAL_MARKET_ID
-        ? DEFAULT_REGION_ID
-        : snapshot.id.startsWith('market_')
-          ? snapshot.id.slice('market_'.length)
-          : DEFAULT_REGION_ID);
-
     return Market.restore({
       id: idResult.value,
-      regionId,
+      regionId: snapshot.regionId,
       createdAt: snapshot.createdAt,
       prices,
-      ...(snapshot.priceHistory !== undefined ? { priceHistory: snapshot.priceHistory } : {}),
+      priceHistory: snapshot.priceHistory,
     });
   }
 

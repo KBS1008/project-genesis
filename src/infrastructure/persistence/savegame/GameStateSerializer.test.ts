@@ -8,9 +8,13 @@ import { STARTING_MONEY } from '../../../domain/finance/FinanceConstants.js';
 import { FinanceTransactionType } from '../../../domain/finance/FinanceTransactionType.js';
 import { STARTER_NPC_WOOD_CONTRACT_ID } from '../../../domain/contract/SupplyContractConstants.js';
 import { GAME_SAVE_SCHEMA_VERSION as GAME_SAVE_SCHEMA_VERSION_V1 } from '../../../application/persistence/GameSaveSnapshotV1.js';
-import { GAME_SAVE_SCHEMA_VERSION } from '../../../application/persistence/GameSaveSnapshotV2.js';
+import { InMemoryCompanyBrainRepository } from '../InMemoryCompanyBrainRepository.js';
+import { GAME_SAVE_SCHEMA_VERSION as GAME_SAVE_SCHEMA_VERSION_V2 } from '../../../application/persistence/GameSaveSnapshotV2.js';
+import { GAME_SAVE_SCHEMA_VERSION } from '../../../application/persistence/GameSaveSnapshotV3.js';
 import { DEFAULT_REGION_ID, DEFAULT_WORLD_ID } from '../../../domain/world/WorldConstants.js';
 import { bootstrapApplication } from '../../../application/bootstrap/bootstrapApplication.js';
+import { restoreApplicationFromSnapshot } from '../../../application/bootstrap/restoreApplicationFromSnapshot.js';
+import type { ApplicationContext } from '../../../application/bootstrap/ApplicationContext.js';
 import { TickHistoryService } from '../../../application/services/TickHistoryService.js';
 import { CreateCompanyUseCase } from '../../../application/use-cases/CreateCompanyUseCase.js';
 import { PlaceBuildingUseCase } from '../../../application/use-cases/PlaceBuildingUseCase.js';
@@ -49,9 +53,54 @@ function requireCompanyId(value: string) {
   return result.value;
 }
 
+function serializeApplicationContext(serializer: GameStateSerializer, context: ApplicationContext) {
+  return serializer.serialize({
+    clock: context.clock,
+    simulationEngine: context.simulationEngine,
+    companyRepository: context.companyRepository,
+    buildingRepository: context.buildingRepository,
+    buildingStorageRepository: context.buildingStorageRepository,
+    transportOrderRepository: context.transportOrderRepository,
+    inventoryRepository: context.inventoryRepository,
+    financeRepository: context.financeRepository,
+    marketRepository: context.marketRepository,
+    productionJobRepository: context.productionJobRepository,
+    researchJobRepository: context.researchJobRepository,
+    companyResearchRepository: context.companyResearchRepository,
+    companyMilestonesRepository: context.companyMilestonesRepository,
+    employeeRepository: context.employeeRepository,
+    supplyContractRepository: context.supplyContractRepository,
+    tickHistoryService: context.tickHistoryService,
+    worldRepository: context.worldRepository,
+    companyBrainRepository: context.companyBrainRepository,
+  });
+}
+
+function captureEconomyFingerprint(context: ApplicationContext, companyIdValue: string) {
+  const companyId = requireCompanyId(companyIdValue);
+  const inventory = context.inventoryRepository
+    .findByCompanyId(companyId)
+    ?.getItems()
+    .map((item) => ({
+      resourceId: item.resourceId.value,
+      quantity: item.quantity,
+      reserved: item.reserved,
+    }))
+    .sort((left, right) => left.resourceId.localeCompare(right.resourceId));
+
+  const brain = context.companyBrainRepository.findByCompanyId(companyId);
+
+  return {
+    tickNumber: context.simulationEngine.state.tickNumber,
+    inventory,
+    decisionIds: brain?.getDecisions().map((decision) => decision.id.value).sort() ?? [],
+  };
+}
+
 function createEmptyHydrateTarget() {
   return {
     companyRepository: new InMemoryCompanyRepository(),
+    companyBrainRepository: new InMemoryCompanyBrainRepository(),
     buildingRepository: new InMemoryBuildingRepository(),
     buildingStorageRepository: new InMemoryBuildingStorageRepository(),
     transportOrderRepository: new InMemoryTransportOrderRepository(),
@@ -83,10 +132,11 @@ function createMinimalSnapshot(overrides: Record<string, unknown> = {}) {
       tickDuration: 1,
     }),
     companies: Object.freeze([]),
+    companyBrains: Object.freeze([]),
+    regionalMarkets: Object.freeze([]),
     buildings: Object.freeze([]),
     inventories: Object.freeze([]),
     financeAccounts: Object.freeze([]),
-    markets: Object.freeze([]),
     productionJobs: Object.freeze([]),
     employees: Object.freeze([]),
     ...overrides,
@@ -131,6 +181,7 @@ describe('GameStateSerializer', () => {
         supplyContractRepository: context.supplyContractRepository,
         tickHistoryService: context.tickHistoryService,
         worldRepository: context.worldRepository,
+        companyBrainRepository: context.companyBrainRepository,
       });
 
       expect(serializeResult.ok).toBe(false);
@@ -195,6 +246,7 @@ describe('GameStateSerializer', () => {
         supplyContractRepository: context.supplyContractRepository,
         tickHistoryService: context.tickHistoryService,
         worldRepository: context.worldRepository,
+        companyBrainRepository: context.companyBrainRepository,
       });
 
       expect(serializeResult.ok).toBe(true);
@@ -261,6 +313,7 @@ describe('GameStateSerializer', () => {
         supplyContractRepository: context.supplyContractRepository,
         tickHistoryService: context.tickHistoryService,
         worldRepository: context.worldRepository,
+        companyBrainRepository: context.companyBrainRepository,
       });
 
       expect(serializeResult.ok).toBe(true);
@@ -336,7 +389,7 @@ describe('GameStateSerializer', () => {
       expect(parseResult.value.supplyContracts).toEqual([]);
     });
 
-    it('migrates v1 snapshots to v2 with default world and region ownership', () => {
+    it('migrates v1 snapshots through v2 to v3 with default world and region ownership', () => {
       const parseResult = serializer.parse(
         createMinimalSnapshot({
           schemaVersion: GAME_SAVE_SCHEMA_VERSION_V1,
@@ -796,6 +849,7 @@ describe('GameStateSerializer', () => {
         supplyContractRepository: sourceContext.supplyContractRepository,
         tickHistoryService: sourceContext.tickHistoryService,
         worldRepository: sourceContext.worldRepository,
+        companyBrainRepository: sourceContext.companyBrainRepository,
       });
 
       expect(serializeResult.ok).toBe(true);
@@ -930,6 +984,7 @@ describe('GameStateSerializer', () => {
         supplyContractRepository: sourceContext.supplyContractRepository,
         tickHistoryService: sourceContext.tickHistoryService,
         worldRepository: sourceContext.worldRepository,
+        companyBrainRepository: sourceContext.companyBrainRepository,
       });
 
       expect(serializeResult.ok).toBe(true);
@@ -1059,6 +1114,7 @@ describe('GameStateSerializer', () => {
         supplyContractRepository: sourceContext.supplyContractRepository,
         tickHistoryService: sourceContext.tickHistoryService,
         worldRepository: sourceContext.worldRepository,
+        companyBrainRepository: sourceContext.companyBrainRepository,
       });
 
       expect(serializeResult.ok).toBe(true);
@@ -1113,6 +1169,202 @@ describe('GameStateSerializer', () => {
       expect(restoredEmployee?.getProductivity()).toBe(sourceEmployee.getProductivity());
       expect(restoredEmployee?.getHiredAt()).toBe(sourceEmployee.getHiredAt());
       expect(restoredEmployee?.getAssignedBuildingId()?.value).toBe('building_001');
+    });
+  });
+
+  describe('schema v3', () => {
+    it('serializes and restores company brain state', async () => {
+      const bootstrapResult = await bootstrapApplication({ gameContentRoot });
+
+      if (!bootstrapResult.ok) {
+        throw new Error(bootstrapResult.error.message);
+      }
+
+      const sourceContext = bootstrapResult.value;
+      const createCompany = new CreateCompanyUseCase(sourceContext);
+
+      createCompany.execute({
+        companyId: 'company_npc_001',
+        name: 'NPC Steel Co',
+        ownerId: 'owner_system',
+        autonomous: true,
+        strategyDefinitionId: 'strategy_manufacturer',
+      });
+
+      sourceContext.simulationEngine.tick();
+
+      const serializeResult = serializer.serialize({
+        clock: sourceContext.clock,
+        simulationEngine: sourceContext.simulationEngine,
+        companyRepository: sourceContext.companyRepository,
+        buildingRepository: sourceContext.buildingRepository,
+        buildingStorageRepository: sourceContext.buildingStorageRepository,
+        transportOrderRepository: sourceContext.transportOrderRepository,
+        inventoryRepository: sourceContext.inventoryRepository,
+        financeRepository: sourceContext.financeRepository,
+        marketRepository: sourceContext.marketRepository,
+        productionJobRepository: sourceContext.productionJobRepository,
+        researchJobRepository: sourceContext.researchJobRepository,
+        companyResearchRepository: sourceContext.companyResearchRepository,
+        companyMilestonesRepository: sourceContext.companyMilestonesRepository,
+        employeeRepository: sourceContext.employeeRepository,
+        supplyContractRepository: sourceContext.supplyContractRepository,
+        tickHistoryService: sourceContext.tickHistoryService,
+        worldRepository: sourceContext.worldRepository,
+        companyBrainRepository: sourceContext.companyBrainRepository,
+      });
+
+      expect(serializeResult.ok).toBe(true);
+
+      if (!serializeResult.ok) {
+        return;
+      }
+
+      expect(serializeResult.value.schemaVersion).toBe(GAME_SAVE_SCHEMA_VERSION);
+      expect(serializeResult.value.companyBrains).toHaveLength(1);
+      expect(serializeResult.value.regionalMarkets.length).toBeGreaterThan(0);
+      expect(serializeResult.value).not.toHaveProperty('markets');
+
+      const parseResult = serializer.parse(JSON.parse(JSON.stringify(serializeResult.value)));
+
+      expect(parseResult.ok).toBe(true);
+
+      if (!parseResult.ok) {
+        return;
+      }
+
+      const target = createEmptyHydrateTarget();
+      const hydrateResult = serializer.hydrate(parseResult.value, target);
+
+      expect(hydrateResult.ok).toBe(true);
+
+      if (!hydrateResult.ok) {
+        return;
+      }
+
+      const restoredBrain = target.companyBrainRepository.findByCompanyId(
+        requireCompanyId('company_npc_001'),
+      );
+
+      expect(restoredBrain).toBeDefined();
+      expect(restoredBrain?.getActiveStrategy()?.strategyDefinitionId).toBe('strategy_manufacturer');
+    });
+
+    it('migrates v2 snapshots with transitional market keys to v3', () => {
+      const parseResult = serializer.parse({
+        schemaVersion: GAME_SAVE_SCHEMA_VERSION_V2,
+        savedAtUtc: '2026-07-22T12:00:00.000Z',
+        world: { activeWorldId: DEFAULT_WORLD_ID },
+        marketRegionMappings: [],
+        simulation: { clockTime: 0, tickNumber: 0, paused: false, tickDuration: 1 },
+        companies: [],
+        buildings: [],
+        inventories: [],
+        financeAccounts: [],
+        markets: [
+          {
+            id: 'market_region_default',
+            createdAt: 0,
+            regionId: DEFAULT_REGION_ID,
+            prices: [
+              {
+                resourceId: 'wood',
+                basePrice: 10,
+                lastPrice: 10,
+                tradeVolume: 0,
+                updatedAt: 0,
+                supply: 20,
+                demand: 10,
+                liquidity: 1,
+              },
+            ],
+            priceHistory: [],
+          },
+        ],
+        productionJobs: [],
+        researchJobs: [],
+        companyResearch: [],
+        companyMilestones: [],
+        buildingStorages: [],
+        transportOrders: [],
+        employees: [],
+      });
+
+      expect(parseResult.ok).toBe(true);
+
+      if (!parseResult.ok) {
+        return;
+      }
+
+      expect(parseResult.value.schemaVersion).toBe(GAME_SAVE_SCHEMA_VERSION);
+      expect(parseResult.value.regionalMarkets[0]?.prices[0]?.supply).toBe(20);
+      expect(parseResult.value.companyBrains).toEqual([]);
+    });
+
+    it('produces identical outcomes after save/load for subsequent ticks', async () => {
+      const bootstrapResult = await bootstrapApplication({ gameContentRoot });
+
+      if (!bootstrapResult.ok) {
+        throw new Error(bootstrapResult.error.message);
+      }
+
+      const continuousContext = bootstrapResult.value;
+      const createCompany = new CreateCompanyUseCase(continuousContext);
+
+      createCompany.execute({
+        companyId: 'company_npc_001',
+        name: 'NPC Steel Co',
+        ownerId: 'owner_system',
+        autonomous: true,
+        strategyDefinitionId: 'strategy_manufacturer',
+      });
+
+      for (let tick = 0; tick < 2; tick += 1) {
+        expect(continuousContext.simulationEngine.tick().ok).toBe(true);
+      }
+
+      const serializeResult = serializeApplicationContext(serializer, continuousContext);
+
+      expect(serializeResult.ok).toBe(true);
+
+      if (!serializeResult.ok) {
+        return;
+      }
+
+      const parseResult = serializer.parse(JSON.parse(JSON.stringify(serializeResult.value)));
+
+      expect(parseResult.ok).toBe(true);
+
+      if (!parseResult.ok) {
+        return;
+      }
+
+      for (let tick = 0; tick < 2; tick += 1) {
+        expect(continuousContext.simulationEngine.tick().ok).toBe(true);
+      }
+
+      const continuousFingerprint = captureEconomyFingerprint(continuousContext, 'company_npc_001');
+
+      const restoreResult = await restoreApplicationFromSnapshot({
+        gameContentRoot,
+        snapshot: parseResult.value,
+      });
+
+      expect(restoreResult.ok).toBe(true);
+
+      if (!restoreResult.ok) {
+        return;
+      }
+
+      const restoredContext = restoreResult.value;
+
+      for (let tick = 0; tick < 2; tick += 1) {
+        expect(restoredContext.simulationEngine.tick().ok).toBe(true);
+      }
+
+      const restoredFingerprint = captureEconomyFingerprint(restoredContext, 'company_npc_001');
+
+      expect(restoredFingerprint).toEqual(continuousFingerprint);
     });
   });
 });

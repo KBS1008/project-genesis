@@ -32,7 +32,7 @@ import { InMemoryWorldMapRepository } from '../../infrastructure/persistence/InM
 import { GameStateSerializer } from '../../infrastructure/persistence/savegame/GameStateSerializer.js';
 import { FileSavegameStore } from '../../infrastructure/persistence/savegame/FileSavegameStore.js';
 import { ConsoleLogger } from '../../infrastructure/logging/ConsoleLogger.js';
-import type { GameSaveSnapshotV2 } from '../persistence/GameSaveSnapshotV2.js';
+import type { GameSaveSnapshotV3 } from '../persistence/GameSaveSnapshotV3.js';
 import { validateSnapshotWorldGraph } from '../persistence/validateSnapshotWorldGraph.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
 import { createDefaultSimulationSystems } from '../../simulation/systems/createDefaultSimulationSystems.js';
@@ -54,7 +54,7 @@ import type { ApplicationContext } from './ApplicationContext.js';
 /** Options for restoring an application session. */
 export type RestoreApplicationOptions = {
   readonly gameContentRoot: string;
-  readonly snapshot: GameSaveSnapshotV2;
+  readonly snapshot: GameSaveSnapshotV3;
 };
 
 /**
@@ -107,6 +107,7 @@ export async function restoreApplicationFromSnapshot(
     employeeRepository,
     supplyContractRepository,
     tickHistoryService,
+    companyBrainRepository,
   });
 
   if (!hydrateResult.ok) {

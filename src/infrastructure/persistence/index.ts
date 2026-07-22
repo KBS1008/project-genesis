@@ -19,4 +19,6 @@ export { GameStateSerializer } from './savegame/GameStateSerializer.js';
 export type { GameSaveSnapshotV1 } from './savegame/GameSaveSnapshotV1.js';
 export { GAME_SAVE_SCHEMA_VERSION as GAME_SAVE_SCHEMA_VERSION_V1 } from './savegame/GameSaveSnapshotV1.js';
 export type { GameSaveSnapshotV2 } from './savegame/GameSaveSnapshotV2.js';
-export { GAME_SAVE_SCHEMA_VERSION } from './savegame/GameSaveSnapshotV2.js';
+export { GAME_SAVE_SCHEMA_VERSION as GAME_SAVE_SCHEMA_VERSION_V2 } from './savegame/GameSaveSnapshotV2.js';
+export type { GameSaveSnapshotV3 } from './savegame/GameSaveSnapshotV3.js';
+export { GAME_SAVE_SCHEMA_VERSION } from './savegame/GameSaveSnapshotV3.js';

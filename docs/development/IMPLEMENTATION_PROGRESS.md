@@ -38,10 +38,10 @@ Update this document whenever a meaningful implementation milestone is completed
 | M5 Economy                       | Completed                                                                                                                                                             |
 | M6 Logistics                     | ✅ Completed (Gate AUD-004, 2026-07-19)                                                                                                                               |
 | M7 World Simulation              | ✅ Completed (Gate AUD-005, 2026-07-19)                                                                                                                               |
-| M8 NPC Economy                   | 🟡 In Progress (~78 %) — Phases 1–7 complete; Phase 8 approved per `M8_PHASE_8_PERSISTENCE_DECISION.md` |
+| M8 NPC Economy                   | 🟡 In Progress (~89 %) — Phases 1–8 complete; Phase 9 (gate + TD closure) next |
 | Phase 1 Core Domain              | ✅ Completed (Gate 2026-07-19) — see `PHASE1_CORE_DOMAIN_REPORT.md`                                                                                                   |
 
-**Tests:** 559 (run `pnpm test` for current count)
+**Tests:** 563 (run `pnpm test` for current count)
 
 ---
 
@@ -49,18 +49,18 @@ Update this document whenever a meaningful implementation milestone is completed
 
 Trackable estimate of progress toward **Release 1.0** (`MILESTONE_PLAN.md`).
 
-**Last calculated:** 2026-07-22 · **Commit:** `ba627fa`
+**Last calculated:** 2026-07-22 · **Commit:** uncommitted (Phase 8 local)
 
 ## Summary
 
 | Metric                         |    Value | Notes                                                     |
 | ------------------------------ | -------: | --------------------------------------------------------- |
-| **Release progress (primary)** | **76 %** | Average of milestone completion % (see below)             |
+| **Release progress (primary)** | **77 %** | Average of milestone completion % (see below)             |
 | Deliverable work invested      |     73 % | Average including partial pre-work (e.g. dashboard in M9) |
 | Playable prototype readiness   |    ~85 % | M1–M7 core + M8 planning loop; not a release metric       |
 | Milestones completed           |   6 / 12 | M1, M2, M4, M5, M6, M7                                    |
 | Milestones in progress         |   2 / 12 | M3, M8                                                    |
-| Tests                          |      559 | `pnpm test`                                               |
+| Tests                          |      563 | `pnpm test`                                               |
 
 **Primary formula:**
 
@@ -81,7 +81,7 @@ Update deliverable rows when a step ships; set milestone % to the **average of i
 | M5  | Economy                | ✅ Completed   |      100 |     8,3 % |        8,3 % |
 | M6  | Logistics              | ✅ Completed   |      100 |     8,3 % |        8,3 % |
 | M7  | World Simulation       | ✅ Completed   |      100 |     8,3 % |        8,3 % |
-| M8  | NPC Economy            | 🟡 In Progress |       78 |     8,3 % |        6,5 % |
+| M8  | NPC Economy            | 🟡 In Progress |       89 |     8,3 % |        7,4 % |
 | M9  | User Interface         | ⚪ Planned*    |       35 |     8,3 % |        2,9 % |
 | M10 | Content Expansion      | ⚪ Planned     |       10 |     8,3 % |        0,8 % |
 | M11 | Polish                 | ⚪ Planned     |        0 |     8,3 % |          0 % |
@@ -168,7 +168,7 @@ Update deliverable rows when a step ships; set milestone % to the **average of i
 | Persistence / queries   |     100 | M7-7 save V2 + migration; M7-8 overview/region queries + minimal API     |
 | **Milestone average (gate)** | **100** | Gate review `M7_WORLD_SIMULATION_GATE_REVIEW_REPORT.md` (AUD-005)   |
 
-### M8 – NPC Economy 🟡 (~78 %)
+### M8 – NPC Economy 🟡 (~89 %)
 
 | Deliverable                         |     % | Evidence                                                                 |
 | ----------------------------------- | ----: | ------------------------------------------------------------------------ |
@@ -179,9 +179,9 @@ Update deliverable rows when a step ships; set milestone % to the **average of i
 | Decision execution (M8-5)           |     100 | `CompanyDecisionExecutionService` → existing use cases                   |
 | Simulation integration (M8-6)       |     100 | `CompanyPlanningSystem`, tick order, domain ports                        |
 | Expansion / production / research   |      85 | Phase 7 planning + bootstrap; partial financial/regional depth           |
-| Brain persistence V3 (M8-7)         |       0 | **Next:** implement per `docs/schemas/GameSaveSnapshotV3.schema.md` |
-| Gate review / test matrix (M8-8/9)  |      50 | Gate 2 report ✅; 559 tests; brain save/load tests pending               |
-| **Milestone average (gate)**        |  **78** | Gate 2: `M8_IMPLEMENTATION_GATE_2_REPORT.md` — READY FOR PHASE 8           |
+| Brain persistence V3 (M8-7)         |     100 | `GameSaveSnapshotV3`, V2→V3 migration, serializer V3, brain/regional round-trip |
+| Gate review / test matrix (M8-8/9)  |      60 | Phase 8 persistence tests ✅; final gate + TD closure pending Phase 9    |
+| **Milestone average (gate)**        |  **89** | Phase 8 complete; Phase 9 gate report outstanding                        |
 
 ### M8 known gaps (not Phase 8 blockers)
 
@@ -605,7 +605,7 @@ Persistence contracts for aggregate roots. Implementations belong in Infrastruct
 - One brain per autonomous company; references `companyId` without replacing the `Company` aggregate.
 - Planning mutates only the brain repository; execution flows through application use cases (DD-037).
 - `CreateCompanyUseCase` with `autonomous: true` bootstraps via `CompanyBrainBootstrapService`.
-- **Not yet persisted** in savegames (Phase 8).
+- Persisted in savegames via `companyBrains[]` on schema V3 (`GameSaveSnapshotV3`).
 
 **References:** `docs/architecture/decisions/DD-037-Company-Brain-and-Decision-Queue.md`, `docs/project-management/M8_ECONOMY_SIMULATION_PLAN.md`
 
@@ -944,9 +944,9 @@ Coordinates use cases between domain, infrastructure and simulation.
 | `InMemoryFinanceRepository`       | `persistence/InMemoryFinanceRepository.ts`                                                        |
 | `InMemoryMarketRepository`        | `persistence/InMemoryMarketRepository.ts`                                                         |
 | `InMemoryCompanyBrainRepository`  | `persistence/InMemoryCompanyBrainRepository.ts`                                                     |
-| `GameSaveSnapshotV1`              | `persistence/savegame/GameSaveSnapshotV1.ts` (frozen contract — revert M8 market extensions in Phase 8) |
+| `GameSaveSnapshotV1`              | `persistence/savegame/GameSaveSnapshotV1.ts` (frozen contract — M8 fields reverted) |
 | `GameSaveSnapshotV2`              | `persistence/savegame/GameSaveSnapshotV2.ts` (M7 world layer; markets[] = global V1 shape) |
-| `GameSaveSnapshotV3`              | **Phase 8** — `docs/schemas/GameSaveSnapshotV3.schema.md` |
+| `GameSaveSnapshotV3`              | `persistence/savegame/GameSaveSnapshotV3.ts` — `docs/schemas/GameSaveSnapshotV3.schema.md` |
 | `GameStateSerializer`             | `persistence/savegame/GameStateSerializer.ts`                                                     |
 | `FileSavegameStore`               | `persistence/savegame/FileSavegameStore.ts`                                                       |
 | NestJS API                        | `apps/api/`                                                                                       |
@@ -1155,16 +1155,16 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Planned Next Steps
 
-1. **M8 Phase 8 — Persistence V3:** per `M8_PHASE_8_PERSISTENCE_DECISION.md` — revert V1 market extensions, implement V3-only brain/regional markets, v2→v3 migration, round-trip + chain migration + determinism tests
-2. **M8 Phase 9 — Testing & closure:** full test matrix, determinism replay, `M8_IMPLEMENTATION_REPORT.md`; resolve **TD-M8-01 … TD-M8-06** (see `TECHNICAL_DEBT_REGISTER.md`) before final gate
-3. Session/auth model for multi-user API access
-4. Full tick log / replay per DD-033 (beyond metrics ring buffer)
+1. **M8 Phase 9 — Testing & closure:** full test matrix, `M8_IMPLEMENTATION_REPORT.md`; resolve **TD-M8-01 … TD-M8-06** (see `TECHNICAL_DEBT_REGISTER.md`) before final gate
+2. Session/auth model for multi-user API access
+3. Full tick log / replay per DD-033 (beyond metrics ring buffer)
 
 ---
 
 # Recently Completed (2026-07)
 
-- **M8 NPC Economy Phases 1–7 (commit `ba627fa`):** Company Brain domain, strategy content (5 YAML strategies), regional markets + price history, planning pipeline (observer/analyser/goal/decision/validator), decision execution (buy/sell/place building/start production/start research), simulation integration (`CompanySimulationSystem`, `CompanyPlanningSystem`), expansion/production/research planning, autonomous company bootstrap; **559 tests**; Gate 2 review **READY FOR PHASE 8** (`docs/architecture/reviews/M8_IMPLEMENTATION_GATE_2_REPORT.md`)
+- **M8 NPC Economy Phase 8 — Savegame V3:** Reverted V1 market type pollution; `GameSaveSnapshotV3` with `companyBrains[]` + `regionalMarkets[]`; `migrateGameSaveSnapshotV2ToV3`; serializer emits schema V3; V1→V2→V3 chain, brain round-trip, determinism-after-load tests; **563 tests**
+- **M8 NPC Economy Phases 1–7 (commit `ba627fa`):** Company Brain domain, strategy content (5 YAML strategies), regional markets + price history, planning pipeline (observer/analyser/goal/decision/validator), decision execution (buy/sell/place building/start production/start research), simulation integration (`CompanySimulationSystem`, `CompanyPlanningSystem`), expansion/production/research planning, autonomous company bootstrap; Gate 2 review **READY FOR PHASE 8** (`docs/architecture/reviews/M8_IMPLEMENTATION_GATE_2_REPORT.md`)
 - **M7 World Simulation completed (AUD-005):** regions, map, biomes, cities, regional resources, cross-region transport, save V2 + migration, world queries/API (`docs/quality/M7_WORLD_SIMULATION_GATE_REVIEW_REPORT.md`)
 - **M6 Logistics completed (AUD-004):** capacities, transport routes, network throughput queue; DD-022 V1 vehicle waiver (`docs/quality/M6_LOGISTICS_GATE_REVIEW_REPORT.md`)
 - **M5 Economy completed:** dynamic prices, dashboard supply/demand, market fees, taxes, NPC contracts, inflation dampening (reports in `docs/quality/M5_ECONOMY_*`)

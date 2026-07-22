@@ -11,13 +11,13 @@ import type { RegionRepository } from '../../domain/region/RegionRepository.js';
 import { createWorldId, type WorldId } from '../../domain/world/WorldId.js';
 import type { World } from '../../domain/world/World.js';
 import type { WorldRepository } from '../../domain/world/WorldRepository.js';
-import type { GameSaveSnapshotV2 } from './GameSaveSnapshotV2.js';
+import type { GameSaveSnapshotV3 } from './GameSaveSnapshotV3.js';
 
 /**
  * Ensures snapshot world metadata and region references match loaded content.
  */
 export function validateSnapshotWorldGraph(
-  snapshot: GameSaveSnapshotV2,
+  snapshot: GameSaveSnapshotV3,
   worldRepository: WorldRepository,
   regionRepository: RegionRepository,
 ): Result<void, ValidationError> {

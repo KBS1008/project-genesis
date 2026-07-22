@@ -23,7 +23,8 @@ import type { TransportOrderRepository } from '../../domain/transport/TransportO
 import type { WorldRepository } from '../../domain/world/WorldRepository.js';
 import type { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
 import type { SimulationState } from '../../simulation/state/SimulationState.js';
-import type { GameSaveSnapshotV2 } from '../persistence/GameSaveSnapshotV2.js';
+import type { CompanyBrainRepository } from '../../domain/brain/CompanyBrainRepository.js';
+import type { GameSaveSnapshotV3 } from '../persistence/GameSaveSnapshotV3.js';
 import type { TickHistorySnapshotProvider } from './TickHistorySnapshotProvider.js';
 
 /** Repositories and runtime state used to build a save snapshot. */
@@ -45,6 +46,7 @@ export type GameStateSource = {
   readonly supplyContractRepository: SupplyContractRepository;
   readonly tickHistoryService: TickHistorySnapshotProvider;
   readonly worldRepository: WorldRepository;
+  readonly companyBrainRepository: CompanyBrainRepository;
 };
 
 /** Repositories populated during snapshot restore. */
@@ -63,6 +65,7 @@ export type GameStateTarget = {
   readonly employeeRepository: EmployeeRepository;
   readonly supplyContractRepository: SupplyContractRepository;
   readonly tickHistoryService: TickHistorySnapshotProvider;
+  readonly companyBrainRepository: CompanyBrainRepository;
 };
 
 /** Restored simulation metadata after loading a snapshot. */
@@ -74,10 +77,10 @@ export type RestoredSimulationMetadata = {
 
 /** Serializes and restores deterministic game snapshots. */
 export interface GameStateSerializerPort {
-  serialize(source: GameStateSource): Result<GameSaveSnapshotV2, ValidationError>;
-  parse(raw: unknown): Result<GameSaveSnapshotV2, ValidationError>;
+  serialize(source: GameStateSource): Result<GameSaveSnapshotV3, ValidationError>;
+  parse(raw: unknown): Result<GameSaveSnapshotV3, ValidationError>;
   hydrate(
-    snapshot: GameSaveSnapshotV2,
+    snapshot: GameSaveSnapshotV3,
     target: GameStateTarget,
   ): Result<RestoredSimulationMetadata, ValidationError>;
 }

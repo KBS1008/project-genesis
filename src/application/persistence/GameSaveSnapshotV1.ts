@@ -96,29 +96,13 @@ export type GameSaveMarketPriceSnapshotV1 = {
   readonly lastPrice: number;
   readonly tradeVolume: number;
   readonly updatedAt: number;
-  readonly supply?: number;
-  readonly demand?: number;
-  readonly liquidity?: number;
-};
-
-/** Persisted market price history entry. */
-export type GameSaveMarketPriceHistorySnapshotV1 = {
-  readonly tick: number;
-  readonly resourceId: string;
-  readonly price: number;
-  readonly tradeVolume: number;
-  readonly supply: number;
-  readonly demand: number;
-  readonly liquidity: number;
 };
 
 /** Persisted market aggregate state. */
 export type GameSaveMarketSnapshotV1 = {
   readonly id: string;
   readonly createdAt: number;
-  readonly regionId?: string;
   readonly prices: readonly GameSaveMarketPriceSnapshotV1[];
-  readonly priceHistory?: readonly GameSaveMarketPriceHistorySnapshotV1[];
 };
 
 /** Persisted production job aggregate state. */

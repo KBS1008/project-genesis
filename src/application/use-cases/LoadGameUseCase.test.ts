@@ -10,7 +10,8 @@ import { BuildingStatus } from '../../domain/building/BuildingStatus.js';
 import { createCompanyId } from '../../domain/company/Company.js';
 import { STARTING_MONEY } from '../../domain/finance/FinanceConstants.js';
 import { GAME_SAVE_SCHEMA_VERSION as GAME_SAVE_SCHEMA_VERSION_V1 } from '../persistence/GameSaveSnapshotV1.js';
-import { GAME_SAVE_SCHEMA_VERSION } from '../persistence/GameSaveSnapshotV2.js';
+import { GAME_SAVE_SCHEMA_VERSION as GAME_SAVE_SCHEMA_VERSION_V2 } from '../persistence/GameSaveSnapshotV2.js';
+import { GAME_SAVE_SCHEMA_VERSION } from '../persistence/GameSaveSnapshotV3.js';
 import { DEFAULT_REGION_ID, DEFAULT_WORLD_ID } from '../../domain/world/WorldConstants.js';
 import { bootstrapApplication } from '../bootstrap/bootstrapApplication.js';
 import { FileSavegameStore } from '../../infrastructure/persistence/savegame/FileSavegameStore.js';
@@ -171,7 +172,8 @@ describe('LoadGameUseCase', () => {
             buildings: [],
             inventories: [],
             financeAccounts: [],
-            markets: [],
+            companyBrains: [],
+            regionalMarkets: [],
             productionJobs: [],
           },
           null,
@@ -241,7 +243,8 @@ describe('LoadGameUseCase', () => {
             ],
             inventories: [],
             financeAccounts: [],
-            markets: [],
+            companyBrains: [],
+            regionalMarkets: [],
             productionJobs: [],
             researchJobs: [],
             companyResearch: [],
@@ -321,7 +324,8 @@ describe('LoadGameUseCase', () => {
             ],
             inventories: [],
             financeAccounts: [],
-            markets: [],
+            companyBrains: [],
+            regionalMarkets: [],
             productionJobs: [],
             researchJobs: [],
             companyResearch: [],
@@ -394,7 +398,8 @@ describe('LoadGameUseCase', () => {
             ],
             inventories: [],
             financeAccounts: [],
-            markets: [],
+            companyBrains: [],
+            regionalMarkets: [],
             productionJobs: [],
             researchJobs: [],
             companyResearch: [],
