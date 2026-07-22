@@ -24,6 +24,7 @@ import { STARTER_NPC_WOOD_CONTRACT_ID } from '../../domain/contract/SupplyContra
 import type { ApplicationContext } from '../bootstrap/ApplicationContext.js';
 import type { StartNewGameCommand } from '../commands/StartNewGameCommand.js';
 import {
+  NEW_GAME_AUTONOMOUS_NPC_COMPANIES,
   NEW_GAME_STARTER_BUILDINGS,
   NEW_GAME_STARTER_RESOURCES,
   type NewGameStarterBuilding,
@@ -36,6 +37,7 @@ export type StartNewGameUseCaseDependencies = Pick<
   ApplicationContext,
   | 'clock'
   | 'companyRepository'
+  | 'companyBrainRepository'
   | 'buildingRepository'
   | 'inventoryRepository'
   | 'financeRepository'
@@ -140,6 +142,21 @@ export class StartNewGameUseCase {
 
     this.#supplyContractRepository.save(contractResult.value);
     this.#simulationEngine.enqueueEvents(contractResult.value.pullDomainEvents());
+
+    for (const npcCompany of NEW_GAME_AUTONOMOUS_NPC_COMPANIES) {
+      const npcResult = this.#createCompany.execute({
+        companyId: npcCompany.companyId,
+        name: npcCompany.name,
+        ownerId: npcCompany.ownerId,
+        autonomous: true,
+        strategyDefinitionId: npcCompany.strategyDefinitionId,
+      });
+
+      if (!npcResult.ok) {
+        return Result.fail(npcResult.error);
+      }
+    }
+
     this.#simulationEngine.tick();
 
     return Result.ok(companyId);

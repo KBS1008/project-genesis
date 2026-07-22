@@ -306,6 +306,7 @@ export async function bootstrapApplication(
     companyBrainRepository,
     strategies: contentResult.value.strategies,
     gameContent: contentResult.value,
+    worldMapRepository,
     clock,
     enqueueEvents,
   });

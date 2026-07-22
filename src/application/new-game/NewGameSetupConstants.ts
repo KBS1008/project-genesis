@@ -21,6 +21,31 @@ export type NewGameStarterBuilding = {
   readonly y: number;
 };
 
+/** Autonomous NPC company seeded at new game start. */
+export type NewGameAutonomousNpcCompany = {
+  readonly companyId: string;
+  readonly name: string;
+  readonly ownerId: string;
+  readonly strategyDefinitionId: string;
+};
+
+/** Competing NPC companies bootstrapped alongside the player company. */
+export const NEW_GAME_AUTONOMOUS_NPC_COMPANIES: readonly NewGameAutonomousNpcCompany[] =
+  Object.freeze([
+    Object.freeze({
+      companyId: 'company_npc_steel',
+      name: 'Steel Works NPC',
+      ownerId: 'owner_system',
+      strategyDefinitionId: 'strategy_manufacturer',
+    }),
+    Object.freeze({
+      companyId: 'company_npc_trader',
+      name: 'Regional Traders NPC',
+      ownerId: 'owner_system',
+      strategyDefinitionId: 'strategy_trading',
+    }),
+  ]);
+
 /** Wood granted at game start — enough for early sawmill production and NPC contracts. */
 export const NEW_GAME_STARTER_WOOD = 40;
 

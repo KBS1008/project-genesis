@@ -117,7 +117,14 @@ export type GameSaveCompanyDecisionPayloadSnapshotV3 =
     }
   | {
       readonly type: 'EXPAND_REGION';
-      readonly data: { readonly targetRegionId: string };
+      readonly data: {
+        readonly targetRegionId: string;
+        readonly buildingId: string;
+        readonly buildingTypeId: string;
+        readonly name: string;
+        readonly mapX: number;
+        readonly mapY: number;
+      };
     };
 
 /** Persisted queued company decision. */

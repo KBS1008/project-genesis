@@ -18,6 +18,7 @@ import type { CompanyId } from '../../domain/company/CompanyId.js';
 import type { CompanyBrain } from '../../domain/brain/CompanyBrain.js';
 import type { CompanyBrainRepository } from '../../domain/brain/CompanyBrainRepository.js';
 import type { PlanningLayer } from '../../domain/brain/PlanningLayer.js';
+import type { WorldMapRepository } from '../../domain/world/WorldMapRepository.js';
 import { CompanyPlanningAnalyser } from './CompanyPlanningAnalyser.js';
 import { CompanyDecisionPlanner } from './CompanyDecisionPlanner.js';
 import { CompanyDecisionValidator } from './CompanyDecisionValidator.js';
@@ -36,6 +37,7 @@ export type CompanyPlanningPipelineDependencies = CompanyPlanningObserverDepende
   readonly companyBrainRepository: CompanyBrainRepository;
   readonly strategies: StrategyRegistry;
   readonly gameContent: GameContentLoadResult;
+  readonly worldMapRepository: WorldMapRepository;
   readonly clock: Clock;
   readonly enqueueEvents?: (events: readonly DomainEvent[]) => void;
 };
@@ -64,7 +66,10 @@ export class CompanyPlanningPipeline {
 
   constructor(dependencies: CompanyPlanningPipelineDependencies) {
     this.#observer = new CompanyPlanningObserver(dependencies);
-    this.#analyser = new CompanyPlanningAnalyser(dependencies.gameContent);
+    this.#analyser = new CompanyPlanningAnalyser(
+      dependencies.gameContent,
+      dependencies.worldMapRepository,
+    );
     this.#knowledgePlanner = new CompanyKnowledgePlanner();
     this.#goalPlanner = new CompanyGoalPlanner();
     this.#decisionPlanner = new CompanyDecisionPlanner();

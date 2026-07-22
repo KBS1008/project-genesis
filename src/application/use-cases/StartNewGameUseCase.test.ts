@@ -7,6 +7,7 @@ import { STARTER_NPC_WOOD_CONTRACT_ID } from '../../domain/contract/SupplyContra
 import { bootstrapApplication } from '../bootstrap/bootstrapApplication.js';
 import { BuildingTypeRegistry } from '../../content/building/BuildingTypeRegistry.js';
 import {
+  NEW_GAME_AUTONOMOUS_NPC_COMPANIES,
   NEW_GAME_STARTER_BUILDINGS,
   NEW_GAME_STARTER_RESOURCES,
 } from '../new-game/NewGameSetupConstants.js';
@@ -82,6 +83,17 @@ describe('StartNewGameUseCase', () => {
       context.supplyContractRepository.findByCompanyId(companyId.value)[0]?.getId().value,
     ).toBe(STARTER_NPC_WOOD_CONTRACT_ID);
     expect(context.simulationEngine.hasPendingEvents()).toBe(false);
+    expect(context.companyRepository.findAll()).toHaveLength(1 + NEW_GAME_AUTONOMOUS_NPC_COMPANIES.length);
+
+    for (const npcCompany of NEW_GAME_AUTONOMOUS_NPC_COMPANIES) {
+      const npcCompanyId = createCompanyId(npcCompany.companyId);
+
+      if (!npcCompanyId.ok) {
+        throw new Error(npcCompanyId.error.message);
+      }
+
+      expect(context.companyBrainRepository.findByCompanyId(npcCompanyId.value)).toBeDefined();
+    }
   });
 
   it('rejects starting a game when the company id already exists', async () => {

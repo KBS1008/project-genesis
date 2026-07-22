@@ -284,6 +284,7 @@ export async function restoreApplicationFromSnapshot(
     companyBrainRepository,
     strategies: contentResult.value.strategies,
     gameContent: contentResult.value,
+    worldMapRepository,
     clock,
     enqueueEvents,
   });

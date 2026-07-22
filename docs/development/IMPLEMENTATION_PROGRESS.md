@@ -38,10 +38,10 @@ Update this document whenever a meaningful implementation milestone is completed
 | M5 Economy                       | Completed                                                                                                                                                             |
 | M6 Logistics                     | ✅ Completed (Gate AUD-004, 2026-07-19)                                                                                                                               |
 | M7 World Simulation              | ✅ Completed (Gate AUD-005, 2026-07-19)                                                                                                                               |
-| M8 NPC Economy                   | 🟡 In Progress (~89 %) — Phases 1–8 complete; Phase 9 (gate + TD closure) next |
+| M8 NPC Economy                   | ✅ Completed (Gate AUD-006, 2026-07-22) |
 | Phase 1 Core Domain              | ✅ Completed (Gate 2026-07-19) — see `PHASE1_CORE_DOMAIN_REPORT.md`                                                                                                   |
 
-**Tests:** 563 (run `pnpm test` for current count)
+**Tests:** 567 (run `pnpm test` for current count)
 
 ---
 
@@ -49,18 +49,18 @@ Update this document whenever a meaningful implementation milestone is completed
 
 Trackable estimate of progress toward **Release 1.0** (`MILESTONE_PLAN.md`).
 
-**Last calculated:** 2026-07-22 · **Commit:** uncommitted (Phase 8 local)
+**Last calculated:** 2026-07-22 · **Commit:** uncommitted (Phase 9 local)
 
 ## Summary
 
 | Metric                         |    Value | Notes                                                     |
 | ------------------------------ | -------: | --------------------------------------------------------- |
-| **Release progress (primary)** | **77 %** | Average of milestone completion % (see below)             |
+| **Release progress (primary)** | **78 %** | Average of milestone completion % (see below)             |
 | Deliverable work invested      |     73 % | Average including partial pre-work (e.g. dashboard in M9) |
 | Playable prototype readiness   |    ~85 % | M1–M7 core + M8 planning loop; not a release metric       |
-| Milestones completed           |   6 / 12 | M1, M2, M4, M5, M6, M7                                    |
-| Milestones in progress         |   2 / 12 | M3, M8                                                    |
-| Tests                          |      563 | `pnpm test`                                               |
+| Milestones completed           |   7 / 12 | M1, M2, M4, M5, M6, M7, M8                                    |
+| Milestones in progress         |   1 / 12 | M3                                                    |
+| Tests                          |      567 | `pnpm test`                                               |
 
 **Primary formula:**
 
@@ -81,7 +81,7 @@ Update deliverable rows when a step ships; set milestone % to the **average of i
 | M5  | Economy                | ✅ Completed   |      100 |     8,3 % |        8,3 % |
 | M6  | Logistics              | ✅ Completed   |      100 |     8,3 % |        8,3 % |
 | M7  | World Simulation       | ✅ Completed   |      100 |     8,3 % |        8,3 % |
-| M8  | NPC Economy            | 🟡 In Progress |       89 |     8,3 % |        7,4 % |
+| M8  | NPC Economy            | ✅ Completed   |      100 |     8,3 % |        8,3 % |
 | M9  | User Interface         | ⚪ Planned*    |       35 |     8,3 % |        2,9 % |
 | M10 | Content Expansion      | ⚪ Planned     |       10 |     8,3 % |        0,8 % |
 | M11 | Polish                 | ⚪ Planned     |        0 |     8,3 % |          0 % |
@@ -168,33 +168,24 @@ Update deliverable rows when a step ships; set milestone % to the **average of i
 | Persistence / queries   |     100 | M7-7 save V2 + migration; M7-8 overview/region queries + minimal API     |
 | **Milestone average (gate)** | **100** | Gate review `M7_WORLD_SIMULATION_GATE_REVIEW_REPORT.md` (AUD-005)   |
 
-### M8 – NPC Economy 🟡 (~89 %)
+### M8 – NPC Economy ✅ (100 %)
 
 | Deliverable                         |     % | Evidence                                                                 |
 | ----------------------------------- | ----: | ------------------------------------------------------------------------ |
 | Company Brain foundation (M8-1)     |     100 | `src/domain/brain/**`, `CompanyBrainRepository`, domain events           |
 | Strategy content (M8-1)             |     100 | `game-content/strategies/`, `StrategyLoader`, `Strategy.schema.md`       |
-| Regional markets (M8-2)             |      95 | Extended `Market` (regionId, liquidity, history), `MarketPriceSeeder`    |
+| Regional markets (M8-2)             |     100 | Extended `Market`, `MarketRegionalSupplyAggregator`, `MarketPriceSeeder` |
 | Planning pipeline (M8-3)            |     100 | `CompanyPlanningPipeline`, observer/analyser/goal/decision planners      |
-| Decision execution (M8-5)           |     100 | `CompanyDecisionExecutionService` → existing use cases                   |
+| Decision execution (M8-5)           |     100 | `CompanyDecisionExecutionService` → existing use cases incl. `EXPAND_REGION` |
 | Simulation integration (M8-6)       |     100 | `CompanyPlanningSystem`, tick order, domain ports                        |
-| Expansion / production / research   |      85 | Phase 7 planning + bootstrap; partial financial/regional depth           |
-| Brain persistence V3 (M8-7)         |     100 | `GameSaveSnapshotV3`, V2→V3 migration, serializer V3, brain/regional round-trip |
-| Gate review / test matrix (M8-8/9)  |      60 | Phase 8 persistence tests ✅; final gate + TD closure pending Phase 9    |
-| **Milestone average (gate)**        |  **89** | Phase 8 complete; Phase 9 gate report outstanding                        |
+| Expansion / production / research   |     100 | Cross-region expansion, liquidity/cost goals, production/research planning |
+| Brain persistence V3 (M8-7)         |     100 | `GameSaveSnapshotV3`, V2→V3 migration, serializer V3                     |
+| Gate review / test matrix (M8-8/9)  |     100 | `docs/quality/M8_IMPLEMENTATION_REPORT.md` (AUD-006); 567 tests          |
+| **Milestone average (gate)**        | **100** | Gate report **PASSED** — milestone closed                                  |
 
-### M8 known gaps (not Phase 8 blockers)
+### M8 known gaps (closed in Phase 9)
 
-Registered as **TD-M8-01 … TD-M8-06** in `docs/project-management/TECHNICAL_DEBT_REGISTER.md`. Close before **final M8 gate** (Phase 9); do **not** block Savegame V3.
-
-| ID       | Gap |
-| -------- | --- |
-| TD-M8-01 | `STABILIZE_LIQUIDITY` goal without decision |
-| TD-M8-02 | `REDUCE_COSTS` never generated |
-| TD-M8-03 | `EXPAND_REGION` decision type not executed |
-| TD-M8-04 | Expansion limited to primary region |
-| TD-M8-05 | `StartNewGameUseCase` seeds no NPC companies |
-| TD-M8-06 | Unused `MarketSupplyAggregator.ts` |
+All **TD-M8-01 … TD-M8-06** resolved — see `docs/quality/M8_IMPLEMENTATION_REPORT.md` and `TECHNICAL_DEBT_REGISTER.md`.
 
 ### M9 – User Interface ⚪ (35 % milestone · 49 % deliverable work)
 
@@ -439,7 +430,7 @@ Business aggregates and domain events.
 | Constants        | `market/MarketConstants.ts` (`createRegionalMarketId`, legacy `GLOBAL_MARKET_ID`)                                                                                                                              |
 | Price history    | `market/MarketPriceHistoryEntry.ts`                                                                                                                                                                            |
 | Regional stats   | `market/MarketRegionalStatistics.ts`, `market/MarketRegionalSupplyAggregator.ts`                                                                                                                               |
-| Price simulation | `market/MarketPriceCalculator.ts`, `market/MarketPriceConstants.ts`, `market/MarketPressureCalculator.ts`, `market/MarketSupplyAggregator.ts` (legacy, unused), `market/InflationCalculator.ts`, `market/InflationConstants.ts` |
+| Price simulation | `market/MarketPriceCalculator.ts`, `market/MarketPriceConstants.ts`, `market/MarketPressureCalculator.ts`, `market/MarketRegionalSupplyAggregator.ts`, `market/InflationCalculator.ts`, `market/InflationConstants.ts` |
 | Read projection  | `read-models/projectMarketPrice.ts`, `read-models/EconomyReadModel.ts`                                                                                                                                         |
 | Domain event     | `market/events/MarketPriceChanged.ts`                                                                                                                                                                          |
 | Repository       | `market/MarketRepository.ts` (incl. `findByRegionId`)                                                                                                                                                          |
@@ -1155,7 +1146,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Planned Next Steps
 
-1. **M8 Phase 9 — Testing & closure:** full test matrix, `M8_IMPLEMENTATION_REPORT.md`; resolve **TD-M8-01 … TD-M8-06** (see `TECHNICAL_DEBT_REGISTER.md`) before final gate
+1. **M9 User Interface:** dashboard windows, accessibility, notification center per milestone plan
 2. Session/auth model for multi-user API access
 3. Full tick log / replay per DD-033 (beyond metrics ring buffer)
 
@@ -1163,8 +1154,8 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Recently Completed (2026-07)
 
-- **M8 NPC Economy Phase 8 — Savegame V3:** Reverted V1 market type pollution; `GameSaveSnapshotV3` with `companyBrains[]` + `regionalMarkets[]`; `migrateGameSaveSnapshotV2ToV3`; serializer emits schema V3; V1→V2→V3 chain, brain round-trip, determinism-after-load tests; **563 tests**
-- **M8 NPC Economy Phases 1–7 (commit `ba627fa`):** Company Brain domain, strategy content (5 YAML strategies), regional markets + price history, planning pipeline (observer/analyser/goal/decision/validator), decision execution (buy/sell/place building/start production/start research), simulation integration (`CompanySimulationSystem`, `CompanyPlanningSystem`), expansion/production/research planning, autonomous company bootstrap; Gate 2 review **READY FOR PHASE 8** (`docs/architecture/reviews/M8_IMPLEMENTATION_GATE_2_REPORT.md`)
+- **M8 NPC Economy completed (AUD-006):** Phase 9 closed TD-M8-01 … TD-M8-06 (liquidity/cost goals, cross-region `EXPAND_REGION`, NPC seeding, removed legacy supply aggregator); gate report `docs/quality/M8_IMPLEMENTATION_REPORT.md`; **567 tests**
+- **M8 NPC Economy Phase 8 — Savegame V3:** Reverted V1 market type pollution; `GameSaveSnapshotV3` with `companyBrains[]` + `regionalMarkets[]`; V1→V2→V3 migration chain; determinism-after-load tests
 - **M7 World Simulation completed (AUD-005):** regions, map, biomes, cities, regional resources, cross-region transport, save V2 + migration, world queries/API (`docs/quality/M7_WORLD_SIMULATION_GATE_REVIEW_REPORT.md`)
 - **M6 Logistics completed (AUD-004):** capacities, transport routes, network throughput queue; DD-022 V1 vehicle waiver (`docs/quality/M6_LOGISTICS_GATE_REVIEW_REPORT.md`)
 - **M5 Economy completed:** dynamic prices, dashboard supply/demand, market fees, taxes, NPC contracts, inflation dampening (reports in `docs/quality/M5_ECONOMY_*`)

@@ -189,6 +189,45 @@ export class CompanyDecisionValidator {
 
         return Result.ok(undefined);
       }
+      case 'EXPAND_REGION': {
+        const targetRegionResult = Guard.againstEmptyString(
+          decision.payload.data.targetRegionId,
+          'Expansion target region id must not be empty.',
+        );
+
+        if (!targetRegionResult.ok) {
+          return targetRegionResult;
+        }
+
+        const buildingIdResult = Guard.againstEmptyString(
+          decision.payload.data.buildingId,
+          'Expansion building id must not be empty.',
+        );
+
+        if (!buildingIdResult.ok) {
+          return buildingIdResult;
+        }
+
+        const buildingTypeIdResult = Guard.againstEmptyString(
+          decision.payload.data.buildingTypeId,
+          'Expansion building type id must not be empty.',
+        );
+
+        if (!buildingTypeIdResult.ok) {
+          return buildingTypeIdResult;
+        }
+
+        const nameResult = Guard.againstEmptyString(
+          decision.payload.data.name,
+          'Expansion building name must not be empty.',
+        );
+
+        if (!nameResult.ok) {
+          return nameResult;
+        }
+
+        return Result.ok(undefined);
+      }
       default:
         return Result.ok(undefined);
     }
@@ -209,6 +248,10 @@ export class CompanyDecisionValidator {
 
     if (decision.payload.type === 'START_RESEARCH') {
       return `${decision.type}:${decision.payload.data.technologyId}`;
+    }
+
+    if (decision.payload.type === 'EXPAND_REGION') {
+      return `${decision.type}:${decision.payload.data.buildingId}`;
     }
 
     return decision.id.value;

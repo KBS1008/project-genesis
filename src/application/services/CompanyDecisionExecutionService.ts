@@ -213,12 +213,18 @@ export class CompanyDecisionExecutionService {
           companyId: companyId.value,
           technologyId: decision.payload.data.technologyId,
         });
+      case 'EXPAND_REGION':
+        return this.#placeBuildingUseCase.execute({
+          buildingId: decision.payload.data.buildingId,
+          buildingTypeId: decision.payload.data.buildingTypeId,
+          companyId: companyId.value,
+          name: decision.payload.data.name,
+          x: decision.payload.data.mapX,
+          y: decision.payload.data.mapY,
+          regionId: decision.payload.data.targetRegionId,
+        });
       default:
-        return Result.fail(
-          new ValidationError(
-            `Decision type "${decision.payload.type}" is not executable in M8 phase 7.`,
-          ),
-        );
+        return Result.fail(new ValidationError('Decision payload is not executable.'));
     }
   }
 }

@@ -29,12 +29,14 @@ export type ProductionCandidate = {
 /** Result of analysing a planning observation. */
 export type PlanningAnalysis = {
   readonly liquidityPressure: boolean;
+  readonly costPressure: boolean;
   readonly liquidityThreshold: number;
   readonly resourceShortages: readonly ResourceShortage[];
   readonly resourceSurpluses: readonly ResourceSurplus[];
   readonly singleRegionOperation: boolean;
   readonly expansionAffordable: boolean;
   readonly expansionBuildingTypeId?: string;
+  readonly expansionTargetRegionId?: string;
   readonly productionCandidate?: ProductionCandidate;
   readonly researchCandidateTechnologyId?: string;
 };
@@ -43,6 +45,7 @@ export type PlanningAnalysis = {
 export function createPlanningAnalysis(analysis: PlanningAnalysis): PlanningAnalysis {
   return Object.freeze({
     liquidityPressure: analysis.liquidityPressure,
+    costPressure: analysis.costPressure,
     liquidityThreshold: analysis.liquidityThreshold,
     resourceShortages: Object.freeze([...analysis.resourceShortages]),
     resourceSurpluses: Object.freeze([...analysis.resourceSurpluses]),
@@ -50,6 +53,9 @@ export function createPlanningAnalysis(analysis: PlanningAnalysis): PlanningAnal
     expansionAffordable: analysis.expansionAffordable,
     ...(analysis.expansionBuildingTypeId !== undefined
       ? { expansionBuildingTypeId: analysis.expansionBuildingTypeId }
+      : {}),
+    ...(analysis.expansionTargetRegionId !== undefined
+      ? { expansionTargetRegionId: analysis.expansionTargetRegionId }
       : {}),
     ...(analysis.productionCandidate !== undefined
       ? { productionCandidate: Object.freeze({ ...analysis.productionCandidate }) }

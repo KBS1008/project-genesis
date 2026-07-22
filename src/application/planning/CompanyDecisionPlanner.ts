@@ -168,12 +168,58 @@ export class CompanyDecisionPlanner {
       });
     }
 
+    if (goal.kind === GoalKind.STABILIZE_LIQUIDITY || goal.kind === GoalKind.REDUCE_COSTS) {
+      const surplus = [...params.analysis.resourceSurpluses].sort((left, right) => {
+        if (right.surplus !== left.surplus) {
+          return right.surplus - left.surplus;
+        }
+
+        return left.resourceId.localeCompare(right.resourceId);
+      })[0];
+
+      if (surplus === undefined) {
+        return undefined;
+      }
+
+      const maxBatch =
+        goal.kind === GoalKind.REDUCE_COSTS
+          ? Math.max(1, Math.floor(PLANNING_MAX_TRADE_BATCH / 2))
+          : PLANNING_MAX_TRADE_BATCH;
+      const quantity = Math.min(maxBatch, Math.max(1, surplus.surplus));
+
+      return this.#createDecision({
+        companyId: params.observation.companyId,
+        tickNumber: params.observation.tickNumber,
+        sequence,
+        layer: params.layer,
+        priority:
+          basePriority +
+          (goal.kind === GoalKind.STABILIZE_LIQUIDITY
+            ? params.strategy.weights.liquidityPreference
+            : params.strategy.weights.liquidityPreference - 10),
+        type: CompanyDecisionType.SELL_RESOURCE,
+        payload: {
+          type: 'SELL_RESOURCE',
+          data: {
+            resourceId: surplus.resourceId,
+            quantity,
+            regionId: params.observation.primaryRegionId,
+          },
+        },
+      });
+    }
+
     if (
       goal.kind === GoalKind.EXPAND_REGION &&
       params.analysis.expansionAffordable &&
-      params.analysis.expansionBuildingTypeId !== undefined
+      params.analysis.expansionBuildingTypeId !== undefined &&
+      !params.analysis.liquidityPressure
     ) {
       const buildingTypeId = params.analysis.expansionBuildingTypeId;
+      const targetRegionId =
+        params.analysis.expansionTargetRegionId ??
+        goal.regionId ??
+        params.observation.primaryRegionId;
       const placement = computeDeterministicBuildingPlacement(params.observation.buildings.length);
       const buildingId = createPlannedBuildingId(
         params.observation.companyId,
@@ -187,14 +233,14 @@ export class CompanyDecisionPlanner {
         sequence,
         layer: params.layer,
         priority: basePriority + params.strategy.weights.expansionWeight,
-        type: CompanyDecisionType.PLACE_BUILDING,
+        type: CompanyDecisionType.EXPAND_REGION,
         payload: {
-          type: 'PLACE_BUILDING',
+          type: 'EXPAND_REGION',
           data: {
+            targetRegionId,
             buildingId,
             buildingTypeId,
             name: `${buildingTypeId} (planned)`,
-            regionId: params.observation.primaryRegionId,
             mapX: placement.x,
             mapY: placement.y,
           },
@@ -300,6 +346,10 @@ export class CompanyDecisionPlanner {
 
       if (pending.payload.type === 'START_RESEARCH' && decision.payload.type === 'START_RESEARCH') {
         return pending.payload.data.technologyId === decision.payload.data.technologyId;
+      }
+
+      if (pending.payload.type === 'EXPAND_REGION' && decision.payload.type === 'EXPAND_REGION') {
+        return pending.payload.data.buildingId === decision.payload.data.buildingId;
       }
 
       return false;

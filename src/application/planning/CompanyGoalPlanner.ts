@@ -53,6 +53,20 @@ export class CompanyGoalPlanner {
       }));
     }
 
+    if (
+      layer === PlanningLayerValues.TACTICAL &&
+      analysis.costPressure &&
+      strategy.weights.liquidityPreference >= 30
+    ) {
+      goals.push(this.#createGoalIfMissing(brain, {
+        companyId: observation.companyId,
+        tickNumber: observation.tickNumber,
+        kind: GoalKind.REDUCE_COSTS,
+        description: 'Reduce operating costs and preserve cash',
+        priority: strategy.weights.liquidityPreference - 5,
+      }));
+    }
+
     if (layer === PlanningLayerValues.TACTICAL || layer === PlanningLayerValues.OPERATIONAL) {
       for (const shortage of analysis.resourceShortages) {
         goals.push(
@@ -105,23 +119,26 @@ export class CompanyGoalPlanner {
     }
 
     if (
-      layer === PlanningLayerValues.STRATEGIC ||
-      (layer === PlanningLayerValues.OPERATIONAL &&
-        analysis.expansionAffordable &&
-        analysis.expansionBuildingTypeId !== undefined)
+      (layer === PlanningLayerValues.STRATEGIC ||
+        (layer === PlanningLayerValues.OPERATIONAL &&
+          analysis.expansionAffordable &&
+          analysis.expansionBuildingTypeId !== undefined)) &&
+      !analysis.liquidityPressure &&
+      strategy.weights.expansionWeight >= 60
     ) {
-      if (analysis.singleRegionOperation && strategy.weights.expansionWeight >= 60) {
-        goals.push(
-          this.#createGoalIfMissing(brain, {
-            companyId: observation.companyId,
-            tickNumber: observation.tickNumber,
-            kind: GoalKind.EXPAND_REGION,
-            description: 'Evaluate regional expansion opportunities',
-            priority: strategy.weights.expansionWeight,
-            regionId: observation.primaryRegionId,
-          }),
-        );
-      }
+      const expansionRegionId =
+        analysis.expansionTargetRegionId ?? observation.primaryRegionId;
+
+      goals.push(
+        this.#createGoalIfMissing(brain, {
+          companyId: observation.companyId,
+          tickNumber: observation.tickNumber,
+          kind: GoalKind.EXPAND_REGION,
+          description: 'Evaluate regional expansion opportunities',
+          priority: strategy.weights.expansionWeight,
+          regionId: expansionRegionId,
+        }),
+      );
     }
 
     if (layer === PlanningLayerValues.STRATEGIC) {

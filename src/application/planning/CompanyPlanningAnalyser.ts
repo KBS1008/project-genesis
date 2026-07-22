@@ -12,17 +12,21 @@ import {
   computeMinimumStock,
   computeTargetStock,
 } from './PlanningConstants.js';
+import { resolveExpansionTargetRegion } from './PlanningExpansionRegionResolver.js';
 import { createPlanningAnalysis, type PlanningAnalysis } from './PlanningAnalysis.js';
 import type { PlanningObservation } from './PlanningObservation.js';
+import type { WorldMapRepository } from '../../domain/world/WorldMapRepository.js';
 
 /**
  * Analyses an observation using strategy weights and game content without mutating state.
  */
 export class CompanyPlanningAnalyser {
   readonly #gameContent: GameContentLoadResult;
+  readonly #worldMapRepository: WorldMapRepository;
 
-  constructor(gameContent: GameContentLoadResult) {
+  constructor(gameContent: GameContentLoadResult, worldMapRepository: WorldMapRepository) {
     this.#gameContent = gameContent;
+    this.#worldMapRepository = worldMapRepository;
   }
 
   /** Derives deterministic planning analysis from an observation. */
@@ -85,9 +89,24 @@ export class CompanyPlanningAnalyser {
 
     const productionCandidate = this.#resolveProductionCandidate(observation);
     const researchCandidateTechnologyId = this.#resolveResearchCandidate(observation);
+    const liquidityPressure = observation.availableCash < liquidityThreshold;
+    const costPressure =
+      !liquidityPressure &&
+      observation.availableCash >= liquidityThreshold &&
+      observation.availableCash < liquidityThreshold * 1.5 &&
+      observation.inventory.length > 0;
+    const expansionTargetRegionId = resolveExpansionTargetRegion({
+      primaryRegionId: observation.primaryRegionId,
+      occupiedRegionIds:
+        observation.regionIds.length > 0
+          ? observation.regionIds
+          : Object.freeze([observation.primaryRegionId]),
+      worldMapRepository: this.#worldMapRepository,
+    });
 
     return createPlanningAnalysis({
-      liquidityPressure: observation.availableCash < liquidityThreshold,
+      liquidityPressure,
+      costPressure,
       liquidityThreshold,
       resourceShortages,
       resourceSurpluses,
@@ -96,6 +115,7 @@ export class CompanyPlanningAnalyser {
       ...(expansionAffordable && expansionBuildingTypeId !== undefined
         ? { expansionBuildingTypeId }
         : {}),
+      ...(expansionTargetRegionId !== undefined ? { expansionTargetRegionId } : {}),
       ...(productionCandidate !== undefined ? { productionCandidate } : {}),
       ...(researchCandidateTechnologyId !== undefined
         ? { researchCandidateTechnologyId }

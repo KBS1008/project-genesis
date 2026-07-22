@@ -79,7 +79,7 @@ Six **M8 planning/economy gaps** registered after Gate 2 (2026-07-22). These are
 | Scope | Blocker? | Notes |
 | ----- | -------- | ----- |
 | **Phase 8 — Savegame V3** | — | Brain + regional market persistence only; functional AI gaps below do **not** block |
-| **Phase 9 — Final M8 gate** | — | TD-M8-01 … TD-M8-06 must be resolved or explicitly waived in gate report |
+| **Phase 9 — Final M8 gate** | — | TD-M8-01 … TD-M8-06 **resolved** (2026-07-22) |
 
 ---
 
@@ -93,12 +93,12 @@ Six **M8 planning/economy gaps** registered after Gate 2 (2026-07-22). These are
 | TD-M7-04  | Scenario-based world selection     | Content       | Low      | Open     | M10              |
 | TD-M7-05  | InfrastructureDefinition platform  | Architecture  | Medium   | Accepted | Deferred         |
 | TD-M7-06  | Company home/default region        | Domain        | Info     | Open     | M8 polish        |
-| TD-M8-01  | STABILIZE_LIQUIDITY orphan goal    | Simulation    | Medium   | Accepted | M8 Phase 9       |
-| TD-M8-02  | REDUCE_COSTS never generated       | Simulation    | Medium   | Accepted | M8 Phase 9       |
-| TD-M8-03  | EXPAND_REGION decision not executed| Domain        | Low      | Accepted | M8 Phase 9       |
-| TD-M8-04  | Expansion primary region only      | Simulation    | Medium   | Accepted | M8 Phase 9       |
-| TD-M8-05  | StartNewGame seeds no NPC companies| Application   | Medium   | Accepted | M8 Phase 9       |
-| TD-M8-06  | Unused MarketSupplyAggregator      | Code          | Low      | Accepted | M8 Phase 9       |
+| TD-M8-01  | STABILIZE_LIQUIDITY orphan goal    | Simulation    | Medium   | Resolved | M8 Phase 9       |
+| TD-M8-02  | REDUCE_COSTS never generated       | Simulation    | Medium   | Resolved | M8 Phase 9       |
+| TD-M8-03  | EXPAND_REGION decision not executed| Domain        | Low      | Resolved | M8 Phase 9       |
+| TD-M8-04  | Expansion primary region only      | Simulation    | Medium   | Resolved | M8 Phase 9       |
+| TD-M8-05  | StartNewGame seeds no NPC companies| Application   | Medium   | Resolved | M8 Phase 9       |
+| TD-M8-06  | Unused MarketSupplyAggregator      | Code          | Low      | Resolved | M8 Phase 9       |
 
 ---
 
@@ -246,13 +246,17 @@ Buildings have required `regionId`; companies do not yet track an optional home 
 
 **Priority:** Medium
 
-**Status:** Accepted
+**Status:** Resolved
 
 **Date Identified:** 2026-07-22
 
+**Date Resolved:** 2026-07-22
+
 **Identified By:** M8 Implementation Gate 2 review
 
-**Related Audit:** `docs/architecture/reviews/M8_IMPLEMENTATION_GATE_2_REPORT.md`
+**Resolved By:** M8 Phase 9 — liquidity goals enqueue `SELL_RESOURCE` decisions
+
+**Related Audit:** `docs/architecture/reviews/M8_IMPLEMENTATION_GATE_2_REPORT.md`, `docs/quality/M8_IMPLEMENTATION_REPORT.md`
 
 **Affected Systems:** `CompanyGoalPlanner`, `CompanyDecisionPlanner`, `GoalKind.STABILIZE_LIQUIDITY`
 
@@ -276,11 +280,15 @@ Add liquidity decisions (e.g. sell resources, defer expansion) or stop generatin
 
 **Priority:** Medium
 
-**Status:** Accepted
+**Status:** Resolved
 
 **Date Identified:** 2026-07-22
 
+**Date Resolved:** 2026-07-22
+
 **Identified By:** M8 Implementation Gate 2 review
+
+**Resolved By:** M8 Phase 9 — `costPressure` analysis + goal/decision generation
 
 **Affected Systems:** `GoalKind.REDUCE_COSTS`, `CompanyGoalPlanner`
 
@@ -300,11 +308,15 @@ Add liquidity decisions (e.g. sell resources, defer expansion) or stop generatin
 
 **Priority:** Low
 
-**Status:** Accepted
+**Status:** Resolved
 
 **Date Identified:** 2026-07-22
 
+**Date Resolved:** 2026-07-22
+
 **Identified By:** M8 Implementation Gate 2 review
+
+**Resolved By:** M8 Phase 9 — `CompanyDecisionExecutionService` executes `EXPAND_REGION` via `PlaceBuildingUseCase`
 
 **Affected Systems:** `CompanyDecisionType.EXPAND_REGION`, `CompanyDecisionExecutionService`
 
@@ -328,11 +340,15 @@ Implement execution path or remove unused type in favour of `PLACE_BUILDING` onl
 
 **Priority:** Medium
 
-**Status:** Accepted
+**Status:** Resolved
 
 **Date Identified:** 2026-07-22
 
+**Date Resolved:** 2026-07-22
+
 **Identified By:** M8 Implementation Gate 2 review
+
+**Resolved By:** M8 Phase 9 — `PlanningExpansionRegionResolver` + cross-region `EXPAND_REGION` decisions
 
 **Affected Systems:** `CompanyPlanningAnalyser`, `CompanyDecisionPlanner`, cross-region world model
 
@@ -352,11 +368,15 @@ Regional expansion goals and building placement decisions target the company's p
 
 **Priority:** Medium
 
-**Status:** Accepted
+**Status:** Resolved
 
 **Date Identified:** 2026-07-22
 
+**Date Resolved:** 2026-07-22
+
 **Identified By:** M8 Implementation Gate 2 review
+
+**Resolved By:** M8 Phase 9 — `NEW_GAME_AUTONOMOUS_NPC_COMPANIES` seeded in `StartNewGameUseCase`
 
 **Affected Systems:** `StartNewGameUseCase`, `CreateCompanyUseCase` (`autonomous: true`)
 
@@ -380,11 +400,15 @@ Extend `StartNewGameUseCase` or add dedicated world-bootstrap step with content-
 
 **Priority:** Low
 
-**Status:** Accepted
+**Status:** Resolved
 
 **Date Identified:** 2026-07-22
 
+**Date Resolved:** 2026-07-22
+
 **Identified By:** M8 Implementation Gate 2 review
+
+**Resolved By:** M8 Phase 9 — removed `MarketSupplyAggregator.ts`; regional aggregator authoritative
 
 **Affected Systems:** `src/domain/market/MarketSupplyAggregator.ts`, `MarketRegionalSupplyAggregator.ts`
 

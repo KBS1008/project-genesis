@@ -17,12 +17,18 @@ import { InMemoryInventoryRepository } from '../../infrastructure/persistence/In
 import { InMemoryMarketRepository } from '../../infrastructure/persistence/InMemoryMarketRepository.js';
 import { InMemoryProductionJobRepository } from '../../infrastructure/persistence/InMemoryProductionJobRepository.js';
 import { InMemoryResearchJobRepository } from '../../infrastructure/persistence/InMemoryResearchJobRepository.js';
+import { InMemoryWorldMapRepository } from '../../infrastructure/persistence/InMemoryWorldMapRepository.js';
+import { InMemoryWorldRepository } from '../../infrastructure/persistence/InMemoryWorldRepository.js';
+import { InMemoryRegionRepository } from '../../infrastructure/persistence/InMemoryRegionRepository.js';
+import { InMemoryCityRepository } from '../../infrastructure/persistence/InMemoryCityRepository.js';
 import { CreateCompanyUseCase } from '../use-cases/CreateCompanyUseCase.js';
 import { MarketPriceSeeder } from '../services/MarketPriceSeeder.js';
+import { WorldBootstrapService } from '../services/WorldBootstrapService.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
 import { InMemoryEventBus } from '../../common/events/InMemoryEventBus.js';
 import { CompanyPlanningPipeline } from './CompanyPlanningPipeline.js';
 import { CompanyPlanningObserver } from './CompanyPlanningObserver.js';
+import { FinanceTransactionType } from '../../domain/finance/FinanceTransactionType.js';
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const gameContentRoot = path.resolve(testDirectory, '../../../game-content');
@@ -97,7 +103,10 @@ function snapshotMarkets(marketRepository: InMemoryMarketRepository) {
     });
 }
 
-async function createPlanningContext(options?: { woodQuantity?: number }) {
+async function createPlanningContext(options?: {
+  woodQuantity?: number;
+  strategyDefinitionId?: string;
+}) {
   const contentResult = await validateGameContent(gameContentRoot);
 
   if (!contentResult.ok) {
@@ -115,8 +124,23 @@ async function createPlanningContext(options?: { woodQuantity?: number }) {
   const researchJobRepository = new InMemoryResearchJobRepository();
   const companyResearchRepository = new InMemoryCompanyResearchRepository();
   const companyMilestonesRepository = new InMemoryCompanyMilestonesRepository();
+  const worldRepository = new InMemoryWorldRepository();
+  const regionRepository = new InMemoryRegionRepository();
+  const cityRepository = new InMemoryCityRepository();
+  const worldMapRepository = new InMemoryWorldMapRepository();
   const eventBus = new InMemoryEventBus();
   const simulationEngine = new SimulationEngine({ clock, eventBus });
+
+  const worldBootstrapResult = new WorldBootstrapService({
+    worldRepository,
+    regionRepository,
+    cityRepository,
+    worldMapRepository,
+  }).bootstrap(contentResult.value);
+
+  if (!worldBootstrapResult.ok) {
+    throw new Error(worldBootstrapResult.error.message);
+  }
 
   new MarketPriceSeeder({ marketRepository, clock }).seed(
     contentResult.value.resourceTypes,
@@ -144,7 +168,7 @@ async function createPlanningContext(options?: { woodQuantity?: number }) {
     id: requireCompanyBrainId('brain_company_001'),
     companyId,
     clock,
-    initialStrategyDefinitionId: 'strategy_balanced',
+    initialStrategyDefinitionId: options?.strategyDefinitionId ?? 'strategy_balanced',
   });
 
   if (!brainResult.ok) {
@@ -174,6 +198,7 @@ async function createPlanningContext(options?: { woodQuantity?: number }) {
     companyBrainRepository,
     strategies: contentResult.value.strategies,
     gameContent: contentResult.value,
+    worldMapRepository,
     clock,
   });
 
@@ -323,5 +348,76 @@ describe('CompanyPlanningPipeline', () => {
         (decision) => decision.type === CompanyDecisionType.SELL_RESOURCE,
       ),
     ).toBe(true);
+  });
+
+  it('queues liquidity sell decisions for STABILIZE_LIQUIDITY goals', async () => {
+    const context = await createPlanningContext({ woodQuantity: 80 });
+    const finance = context.financeRepository.findByCompanyId(context.companyId);
+
+    expect(finance).toBeDefined();
+
+    const debitResult = finance!.debit(99_100, FinanceTransactionType.ADMIN, context.clock);
+
+    expect(debitResult.ok).toBe(true);
+    context.financeRepository.save(finance!);
+
+    const result = context.pipeline.run(context.companyId, 1);
+
+    expect(result.ok).toBe(true);
+
+    const brain = context.companyBrainRepository.findByCompanyId(context.companyId);
+
+    expect(brain?.getGoals().some((goal) => goal.kind === GoalKind.STABILIZE_LIQUIDITY)).toBe(true);
+    expect(
+      brain?.getPendingDecisions().some(
+        (decision) =>
+          decision.type === CompanyDecisionType.SELL_RESOURCE &&
+          decision.payload.type === 'SELL_RESOURCE',
+      ),
+    ).toBe(true);
+  });
+
+  it('queues cost reduction sell decisions for REDUCE_COSTS goals', async () => {
+    const context = await createPlanningContext({ woodQuantity: 40 });
+    const finance = context.financeRepository.findByCompanyId(context.companyId);
+
+    expect(finance).toBeDefined();
+
+    const debitResult = finance!.debit(98_800, FinanceTransactionType.ADMIN, context.clock);
+
+    expect(debitResult.ok).toBe(true);
+    context.financeRepository.save(finance!);
+
+    const result = context.pipeline.run(context.companyId, 1);
+
+    expect(result.ok).toBe(true);
+
+    const brain = context.companyBrainRepository.findByCompanyId(context.companyId);
+
+    expect(brain?.getGoals().some((goal) => goal.kind === GoalKind.REDUCE_COSTS)).toBe(true);
+    expect(
+      brain?.getPendingDecisions().some(
+        (decision) => decision.type === CompanyDecisionType.SELL_RESOURCE,
+      ),
+    ).toBe(true);
+  });
+
+  it('queues cross-region EXPAND_REGION decisions when a connected region is available', async () => {
+    const context = await createPlanningContext({ strategyDefinitionId: 'strategy_expansionist' });
+    const result = context.pipeline.run(context.companyId, 10);
+
+    expect(result.ok).toBe(true);
+
+    const brain = context.companyBrainRepository.findByCompanyId(context.companyId);
+    const expansionDecision = brain
+      ?.getPendingDecisions()
+      .find((decision) => decision.type === CompanyDecisionType.EXPAND_REGION);
+
+    expect(brain?.getGoals().some((goal) => goal.kind === GoalKind.EXPAND_REGION)).toBe(true);
+    expect(expansionDecision).toBeDefined();
+
+    if (expansionDecision?.payload.type === 'EXPAND_REGION') {
+      expect(expansionDecision.payload.data.targetRegionId).toBe('region_east');
+    }
   });
 });

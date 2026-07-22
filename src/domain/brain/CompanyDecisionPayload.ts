@@ -45,6 +45,11 @@ export type StartResearchDecisionPayload = {
 /** Payload for regional expansion planning. */
 export type ExpandRegionDecisionPayload = {
   readonly targetRegionId: string;
+  readonly buildingId: string;
+  readonly buildingTypeId: string;
+  readonly name: string;
+  readonly mapX: number;
+  readonly mapY: number;
 };
 
 /** Discriminated union of all company decision payloads. */
