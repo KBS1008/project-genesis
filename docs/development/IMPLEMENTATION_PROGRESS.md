@@ -4,7 +4,7 @@ Version: 1.0.0
 
 Status: Active
 
-Last Updated: 2026-07-19
+Last Updated: 2026-07-22
 
 ---
 
@@ -23,12 +23,12 @@ Update this document whenever a meaningful implementation milestone is completed
 | Area                             | Status                                                                                                                                                                |
 | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Common foundation                | Implemented                                                                                                                                                           |
-| Domain aggregates                | Implemented (Company, Building, Inventory, ProductionJob, FinanceAccount, Market, SupplyContract, CompanyResearch, ResearchJob, CompanyMilestones, Employee)          |
+| Domain aggregates                | Implemented (Company, Building, Inventory, ProductionJob, FinanceAccount, Market, SupplyContract, CompanyResearch, ResearchJob, CompanyMilestones, Employee, **CompanyBrain**) |
 | Domain value objects             | Partial (Money, Quantity, ResourceAmount, Capacity, Position)                                                                                                         |
 | Domain specifications & policies | Partial (foundation + production/market/employee rules)                                                                                                               |
-| Content loaders                  | Partial (ResourceType, BuildingType, Recipe, Technology, Milestone, Employee, TransportRoute)                                                                         |
-| Simulation                       | Partial (SimulationEngine, systems pipeline incl. market, contracts, payroll, tax, inflation dampening)                                                               |
-| Infrastructure                   | Partial (in-memory repositories, JSON savegames incl. employees, supply contracts, tick metrics history)                                                              |
+| Content loaders                  | Partial (ResourceType, BuildingType, Recipe, Technology, Milestone, Employee, TransportRoute, **StrategyDefinition**)                                              |
+| Simulation                       | Partial (SimulationEngine, systems pipeline incl. regional market, company planning/execution, contracts, payroll, tax, inflation dampening)                          |
+| Infrastructure                   | Partial (in-memory repositories incl. **CompanyBrain**, JSON savegames incl. regional markets + price history, employees, supply contracts, tick metrics history)   |
 | Application layer                | Implemented (bootstrap, use cases, queries, dashboard facade, tutorial progress)                                                                                      |
 | UI                               | Partial (Next.js dashboard per DASHBOARD_STYLE_GUIDE: layout, charts, drill-down, tutorial checklist, outline KPI icons, auto-dismiss toasts, live WebSocket refresh) |
 | Energy system                    | Partial (balance service, production gating, baseline grid)                                                                                                           |
@@ -38,9 +38,10 @@ Update this document whenever a meaningful implementation milestone is completed
 | M5 Economy                       | Completed                                                                                                                                                             |
 | M6 Logistics                     | ✅ Completed (Gate AUD-004, 2026-07-19)                                                                                                                               |
 | M7 World Simulation              | ✅ Completed (Gate AUD-005, 2026-07-19)                                                                                                                               |
+| M8 NPC Economy                   | 🟡 In Progress (~78 %) — Phases 1–7 complete; Gate 2 passed (`M8_IMPLEMENTATION_GATE_2_REPORT.md`); Phase 8 persistence open                                          |
 | Phase 1 Core Domain              | ✅ Completed (Gate 2026-07-19) — see `PHASE1_CORE_DOMAIN_REPORT.md`                                                                                                   |
 
-**Tests:** 528 (run `pnpm test` for current count)
+**Tests:** 559 (run `pnpm test` for current count)
 
 ---
 
@@ -48,18 +49,18 @@ Update this document whenever a meaningful implementation milestone is completed
 
 Trackable estimate of progress toward **Release 1.0** (`MILESTONE_PLAN.md`).
 
-**Last calculated:** 2026-07-19 · **Commit:** `ee34e8b` (+ M7-7/8 working tree)
+**Last calculated:** 2026-07-22 · **Commit:** `ba627fa`
 
 ## Summary
 
 | Metric                         |    Value | Notes                                                     |
 | ------------------------------ | -------: | --------------------------------------------------------- |
-| **Release progress (primary)** | **69 %** | Average of milestone completion % (see below)             |
-| Deliverable work invested      |     68 % | Average including partial pre-work (e.g. dashboard in M9) |
-| Playable prototype readiness   |    ~82 % | M1–M7 core; not a release metric                          |
+| **Release progress (primary)** | **76 %** | Average of milestone completion % (see below)             |
+| Deliverable work invested      |     73 % | Average including partial pre-work (e.g. dashboard in M9) |
+| Playable prototype readiness   |    ~85 % | M1–M7 core + M8 planning loop; not a release metric       |
 | Milestones completed           |   6 / 12 | M1, M2, M4, M5, M6, M7                                    |
-| Milestones in progress         |   1 / 12 | M3                                                        |
-| Tests                          |      528 | `pnpm test`                                               |
+| Milestones in progress         |   2 / 12 | M3, M8                                                    |
+| Tests                          |      559 | `pnpm test`                                               |
 
 **Primary formula:**
 
@@ -80,12 +81,12 @@ Update deliverable rows when a step ships; set milestone % to the **average of i
 | M5  | Economy                | ✅ Completed   |      100 |     8,3 % |        8,3 % |
 | M6  | Logistics              | ✅ Completed   |      100 |     8,3 % |        8,3 % |
 | M7  | World Simulation       | ✅ Completed   |      100 |     8,3 % |        8,3 % |
-| M8  | NPC Economy            | ⚪ Planned     |        0 |     8,3 % |          0 % |
+| M8  | NPC Economy            | 🟡 In Progress |       78 |     8,3 % |        6,5 % |
 | M9  | User Interface         | ⚪ Planned*    |       35 |     8,3 % |        2,9 % |
 | M10 | Content Expansion      | ⚪ Planned     |       10 |     8,3 % |        0,8 % |
 | M11 | Polish                 | ⚪ Planned     |        0 |     8,3 % |          0 % |
 | M12 | Release                | ⚪ Planned     |        0 |     8,3 % |          0 % |
-|     | **Total**              |                | **69 %** | **100 %** |     **69 %** |
+|     | **Total**              |                | **76 %** | **100 %** |     **76 %** |
 
 \*M9 is officially planned; dashboard, charts, tutorial and WebSocket from M4/M5 count as pre-work in the deliverable matrix below.
 
@@ -167,14 +168,20 @@ Update deliverable rows when a step ships; set milestone % to the **average of i
 | Persistence / queries   |     100 | M7-7 save V2 + migration; M7-8 overview/region queries + minimal API     |
 | **Milestone average (gate)** | **100** | Gate review `M7_WORLD_SIMULATION_GATE_REVIEW_REPORT.md` (AUD-005)   |
 
-### M8 – NPC Economy ⚪ (0 %)
+### M8 – NPC Economy 🟡 (~78 %)
 
-| Deliverable                    |     % | Next step     |
-| ------------------------------ | ----: | ------------- |
-| AI companies / expansion       |     0 | **Unblocked** — start M8 |
-| Market behaviour / competition |     0 | Not started   |
-| Bankruptcy / long-term sim     |     0 | Not started   |
-| **Milestone average**          | **0** | M7 gate passed |
+| Deliverable                         |     % | Evidence                                                                 |
+| ----------------------------------- | ----: | ------------------------------------------------------------------------ |
+| Company Brain foundation (M8-1)     |     100 | `src/domain/brain/**`, `CompanyBrainRepository`, domain events           |
+| Strategy content (M8-1)             |     100 | `game-content/strategies/`, `StrategyLoader`, `Strategy.schema.md`       |
+| Regional markets (M8-2)             |      95 | Extended `Market` (regionId, liquidity, history), `MarketPriceSeeder`    |
+| Planning pipeline (M8-3)            |     100 | `CompanyPlanningPipeline`, observer/analyser/goal/decision planners      |
+| Decision execution (M8-5)           |     100 | `CompanyDecisionExecutionService` → existing use cases                   |
+| Simulation integration (M8-6)       |     100 | `CompanyPlanningSystem`, tick order, domain ports                        |
+| Expansion / production / research   |      85 | Phase 7 planning + bootstrap; partial financial/regional depth           |
+| Brain persistence V3 (M8-7)         |       0 | **Next:** `GameSaveSnapshotV3`, serializer migration                     |
+| Gate review / test matrix (M8-8/9)  |      50 | Gate 2 report ✅; 559 tests; brain save/load tests pending               |
+| **Milestone average (gate)**        |  **78** | Gate 2: `M8_IMPLEMENTATION_GATE_2_REPORT.md` — READY FOR PHASE 8           |
 
 ### M9 – User Interface ⚪ (35 % milestone · 49 % deliverable work)
 
@@ -416,19 +423,23 @@ Business aggregates and domain events.
 | Aggregate        | `market/Market.ts`                                                                                                                                                                                             |
 | Identifiers      | `market/MarketId.ts`                                                                                                                                                                                           |
 | Price snapshot   | `market/ResourceMarketPrice.ts`                                                                                                                                                                                |
-| Constants        | `market/MarketConstants.ts` (`GLOBAL_MARKET_ID`)                                                                                                                                                               |
-| Price simulation | `market/MarketPriceCalculator.ts`, `market/MarketPriceConstants.ts`, `market/MarketPressureCalculator.ts`, `market/MarketSupplyAggregator.ts`, `market/InflationCalculator.ts`, `market/InflationConstants.ts` |
+| Constants        | `market/MarketConstants.ts` (`createRegionalMarketId`, legacy `GLOBAL_MARKET_ID`)                                                                                                                              |
+| Price history    | `market/MarketPriceHistoryEntry.ts`                                                                                                                                                                            |
+| Regional stats   | `market/MarketRegionalStatistics.ts`, `market/MarketRegionalSupplyAggregator.ts`                                                                                                                               |
+| Price simulation | `market/MarketPriceCalculator.ts`, `market/MarketPriceConstants.ts`, `market/MarketPressureCalculator.ts`, `market/MarketSupplyAggregator.ts` (legacy, unused), `market/InflationCalculator.ts`, `market/InflationConstants.ts` |
 | Read projection  | `read-models/projectMarketPrice.ts`, `read-models/EconomyReadModel.ts`                                                                                                                                         |
 | Domain event     | `market/events/MarketPriceChanged.ts`                                                                                                                                                                          |
-| Repository       | `market/MarketRepository.ts`                                                                                                                                                                                   |
+| Repository       | `market/MarketRepository.ts` (incl. `findByRegionId`)                                                                                                                                                          |
 | Tests            | `market/Market.test.ts`                                                                                                                                                                                        |
 
 **Behaviour:**
 
-- `Market.seedFromResources()` — global price book from enabled, market-enabled resource definitions; `lastPrice` starts at `basePrice`.
-- `updateLastPrice()` — records price changes and emits `MarketPriceChanged`.
-- `MarketPriceSeeder` (application) initializes `market_global` during bootstrap.
-- `MarketSimulationSystem` dampens or stimulates price adjustment via `InflationCalculator` when the global price index leaves the neutral band.
+- `Market.seedFromResources()` — regional price book per enabled region; `lastPrice` starts at `basePrice`.
+- `updateLastPrice()` / `updateSupplyDemand()` — records price changes, liquidity, embedded price history (limit 100), emits `MarketPriceChanged`.
+- `MarketPriceSeeder` seeds one market per enabled region during bootstrap (`market_{regionId}`).
+- `MarketTradeService` executes instant regional buy/sell; legacy `market_global` fallback for old saves.
+- `MarketSimulationSystem` updates all regional markets from building-storage supply and baseline demand.
+- Instant trade only — no order book (DD-018 deferred).
 
 **References:** `docs/gameplay/market.md`, `docs/gameplay/economy.md`, DD-018
 
@@ -463,6 +474,7 @@ Business aggregates and domain events.
 | `ProductionJobRepository`  | `production/ProductionJobRepository.ts` |
 | `FinanceRepository`        | `finance/FinanceRepository.ts`          |
 | `MarketRepository`         | `market/MarketRepository.ts`            |
+| `CompanyBrainRepository`   | `brain/CompanyBrainRepository.ts`     |
 | `SupplyContractRepository` | `contract/SupplyContractRepository.ts`  |
 | `EmployeeRepository`       | `employee/EmployeeRepository.ts`        |
 
@@ -557,6 +569,32 @@ Persistence contracts for aggregate roots. Implementations belong in Infrastruct
 - Tracks permanently completed milestone ids per company.
 - Created alongside company research in `CreateCompanyUseCase`.
 - Persisted in savegame snapshots as `companyMilestones`.
+
+### CompanyBrain aggregate (M8)
+
+| Item          | Path                                                                 |
+| ------------- | -------------------------------------------------------------------- |
+| Aggregate     | `brain/CompanyBrain.ts`                                              |
+| Identifiers   | `brain/CompanyBrainId.ts`, `brain/GoalId.ts`, `brain/CompanyDecisionId.ts`, … |
+| Strategy ref  | `brain/ActiveStrategy.ts`                                            |
+| Decision queue| `brain/DecisionQueue.ts`                                             |
+| Goals         | `brain/Goal.ts`, `GoalKind.ts`, `GoalStatus.ts`                      |
+| Knowledge     | `brain/KnowledgeEntry.ts`, `KnowledgeKind.ts`, `KnowledgeValue.ts`   |
+| Memory        | `brain/MemoryEntry.ts`, `MemoryKind.ts`, `MemoryPayload.ts`          |
+| Decisions     | `brain/CompanyDecision.ts`, `CompanyDecisionPayload.ts`, `PlanningLayer.ts` |
+| Domain events | `brain/events/StrategyChanged.ts`, `GoalCreated.ts`, `GoalCompleted.ts`, `DecisionQueued.ts` |
+| Ports         | `brain/CompanyPlanningPort.ts`, `CompanyDecisionExecutionPort.ts`    |
+| Repository    | `brain/CompanyBrainRepository.ts`                                  |
+| Tests         | `brain/CompanyBrain.test.ts`                                         |
+
+**Behaviour:**
+
+- One brain per autonomous company; references `companyId` without replacing the `Company` aggregate.
+- Planning mutates only the brain repository; execution flows through application use cases (DD-0XX).
+- `CreateCompanyUseCase` with `autonomous: true` bootstraps via `CompanyBrainBootstrapService`.
+- **Not yet persisted** in savegames (Phase 8).
+
+**References:** `docs/architecture/decisions/DD-0XX_COMPANY_BRAIN_AND_DECISION_QUEUE.md`, `docs/project-management/M8_ECONOMY_SIMULATION_PLAN.md`
 
 ---
 
@@ -688,6 +726,29 @@ game-content/milestones/
 
 **Trigger types (v1):** `FIRST_SALE`, `PRODUCTION_VOLUME` (`count`, optional `recipeId`), `PROFIT_THRESHOLD` (`amount` = cumulative sale revenue in GC).
 
+### StrategyDefinition loader (M8)
+
+| Item       | Path                                  |
+| ---------- | ------------------------------------- |
+| Definition | `strategy/StrategyDefinition.ts`      |
+| Validator  | `strategy/StrategyValidator.ts`       |
+| Registry   | `strategy/StrategyRegistry.ts`        |
+| Loader     | `strategy/StrategyLoader.ts`          |
+| Tests      | `strategy/StrategyLoader.test.ts`     |
+
+**Content files:**
+
+```text
+game-content/strategies/
+├── strategy_balanced.yaml
+├── strategy_conservative.yaml
+├── strategy_expansionist.yaml
+├── strategy_manufacturer.yaml
+└── strategy_trading.yaml
+```
+
+**References:** `docs/schemas/Strategy.schema.md`, DD-0XX
+
 ### Content validation orchestration
 
 | Item                           | Path                                                                       |
@@ -729,17 +790,22 @@ Deterministic simulation engine (first increment).
 | Item                         | Path                                               |
 | ---------------------------- | -------------------------------------------------- |
 | `CompanySimulationSystem`    | `systems/company/CompanySimulationSystem.ts`       |
+| `CompanyPlanningSystem`      | `systems/company/CompanyPlanningSystem.ts`         |
 | `BuildingSimulationSystem`   | `systems/building/BuildingSimulationSystem.ts`     |
 | `TransportSimulationSystem`  | `systems/transport/TransportSimulationSystem.ts`   |
 | `ProductionSimulationSystem` | `systems/production/ProductionSimulationSystem.ts` |
 | `ResearchSimulationSystem`   | `systems/research/ResearchSimulationSystem.ts`     |
 | `MarketSimulationSystem`     | `systems/market/MarketSimulationSystem.ts`         |
-| `MarketSupplyAggregator`     | `domain/market/MarketSupplyAggregator.ts`          |
+| `MarketRegionalSupplyAggregator` | `domain/market/MarketRegionalSupplyAggregator.ts` |
 | `ContractSimulationSystem`   | `systems/contract/ContractSimulationSystem.ts`     |
 | `FinanceSimulationSystem`    | `systems/finance/FinanceSimulationSystem.ts`       |
 | Factory                      | `systems/createDefaultSimulationSystems.ts`        |
 
-Default order: Company → Building → Transport → Production → Research → Market → Contract → Finance
+Default order: Company → Building → Transport → Production → Research → Market → **CompanyPlanning** → Contract → Finance
+
+`CompanySimulationSystem` executes queued brain decisions at tick start (prior-tick market prices).
+
+`CompanyPlanningSystem` runs the planning pipeline after regional market updates.
 
 Building system advances {@link Building} construction progress each tick for aggregates in `UNDER_CONSTRUCTION` status.
 
@@ -749,7 +815,7 @@ Research system advances running {@link ResearchJob} aggregates each tick and in
 
 Finance system debits combined employee salaries every `PAYROLL_INTERVAL_TICKS` ticks as `SALARY` transactions and collects flat corporate tax every `TAX_INTERVAL_TICKS` ticks as `TAX` transactions.
 
-Market system adjusts global resource prices every `MARKET_PRICE_UPDATE_INTERVAL_TICKS` ticks from aggregate inventory supply and baseline demand via `MarketPriceCalculator`, scaled by `InflationCalculator`.
+Market system adjusts **regional** resource prices every `MARKET_PRICE_UPDATE_INTERVAL_TICKS` ticks from building-storage supply and baseline demand via `MarketPriceCalculator`, scaled by `InflationCalculator`.
 
 Contract system fulfills active NPC supply contracts before finance processing; starter wood purchase contract is seeded by `StartNewGameUseCase`.
 
@@ -772,6 +838,9 @@ Coordinates use cases between domain, infrastructure and simulation.
 | `ProductionInventoryService`          | `services/ProductionInventoryService.ts`                                                                                                                                                         |
 | `MarketPriceSeeder`                   | `services/MarketPriceSeeder.ts`                                                                                                                                                                  |
 | `MarketTradeService`                  | `services/MarketTradeService.ts`                                                                                                                                                                 |
+| `CompanyPlanningPipeline`             | `planning/CompanyPlanningPipeline.ts`                                                                                                                                                          |
+| `CompanyDecisionExecutionService`     | `services/CompanyDecisionExecutionService.ts`                                                                                                                                                    |
+| `CompanyBrainBootstrapService`        | `services/CompanyBrainBootstrapService.ts`                                                                                                                                                        |
 | `StartProductionCommand`              | `commands/StartProductionCommand.ts`                                                                                                                                                             |
 | `SellResourceCommand`                 | `commands/SellResourceCommand.ts`                                                                                                                                                                |
 | `BuyResourceCommand`                  | `commands/BuyResourceCommand.ts`                                                                                                                                                                 |
@@ -806,18 +875,32 @@ Coordinates use cases between domain, infrastructure and simulation.
 | `GetMarketPricesQueryHandler`         | `queries/GetMarketPricesQueryHandler.ts`                                                                                                                                                         |
 | Market dashboard charts               | `apps/web/src/components/MarketSupplyDemandChart.tsx`, `MarketPressureHistoryChart.tsx`, `MarketPricesTable.tsx`                                                                                 |
 | Read models                           | `read-models/CompanyReadModel.ts`, `BuildingReadModel.ts`, `InventoryReadModel.ts`, `FinanceReadModel.ts`, `MarketPriceReadModel.ts`, `TickMetricsSnapshot.ts`, `FinanceTransactionReadModel.ts` |
-| Tests                                 | `bootstrap/bootstrapApplication.test.ts`, `services/*.test.ts`, `queries/*.test.ts`, `use-cases/*.test.ts`, `facade/GameSession.test.ts`                                                         |
+| Tests                                 | `bootstrap/bootstrapApplication.test.ts`, `planning/CompanyPlanningPipeline.test.ts`, `services/CompanyDecisionExecutionService.test.ts`, `services/*.test.ts`, `queries/*.test.ts`, `use-cases/*.test.ts`, `facade/GameSession.test.ts` |
 
 **Behaviour:**
 
-- Bootstrap loads validated game content and wires in-memory repos, clock, event bus and simulation engine with default systems.
+- Bootstrap loads validated game content and wires in-memory repos, clock, event bus, simulation engine with default systems (incl. brain repo, planning pipeline, decision execution).
 - Use cases create domain aggregates, persist via repository interfaces and enqueue domain events for the next tick.
-- `CreateCompanyUseCase` also creates an empty company inventory and finance account with starting capital.
+- `CreateCompanyUseCase` also creates an empty company inventory and finance account with starting capital; optional `autonomous: true` bootstraps a `CompanyBrain`.
 - `PlaceBuildingUseCase` resolves `constructionCost` via `ConstructionCostPolicy`, debits company finance, calls `beginConstruction()` with content `constructionTime`, and rolls back nothing on debit failure because the building is not persisted yet.
 - `StartProductionUseCase` validates recipe/building compatibility against loaded content, reserves recipe inputs via `ProductionInventoryService`, rejects non-`ACTIVE` buildings, and rolls back reservations if job creation fails.
 - `ProductionInventoryService` reserves inputs on production start; simulation invokes `completeJob()` on completion to consume inputs and deliver outputs.
-- Bootstrap seeds global market prices from resource `basePrice` via `MarketPriceSeeder`.
-- `MarketTradeService` executes instant buy/sell at `lastPrice`, updating inventory, finance and market trade volume.
+- Bootstrap seeds **regional** market prices from resource `basePrice` via `MarketPriceSeeder` (one market per enabled region).
+- `MarketTradeService` executes instant buy/sell at regional `lastPrice`, updating inventory, finance and market trade volume.
+- `CompanyPlanningPipeline` observes repo state read-only, analyses strategy-weighted goals, validates decisions, and queues them on the company brain only.
+- `CompanyDecisionExecutionService` drains the brain queue through `BuyResource`, `SellResource`, `PlaceBuilding`, `StartProduction`, and `StartResearch` use cases (max 50 per company per tick).
+
+### Company planning (M8)
+
+| Item                        | Path                                      |
+| --------------------------- | ----------------------------------------- |
+| `CompanyPlanningObserver`   | `planning/CompanyPlanningObserver.ts`     |
+| `CompanyPlanningAnalyser`   | `planning/CompanyPlanningAnalyser.ts`     |
+| `CompanyGoalPlanner`        | `planning/CompanyGoalPlanner.ts`          |
+| `CompanyDecisionPlanner`    | `planning/CompanyDecisionPlanner.ts`      |
+| `CompanyDecisionValidator`  | `planning/CompanyDecisionValidator.ts`    |
+| `CompanyPlanningPipeline`   | `planning/CompanyPlanningPipeline.ts`     |
+
 - Query handlers (`GetCompany`, `ListBuildings`, `GetInventory`, `GetFinance`, `GetMarketPrices`) read repository state and return immutable read models without mutating aggregates.
 - `SaveGameUseCase` serializes all aggregate repositories (including employees), simulation metadata and dashboard tick metrics history into a versioned JSON snapshot; saves are rejected while domain events remain queued.
 - `LoadGameUseCase` reads a snapshot file and `restoreApplicationFromSnapshot` hydrates fresh in-memory repositories, clock, simulation engine state and tick chart history.
@@ -847,7 +930,8 @@ Coordinates use cases between domain, infrastructure and simulation.
 | `InMemoryProductionJobRepository` | `persistence/InMemoryProductionJobRepository.ts`                                                  |
 | `InMemoryFinanceRepository`       | `persistence/InMemoryFinanceRepository.ts`                                                        |
 | `InMemoryMarketRepository`        | `persistence/InMemoryMarketRepository.ts`                                                         |
-| `GameSaveSnapshotV1`              | `persistence/savegame/GameSaveSnapshotV1.ts` (incl. `employees`, optional `tickMetricsHistory`)   |
+| `InMemoryCompanyBrainRepository`  | `persistence/InMemoryCompanyBrainRepository.ts`                                                     |
+| `GameSaveSnapshotV1`              | `persistence/savegame/GameSaveSnapshotV1.ts` (incl. regional markets + `priceHistory`; brain pending V3) |
 | `GameStateSerializer`             | `persistence/savegame/GameStateSerializer.ts`                                                     |
 | `FileSavegameStore`               | `persistence/savegame/FileSavegameStore.ts`                                                       |
 | NestJS API                        | `apps/api/`                                                                                       |
@@ -1007,8 +1091,12 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 | Content / All                     | `validateGameContent.test.ts`                                                                                  | Full content pipeline                                                                         |
 | Simulation / Engine               | `SimulationEngine.test.ts`                                                                                     | Tick, determinism, pause                                                                      |
 | Simulation / EventQueue           | `EventQueue.test.ts`                                                                                           | Enqueue, drain, peek                                                                          |
-| Simulation / Systems              | `createDefaultSimulationSystems.test.ts`, `MarketSimulationSystem.test.ts`, `ContractSimulationSystem.test.ts` | Default pipeline order, dynamic prices, NPC contracts                                         |
-| Simulation / Finance              | `FinanceSimulationSystem.test.ts`, `TaxCalculator.test.ts`                                                     | Payroll and corporate tax debits                                                              |
+| Simulation / Systems              | `createDefaultSimulationSystems.test.ts`, `MarketSimulationSystem.test.ts`, `ContractSimulationSystem.test.ts`, `CompanySimulationSystem.test.ts`, `CompanyEconomySimulation.integration.test.ts` | Default pipeline order, regional prices, NPC contracts, brain planning loop |
+| Domain / CompanyBrain             | `CompanyBrain.test.ts`, `InMemoryCompanyBrainRepository.test.ts`                                                                               | Goals, decision queue, strategy, repository round-trip                        |
+| Content / Strategy                | `StrategyLoader.test.ts`                                                                                                                       | Load, validate strategy YAML                                                  |
+| Application / Planning            | `CompanyPlanningPipeline.test.ts`                                                                                                                | Observer → analyser → goal/decision planners → queue                          |
+| Application / DecisionExecution   | `CompanyDecisionExecutionService.test.ts`                                                                                                        | Buy/sell/place/start production/research via use cases                          |
+| Simulation / Finance              | `FinanceSimulationSystem.test.ts`, `TaxCalculator.test.ts`                                                     | Payroll and corporate tax debits                                              |
 | Domain / Market                   | `MarketPriceCalculator.test.ts`, `InflationCalculator.test.ts`, `MarketFeePolicy.test.ts`                      | Price formula, inflation dampening, trade fees                                                |
 | Domain / Contract                 | `SupplyContract.test.ts`                                                                                       | Starter contract defaults and fulfillment guard                                               |
 | Simulation / Production           | `ProductionSimulationSystem.test.ts`                                                                           | Worker shortage and full staffing                                                             |
@@ -1052,14 +1140,16 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Planned Next Steps
 
-1. **M8 – NPC Economy:** AI companies, market behaviour, competition (see `M8_ECONOMY_SIMULATION_PLAN.md`)
-2. Session/auth model for multi-user API access
-3. Full tick log / replay per DD-033 (beyond metrics ring buffer)
+1. **M8 Phase 8 — Persistence V3:** `GameSaveSnapshotV3`, serialize `CompanyBrain` (goals, knowledge, memory, decision queue, active strategy), serializer migration, brain save/load integration tests (see `M8_ECONOMY_SIMULATION_PLAN.md`, Gate 2 report)
+2. **M8 Phase 9 — Testing & closure:** full test matrix, determinism replay, `M8_IMPLEMENTATION_REPORT.md`; optional: `STABILIZE_LIQUIDITY` goal wiring, default NPC seed in `StartNewGameUseCase`
+3. Session/auth model for multi-user API access
+4. Full tick log / replay per DD-033 (beyond metrics ring buffer)
 
 ---
 
 # Recently Completed (2026-07)
 
+- **M8 NPC Economy Phases 1–7 (commit `ba627fa`):** Company Brain domain, strategy content (5 YAML strategies), regional markets + price history, planning pipeline (observer/analyser/goal/decision/validator), decision execution (buy/sell/place building/start production/start research), simulation integration (`CompanySimulationSystem`, `CompanyPlanningSystem`), expansion/production/research planning, autonomous company bootstrap; **559 tests**; Gate 2 review **READY FOR PHASE 8** (`docs/architecture/reviews/M8_IMPLEMENTATION_GATE_2_REPORT.md`)
 - **M7 World Simulation completed (AUD-005):** regions, map, biomes, cities, regional resources, cross-region transport, save V2 + migration, world queries/API (`docs/quality/M7_WORLD_SIMULATION_GATE_REVIEW_REPORT.md`)
 - **M6 Logistics completed (AUD-004):** capacities, transport routes, network throughput queue; DD-022 V1 vehicle waiver (`docs/quality/M6_LOGISTICS_GATE_REVIEW_REPORT.md`)
 - **M5 Economy completed:** dynamic prices, dashboard supply/demand, market fees, taxes, NPC contracts, inflation dampening (reports in `docs/quality/M5_ECONOMY_*`)
@@ -1108,6 +1198,8 @@ When completing an implementation task:
 # Related Documents
 
 - `docs/development/CURSOR_IMPLEMENTATION_GUIDE.md`
+- `docs/project-management/M8_ECONOMY_SIMULATION_PLAN.md`
+- `docs/architecture/reviews/M8_IMPLEMENTATION_GATE_2_REPORT.md`
 - `docs/decisions/DD-000-decision-index.md`
 - `src/common/readme.md`
 - `src/domain/readme.md`
