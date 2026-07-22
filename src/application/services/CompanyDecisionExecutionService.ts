@@ -6,7 +6,7 @@
  * Planning produces decisions; this service drains the queue without bypassing
  * domain validation or repository ownership rules.
  *
- * @see docs/architecture/decisions/DD-0XX_COMPANY_BRAIN_AND_DECISION_QUEUE.md
+ * @see docs/architecture/decisions/DD-037-Company-Brain-and-Decision-Queue.md
  */
 
 import type { DomainEvent } from '../../common/events/DomainEvent.js';

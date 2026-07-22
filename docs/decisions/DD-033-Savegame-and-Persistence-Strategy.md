@@ -449,7 +449,7 @@ Project Genesis speichert den Spielzustand als vollständige, deterministische S
 
 - DD-032 – Deterministic Tick Processing
 
-- DD-0XX – Company Brain & Decision Queue Architecture
+- DD-037 – Company Brain & Decision Queue Architecture
 
 ---
 
@@ -512,6 +512,8 @@ Version 3 extends the existing snapshot.
 It does not replace previous savegame versions.
 
 Backward compatibility remains mandatory.
+
+**Concrete contract:** `docs/schemas/GameSaveSnapshotV3.schema.md` (field definitions, ordering rules, v2→v3 migration).
 
 Migration shall occur exclusively through the central serializer.
 

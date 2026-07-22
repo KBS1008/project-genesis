@@ -3,9 +3,9 @@ Document-ID: DD-000
 Title: Architecture Decision Index
 Type: Architecture Decision Record
 Status: Living Document
-Version: 3.0.0
+Version: 3.1.0
 Created: 2026-07-03
-Last Updated: 2026-07-03
+Last Updated: 2026-07-22
 
 Authors:
   - Project Genesis Architecture
@@ -81,6 +81,8 @@ Die ADRs dokumentieren alle langfristigen Architekturentscheidungen und bilden g
 | DD-033 | 💾        | Savegame and Persistence Strategy    | Accepted | ⭐   |
 | DD-034 | 🚀        | Configuration Management             | Accepted |      |
 | DD-035 | 🚀        | Error Handling Strategy              | Accepted |      |
+| DD-036 | 🚀        | Package Manager Strategy             | Accepted |      |
+| DD-037 | ⚙         | Company Brain & Decision Queue       | Accepted | ⭐   |
 
 ---
 
@@ -131,3 +133,4 @@ Einmal akzeptierte ADRs bleiben Bestandteil der Projekthistorie. Änderungen erf
 | 1.0.0   | 2026-07-03 | Initiale Version                                              |
 | 2.0.0   | 2026-07-03 | Erweiterung um DD-035                                         |
 | 3.0.0   | 2026-07-03 | Überarbeitung mit Kategorien, Core Decisions und Lebenszyklus |
+| 3.1.0   | 2026-07-22 | DD-036 und DD-037 ergänzt                                     |

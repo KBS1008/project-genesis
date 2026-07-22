@@ -15,7 +15,7 @@
 - DD-015 – Content Architecture
 - DD-029 – Modular Monolith
 - DD-032 – Deterministic Tick Processing
-- DD-0XX – Company Brain & Decision Queue
+- DD-037 – Company Brain & Decision Queue
 
 ---
 

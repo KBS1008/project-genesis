@@ -179,7 +179,7 @@ Update deliverable rows when a step ships; set milestone % to the **average of i
 | Decision execution (M8-5)           |     100 | `CompanyDecisionExecutionService` → existing use cases                   |
 | Simulation integration (M8-6)       |     100 | `CompanyPlanningSystem`, tick order, domain ports                        |
 | Expansion / production / research   |      85 | Phase 7 planning + bootstrap; partial financial/regional depth           |
-| Brain persistence V3 (M8-7)         |       0 | **Next:** `GameSaveSnapshotV3`, serializer migration                     |
+| Brain persistence V3 (M8-7)         |       0 | **Next:** implement per `docs/schemas/GameSaveSnapshotV3.schema.md` |
 | Gate review / test matrix (M8-8/9)  |      50 | Gate 2 report ✅; 559 tests; brain save/load tests pending               |
 | **Milestone average (gate)**        |  **78** | Gate 2: `M8_IMPLEMENTATION_GATE_2_REPORT.md` — READY FOR PHASE 8           |
 
@@ -590,11 +590,11 @@ Persistence contracts for aggregate roots. Implementations belong in Infrastruct
 **Behaviour:**
 
 - One brain per autonomous company; references `companyId` without replacing the `Company` aggregate.
-- Planning mutates only the brain repository; execution flows through application use cases (DD-0XX).
+- Planning mutates only the brain repository; execution flows through application use cases (DD-037).
 - `CreateCompanyUseCase` with `autonomous: true` bootstraps via `CompanyBrainBootstrapService`.
 - **Not yet persisted** in savegames (Phase 8).
 
-**References:** `docs/architecture/decisions/DD-0XX_COMPANY_BRAIN_AND_DECISION_QUEUE.md`, `docs/project-management/M8_ECONOMY_SIMULATION_PLAN.md`
+**References:** `docs/architecture/decisions/DD-037-Company-Brain-and-Decision-Queue.md`, `docs/project-management/M8_ECONOMY_SIMULATION_PLAN.md`
 
 ---
 
@@ -747,7 +747,7 @@ game-content/strategies/
 └── strategy_trading.yaml
 ```
 
-**References:** `docs/schemas/Strategy.schema.md`, DD-0XX
+**References:** `docs/schemas/Strategy.schema.md`, DD-037
 
 ### Content validation orchestration
 
@@ -1140,7 +1140,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Planned Next Steps
 
-1. **M8 Phase 8 — Persistence V3:** `GameSaveSnapshotV3`, serialize `CompanyBrain` (goals, knowledge, memory, decision queue, active strategy), serializer migration, brain save/load integration tests (see `M8_ECONOMY_SIMULATION_PLAN.md`, Gate 2 report)
+1. **M8 Phase 8 — Persistence V3:** implement `GameSaveSnapshotV3` per `docs/schemas/GameSaveSnapshotV3.schema.md` (brain + regional markets, v2→v3 migration, save/load integration tests)
 2. **M8 Phase 9 — Testing & closure:** full test matrix, determinism replay, `M8_IMPLEMENTATION_REPORT.md`; optional: `STABILIZE_LIQUIDITY` goal wiring, default NPC seed in `StartNewGameUseCase`
 3. Session/auth model for multi-user API access
 4. Full tick log / replay per DD-033 (beyond metrics ring buffer)
@@ -1198,8 +1198,8 @@ When completing an implementation task:
 # Related Documents
 
 - `docs/development/CURSOR_IMPLEMENTATION_GUIDE.md`
+- `docs/schemas/GameSaveSnapshotV3.schema.md`
 - `docs/project-management/M8_ECONOMY_SIMULATION_PLAN.md`
-- `docs/architecture/reviews/M8_IMPLEMENTATION_GATE_2_REPORT.md`
 - `docs/decisions/DD-000-decision-index.md`
 - `src/common/readme.md`
 - `src/domain/readme.md`

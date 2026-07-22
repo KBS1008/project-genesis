@@ -12,7 +12,7 @@
 - `docs/project-management/M8_ECONOMY_SIMULATION_PLAN.md`
 - `docs/architecture/reviews/M8_ARCHITECTURE_REVIEW.md`
 - `docs/architecture/reviews/M8_ARCHITECTURE_REVIEW_REPORT.md` (pre-implementation, M8-0)
-- `docs/architecture/decisions/DD-0XX_COMPANY_BRAIN_AND_DECISION_QUEUE.md`
+- `docs/architecture/decisions/DD-037-Company-Brain-and-Decision-Queue.md`
 - `docs/architecture/decisions/DD-018 – Economy & Market Architecture.md`
 - `docs/decisions/DD-033-Savegame-and-Persistence-Strategy.md`
 - `docs/decisions/DD-032-Deterministic-Tick-Processing.md`
@@ -93,7 +93,7 @@ The implementation **extends** existing aggregates and use cases rather than int
 | Market regional statistics | `src/domain/market/MarketRegionalStatistics.ts` | New |
 | Market regional supply aggregator | `src/domain/market/MarketRegionalSupplyAggregator.ts` | New |
 | M8 integration tests | `CompanyEconomySimulation.integration.test.ts`, `CompanySimulationSystem.test.ts`, planning/execution tests | New |
-| ADR (draft/untracked) | `docs/architecture/decisions/DD-0XX_COMPANY_BRAIN_AND_DECISION_QUEUE.md` | New |
+| ADR (draft/untracked) | `docs/architecture/decisions/DD-037-Company-Brain-and-Decision-Queue.md` | New |
 | M8 plan / review docs | `docs/project-management/M8_ECONOMY_SIMULATION_PLAN.md`, review docs | New |
 
 ## Extended (existing systems modified for M8)
@@ -150,7 +150,7 @@ All items listed under **Extended** above. Additionally:
 
 **Notes:**
 
-- Brain is a **separate aggregate** referenced by `companyId`; `Company` remains the business identity aggregate. This matches DD-0XX.
+- Brain is a **separate aggregate** referenced by `companyId`; `Company` remains the business identity aggregate. This matches DD-037.
 - Brain state is **not serialized** in savegames yet (Phase 8 scope).
 
 ---
@@ -251,7 +251,7 @@ All items listed under **Extended** above. Additionally:
 
 **Notes:**
 
-- Execution path matches DD-0XX: Queue → Application Use Cases → Domain → Repositories.
+- Execution path matches DD-037: Queue → Application Use Cases → Domain → Repositories.
 
 ---
 
@@ -328,7 +328,7 @@ Source: `createDefaultSimulationSystems.ts` + `createDefaultSimulationSystems.te
 | Goal ownership | ✅ Stored on brain |
 | Decision queue ownership | ✅ `DecisionQueue` inside brain |
 | Company remains primary business aggregate | ✅ Brain references `companyId`; does not replace `Company` |
-| Brain never mutates other repos directly | ✅ Verified in pipeline and DD-0XX alignment |
+| Brain never mutates other repos directly | ✅ Verified in pipeline and DD-037 alignment |
 | Brain persistence | ❌ Not in savegame (Phase 8) |
 
 ---
@@ -350,7 +350,7 @@ Source: `createDefaultSimulationSystems.ts` + `createDefaultSimulationSystems.te
 
 # Planning Pipeline Review
 
-Matches DD-0XX with these documented deviations:
+Matches DD-037 with these documented deviations:
 
 1. **Strategy evaluation** is folded into `resolveStrategyDefinition()` + analyser weight usage rather than a standalone planner class.
 2. **Knowledge recording** runs before the per-layer goal loop (documented in pipeline orchestrator).
@@ -468,7 +468,7 @@ No O(n³) patterns identified. Scale risk is **multi-company × multi-region** o
 | `IMPLEMENTATION_PROGRESS.md` | ❌ **Stale** — still shows M8 at 0%, 528 tests, last updated 2026-07-19 |
 | `M8_ECONOMY_SIMULATION_PLAN.md` | ✅ Present (untracked) |
 | `M8_ARCHITECTURE_REVIEW_REPORT.md` | ⚠️ Pre-implementation snapshot; superseded by this report for Phases 1–7 |
-| `DD-0XX_COMPANY_BRAIN_AND_DECISION_QUEUE.md` | ✅ Present; placeholder date `YYYY-MM-DD` should be finalized |
+| `DD-037-Company-Brain-and-Decision-Queue.md` | ✅ Present; metadata finalized (2026-07-22) |
 | `Strategy.schema.md` | ✅ Present |
 | Domain schema docs for brain | ❌ Not found (goals/decisions may need schema docs in Phase 9) |
 | `M8_IMPLEMENTATION_REPORT.md` | ❌ Not created (Phase 9 deliverable) |
@@ -513,8 +513,8 @@ No O(n³) patterns identified. Scale risk is **multi-company × multi-region** o
 
 1. **Commit Phase 1–7** as a coherent baseline before persistence work.
 2. **Update `IMPLEMENTATION_PROGRESS.md`** — M8 status, test count (559), implemented modules.
-3. **Finalize DD-0XX metadata** (date, cross-links).
-4. **Define `GameSaveSnapshotV3` contract** — brain fields, decision queue ordering, active strategy, deterministic serialization order (per DD-033).
+3. ~~**Finalize DD-037 metadata** (date, cross-links).~~ Done (2026-07-22).
+4. ~~**Define `GameSaveSnapshotV3` contract**~~ — ✅ `docs/schemas/GameSaveSnapshotV3.schema.md` (2026-07-22)
 5. **Add save/load integration tests** for brain state in Phase 8.
 6. **Wire orphan goals** (`STABILIZE_LIQUIDITY`) or remove from goal planner until decisions exist.
 7. **Plan NPC seeding strategy** — content-driven competitor companies for integration/determinism tests.

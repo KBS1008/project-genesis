@@ -66,5 +66,5 @@ version: 1
 
 # Related Documentation
 
-- `docs/architecture/decisions/DD-0XX_COMPANY_BRAIN_AND_DECISION_QUEUE.md`
+- `docs/architecture/decisions/DD-037-Company-Brain-and-Decision-Queue.md`
 - `docs/project-management/M8_ECONOMY_SIMULATION_PLAN.md`

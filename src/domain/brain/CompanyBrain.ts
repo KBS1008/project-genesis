@@ -6,7 +6,7 @@
  * The company brain transforms observable simulation state into validated
  * decisions. It never mutates domain repositories directly.
  *
- * @see docs/architecture/decisions/DD-0XX_COMPANY_BRAIN_AND_DECISION_QUEUE.md
+ * @see docs/architecture/decisions/DD-037-Company-Brain-and-Decision-Queue.md
  */
 
 import { AggregateRoot } from '../../common/core/AggregateRoot.js';

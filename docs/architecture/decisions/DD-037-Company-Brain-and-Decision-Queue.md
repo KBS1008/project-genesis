@@ -1,8 +1,37 @@
-# DD-0XX – Company Brain & Decision Queue Architecture
+---
+Document-ID: DD-037
+Title: Company Brain & Decision Queue Architecture
+Type: Architecture Decision Record
+Status: Accepted
+Version: 1.0.0
+Created: 2026-07-22
+Last Updated: 2026-07-22
+
+Authors:
+  - Project Genesis Team
+
+Related Documents:
+  - DD-009 – Deterministic Simulation
+  - DD-015 – Static Definitions vs Dynamic State
+  - DD-025 – ECS-Inspired Simulation Architecture
+  - DD-029 – Modular Monolith Architecture
+  - DD-032 – Deterministic Tick Processing
+  - DD-033 – Savegame and Persistence Strategy
+  - docs/schemas/GameSaveSnapshotV3.schema.md
+  - docs/project-management/M8_ECONOMY_SIMULATION_PLAN.md
+
+Tags:
+  - npc-economy
+  - planning
+  - simulation
+  - determinism
+---
+
+# DD-037 – Company Brain & Decision Queue Architecture
 
 **Status:** Accepted
 
-**Date:** YYYY-MM-DD
+**Date:** 2026-07-22
 
 **Authors:** Project Genesis Team
 
@@ -10,12 +39,12 @@
 
 **Related ADRs:**
 
-- DD-009 – Event-Driven Architecture
-- DD-015 – Content Architecture
-- DD-025 – ECS-inspired Simulation
-- DD-029 – Modular Monolith
+- DD-009 – Deterministic Simulation
+- DD-015 – Static Definitions vs Dynamic State
+- DD-025 – ECS-Inspired Simulation Architecture
+- DD-029 – Modular Monolith Architecture
 - DD-032 – Deterministic Tick Processing
-- DD-033 – Savegame Architecture
+- DD-033 – Savegame and Persistence Strategy
 
 ---
 
@@ -257,6 +286,8 @@ The following runtime concepts are owned by the Company:
 - Memory
 - Decision Queue
 
+These components belong to the Company **conceptually**. Whether they are modelled as fields on the aggregate or via tightly coupled, specialised repositories is an implementation detail, provided aggregate boundaries and responsibilities remain unchanged.
+
 The architecture intentionally avoids creating an independent AI aggregate.
 
 Repository boundaries remain unchanged.
@@ -334,6 +365,8 @@ The following runtime state must be persisted:
 - Decision Queue
 
 Transient planning caches shall never be serialized.
+
+**Snapshot contract:** `docs/schemas/GameSaveSnapshotV3.schema.md`
 
 ---
 
@@ -445,13 +478,3 @@ Implementation shall proceed incrementally:
 8. Savegame Integration
 
 No implementation may bypass the established Application Layer.
-
-```
-
----
-
-## Einschätzung
-
-Ich würde diese ADR sogar als **eine der wichtigsten Architekturentscheidungen des gesamten Projekts** einstufen. Sie beantwortet die zentrale Frage, *wie* KI-Unternehmen in die bestehende Architektur integriert werden, ohne parallele Geschäftslogik oder Sonderfälle einzuführen.
-
-Eine kleine Empfehlung würde ich noch ergänzen: Im Abschnitt **"Repository Ownership"** könnte ausdrücklich festgehalten werden, dass die aufgeführten Bestandteile (*Brain, Strategy, Goals, Knowledge, Memory, Decision Queue*) **konzeptionell** der `Company` gehören. Ob sie intern als Felder des Aggregats oder über eng gekoppelte, spezialisierte Repositories verwaltet werden, bleibt eine Implementierungsentscheidung, solange die Aggregate-Grenzen und Verantwortlichkeiten gewahrt bleiben. Das gibt euch mehr Flexibilität, falls Performance- oder Persistenzanforderungen später eine andere technische Umsetzung sinnvoll machen.

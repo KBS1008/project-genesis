@@ -452,7 +452,7 @@ Aligns with M8 plan work packages, adjusted for verified repository gaps and ADR
 
 | ADR                                            | Action                 | Reason                                                                                          |
 | ---------------------------------------------- | ---------------------- | ----------------------------------------------------------------------------------------------- |
-| **New: DD-0XX Company Brain & Decision Queue** | Create                 | Define aggregates, repos, planning vs execution boundary, event set                             |
+| **New: DD-037 Company Brain & Decision Queue** | Create                 | Define aggregates, repos, planning vs execution boundary, event set                             |
 | **DD-018**                                     | Amend or companion ADR | Reconcile regional markets + order-book scope with current instant-trade implementation         |
 | **DD-032**                                     | Clarify amendment      | Insert planning/execution systems into factory order without breaking M6–M7 ordering invariants |
 | **DD-033**                                     | Amend                  | Savegame V3 fields for AI + regional markets + market history                                   |
