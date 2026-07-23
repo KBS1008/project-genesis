@@ -1,8 +1,8 @@
 'use client';
 
-import { DashboardShell } from '@/components/DashboardShell';
+import { GameWorkspaceScreen } from '@/presentation/screens/workspace/GameWorkspaceScreen';
 
-/** M9 dashboard screen — legacy shell wrapped by ApplicationShell in layout. */
+/** Entry screen for the browser game workspace. */
 export function DashboardScreen() {
-  return <DashboardShell />;
+  return <GameWorkspaceScreen />;
 }

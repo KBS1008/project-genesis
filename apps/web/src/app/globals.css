@@ -1,4 +1,5 @@
 @import '../presentation/tokens/design-tokens.css';
 @import '../presentation/primitives/primitives.css';
 @import '../presentation/shell/shell.css';
+@import '../presentation/navigation/navigation.css';
 @import './dashboard.css';

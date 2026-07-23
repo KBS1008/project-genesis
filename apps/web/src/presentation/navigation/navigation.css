@@ -1,0 +1,169 @@
+.pg-primary-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  padding: var(--space-sm);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
+}
+
+.pg-primary-nav-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.25rem;
+  padding: 0.375rem 0.75rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--muted);
+  font-size: var(--text-small);
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  background: transparent;
+}
+
+.pg-primary-nav-link:hover {
+  color: var(--text);
+  background: rgba(37, 99, 235, 0.06);
+}
+
+.pg-primary-nav-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.pg-primary-nav-link.is-active {
+  color: var(--accent);
+  border-color: rgba(37, 99, 235, 0.25);
+  background: rgba(37, 99, 235, 0.08);
+}
+
+.pg-workspace {
+  max-width: var(--shell-max-width);
+  margin: 0 auto;
+  padding: var(--space-lg) var(--space-md) var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.pg-workspace-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.pg-workspace-title-block h1 {
+  margin: 0;
+  font-size: var(--text-display);
+}
+
+.pg-workspace-eyebrow {
+  margin: 0 0 var(--space-xs);
+  color: var(--muted);
+  font-size: var(--text-caption);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.pg-workspace-subtitle {
+  margin: var(--space-xs) 0 0;
+  color: var(--muted);
+  font-size: var(--text-small);
+}
+
+.pg-workspace-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  align-items: center;
+}
+
+.pg-workspace-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.625rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-caption);
+  color: var(--text);
+  background: var(--bg-elevated);
+}
+
+.pg-workspace-pill-live {
+  color: var(--color-success);
+  border-color: rgba(22, 163, 74, 0.35);
+}
+
+.pg-workspace-screen {
+  min-width: 0;
+}
+
+.pg-screen-placeholder {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.pg-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: grid;
+  place-items: center;
+  padding: var(--space-md);
+  background: rgba(17, 24, 39, 0.45);
+}
+
+.pg-dialog {
+  width: min(28rem, 100%);
+  padding: var(--space-lg);
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
+  box-shadow: var(--shadow);
+}
+
+.pg-dialog-title {
+  margin: 0 0 var(--space-sm);
+  font-size: var(--text-h2);
+}
+
+.pg-dialog-message {
+  margin: 0 0 var(--space-lg);
+  color: var(--muted);
+  font-size: var(--text-body);
+}
+
+.pg-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+}
+
+.pg-selection-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding: 0.625rem 0.875rem;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  background: rgba(37, 99, 235, 0.04);
+  font-size: var(--text-small);
+}
+
+.pg-selection-banner button {
+  border: none;
+  background: transparent;
+  color: var(--accent);
+  cursor: pointer;
+  font: inherit;
+}
+
+.pg-selection-banner button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}

@@ -718,7 +718,7 @@ function applyTheme(theme: ThemeMode): void {
 }
 
 /** Interactive browser dashboard wired to the NestJS API. */
-export function DashboardShell() {
+export function DashboardShell({ hideHeader = false }: { readonly hideHeader?: boolean }) {
   const [dashboard, setDashboard] = useState<GameSessionDashboard | null>(null);
   const [tickHistory, setTickHistory] = useState<readonly TickMetricsSnapshot[]>([]);
   const [theme, setTheme] = useState<ThemeMode>('light');
@@ -938,6 +938,7 @@ export function DashboardShell() {
         />
       ) : null}
 
+      {hideHeader ? null : (
       <header className="header">
         <div>
           <p className="eyebrow">Deterministic Economy Simulation</p>
@@ -986,8 +987,39 @@ export function DashboardShell() {
           ) : null}
         </div>
       </header>
+      )}
 
-      <div className="dashboard-body">
+      {hideHeader ? (
+        <div className="header-actions workspace-toolbar">
+          <button
+            type="button"
+            className="btn-secondary mobile-only"
+            aria-expanded={sidebarOpen}
+            aria-controls="dashboard-sidebar"
+            onClick={() => setSidebarOpen((open) => !open)}
+          >
+            Aktionen
+          </button>
+          <button
+            type="button"
+            className="btn-secondary theme-toggle"
+            aria-label={theme === 'light' ? 'Dark Mode aktivieren' : 'Light Mode aktivieren'}
+            onClick={toggleTheme}
+          >
+            {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
+          </button>
+          {dashboard?.energy?.hasDeficit ? (
+            <span
+              className="meta-pill"
+              style={{ color: 'var(--color-warning)', borderColor: 'rgba(245, 158, 11, 0.45)' }}
+            >
+              Energie-Defizit
+            </span>
+          ) : null}
+        </div>
+      ) : null}
+
+      <div className={`dashboard-body${hideHeader ? ' dashboard-body-embedded' : ''}`}>
         <aside
           id="dashboard-sidebar"
           className={`dashboard-sidebar${sidebarOpen ? ' is-open' : ''}`}
