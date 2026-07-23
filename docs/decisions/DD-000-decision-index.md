@@ -83,6 +83,7 @@ Die ADRs dokumentieren alle langfristigen Architekturentscheidungen und bilden g
 | DD-035 | 🚀        | Error Handling Strategy              | Accepted |      |
 | DD-036 | 🚀        | Package Manager Strategy             | Accepted |      |
 | DD-037 | ⚙         | Company Brain & Decision Queue       | Accepted | ⭐   |
+| DD-038 | 🚀        | Presentation Architecture            | Accepted | ⭐   |
 
 ---
 
@@ -134,3 +135,4 @@ Einmal akzeptierte ADRs bleiben Bestandteil der Projekthistorie. Änderungen erf
 | 2.0.0   | 2026-07-03 | Erweiterung um DD-035                                         |
 | 3.0.0   | 2026-07-03 | Überarbeitung mit Kategorien, Core Decisions und Lebenszyklus |
 | 3.1.0   | 2026-07-22 | DD-036 und DD-037 ergänzt                                     |
+| 3.2.0   | 2026-07-23 | DD-038 Presentation Architecture ergänzt                      |

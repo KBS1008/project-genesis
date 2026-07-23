@@ -1,8 +1,6 @@
-'use client';
-
-import { DashboardShell } from '@/components/DashboardShell';
+import { DashboardScreen } from '@/presentation/screens/dashboard/DashboardScreen';
 
 /** Main dashboard page for the browser shell. */
 export default function HomePage() {
-  return <DashboardShell />;
+  return <DashboardScreen />;
 }

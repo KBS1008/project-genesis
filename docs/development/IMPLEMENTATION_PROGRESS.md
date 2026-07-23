@@ -31,7 +31,7 @@ Update this document whenever a meaningful implementation milestone is completed
 | Infrastructure                   | Partial (in-memory repositories incl. **CompanyBrain**, JSON savegames V3 on disk; employees, supply contracts, tick metrics history)   |
 | Application layer                | Implemented (bootstrap, use cases, queries, dashboard facade, tutorial progress)                                                                                      |
 | UI                               | Partial (Next.js dashboard dev shell; M9 Gate 0 audit complete — navigation/screens pending) |
-| M9 User Interface                | 🟡 In Progress (Gate 0 ✅) — see `M9_ARCHITECTURE_REVIEW_REPORT.md` |
+| M9 User Interface                | 🟡 In Progress (Gate 0 ✅ · Phase 1 ✅) — DD-038 accepted |
 | Energy system                    | Partial (balance service, production gating, baseline grid)                                                                                                           |
 | Transport / logistics            | ✅ M6 completed — capacities, route durations, throughput queue (DD-022)                                                                                              |
 | World simulation                 | ✅ M7 completed — regions, map, biomes, cities, regional resources, save V2 (AUD-005)                                                                               |
@@ -42,7 +42,7 @@ Update this document whenever a meaningful implementation milestone is completed
 | M8 NPC Economy                   | ✅ Completed (Gate AUD-006, 2026-07-22) |
 | Phase 1 Core Domain              | ✅ Completed (Gate 2026-07-19) — see `PHASE1_CORE_DOMAIN_REPORT.md`                                                                                                   |
 
-**Tests:** 567 (run `pnpm test` for current count)
+**Tests:** 573 (run `pnpm test` for current count)
 
 ---
 
@@ -61,7 +61,7 @@ Trackable estimate of progress toward **Release 1.0** (`MILESTONE_PLAN.md`).
 | Playable prototype readiness   |    ~85 % | M1–M7 core + M8 planning loop; not a release metric       |
 | Milestones completed           |   7 / 12 | M1, M2, M4, M5, M6, M7, M8                                    |
 | Milestones in progress         |   2 / 12 | M3, M9                                                |
-| Tests                          |      567 | `pnpm test`                                               |
+| Tests                          |      573 | `pnpm test`                                               |
 
 **Primary formula:**
 
@@ -83,7 +83,7 @@ Update deliverable rows when a step ships; set milestone % to the **average of i
 | M6  | Logistics              | ✅ Completed   |      100 |     8,3 % |        8,3 % |
 | M7  | World Simulation       | ✅ Completed   |      100 |     8,3 % |        8,3 % |
 | M8  | NPC Economy            | ✅ Completed   |      100 |     8,3 % |        8,3 % |
-| M9  | User Interface         | 🟡 In Progress |       40 |     8,3 % |        3,3 % |
+| M9  | User Interface         | 🟡 In Progress |       45 |     8,3 % |        3,8 % |
 | M10 | Content Expansion      | ⚪ Planned     |       10 |     8,3 % |        0,8 % |
 | M11 | Polish                 | ⚪ Planned     |        0 |     8,3 % |          0 % |
 | M12 | Release                | ⚪ Planned     |        0 |     8,3 % |          0 % |
@@ -188,18 +188,19 @@ Update deliverable rows when a step ships; set milestone % to the **average of i
 
 All **TD-M8-01 … TD-M8-06** resolved — see `docs/quality/M8_IMPLEMENTATION_REPORT.md` and `TECHNICAL_DEBT_REGISTER.md`.
 
-### M9 – User Interface 🟡 (~40 % · Gate 0 ✅)
+### M9 – User Interface 🟡 (~45 % · Gate 0 ✅ · Phase 1 ✅)
 
 | Deliverable                         |     % | Evidence                                                                 |
 | ----------------------------------- | ----: | ------------------------------------------------------------------------ |
 | Gate 0 architecture review (M9-0)   |     100 | `docs/architecture/reviews/M9_ARCHITECTURE_REVIEW_REPORT.md`             |
-| Dev dashboard pre-work (M4/M5)      |      70 | `apps/web/`, `DashboardShell`, charts, WebSocket, tutorial panel         |
-| Presentation ADR (DD-038)           |       0 | **Next:** required before Phase 1                                        |
-| Navigation / screen IA              |       0 | Single-page dashboard today                                              |
+| Presentation ADR (DD-038)           |     100 | `docs/decisions/DD-038-Presentation-Architecture.md`                     |
+| Presentation foundation (M9-1)      |     100 | `apps/web/src/presentation/` — shell, primitives, notifications, tests |
+| Dev dashboard pre-work (M4/M5)      |      70 | `apps/web/`, legacy `DashboardShell`, charts, WebSocket                  |
+| Navigation / screen IA              |       0 | **Next:** Phase 2                                                         |
 | Simulation controls (pause/speed)   |       0 | Tick only; domain `paused` not exposed to API                            |
 | Save/load UX                        |      20 | Fixed-path save/load buttons; no discovery or confirm flows              |
-| Accessibility baseline              |      10 | Partial ARIA; no automated a11y suite                                    |
-| **Milestone average (gate)**        |  **40** | Gate 0 complete; Phase 1 blocked on DD-038                               |
+| Accessibility baseline              |      20 | Primitives with ARIA; automated a11y suite in Phase 10                   |
+| **Milestone average (gate)**        |  **45** | Phase 1 complete; Phase 2 navigation next                                |
 
 ### M10 – Content Expansion ⚪ (10 %)
 
@@ -1147,8 +1148,8 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Planned Next Steps
 
-1. **M9 Phase 1 — Presentation Foundation:** accept **DD-038** (presentation architecture), add presentation dependency test, refactor shell per `M9_USER_INTERFACE_PLAN.md`
-2. **M9 Phase 2–3:** primary navigation, query adapters, missing read models (simulation status, save metadata)
+1. **M9 Phase 2 — Navigation and UI State:** primary navigation, screen routing, selection state per `M9_USER_INTERFACE_PLAN.md`
+2. **M9 Phase 3:** query adapters, missing read models (simulation status, save metadata)
 3. Session/auth model for multi-user API access
 4. Full tick log / replay per DD-033 (beyond metrics ring buffer)
 
@@ -1156,7 +1157,8 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Recently Completed (2026-07)
 
-- **M9 Gate 0 — Architecture Review:** audit of web/API/`GameSession`; verdict **ARCHITECTURE CHANGES REQUIRED**; retain Next.js + NestJS; ADR DD-038 required before Phase 1 (`docs/architecture/reviews/M9_ARCHITECTURE_REVIEW_REPORT.md`)
+- **M9 Phase 1 — Presentation Foundation:** DD-038 accepted; `apps/web/src/presentation/` shell, tokens, primitives, notifications, API adapters, dependency rule test, UI test harness (**573 tests**)
+- **M9 Gate 0 — Architecture Review:** audit of web/API/`GameSession`; verdict **ARCHITECTURE CHANGES REQUIRED**; retain Next.js + NestJS (`docs/architecture/reviews/M9_ARCHITECTURE_REVIEW_REPORT.md`)
 - **M8 NPC Economy completed (AUD-006):** Phase 9 closed TD-M8-01 … TD-M8-06 (liquidity/cost goals, cross-region `EXPAND_REGION`, NPC seeding, removed legacy supply aggregator); gate report `docs/quality/M8_IMPLEMENTATION_REPORT.md`; **567 tests**
 - **M8 NPC Economy Phase 8 — Savegame V3:** Reverted V1 market type pollution; `GameSaveSnapshotV3` with `companyBrains[]` + `regionalMarkets[]`; V1→V2→V3 migration chain; determinism-after-load tests
 - **M7 World Simulation completed (AUD-005):** regions, map, biomes, cities, regional resources, cross-region transport, save V2 + migration, world queries/API (`docs/quality/M7_WORLD_SIMULATION_GATE_REVIEW_REPORT.md`)
