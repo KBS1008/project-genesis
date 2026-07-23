@@ -130,4 +130,29 @@ describe('GameController (NestJS)', () => {
     expect(dashboardAfterAssign.body.data.employees[0].assignedBuildingId).toBe(activeBuilding.id);
     expect(dashboardAfterAssign.body.data.kpis.assignedEmployeeCount).toBe(1);
   });
+
+  it('GET /api/session/status and /api/simulation/status expose authoritative read models', async () => {
+    await request(app.getHttpServer()).post('/api/session/new').send({ name: 'Status Test Corp' });
+
+    const sessionResponse = await request(app.getHttpServer()).get('/api/session/status');
+    const simulationResponse = await request(app.getHttpServer()).get('/api/simulation/status');
+
+    expect(sessionResponse.status).toBe(200);
+    expect(sessionResponse.body.data.hasActiveSession).toBe(true);
+    expect(sessionResponse.body.data.companyName).toBeTruthy();
+
+    expect(simulationResponse.status).toBe(200);
+    expect(simulationResponse.body.data.hasActiveSession).toBe(true);
+    expect(typeof simulationResponse.body.data.tickNumber).toBe('number');
+    expect(typeof simulationResponse.body.data.isPaused).toBe('boolean');
+  });
+
+  it('GET /api/world/regions returns bootstrapped regions', async () => {
+    const response = await request(app.getHttpServer()).get('/api/world/regions');
+
+    expect(response.status).toBe(200);
+    expect(response.body.ok).toBe(true);
+    expect(Array.isArray(response.body.data)).toBe(true);
+    expect(response.body.data.length).toBeGreaterThan(0);
+  });
 });

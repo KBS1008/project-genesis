@@ -163,7 +163,40 @@
   font: inherit;
 }
 
-.pg-selection-banner button:focus-visible {
+.pg-query-table {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.pg-query-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-sm);
+  align-items: center;
+  padding: 0.625rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-elevated);
+  text-align: left;
+  font: inherit;
+  color: inherit;
+}
+
+button.pg-query-row {
+  cursor: pointer;
+}
+
+button.pg-query-row:hover {
+  border-color: var(--accent);
+}
+
+button.pg-query-row:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
+}
+
+.pg-query-header {
+  background: rgba(37, 99, 235, 0.05);
+  font-weight: 600;
 }

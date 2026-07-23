@@ -6,39 +6,65 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { connectDashboardSocket } from '@/presentation/adapters/api/dashboard-socket';
-import { fetchDashboard, type GameSessionDashboard } from '@/presentation/adapters/api/client';
+import type { GameSessionDashboard } from '@/presentation/adapters/api/client';
+import type { RegionDto } from '@/presentation/adapters/api/query-client';
+import { loadWorkspaceQueries } from '@/presentation/adapters/queries/load-workspace-queries';
 import type { PrimaryScreenId } from '@/presentation/navigation/primary-screens';
 import { translatePresentationError } from '@/presentation/notifications/translatePresentationError';
 import { useNotifications } from '@/presentation/notifications/NotificationProvider';
+import { buildEntityCatalogRegionIds } from '@/presentation/adapters/mappers/workspace-view-mappers';
+import type { CompanyDashboardViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
+import { EMPTY_COMPANY_DASHBOARD_VIEW_DATA } from '@/presentation/adapters/view-data/company-dashboard-view-data';
+import type { WorkspaceViewData } from '@/presentation/adapters/view-data/workspace-view-data';
 import {
   buildEntityCatalogFromDashboard,
   buildNavigationQueryString,
-  buildSessionSnapshots,
   parseNavigationState,
   recoverInvalidEntitySelection,
-  type ApplicationSessionSnapshot,
   type EntitySelection,
   type NavigationState,
-  type SimulationStatusSnapshot,
 } from './navigation-state';
 
 export type GameWorkspaceContextValue = {
   readonly navigation: NavigationState;
-  readonly session: ApplicationSessionSnapshot;
-  readonly simulation: SimulationStatusSnapshot;
-  readonly dashboard: GameSessionDashboard | null;
+  readonly viewData: WorkspaceViewData;
+  readonly companyViewData: CompanyDashboardViewData;
+  readonly regions: readonly RegionDto[];
   readonly isLoading: boolean;
+  readonly isBusy: boolean;
   readonly isLiveConnected: boolean;
   readonly navigateToScreen: (screen: PrimaryScreenId) => void;
   readonly selectEntity: (selection: EntitySelection) => void;
   readonly clearEntitySelection: () => void;
   readonly refreshSession: () => Promise<void>;
+  readonly runCommand: (action: () => Promise<void>, successMessage: string) => Promise<void>;
 };
+
+const EMPTY_VIEW_DATA: WorkspaceViewData = Object.freeze({
+  session: {
+    hasGame: false,
+    companyId: null,
+    companyName: null,
+    playerId: null,
+    savePath: 'saves/browser-session.json',
+  },
+  simulation: {
+    tickNumber: null,
+    simulationTime: null,
+    isPaused: false,
+    speedMultiplier: 1,
+    hasActiveSession: false,
+    speedLabel: '×1',
+  },
+  world: null,
+  saves: Object.freeze([]),
+});
 
 const GameWorkspaceContext = createContext<GameWorkspaceContextValue | null>(null);
 
@@ -55,9 +81,19 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
     [searchKey, searchParams],
   );
 
-  const [dashboard, setDashboard] = useState<GameSessionDashboard | null>(null);
+  const [sessionDashboard, setSessionDashboard] = useState<GameSessionDashboard | null>(null);
+  const [viewData, setViewData] = useState<WorkspaceViewData>(EMPTY_VIEW_DATA);
+  const [companyViewData, setCompanyViewData] =
+    useState<CompanyDashboardViewData>(EMPTY_COMPANY_DASHBOARD_VIEW_DATA);
+  const [regions, setRegions] = useState<readonly RegionDto[]>(Object.freeze([]));
   const [isLoading, setIsLoading] = useState(true);
+  const [isBusy, setIsBusy] = useState(false);
   const [isLiveConnected, setIsLiveConnected] = useState(false);
+  const isBusyRef = useRef(false);
+
+  useEffect(() => {
+    isBusyRef.current = isBusy;
+  }, [isBusy]);
 
   const replaceNavigation = useCallback(
     (nextNavigation: NavigationState) => {
@@ -68,9 +104,32 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
   );
 
   const refreshSession = useCallback(async (): Promise<void> => {
-    const nextDashboard = await fetchDashboard();
-    setDashboard(nextDashboard);
+    const result = await loadWorkspaceQueries();
+    setSessionDashboard(result.dashboard);
+    setViewData(result.viewData);
+    setCompanyViewData(result.companyViewData);
+    setRegions(result.regions);
   }, []);
+
+  const runCommand = useCallback(
+    async (action: () => Promise<void>, successMessage: string): Promise<void> => {
+      try {
+        setIsBusy(true);
+        showNotification({ tone: 'info', message: 'Bitte warten…' });
+        await action();
+        await refreshSession();
+        showNotification({ tone: 'success', message: successMessage });
+      } catch (error: unknown) {
+        showNotification({
+          tone: 'error',
+          message: translatePresentationError(error),
+        });
+      } finally {
+        setIsBusy(false);
+      }
+    },
+    [refreshSession, showNotification],
+  );
 
   useEffect(() => {
     let active = true;
@@ -99,11 +158,14 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
   }, [refreshSession, showNotification]);
 
   useEffect(() => {
-    if (dashboard === null) {
+    if (sessionDashboard === null) {
       return;
     }
 
-    const catalog = buildEntityCatalogFromDashboard(dashboard);
+    const catalog = {
+      ...buildEntityCatalogFromDashboard(sessionDashboard),
+      regionIds: buildEntityCatalogRegionIds(regions),
+    };
     const recoveredNavigation = recoverInvalidEntitySelection(navigation, catalog);
 
     if (
@@ -114,11 +176,15 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
     ) {
       replaceNavigation(recoveredNavigation);
     }
-  }, [dashboard, navigation, replaceNavigation]);
+  }, [sessionDashboard, navigation, regions, replaceNavigation]);
 
   useEffect(() => {
     const socket = connectDashboardSocket(
       () => {
+        if (isBusyRef.current) {
+          return;
+        }
+
         void refreshSession().catch((error: unknown) => {
           showNotification({
             tone: 'error',
@@ -163,54 +229,34 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
     });
   }, [navigation, replaceNavigation]);
 
-  const snapshots = useMemo(
-    () =>
-      dashboard === null
-        ? {
-            session: {
-              hasGame: false,
-              companyId: null,
-              companyName: null,
-              tickNumber: null,
-              simulationTime: null,
-              availableCash: null,
-            },
-            simulation: {
-              tickNumber: null,
-              simulationTime: null,
-              isPaused: false,
-              speedMultiplier: 1,
-              hasActiveSession: false,
-            },
-          }
-        : buildSessionSnapshots(dashboard),
-    [dashboard],
-  );
-
   const value = useMemo<GameWorkspaceContextValue>(
     () => ({
       navigation,
-      session: snapshots.session,
-      simulation: snapshots.simulation,
-      dashboard,
+      viewData,
+      companyViewData,
+      regions,
       isLoading,
+      isBusy,
       isLiveConnected,
       navigateToScreen,
       selectEntity,
       clearEntitySelection,
       refreshSession,
+      runCommand,
     }),
     [
       navigation,
-      snapshots.session,
-      snapshots.simulation,
-      dashboard,
+      viewData,
+      companyViewData,
+      regions,
       isLoading,
+      isBusy,
       isLiveConnected,
       navigateToScreen,
       selectEntity,
       clearEntitySelection,
       refreshSession,
+      runCommand,
     ],
   );
 

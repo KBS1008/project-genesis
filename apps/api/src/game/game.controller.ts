@@ -106,6 +106,12 @@ export class GameController {
     return toApiSuccess(unwrapResult(this.gameSessionService.getSession().getWorldOverview()));
   }
 
+  /** Returns all bootstrapped regions. */
+  @Get('world/regions')
+  listRegions() {
+    return toApiSuccess(unwrapResult(this.gameSessionService.getSession().listRegions()));
+  }
+
   /** Returns one region with resources and cities. */
   @Get('world/regions/:regionId')
   getRegionDetails(@Param('regionId') regionId: string) {
@@ -115,6 +121,113 @@ export class GameController {
 
     return toApiSuccess(
       unwrapResult(this.gameSessionService.getSession().getRegionDetails(regionId)),
+    );
+  }
+
+  /** Returns the active world map layout. */
+  @Get('world/map')
+  getWorldMap() {
+    return toApiSuccess(unwrapResult(this.gameSessionService.getSession().getWorldMap()));
+  }
+
+  /** Returns cities, optionally filtered by region. */
+  @Get('world/cities')
+  listCities(@Query('regionId') regionId?: string) {
+    return toApiSuccess(unwrapResult(this.gameSessionService.getSession().listCities(regionId)));
+  }
+
+  /** Returns browser session status. */
+  @Get('session/status')
+  getSessionStatus() {
+    return toApiSuccess(unwrapResult(this.gameSessionService.getSession().getSessionStatus()));
+  }
+
+  /** Returns simulation execution status. */
+  @Get('simulation/status')
+  getSimulationStatus() {
+    return toApiSuccess(unwrapResult(this.gameSessionService.getSession().getSimulationStatus()));
+  }
+
+  /** Lists savegame metadata in the configured save directory. */
+  @Get('saves')
+  async listSavegames() {
+    const result = await this.gameSessionService.getSession().listSavegames();
+    return toApiSuccess(unwrapResult(result));
+  }
+
+  /** Returns the active company read model. */
+  @Get('company')
+  getCompany() {
+    return toApiSuccess(unwrapResult(this.gameSessionService.getSession().getCompany()));
+  }
+
+  /** Returns buildings for the active company. */
+  @Get('buildings')
+  listBuildings() {
+    return toApiSuccess(unwrapResult(this.gameSessionService.getSession().listBuildings()));
+  }
+
+  /** Returns inventory for the active company. */
+  @Get('inventory')
+  getInventory() {
+    return toApiSuccess(unwrapResult(this.gameSessionService.getSession().getInventory()));
+  }
+
+  /** Returns finance data for the active company. */
+  @Get('finance')
+  getFinance() {
+    return toApiSuccess(unwrapResult(this.gameSessionService.getSession().getFinance()));
+  }
+
+  /** Returns finance transactions for the active company. */
+  @Get('finance/transactions')
+  listFinanceTransactions() {
+    return toApiSuccess(
+      unwrapResult(this.gameSessionService.getSession().listFinanceTransactions()),
+    );
+  }
+
+  /** Returns market prices for the active regional market. */
+  @Get('markets/prices')
+  getMarketPrices(@Query('regionId') regionId?: string) {
+    return toApiSuccess(unwrapResult(this.gameSessionService.getSession().getMarketPrices(regionId)));
+  }
+
+  /** Returns production jobs for the active company. */
+  @Get('production/jobs')
+  listProductionJobs() {
+    return toApiSuccess(unwrapResult(this.gameSessionService.getSession().listProductionJobs()));
+  }
+
+  /** Returns research jobs for the active company. */
+  @Get('research/jobs')
+  listResearchJobs() {
+    return toApiSuccess(unwrapResult(this.gameSessionService.getSession().listResearchJobs()));
+  }
+
+  /** Returns transport orders for the active company. */
+  @Get('transport/orders')
+  listTransportOrders() {
+    return toApiSuccess(unwrapResult(this.gameSessionService.getSession().listTransportOrders()));
+  }
+
+  /** Returns employees for the active company. */
+  @Get('employees')
+  listEmployees() {
+    return toApiSuccess(unwrapResult(this.gameSessionService.getSession().listEmployees()));
+  }
+
+  /** Returns player-visible event log entries. */
+  @Get('events/log')
+  getEventLog(@Query('limit') limit?: string) {
+    const parsedLimit = limit === undefined ? undefined : Number.parseInt(limit, 10);
+
+    if (limit !== undefined && (!Number.isInteger(parsedLimit) || parsedLimit! < 1)) {
+      throw new BadRequestException('limit must be a positive integer.');
+    }
+
+    return toApiSuccess(
+      unwrapResult(this.gameSessionService.getSession().getEventLog(parsedLimit)),
     );
   }
 

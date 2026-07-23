@@ -28,8 +28,10 @@ function EntitySelectionBanner() {
 }
 
 function WorkspaceHeader() {
-  const { navigation, session, simulation, isLiveConnected } = useGameWorkspace();
+  const { navigation, viewData, companyViewData, isLiveConnected } = useGameWorkspace();
   const screenLabel = labelPrimaryScreen(navigation.screen);
+  const { session, simulation } = viewData;
+  const availableCashLabel = companyViewData.kpis?.availableCashLabel ?? null;
 
   return (
     <header className="pg-workspace-header">
@@ -38,22 +40,16 @@ function WorkspaceHeader() {
         <h1>{session.companyName ?? 'Project Genesis'}</h1>
         <p className="pg-workspace-subtitle">
           {session.hasGame
-            ? `Tick ${session.tickNumber ?? '—'} · Simulationszeit ${session.simulationTime ?? '—'}`
+            ? `Tick ${simulation.tickNumber ?? '—'} · Simulationszeit ${simulation.simulationTime ?? '—'}`
             : 'Starten Sie eine Session über das Unternehmens-Dashboard.'}
         </p>
       </div>
       <div className="pg-workspace-meta">
         {isLiveConnected ? <span className="pg-workspace-pill pg-workspace-pill-live">Live</span> : null}
-        {session.availableCash !== null ? (
-          <span className="pg-workspace-pill">
-            Verfügbar: {session.availableCash.toLocaleString('de-DE')} GC
-          </span>
+        {availableCashLabel !== null ? (
+          <span className="pg-workspace-pill">Verfügbar: {availableCashLabel}</span>
         ) : null}
-        {simulation.isPaused ? (
-          <span className="pg-workspace-pill">Pausiert</span>
-        ) : (
-          <span className="pg-workspace-pill">Geschwindigkeit ×{simulation.speedMultiplier}</span>
-        )}
+        <span className="pg-workspace-pill">{simulation.speedLabel}</span>
       </div>
     </header>
   );

@@ -53,6 +53,11 @@ export class SimulationEngine {
     this.#eventQueue = new EventQueue();
   }
 
+  /** Returns the configured tick duration in simulation time units. */
+  get tickDuration(): number {
+    return this.#tickDuration;
+  }
+
   /** Returns the current simulation execution state. */
   get state(): SimulationState {
     return this.#state;

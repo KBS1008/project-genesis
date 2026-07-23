@@ -28,6 +28,14 @@ import { ListFinanceTransactionsQueryHandler } from '../queries/ListFinanceTrans
 import { GetMarketPricesQueryHandler } from '../queries/GetMarketPricesQueryHandler.js';
 import { GetWorldOverviewQueryHandler } from '../queries/GetWorldOverviewQueryHandler.js';
 import { GetRegionDetailsQueryHandler } from '../queries/GetRegionDetailsQueryHandler.js';
+import { ListRegionsQueryHandler } from '../queries/ListRegionsQueryHandler.js';
+import { GetWorldMapQueryHandler } from '../queries/GetWorldMapQueryHandler.js';
+import { ListCitiesQueryHandler } from '../queries/ListCitiesQueryHandler.js';
+import { GetSessionStatusQueryHandler } from '../queries/GetSessionStatusQueryHandler.js';
+import { GetSimulationStatusQueryHandler } from '../queries/GetSimulationStatusQueryHandler.js';
+import { ListSavegamesQueryHandler } from '../queries/ListSavegamesQueryHandler.js';
+import { GetEventLogQueryHandler } from '../queries/GetEventLogQueryHandler.js';
+import path from 'node:path';
 import { createCompanyId } from '../../domain/company/Company.js';
 import { ProductionJobStatus } from '../../domain/production/ProductionJobStatus.js';
 import { TransportOrderStatus } from '../../domain/transport/TransportOrderStatus.js';
@@ -44,6 +52,18 @@ import { GameSessionDashboardBuilder } from './GameSessionDashboardBuilder.js';
 import type { DashboardTickHistory, TickHistoryQuery } from '../read-models/TickMetricsSnapshot.js';
 import type { WorldOverviewReadModel } from '../read-models/WorldOverviewReadModel.js';
 import type { RegionDetailsReadModel } from '../read-models/RegionDetailsReadModel.js';
+import type { RegionReadModel } from '../read-models/RegionReadModel.js';
+import type { WorldMapReadModel } from '../read-models/WorldMapReadModel.js';
+import type { CityReadModel } from '../read-models/CityReadModel.js';
+import type { SessionStatusReadModel } from '../read-models/SessionStatusReadModel.js';
+import type { SimulationStatusReadModel } from '../read-models/SimulationStatusReadModel.js';
+import type { SaveMetadataReadModel } from '../read-models/SaveMetadataReadModel.js';
+import type { EventLogEntryReadModel } from '../read-models/EventLogEntryReadModel.js';
+import type { CompanyReadModel } from '../read-models/CompanyReadModel.js';
+import type { InventoryReadModel } from '../read-models/InventoryReadModel.js';
+import type { FinanceReadModel } from '../read-models/FinanceReadModel.js';
+import type { FinanceTransactionReadModel } from '../read-models/FinanceTransactionReadModel.js';
+import type { MarketPriceReadModel } from '../read-models/MarketPriceReadModel.js';
 
 /** Options for creating a {@link GameSession}. */
 export type CreateGameSessionOptions = {
@@ -119,6 +139,13 @@ export class GameSession {
   #getMarketPrices!: GetMarketPricesQueryHandler;
   #getWorldOverview!: GetWorldOverviewQueryHandler;
   #getRegionDetails!: GetRegionDetailsQueryHandler;
+  #listRegions!: ListRegionsQueryHandler;
+  #getWorldMap!: GetWorldMapQueryHandler;
+  #listCities!: ListCitiesQueryHandler;
+  #getSessionStatus!: GetSessionStatusQueryHandler;
+  #getSimulationStatus!: GetSimulationStatusQueryHandler;
+  #listSavegames!: ListSavegamesQueryHandler;
+  #getEventLog!: GetEventLogQueryHandler;
   #dashboardBuilder!: GameSessionDashboardBuilder;
   readonly #gameContentRoot: string;
   readonly #savePath: string;
@@ -329,6 +356,182 @@ export class GameSession {
   /** Returns one region with resources and cities. */
   getRegionDetails(regionId: string): Result<RegionDetailsReadModel, ValidationError> {
     return this.#getRegionDetails.execute({ regionId });
+  }
+
+  /** Returns all bootstrapped regions. */
+  listRegions(): Result<readonly RegionReadModel[], ValidationError> {
+    return this.#listRegions.execute();
+  }
+
+  /** Returns the active world map layout. */
+  getWorldMap(): Result<WorldMapReadModel, ValidationError> {
+    const overviewResult = this.#getWorldOverview.execute();
+
+    if (!overviewResult.ok) {
+      return Result.fail(overviewResult.error);
+    }
+
+    return this.#getWorldMap.execute({ mapId: overviewResult.value.defaultMapId });
+  }
+
+  /** Returns cities, optionally filtered by region. */
+  listCities(regionId?: string): Result<readonly CityReadModel[], ValidationError> {
+    return this.#listCities.execute(regionId === undefined ? {} : { regionId });
+  }
+
+  /** Returns browser session status for the active company. */
+  getSessionStatus(): Result<SessionStatusReadModel, ValidationError> {
+    return this.#getSessionStatus.execute({ savePath: this.#savePath });
+  }
+
+  /** Returns current simulation execution status. */
+  getSimulationStatus(): Result<SimulationStatusReadModel, ValidationError> {
+    const sessionResult = this.getSessionStatus();
+
+    if (!sessionResult.ok) {
+      return Result.fail(sessionResult.error);
+    }
+
+    return this.#getSimulationStatus.execute({
+      hasActiveSession: sessionResult.value.hasActiveSession,
+    });
+  }
+
+  /** Lists savegame metadata in the configured save directory. */
+  listSavegames(): Promise<Result<readonly SaveMetadataReadModel[], PersistenceError>> {
+    return this.#listSavegames.execute({ directory: path.dirname(this.#savePath) });
+  }
+
+  /** Returns the active company read model. */
+  getCompany(): Result<CompanyReadModel | null, ValidationError> {
+    const companyId = this.#activeCompanyId;
+
+    if (companyId === undefined) {
+      return Result.ok(null);
+    }
+
+    return this.#getCompany.execute({ companyId });
+  }
+
+  /** Returns buildings for the active company. */
+  listBuildings(): Result<readonly BuildingReadModel[], ValidationError> {
+    const companyId = this.#activeCompanyId;
+
+    if (companyId === undefined) {
+      return Result.ok(Object.freeze([]));
+    }
+
+    return this.#listBuildings.execute({ companyId });
+  }
+
+  /** Returns inventory for the active company. */
+  getInventory(): Result<InventoryReadModel | null, ValidationError> {
+    const companyId = this.#activeCompanyId;
+
+    if (companyId === undefined) {
+      return Result.ok(null);
+    }
+
+    return this.#getInventory.execute({ companyId });
+  }
+
+  /** Returns finance account data for the active company. */
+  getFinance(): Result<FinanceReadModel | null, ValidationError> {
+    const companyId = this.#activeCompanyId;
+
+    if (companyId === undefined) {
+      return Result.ok(null);
+    }
+
+    return this.#getFinance.execute({ companyId });
+  }
+
+  /** Returns finance transactions for the active company. */
+  listFinanceTransactions(): Result<readonly FinanceTransactionReadModel[], ValidationError> {
+    const companyId = this.#activeCompanyId;
+
+    if (companyId === undefined) {
+      return Result.ok(Object.freeze([]));
+    }
+
+    return this.#listFinanceTransactions.execute({ companyId });
+  }
+
+  /** Returns market prices for the active regional market. */
+  getMarketPrices(regionId?: string): Result<readonly MarketPriceReadModel[], ValidationError> {
+    return this.#getMarketPrices.execute(regionId === undefined ? {} : { regionId });
+  }
+
+  /** Returns production jobs for the active company. */
+  listProductionJobs(): Result<readonly ProductionJobSessionReadModel[], ValidationError> {
+    const companyId = this.#activeCompanyId;
+
+    if (companyId === undefined) {
+      return Result.ok(Object.freeze([]));
+    }
+
+    return Result.ok(Object.freeze(this.#readProductionJobs(companyId)));
+  }
+
+  /** Returns research jobs for the active company. */
+  listResearchJobs(): Result<readonly ResearchJobSessionReadModel[], ValidationError> {
+    const companyId = this.#activeCompanyId;
+
+    if (companyId === undefined) {
+      return Result.ok(Object.freeze([]));
+    }
+
+    return Result.ok(Object.freeze(this.#readResearchJobs(companyId)));
+  }
+
+  /** Returns transport orders for the active company. */
+  listTransportOrders(): Result<readonly TransportOrderSessionReadModel[], ValidationError> {
+    const companyId = this.#activeCompanyId;
+
+    if (companyId === undefined) {
+      return Result.ok(Object.freeze([]));
+    }
+
+    const buildingsResult = this.#listBuildings.execute({ companyId });
+
+    if (!buildingsResult.ok) {
+      return Result.fail(buildingsResult.error);
+    }
+
+    const productionJobs = this.#readProductionJobs(companyId);
+
+    return Result.ok(
+      Object.freeze(
+        this.#readTransportOrders(companyId, buildingsResult.value, productionJobs),
+      ),
+    );
+  }
+
+  /** Returns employees for the active company. */
+  listEmployees(): Result<readonly EmployeeSessionReadModel[], ValidationError> {
+    const companyId = this.#activeCompanyId;
+
+    if (companyId === undefined) {
+      return Result.ok(Object.freeze([]));
+    }
+
+    const buildingsResult = this.#listBuildings.execute({ companyId });
+
+    if (!buildingsResult.ok) {
+      return Result.fail(buildingsResult.error);
+    }
+
+    return Result.ok(Object.freeze(this.#readEmployees(companyId, buildingsResult.value)));
+  }
+
+  /** Returns player-visible event log entries. */
+  getEventLog(limit?: number): Result<readonly EventLogEntryReadModel[], ValidationError> {
+    const companyId = this.#activeCompanyId;
+
+    return this.#getEventLog.execute({
+      ...(companyId === undefined ? {} : { companyId }),
+      ...(limit === undefined ? {} : { limit }),
+    });
   }
 
   /** Advances the simulation by one or more ticks. */
@@ -552,6 +755,13 @@ export class GameSession {
     this.#getMarketPrices = new GetMarketPricesQueryHandler(this.#context);
     this.#getWorldOverview = new GetWorldOverviewQueryHandler(this.#context);
     this.#getRegionDetails = new GetRegionDetailsQueryHandler(this.#context);
+    this.#listRegions = new ListRegionsQueryHandler(this.#context);
+    this.#getWorldMap = new GetWorldMapQueryHandler(this.#context);
+    this.#listCities = new ListCitiesQueryHandler(this.#context);
+    this.#getSessionStatus = new GetSessionStatusQueryHandler(this.#context);
+    this.#getSimulationStatus = new GetSimulationStatusQueryHandler(this.#context);
+    this.#listSavegames = new ListSavegamesQueryHandler(this.#context);
+    this.#getEventLog = new GetEventLogQueryHandler();
     this.#dashboardBuilder = new GameSessionDashboardBuilder(
       this.#context,
       this.#context.energyBalanceService,
