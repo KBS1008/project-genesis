@@ -87,13 +87,19 @@ function mapEntityCatalog(dashboard: GameSessionDashboard): EntityCatalogViewDat
   });
 }
 
-function mapBuildingRow(building: BuildingReadModel, labels: ContentLabelsViewData): BuildingRowViewData {
+function mapBuildingRow(
+  building: BuildingReadModel,
+  labels: ContentLabelsViewData,
+  regionNames: ReadonlyMap<string, string> = new Map(),
+): BuildingRowViewData {
   return Object.freeze({
     id: building.id,
     name: building.name,
     buildingTypeLabel: labels.building(building.buildingTypeId),
     statusLabel: building.status,
     positionLabel: `${building.x}, ${building.y}`,
+    regionId: building.regionId,
+    regionLabel: regionNames.get(building.regionId) ?? building.regionId,
     isUnderConstruction: building.status === 'UNDER_CONSTRUCTION',
     constructionProgressPercent: building.constructionProgress,
   });
@@ -102,6 +108,7 @@ function mapBuildingRow(building: BuildingReadModel, labels: ContentLabelsViewDa
 export function mapBuildingListRow(
   building: BuildingReadModel,
   labels: ContentLabelsViewData,
+  regionNames: ReadonlyMap<string, string> = new Map(),
 ): BuildingListRowViewData {
   return Object.freeze({
     id: building.id,
@@ -109,6 +116,8 @@ export function mapBuildingListRow(
     buildingTypeLabel: labels.building(building.buildingTypeId),
     statusLabel: building.status,
     positionLabel: `${building.x}, ${building.y}`,
+    regionId: building.regionId,
+    regionLabel: regionNames.get(building.regionId) ?? building.regionId,
   });
 }
 

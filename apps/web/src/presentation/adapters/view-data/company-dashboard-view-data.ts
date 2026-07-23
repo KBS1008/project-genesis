@@ -69,6 +69,8 @@ export type BuildingRowViewData = {
   readonly buildingTypeLabel: string;
   readonly statusLabel: string;
   readonly positionLabel: string;
+  readonly regionId: string;
+  readonly regionLabel: string;
   readonly isUnderConstruction: boolean;
   readonly constructionProgressPercent: number;
 };
@@ -79,6 +81,8 @@ export type BuildingListRowViewData = {
   readonly buildingTypeLabel: string;
   readonly statusLabel: string;
   readonly positionLabel: string;
+  readonly regionId: string;
+  readonly regionLabel: string;
 };
 
 export type EmployeeRowViewData = {

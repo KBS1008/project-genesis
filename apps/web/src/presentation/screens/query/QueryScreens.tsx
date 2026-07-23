@@ -22,107 +22,38 @@ import {
   fetchTransportOrders,
 } from '@/presentation/adapters/api/query-client';
 import type { BuildingListRowViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
-import type { JobRowViewData, MarketRowViewData, FinanceRowViewData } from '@/presentation/adapters/view-data/workspace-view-data';
-import { useEffect, useState } from 'react';
-
-function QueryRows({
-  rows,
-  columns,
-}: {
-  readonly rows: readonly { readonly id: string; readonly cells: readonly string[] }[];
-  readonly columns: readonly string[];
-}) {
-  if (rows.length === 0) {
-    return <EmptyState title="Keine Daten vorhanden." />;
-  }
-
-  return (
-    <div className="pg-query-table" role="table" aria-label="Abfrageergebnisse">
-      <div className="pg-query-row pg-query-header" role="row">
-        {columns.map((column) => (
-          <span key={column} role="columnheader">
-            {column}
-          </span>
-        ))}
-      </div>
-      {rows.map((row) => (
-        <div key={row.id} className="pg-query-row" role="row">
-          {row.cells.map((cell, index) => (
-            <span key={`${row.id}-${index}`} role="cell">
-              {cell}
-            </span>
-          ))}
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function useScreenQuery<T>(queryKey: string, loader: () => Promise<T>, enabled: boolean): {
-  readonly data: T | null;
-  readonly isLoading: boolean;
-} {
-  const [data, setData] = useState<T | null>(null);
-  const [isLoading, setIsLoading] = useState(enabled);
-
-  useEffect(() => {
-    if (!enabled) {
-      setData(null);
-      setIsLoading(false);
-      return;
-    }
-
-    let active = true;
-    setIsLoading(true);
-
-    void loader()
-      .then((result) => {
-        if (active) {
-          setData(result);
-        }
-      })
-      .finally(() => {
-        if (active) {
-          setIsLoading(false);
-        }
-      });
-
-    return () => {
-      active = false;
-    };
-  }, [queryKey, enabled]);
-
-  return { data, isLoading };
-}
+import type { FinanceRowViewData, JobRowViewData, MarketRowViewData } from '@/presentation/adapters/view-data/workspace-view-data';
+import { useScreenQuery } from '@/presentation/hooks/useScreenQuery';
+import { QueryRows } from '@/presentation/screens/shared/QueryRows';
+import { ScreenQueryFrame } from '@/presentation/screens/shared/ScreenQueryFrame';
 
 /** Markets screen consuming dedicated market price queries. */
 export function MarketsScreen() {
   const { viewData, companyViewData } = useGameWorkspace();
   const names = useMemo(() => buildNameResolver(companyViewData.labels), [companyViewData.labels]);
-  const { data, isLoading } = useScreenQuery(
+  const { data, isLoading, errorMessage } = useScreenQuery(
     'markets',
     () => fetchMarketPrices().then((prices) => mapMarketRowsViewData(prices, names.resource)),
     viewData.session.hasGame,
   );
 
-  if (!viewData.session.hasGame) {
-    return <EmptyState title="Keine Session aktiv" hint="Starten Sie ein Spiel über das Hauptmenü." />;
-  }
-
-  if (isLoading || data === null) {
-    return <EmptyState title="Marktdaten werden geladen…" />;
-  }
-
   return (
-    <Card title="Märkte">
-      <QueryRows
-        columns={['Ressource', 'Preis', 'Trend', 'Druck']}
-        rows={data.map((row: MarketRowViewData) => ({
-          id: row.resourceId,
-          cells: [row.resourceLabel, row.lastPriceLabel, row.trendLabel, row.pressureLabel],
-        }))}
-      />
-    </Card>
+    <ScreenQueryFrame
+      hasGame={viewData.session.hasGame}
+      isLoading={isLoading}
+      errorMessage={errorMessage}
+      loadingLabel="Marktdaten werden geladen…"
+    >
+      <Card title="Märkte">
+        <QueryRows
+          columns={['Ressource', 'Preis', 'Trend', 'Druck']}
+          rows={(data ?? []).map((row: MarketRowViewData) => ({
+            id: row.resourceId,
+            cells: [row.resourceLabel, row.lastPriceLabel, row.trendLabel, row.pressureLabel],
+          }))}
+        />
+      </Card>
+    </ScreenQueryFrame>
   );
 }
 
@@ -130,30 +61,29 @@ export function MarketsScreen() {
 export function ProductionScreen() {
   const { viewData, companyViewData } = useGameWorkspace();
   const names = useMemo(() => buildNameResolver(companyViewData.labels), [companyViewData.labels]);
-  const { data, isLoading } = useScreenQuery(
+  const { data, isLoading, errorMessage } = useScreenQuery(
     'production',
     () => fetchProductionJobs().then((jobs) => mapProductionJobRowsViewData(jobs, names.recipe)),
     viewData.session.hasGame,
   );
 
-  if (!viewData.session.hasGame) {
-    return <EmptyState title="Keine Session aktiv" hint="Starten Sie ein Spiel über das Hauptmenü." />;
-  }
-
-  if (isLoading || data === null) {
-    return <EmptyState title="Produktionsdaten werden geladen…" />;
-  }
-
   return (
-    <Card title="Produktion">
-      <QueryRows
-        columns={['Rezept', 'Status', 'Fortschritt']}
-        rows={data.map((row: JobRowViewData) => ({
-          id: row.id,
-          cells: [row.title, row.statusLabel, row.progressLabel],
-        }))}
-      />
-    </Card>
+    <ScreenQueryFrame
+      hasGame={viewData.session.hasGame}
+      isLoading={isLoading}
+      errorMessage={errorMessage}
+      loadingLabel="Produktionsdaten werden geladen…"
+    >
+      <Card title="Produktion">
+        <QueryRows
+          columns={['Rezept', 'Status', 'Fortschritt']}
+          rows={(data ?? []).map((row: JobRowViewData) => ({
+            id: row.id,
+            cells: [row.title, row.statusLabel, row.progressLabel],
+          }))}
+        />
+      </Card>
+    </ScreenQueryFrame>
   );
 }
 
@@ -161,90 +91,87 @@ export function ProductionScreen() {
 export function ResearchScreen() {
   const { viewData, companyViewData } = useGameWorkspace();
   const names = useMemo(() => buildNameResolver(companyViewData.labels), [companyViewData.labels]);
-  const { data, isLoading } = useScreenQuery(
+  const { data, isLoading, errorMessage } = useScreenQuery(
     'research',
     () => fetchResearchJobs().then((jobs) => mapResearchJobRowsViewData(jobs, names.technology)),
     viewData.session.hasGame,
   );
 
-  if (!viewData.session.hasGame) {
-    return <EmptyState title="Keine Session aktiv" hint="Starten Sie ein Spiel über das Hauptmenü." />;
-  }
-
-  if (isLoading || data === null) {
-    return <EmptyState title="Forschungsdaten werden geladen…" />;
-  }
-
   return (
-    <Card title="Forschung">
-      <QueryRows
-        columns={['Technologie', 'Status', 'Fortschritt']}
-        rows={data.map((row: JobRowViewData) => ({
-          id: row.id,
-          cells: [row.title, row.statusLabel, row.progressLabel],
-        }))}
-      />
-    </Card>
+    <ScreenQueryFrame
+      hasGame={viewData.session.hasGame}
+      isLoading={isLoading}
+      errorMessage={errorMessage}
+      loadingLabel="Forschungsdaten werden geladen…"
+    >
+      <Card title="Forschung">
+        <QueryRows
+          columns={['Technologie', 'Status', 'Fortschritt']}
+          rows={(data ?? []).map((row: JobRowViewData) => ({
+            id: row.id,
+            cells: [row.title, row.statusLabel, row.progressLabel],
+          }))}
+        />
+      </Card>
+    </ScreenQueryFrame>
   );
 }
 
 /** Transport screen backed by transport order queries. */
 export function TransportScreen() {
   const { viewData } = useGameWorkspace();
-  const { data, isLoading } = useScreenQuery(
+  const { data, isLoading, errorMessage } = useScreenQuery(
     'transport',
     () => fetchTransportOrders().then(mapTransportJobRowsViewData),
     viewData.session.hasGame,
   );
 
-  if (!viewData.session.hasGame) {
-    return <EmptyState title="Keine Session aktiv" hint="Starten Sie ein Spiel über das Hauptmenü." />;
-  }
-
-  if (isLoading || data === null) {
-    return <EmptyState title="Transportdaten werden geladen…" />;
-  }
-
   return (
-    <Card title="Transport">
-      <QueryRows
-        columns={['Route', 'Status', 'Fortschritt']}
-        rows={data.map((row: JobRowViewData) => ({
-          id: row.id,
-          cells: [row.title, row.statusLabel, row.progressLabel],
-        }))}
-      />
-    </Card>
+    <ScreenQueryFrame
+      hasGame={viewData.session.hasGame}
+      isLoading={isLoading}
+      errorMessage={errorMessage}
+      loadingLabel="Transportdaten werden geladen…"
+    >
+      <Card title="Transport">
+        <QueryRows
+          columns={['Route', 'Status', 'Fortschritt']}
+          rows={(data ?? []).map((row: JobRowViewData) => ({
+            id: row.id,
+            cells: [row.title, row.statusLabel, row.progressLabel],
+          }))}
+        />
+      </Card>
+    </ScreenQueryFrame>
   );
 }
 
 /** Finance screen backed by finance transaction queries. */
 export function FinanceScreen() {
   const { viewData } = useGameWorkspace();
-  const { data, isLoading } = useScreenQuery(
+  const { data, isLoading, errorMessage } = useScreenQuery(
     'finance',
     () => fetchFinanceTransactions().then(mapFinanceRowsViewData),
     viewData.session.hasGame,
   );
 
-  if (!viewData.session.hasGame) {
-    return <EmptyState title="Keine Session aktiv" hint="Starten Sie ein Spiel über das Hauptmenü." />;
-  }
-
-  if (isLoading || data === null) {
-    return <EmptyState title="Finanzdaten werden geladen…" />;
-  }
-
   return (
-    <Card title="Finanzen">
-      <QueryRows
-        columns={['Typ', 'Betrag', 'Saldo']}
-        rows={data.map((row: FinanceRowViewData) => ({
-          id: row.id,
-          cells: [row.typeLabel, row.amountLabel, row.balanceLabel],
-        }))}
-      />
-    </Card>
+    <ScreenQueryFrame
+      hasGame={viewData.session.hasGame}
+      isLoading={isLoading}
+      errorMessage={errorMessage}
+      loadingLabel="Finanzdaten werden geladen…"
+    >
+      <Card title="Finanzen">
+        <QueryRows
+          columns={['Typ', 'Betrag', 'Saldo']}
+          rows={(data ?? []).map((row: FinanceRowViewData) => ({
+            id: row.id,
+            cells: [row.typeLabel, row.amountLabel, row.balanceLabel],
+          }))}
+        />
+      </Card>
+    </ScreenQueryFrame>
   );
 }
 
@@ -273,38 +200,42 @@ export function ReportsScreen() {
 
 /** Buildings screen backed by the dedicated buildings query endpoint. */
 export function BuildingsScreen() {
-  const { companyViewData, viewData } = useGameWorkspace();
-  const { data, isLoading } = useScreenQuery(
+  const { companyViewData, viewData, regions } = useGameWorkspace();
+  const regionNames = useMemo(
+    () => new Map(regions.map((region) => [region.id, region.name])),
+    [regions],
+  );
+  const { data, isLoading, errorMessage } = useScreenQuery(
     'buildings',
     () =>
       fetchBuildingList().then((buildings) =>
-        buildings.map((building) => mapBuildingListRow(building, companyViewData.labels)),
+        buildings.map((building) => mapBuildingListRow(building, companyViewData.labels, regionNames)),
       ),
     viewData.session.hasGame,
   );
 
-  if (!viewData.session.hasGame) {
-    return <EmptyState title="Keine Session aktiv" hint="Starten Sie ein Spiel über das Hauptmenü." />;
-  }
-
-  if (isLoading || data === null) {
-    return <EmptyState title="Gebäudedaten werden geladen…" />;
-  }
-
   return (
-    <Card title="Gebäude">
-      <QueryRows
-        columns={['Name', 'Typ', 'Status', 'Position']}
-        rows={data.map((building: BuildingListRowViewData) => ({
-          id: building.id,
-          cells: [
-            building.name,
-            building.buildingTypeLabel,
-            building.statusLabel,
-            building.positionLabel,
-          ],
-        }))}
-      />
-    </Card>
+    <ScreenQueryFrame
+      hasGame={viewData.session.hasGame}
+      isLoading={isLoading}
+      errorMessage={errorMessage}
+      loadingLabel="Gebäudedaten werden geladen…"
+    >
+      <Card title="Gebäude">
+        <QueryRows
+          columns={['Name', 'Typ', 'Region', 'Status', 'Position']}
+          rows={(data ?? []).map((building: BuildingListRowViewData) => ({
+            id: building.id,
+            cells: [
+              building.name,
+              building.buildingTypeLabel,
+              building.regionLabel,
+              building.statusLabel,
+              building.positionLabel,
+            ],
+          }))}
+        />
+      </Card>
+    </ScreenQueryFrame>
   );
 }

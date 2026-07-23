@@ -9,7 +9,7 @@ import {
   ResearchScreen,
   TransportScreen,
 } from '@/presentation/screens/query/QueryScreens';
-import { CompanyDashboardScreen } from '@/presentation/screens/company/CompanyDashboardScreen';
+import { CompanyScreen } from '@/presentation/screens/company/CompanyScreen';
 import { WorldScreen } from '@/presentation/screens/world/WorldScreen';
 import { useGameWorkspace } from '@/presentation/state/GameWorkspaceProvider';
 
@@ -19,7 +19,7 @@ export function ScreenRouter() {
 
   switch (navigation.screen) {
     case 'company':
-      return <CompanyDashboardScreen hideHeader />;
+      return <CompanyScreen />;
     case 'world':
       return <WorldScreen />;
     case 'markets':
@@ -37,6 +37,6 @@ export function ScreenRouter() {
     case 'reports':
       return <ReportsScreen />;
     default:
-      return <CompanyDashboardScreen hideHeader />;
+      return <CompanyScreen />;
   }
 }

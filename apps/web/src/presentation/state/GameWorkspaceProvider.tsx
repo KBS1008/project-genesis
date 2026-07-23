@@ -15,6 +15,7 @@ import { connectDashboardSocket } from '@/presentation/adapters/api/dashboard-so
 import type { GameSessionDashboard } from '@/presentation/adapters/api/client';
 import type { RegionDto } from '@/presentation/adapters/api/query-client';
 import { loadWorkspaceQueries } from '@/presentation/adapters/queries/load-workspace-queries';
+import type { EntityNavigationTarget } from '@/presentation/navigation/entity-navigation';
 import type { PrimaryScreenId } from '@/presentation/navigation/primary-screens';
 import { translatePresentationError } from '@/presentation/notifications/translatePresentationError';
 import { useNotifications } from '@/presentation/notifications/NotificationProvider';
@@ -50,6 +51,7 @@ export type GameWorkspaceContextValue = {
     options?: { readonly clearsDirty?: boolean },
   ) => Promise<void>;
   readonly markSessionSaved: (savePath?: string) => void;
+  readonly navigateToTarget: (target: EntityNavigationTarget) => void;
 };
 
 const EMPTY_VIEW_DATA: WorkspaceViewData = Object.freeze({
@@ -230,6 +232,16 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
     };
   }, [refreshSession, showNotification]);
 
+  const navigateToTarget = useCallback(
+    (target: EntityNavigationTarget) => {
+      replaceNavigation({
+        screen: target.screen,
+        entitySelection: target.entitySelection,
+      });
+    },
+    [replaceNavigation],
+  );
+
   const navigateToScreen = useCallback(
     (screen: PrimaryScreenId) => {
       replaceNavigation({
@@ -273,6 +285,7 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
       refreshSession,
       runCommand,
       markSessionSaved,
+      navigateToTarget,
     }),
     [
       navigation,
@@ -289,6 +302,7 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
       refreshSession,
       runCommand,
       markSessionSaved,
+      navigateToTarget,
     ],
   );
 

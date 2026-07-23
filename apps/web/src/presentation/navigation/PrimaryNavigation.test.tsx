@@ -42,6 +42,7 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
     refreshSession: vi.fn(),
     runCommand: vi.fn(),
     markSessionSaved: vi.fn(),
+    navigateToTarget: vi.fn(),
   }),
 }));
 

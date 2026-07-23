@@ -454,8 +454,15 @@ function applyTheme(theme: ThemeMode): void {
 }
 
 /** Company dashboard screen consuming workspace view-data. */
-export function CompanyDashboardScreen({ hideHeader = false }: { readonly hideHeader?: boolean }) {
-  const { companyViewData, isLoading, isBusy, isLiveConnected, runCommand } = useGameWorkspace();
+export function CompanyDashboardScreen({
+  hideHeader = false,
+  onBackToOverview,
+}: {
+  readonly hideHeader?: boolean;
+  readonly onBackToOverview?: () => void;
+}) {
+  const { companyViewData, isLoading, isBusy, isLiveConnected, runCommand, navigation } =
+    useGameWorkspace();
   const [theme, setTheme] = useState<ThemeMode>('light');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [detailSelection, setDetailSelection] = useState<DetailSelection>({ kind: 'overview' });
@@ -492,6 +499,34 @@ export function CompanyDashboardScreen({ hideHeader = false }: { readonly hideHe
       ),
     );
   }, [companyViewData]);
+
+  useEffect(() => {
+    const selection = navigation.entitySelection;
+
+    if (selection.kind === 'building') {
+      setDetailSelection({ kind: 'building', id: selection.id });
+      return;
+    }
+
+    if (selection.kind === 'production') {
+      setDetailSelection({ kind: 'production', id: selection.id });
+      return;
+    }
+
+    if (selection.kind === 'transport') {
+      setDetailSelection({ kind: 'transport', id: selection.id });
+      return;
+    }
+
+    if (selection.kind === 'research') {
+      setDetailSelection({ kind: 'research', id: selection.id });
+      return;
+    }
+
+    if (selection.kind === 'employee') {
+      setDetailSelection({ kind: 'employee', id: selection.id });
+    }
+  }, [navigation.entitySelection]);
 
   const runAction = useCallback(
     async (action: () => Promise<void>, successMessage: string) => {
@@ -620,6 +655,11 @@ export function CompanyDashboardScreen({ hideHeader = false }: { readonly hideHe
 
       {hideHeader ? (
         <div className="header-actions workspace-toolbar">
+          {onBackToOverview ? (
+            <button type="button" className="btn-secondary" onClick={onBackToOverview}>
+              Zur Übersicht
+            </button>
+          ) : null}
           <button
             type="button"
             className="btn-secondary mobile-only"

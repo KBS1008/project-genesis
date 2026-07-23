@@ -43,6 +43,7 @@ export type InventoryReadModel = {
 export type BuildingReadModel = {
   readonly id: string;
   readonly buildingTypeId: string;
+  readonly regionId: string;
   readonly name: string;
   readonly x: number;
   readonly y: number;
