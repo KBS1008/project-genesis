@@ -252,38 +252,6 @@ function SidebarActions({
       <p className="sidebar-title">Aktionen</p>
 
       <div className="toolbar-group">
-        <span className="toolbar-label">Simulation</span>
-        <button
-          type="button"
-          disabled={!hasGame}
-          onClick={() => {
-            void runAction(
-              () => callApi('/api/simulation/tick', { method: 'POST', body: '{}' }),
-              'Simulation tick ausgeführt.',
-            );
-          }}
-        >
-          Simulation Tick
-        </button>
-        <button
-          type="button"
-          disabled={!hasGame}
-          onClick={() => {
-            void runAction(
-              () =>
-                callApi('/api/simulation/tick', {
-                  method: 'POST',
-                  body: JSON.stringify({ count: 10 }),
-                }),
-              '10 Simulation ticks ausgeführt.',
-            );
-          }}
-        >
-          10× Tick
-        </button>
-      </div>
-
-      <div className="toolbar-group">
         <span className="toolbar-label">Bauen</span>
         {hints.placeBuilding.length === 0 ? (
           <p className="empty-state">Keine Bauoptionen verfügbar.</p>

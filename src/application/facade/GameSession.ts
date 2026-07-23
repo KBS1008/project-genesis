@@ -555,6 +555,69 @@ export class GameSession {
     return Result.ok(undefined);
   }
 
+  /** Pauses simulation tick execution. */
+  pauseSimulation(): Result<void, ValidationError> {
+    if (this.#activeCompanyId === undefined) {
+      return Result.fail(new ValidationError('Start a new game before pausing the simulation.'));
+    }
+
+    this.#context.simulationEngine.pause();
+    return Result.ok(undefined);
+  }
+
+  /** Resumes simulation tick execution. */
+  resumeSimulation(): Result<void, ValidationError> {
+    if (this.#activeCompanyId === undefined) {
+      return Result.fail(new ValidationError('Start a new game before resuming the simulation.'));
+    }
+
+    this.#context.simulationEngine.resume();
+    return Result.ok(undefined);
+  }
+
+  /** Updates the configured simulation speed multiplier. */
+  setSimulationSpeed(tickDuration: number): Result<void, ValidationError> {
+    if (this.#activeCompanyId === undefined) {
+      return Result.fail(
+        new ValidationError('Start a new game before changing simulation speed.'),
+      );
+    }
+
+    return this.#context.simulationEngine.setTickDuration(tickDuration);
+  }
+
+  /** Executes exactly one tick, even while the simulation is paused. */
+  stepSimulation(): Result<void, ValidationError> {
+    if (this.#activeCompanyId === undefined) {
+      return Result.fail(new ValidationError('Start a new game before stepping the simulation.'));
+    }
+
+    const engine = this.#context.simulationEngine;
+    const wasPaused = engine.state.paused;
+
+    if (wasPaused) {
+      engine.resume();
+    }
+
+    const tickResult = engine.tick();
+
+    if (!tickResult.ok) {
+      if (wasPaused) {
+        engine.pause();
+      }
+
+      return Result.fail(tickResult.error);
+    }
+
+    this.#recordTickSnapshot();
+
+    if (wasPaused) {
+      engine.pause();
+    }
+
+    return Result.ok(undefined);
+  }
+
   /** Places a building for the active company. */
   placeBuilding(input: PlaceBuildingInput): Result<string, ValidationError> {
     if (this.#activeCompanyId === undefined) {

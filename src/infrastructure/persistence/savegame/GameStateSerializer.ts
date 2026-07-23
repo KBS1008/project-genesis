@@ -134,7 +134,7 @@ export class GameStateSerializer implements GameStateSerializerPort {
             clockTime: source.clock.now(),
             tickNumber: source.simulationEngine.state.tickNumber,
             paused: source.simulationEngine.state.paused,
-            tickDuration: 1,
+            tickDuration: source.simulationEngine.tickDuration,
           }),
           companies: Object.freeze(
             source.companyRepository.findAll().map((company) =>

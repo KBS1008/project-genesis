@@ -151,6 +151,43 @@ describe('GameController (NestJS)', () => {
     expect(typeof simulationResponse.body.data.isPaused).toBe('boolean');
   });
 
+  it('POST /api/simulation/pause, resume, speed, and step control execution state', async () => {
+    const initialDashboard = await request(app.getHttpServer()).get('/api/dashboard');
+
+    if (initialDashboard.body.data.company === null) {
+      await request(app.getHttpServer()).post('/api/session/new').send({ name: 'Sim Control Corp' });
+    }
+
+    const pauseResponse = await request(app.getHttpServer()).post('/api/simulation/pause').send({});
+    expect(pauseResponse.status).toBe(200);
+
+    let simulationResponse = await request(app.getHttpServer()).get('/api/simulation/status');
+    expect(simulationResponse.body.data.isPaused).toBe(true);
+
+    const tickWhilePaused = await request(app.getHttpServer()).post('/api/simulation/tick').send({ count: 1 });
+    expect(tickWhilePaused.status).toBe(400);
+
+    const tickBeforeStep = simulationResponse.body.data.tickNumber;
+    const stepResponse = await request(app.getHttpServer()).post('/api/simulation/step').send({});
+    expect(stepResponse.status).toBe(200);
+
+    simulationResponse = await request(app.getHttpServer()).get('/api/simulation/status');
+    expect(simulationResponse.body.data.tickNumber).toBe(tickBeforeStep + 1);
+    expect(simulationResponse.body.data.isPaused).toBe(true);
+
+    const resumeResponse = await request(app.getHttpServer()).post('/api/simulation/resume').send({});
+    expect(resumeResponse.status).toBe(200);
+
+    const speedResponse = await request(app.getHttpServer())
+      .post('/api/simulation/speed')
+      .send({ tickDuration: 2 });
+    expect(speedResponse.status).toBe(200);
+
+    simulationResponse = await request(app.getHttpServer()).get('/api/simulation/status');
+    expect(simulationResponse.body.data.isPaused).toBe(false);
+    expect(simulationResponse.body.data.tickDuration).toBe(2);
+  });
+
   it('POST /api/session/save and load round-trip with custom filePath', async () => {
     const savePath = 'saves/test-round-trip-ui.json';
 

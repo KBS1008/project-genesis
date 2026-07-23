@@ -9,7 +9,10 @@ import { Button } from '@/presentation/primitives/Button';
 import { LoadingState } from '@/presentation/primitives/LoadingState';
 import { useDialog } from '@/presentation/dialog/DialogProvider';
 import { useNotifications } from '@/presentation/notifications/NotificationProvider';
+import { formatSimulationTime, formatTick } from '@/presentation/formatting/presentation-formatters';
+import { NotificationIndicator } from '@/presentation/shell/NotificationIndicator';
 import { SaveGameDialog } from '@/presentation/screens/menu/SaveGameDialog';
+import { SimulationControlsBar } from '@/presentation/shell/SimulationControlsBar';
 import { useGameWorkspace } from '@/presentation/state/GameWorkspaceProvider';
 
 function EntitySelectionBanner() {
@@ -79,17 +82,25 @@ function WorkspaceHeader() {
           <h1>{session.companyName ?? 'Project Genesis'}</h1>
           <p className="pg-workspace-subtitle">
             {session.hasGame
-              ? `Tick ${simulation.tickNumber ?? '—'} · Simulationszeit ${simulation.simulationTime ?? '—'}`
+              ? `Tick ${formatTick(simulation.tickNumber)} · Simulationszeit ${formatSimulationTime(simulation.simulationTime)}`
               : 'Keine aktive Session — kehren Sie zum Hauptmenü zurück.'}
           </p>
         </div>
         <div className="pg-workspace-meta">
+          {session.hasGame ? (
+            <span
+              className={`pg-workspace-pill${simulation.isPaused ? ' pg-workspace-pill-paused' : ' pg-workspace-pill-active'}`.trim()}
+            >
+              {simulation.isPaused ? 'Pausiert' : 'Session aktiv'}
+            </span>
+          ) : null}
           {isLiveConnected ? <span className="pg-workspace-pill pg-workspace-pill-live">Live</span> : null}
           {isSessionDirty ? <span className="pg-workspace-pill">Ungespeichert</span> : null}
           {availableCashLabel !== null ? (
             <span className="pg-workspace-pill">Verfügbar: {availableCashLabel}</span>
           ) : null}
           <span className="pg-workspace-pill">{simulation.speedLabel}</span>
+          <NotificationIndicator />
           <div className="pg-workspace-toolbar">
             <Button
               variant="secondary"
@@ -131,6 +142,7 @@ export function GameWorkspaceShell({ children }: { readonly children: ReactNode 
   return (
     <div className="pg-workspace">
       <WorkspaceHeader />
+      <SimulationControlsBar />
       <PrimaryNavigation />
       <EntitySelectionBanner />
       <main className="pg-workspace-screen" id="game-workspace-main">

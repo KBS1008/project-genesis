@@ -36,7 +36,7 @@ export type SimulationEngineOptions = {
 export class SimulationEngine {
   readonly #clock: TickClock;
   readonly #eventBus: IEventBus;
-  readonly #tickDuration: number;
+  #tickDuration: number;
   readonly #systems: readonly SimulationSystem[];
   #state: SimulationState;
   readonly #eventQueue: EventQueue;
@@ -75,6 +75,30 @@ export class SimulationEngine {
    */
   enqueueEvents(events: readonly DomainEvent[]): void {
     this.#eventQueue.enqueue(events);
+  }
+
+  /** Pauses automatic tick execution. */
+  pause(): void {
+    this.#state = this.#state.withPaused(true);
+  }
+
+  /** Resumes automatic tick execution. */
+  resume(): void {
+    this.#state = this.#state.withPaused(false);
+  }
+
+  /**
+   * Updates the simulation time advanced per tick.
+   *
+   * @param tickDuration - Positive integer time units per tick.
+   */
+  setTickDuration(tickDuration: number): Result<void, ValidationError> {
+    if (!Number.isInteger(tickDuration) || tickDuration < 1 || tickDuration > 10) {
+      return Result.fail(new ValidationError('Tick duration must be an integer between 1 and 10.'));
+    }
+
+    this.#tickDuration = tickDuration;
+    return Result.ok(undefined);
   }
 
   /**

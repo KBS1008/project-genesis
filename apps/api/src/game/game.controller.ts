@@ -20,6 +20,7 @@ import { unwrapResult } from '../common/unwrap-result.js';
 import type { LoadGameDto } from './dto/load-game.dto.js';
 import type { NewGameDto } from './dto/new-game.dto.js';
 import type { SaveGameDto } from './dto/save-game.dto.js';
+import type { SetSimulationSpeedDto } from './dto/set-simulation-speed.dto.js';
 import type { PlaceBuildingDto } from './dto/place-building.dto.js';
 import type { SellResourceDto } from './dto/sell-resource.dto.js';
 import type { TickSimulationDto } from './dto/tick-simulation.dto.js';
@@ -275,6 +276,50 @@ export class GameController {
     }
 
     const result = toApiSuccess(unwrapResult(this.gameSessionService.getSession().tick(count)));
+    this.#notifyDashboardRefresh();
+    return result;
+  }
+
+  /** Pauses simulation tick execution. */
+  @Post('simulation/pause')
+  @HttpCode(200)
+  pauseSimulation() {
+    const result = toApiSuccess(unwrapResult(this.gameSessionService.getSession().pauseSimulation()));
+    this.#notifyDashboardRefresh();
+    return result;
+  }
+
+  /** Resumes simulation tick execution. */
+  @Post('simulation/resume')
+  @HttpCode(200)
+  resumeSimulation() {
+    const result = toApiSuccess(
+      unwrapResult(this.gameSessionService.getSession().resumeSimulation()),
+    );
+    this.#notifyDashboardRefresh();
+    return result;
+  }
+
+  /** Updates the simulation speed multiplier. */
+  @Post('simulation/speed')
+  @HttpCode(200)
+  setSimulationSpeed(@Body() body: SetSimulationSpeedDto | undefined) {
+    if (body?.tickDuration === undefined || !Number.isInteger(body.tickDuration)) {
+      throw new BadRequestException('tickDuration must be an integer.');
+    }
+
+    const result = toApiSuccess(
+      unwrapResult(this.gameSessionService.getSession().setSimulationSpeed(body.tickDuration)),
+    );
+    this.#notifyDashboardRefresh();
+    return result;
+  }
+
+  /** Executes one simulation tick while keeping paused state unchanged. */
+  @Post('simulation/step')
+  @HttpCode(200)
+  stepSimulation() {
+    const result = toApiSuccess(unwrapResult(this.gameSessionService.getSession().stepSimulation()));
     this.#notifyDashboardRefresh();
     return result;
   }

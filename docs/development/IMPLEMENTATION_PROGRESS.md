@@ -200,9 +200,9 @@ All **TD-M8-01 … TD-M8-06** resolved — see `docs/quality/M8_IMPLEMENTATION_R
 | Query adapters / view-data (M9-3)   |     100 | `presentation/adapters/` query clients, mappers, screen queries          |
 | Company screen (consolidated)       |      85 | `CompanyDashboardScreen` — section split deferred post-Phase 4           |
 | Main menu / save-load UX (M9-4)     |      90 | Main menu, new/load/save flows, API round-trip test                      |
-| Simulation controls (pause/speed)   |       0 | **Next:** Phase 5                                                         |
-| Accessibility baseline              |      25 | Menu + save dialogs; full audit in Phase 10                              |
-| **Milestone average (gate)**        |  **72** | Phase 4 main menu/save-load complete                                     |
+| Simulation controls (pause/speed)   |      90 | Pause/resume/speed/step API + persistent game shell controls             |
+| Accessibility baseline              |      30 | Menu, save, and simulation controls with ARIA labels                     |
+| **Milestone average (gate)**        |  **88** | Phase 5 simulation controls complete                                     |
 
 **Post-Phase 4 deferred (non-blocking):** `CompanyDashboardScreen` section split, legacy chart migration, optional per-domain queries for company tables, removal of unused `DashboardDetailPanel.tsx`.
 
@@ -1152,7 +1152,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Planned Next Steps
 
-1. **M9 Phase 5 — Simulation Controls:** pause/resume API + game shell controls
+1. **M9 Phase 6 — World, Region, and Company Views:** per `M9_USER_INTERFACE_PLAN.md`
 2. Session/auth model for multi-user API access
 3. Full tick log / replay per DD-033 (beyond metrics ring buffer)
 

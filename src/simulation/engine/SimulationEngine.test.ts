@@ -87,4 +87,25 @@ describe('SimulationEngine', () => {
     expect(clock.now()).toBe(0);
     expect(engine.state.tickNumber).toBe(0);
   });
+
+  it('supports pause, resume, and tick duration changes', () => {
+    const clock = new ManualClock(0);
+    const eventBus = new InMemoryEventBus();
+    const engine = new SimulationEngine({ clock, eventBus, tickDuration: 1 });
+
+    engine.pause();
+    expect(engine.state.paused).toBe(true);
+    expect(engine.tick().ok).toBe(false);
+
+    engine.resume();
+    expect(engine.state.paused).toBe(false);
+
+    const speedResult = engine.setTickDuration(4);
+    expect(speedResult.ok).toBe(true);
+    expect(engine.tickDuration).toBe(4);
+
+    const tickResult = engine.tick();
+    expect(tickResult.ok).toBe(true);
+    expect(clock.now()).toBe(4);
+  });
 });
