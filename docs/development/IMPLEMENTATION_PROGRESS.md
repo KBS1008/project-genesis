@@ -188,20 +188,23 @@ Update deliverable rows when a step ships; set milestone % to the **average of i
 
 All **TD-M8-01 … TD-M8-06** resolved — see `docs/quality/M8_IMPLEMENTATION_REPORT.md` and `TECHNICAL_DEBT_REGISTER.md`.
 
-### M9 – User Interface 🟡 (~65 % · Gate 0 ✅ · Phase 1–3 ✅)
+### M9 – User Interface 🟡 (~65 % · Gate 0 ✅ · Phase 1–3 ✅ · Consolidation ✅)
 
 | Deliverable                         |     % | Evidence                                                                 |
 | ----------------------------------- | ----: | ------------------------------------------------------------------------ |
 | Gate 0 architecture review (M9-0)   |     100 | `docs/architecture/reviews/M9_ARCHITECTURE_REVIEW_REPORT.md`             |
+| Gate 1 foundation consolidation     |     100 | `docs/architecture/reviews/M9_FOUNDATION_CONSOLIDATION_REPORT.md`        |
 | Presentation ADR (DD-038)           |     100 | `docs/decisions/DD-038-Presentation-Architecture.md`                     |
 | Presentation foundation (M9-1)    |     100 | shell, primitives, notifications, UI test harness                        |
 | Navigation & UI state (M9-2)        |     100 | primary nav, URL state, dialogs, `GameWorkspaceProvider`                 |
 | Query adapters / view-data (M9-3)   |     100 | `presentation/adapters/` query clients, mappers, screen queries          |
-| Dev dashboard pre-work (M4/M5)      |      70 | legacy `DashboardShell` on Unternehmen screen                            |
+| Company screen (consolidated)       |      85 | `CompanyDashboardScreen` — section split deferred post-Phase 4           |
 | Main menu / save-load UX (M9-4)     |       0 | **Next:** Phase 4                                                         |
 | Simulation controls (pause/speed)   |       0 | Phase 5 prerequisite                                                     |
 | Accessibility baseline              |      20 | Primitives with ARIA; full audit in Phase 10                             |
-| **Milestone average (gate)**        |  **65** | Phase 3 complete; Phase 4 main menu/save-load next                       |
+| **Milestone average (gate)**        |  **65** | Consolidation complete; Phase 4 main menu/save-load next                   |
+
+**Post-Phase 4 deferred (non-blocking):** `CompanyDashboardScreen` section split, legacy chart migration, optional per-domain queries for company tables, removal of unused `DashboardDetailPanel.tsx`.
 
 ### M10 – Content Expansion ⚪ (10 %)
 
@@ -1158,6 +1161,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Recently Completed (2026-07)
 
+- **M9 Gate 1 — Foundation Consolidation:** single session/notification pipeline, `CompanyDashboardScreen` + ViewData layer, Buildings query; verdict **READY FOR GATE 1 DELTA REVIEW** (`docs/architecture/reviews/M9_FOUNDATION_CONSOLIDATION_REPORT.md`)
 - **M9 Phase 3 — Read Model & Query Layer:** session/simulation/save/world queries + API routes, presentation adapters/view-data/mappers, query-backed screens (**588 tests**)
 - **M9 Phase 2 — Navigation & UI State:** primary navigation, URL-backed workspace state, dialog layer
 - **M9 Gate 0 — Architecture Review:** audit of web/API/`GameSession`; verdict **ARCHITECTURE CHANGES REQUIRED**; retain Next.js + NestJS (`docs/architecture/reviews/M9_ARCHITECTURE_REVIEW_REPORT.md`)

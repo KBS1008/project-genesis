@@ -150,13 +150,17 @@ No new tests were required beyond mock alignment; migration preserves existing b
 
 ---
 
-# Remaining Risks
+# Deferred Follow-ups (Post-Phase 4)
 
-1. **Large CompanyDashboardScreen file** — Still ~1,300 lines with co-located subcomponents. Further splitting into `presentation/screens/company/sections/` is recommended before Phase 4 scale-up but is not blocking.
-2. **Legacy chart components** — Remain in `apps/web/src/components/`; they receive mapped data at the boundary but still use legacy import paths (`@/lib/api` types in chart files).
-3. **Dashboard aggregate for company screen** — Company tables still derive from `/api/dashboard` snapshot loaded once in the workspace query loader. Dedicated per-domain queries for company-screen tables (buildings, employees, etc.) can be incremental follow-up; Buildings screen already uses dedicated query.
-4. **Unused `DashboardDetailPanel.tsx`** — Legacy file retained; should be removed or migrated in a cleanup pass.
-5. **Dialog / `useTransientFormState` infrastructure** — Still unused (pre-existing Phase 2 finding); not in consolidation scope.
+The items below were reviewed after consolidation. **None block Phase 4.** Each is deferred until after Phase 4 or until a dedicated cleanup pass.
+
+| Item | Status | Decision |
+| ---- | ------ | -------- |
+| **CompanyDashboardScreen (~1,300 lines)** | Deferred | Split into `presentation/screens/company/sections/` is desirable but **not forced before Phase 4**. The optimal section boundaries will become clearer once Phase 4 screens exist. |
+| **Legacy chart components** | Accepted | Charts remain in `apps/web/src/components/` with legacy types. Acceptable while they are fed **only** via mapped ViewData at the presentation boundary. Targeted migration in a later cleanup. |
+| **Dashboard snapshot for company tables** | Accepted | Parts of the company view still load from the `/api/dashboard` snapshot in `loadWorkspaceQueries()`. Sufficient for Phase 4. Per-domain queries (employees, finance, production, etc.) can be evaluated incrementally later; Buildings already uses `/api/buildings`. |
+| **Unused `DashboardDetailPanel.tsx`** | Deferred | Legacy code, no runtime risk. Remove in a later cleanup pass. |
+| **Dialog / `useTransientFormState`** | Deferred | Pre-existing Phase 2 infrastructure; still unused. Address when Phase 4 workflows require it. |
 
 ---
 
@@ -165,3 +169,5 @@ No new tests were required beyond mock alignment; migration preserves existing b
 **READY FOR GATE 1 DELTA REVIEW**
 
 Foundation consolidation is complete. Phase 4 (Main Menu, New Game, Save/Load gameplay UI) may proceed after delta review confirms no regressions in the consolidated architecture.
+
+The deferred follow-ups above do **not** gate Phase 4.
