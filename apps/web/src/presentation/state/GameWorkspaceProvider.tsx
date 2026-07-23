@@ -39,11 +39,17 @@ export type GameWorkspaceContextValue = {
   readonly isLoading: boolean;
   readonly isBusy: boolean;
   readonly isLiveConnected: boolean;
+  readonly isSessionDirty: boolean;
   readonly navigateToScreen: (screen: PrimaryScreenId) => void;
   readonly selectEntity: (selection: EntitySelection) => void;
   readonly clearEntitySelection: () => void;
   readonly refreshSession: () => Promise<void>;
-  readonly runCommand: (action: () => Promise<void>, successMessage: string) => Promise<void>;
+  readonly runCommand: (
+    action: () => Promise<void>,
+    successMessage: string,
+    options?: { readonly clearsDirty?: boolean },
+  ) => Promise<void>;
+  readonly markSessionSaved: (savePath?: string) => void;
 };
 
 const EMPTY_VIEW_DATA: WorkspaceViewData = Object.freeze({
@@ -89,6 +95,7 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
   const [isLoading, setIsLoading] = useState(true);
   const [isBusy, setIsBusy] = useState(false);
   const [isLiveConnected, setIsLiveConnected] = useState(false);
+  const [isSessionDirty, setIsSessionDirty] = useState(false);
   const isBusyRef = useRef(false);
 
   useEffect(() => {
@@ -112,12 +119,17 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
   }, []);
 
   const runCommand = useCallback(
-    async (action: () => Promise<void>, successMessage: string): Promise<void> => {
+    async (
+      action: () => Promise<void>,
+      successMessage: string,
+      options?: { readonly clearsDirty?: boolean },
+    ): Promise<void> => {
       try {
         setIsBusy(true);
         showNotification({ tone: 'info', message: 'Bitte warten…' });
         await action();
         await refreshSession();
+        setIsSessionDirty(options?.clearsDirty === true ? false : true);
         showNotification({ tone: 'success', message: successMessage });
       } catch (error: unknown) {
         showNotification({
@@ -130,6 +142,22 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
     },
     [refreshSession, showNotification],
   );
+
+  const markSessionSaved = useCallback((savePath?: string) => {
+    setIsSessionDirty(false);
+
+    if (savePath !== undefined) {
+      setViewData((current) =>
+        Object.freeze({
+          ...current,
+          session: Object.freeze({
+            ...current.session,
+            savePath,
+          }),
+        }),
+      );
+    }
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -238,11 +266,13 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
       isLoading,
       isBusy,
       isLiveConnected,
+      isSessionDirty,
       navigateToScreen,
       selectEntity,
       clearEntitySelection,
       refreshSession,
       runCommand,
+      markSessionSaved,
     }),
     [
       navigation,
@@ -252,11 +282,13 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
       isLoading,
       isBusy,
       isLiveConnected,
+      isSessionDirty,
       navigateToScreen,
       selectEntity,
       clearEntitySelection,
       refreshSession,
       runCommand,
+      markSessionSaved,
     ],
   );
 

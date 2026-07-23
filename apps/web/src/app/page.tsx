@@ -1,6 +1,6 @@
-import { DashboardScreen } from '@/presentation/screens/dashboard/DashboardScreen';
+import { MainMenuScreen } from '@/presentation/screens/menu/MainMenuScreen';
 
-/** Main dashboard page for the browser shell. */
+/** Main menu entry point for the browser shell. */
 export default function HomePage() {
-  return <DashboardScreen />;
+  return <MainMenuScreen />;
 }

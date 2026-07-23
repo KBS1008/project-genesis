@@ -9,6 +9,10 @@ import { ApiExceptionFilter } from '../common/api-exception.filter.js';
 import { STARTING_MONEY } from '../../../../src/domain/finance/FinanceConstants.js';
 import { NEW_GAME_STARTER_BUILDINGS } from '../../../../src/application/new-game/NewGameSetupConstants.js';
 
+function normalizeSavePath(filePath: string): string {
+  return filePath.replace(/\\/g, '/');
+}
+
 describe('GameController (NestJS)', () => {
   let app: INestApplication;
 
@@ -145,6 +149,60 @@ describe('GameController (NestJS)', () => {
     expect(simulationResponse.body.data.hasActiveSession).toBe(true);
     expect(typeof simulationResponse.body.data.tickNumber).toBe('number');
     expect(typeof simulationResponse.body.data.isPaused).toBe('boolean');
+  });
+
+  it('POST /api/session/save and load round-trip with custom filePath', async () => {
+    const savePath = 'saves/test-round-trip-ui.json';
+
+    const initialDashboard = await request(app.getHttpServer()).get('/api/dashboard');
+
+    if (initialDashboard.body.data.company === null) {
+      await request(app.getHttpServer()).post('/api/session/new').send({ name: 'Round Trip Corp' });
+    }
+
+    await request(app.getHttpServer()).post('/api/simulation/tick').send({ count: 2 });
+
+    const beforeSave = await request(app.getHttpServer()).get('/api/dashboard');
+    const companyName = beforeSave.body.data.company?.name;
+    const tickBeforeSave = beforeSave.body.data.tickNumber;
+
+    expect(companyName).toBeTruthy();
+    expect(typeof tickBeforeSave).toBe('number');
+
+    const saveResponse = await request(app.getHttpServer())
+      .post('/api/session/save')
+      .send({ filePath: savePath });
+
+    expect(saveResponse.status).toBe(200);
+    expect(saveResponse.body.ok).toBe(true);
+    expect(saveResponse.body.data).toBe(savePath);
+
+    await request(app.getHttpServer()).post('/api/simulation/tick').send({ count: 5 });
+
+    const afterAdvance = await request(app.getHttpServer()).get('/api/dashboard');
+    expect(afterAdvance.body.data.tickNumber).toBeGreaterThan(tickBeforeSave);
+
+    const loadResponse = await request(app.getHttpServer())
+      .post('/api/session/load')
+      .send({ filePath: savePath });
+
+    expect(loadResponse.status).toBe(200);
+    expect(loadResponse.body.ok).toBe(true);
+
+    const afterLoad = await request(app.getHttpServer()).get('/api/dashboard');
+
+    expect(afterLoad.status).toBe(200);
+    expect(afterLoad.body.data.company?.name).toBe(companyName);
+    expect(afterLoad.body.data.tickNumber).toBe(tickBeforeSave);
+
+    const savesResponse = await request(app.getHttpServer()).get('/api/saves');
+
+    expect(savesResponse.status).toBe(200);
+    expect(
+      savesResponse.body.data.some(
+        (save: { filePath: string }) => normalizeSavePath(save.filePath) === savePath,
+      ),
+    ).toBe(true);
   });
 
   it('GET /api/world/regions returns bootstrapped regions', async () => {

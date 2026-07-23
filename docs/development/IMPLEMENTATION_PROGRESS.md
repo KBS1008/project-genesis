@@ -199,10 +199,10 @@ All **TD-M8-01 … TD-M8-06** resolved — see `docs/quality/M8_IMPLEMENTATION_R
 | Navigation & UI state (M9-2)        |     100 | primary nav, URL state, dialogs, `GameWorkspaceProvider`                 |
 | Query adapters / view-data (M9-3)   |     100 | `presentation/adapters/` query clients, mappers, screen queries          |
 | Company screen (consolidated)       |      85 | `CompanyDashboardScreen` — section split deferred post-Phase 4           |
-| Main menu / save-load UX (M9-4)     |       0 | **Next:** Phase 4                                                         |
-| Simulation controls (pause/speed)   |       0 | Phase 5 prerequisite                                                     |
-| Accessibility baseline              |      20 | Primitives with ARIA; full audit in Phase 10                             |
-| **Milestone average (gate)**        |  **65** | Consolidation complete; Phase 4 main menu/save-load next                   |
+| Main menu / save-load UX (M9-4)     |      90 | Main menu, new/load/save flows, API round-trip test                      |
+| Simulation controls (pause/speed)   |       0 | **Next:** Phase 5                                                         |
+| Accessibility baseline              |      25 | Menu + save dialogs; full audit in Phase 10                              |
+| **Milestone average (gate)**        |  **72** | Phase 4 main menu/save-load complete                                     |
 
 **Post-Phase 4 deferred (non-blocking):** `CompanyDashboardScreen` section split, legacy chart migration, optional per-domain queries for company tables, removal of unused `DashboardDetailPanel.tsx`.
 
@@ -1152,10 +1152,9 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Planned Next Steps
 
-1. **M9 Phase 4 — Main Menu, New Game, Save/Load:** workflows per `M9_USER_INTERFACE_PLAN.md`
-2. **M9 Phase 5 — Simulation Controls:** pause/resume API + game shell controls
-3. Session/auth model for multi-user API access
-4. Full tick log / replay per DD-033 (beyond metrics ring buffer)
+1. **M9 Phase 5 — Simulation Controls:** pause/resume API + game shell controls
+2. Session/auth model for multi-user API access
+3. Full tick log / replay per DD-033 (beyond metrics ring buffer)
 
 ---
 

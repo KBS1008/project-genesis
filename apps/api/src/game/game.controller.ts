@@ -17,7 +17,9 @@ import {
 } from '@nestjs/common';
 import { toApiSuccess } from '../common/api-response.js';
 import { unwrapResult } from '../common/unwrap-result.js';
+import type { LoadGameDto } from './dto/load-game.dto.js';
 import type { NewGameDto } from './dto/new-game.dto.js';
+import type { SaveGameDto } from './dto/save-game.dto.js';
 import type { PlaceBuildingDto } from './dto/place-building.dto.js';
 import type { SellResourceDto } from './dto/sell-resource.dto.js';
 import type { TickSimulationDto } from './dto/tick-simulation.dto.js';
@@ -245,8 +247,8 @@ export class GameController {
   /** Persists the active session to disk. */
   @Post('session/save')
   @HttpCode(200)
-  async saveGame() {
-    const saveResult = await this.gameSessionService.getSession().saveGame();
+  async saveGame(@Body() body: SaveGameDto | undefined) {
+    const saveResult = await this.gameSessionService.getSession().saveGame(body?.filePath);
     const result = toApiSuccess(unwrapResult(saveResult));
     this.#notifyDashboardRefresh();
     return result;
@@ -255,8 +257,8 @@ export class GameController {
   /** Restores the active session from disk. */
   @Post('session/load')
   @HttpCode(200)
-  async loadGame() {
-    const loadResult = await this.gameSessionService.getSession().loadGame();
+  async loadGame(@Body() body: LoadGameDto | undefined) {
+    const loadResult = await this.gameSessionService.getSession().loadGame(body?.filePath);
     const result = toApiSuccess(unwrapResult(loadResult));
     this.#notifyDashboardRefresh();
     return result;

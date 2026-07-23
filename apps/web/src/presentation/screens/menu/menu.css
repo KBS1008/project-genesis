@@ -1,0 +1,135 @@
+.pg-main-menu {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xl);
+  background:
+    radial-gradient(circle at top, color-mix(in srgb, var(--accent) 12%, transparent), transparent 55%),
+    var(--bg);
+}
+
+.pg-main-menu-card {
+  width: min(32rem, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  padding: var(--space-xl);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  box-shadow: var(--shadow);
+}
+
+.pg-main-menu-brand h1 {
+  margin: 0 0 var(--space-xs);
+  font-size: var(--text-h1);
+}
+
+.pg-main-menu-brand p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.pg-main-menu-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.pg-main-menu-actions .pg-button {
+  width: 100%;
+  justify-content: center;
+}
+
+.pg-main-menu-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  font-size: var(--text-small);
+  color: var(--muted);
+}
+
+.pg-main-menu-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.pg-main-menu-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.pg-main-menu-form label {
+  font-size: var(--text-small);
+  font-weight: 600;
+}
+
+.pg-main-menu-form input {
+  width: 100%;
+  padding: 0.625rem 0.75rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+}
+
+.pg-main-menu-form input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.pg-main-menu-form-actions {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.pg-save-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  max-height: 16rem;
+  overflow: auto;
+}
+
+.pg-save-list-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-sm);
+  align-items: center;
+  padding: 0.625rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+}
+
+.pg-save-list-item.is-selected {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+
+.pg-save-list-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  font-size: var(--text-small);
+}
+
+.pg-save-list-meta strong {
+  font-size: var(--text-body);
+}
+
+.pg-save-list-meta span {
+  color: var(--muted);
+}
+
+.pg-workspace-toolbar {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+  margin-left: auto;
+}

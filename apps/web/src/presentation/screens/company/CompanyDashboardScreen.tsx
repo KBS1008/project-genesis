@@ -252,51 +252,6 @@ function SidebarActions({
       <p className="sidebar-title">Aktionen</p>
 
       <div className="toolbar-group">
-        <span className="toolbar-label">Session</span>
-        <button
-          type="button"
-          onClick={() => {
-            void runAction(
-              () =>
-                callApi('/api/session/new', {
-                  method: 'POST',
-                  body: JSON.stringify({ name: 'Genesis Industries' }),
-                }),
-              'Neues Spiel gestartet.',
-            );
-          }}
-        >
-          Neues Spiel
-        </button>
-        <button
-          type="button"
-          className="btn-secondary"
-          disabled={!hasGame}
-          onClick={() => {
-            void runAction(
-              () => callApi('/api/session/save', { method: 'POST', body: '{}' }),
-              'Spielstand gespeichert.',
-            );
-          }}
-        >
-          Speichern
-        </button>
-        <button
-          type="button"
-          className="btn-secondary"
-          disabled={!hasGame}
-          onClick={() => {
-            void runAction(
-              () => callApi('/api/session/load', { method: 'POST', body: '{}' }),
-              'Spielstand geladen.',
-            );
-          }}
-        >
-          Laden
-        </button>
-      </div>
-
-      <div className="toolbar-group">
         <span className="toolbar-label">Simulation</span>
         <button
           type="button"

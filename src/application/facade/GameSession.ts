@@ -148,7 +148,7 @@ export class GameSession {
   #getEventLog!: GetEventLogQueryHandler;
   #dashboardBuilder!: GameSessionDashboardBuilder;
   readonly #gameContentRoot: string;
-  readonly #savePath: string;
+  #savePath: string;
   #activeCompanyId: string | undefined;
   #buildingSequence = 0;
   #productionSequence = 0;
@@ -704,18 +704,28 @@ export class GameSession {
   }
 
   /** Persists the current session to the configured save path. */
-  async saveGame(): Promise<Result<string, ValidationError | PersistenceError>> {
+  async saveGame(
+    filePath?: string,
+  ): Promise<Result<string, ValidationError | PersistenceError>> {
     if (this.#activeCompanyId === undefined) {
       return Result.fail(new ValidationError('Start a new game before saving.'));
     }
 
-    return this.#saveGame.execute({ filePath: this.#savePath });
+    const targetPath = filePath ?? this.#savePath;
+    const result = await this.#saveGame.execute({ filePath: targetPath });
+
+    if (result.ok) {
+      this.#savePath = targetPath;
+    }
+
+    return result;
   }
 
   /** Restores a session from the configured save path. */
-  async loadGame(): Promise<Result<void, ValidationError | PersistenceError>> {
+  async loadGame(filePath?: string): Promise<Result<void, ValidationError | PersistenceError>> {
+    const targetPath = filePath ?? this.#savePath;
     const loadResult = await this.#loadGame.execute({
-      filePath: this.#savePath,
+      filePath: targetPath,
       gameContentRoot: this.#gameContentRoot,
     });
 
@@ -724,6 +734,7 @@ export class GameSession {
     }
 
     this.#replaceContext(loadResult.value);
+    this.#savePath = targetPath;
     this.#syncSessionState();
 
     if (

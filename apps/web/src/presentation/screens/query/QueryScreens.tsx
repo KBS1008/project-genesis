@@ -106,7 +106,7 @@ export function MarketsScreen() {
   );
 
   if (!viewData.session.hasGame) {
-    return <EmptyState title="Keine Session aktiv" hint="Starten Sie ein Spiel im Unternehmen-Screen." />;
+    return <EmptyState title="Keine Session aktiv" hint="Starten Sie ein Spiel über das Hauptmenü." />;
   }
 
   if (isLoading || data === null) {
@@ -137,7 +137,7 @@ export function ProductionScreen() {
   );
 
   if (!viewData.session.hasGame) {
-    return <EmptyState title="Keine Session aktiv" hint="Starten Sie ein Spiel im Unternehmen-Screen." />;
+    return <EmptyState title="Keine Session aktiv" hint="Starten Sie ein Spiel über das Hauptmenü." />;
   }
 
   if (isLoading || data === null) {
@@ -168,7 +168,7 @@ export function ResearchScreen() {
   );
 
   if (!viewData.session.hasGame) {
-    return <EmptyState title="Keine Session aktiv" hint="Starten Sie ein Spiel im Unternehmen-Screen." />;
+    return <EmptyState title="Keine Session aktiv" hint="Starten Sie ein Spiel über das Hauptmenü." />;
   }
 
   if (isLoading || data === null) {
@@ -198,7 +198,7 @@ export function TransportScreen() {
   );
 
   if (!viewData.session.hasGame) {
-    return <EmptyState title="Keine Session aktiv" hint="Starten Sie ein Spiel im Unternehmen-Screen." />;
+    return <EmptyState title="Keine Session aktiv" hint="Starten Sie ein Spiel über das Hauptmenü." />;
   }
 
   if (isLoading || data === null) {
@@ -228,7 +228,7 @@ export function FinanceScreen() {
   );
 
   if (!viewData.session.hasGame) {
-    return <EmptyState title="Keine Session aktiv" hint="Starten Sie ein Spiel im Unternehmen-Screen." />;
+    return <EmptyState title="Keine Session aktiv" hint="Starten Sie ein Spiel über das Hauptmenü." />;
   }
 
   if (isLoading || data === null) {
@@ -284,7 +284,7 @@ export function BuildingsScreen() {
   );
 
   if (!viewData.session.hasGame) {
-    return <EmptyState title="Keine Session aktiv" hint="Starten Sie ein Spiel im Unternehmen-Screen." />;
+    return <EmptyState title="Keine Session aktiv" hint="Starten Sie ein Spiel über das Hauptmenü." />;
   }
 
   if (isLoading || data === null) {

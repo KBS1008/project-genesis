@@ -35,11 +35,13 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
     isLoading: false,
     isBusy: false,
     isLiveConnected: false,
+    isSessionDirty: false,
     navigateToScreen,
     selectEntity: vi.fn(),
     clearEntitySelection: vi.fn(),
     refreshSession: vi.fn(),
     runCommand: vi.fn(),
+    markSessionSaved: vi.fn(),
   }),
 }));
 
