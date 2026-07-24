@@ -165,6 +165,7 @@ export type WarehouseStorageRowViewData = {
 export type PlaceBuildingHintViewData = {
   readonly buildingTypeId: string;
   readonly name: string;
+  readonly category: string;
   readonly canPlace: boolean;
   readonly reason: string | null;
 };

@@ -324,4 +324,106 @@ describe('GameController (NestJS)', () => {
     expect(response.body.ok).toBe(false);
     expect(response.body.error).toContain('Missing market buy fields');
   });
+
+  it('POST /api/buildings/place creates a building and debits cash', async () => {
+    await request(app.getHttpServer()).post('/api/session/new').send({ name: 'Building Placement Corp' });
+
+    const before = await request(app.getHttpServer()).get('/api/dashboard');
+    const cashBefore = before.body.data.finance.cashBalance as number;
+    const buildingCountBefore = before.body.data.buildings.length as number;
+
+    const response = await request(app.getHttpServer()).post('/api/buildings/place').send({
+      buildingTypeId: 'sawmill',
+      name: 'Test Sawmill',
+      x: 20,
+      y: 4,
+    });
+
+    expect(response.status).toBe(200);
+    expect(response.body.ok).toBe(true);
+
+    const after = await request(app.getHttpServer()).get('/api/dashboard');
+
+    expect(after.body.data.buildings.length).toBe(buildingCountBefore + 1);
+    expect(after.body.data.buildings.some((building: { name: string }) => building.name === 'Test Sawmill')).toBe(
+      true,
+    );
+    expect(after.body.data.finance.cashBalance).toBeLessThan(cashBefore);
+  });
+
+  it('POST /api/production/start validates required fields', async () => {
+    await request(app.getHttpServer()).post('/api/session/new').send({ name: 'Production Validation Corp' });
+
+    const response = await request(app.getHttpServer())
+      .post('/api/production/start')
+      .send({ buildingId: 'building_001' });
+
+    expect(response.status).toBe(400);
+    expect(response.body.ok).toBe(false);
+    expect(response.body.error).toContain('Missing production start fields');
+  });
+
+  it('POST /api/production/start rejects jobs on buildings under construction', async () => {
+    const initialDashboard = await request(app.getHttpServer()).get('/api/dashboard');
+
+    if (initialDashboard.body.data.company === null) {
+      await request(app.getHttpServer()).post('/api/session/new').send({ name: 'Production Failure Corp' });
+    }
+
+    let buildings = await request(app.getHttpServer()).get('/api/buildings');
+    let pendingBuilding = buildings.body.data.find(
+      (building: { status: string }) => building.status === 'UNDER_CONSTRUCTION',
+    );
+
+    if (pendingBuilding === undefined) {
+      const placeResponse = await request(app.getHttpServer()).post('/api/buildings/place').send({
+        buildingTypeId: 'sawmill',
+        name: `Pending Sawmill ${Date.now()}`,
+        x: 40,
+        y: 40,
+      });
+
+      expect(placeResponse.status).toBe(200);
+
+      buildings = await request(app.getHttpServer()).get('/api/buildings');
+      pendingBuilding = buildings.body.data.find(
+        (building: { status: string }) => building.status === 'UNDER_CONSTRUCTION',
+      );
+    }
+
+    expect(pendingBuilding).toBeDefined();
+
+    const response = await request(app.getHttpServer()).post('/api/production/start').send({
+      buildingId: pendingBuilding.id,
+      recipeId: 'recipe_planks',
+    });
+
+    expect(response.status).toBe(400);
+    expect(response.body.ok).toBe(false);
+  });
+
+  it('POST /api/research/start validates required fields', async () => {
+    await request(app.getHttpServer()).post('/api/session/new').send({ name: 'Research Validation Corp' });
+
+    const response = await request(app.getHttpServer()).post('/api/research/start').send({});
+
+    expect(response.status).toBe(400);
+    expect(response.body.ok).toBe(false);
+    expect(response.body.error).toContain('Missing research start fields');
+  });
+
+  it('POST /api/research/start rejects unknown technologies', async () => {
+    const initialDashboard = await request(app.getHttpServer()).get('/api/dashboard');
+
+    if (initialDashboard.body.data.company === null) {
+      await request(app.getHttpServer()).post('/api/session/new').send({ name: 'Research Failure Corp' });
+    }
+
+    const response = await request(app.getHttpServer())
+      .post('/api/research/start')
+      .send({ technologyId: 'unknown_technology' });
+
+    expect(response.status).toBe(400);
+    expect(response.body.ok).toBe(false);
+  });
 });

@@ -1,89 +1,14 @@
 'use client';
 
-import { useMemo } from 'react';
 import { useGameWorkspace } from '@/presentation/state/GameWorkspaceProvider';
 import { Card } from '@/presentation/primitives/Card';
 import { EmptyState } from '@/presentation/primitives/EmptyState';
-import {
-  buildNameResolver,
-  mapFinanceRowsViewData,
-  mapProductionJobRowsViewData,
-  mapResearchJobRowsViewData,
-  mapTransportJobRowsViewData,
-} from '@/presentation/adapters/mappers/workspace-view-mappers';
-import { mapBuildingListRow } from '@/presentation/adapters/mappers/company-dashboard-view-mappers';
-import {
-  fetchBuildingList,
-  fetchFinanceTransactions,
-  fetchProductionJobs,
-  fetchResearchJobs,
-  fetchTransportOrders,
-} from '@/presentation/adapters/api/query-client';
-import type { BuildingListRowViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
+import { mapFinanceRowsViewData, mapTransportJobRowsViewData } from '@/presentation/adapters/mappers/workspace-view-mappers';
+import { fetchFinanceTransactions, fetchTransportOrders } from '@/presentation/adapters/api/query-client';
 import type { FinanceRowViewData, JobRowViewData } from '@/presentation/adapters/view-data/workspace-view-data';
 import { useScreenQuery } from '@/presentation/hooks/useScreenQuery';
 import { QueryRows } from '@/presentation/screens/shared/QueryRows';
 import { ScreenQueryFrame } from '@/presentation/screens/shared/ScreenQueryFrame';
-
-/** Production screen backed by production job queries. */
-export function ProductionScreen() {
-  const { viewData, companyViewData } = useGameWorkspace();
-  const names = useMemo(() => buildNameResolver(companyViewData.labels), [companyViewData.labels]);
-  const { data, isLoading, errorMessage } = useScreenQuery(
-    'production',
-    () => fetchProductionJobs().then((jobs) => mapProductionJobRowsViewData(jobs, names.recipe)),
-    viewData.session.hasGame,
-  );
-
-  return (
-    <ScreenQueryFrame
-      hasGame={viewData.session.hasGame}
-      isLoading={isLoading}
-      errorMessage={errorMessage}
-      loadingLabel="Produktionsdaten werden geladen…"
-    >
-      <Card title="Produktion">
-        <QueryRows
-          columns={['Rezept', 'Status', 'Fortschritt']}
-          rows={(data ?? []).map((row: JobRowViewData) => ({
-            id: row.id,
-            cells: [row.title, row.statusLabel, row.progressLabel],
-          }))}
-        />
-      </Card>
-    </ScreenQueryFrame>
-  );
-}
-
-/** Research screen backed by research job queries. */
-export function ResearchScreen() {
-  const { viewData, companyViewData } = useGameWorkspace();
-  const names = useMemo(() => buildNameResolver(companyViewData.labels), [companyViewData.labels]);
-  const { data, isLoading, errorMessage } = useScreenQuery(
-    'research',
-    () => fetchResearchJobs().then((jobs) => mapResearchJobRowsViewData(jobs, names.technology)),
-    viewData.session.hasGame,
-  );
-
-  return (
-    <ScreenQueryFrame
-      hasGame={viewData.session.hasGame}
-      isLoading={isLoading}
-      errorMessage={errorMessage}
-      loadingLabel="Forschungsdaten werden geladen…"
-    >
-      <Card title="Forschung">
-        <QueryRows
-          columns={['Technologie', 'Status', 'Fortschritt']}
-          rows={(data ?? []).map((row: JobRowViewData) => ({
-            id: row.id,
-            cells: [row.title, row.statusLabel, row.progressLabel],
-          }))}
-        />
-      </Card>
-    </ScreenQueryFrame>
-  );
-}
 
 /** Transport screen backed by transport order queries. */
 export function TransportScreen() {
@@ -163,47 +88,5 @@ export function ReportsScreen() {
         )}
       </Card>
     </div>
-  );
-}
-
-/** Buildings screen backed by the dedicated buildings query endpoint. */
-export function BuildingsScreen() {
-  const { companyViewData, viewData, regions } = useGameWorkspace();
-  const regionNames = useMemo(
-    () => new Map(regions.map((region) => [region.id, region.name])),
-    [regions],
-  );
-  const { data, isLoading, errorMessage } = useScreenQuery(
-    'buildings',
-    () =>
-      fetchBuildingList().then((buildings) =>
-        buildings.map((building) => mapBuildingListRow(building, companyViewData.labels, regionNames)),
-      ),
-    viewData.session.hasGame,
-  );
-
-  return (
-    <ScreenQueryFrame
-      hasGame={viewData.session.hasGame}
-      isLoading={isLoading}
-      errorMessage={errorMessage}
-      loadingLabel="Gebäudedaten werden geladen…"
-    >
-      <Card title="Gebäude">
-        <QueryRows
-          columns={['Name', 'Typ', 'Region', 'Status', 'Position']}
-          rows={(data ?? []).map((building: BuildingListRowViewData) => ({
-            id: building.id,
-            cells: [
-              building.name,
-              building.buildingTypeLabel,
-              building.regionLabel,
-              building.statusLabel,
-              building.positionLabel,
-            ],
-          }))}
-        />
-      </Card>
-    </ScreenQueryFrame>
   );
 }

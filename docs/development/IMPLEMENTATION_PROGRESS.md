@@ -203,8 +203,9 @@ All **TD-M8-01 … TD-M8-06** resolved — see `docs/quality/M8_IMPLEMENTATION_R
 | Simulation controls (pause/speed)   |      90 | Pause/resume/speed/step API + persistent game shell controls             |
 | World / region / company views (M9-6) |      90 | Overview screens, entity navigation, loading/error states                |
 | Market interaction (M9-7)           |      90 | Regional selector, price table/history, buy/sell forms, API round-trip   |
+| Buildings / production / research (M9-8) |  90 | Dedicated screens, gameplay client, hint-driven workflows, API tests |
 | Accessibility baseline              |      35 | Menu, save, simulation, and inspection screens with ARIA labels          |
-| **Milestone average (gate)**        |  **92** | Phase 7 market interaction complete                                      |
+| **Milestone average (gate)**        |  **93** | Phase 8 buildings, production, and research screens complete             |
 
 **Post-Phase 4 deferred (non-blocking):** `CompanyDashboardScreen` section split, legacy chart migration, optional per-domain queries for company tables, removal of unused `DashboardDetailPanel.tsx`.
 
@@ -1154,7 +1155,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Planned Next Steps
 
-1. **M9 Phase 8 — Buildings, Production, and Research:** per `M9_USER_INTERFACE_PLAN.md`
+1. **M9 Phase 9 — Transport, Reports, and Event Log:** per `M9_USER_INTERFACE_PLAN.md`
 2. Session/auth model for multi-user API access
 3. Full tick log / replay per DD-033 (beyond metrics ring buffer)
 
@@ -1162,7 +1163,9 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Recently Completed (2026-07)
 
-- **M9 Phase 7 — Market Interaction:** regional market selector, supply/demand/liquidity table, price history, buy/sell forms with validation hints, `market-client.ts`, API round-trip tests single session/notification pipeline, `CompanyDashboardScreen` + ViewData layer, Buildings query; verdict **READY FOR GATE 1 DELTA REVIEW** (`docs/architecture/reviews/M9_FOUNDATION_CONSOLIDATION_REPORT.md`)
+- **M9 Phase 8 — Buildings, Production, and Research:** dedicated operation screens, `gameplay-client.ts`, sidebar cleanup, API success/failure tests
+- **M9 Phase 7 — Market Interaction:** regional market selector, supply/demand/liquidity table, price history, buy/sell forms with validation hints, `market-client.ts`, API round-trip tests
+- **M9 Gate 1 — Foundation Consolidation:** single session/notification pipeline, `CompanyDashboardScreen` + ViewData layer, Buildings query; verdict **READY FOR GATE 1 DELTA REVIEW** (`docs/architecture/reviews/M9_FOUNDATION_CONSOLIDATION_REPORT.md`)
 - **M9 Phase 3 — Read Model & Query Layer:** session/simulation/save/world queries + API routes, presentation adapters/view-data/mappers, query-backed screens (**588 tests**)
 - **M9 Phase 2 — Navigation & UI State:** primary navigation, URL-backed workspace state, dialog layer
 - **M9 Gate 0 — Architecture Review:** audit of web/API/`GameSession`; verdict **ARCHITECTURE CHANGES REQUIRED**; retain Next.js + NestJS (`docs/architecture/reviews/M9_ARCHITECTURE_REVIEW_REPORT.md`)

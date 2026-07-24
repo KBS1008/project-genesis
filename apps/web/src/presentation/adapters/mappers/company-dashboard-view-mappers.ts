@@ -243,6 +243,7 @@ function mapSidebarHints(dashboard: GameSessionDashboard): SidebarHintsViewData 
         Object.freeze({
           buildingTypeId: hint.buildingTypeId,
           name: hint.name,
+          category: hint.category,
           canPlace: hint.canPlace,
           reason: hint.reason,
         }),

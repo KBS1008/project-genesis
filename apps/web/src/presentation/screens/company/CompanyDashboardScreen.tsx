@@ -239,103 +239,15 @@ function ConstructionStatus({ building }: { readonly building: BuildingRowViewDa
 function SidebarActions({
   hasGame,
   hints,
-  buildingCount,
   runAction,
 }: {
   readonly hasGame: boolean;
   readonly hints: SidebarHintsViewData;
-  readonly buildingCount: number;
   readonly runAction: (action: () => Promise<void>, successMessage: string) => Promise<void>;
 }) {
   return (
     <>
       <p className="sidebar-title">Aktionen</p>
-
-      <div className="toolbar-group">
-        <span className="toolbar-label">Bauen</span>
-        {hints.placeBuilding.length === 0 ? (
-          <p className="empty-state">Keine Bauoptionen verfügbar.</p>
-        ) : (
-          hints.placeBuilding.map((hint) => (
-            <HintButton
-              key={hint.buildingTypeId}
-              label={hint.name}
-              disabled={!hasGame || !hint.canPlace}
-              reason={hint.reason}
-              onClick={() => {
-                void runAction(
-                  () =>
-                    callApi('/api/buildings/place', {
-                      method: 'POST',
-                      body: JSON.stringify({
-                        buildingTypeId: hint.buildingTypeId,
-                        name: hint.name,
-                        x: buildingCount * 2,
-                        y: 0,
-                      }),
-                    }),
-                  `${hint.name} in Bau gegeben.`,
-                );
-              }}
-            />
-          ))
-        )}
-      </div>
-
-      <div className="toolbar-group">
-        <span className="toolbar-label">Produktion</span>
-        {hints.production.length === 0 ? (
-          <p className="empty-state">Keine Produktionsaktionen möglich.</p>
-        ) : (
-          hints.production.map((hint) => (
-            <HintButton
-              key={`${hint.buildingId}-${hint.recipeId}`}
-              label={`${hint.recipeName} (${hint.buildingName})`}
-              disabled={!hasGame || !hint.canStart}
-              reason={hint.reason}
-              onClick={() => {
-                void runAction(
-                  () =>
-                    callApi('/api/production/start', {
-                      method: 'POST',
-                      body: JSON.stringify({
-                        buildingId: hint.buildingId,
-                        recipeId: hint.recipeId,
-                      }),
-                    }),
-                  `${hint.recipeName} gestartet.`,
-                );
-              }}
-            />
-          ))
-        )}
-      </div>
-
-      <div className="toolbar-group">
-        <span className="toolbar-label">Forschung</span>
-        {hints.research.length === 0 ? (
-          <p className="empty-state">Keine Forschungsprojekte startbar.</p>
-        ) : (
-          hints.research.map((hint) => (
-            <HintButton
-              key={hint.technologyId}
-              label={hint.name}
-              disabled={!hasGame || !hint.canStart}
-              reason={hint.reason}
-              onClick={() => {
-                void runAction(
-                  () =>
-                    callApi('/api/research/start', {
-                      method: 'POST',
-                      body: JSON.stringify({ technologyId: hint.technologyId }),
-                    }),
-                  `Forschung „${hint.name}“ gestartet.`,
-                );
-              }}
-            />
-          ))
-        )}
-      </div>
 
       <div className="toolbar-group">
         <span className="toolbar-label">Personal</span>
@@ -648,7 +560,6 @@ export function CompanyDashboardScreen({
           <SidebarActions
             hasGame={hasGame}
             hints={companyViewData.hints}
-            buildingCount={companyViewData.buildingCount}
             runAction={runAction}
           />
         </aside>
