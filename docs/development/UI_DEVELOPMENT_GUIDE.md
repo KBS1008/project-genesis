@@ -144,6 +144,23 @@ Include `viewData.simulation.tickNumber` in the query key when the screen must r
 
 Live dashboard refreshes are debounced in `GameWorkspaceProvider` (250 ms).
 
+## Operator notes
+
+- Run the stack with `pnpm dev` (API on default Nest port, web on `:3000`).
+- Savegames are written under `saves/` relative to the repository root.
+- Saving fails while domain events are queued; advance one simulation tick before save if commands were just executed.
+- High simulation speed relies on debounced queries — do not remove `TICK_QUERY_DEBOUNCE_MS` without profiling.
+
+## E2E tests
+
+API-level end-to-end flows live in `apps/api/src/e2e/`:
+
+```bash
+pnpm test:e2e
+```
+
+These validate the M9 gameplay chain (new game → trade → build → produce → research → save/load) through the real NestJS adapter and Application layer.
+
 ## Accessibility
 
 - Use `useModalAccessibility` for modal dialogs (focus trap + Escape).

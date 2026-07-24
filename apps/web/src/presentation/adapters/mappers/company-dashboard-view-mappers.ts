@@ -1,34 +1,35 @@
-import type {
-  BuildingReadModel,
-  GameSessionDashboard,
-  TickMetricsSnapshot,
+import {
+  buildNameMap,
+  type BuildingReadModel,
+  type GameSessionDashboard,
+  type TickMetricsSnapshot,
 } from '@/presentation/adapters/api/client';
-import { buildNameMap } from '@/presentation/adapters/api/client';
-import type {
-  BuildingListRowViewData,
-  BuildingRowViewData,
-  CompanyDashboardViewData,
-  CompanyDetailViewData,
-  ContentLabelsViewData,
-  ContractRowViewData,
-  EconomySectionViewData,
-  EmployeeRowViewData,
-  EntityCatalogViewData,
-  EntityDetailViewData,
-  FinanceTransactionRowViewData,
-  InventoryItemRowViewData,
-  KpiStripViewData,
-  MarketPriceChartViewData,
-  OverviewStripViewData,
-  ProductionJobRowViewData,
-  ResearchJobRowViewData,
-  SidebarHintsViewData,
-  TickMetricsViewData,
-  TransportOrderRowViewData,
-  TutorialViewData,
-  WarehouseStorageRowViewData,
+import {
+  EMPTY_COMPANY_DASHBOARD_VIEW_DATA,
+  type BuildingListRowViewData,
+  type BuildingRowViewData,
+  type CompanyDashboardViewData,
+  type CompanyDetailViewData,
+  type ContentLabelsViewData,
+  type ContractRowViewData,
+  type DetailKeyValueViewData,
+  type EconomySectionViewData,
+  type EmployeeRowViewData,
+  type EntityCatalogViewData,
+  type EntityDetailViewData,
+  type FinanceTransactionRowViewData,
+  type InventoryItemRowViewData,
+  type KpiStripViewData,
+  type MarketPriceChartViewData,
+  type OverviewStripViewData,
+  type ProductionJobRowViewData,
+  type ResearchJobRowViewData,
+  type SidebarHintsViewData,
+  type TickMetricsViewData,
+  type TransportOrderRowViewData,
+  type TutorialViewData,
+  type WarehouseStorageRowViewData,
 } from '@/presentation/adapters/view-data/company-dashboard-view-data';
-import { EMPTY_COMPANY_DASHBOARD_VIEW_DATA } from '@/presentation/adapters/view-data/company-dashboard-view-data';
 import {
   formatContractStatus,
   formatCurrency,
@@ -46,7 +47,6 @@ import {
   trendFromHistory,
   trendLabel,
 } from '@/presentation/formatting/presentation-formatters';
-import type { DetailKeyValueViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
 
 function kv(label: string, value: string, valueClass?: string): DetailKeyValueViewData {
   return valueClass === undefined

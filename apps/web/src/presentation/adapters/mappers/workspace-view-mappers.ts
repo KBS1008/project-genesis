@@ -15,15 +15,15 @@ import {
   formatTransactionAmount,
   formatTransactionType,
 } from '@/presentation/formatting/presentation-formatters';
-import type {
-  FinanceTransactionReadModel,
-  GameSessionDashboard,
-  MarketPriceReadModel,
-  ProductionJobSessionReadModel,
-  ResearchJobSessionReadModel,
-  TransportOrderSessionReadModel,
+import {
+  buildNameMap,
+  type FinanceTransactionReadModel,
+  type GameSessionDashboard,
+  type MarketPriceReadModel,
+  type ProductionJobSessionReadModel,
+  type ResearchJobSessionReadModel,
+  type TransportOrderSessionReadModel,
 } from '@/presentation/adapters/api/client';
-import { buildNameMap } from '@/presentation/adapters/api/client';
 import type {
   EventLogRowViewData,
   FinanceRowViewData,

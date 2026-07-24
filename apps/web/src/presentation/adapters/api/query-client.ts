@@ -1,6 +1,14 @@
 /** HTTP DTOs and fetch helpers for M9 read-model queries. */
 
-import { callApi } from './client';
+import {
+  callApi,
+  type BuildingReadModel,
+  type FinanceTransactionReadModel,
+  type MarketPriceReadModel,
+  type ProductionJobSessionReadModel,
+  type ResearchJobSessionReadModel,
+  type TransportOrderSessionReadModel,
+} from './client';
 
 export type SessionStatusDto = {
   readonly hasActiveSession: boolean;
@@ -117,27 +125,27 @@ export function fetchEventLog(
   return callApi<readonly EventLogEntryDto[]>(`/api/events/log${query.length > 0 ? `?${query}` : ''}`);
 }
 
-export function fetchMarketPrices(regionId?: string): Promise<readonly import('./client').MarketPriceReadModel[]> {
+export function fetchMarketPrices(regionId?: string): Promise<readonly MarketPriceReadModel[]> {
   const query = regionId === undefined ? '' : `?regionId=${encodeURIComponent(regionId)}`;
   return callApi(`/api/markets/prices${query}`);
 }
 
-export function fetchProductionJobs(): Promise<readonly import('./client').ProductionJobSessionReadModel[]> {
+export function fetchProductionJobs(): Promise<readonly ProductionJobSessionReadModel[]> {
   return callApi('/api/production/jobs');
 }
 
-export function fetchResearchJobs(): Promise<readonly import('./client').ResearchJobSessionReadModel[]> {
+export function fetchResearchJobs(): Promise<readonly ResearchJobSessionReadModel[]> {
   return callApi('/api/research/jobs');
 }
 
-export function fetchTransportOrders(): Promise<readonly import('./client').TransportOrderSessionReadModel[]> {
+export function fetchTransportOrders(): Promise<readonly TransportOrderSessionReadModel[]> {
   return callApi('/api/transport/orders');
 }
 
-export function fetchFinanceTransactions(): Promise<readonly import('./client').FinanceTransactionReadModel[]> {
+export function fetchFinanceTransactions(): Promise<readonly FinanceTransactionReadModel[]> {
   return callApi('/api/finance/transactions');
 }
 
-export function fetchBuildingList(): Promise<readonly import('./client').BuildingReadModel[]> {
+export function fetchBuildingList(): Promise<readonly BuildingReadModel[]> {
   return callApi('/api/buildings');
 }

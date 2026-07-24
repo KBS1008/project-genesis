@@ -102,7 +102,7 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
   const [isLiveConnected, setIsLiveConnected] = useState(false);
   const [isSessionDirty, setIsSessionDirty] = useState(false);
   const isBusyRef = useRef(false);
-  const refreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const refreshTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
     return () => {

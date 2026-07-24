@@ -3,7 +3,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
-import { EMPTY_COMPANY_DASHBOARD_VIEW_DATA } from '@/presentation/adapters/view-data/company-dashboard-view-data';
 import { SimulationControlsBar } from '@/presentation/shell/SimulationControlsBar';
 
 const runCommand = vi.fn();

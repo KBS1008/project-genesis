@@ -1,6 +1,8 @@
 import type { RegionDto } from '@/presentation/adapters/api/query-client';
-import type { BuildingListRowViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
-import type { CompanyDashboardViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
+import type {
+  BuildingListRowViewData,
+  CompanyDashboardViewData,
+} from '@/presentation/adapters/view-data/company-dashboard-view-data';
 import type {
   CompanyOverviewViewData,
   RegionalPresenceRowViewData,

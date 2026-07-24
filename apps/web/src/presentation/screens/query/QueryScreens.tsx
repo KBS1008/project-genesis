@@ -2,9 +2,9 @@
 
 import { useGameWorkspace } from '@/presentation/state/GameWorkspaceProvider';
 import { Card } from '@/presentation/primitives/Card';
-import { mapFinanceRowsViewData, mapTransportJobRowsViewData } from '@/presentation/adapters/mappers/workspace-view-mappers';
-import { fetchFinanceTransactions, fetchTransportOrders } from '@/presentation/adapters/api/query-client';
-import type { FinanceRowViewData, JobRowViewData } from '@/presentation/adapters/view-data/workspace-view-data';
+import { mapFinanceRowsViewData } from '@/presentation/adapters/mappers/workspace-view-mappers';
+import { fetchFinanceTransactions } from '@/presentation/adapters/api/query-client';
+import type { FinanceRowViewData } from '@/presentation/adapters/view-data/workspace-view-data';
 import { useScreenQuery } from '@/presentation/hooks/useScreenQuery';
 import { QueryRows } from '@/presentation/screens/shared/QueryRows';
 import { ScreenQueryFrame } from '@/presentation/screens/shared/ScreenQueryFrame';

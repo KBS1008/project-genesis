@@ -59,8 +59,8 @@ export function TransportScreen() {
 
         <div className="pg-operation-summary-grid">
           <Card title="Aktiv unterwegs">
-            <p className="pg-operation-metric">{companyViewData.kpis.activeTransportCount}</p>
-            <p className="pg-operation-hint-copy">{companyViewData.kpis.activeTransportTrend}</p>
+            <p className="pg-operation-metric">{companyViewData.kpis?.activeTransportCount ?? 0}</p>
+            <p className="pg-operation-hint-copy">{companyViewData.kpis?.activeTransportTrend ?? '—'}</p>
           </Card>
           <Card title="Warteschlange">
             <p className="pg-operation-metric">{routeSummary.waiting}</p>

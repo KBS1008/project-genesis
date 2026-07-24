@@ -30,8 +30,8 @@ Update this document whenever a meaningful implementation milestone is completed
 | Simulation                       | Partial (SimulationEngine, systems pipeline incl. regional market, company planning/execution, contracts, payroll, tax, inflation dampening)                          |
 | Infrastructure                   | Partial (in-memory repositories incl. **CompanyBrain**, JSON savegames V3 on disk; employees, supply contracts, tick metrics history)   |
 | Application layer                | Implemented (bootstrap, use cases, queries, dashboard facade, tutorial progress)                                                                                      |
-| UI                               | Partial (M9 Phases 1–10; Phase 11 pending) |
-| M9 User Interface                | 🟡 In Progress (Gate 0 ✅ · Gate 1 ✅ · Gate 2 ✅ · Phases 1–10 ✅) |
+| UI                               | ✅ M9 complete (Phases 1–11) |
+| M9 User Interface                | ✅ Complete (Gate 0 ✅ · Gate 1 ✅ · Gate 2 ✅ · Gate 3 ✅) |
 | Energy system                    | Partial (balance service, production gating, baseline grid)                                                                                                           |
 | Transport / logistics            | ✅ M6 completed — capacities, route durations, throughput queue (DD-022)                                                                                              |
 | World simulation                 | ✅ M7 completed — regions, map, biomes, cities, regional resources, save V2 (AUD-005)                                                                               |
@@ -42,7 +42,7 @@ Update this document whenever a meaningful implementation milestone is completed
 | M8 NPC Economy                   | ✅ Completed (Gate AUD-006, 2026-07-22) |
 | Phase 1 Core Domain              | ✅ Completed (Gate 2026-07-19) — see `PHASE1_CORE_DOMAIN_REPORT.md`                                                                                                   |
 
-**Tests:** 628 (run `pnpm test` for current count)
+**Tests:** 632 (run `pnpm test` for current count; `pnpm test:e2e` for M9 API flows)
 
 ---
 
@@ -188,29 +188,32 @@ Update deliverable rows when a step ships; set milestone % to the **average of i
 
 All **TD-M8-01 … TD-M8-06** resolved — see `docs/quality/M8_IMPLEMENTATION_REPORT.md` and `TECHNICAL_DEBT_REGISTER.md`.
 
-### M9 – User Interface 🟡 (~98 % · Gate 0 ✅ · Gate 1 ✅ · Gate 2 ✅ · Phases 1–10 ✅)
+### M9 – User Interface ✅ (100 % · Gate 0 ✅ · Gate 1 ✅ · Gate 2 ✅ · Gate 3 ✅)
 
 | Deliverable                         |     % | Evidence                                                                 |
 | ----------------------------------- | ----: | ------------------------------------------------------------------------ |
 | Gate 0 architecture review (M9-0)   |     100 | `docs/architecture/reviews/M9_ARCHITECTURE_REVIEW_REPORT.md`             |
 | Gate 1 foundation consolidation     |     100 | `docs/architecture/reviews/M9_FOUNDATION_CONSOLIDATION_REPORT.md`        |
 | Gate 2 gameplay UI review           |     100 | `docs/architecture/reviews/M9_IMPLEMENTATION_GATE_2_REPORT.md`           |
-| Transport / reports / event log (M9-9) | 90 | `TransportScreen`, `ReportsScreen`, `PlayerEventLogService`, notification navigation |
+| Gate 3 final review                 |     100 | `docs/architecture/reviews/M9_FINAL_GATE_REPORT.md`                      |
+| Final implementation report         |     100 | `docs/implementation/M9_IMPLEMENTATION_REPORT.md`                        |
 | Presentation ADR (DD-038)           |     100 | `docs/decisions/DD-038-Presentation-Architecture.md`                     |
 | UI development guide                |     100 | `docs/development/UI_DEVELOPMENT_GUIDE.md`                               |
+| UI read-model schema doc            |     100 | `docs/schemas/UIReadModels.schema.md`                                    |
 | Presentation foundation (M9-1)    |     100 | shell, primitives, notifications, UI test harness                        |
 | Navigation & UI state (M9-2)        |     100 | primary nav, URL state, dialogs, `GameWorkspaceProvider`                 |
 | Query adapters / view-data (M9-3)   |     100 | `presentation/adapters/` query clients, mappers, screen queries          |
-| Company screen (consolidated)       |      85 | `CompanyDashboardScreen` — section split deferred post-Phase 4           |
-| Main menu / save-load UX (M9-4)     |      90 | Main menu, new/load/save flows, API round-trip test                      |
-| Simulation controls (pause/speed)   |      90 | Pause/resume/speed/step API + persistent game shell controls             |
-| World / region / company views (M9-6) |      90 | Overview screens, entity navigation, loading/error states                |
-| Market interaction (M9-7)           |      90 | Regional selector, price table/history, buy/sell forms, API round-trip   |
-| Buildings / production / research (M9-8) |  90 | Dedicated screens, gameplay client, hint-driven workflows, API tests |
-| Transport / reports / event log (M9-9) | 90 | `TransportScreen`, `ReportsScreen`, `PlayerEventLogService`, notification navigation |
-| UX / accessibility / performance (M9-10) | 90 | debounced queries, modal focus trap, keyboard nav, skip link, step confirm |
-| Accessibility baseline              |      75 | Focus management, ARIA landmarks, reduced motion, keyboard navigation    |
-| **Milestone average (gate)**        |  **98** | Phase 10 UX, accessibility, and performance hardening complete           |
+| Company screen (consolidated)       |      85 | `CompanyDashboardScreen` — section split deferred (TD-M9-02)           |
+| Main menu / save-load UX (M9-4)     |      95 | Main menu, new/load/save flows, save/load E2E                           |
+| Simulation controls (pause/speed)   |      95 | Pause/resume/speed/step API + persistent game shell controls             |
+| World / region / company views (M9-6) |    95 | Overview screens, entity navigation, loading/error states                |
+| Market interaction (M9-7)           |      95 | Regional selector, price table/history, buy/sell forms, API round-trip   |
+| Buildings / production / research (M9-8) |  95 | Dedicated screens, gameplay client, hint-driven workflows, API tests |
+| Transport / reports / event log (M9-9) | 95 | `TransportScreen`, `ReportsScreen`, `PlayerEventLogService`, notification navigation |
+| UX / accessibility / performance (M9-10) | 95 | debounced queries, modal focus trap, keyboard nav, skip link, step confirm |
+| Final integration & E2E (M9-11)     |     100 | API E2E flows, architecture tests, Gate 3, production build              |
+| Accessibility baseline              |      80 | Focus management, ARIA landmarks, reduced motion, keyboard navigation    |
+| **Milestone average (gate)**        | **100** | Gate 3 verdict **M9 COMPLETE**                                           |
 
 **Post-Phase 4 deferred (non-blocking):** `CompanyDashboardScreen` section split, legacy chart migration, optional per-domain queries for company tables, removal of unused `DashboardDetailPanel.tsx`.
 
@@ -1160,7 +1163,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Planned Next Steps
 
-1. **M9 Phase 11 — Final Integration and Documentation:** per `M9_USER_INTERFACE_PLAN.md`
+1. **M10 Content Expansion** — per `PROJECT_ROADMAP.md`
 2. Session/auth model for multi-user API access
 3. Full tick log / replay per DD-033 (beyond metrics ring buffer)
 
@@ -1168,6 +1171,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Recently Completed (2026-07)
 
+- **M9 Phase 11 — Final Integration and Documentation:** API E2E gameplay/save-load flows, architecture tests, `M9_IMPLEMENTATION_REPORT.md`, Gate 3 **M9 COMPLETE**
 - **M9 Phase 10 — UX, Accessibility, and Performance:** debounced tick queries, throttled socket refresh, modal focus trap, keyboard navigation, skip link, step confirmation, unique card heading ids
 - **M9 Phase 9 — Transport, Reports, and Event Log:** `PlayerEventLogService`, dedicated transport/reports screens, category filters, notification-to-event navigation, API tests
 - **M9 documentation — UI development guide:** `docs/development/UI_DEVELOPMENT_GUIDE.md` (view-data, queries, commands, screen patterns)

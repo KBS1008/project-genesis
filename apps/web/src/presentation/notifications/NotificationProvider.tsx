@@ -33,7 +33,7 @@ export function NotificationProvider({ children }: { readonly children: ReactNod
   }, []);
 
   const showNotification = useCallback(
-    ({ message, tone = 'info', dismissMs }: ShowNotificationInput) => {
+    ({ message, tone = 'info', dismissMs, eventLogId }: ShowNotificationInput) => {
       const id = createNotificationId();
       const resolvedDismissMs = dismissMs === undefined ? defaultDismissMs(tone) : dismissMs;
 
@@ -45,7 +45,7 @@ export function NotificationProvider({ children }: { readonly children: ReactNod
           tone,
           createdAt: Date.now(),
           dismissMs: resolvedDismissMs,
-          ...(input.eventLogId !== undefined ? { eventLogId: input.eventLogId } : {}),
+          ...(eventLogId !== undefined ? { eventLogId } : {}),
         },
       ]);
 
