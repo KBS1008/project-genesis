@@ -1,0 +1,12 @@
+id: executive_leadership
+name: Executive Leadership
+description: Strategische Unternehmenssteuerung und Konzernstrukturen.
+category: MANAGEMENT
+requiredResearch:
+  - corporate_management
+requiredMilestones:
+  - first_profit
+researchCost: 4500
+researchDuration: 120
+enabled: true
+version: 1

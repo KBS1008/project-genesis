@@ -11,7 +11,8 @@ constructionCost: 15000
 constructionTime: 160
 allowedRecipes: []
 maxProductionLines: 1
-requiredResearch: []
+requiredResearch:
+  - corporate_management
 requiredMilestones:
   - first_steel
 enabled: true

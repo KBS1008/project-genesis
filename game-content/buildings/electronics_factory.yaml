@@ -12,7 +12,8 @@ constructionTime: 160
 allowedRecipes:
   - recipe_advanced_electronics
 maxProductionLines: 1
-requiredResearch: []
+requiredResearch:
+  - circuit_design
 requiredMilestones:
   - first_industrial_machinery
 enabled: true

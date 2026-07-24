@@ -1,0 +1,12 @@
+id: polymer_science
+name: Polymerwissenschaft
+description: Kunststoffe und Verbundwerkstoffe fuer Recycling und Spezialproduktion.
+category: CHEMISTRY
+requiredResearch:
+  - organic_chemistry
+requiredMilestones:
+  - first_machine_parts
+researchCost: 5000
+researchDuration: 140
+enabled: true
+version: 1

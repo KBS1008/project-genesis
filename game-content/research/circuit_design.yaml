@@ -1,0 +1,11 @@
+id: circuit_design
+name: Schaltungsdesign
+description: Entwurf und Fertigung elektronischer Baugruppen und Steuerungssysteme.
+category: ELECTRONICS
+requiredResearch:
+  - precision_machining
+requiredMilestones: []
+researchCost: 5000
+researchDuration: 140
+enabled: true
+version: 1

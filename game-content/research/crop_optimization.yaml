@@ -1,0 +1,12 @@
+id: crop_optimization
+name: Ertragsoptimierung
+description: Verbesserte Anbaumethoden und Ernteverfahren fuer stabile Rohstofflieferungen.
+category: AGRICULTURE
+requiredResearch:
+  - sustainable_agriculture
+requiredMilestones:
+  - first_production
+researchCost: 2500
+researchDuration: 90
+enabled: true
+version: 1

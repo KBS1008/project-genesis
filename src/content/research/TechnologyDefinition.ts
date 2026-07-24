@@ -11,6 +11,12 @@ export const TechnologyCategory = {
   ENERGY: 'ENERGY',
   LOGISTICS: 'LOGISTICS',
   MANAGEMENT: 'MANAGEMENT',
+  AUTOMATION: 'AUTOMATION',
+  FINANCE: 'FINANCE',
+  AGRICULTURE: 'AGRICULTURE',
+  CHEMISTRY: 'CHEMISTRY',
+  ELECTRONICS: 'ELECTRONICS',
+  AI: 'AI',
 } as const;
 
 export type TechnologyCategory = (typeof TechnologyCategory)[keyof typeof TechnologyCategory];

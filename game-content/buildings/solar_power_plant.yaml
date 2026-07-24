@@ -12,7 +12,8 @@ constructionCost: 14000
 constructionTime: 140
 allowedRecipes: []
 maxProductionLines: 1
-requiredResearch: []
+requiredResearch:
+  - renewable_energy
 requiredMilestones:
   - first_profit
 enabled: true

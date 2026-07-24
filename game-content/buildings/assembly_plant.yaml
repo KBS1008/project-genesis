@@ -12,7 +12,8 @@ constructionTime: 140
 allowedRecipes:
   - recipe_industrial_machinery
 maxProductionLines: 1
-requiredResearch: []
+requiredResearch:
+  - industrial_assembly
 requiredMilestones:
   - first_machine_parts
 enabled: true

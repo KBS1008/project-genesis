@@ -1,0 +1,12 @@
+id: warehouse_systems
+name: Lagersysteme
+description: Organisierte Lagerhaltung und Bestandsfuehrung fuer wachsende Betriebe.
+category: LOGISTICS
+requiredResearch:
+  - basic_woodworking
+requiredMilestones:
+  - first_production
+researchCost: 2000
+researchDuration: 80
+enabled: true
+version: 1

@@ -1,0 +1,12 @@
+id: distribution_networks
+name: Distributionsnetze
+description: Regionale Verteilung und Umschlagpunkte fuer Warenstroeme.
+category: LOGISTICS
+requiredResearch:
+  - warehouse_systems
+requiredMilestones:
+  - first_steel
+researchCost: 3500
+researchDuration: 110
+enabled: true
+version: 1

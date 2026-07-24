@@ -1,0 +1,12 @@
+id: corporate_management
+name: Unternehmensfuehrung
+description: Organisationsstrukturen und Fuehrungsprozesse fuer wachsende Konzerne.
+category: MANAGEMENT
+requiredResearch:
+  - basic_woodworking
+requiredMilestones:
+  - profit_100
+researchCost: 2000
+researchDuration: 80
+enabled: true
+version: 1

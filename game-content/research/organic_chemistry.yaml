@@ -1,0 +1,12 @@
+id: organic_chemistry
+name: Organische Chemie
+description: Grundlegende chemische Verfahren fuer Industrieprodukte und Recycling.
+category: CHEMISTRY
+requiredResearch:
+  - basic_woodworking
+requiredMilestones:
+  - first_steel
+researchCost: 3000
+researchDuration: 100
+enabled: true
+version: 1

@@ -1,0 +1,12 @@
+id: smart_grid
+name: Intelligentes Stromnetz
+description: Netzsteuerung und Lastausgleich fuer wachsende Industrieanlagen.
+category: ENERGY
+requiredResearch:
+  - renewable_energy
+requiredMilestones:
+  - first_machine_parts
+researchCost: 5000
+researchDuration: 150
+enabled: true
+version: 1

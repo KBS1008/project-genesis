@@ -1,0 +1,12 @@
+id: semiconductor_process
+name: Halbleiterprozesse
+description: Mikrostruktur-Fertigung fuer fortgeschrittene Elektronik und Endprodukte.
+category: ELECTRONICS
+requiredResearch:
+  - circuit_design
+requiredMilestones:
+  - first_advanced_electronics
+researchCost: 8000
+researchDuration: 180
+enabled: true
+version: 1

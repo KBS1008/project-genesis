@@ -12,7 +12,8 @@ constructionTime: 120
 allowedRecipes:
   - recipe_machine_parts
 maxProductionLines: 1
-requiredResearch: []
+requiredResearch:
+  - advanced_metallurgy
 requiredMilestones:
   - first_steel
 enabled: true

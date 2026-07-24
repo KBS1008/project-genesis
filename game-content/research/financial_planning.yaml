@@ -1,0 +1,12 @@
+id: financial_planning
+name: Finanzplanung
+description: Budgetierung, Cashflow-Steuerung und langfristige Investitionsplanung.
+category: FINANCE
+requiredResearch:
+  - corporate_management
+requiredMilestones:
+  - profit_100
+researchCost: 3000
+researchDuration: 100
+enabled: true
+version: 1

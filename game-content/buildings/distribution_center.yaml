@@ -12,7 +12,8 @@ constructionTime: 110
 allowedRecipes: []
 maxProductionLines: 1
 storageCapacity: 1200
-requiredResearch: []
+requiredResearch:
+  - distribution_networks
 requiredMilestones:
   - first_profit
 enabled: true

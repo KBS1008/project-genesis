@@ -32,7 +32,7 @@ Update this document whenever a meaningful implementation milestone is completed
 | Application layer                | Implemented (bootstrap, use cases, queries, dashboard facade, tutorial progress)                                                                                      |
 | UI                               | ✅ M9 complete (Phases 1–11) |
 | M9 User Interface                | ✅ Complete (Gate 0 ✅ · Gate 1 ✅ · Gate 2 ✅ · Gate 3 ✅) |
-| M10 Content Expansion            | 🟡 In Progress (Gate 0 ✅ · Phase 1 ✅ · Phase 2 ✅) |
+| M10 Content Expansion            | 🟡 In Progress (Gate 0 ✅ · Phase 1 ✅ · Phase 2 ✅ · Phase 3 ✅) |
 | Energy system                    | Partial (balance service, production gating, baseline grid)                                                                                                           |
 | Transport / logistics            | ✅ M6 completed — capacities, route durations, throughput queue (DD-022)                                                                                              |
 | World simulation                 | ✅ M7 completed — regions, map, biomes, cities, regional resources, save V2 (AUD-005)                                                                               |
@@ -43,7 +43,7 @@ Update this document whenever a meaningful implementation milestone is completed
 | M8 NPC Economy                   | ✅ Completed (Gate AUD-006, 2026-07-22) |
 | Phase 1 Core Domain              | ✅ Completed (Gate 2026-07-19) — see `PHASE1_CORE_DOMAIN_REPORT.md`                                                                                                   |
 
-**Tests:** 634 (run `pnpm test` for current count; `pnpm test:e2e` for M9 API flows)
+**Tests:** 635 (run `pnpm test` for current count; `pnpm test:e2e` for M9 API flows)
 
 ---
 
@@ -85,7 +85,7 @@ Update deliverable rows when a step ships; set milestone % to the **average of i
 | M7  | World Simulation       | ✅ Completed   |      100 |     8,3 % |        8,3 % |
 | M8  | NPC Economy            | ✅ Completed   |      100 |     8,3 % |        8,3 % |
 | M9  | User Interface         | ✅ Completed   |      100 |     8,3 % |        8,3 % |
-| M10 | Content Expansion      | 🟡 In Progress |       35 |     8,3 % |        2,9 % |
+| M10 | Content Expansion      | 🟡 In Progress |       48 |     8,3 % |        4,0 % |
 | M11 | Polish                 | ⚪ Planned     |        0 |     8,3 % |          0 % |
 | M12 | Release                | ⚪ Planned     |        0 |     8,3 % |          0 % |
 |     | **Total**              |                | **78 %** | **100 %** |     **78 %** |
@@ -218,19 +218,20 @@ All **TD-M8-01 … TD-M8-06** resolved — see `docs/quality/M8_IMPLEMENTATION_R
 
 **Post-Phase 4 deferred (non-blocking):** `CompanyDashboardScreen` section split, legacy chart migration, optional per-domain queries for company tables, removal of unused `DashboardDetailPanel.tsx`.
 
-### M10 – Content Expansion 🟡 (~35 % · Gate 0 ✅ · Phase 1 ✅ · Phase 2 ✅)
+### M10 – Content Expansion 🟡 (~48 % · Gate 0 ✅ · Phase 1 ✅ · Phase 2 ✅ · Phase 3 ✅)
 
 | Deliverable                     |      % | Evidence                                     |
 | ------------------------------- | -----: | -------------------------------------------- |
 | Gate 0 architecture review      |     100 | `docs/architecture/reviews/M10_GATE_0_REPORT.md` |
 | Production chain (Phase 1)      |      40 | Tier 2–5 industrial ladder in `game-content/` |
 | Building expansion (Phase 2)    |      55 | 12 new buildings across 5 categories         |
-| Buildings / resources / recipes |      60 | 9 resources, 23 buildings, 7 recipes       |
-| Technologies / employees        |      15 | Loaders + small catalog (unchanged)          |
+| Research expansion (Phase 3)    |      70 | 21 technologies, 10 branches, research-gated unlocks |
+| Buildings / resources / recipes |      65 | 9 resources, 23 buildings, 7 recipes       |
+| Technologies / employees        |      65 | 21 technologies across production, energy, logistics, AI |
 | Industries / scenarios          |       0 | Not started                                  |
 | Vehicles (content)              |       5 | `Vehicle.schema.md`, art library docs        |
-| Content pipeline / registry     |      40 | Loaders, strict validation, M10 content tests |
-| **Milestone average**           |  **35** | Phase 3 research expansion next              |
+| Content pipeline / registry     |      55 | Loaders, strict validation, M10 content tests |
+| **Milestone average**           |  **48** | Phase 4 transport expansion next; Gate 1 after Phase 3 |
 
 ### M11 – Polish ⚪ (0 %)
 
@@ -1167,14 +1168,15 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Planned Next Steps
 
-1. **M10 Phase 3 — Research Expansion:** technology tree per `M10_CONTENT_EXPANSION_PLAN.md`
-2. Session/auth model for multi-user API access
-3. Full tick log / replay per DD-033 (beyond metrics ring buffer)
+1. **M10 Phase 4 — Transport Expansion:** vehicles, routes, distribution per `M10_CONTENT_EXPANSION_PLAN.md`
+2. **M10 Gate 1 review:** production, buildings, research, savegame compatibility
+3. Session/auth model for multi-user API access
 
 ---
 
 # Recently Completed (2026-07)
 
+- **M10 Phase 3 — Research Expansion:** 20 new technologies across 10 branches, research-gated industrial chain and Phase 2 buildings, `m10ResearchExpansion.test.ts`
 - **M10 Phase 2 — Building Expansion:** 12 buildings (storage, administration, research, infrastructure, energy), milestone-gated placement, `m10BuildingExpansion.test.ts`
 - **M10 Phase 1 — Production Expansion:** industrial tier 2–5 chain (machine parts → consumer goods), 4 buildings, 4 recipes, 4 milestones, `region_east` resources
 - **M10 Gate 0 — Architecture Review:** content pipeline ready; verdict **READY FOR M10 PHASE 1** (`docs/architecture/reviews/M10_GATE_0_REPORT.md`)

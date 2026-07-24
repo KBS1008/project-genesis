@@ -1,0 +1,12 @@
+id: advanced_metallurgy
+name: Fortgeschrittene Metallurgie
+description: Verbesserte Stahlverarbeitung und Praezisionslegierungen fuer die Industrieproduktion.
+category: PRODUCTION
+requiredResearch:
+  - basic_woodworking
+requiredMilestones:
+  - first_steel
+researchCost: 2500
+researchDuration: 90
+enabled: true
+version: 1

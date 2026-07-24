@@ -1,0 +1,12 @@
+id: intermodal_logistics
+name: Intermodale Logistik
+description: Anbindung von Schiene, Strasse und Hafen fuer guenstige Transportketten.
+category: LOGISTICS
+requiredResearch:
+  - distribution_networks
+requiredMilestones:
+  - first_machine_parts
+researchCost: 5500
+researchDuration: 140
+enabled: true
+version: 1

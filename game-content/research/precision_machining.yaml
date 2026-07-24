@@ -1,0 +1,12 @@
+id: precision_machining
+name: Praezisionsbearbeitung
+description: Hochpraezise Werkzeugmaschinen und Fertigungsverfahren fuer Maschinenteile.
+category: PRODUCTION
+requiredResearch:
+  - advanced_metallurgy
+requiredMilestones:
+  - first_machine_parts
+researchCost: 4000
+researchDuration: 120
+enabled: true
+version: 1

@@ -1,0 +1,11 @@
+id: process_automation
+name: Prozessautomatisierung
+description: Automatisierte Steuerung und Sensorik fuer Produktionslinien.
+category: AUTOMATION
+requiredResearch:
+  - advanced_metallurgy
+requiredMilestones: []
+researchCost: 4500
+researchDuration: 120
+enabled: true
+version: 1

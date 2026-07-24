@@ -1,0 +1,13 @@
+id: predictive_analytics
+name: Predictive Analytics
+description: KI-gestuetzte Prognosen fuer Produktion, Markt und Unternehmensplanung.
+category: AI
+requiredResearch:
+  - factory_automation
+  - semiconductor_process
+requiredMilestones:
+  - first_consumer_goods
+researchCost: 12000
+researchDuration: 240
+enabled: true
+version: 1

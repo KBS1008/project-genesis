@@ -1,0 +1,11 @@
+id: coal_efficiency
+name: Kohlekraft-Effizienz
+description: Optimierte Verbrennung und Waermerueckgewinnung fuer konventionelle Kraftwerke.
+category: ENERGY
+requiredResearch:
+  - basic_woodworking
+requiredMilestones: []
+researchCost: 1500
+researchDuration: 75
+enabled: true
+version: 1

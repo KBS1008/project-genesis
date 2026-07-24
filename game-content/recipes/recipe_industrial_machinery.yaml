@@ -16,7 +16,8 @@ outputs:
 duration: 100
 energy: 24
 workers: 3
-requiredResearch: []
+requiredResearch:
+  - industrial_assembly
 requiredMilestones:
   - first_machine_parts
 maintenanceCost: 4

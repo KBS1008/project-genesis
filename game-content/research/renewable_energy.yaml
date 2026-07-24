@@ -1,0 +1,12 @@
+id: renewable_energy
+name: Erneuerbare Energie
+description: Solare und hybride Energiesysteme fuer nachhaltige Versorgung.
+category: ENERGY
+requiredResearch:
+  - coal_efficiency
+requiredMilestones:
+  - first_steel
+researchCost: 3500
+researchDuration: 120
+enabled: true
+version: 1

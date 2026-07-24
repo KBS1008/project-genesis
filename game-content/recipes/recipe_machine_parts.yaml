@@ -14,7 +14,8 @@ outputs:
 duration: 75
 energy: 18
 workers: 2
-requiredResearch: []
+requiredResearch:
+  - advanced_metallurgy
 requiredMilestones:
   - first_steel
 maintenanceCost: 3

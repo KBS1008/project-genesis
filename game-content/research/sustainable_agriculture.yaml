@@ -1,0 +1,11 @@
+id: sustainable_agriculture
+name: Nachhaltige Landwirtschaft
+description: Ressourcenschonende Anbaumethoden und regionale Versorgungsketten.
+category: AGRICULTURE
+requiredResearch:
+  - basic_woodworking
+requiredMilestones: []
+researchCost: 1500
+researchDuration: 70
+enabled: true
+version: 1

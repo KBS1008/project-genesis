@@ -1,0 +1,12 @@
+id: factory_automation
+name: Fabrikautomatisierung
+description: Integrierte Automatisierungssysteme fuer grosse Fertigungsanlagen.
+category: AUTOMATION
+requiredResearch:
+  - process_automation
+requiredMilestones:
+  - first_industrial_machinery
+researchCost: 7000
+researchDuration: 180
+enabled: true
+version: 1

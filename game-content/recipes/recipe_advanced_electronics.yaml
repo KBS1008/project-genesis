@@ -16,7 +16,8 @@ outputs:
 duration: 110
 energy: 28
 workers: 3
-requiredResearch: []
+requiredResearch:
+  - circuit_design
 requiredMilestones:
   - first_industrial_machinery
 maintenanceCost: 5

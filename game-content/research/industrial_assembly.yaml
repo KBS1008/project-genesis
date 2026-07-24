@@ -1,0 +1,12 @@
+id: industrial_assembly
+name: Industriemontage
+description: Montagelinien und Qualitaetsverfahren fuer komplexe Industriemaschinen.
+category: PRODUCTION
+requiredResearch:
+  - precision_machining
+requiredMilestones:
+  - first_industrial_machinery
+researchCost: 6000
+researchDuration: 150
+enabled: true
+version: 1
