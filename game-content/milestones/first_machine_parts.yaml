@@ -1,0 +1,9 @@
+id: first_machine_parts
+name: Erste Maschinenteile
+description: Stelle zum ersten Mal Maschinenteile her.
+trigger:
+  type: PRODUCTION_VOLUME
+  count: 1
+  recipeId: recipe_machine_parts
+enabled: true
+version: 1

@@ -1,0 +1,26 @@
+id: recipe_machine_parts
+name: Maschinenteile fertigen
+description: Verarbeitet Stahl zu präzisen Maschinenteilen.
+version: 1
+category: METAL
+buildingTypes:
+  - machine_shop
+inputs:
+  - resource: steel
+    amount: 3
+outputs:
+  - resource: machine_parts
+    amount: 2
+duration: 75
+energy: 18
+workers: 2
+requiredResearch: []
+requiredMilestones:
+  - first_steel
+maintenanceCost: 3
+productionCost: 2
+experience: 6
+tags:
+  - industrial
+  - tier2
+enabled: true

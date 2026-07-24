@@ -17,5 +17,17 @@ regionalResources:
   - resourceTypeId: steel
     available: true
     extractionModifier: 1.0
+  - resourceTypeId: machine_parts
+    available: true
+    extractionModifier: 0.9
+  - resourceTypeId: industrial_machinery
+    available: true
+    extractionModifier: 0.8
+  - resourceTypeId: advanced_electronics
+    available: true
+    extractionModifier: 0.7
+  - resourceTypeId: consumer_goods
+    available: true
+    extractionModifier: 0.6
 enabled: true
 version: 1

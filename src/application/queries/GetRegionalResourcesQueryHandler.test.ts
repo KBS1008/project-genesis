@@ -46,8 +46,17 @@ describe('GetRegionalResourcesQueryHandler', () => {
     expect(result.ok).toBe(true);
 
     if (result.ok) {
-      expect(result.value.map((entry) => entry.resourceTypeId)).toEqual(['iron_ore', 'steel']);
-      expect(result.value[0]?.extractionModifier).toBe(1.2);
+      expect(result.value.map((entry) => entry.resourceTypeId)).toEqual([
+        'advanced_electronics',
+        'consumer_goods',
+        'industrial_machinery',
+        'iron_ore',
+        'machine_parts',
+        'steel',
+      ]);
+
+      const ironOre = result.value.find((entry) => entry.resourceTypeId === 'iron_ore');
+      expect(ironOre?.extractionModifier).toBe(1.2);
     }
   });
 

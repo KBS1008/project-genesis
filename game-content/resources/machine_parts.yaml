@@ -1,0 +1,26 @@
+id: machine_parts
+name: Maschinenteile
+description: Präzisionskomponenten für industrielle Montage.
+category: COMPONENT
+tier: 2
+state: SOLID
+weight: 5
+volume: 2
+basePrice: 150
+marketEnabled: true
+tradable: true
+stackSize: 999999
+storageType: WAREHOUSE
+transportType: TRUCK
+qualityEnabled: false
+decayEnabled: false
+hazardous: false
+flammable: false
+recyclable: true
+energyValue: 0
+requiredResearch: []
+tags:
+  - component
+  - industrial
+enabled: true
+version: 1

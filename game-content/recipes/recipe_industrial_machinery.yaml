@@ -1,0 +1,28 @@
+id: recipe_industrial_machinery
+name: Industriemaschinen montieren
+description: Montiert Maschinenteile zu schweren Industriemaschinen.
+version: 1
+category: METAL
+buildingTypes:
+  - assembly_plant
+inputs:
+  - resource: machine_parts
+    amount: 4
+  - resource: steel
+    amount: 2
+outputs:
+  - resource: industrial_machinery
+    amount: 1
+duration: 100
+energy: 24
+workers: 3
+requiredResearch: []
+requiredMilestones:
+  - first_machine_parts
+maintenanceCost: 4
+productionCost: 3
+experience: 8
+tags:
+  - industrial
+  - tier3
+enabled: true

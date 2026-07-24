@@ -1,0 +1,9 @@
+id: first_industrial_machinery
+name: Erste Industriemaschine
+description: Montiere zum ersten Mal eine Industriemaschine.
+trigger:
+  type: PRODUCTION_VOLUME
+  count: 1
+  recipeId: recipe_industrial_machinery
+enabled: true
+version: 1

@@ -1,0 +1,9 @@
+id: first_consumer_goods
+name: Erste Konsumgüter
+description: Stelle zum ersten Mal Konsumgüter her.
+trigger:
+  type: PRODUCTION_VOLUME
+  count: 1
+  recipeId: recipe_consumer_goods
+enabled: true
+version: 1

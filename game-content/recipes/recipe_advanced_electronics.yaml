@@ -1,0 +1,28 @@
+id: recipe_advanced_electronics
+name: Advanced Elektronik produzieren
+description: Fertigt elektronische Baugruppen aus Industriemaschinen und Stahl.
+version: 1
+category: ELECTRONICS
+buildingTypes:
+  - electronics_factory
+inputs:
+  - resource: industrial_machinery
+    amount: 1
+  - resource: steel
+    amount: 1
+outputs:
+  - resource: advanced_electronics
+    amount: 2
+duration: 110
+energy: 28
+workers: 3
+requiredResearch: []
+requiredMilestones:
+  - first_industrial_machinery
+maintenanceCost: 5
+productionCost: 4
+experience: 10
+tags:
+  - electronics
+  - tier4
+enabled: true

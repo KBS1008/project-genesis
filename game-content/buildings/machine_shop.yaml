@@ -1,0 +1,19 @@
+id: machine_shop
+name: Maschinenwerkstatt
+description: Fertigt Maschinenteile aus Stahl.
+category: PRODUCTION
+size:
+  width: 3
+  height: 3
+energyUsage: 18
+maintenanceCost: 6
+constructionCost: 9000
+constructionTime: 120
+allowedRecipes:
+  - recipe_machine_parts
+maxProductionLines: 1
+requiredResearch: []
+requiredMilestones:
+  - first_steel
+enabled: true
+version: 1

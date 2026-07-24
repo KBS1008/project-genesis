@@ -1,0 +1,28 @@
+id: recipe_consumer_goods
+name: Konsumgüter herstellen
+description: Kombiniert Elektronik und Holzprodukte zu Endkonsumgütern.
+version: 1
+category: ELECTRONICS
+buildingTypes:
+  - consumer_goods_plant
+inputs:
+  - resource: advanced_electronics
+    amount: 2
+  - resource: planks
+    amount: 5
+outputs:
+  - resource: consumer_goods
+    amount: 3
+duration: 90
+energy: 20
+workers: 2
+requiredResearch: []
+requiredMilestones:
+  - first_advanced_electronics
+maintenanceCost: 4
+productionCost: 3
+experience: 12
+tags:
+  - consumer
+  - tier5
+enabled: true

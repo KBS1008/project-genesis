@@ -1,0 +1,26 @@
+id: advanced_electronics
+name: Advanced Elektronik
+description: Hochwertige elektronische Baugruppen für Endprodukte.
+category: COMPONENT
+tier: 4
+state: SOLID
+weight: 3
+volume: 1
+basePrice: 520
+marketEnabled: true
+tradable: true
+stackSize: 999999
+storageType: WAREHOUSE
+transportType: TRUCK
+qualityEnabled: false
+decayEnabled: false
+hazardous: false
+flammable: false
+recyclable: true
+energyValue: 0
+requiredResearch: []
+tags:
+  - electronics
+  - advanced
+enabled: true
+version: 1

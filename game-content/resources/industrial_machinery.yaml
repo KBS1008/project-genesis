@@ -1,0 +1,26 @@
+id: industrial_machinery
+name: Industriemaschinen
+description: Montierte Maschinen für Fabriken und Elektronikproduktion.
+category: INDUSTRIAL_MATERIAL
+tier: 3
+state: SOLID
+weight: 12
+volume: 6
+basePrice: 320
+marketEnabled: true
+tradable: true
+stackSize: 999999
+storageType: WAREHOUSE
+transportType: TRUCK
+qualityEnabled: false
+decayEnabled: false
+hazardous: false
+flammable: false
+recyclable: true
+energyValue: 0
+requiredResearch: []
+tags:
+  - machinery
+  - industrial
+enabled: true
+version: 1

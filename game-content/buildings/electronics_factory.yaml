@@ -1,0 +1,19 @@
+id: electronics_factory
+name: Elektronikfabrik
+description: Produziert advanced elektronische Baugruppen.
+category: PRODUCTION
+size:
+  width: 4
+  height: 3
+energyUsage: 26
+maintenanceCost: 10
+constructionCost: 18000
+constructionTime: 160
+allowedRecipes:
+  - recipe_advanced_electronics
+maxProductionLines: 1
+requiredResearch: []
+requiredMilestones:
+  - first_industrial_machinery
+enabled: true
+version: 1

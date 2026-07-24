@@ -1,0 +1,19 @@
+id: consumer_goods_plant
+name: Konsumgüterwerk
+description: Stellt fertige Konsumgüter für den Markt her.
+category: PRODUCTION
+size:
+  width: 3
+  height: 4
+energyUsage: 20
+maintenanceCost: 9
+constructionCost: 16000
+constructionTime: 150
+allowedRecipes:
+  - recipe_consumer_goods
+maxProductionLines: 1
+requiredResearch: []
+requiredMilestones:
+  - first_advanced_electronics
+enabled: true
+version: 1

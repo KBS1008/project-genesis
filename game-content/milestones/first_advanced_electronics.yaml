@@ -1,0 +1,9 @@
+id: first_advanced_electronics
+name: Erste Advanced Elektronik
+description: Produziere zum ersten Mal advanced Elektronik.
+trigger:
+  type: PRODUCTION_VOLUME
+  count: 1
+  recipeId: recipe_advanced_electronics
+enabled: true
+version: 1

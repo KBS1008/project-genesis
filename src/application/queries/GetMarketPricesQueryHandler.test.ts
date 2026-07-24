@@ -49,7 +49,17 @@ describe('GetMarketPricesQueryHandler', () => {
 
     if (result.ok) {
       expect(result.value.length).toBeGreaterThanOrEqual(3);
-      expect(result.value[0]?.resourceId).toBe('iron_ore');
+      expect(result.value.map((price) => price.resourceId)).toEqual([
+        'advanced_electronics',
+        'consumer_goods',
+        'industrial_machinery',
+        'iron_ore',
+        'machine_parts',
+        'planks',
+        'steel',
+        'stone',
+        'wood',
+      ]);
       expect(result.value.find((price) => price.resourceId === 'wood')).toEqual({
         resourceId: 'wood',
         basePrice: 25,

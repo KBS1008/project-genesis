@@ -1,0 +1,19 @@
+id: assembly_plant
+name: Montagehalle
+description: Montiert Maschinenteile zu Industriemaschinen.
+category: PRODUCTION
+size:
+  width: 4
+  height: 4
+energyUsage: 22
+maintenanceCost: 8
+constructionCost: 14000
+constructionTime: 140
+allowedRecipes:
+  - recipe_industrial_machinery
+maxProductionLines: 1
+requiredResearch: []
+requiredMilestones:
+  - first_machine_parts
+enabled: true
+version: 1

@@ -32,6 +32,7 @@ Update this document whenever a meaningful implementation milestone is completed
 | Application layer                | Implemented (bootstrap, use cases, queries, dashboard facade, tutorial progress)                                                                                      |
 | UI                               | ✅ M9 complete (Phases 1–11) |
 | M9 User Interface                | ✅ Complete (Gate 0 ✅ · Gate 1 ✅ · Gate 2 ✅ · Gate 3 ✅) |
+| M10 Content Expansion            | 🟡 In Progress (Gate 0 ✅ · Phase 1 ✅) |
 | Energy system                    | Partial (balance service, production gating, baseline grid)                                                                                                           |
 | Transport / logistics            | ✅ M6 completed — capacities, route durations, throughput queue (DD-022)                                                                                              |
 | World simulation                 | ✅ M7 completed — regions, map, biomes, cities, regional resources, save V2 (AUD-005)                                                                               |
@@ -83,8 +84,8 @@ Update deliverable rows when a step ships; set milestone % to the **average of i
 | M6  | Logistics              | ✅ Completed   |      100 |     8,3 % |        8,3 % |
 | M7  | World Simulation       | ✅ Completed   |      100 |     8,3 % |        8,3 % |
 | M8  | NPC Economy            | ✅ Completed   |      100 |     8,3 % |        8,3 % |
-| M9  | User Interface         | 🟡 In Progress |       93 |     8,3 % |        7,7 % |
-| M10 | Content Expansion      | ⚪ Planned     |       10 |     8,3 % |        0,8 % |
+| M9  | User Interface         | ✅ Completed   |      100 |     8,3 % |        8,3 % |
+| M10 | Content Expansion      | 🟡 In Progress |       25 |     8,3 % |        2,1 % |
 | M11 | Polish                 | ⚪ Planned     |        0 |     8,3 % |          0 % |
 | M12 | Release                | ⚪ Planned     |        0 |     8,3 % |          0 % |
 |     | **Total**              |                | **78 %** | **100 %** |     **78 %** |
@@ -217,16 +218,18 @@ All **TD-M8-01 … TD-M8-06** resolved — see `docs/quality/M8_IMPLEMENTATION_R
 
 **Post-Phase 4 deferred (non-blocking):** `CompanyDashboardScreen` section split, legacy chart migration, optional per-domain queries for company tables, removal of unused `DashboardDetailPanel.tsx`.
 
-### M10 – Content Expansion ⚪ (10 %)
+### M10 – Content Expansion 🟡 (~25 % · Gate 0 ✅ · Phase 1 ✅)
 
 | Deliverable                     |      % | Evidence                                     |
 | ------------------------------- | -----: | -------------------------------------------- |
-| Buildings / resources / recipes |     25 | Starter set in `game-content/`               |
-| Technologies / employees        |     15 | Loaders + small catalog                      |
-| Industries / scenarios          |      0 | Not started                                  |
-| Vehicles (content)              |      5 | `Vehicle.schema.md`, art library docs        |
-| Content pipeline / registry     |     20 | Loaders, validation; global registry partial |
-| **Milestone average**           | **10** |                                              |
+| Gate 0 architecture review      |     100 | `docs/architecture/reviews/M10_GATE_0_REPORT.md` |
+| Production chain (Phase 1)      |      40 | Tier 2–5 industrial ladder in `game-content/` |
+| Buildings / resources / recipes |      45 | 9 resources, 11 buildings, 7 recipes         |
+| Technologies / employees        |      15 | Loaders + small catalog (unchanged)          |
+| Industries / scenarios          |       0 | Not started                                  |
+| Vehicles (content)              |       5 | `Vehicle.schema.md`, art library docs        |
+| Content pipeline / registry     |      30 | Loaders, strict validation, M10 chain test   |
+| **Milestone average**           |  **25** | Phase 2 building expansion next              |
 
 ### M11 – Polish ⚪ (0 %)
 
@@ -1163,7 +1166,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Planned Next Steps
 
-1. **M10 Content Expansion** — per `PROJECT_ROADMAP.md`
+1. **M10 Phase 2 — Building Expansion:** new building categories per `M10_CONTENT_EXPANSION_PLAN.md`
 2. Session/auth model for multi-user API access
 3. Full tick log / replay per DD-033 (beyond metrics ring buffer)
 
@@ -1171,6 +1174,8 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Recently Completed (2026-07)
 
+- **M10 Phase 1 — Production Expansion:** industrial tier 2–5 chain (machine parts → consumer goods), 4 buildings, 4 recipes, 4 milestones, `region_east` resources
+- **M10 Gate 0 — Architecture Review:** content pipeline ready; verdict **READY FOR M10 PHASE 1** (`docs/architecture/reviews/M10_GATE_0_REPORT.md`)
 - **M9 Phase 11 — Final Integration and Documentation:** API E2E gameplay/save-load flows, architecture tests, `M9_IMPLEMENTATION_REPORT.md`, Gate 3 **M9 COMPLETE**
 - **M9 Phase 10 — UX, Accessibility, and Performance:** debounced tick queries, throttled socket refresh, modal focus trap, keyboard navigation, skip link, step confirmation, unique card heading ids
 - **M9 Phase 9 — Transport, Reports, and Event Log:** `PlayerEventLogService`, dedicated transport/reports screens, category filters, notification-to-event navigation, API tests
