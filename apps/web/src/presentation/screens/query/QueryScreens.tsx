@@ -7,7 +7,6 @@ import { EmptyState } from '@/presentation/primitives/EmptyState';
 import {
   buildNameResolver,
   mapFinanceRowsViewData,
-  mapMarketRowsViewData,
   mapProductionJobRowsViewData,
   mapResearchJobRowsViewData,
   mapTransportJobRowsViewData,
@@ -16,46 +15,15 @@ import { mapBuildingListRow } from '@/presentation/adapters/mappers/company-dash
 import {
   fetchBuildingList,
   fetchFinanceTransactions,
-  fetchMarketPrices,
   fetchProductionJobs,
   fetchResearchJobs,
   fetchTransportOrders,
 } from '@/presentation/adapters/api/query-client';
 import type { BuildingListRowViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
-import type { FinanceRowViewData, JobRowViewData, MarketRowViewData } from '@/presentation/adapters/view-data/workspace-view-data';
+import type { FinanceRowViewData, JobRowViewData } from '@/presentation/adapters/view-data/workspace-view-data';
 import { useScreenQuery } from '@/presentation/hooks/useScreenQuery';
 import { QueryRows } from '@/presentation/screens/shared/QueryRows';
 import { ScreenQueryFrame } from '@/presentation/screens/shared/ScreenQueryFrame';
-
-/** Markets screen consuming dedicated market price queries. */
-export function MarketsScreen() {
-  const { viewData, companyViewData } = useGameWorkspace();
-  const names = useMemo(() => buildNameResolver(companyViewData.labels), [companyViewData.labels]);
-  const { data, isLoading, errorMessage } = useScreenQuery(
-    'markets',
-    () => fetchMarketPrices().then((prices) => mapMarketRowsViewData(prices, names.resource)),
-    viewData.session.hasGame,
-  );
-
-  return (
-    <ScreenQueryFrame
-      hasGame={viewData.session.hasGame}
-      isLoading={isLoading}
-      errorMessage={errorMessage}
-      loadingLabel="Marktdaten werden geladen…"
-    >
-      <Card title="Märkte">
-        <QueryRows
-          columns={['Ressource', 'Preis', 'Trend', 'Druck']}
-          rows={(data ?? []).map((row: MarketRowViewData) => ({
-            id: row.resourceId,
-            cells: [row.resourceLabel, row.lastPriceLabel, row.trendLabel, row.pressureLabel],
-          }))}
-        />
-      </Card>
-    </ScreenQueryFrame>
-  );
-}
 
 /** Production screen backed by production job queries. */
 export function ProductionScreen() {

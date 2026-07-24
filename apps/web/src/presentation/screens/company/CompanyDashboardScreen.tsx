@@ -312,55 +312,6 @@ function SidebarActions({
       </div>
 
       <div className="toolbar-group">
-        <span className="toolbar-label">Markt</span>
-        {hints.market.length === 0 ? (
-          <p className="empty-state">Keine Marktaktionen verfügbar.</p>
-        ) : (
-          hints.market.flatMap((hint) => [
-            <HintButton
-              key={`sell-${hint.resourceId}`}
-              label={`${hint.tradeAmount}× ${hint.name} verkaufen`}
-              variant="secondary"
-              disabled={!hasGame || !hint.canSell}
-              reason={hint.sellReason}
-              onClick={() => {
-                void runAction(
-                  () =>
-                    callApi('/api/market/sell', {
-                      method: 'POST',
-                      body: JSON.stringify({
-                        resourceId: hint.resourceId,
-                        amount: hint.tradeAmount,
-                      }),
-                    }),
-                  `${hint.name} verkauft.`,
-                );
-              }}
-            />,
-            <HintButton
-              key={`buy-${hint.resourceId}`}
-              label={`${hint.tradeAmount}× ${hint.name} kaufen`}
-              disabled={!hasGame || !hint.canBuy}
-              reason={hint.buyReason}
-              onClick={() => {
-                void runAction(
-                  () =>
-                    callApi('/api/market/buy', {
-                      method: 'POST',
-                      body: JSON.stringify({
-                        resourceId: hint.resourceId,
-                        amount: hint.tradeAmount,
-                      }),
-                    }),
-                  `${hint.name} gekauft.`,
-                );
-              }}
-            />,
-          ])
-        )}
-      </div>
-
-      <div className="toolbar-group">
         <span className="toolbar-label">Forschung</span>
         {hints.research.length === 0 ? (
           <p className="empty-state">Keine Forschungsprojekte startbar.</p>

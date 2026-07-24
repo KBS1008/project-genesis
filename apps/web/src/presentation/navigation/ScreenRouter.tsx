@@ -3,13 +3,13 @@
 import {
   BuildingsScreen,
   FinanceScreen,
-  MarketsScreen,
   ProductionScreen,
   ReportsScreen,
   ResearchScreen,
   TransportScreen,
 } from '@/presentation/screens/query/QueryScreens';
 import { CompanyScreen } from '@/presentation/screens/company/CompanyScreen';
+import { MarketScreen } from '@/presentation/screens/market/MarketScreen';
 import { WorldScreen } from '@/presentation/screens/world/WorldScreen';
 import { useGameWorkspace } from '@/presentation/state/GameWorkspaceProvider';
 
@@ -23,7 +23,7 @@ export function ScreenRouter() {
     case 'world':
       return <WorldScreen />;
     case 'markets':
-      return <MarketsScreen />;
+      return <MarketScreen />;
     case 'production':
       return <ProductionScreen />;
     case 'buildings':

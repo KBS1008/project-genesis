@@ -1,0 +1,63 @@
+.pg-market-screen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.pg-market-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  align-items: flex-end;
+}
+
+.pg-market-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  min-width: 12rem;
+}
+
+.pg-market-field label {
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.pg-market-field select,
+.pg-market-field input {
+  min-height: 2.25rem;
+  padding: 0.375rem 0.625rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: inherit;
+}
+
+.pg-market-field select:focus-visible,
+.pg-market-field input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.pg-market-context-grid {
+  display: grid;
+  gap: var(--space-md);
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+}
+
+.pg-market-trade-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  align-items: center;
+}
+
+.pg-market-validation {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.pg-market-validation.is-error {
+  color: var(--danger, #b91c1c);
+}

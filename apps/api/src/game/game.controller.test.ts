@@ -250,4 +250,78 @@ describe('GameController (NestJS)', () => {
     expect(Array.isArray(response.body.data)).toBe(true);
     expect(response.body.data.length).toBeGreaterThan(0);
   });
+
+  it('GET /api/markets/prices returns supply, demand, and liquidity fields', async () => {
+    await request(app.getHttpServer()).post('/api/session/new').send({ name: 'Market Prices Corp' });
+
+    const response = await request(app.getHttpServer()).get('/api/markets/prices');
+
+    expect(response.status).toBe(200);
+    expect(response.body.ok).toBe(true);
+    expect(response.body.data.length).toBeGreaterThan(0);
+    expect(response.body.data[0]).toMatchObject({
+      resourceId: expect.any(String),
+      lastPrice: expect.any(Number),
+      totalSupply: expect.any(Number),
+      baselineDemand: expect.any(Number),
+      tradeVolume: expect.any(Number),
+    });
+  });
+
+  it('POST /api/market/buy and sell execute trades against dashboard state', async () => {
+    await request(app.getHttpServer()).post('/api/session/new').send({ name: 'Market Trade Corp' });
+
+    const dashboardBefore = await request(app.getHttpServer()).get('/api/dashboard');
+    const cashBefore = dashboardBefore.body.data.finance.cashBalance as number;
+    const woodBefore =
+      dashboardBefore.body.data.inventory.items.find(
+        (item: { resourceId: string }) => item.resourceId === 'wood',
+      )?.quantity ?? 0;
+
+    const sellResponse = await request(app.getHttpServer())
+      .post('/api/market/sell')
+      .send({ resourceId: 'wood', amount: 5 });
+
+    expect(sellResponse.status).toBe(200);
+    expect(sellResponse.body.ok).toBe(true);
+
+    const afterSell = await request(app.getHttpServer()).get('/api/dashboard');
+    const woodAfterSell =
+      afterSell.body.data.inventory.items.find(
+        (item: { resourceId: string }) => item.resourceId === 'wood',
+      )?.quantity ?? 0;
+
+    expect(woodAfterSell).toBeLessThan(woodBefore);
+    expect(afterSell.body.data.finance.cashBalance).toBeGreaterThan(cashBefore);
+
+    const cashAfterSell = afterSell.body.data.finance.cashBalance as number;
+
+    const buyResponse = await request(app.getHttpServer())
+      .post('/api/market/buy')
+      .send({ resourceId: 'wood', amount: 2 });
+
+    expect(buyResponse.status).toBe(200);
+    expect(buyResponse.body.ok).toBe(true);
+
+    const afterBuy = await request(app.getHttpServer()).get('/api/dashboard');
+
+    expect(afterBuy.body.data.finance.cashBalance).toBeLessThan(cashAfterSell);
+    expect(
+      afterBuy.body.data.inventory.items.find(
+        (item: { resourceId: string }) => item.resourceId === 'wood',
+      )?.quantity ?? 0,
+    ).toBeGreaterThanOrEqual(woodAfterSell);
+  });
+
+  it('POST /api/market/buy validates required fields', async () => {
+    await request(app.getHttpServer()).post('/api/session/new').send({ name: 'Market Validation Corp' });
+
+    const response = await request(app.getHttpServer())
+      .post('/api/market/buy')
+      .send({ resourceId: 'wood' });
+
+    expect(response.status).toBe(400);
+    expect(response.body.ok).toBe(false);
+    expect(response.body.error).toContain('Missing market buy fields');
+  });
 });
