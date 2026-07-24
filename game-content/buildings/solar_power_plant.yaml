@@ -1,0 +1,19 @@
+id: solar_power_plant
+name: Solarkraftwerk
+description: Erneuerbare Energieerzeugung mit moderaten Betriebskosten.
+category: ENERGY
+size:
+  width: 4
+  height: 4
+energyUsage: 2
+energyGeneration: 35
+maintenanceCost: 8
+constructionCost: 14000
+constructionTime: 140
+allowedRecipes: []
+maxProductionLines: 1
+requiredResearch: []
+requiredMilestones:
+  - first_profit
+enabled: true
+version: 1

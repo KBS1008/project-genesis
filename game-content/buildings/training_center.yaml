@@ -1,0 +1,18 @@
+id: training_center
+name: Ausbildungszentrum
+description: Schulungsstandort fuer Produktions- und Logistikpersonal.
+category: ADMINISTRATION
+size:
+  width: 3
+  height: 4
+energyUsage: 5
+maintenanceCost: 5
+constructionCost: 7000
+constructionTime: 100
+allowedRecipes: []
+maxProductionLines: 1
+requiredResearch: []
+requiredMilestones:
+  - first_production
+enabled: true
+version: 1

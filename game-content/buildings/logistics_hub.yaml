@@ -1,0 +1,18 @@
+id: logistics_hub
+name: Logistikzentrum
+description: Koordiniert Transporte und Lagerfluesse im Unternehmen.
+category: INFRASTRUCTURE
+size:
+  width: 4
+  height: 4
+energyUsage: 6
+maintenanceCost: 7
+constructionCost: 10000
+constructionTime: 120
+allowedRecipes: []
+maxProductionLines: 1
+requiredResearch: []
+requiredMilestones:
+  - first_machine_parts
+enabled: true
+version: 1

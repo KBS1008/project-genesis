@@ -1,0 +1,18 @@
+id: regional_headquarters
+name: Regionalzentrale
+description: Verwaltet mehrere Standorte in einer Region.
+category: ADMINISTRATION
+size:
+  width: 4
+  height: 5
+energyUsage: 6
+maintenanceCost: 8
+constructionCost: 12000
+constructionTime: 130
+allowedRecipes: []
+maxProductionLines: 1
+requiredResearch: []
+requiredMilestones:
+  - profit_100
+enabled: true
+version: 1

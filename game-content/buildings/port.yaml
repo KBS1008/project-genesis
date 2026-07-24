@@ -1,0 +1,18 @@
+id: port
+name: Hafenanlage
+description: Seehafen-Infrastruktur fuer Import und Export grosser Mengen.
+category: INFRASTRUCTURE
+size:
+  width: 6
+  height: 4
+energyUsage: 8
+maintenanceCost: 11
+constructionCost: 16000
+constructionTime: 170
+allowedRecipes: []
+maxProductionLines: 1
+requiredResearch: []
+requiredMilestones:
+  - profit_100
+enabled: true
+version: 1

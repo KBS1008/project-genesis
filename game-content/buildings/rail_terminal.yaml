@@ -1,0 +1,18 @@
+id: rail_terminal
+name: Bahnterminal
+description: Anbindung an das regionale Schienennetz fuer Schwertransporte.
+category: INFRASTRUCTURE
+size:
+  width: 5
+  height: 3
+energyUsage: 4
+maintenanceCost: 9
+constructionCost: 14000
+constructionTime: 150
+allowedRecipes: []
+maxProductionLines: 1
+requiredResearch: []
+requiredMilestones:
+  - first_industrial_machinery
+enabled: true
+version: 1

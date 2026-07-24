@@ -1,0 +1,18 @@
+id: recycling_facility
+name: Recyclinganlage
+description: Verarbeitet Industrieabfälle und Rueckgewinnungsmaterial.
+category: INFRASTRUCTURE
+size:
+  width: 4
+  height: 3
+energyUsage: 10
+maintenanceCost: 8
+constructionCost: 11000
+constructionTime: 130
+allowedRecipes: []
+maxProductionLines: 1
+requiredResearch: []
+requiredMilestones:
+  - first_advanced_electronics
+enabled: true
+version: 1

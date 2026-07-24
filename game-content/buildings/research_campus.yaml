@@ -1,0 +1,18 @@
+id: research_campus
+name: Forschungscampus
+description: Basis fuer Technologieprogramme und Forschungsprojekte.
+category: RESEARCH
+size:
+  width: 5
+  height: 4
+energyUsage: 12
+maintenanceCost: 10
+constructionCost: 15000
+constructionTime: 160
+allowedRecipes: []
+maxProductionLines: 1
+requiredResearch: []
+requiredMilestones:
+  - first_steel
+enabled: true
+version: 1

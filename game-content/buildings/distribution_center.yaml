@@ -1,0 +1,19 @@
+id: distribution_center
+name: Verteilzentrum
+description: Grosses Lager fuer sortierte Waren und regionale Auslieferung.
+category: STORAGE
+size:
+  width: 5
+  height: 5
+energyUsage: 4
+maintenanceCost: 6
+constructionCost: 8000
+constructionTime: 110
+allowedRecipes: []
+maxProductionLines: 1
+storageCapacity: 1200
+requiredResearch: []
+requiredMilestones:
+  - first_profit
+enabled: true
+version: 1
