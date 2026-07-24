@@ -100,8 +100,21 @@ export function fetchRegionDetails(regionId: string): Promise<RegionDetailsDto> 
   return callApi<RegionDetailsDto>(`/api/world/regions/${encodeURIComponent(regionId)}`);
 }
 
-export function fetchEventLog(limit = 50): Promise<readonly EventLogEntryDto[]> {
-  return callApi<readonly EventLogEntryDto[]>(`/api/events/log?limit=${limit}`);
+export function fetchEventLog(
+  options: { readonly limit?: number; readonly category?: string } = {},
+): Promise<readonly EventLogEntryDto[]> {
+  const params = new URLSearchParams();
+
+  if (options.limit !== undefined) {
+    params.set('limit', String(options.limit));
+  }
+
+  if (options.category !== undefined && options.category.length > 0) {
+    params.set('category', options.category);
+  }
+
+  const query = params.toString();
+  return callApi<readonly EventLogEntryDto[]>(`/api/events/log${query.length > 0 ? `?${query}` : ''}`);
 }
 
 export function fetchMarketPrices(regionId?: string): Promise<readonly import('./client').MarketPriceReadModel[]> {

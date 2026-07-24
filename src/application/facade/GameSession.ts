@@ -154,6 +154,7 @@ export class GameSession {
   #productionSequence = 0;
   #researchSequence = 0;
   #employeeSequence = 0;
+  readonly #loggedCompletedTransportIds = new Set<string>();
 
   private constructor(context: ApplicationContext, gameContentRoot: string, savePath: string) {
     this.#context = context;
@@ -205,7 +206,10 @@ export class GameSession {
 
     this.#activeCompanyId = DEFAULT_COMPANY_ID;
     this.#context.tickHistoryService.clear(DEFAULT_COMPANY_ID);
+    this.#context.playerEventLogService.clear(DEFAULT_COMPANY_ID);
+    this.#loggedCompletedTransportIds.clear();
     this.#recordTickSnapshot();
+    this.#recordPlayerEvent('SESSION', `Neues Spiel gestartet: ${name}.`);
     return Result.ok(undefined);
   }
 
@@ -525,12 +529,16 @@ export class GameSession {
   }
 
   /** Returns player-visible event log entries. */
-  getEventLog(limit?: number): Result<readonly EventLogEntryReadModel[], ValidationError> {
+  getEventLog(
+    limit?: number,
+    category?: string,
+  ): Result<readonly EventLogEntryReadModel[], ValidationError> {
     const companyId = this.#activeCompanyId;
 
     return this.#getEventLog.execute({
       ...(companyId === undefined ? {} : { companyId }),
       ...(limit === undefined ? {} : { limit }),
+      ...(category === undefined || category.length === 0 ? {} : { category }),
     });
   }
 
@@ -552,6 +560,11 @@ export class GameSession {
       this.#recordTickSnapshot();
     }
 
+    this.#recordPlayerEvent(
+      'SIMULATION',
+      count === 1 ? 'Simulation um einen Tick fortgeschritten.' : `Simulation um ${count} Ticks fortgeschritten.`,
+    );
+
     return Result.ok(undefined);
   }
 
@@ -562,6 +575,7 @@ export class GameSession {
     }
 
     this.#context.simulationEngine.pause();
+    this.#recordPlayerEvent('SIMULATION', 'Simulation pausiert.');
     return Result.ok(undefined);
   }
 
@@ -572,6 +586,7 @@ export class GameSession {
     }
 
     this.#context.simulationEngine.resume();
+    this.#recordPlayerEvent('SIMULATION', 'Simulation fortgesetzt.');
     return Result.ok(undefined);
   }
 
@@ -583,7 +598,13 @@ export class GameSession {
       );
     }
 
-    return this.#context.simulationEngine.setTickDuration(tickDuration);
+    const result = this.#context.simulationEngine.setTickDuration(tickDuration);
+
+    if (result.ok) {
+      this.#recordPlayerEvent('SIMULATION', `Simulationsgeschwindigkeit auf ×${tickDuration} gesetzt.`);
+    }
+
+    return result;
   }
 
   /** Executes exactly one tick, even while the simulation is paused. */
@@ -615,6 +636,7 @@ export class GameSession {
       engine.pause();
     }
 
+    this.#recordPlayerEvent('SIMULATION', 'Simulationsschritt ausgeführt.');
     return Result.ok(undefined);
   }
 
@@ -640,6 +662,7 @@ export class GameSession {
       return Result.fail(placeResult.error);
     }
 
+    this.#recordPlayerEvent('BUILDING', `Gebäude platziert: ${input.name}.`);
     return Result.ok(placeResult.value.value);
   }
 
@@ -662,6 +685,10 @@ export class GameSession {
       return Result.fail(startResult.error);
     }
 
+    this.#recordPlayerEvent(
+      'PRODUCTION',
+      `Produktion gestartet: ${input.recipeId} auf ${input.buildingId}.`,
+    );
     return Result.ok(startResult.value.value);
   }
 
@@ -684,6 +711,7 @@ export class GameSession {
       return Result.fail(startResult.error);
     }
 
+    this.#recordPlayerEvent('RESEARCH', `Forschung gestartet: ${input.technologyId}.`);
     return Result.ok(startResult.value.value);
   }
 
@@ -707,6 +735,7 @@ export class GameSession {
       return Result.fail(hireResult.error);
     }
 
+    this.#recordPlayerEvent('EMPLOYEE', `Mitarbeiter eingestellt: ${input.displayName}.`);
     return Result.ok(hireResult.value.value);
   }
 
@@ -725,6 +754,10 @@ export class GameSession {
       return Result.fail(assignResult.error);
     }
 
+    this.#recordPlayerEvent(
+      'EMPLOYEE',
+      `Mitarbeiter ${input.employeeId} Gebäude ${input.buildingId} zugewiesen.`,
+    );
     return Result.ok(undefined);
   }
 
@@ -744,7 +777,17 @@ export class GameSession {
       return Result.fail(sellResult.error);
     }
 
-    return this.tick();
+    const tickResult = this.tick();
+
+    if (!tickResult.ok) {
+      return Result.fail(tickResult.error);
+    }
+
+    this.#recordPlayerEvent(
+      'TRADE',
+      `Verkauf: ${input.amount}× ${input.resourceId}.`,
+    );
+    return Result.ok(undefined);
   }
 
   /** Buys resources for the active company. */
@@ -763,7 +806,17 @@ export class GameSession {
       return Result.fail(buyResult.error);
     }
 
-    return this.tick();
+    const tickResult = this.tick();
+
+    if (!tickResult.ok) {
+      return Result.fail(tickResult.error);
+    }
+
+    this.#recordPlayerEvent(
+      'TRADE',
+      `Kauf: ${input.amount}× ${input.resourceId}.`,
+    );
+    return Result.ok(undefined);
   }
 
   /** Persists the current session to the configured save path. */
@@ -779,6 +832,7 @@ export class GameSession {
 
     if (result.ok) {
       this.#savePath = targetPath;
+      this.#recordPlayerEvent('SESSION', `Spielstand gespeichert: ${targetPath}.`);
     }
 
     return result;
@@ -799,12 +853,27 @@ export class GameSession {
     this.#replaceContext(loadResult.value);
     this.#savePath = targetPath;
     this.#syncSessionState();
+    this.#context.playerEventLogService.clear(this.#activeCompanyId);
+    this.#loggedCompletedTransportIds.clear();
 
     if (
       this.#activeCompanyId !== undefined &&
       this.#context.tickHistoryService.getHistory().length === 0
     ) {
       this.#recordTickSnapshot();
+    }
+
+    if (this.#activeCompanyId !== undefined) {
+      const buildingsResult = this.#listBuildings.execute({ companyId: this.#activeCompanyId });
+
+      if (buildingsResult.ok) {
+        const productionJobs = this.#readProductionJobs(this.#activeCompanyId);
+        this.#seedLoggedCompletedTransports(
+          this.#readTransportOrders(this.#activeCompanyId, buildingsResult.value, productionJobs),
+        );
+      }
+
+      this.#recordPlayerEvent('SESSION', `Spielstand geladen: ${targetPath}.`);
     }
 
     return Result.ok(undefined);
@@ -835,7 +904,7 @@ export class GameSession {
     this.#getSessionStatus = new GetSessionStatusQueryHandler(this.#context);
     this.#getSimulationStatus = new GetSimulationStatusQueryHandler(this.#context);
     this.#listSavegames = new ListSavegamesQueryHandler(this.#context);
-    this.#getEventLog = new GetEventLogQueryHandler();
+    this.#getEventLog = new GetEventLogQueryHandler(this.#context.playerEventLogService);
     this.#dashboardBuilder = new GameSessionDashboardBuilder(
       this.#context,
       this.#context.energyBalanceService,
@@ -954,6 +1023,8 @@ export class GameSession {
     if (!inventoryResult.ok) {
       return;
     }
+
+    this.#recordCompletedTransportEvents(transportOrders);
 
     this.#context.tickHistoryService.record(
       this.#dashboardBuilder.captureTickMetrics({
@@ -1159,5 +1230,50 @@ export class GameSession {
     }
 
     return marketResult.value;
+  }
+
+  #recordPlayerEvent(
+    category: string,
+    message: string,
+    severity: EventLogEntryReadModel['severity'] = 'INFO',
+  ): string {
+    if (this.#activeCompanyId === undefined) {
+      return '';
+    }
+
+    return this.#context.playerEventLogService.append({
+      companyId: this.#activeCompanyId,
+      tickNumber: this.#context.simulationEngine.state.tickNumber,
+      occurredAt: this.#context.clock.now(),
+      category,
+      message,
+      severity,
+    });
+  }
+
+  #seedLoggedCompletedTransports(orders: readonly TransportOrderSessionReadModel[]): void {
+    for (const order of orders) {
+      if (order.status === TransportOrderStatus.COMPLETED) {
+        this.#loggedCompletedTransportIds.add(order.id);
+      }
+    }
+  }
+
+  #recordCompletedTransportEvents(orders: readonly TransportOrderSessionReadModel[]): void {
+    for (const order of orders) {
+      if (order.status !== TransportOrderStatus.COMPLETED) {
+        continue;
+      }
+
+      if (this.#loggedCompletedTransportIds.has(order.id)) {
+        continue;
+      }
+
+      this.#loggedCompletedTransportIds.add(order.id);
+      this.#recordPlayerEvent(
+        'TRANSPORT',
+        `Transport abgeschlossen: ${order.sourceBuildingName} → ${order.destinationBuildingName}.`,
+      );
+    }
   }
 }

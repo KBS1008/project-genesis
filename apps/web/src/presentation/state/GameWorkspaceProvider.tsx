@@ -14,6 +14,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { connectDashboardSocket } from '@/presentation/adapters/api/dashboard-socket';
 import type { GameSessionDashboard } from '@/presentation/adapters/api/client';
 import type { RegionDto } from '@/presentation/adapters/api/query-client';
+import { fetchEventLog } from '@/presentation/adapters/api/query-client';
 import { loadWorkspaceQueries } from '@/presentation/adapters/queries/load-workspace-queries';
 import type { EntityNavigationTarget } from '@/presentation/navigation/entity-navigation';
 import type { PrimaryScreenId } from '@/presentation/navigation/primary-screens';
@@ -132,7 +133,17 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
         await action();
         await refreshSession();
         setIsSessionDirty(options?.clearsDirty === true ? false : true);
-        showNotification({ tone: 'success', message: successMessage });
+
+        let eventLogId: string | undefined;
+
+        try {
+          const entries = await fetchEventLog({ limit: 1 });
+          eventLogId = entries[0]?.id;
+        } catch {
+          eventLogId = undefined;
+        }
+
+        showNotification({ tone: 'success', message: successMessage, eventLogId });
       } catch (error: unknown) {
         showNotification({
           tone: 'error',

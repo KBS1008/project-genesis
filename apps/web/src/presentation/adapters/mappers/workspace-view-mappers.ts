@@ -8,7 +8,10 @@ import type {
   WorldOverviewDto,
 } from '@/presentation/adapters/api/query-client';
 import {
+  formatEventCategory,
+  formatEventSeverity,
   formatNumber,
+  formatTick,
   formatTransactionAmount,
   formatTransactionType,
 } from '@/presentation/formatting/presentation-formatters';
@@ -214,10 +217,12 @@ export function mapEventLogRowsViewData(
     entries.map((entry) =>
       Object.freeze({
         id: entry.id,
-        tickLabel: String(entry.tickNumber),
+        tickLabel: formatTick(entry.tickNumber),
         category: entry.category,
+        categoryLabel: formatEventCategory(entry.category),
         message: entry.message,
         severity: entry.severity,
+        severityLabel: formatEventSeverity(entry.severity),
       }),
     ),
   );

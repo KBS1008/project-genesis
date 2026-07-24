@@ -426,4 +426,30 @@ describe('GameController (NestJS)', () => {
     expect(response.status).toBe(400);
     expect(response.body.ok).toBe(false);
   });
+
+  it('GET /api/events/log returns bounded player-visible events with category filtering', async () => {
+    const dashboard = await request(app.getHttpServer()).get('/api/dashboard');
+
+    if (dashboard.body.data.company === null) {
+      await request(app.getHttpServer()).post('/api/session/new').send({ name: 'Event Log Corp' });
+    }
+
+    await request(app.getHttpServer()).post('/api/simulation/pause').send({});
+
+    const allEvents = await request(app.getHttpServer()).get('/api/events/log?limit=10');
+
+    expect(allEvents.status).toBe(200);
+    expect(allEvents.body.ok).toBe(true);
+    expect(allEvents.body.data.length).toBeGreaterThan(0);
+    expect(allEvents.body.data.every((entry: { id: string }) => /^event_/.test(entry.id))).toBe(true);
+
+    const simulationEvents = await request(app.getHttpServer()).get('/api/events/log?category=SIMULATION&limit=10');
+
+    expect(
+      simulationEvents.body.data.every((entry: { category: string }) => entry.category === 'SIMULATION'),
+    ).toBe(true);
+    expect(
+      simulationEvents.body.data.some((entry: { message: string }) => entry.message.includes('pausiert')),
+    ).toBe(true);
+  });
 });

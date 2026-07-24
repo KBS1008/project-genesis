@@ -1,15 +1,13 @@
 'use client';
 
-import {
-  FinanceScreen,
-  ReportsScreen,
-  TransportScreen,
-} from '@/presentation/screens/query/QueryScreens';
+import { FinanceScreen } from '@/presentation/screens/query/QueryScreens';
 import { BuildingsScreen } from '@/presentation/screens/buildings/BuildingsScreen';
 import { CompanyScreen } from '@/presentation/screens/company/CompanyScreen';
 import { MarketScreen } from '@/presentation/screens/market/MarketScreen';
 import { ProductionScreen } from '@/presentation/screens/production/ProductionScreen';
+import { ReportsScreen } from '@/presentation/screens/reports/ReportsScreen';
 import { ResearchScreen } from '@/presentation/screens/research/ResearchScreen';
+import { TransportScreen } from '@/presentation/screens/transport/TransportScreen';
 import { WorldScreen } from '@/presentation/screens/world/WorldScreen';
 import { useGameWorkspace } from '@/presentation/state/GameWorkspaceProvider';
 

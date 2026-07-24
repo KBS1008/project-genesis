@@ -54,6 +54,13 @@
   outline-offset: 2px;
 }
 
+.pg-notification-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  flex-shrink: 0;
+}
+
 .pg-error-boundary {
   max-width: var(--shell-max-width);
   margin: var(--space-xl) auto;

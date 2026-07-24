@@ -179,9 +179,9 @@ Must never define gameplay rules.
 
 ## UI
 
-Presentation only.
+Presentation only. Must never contain business logic.
 
-Must never contain business logic.
+See `docs/development/UI_DEVELOPMENT_GUIDE.md` for presentation patterns, view-data, queries, and commands.
 
 ---
 

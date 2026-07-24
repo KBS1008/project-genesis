@@ -6,12 +6,14 @@ export type NotificationEntry = {
   readonly tone: NotificationTone;
   readonly createdAt: number;
   readonly dismissMs: number | null;
+  readonly eventLogId?: string;
 };
 
 export type ShowNotificationInput = {
   readonly message: string;
   readonly tone?: NotificationTone;
   readonly dismissMs?: number | null;
+  readonly eventLogId?: string;
 };
 
 export type NotificationContextValue = {

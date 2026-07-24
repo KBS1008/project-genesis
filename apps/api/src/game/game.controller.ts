@@ -222,7 +222,7 @@ export class GameController {
 
   /** Returns player-visible event log entries. */
   @Get('events/log')
-  getEventLog(@Query('limit') limit?: string) {
+  getEventLog(@Query('limit') limit?: string, @Query('category') category?: string) {
     const parsedLimit = limit === undefined ? undefined : Number.parseInt(limit, 10);
 
     if (limit !== undefined && (!Number.isInteger(parsedLimit) || parsedLimit! < 1)) {
@@ -230,7 +230,7 @@ export class GameController {
     }
 
     return toApiSuccess(
-      unwrapResult(this.gameSessionService.getSession().getEventLog(parsedLimit)),
+      unwrapResult(this.gameSessionService.getSession().getEventLog(parsedLimit, category)),
     );
   }
 

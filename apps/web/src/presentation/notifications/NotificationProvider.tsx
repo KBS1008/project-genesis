@@ -45,6 +45,7 @@ export function NotificationProvider({ children }: { readonly children: ReactNod
           tone,
           createdAt: Date.now(),
           dismissMs: resolvedDismissMs,
+          ...(input.eventLogId !== undefined ? { eventLogId: input.eventLogId } : {}),
         },
       ]);
 

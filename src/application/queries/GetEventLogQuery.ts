@@ -2,4 +2,5 @@
 export type GetEventLogQuery = {
   readonly companyId?: string;
   readonly limit?: number;
+  readonly category?: string;
 };

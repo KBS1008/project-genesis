@@ -60,6 +60,7 @@ import { EnergyBalanceService } from '../services/EnergyBalanceService.js';
 import { EmployeeAllocationService } from '../services/EmployeeAllocationService.js';
 import { TransportLogisticsService } from '../services/TransportLogisticsService.js';
 import { TickHistoryService } from '../services/TickHistoryService.js';
+import { PlayerEventLogService } from '../services/PlayerEventLogService.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
 import { createDefaultSimulationSystems } from '../../simulation/systems/createDefaultSimulationSystems.js';
 import { FileSavegameStore } from '../../infrastructure/persistence/savegame/FileSavegameStore.js';
@@ -322,6 +323,7 @@ export async function bootstrapApplication(
   });
 
   const tickHistoryService = new TickHistoryService();
+  const playerEventLogService = new PlayerEventLogService();
   const savegameStore = new FileSavegameStore();
   const gameStateSerializer = new GameStateSerializer();
   const logger = new ConsoleLogger();
@@ -367,6 +369,7 @@ export async function bootstrapApplication(
     energyBalanceService,
     transportLogisticsService,
     tickHistoryService,
+    playerEventLogService,
     savegameStore,
     gameStateSerializer,
     logger,

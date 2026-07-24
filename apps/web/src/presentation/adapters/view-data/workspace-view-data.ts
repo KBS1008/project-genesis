@@ -78,8 +78,10 @@ export type EventLogRowViewData = {
   readonly id: string;
   readonly tickLabel: string;
   readonly category: string;
+  readonly categoryLabel: string;
   readonly message: string;
   readonly severity: 'INFO' | 'WARNING' | 'ERROR';
+  readonly severityLabel: string;
 };
 
 export type WorkspaceViewData = {

@@ -1,7 +1,12 @@
 'use client';
 
 import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { buildEventNavigationTarget } from '@/presentation/navigation/entity-navigation';
+import { buildNavigationQueryString } from '@/presentation/state/navigation-state';
+import { Button } from '@/presentation/primitives/Button';
 import { useNotifications } from './NotificationProvider';
+import type { NotificationEntry } from './types';
 
 /** Renders active toast notifications in a fixed viewport region. */
 export function NotificationHost() {
@@ -26,14 +31,11 @@ function NotificationToast({
   entry,
   onDismiss,
 }: {
-  readonly entry: {
-    readonly id: string;
-    readonly message: string;
-    readonly tone: string;
-    readonly dismissMs: number | null;
-  };
+  readonly entry: NotificationEntry;
   readonly onDismiss: () => void;
 }) {
+  const router = useRouter();
+
   useEffect(() => {
     if (entry.dismissMs === null) {
       return undefined;
@@ -45,15 +47,32 @@ function NotificationToast({
     };
   }, [entry.dismissMs, entry.id, onDismiss]);
 
+  const openEventLog = () => {
+    if (entry.eventLogId === undefined) {
+      return;
+    }
+
+    const query = buildNavigationQueryString(buildEventNavigationTarget(entry.eventLogId));
+    router.push(`/game${query}`);
+    onDismiss();
+  };
+
   return (
     <div
       className={`pg-notification pg-notification-${entry.tone}`.trim()}
       role={entry.tone === 'error' ? 'alert' : 'status'}
     >
       <span>{entry.message}</span>
-      <button type="button" className="pg-notification-dismiss" onClick={onDismiss} aria-label="Schließen">
-        ×
-      </button>
+      <div className="pg-notification-actions">
+        {entry.eventLogId !== undefined ? (
+          <Button variant="secondary" onClick={openEventLog}>
+            Protokoll
+          </Button>
+        ) : null}
+        <button type="button" className="pg-notification-dismiss" onClick={onDismiss} aria-label="Schließen">
+          ×
+        </button>
+      </div>
     </div>
   );
 }

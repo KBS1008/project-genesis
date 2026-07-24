@@ -12,6 +12,7 @@ import { describe, expect, it } from 'vitest';
 import { GetSessionStatusQueryHandler } from './GetSessionStatusQueryHandler.js';
 import { GetSimulationStatusQueryHandler } from './GetSimulationStatusQueryHandler.js';
 import { GetEventLogQueryHandler } from './GetEventLogQueryHandler.js';
+import { PlayerEventLogService } from '../services/PlayerEventLogService.js';
 
 function createCompanyContext() {
   const clock = new ManualClock(250);
@@ -96,14 +97,29 @@ describe('GetSimulationStatusQueryHandler', () => {
 });
 
 describe('GetEventLogQueryHandler', () => {
-  it('returns an empty immutable event list until persistence exists', () => {
-    const handler = new GetEventLogQueryHandler();
-    const result = handler.execute({ limit: 20 });
+  it('returns events from the player event log service', () => {
+    const playerEventLogService = new PlayerEventLogService();
+    playerEventLogService.append({
+      companyId: 'company_001',
+      tickNumber: 3,
+      occurredAt: 300,
+      category: 'SESSION',
+      message: 'Neues Spiel gestartet.',
+    });
+
+    const handler = new GetEventLogQueryHandler(playerEventLogService);
+    const result = handler.execute({ companyId: 'company_001', limit: 20 });
 
     expect(result.ok).toBe(true);
 
     if (result.ok) {
-      expect(result.value).toEqual([]);
+      expect(result.value).toEqual([
+        expect.objectContaining({
+          id: 'event_0001',
+          category: 'SESSION',
+          message: 'Neues Spiel gestartet.',
+        }),
+      ]);
     }
   });
 });

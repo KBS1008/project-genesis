@@ -29,3 +29,19 @@ export function buildProductionNavigationTarget(jobId: string): EntityNavigation
     entitySelection: { kind: 'production', id: jobId },
   };
 }
+
+/** Builds navigation state for inspecting a transport order. */
+export function buildTransportNavigationTarget(orderId: string): EntityNavigationTarget {
+  return {
+    screen: 'transport',
+    entitySelection: { kind: 'transport', id: orderId },
+  };
+}
+
+/** Builds navigation state for inspecting an event log entry. */
+export function buildEventNavigationTarget(eventId: string): EntityNavigationTarget {
+  return {
+    screen: 'reports',
+    entitySelection: { kind: 'event', id: eventId },
+  };
+}

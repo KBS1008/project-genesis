@@ -176,3 +176,30 @@ export function formatMarketTrend(trend: 'UP' | 'DOWN' | 'STABLE'): string {
 
   return 'Stabil';
 }
+
+const EVENT_CATEGORY_LABELS: Readonly<Record<string, string>> = {
+  SESSION: 'Session',
+  SIMULATION: 'Simulation',
+  TRADE: 'Handel',
+  BUILDING: 'Gebäude',
+  PRODUCTION: 'Produktion',
+  RESEARCH: 'Forschung',
+  TRANSPORT: 'Transport',
+  EMPLOYEE: 'Personal',
+};
+
+export function formatEventCategory(category: string): string {
+  return EVENT_CATEGORY_LABELS[category] ?? category;
+}
+
+export function formatEventSeverity(severity: 'INFO' | 'WARNING' | 'ERROR'): string {
+  if (severity === 'WARNING') {
+    return 'Warnung';
+  }
+
+  if (severity === 'ERROR') {
+    return 'Fehler';
+  }
+
+  return 'Info';
+}

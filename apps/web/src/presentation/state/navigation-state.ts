@@ -11,7 +11,8 @@ export type EntitySelectionKind =
   | 'production'
   | 'transport'
   | 'research'
-  | 'employee';
+  | 'employee'
+  | 'event';
 
 export type EntitySelection =
   | { readonly kind: 'none' }
@@ -21,7 +22,8 @@ export type EntitySelection =
   | { readonly kind: 'production'; readonly id: string }
   | { readonly kind: 'transport'; readonly id: string }
   | { readonly kind: 'research'; readonly id: string }
-  | { readonly kind: 'employee'; readonly id: string };
+  | { readonly kind: 'employee'; readonly id: string }
+  | { readonly kind: 'event'; readonly id: string };
 
 export type NavigationState = {
   readonly screen: PrimaryScreenId;
@@ -69,6 +71,7 @@ const ENTITY_KINDS = new Set<EntitySelectionKind>([
   'transport',
   'research',
   'employee',
+  'event',
 ]);
 
 function parseEntitySelection(rawValue: string | null): EntitySelection {
@@ -153,6 +156,8 @@ function isEntityKnown(selection: EntitySelection, catalog: EntityCatalog): bool
       return catalog.researchIds.has(selection.id);
     case 'employee':
       return catalog.employeeIds.has(selection.id);
+    case 'event':
+      return true;
     default:
       return false;
   }

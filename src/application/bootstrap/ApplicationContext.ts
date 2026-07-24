@@ -26,6 +26,7 @@ import type { CompanyPlanningPipeline } from '../planning/CompanyPlanningPipelin
 import type { EnergyBalanceService } from '../services/EnergyBalanceService.js';
 import type { TransportLogisticsService } from '../services/TransportLogisticsService.js';
 import type { TickHistoryService } from '../services/TickHistoryService.js';
+import type { PlayerEventLogService } from '../services/PlayerEventLogService.js';
 import type { TransportOrderRepository } from '../../domain/transport/TransportOrderRepository.js';
 import type { WorldRepository } from '../../domain/world/WorldRepository.js';
 import type { RegionRepository } from '../../domain/region/RegionRepository.js';
@@ -67,6 +68,7 @@ export type ApplicationContext = {
   readonly energyBalanceService: EnergyBalanceService;
   readonly transportLogisticsService: TransportLogisticsService;
   readonly tickHistoryService: TickHistoryService;
+  readonly playerEventLogService: PlayerEventLogService;
   readonly savegameStore: SavegameStore;
   readonly gameStateSerializer: GameStateSerializerPort;
   readonly logger: Logger;

@@ -48,6 +48,7 @@ import { EnergyBalanceService } from '../services/EnergyBalanceService.js';
 import { EmployeeAllocationService } from '../services/EmployeeAllocationService.js';
 import { TransportLogisticsService } from '../services/TransportLogisticsService.js';
 import { TickHistoryService } from '../services/TickHistoryService.js';
+import { PlayerEventLogService } from '../services/PlayerEventLogService.js';
 import { WorldBootstrapService } from '../services/WorldBootstrapService.js';
 import type { ApplicationContext } from './ApplicationContext.js';
 
@@ -88,6 +89,7 @@ export async function restoreApplicationFromSnapshot(
   const cityRepository = new InMemoryCityRepository();
   const worldMapRepository = new InMemoryWorldMapRepository();
   const tickHistoryService = new TickHistoryService();
+  const playerEventLogService = new PlayerEventLogService();
   const gameStateSerializer = new GameStateSerializer();
   const savegameStore = new FileSavegameStore();
   const logger = new ConsoleLogger();
@@ -328,6 +330,7 @@ export async function restoreApplicationFromSnapshot(
     energyBalanceService,
     transportLogisticsService,
     tickHistoryService,
+    playerEventLogService,
     savegameStore,
     gameStateSerializer,
     logger,
