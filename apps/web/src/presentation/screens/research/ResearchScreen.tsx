@@ -6,7 +6,7 @@ import { startResearch } from '@/presentation/adapters/api/gameplay-client';
 import { fetchResearchJobs } from '@/presentation/adapters/api/query-client';
 import type { ResearchHintViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
 import type { JobRowViewData } from '@/presentation/adapters/view-data/workspace-view-data';
-import { useScreenQuery } from '@/presentation/hooks/useScreenQuery';
+import { useScreenQuery, TICK_QUERY_DEBOUNCE_MS } from '@/presentation/hooks/useScreenQuery';
 import { Button } from '@/presentation/primitives/Button';
 import { Card } from '@/presentation/primitives/Card';
 import { EmptyState } from '@/presentation/primitives/EmptyState';
@@ -29,6 +29,7 @@ export function ResearchScreen() {
     `research:${tickKey}`,
     () => fetchResearchJobs().then((jobs) => mapResearchJobRowsViewData(jobs, labels.technology)),
     viewData.session.hasGame,
+    { debounceMs: TICK_QUERY_DEBOUNCE_MS },
   );
   const researchHints = companyViewData.hints.research;
   const selectedJobDetail =

@@ -6,7 +6,7 @@ import { startProduction } from '@/presentation/adapters/api/gameplay-client';
 import { fetchProductionJobs } from '@/presentation/adapters/api/query-client';
 import type { ProductionHintViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
 import type { JobRowViewData } from '@/presentation/adapters/view-data/workspace-view-data';
-import { useScreenQuery } from '@/presentation/hooks/useScreenQuery';
+import { useScreenQuery, TICK_QUERY_DEBOUNCE_MS } from '@/presentation/hooks/useScreenQuery';
 import { Button } from '@/presentation/primitives/Button';
 import { Card } from '@/presentation/primitives/Card';
 import { EmptyState } from '@/presentation/primitives/EmptyState';
@@ -30,6 +30,7 @@ export function ProductionScreen() {
     `production:${tickKey}`,
     () => fetchProductionJobs().then((jobs) => mapProductionJobRowsViewData(jobs, labels.recipe)),
     viewData.session.hasGame,
+    { debounceMs: TICK_QUERY_DEBOUNCE_MS },
   );
   const productionHints = companyViewData.hints.production;
   const selectedJobDetail =

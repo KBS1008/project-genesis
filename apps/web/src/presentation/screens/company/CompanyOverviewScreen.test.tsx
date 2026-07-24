@@ -36,6 +36,7 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
 }));
 
 vi.mock('@/presentation/hooks/useScreenQuery', () => ({
+  TICK_QUERY_DEBOUNCE_MS: 250,
   useScreenQuery: () => ({
     data: [],
     isLoading: false,

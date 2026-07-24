@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { fetchSaveList } from '@/presentation/adapters/api/query-client';
 import {
   normalizeSaveFilePath,
@@ -8,6 +8,7 @@ import {
   savePathToFileName,
 } from '@/presentation/adapters/api/session-client';
 import { mapSaveSlotViewData } from '@/presentation/adapters/mappers/workspace-view-mappers';
+import { useModalAccessibility } from '@/presentation/hooks/useModalAccessibility';
 import { Button } from '@/presentation/primitives/Button';
 import { StatusBanner } from '@/presentation/primitives/StatusBanner';
 import { useDialog } from '@/presentation/dialog/DialogProvider';
@@ -26,10 +27,17 @@ export function SaveGameDialog({
   readonly onClose: () => void;
   readonly onSaved: (filePath: string) => void;
 }) {
+  const dialogRef = useRef<HTMLDivElement>(null);
   const { openConfirmDialog } = useDialog();
   const form = useTransientFormState({ fileName: savePathToFileName(defaultSavePath) });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  useModalAccessibility({
+    isOpen: true,
+    onClose,
+    containerRef: dialogRef,
+  });
 
   const performSave = useCallback(
     async (filePath: string) => {
@@ -88,22 +96,10 @@ export function SaveGameDialog({
     }
   }, [form.value.fileName, openConfirmDialog, performSave]);
 
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        onClose();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [onClose]);
-
   return (
     <div className="pg-dialog-backdrop" role="presentation" onClick={onClose}>
       <div
+        ref={dialogRef}
         className="pg-dialog"
         role="dialog"
         aria-modal="true"

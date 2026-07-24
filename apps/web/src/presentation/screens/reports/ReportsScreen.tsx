@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { mapEventLogRowsViewData } from '@/presentation/adapters/mappers/workspace-view-mappers';
 import { fetchEventLog } from '@/presentation/adapters/api/query-client';
 import type { EventLogRowViewData } from '@/presentation/adapters/view-data/workspace-view-data';
-import { useScreenQuery } from '@/presentation/hooks/useScreenQuery';
+import { useScreenQuery, TICK_QUERY_DEBOUNCE_MS } from '@/presentation/hooks/useScreenQuery';
 import { Card } from '@/presentation/primitives/Card';
 import { EmptyState } from '@/presentation/primitives/EmptyState';
 import { QueryRows } from '@/presentation/screens/shared/QueryRows';
@@ -39,6 +39,7 @@ export function ReportsScreen() {
         ...(categoryFilter.length > 0 ? { category: categoryFilter } : {}),
       }).then(mapEventLogRowsViewData),
     viewData.session.hasGame,
+    { debounceMs: TICK_QUERY_DEBOUNCE_MS },
   );
   const selectedEvent = useMemo(() => {
     if (selectedEventId === null) {

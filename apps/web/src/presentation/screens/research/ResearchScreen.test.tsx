@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { ResearchScreen } from '@/presentation/screens/research/ResearchScreen';
 
 vi.mock('@/presentation/hooks/useScreenQuery', () => ({
+  TICK_QUERY_DEBOUNCE_MS: 250,
   useScreenQuery: () => ({
     data: [],
     isLoading: false,

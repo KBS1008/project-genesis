@@ -7,7 +7,7 @@ import { buildNameResolver } from '@/presentation/adapters/mappers/workspace-vie
 import { buyResource, sellResource } from '@/presentation/adapters/api/market-client';
 import { fetchMarketPrices } from '@/presentation/adapters/api/query-client';
 import type { MarketHintViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
-import { useScreenQuery } from '@/presentation/hooks/useScreenQuery';
+import { useScreenQuery, TICK_QUERY_DEBOUNCE_MS } from '@/presentation/hooks/useScreenQuery';
 import { Button } from '@/presentation/primitives/Button';
 import { Card } from '@/presentation/primitives/Card';
 import { EmptyState } from '@/presentation/primitives/EmptyState';
@@ -70,6 +70,7 @@ export function MarketScreen() {
     `markets:${regionId}:${tickKey}`,
     () => fetchMarketPrices(regionId),
     viewData.session.hasGame && regionId.length > 0,
+    { debounceMs: TICK_QUERY_DEBOUNCE_MS },
   );
 
   useEffect(() => {

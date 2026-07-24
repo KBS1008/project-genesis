@@ -27,7 +27,7 @@ function EntitySelectionBanner() {
       <span>
         Auswahl: {navigation.entitySelection.kind} · {navigation.entitySelection.id}
       </span>
-      <button type="button" onClick={clearEntitySelection}>
+      <button type="button" aria-label="Auswahl aufheben" onClick={clearEntitySelection}>
         Auswahl aufheben
       </button>
     </div>
@@ -141,6 +141,9 @@ export function GameWorkspaceShell({ children }: { readonly children: ReactNode 
 
   return (
     <div className="pg-workspace">
+      <a className="pg-skip-link" href="#game-workspace-main">
+        Zum Inhalt springen
+      </a>
       <WorkspaceHeader />
       <SimulationControlsBar />
       <PrimaryNavigation />

@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useDebouncedValue } from '@/presentation/hooks/useDebouncedValue';
 import { translatePresentationError } from '@/presentation/notifications/translatePresentationError';
 
 export type ScreenQueryState<T> = {
@@ -9,12 +10,23 @@ export type ScreenQueryState<T> = {
   readonly errorMessage: string | null;
 };
 
+export type ScreenQueryOptions = {
+  readonly debounceMs?: number;
+};
+
+/** Debounce interval for tick-driven screen queries during active simulation. */
+export const TICK_QUERY_DEBOUNCE_MS = 250;
+
 /** Loads screen-scoped query data with loading and error presentation state. */
 export function useScreenQuery<T>(
   queryKey: string,
   loader: () => Promise<T>,
   enabled: boolean,
+  options?: ScreenQueryOptions,
 ): ScreenQueryState<T> {
+  const debouncedKey = useDebouncedValue(queryKey, options?.debounceMs ?? 0);
+  const loaderRef = useRef(loader);
+  loaderRef.current = loader;
   const [data, setData] = useState<T | null>(null);
   const [isLoading, setIsLoading] = useState(enabled);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -31,7 +43,8 @@ export function useScreenQuery<T>(
     setIsLoading(true);
     setErrorMessage(null);
 
-    void loader()
+    void loaderRef
+      .current()
       .then((result) => {
         if (active) {
           setData(result);
@@ -52,7 +65,7 @@ export function useScreenQuery<T>(
     return () => {
       active = false;
     };
-  }, [queryKey, enabled]);
+  }, [debouncedKey, enabled]);
 
   return { data, isLoading, errorMessage };
 }

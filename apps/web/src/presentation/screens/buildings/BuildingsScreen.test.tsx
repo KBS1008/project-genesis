@@ -8,6 +8,7 @@ import { BuildingsScreen } from '@/presentation/screens/buildings/BuildingsScree
 const runCommand = vi.fn();
 
 vi.mock('@/presentation/hooks/useScreenQuery', () => ({
+  TICK_QUERY_DEBOUNCE_MS: 250,
   useScreenQuery: () => ({
     data: [
       {

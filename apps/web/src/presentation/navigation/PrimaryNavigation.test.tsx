@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { EMPTY_COMPANY_DASHBOARD_VIEW_DATA } from '@/presentation/adapters/view-data/company-dashboard-view-data';
@@ -59,6 +59,18 @@ describe('PrimaryNavigation', () => {
     );
 
     await user.click(screen.getByRole('button', { name: 'Märkte' }));
+    expect(navigateToScreen).toHaveBeenCalledWith('markets');
+  });
+
+  it('navigates with arrow keys', () => {
+    navigateToScreen.mockClear();
+
+    render(<PrimaryNavigation />);
+
+    fireEvent.keyDown(screen.getByRole('navigation', { name: 'Hauptnavigation' }), {
+      key: 'ArrowRight',
+    });
+
     expect(navigateToScreen).toHaveBeenCalledWith('markets');
   });
 });

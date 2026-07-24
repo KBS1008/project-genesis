@@ -77,6 +77,8 @@ const EMPTY_VIEW_DATA: WorkspaceViewData = Object.freeze({
 
 const GameWorkspaceContext = createContext<GameWorkspaceContextValue | null>(null);
 
+const SOCKET_REFRESH_DEBOUNCE_MS = 250;
+
 /** Provides navigation, session, and simulation UI state for the game workspace. */
 export function GameWorkspaceProvider({ children }: { readonly children: ReactNode }) {
   const router = useRouter();
@@ -100,10 +102,15 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
   const [isLiveConnected, setIsLiveConnected] = useState(false);
   const [isSessionDirty, setIsSessionDirty] = useState(false);
   const isBusyRef = useRef(false);
+  const refreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    isBusyRef.current = isBusy;
-  }, [isBusy]);
+    return () => {
+      if (refreshTimerRef.current !== null) {
+        window.clearTimeout(refreshTimerRef.current);
+      }
+    };
+  }, []);
 
   const replaceNavigation = useCallback(
     (nextNavigation: NavigationState) => {
@@ -120,6 +127,27 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
     setCompanyViewData(result.companyViewData);
     setRegions(result.regions);
   }, []);
+
+  const scheduleRefreshSession = useCallback((): void => {
+    if (refreshTimerRef.current !== null) {
+      window.clearTimeout(refreshTimerRef.current);
+    }
+
+    refreshTimerRef.current = window.setTimeout(() => {
+      refreshTimerRef.current = null;
+
+      if (isBusyRef.current) {
+        return;
+      }
+
+      void refreshSession().catch((error: unknown) => {
+        showNotification({
+          tone: 'error',
+          message: translatePresentationError(error),
+        });
+      });
+    }, SOCKET_REFRESH_DEBOUNCE_MS);
+  }, [refreshSession, showNotification]);
 
   const runCommand = useCallback(
     async (
@@ -199,6 +227,10 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
   }, [refreshSession, showNotification]);
 
   useEffect(() => {
+    isBusyRef.current = isBusy;
+  }, [isBusy]);
+
+  useEffect(() => {
     if (sessionDashboard === null) {
       return;
     }
@@ -222,16 +254,7 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
   useEffect(() => {
     const socket = connectDashboardSocket(
       () => {
-        if (isBusyRef.current) {
-          return;
-        }
-
-        void refreshSession().catch((error: unknown) => {
-          showNotification({
-            tone: 'error',
-            message: translatePresentationError(error),
-          });
-        });
+        scheduleRefreshSession();
       },
       (connected) => {
         setIsLiveConnected(connected);
@@ -241,7 +264,7 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
     return () => {
       socket.disconnect();
     };
-  }, [refreshSession, showNotification]);
+  }, [scheduleRefreshSession]);
 
   const navigateToTarget = useCallback(
     (target: EntityNavigationTarget) => {

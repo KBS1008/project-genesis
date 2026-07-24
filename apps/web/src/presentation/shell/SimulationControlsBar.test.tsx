@@ -7,6 +7,15 @@ import { EMPTY_COMPANY_DASHBOARD_VIEW_DATA } from '@/presentation/adapters/view-
 import { SimulationControlsBar } from '@/presentation/shell/SimulationControlsBar';
 
 const runCommand = vi.fn();
+const openConfirmDialog = vi.fn((_config: unknown, onConfirm: () => void) => {
+  onConfirm();
+});
+
+vi.mock('@/presentation/dialog/DialogProvider', () => ({
+  useDialog: () => ({
+    openConfirmDialog,
+  }),
+}));
 
 vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
   useGameWorkspace: () => ({
@@ -50,6 +59,19 @@ describe('SimulationControlsBar', () => {
     );
 
     await user.click(screen.getByRole('button', { name: 'Simulationsgeschwindigkeit ×2' }));
+    expect(runCommand).toHaveBeenCalledTimes(1);
+  });
+
+  it('confirms a simulation step while the simulation is running', async () => {
+    const user = userEvent.setup();
+    openConfirmDialog.mockClear();
+    runCommand.mockClear();
+
+    render(<SimulationControlsBar />);
+
+    await user.click(screen.getByRole('button', { name: 'Einen Simulationsschritt ausführen' }));
+
+    expect(openConfirmDialog).toHaveBeenCalledTimes(1);
     expect(runCommand).toHaveBeenCalledTimes(1);
   });
 });

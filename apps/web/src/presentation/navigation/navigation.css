@@ -48,6 +48,27 @@
   gap: var(--space-md);
 }
 
+.pg-skip-link {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.pg-skip-link:focus-visible {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: 0.5rem 0.875rem;
+  border-radius: var(--radius-sm);
+  background: var(--accent);
+  color: #fff;
+  text-decoration: none;
+  z-index: 1200;
+}
+
 .pg-workspace-header {
   display: flex;
   flex-wrap: wrap;
@@ -161,6 +182,24 @@
   color: var(--accent);
   cursor: pointer;
   font: inherit;
+}
+
+.pg-selection-banner button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pg-loading-spinner {
+    animation: none;
+    border-top-color: var(--accent);
+  }
+
+  .pg-button,
+  .pg-primary-nav-link,
+  button.pg-query-row {
+    transition: none;
+  }
 }
 
 .pg-query-table {

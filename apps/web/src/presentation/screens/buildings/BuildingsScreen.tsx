@@ -5,7 +5,7 @@ import { mapBuildingListRow } from '@/presentation/adapters/mappers/company-dash
 import { placeBuilding } from '@/presentation/adapters/api/gameplay-client';
 import { fetchBuildingList } from '@/presentation/adapters/api/query-client';
 import type { BuildingListRowViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
-import { useScreenQuery } from '@/presentation/hooks/useScreenQuery';
+import { useScreenQuery, TICK_QUERY_DEBOUNCE_MS } from '@/presentation/hooks/useScreenQuery';
 import { Button } from '@/presentation/primitives/Button';
 import { Card } from '@/presentation/primitives/Card';
 import { EmptyState } from '@/presentation/primitives/EmptyState';
@@ -35,6 +35,7 @@ export function BuildingsScreen() {
         ),
       ),
     viewData.session.hasGame,
+    { debounceMs: TICK_QUERY_DEBOUNCE_MS },
   );
   const placementForm = useTransientFormState({
     buildingTypeId: '',

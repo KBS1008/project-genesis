@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { mapTransportJobRowsViewData } from '@/presentation/adapters/mappers/workspace-view-mappers';
 import { fetchTransportOrders } from '@/presentation/adapters/api/query-client';
 import type { JobRowViewData } from '@/presentation/adapters/view-data/workspace-view-data';
-import { useScreenQuery } from '@/presentation/hooks/useScreenQuery';
+import { useScreenQuery, TICK_QUERY_DEBOUNCE_MS } from '@/presentation/hooks/useScreenQuery';
 import { Card } from '@/presentation/primitives/Card';
 import { EmptyState } from '@/presentation/primitives/EmptyState';
 import { StatusBanner } from '@/presentation/primitives/StatusBanner';
@@ -23,6 +23,7 @@ export function TransportScreen() {
     `transport:${tickKey}`,
     () => fetchTransportOrders().then(mapTransportJobRowsViewData),
     viewData.session.hasGame,
+    { debounceMs: TICK_QUERY_DEBOUNCE_MS },
   );
   const selectedDetail =
     selectedOrderId === null

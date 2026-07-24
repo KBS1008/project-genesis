@@ -9,11 +9,13 @@ import {
   type SimulationSpeedOption,
 } from '@/presentation/adapters/api/simulation-client';
 import { Button } from '@/presentation/primitives/Button';
+import { useDialog } from '@/presentation/dialog/DialogProvider';
 import { useGameWorkspace } from '@/presentation/state/GameWorkspaceProvider';
 import './simulation-controls.css';
 
 /** Persistent simulation controls for pause, resume, step, and speed. */
 export function SimulationControlsBar() {
+  const { openConfirmDialog } = useDialog();
   const { viewData, isBusy, runCommand } = useGameWorkspace();
   const { session, simulation } = viewData;
   const disabled = !session.hasGame || isBusy;
@@ -25,6 +27,28 @@ export function SimulationControlsBar() {
     }
 
     void runCommand(() => setSimulationSpeed(speed), `Simulationsgeschwindigkeit ×${speed}.`);
+  };
+
+  const handleStep = () => {
+    const executeStep = () => {
+      void runCommand(() => stepSimulation(), 'Simulationsschritt ausgeführt.');
+    };
+
+    if (!simulation.isPaused) {
+      openConfirmDialog(
+        {
+          id: 'simulation-step-while-running',
+          title: 'Simulationsschritt ausführen?',
+          message:
+            'Die Simulation läuft derzeit. Möchten Sie trotzdem genau einen Tick voranschreiten?',
+          confirmLabel: 'Schritt ausführen',
+        },
+        executeStep,
+      );
+      return;
+    }
+
+    executeStep();
   };
 
   return (
@@ -59,9 +83,7 @@ export function SimulationControlsBar() {
           variant="secondary"
           disabled={disabled}
           aria-label="Einen Simulationsschritt ausführen"
-          onClick={() => {
-            void runCommand(() => stepSimulation(), 'Simulationsschritt ausgeführt.');
-          }}
+          onClick={handleStep}
         >
           +1 Tick
         </Button>

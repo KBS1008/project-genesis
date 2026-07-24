@@ -1,6 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
+import { useId } from 'react';
 
 /** Elevated surface container for dashboard panels and forms. */
 export function Card({
@@ -12,10 +13,12 @@ export function Card({
   readonly children: ReactNode;
   readonly className?: string;
 }) {
+  const titleId = useId();
+
   return (
-    <section className={`pg-card ${className}`.trim()} aria-labelledby={title ? 'pg-card-title' : undefined}>
+    <section className={`pg-card ${className}`.trim()} aria-labelledby={title !== undefined ? titleId : undefined}>
       {title !== undefined ? (
-        <h2 id="pg-card-title" className="pg-card-title">
+        <h2 id={titleId} className="pg-card-title">
           {title}
         </h2>
       ) : null}

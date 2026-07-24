@@ -140,7 +140,17 @@ fetchBuildingList().then((buildings) =>
 
 ## Tick refresh
 
-Include `viewData.simulation.tickNumber` in the query key when the screen must refresh after simulation ticks (markets, buildings, production, research). Document the choice per screen.
+Include `viewData.simulation.tickNumber` in the query key when the screen must refresh after simulation ticks (markets, buildings, production, research). Pass `{ debounceMs: TICK_QUERY_DEBOUNCE_MS }` to avoid unbounded refetch queues during high simulation speeds.
+
+Live dashboard refreshes are debounced in `GameWorkspaceProvider` (250 ms).
+
+## Accessibility
+
+- Use `useModalAccessibility` for modal dialogs (focus trap + Escape).
+- `Card` generates unique heading ids via `useId()`.
+- Primary navigation supports ArrowLeft/ArrowRight/Home/End.
+- Game workspace exposes a skip link to `#game-workspace-main`.
+- Respect `prefers-reduced-motion` for spinner and transition styles.
 
 ---
 
