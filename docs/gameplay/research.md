@@ -3,7 +3,7 @@ title: Research System
 version: 1.0
 status: Approved
 owner: Project Genesis Architecture
-lastUpdated: 2026-07-02
+lastUpdated: 2026-07-25
 reviewedBy: TBD
 relatedDocuments:
   - production.md
@@ -78,7 +78,23 @@ Mehr Gewinn
 
 # Forschungsbereiche
 
-Version 1 besitzt fünf Hauptbereiche.
+Der Content-Contract (`TechnologyCategory` in `TechnologyDefinition`) definiert **elf Forschungszweige**. M10 Phase 3 nutzt alle Zweige im Technologiebaum unter `game-content/research/`.
+
+| Kategorie | Schwerpunkt |
+| --------- | ----------- |
+| `PRODUCTION` | Produktionsprozesse und Industrieketten |
+| `BUILDING` | Gebäudetypen und Infrastruktur-Freischaltungen |
+| `ENERGY` | Energieerzeugung, Effizienz, Netzsteuerung |
+| `LOGISTICS` | Lager, Distribution, intermodale Transporte |
+| `MANAGEMENT` | Unternehmensführung und Konzernstrukturen |
+| `AUTOMATION` | Prozess- und Fabrikautomatisierung |
+| `FINANCE` | Finanzplanung und Investitionssteuerung |
+| `AGRICULTURE` | Nachhaltige Landwirtschaft und Ertragsoptimierung |
+| `CHEMISTRY` | Chemische Verfahren und Polymerwissenschaft |
+| `ELECTRONICS` | Schaltungsdesign und Halbleiterprozesse |
+| `AI` | Späte Spieltechnologien (z. B. Predictive Analytics) |
+
+Freischaltungen erfolgen primär über `requiredResearch` auf Gebäuden und Rezepten. Technologie-Boni als separates Effekt-System sind nicht Teil des v1-Contracts.
 
 ## Produktion
 
@@ -111,7 +127,7 @@ Verbessert Energieversorgung.
 Beispiele
 
 - Effizientere Kraftwerke
-- Energiespeicher
+- Erneuerbare Energie
 - Lastmanagement
 
 ---

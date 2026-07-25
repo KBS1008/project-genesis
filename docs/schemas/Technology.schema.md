@@ -156,10 +156,13 @@ Der kanonische Kern besteht aus:
 | `id`                 | string   | Eindeutige Technology-ID                                 |
 | `name`               | string   | Anzeigename der Technologie                              |
 | `description`        | string   | Beschreibung der Technologie                             |
+| `category`           | enum     | Forschungszweig (`TechnologyCategory`)                   |
 | `researchCost`       | number   | Kosten für die Erforschung                               |
-| `researchTime`       | number   | Dauer der Erforschung                                    |
+| `researchDuration`   | number   | Dauer der Erforschung (Simulationsticks)                   |
 | `requiredResearch`   | string[] | Optionale Voraussetzungen in Form anderer Technology-IDs |
 | `requiredMilestones` | string[] | Optionale Voraussetzungen in Form von Milestone-IDs      |
+| `enabled`            | boolean  | Ob die Technologie im Content-Katalog aktiv ist          |
+| `version`            | number   | Content-Asset-Version (mindestens `1`)                   |
 
 Die genaue Feldstruktur muss mit dem tatsächlichen `TechnologyDefinition`- und `TechnologyValidator`-Contract synchron bleiben.
 
@@ -178,10 +181,13 @@ Technology
 ├── id
 ├── name
 ├── description
+├── category
 ├── researchCost
-├── researchTime
+├── researchDuration
 ├── requiredResearch
-└── requiredMilestones
+├── requiredMilestones
+├── enabled
+└── version
 ```
 
 Die statische Definition enthält keine Company-spezifischen Runtime-Zustände.
@@ -218,14 +224,14 @@ Die Schema-Dokumentation darf nicht automatisch eine bestimmte Currency-Implemen
 
 ---
 
-# Research Time
+# Research Duration
 
-`researchTime` beschreibt die für die Erforschung erforderliche Zeitdauer.
+`researchDuration` beschreibt die für die Erforschung erforderliche Zeitdauer in Simulationsticks.
 
 Beispiel:
 
 ```yaml
-researchTime: 60
+researchDuration: 60
 ```
 
 Die Einheit muss mit der im Runtime-Research-System verwendeten Zeitrepräsentation übereinstimmen.
@@ -233,6 +239,32 @@ Die Einheit muss mit der im Runtime-Research-System verwendeten Zeitrepräsentat
 Das statische Technology-Asset definiert lediglich die erforderliche Dauer.
 
 Der tatsächliche Fortschritt wird im `ResearchJob` verwaltet.
+
+---
+
+# Technology Category
+
+`category` ordnet eine Technology einem Forschungszweig zu. Gültige Werte entsprechen `TechnologyCategory` in `TechnologyDefinition`:
+
+```text
+PRODUCTION
+BUILDING
+ENERGY
+LOGISTICS
+MANAGEMENT
+AUTOMATION
+FINANCE
+AGRICULTURE
+CHEMISTRY
+ELECTRONICS
+AI
+```
+
+Beispiel:
+
+```yaml
+category: PRODUCTION
+```
 
 ---
 
@@ -463,7 +495,7 @@ Technology
     name
     description
     researchCost
-    researchTime
+    researchDuration
     prerequisites
 
 
@@ -643,13 +675,19 @@ name: Basic Woodworking
 description: >
   Enables basic woodworking production.
 
+category: PRODUCTION
+
 researchCost: 100
 
-researchTime: 60
+researchDuration: 60
 
 requiredResearch: []
 
 requiredMilestones: []
+
+enabled: true
+
+version: 1
 ```
 
 Eine abhängige Technology:
@@ -662,15 +700,21 @@ name: Advanced Woodworking
 description: >
   Enables advanced woodworking production.
 
+category: PRODUCTION
+
 researchCost: 250
 
-researchTime: 120
+researchDuration: 120
 
 requiredResearch:
   - basic_woodworking
 
 requiredMilestones:
-  - milestone.first_production
+  - first_production
+
+enabled: true
+
+version: 1
 ```
 
 Die Beispiele dienen der Darstellung des Contract-Modells. Die tatsächlich im Repository vorhandenen Technology-Assets bleiben die maßgebliche Quelle für konkrete Werte und Inhalte.
@@ -753,10 +797,13 @@ Technology
 ├── id
 ├── name
 ├── description
+├── category
 ├── researchCost
-├── researchTime
+├── researchDuration
 ├── requiredResearch
-└── requiredMilestones
+├── requiredMilestones
+├── enabled
+└── version
 ```
 
 ## Runtime Research

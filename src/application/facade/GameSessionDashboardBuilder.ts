@@ -615,6 +615,9 @@ export class GameSessionDashboardBuilder {
           const missingMilestone = technology.requiredMilestones.find(
             (milestoneId) => !input.completedMilestones.has(milestoneId),
           );
+          const missingResearch = technology.requiredResearch.find(
+            (technologyId) => !input.completedResearch.has(technologyId),
+          );
           const inProgress = input.researchJobs.some(
             (job) =>
               job.technologyId === technology.id &&
@@ -631,6 +634,9 @@ export class GameSessionDashboardBuilder {
           } else if (inProgress) {
             canStart = false;
             reason = 'Forschung läuft bereits.';
+          } else if (missingResearch !== undefined) {
+            canStart = false;
+            reason = `Forschung „${missingResearch}“ fehlt.`;
           } else if (missingMilestone !== undefined) {
             canStart = false;
             reason = `Meilenstein „${missingMilestone}“ fehlt.`;
