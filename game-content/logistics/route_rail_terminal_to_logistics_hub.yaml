@@ -1,0 +1,9 @@
+id: route_rail_terminal_to_logistics_hub
+name: Schienenterminal zum Logistikzentrum
+description: Schienentransportroute fuer Gueterzuege ins Logistikzentrum.
+sourceBuildingTypeId: rail_terminal
+destinationBuildingTypeId: logistics_hub
+durationTicks: 11
+throughputCapacity: 5
+enabled: true
+version: 1

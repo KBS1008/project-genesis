@@ -1,0 +1,9 @@
+id: route_storage_to_infrastructure
+name: Lager zu Logistik
+description: Strassenroute vom Lager zum Logistikzentrum fuer Umschlag und Sortierung.
+sourceCategory: STORAGE
+destinationCategory: INFRASTRUCTURE
+durationTicks: 10
+throughputCapacity: 2
+enabled: true
+version: 1

@@ -1,0 +1,9 @@
+id: route_production_to_storage
+name: Produktion zu Lager
+description: Strassenroute fuer Fertigwaren von Produktionsgebaeuden ins Lager.
+sourceCategory: PRODUCTION
+destinationCategory: STORAGE
+durationTicks: 6
+throughputCapacity: 3
+enabled: true
+version: 1

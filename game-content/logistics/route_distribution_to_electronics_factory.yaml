@@ -1,0 +1,9 @@
+id: route_distribution_to_electronics_factory
+name: Verteilzentrum zur Elektronikfabrik
+description: Optimierte Strassenroute fuer Elektronik-Komponenten.
+sourceBuildingTypeId: distribution_center
+destinationBuildingTypeId: electronics_factory
+durationTicks: 8
+throughputCapacity: 3
+enabled: true
+version: 1

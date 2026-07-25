@@ -1,0 +1,9 @@
+id: route_rail_terminal_to_distribution_center
+name: Schienenterminal zum Verteilzentrum
+description: Schienentransportroute mit mittlerer Laufzeit und hoher Kapazitaet.
+sourceBuildingTypeId: rail_terminal
+destinationBuildingTypeId: distribution_center
+durationTicks: 12
+throughputCapacity: 5
+enabled: true
+version: 1

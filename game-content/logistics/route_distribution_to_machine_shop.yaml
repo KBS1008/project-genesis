@@ -1,0 +1,9 @@
+id: route_distribution_to_machine_shop
+name: Verteilzentrum zur Maschinenwerkstatt
+description: Optimierte Strassenroute fuer Maschinenteile-Zufuhr.
+sourceBuildingTypeId: distribution_center
+destinationBuildingTypeId: machine_shop
+durationTicks: 6
+throughputCapacity: 4
+enabled: true
+version: 1

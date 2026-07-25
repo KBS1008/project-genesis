@@ -1,0 +1,9 @@
+id: route_infrastructure_to_storage
+name: Logistik zu Verteilzentrum
+description: Schienenaehnliche Route vom Logistikzentrum zum Verteilzentrum.
+sourceCategory: INFRASTRUCTURE
+destinationCategory: STORAGE
+durationTicks: 12
+throughputCapacity: 4
+enabled: true
+version: 1

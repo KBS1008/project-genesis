@@ -1,0 +1,9 @@
+id: route_port_to_logistics_hub
+name: Hafen zum Logistikzentrum
+description: Seetransportroute fuer Containerumschlag im Logistikzentrum.
+sourceBuildingTypeId: port
+destinationBuildingTypeId: logistics_hub
+durationTicks: 18
+throughputCapacity: 6
+enabled: true
+version: 1

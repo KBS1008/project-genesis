@@ -1,0 +1,9 @@
+id: route_infrastructure_to_production
+name: Logistik zu Produktion
+description: Schienenaehnliche Zufuhrroute vom Logistikzentrum zu Produktionsanlagen.
+sourceCategory: INFRASTRUCTURE
+destinationCategory: PRODUCTION
+durationTicks: 14
+throughputCapacity: 4
+enabled: true
+version: 1

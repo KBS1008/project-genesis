@@ -1,0 +1,9 @@
+id: route_logistics_hub_to_distribution_center
+name: Logistikzentrum zum Verteilzentrum
+description: Interne Strassenroute zwischen Logistik- und Verteilzentrum.
+sourceBuildingTypeId: logistics_hub
+destinationBuildingTypeId: distribution_center
+durationTicks: 8
+throughputCapacity: 3
+enabled: true
+version: 1

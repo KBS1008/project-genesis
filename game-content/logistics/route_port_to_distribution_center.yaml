@@ -1,0 +1,9 @@
+id: route_port_to_distribution_center
+name: Hafen zum Verteilzentrum
+description: Seetransportroute mit hoher Kapazitaet und laengerer Laufzeit.
+sourceBuildingTypeId: port
+destinationBuildingTypeId: distribution_center
+durationTicks: 20
+throughputCapacity: 6
+enabled: true
+version: 1

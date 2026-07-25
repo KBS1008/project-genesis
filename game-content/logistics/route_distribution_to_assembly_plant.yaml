@@ -1,0 +1,9 @@
+id: route_distribution_to_assembly_plant
+name: Verteilzentrum zur Montagehalle
+description: Optimierte Strassenroute fuer Montagezufuhr.
+sourceBuildingTypeId: distribution_center
+destinationBuildingTypeId: assembly_plant
+durationTicks: 7
+throughputCapacity: 4
+enabled: true
+version: 1

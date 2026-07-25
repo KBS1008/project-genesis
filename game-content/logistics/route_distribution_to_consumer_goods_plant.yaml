@@ -1,0 +1,9 @@
+id: route_distribution_to_consumer_goods_plant
+name: Verteilzentrum zur Konsumgueterfabrik
+description: Optimierte Strassenroute fuer Endproduktionszufuhr.
+sourceBuildingTypeId: distribution_center
+destinationBuildingTypeId: consumer_goods_plant
+durationTicks: 9
+throughputCapacity: 3
+enabled: true
+version: 1
