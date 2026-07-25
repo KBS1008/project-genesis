@@ -24,6 +24,7 @@ Architecture compliance with DD-029, DD-032, DD-033, and DD-038 is **maintained*
 | ~~`Technology.schema.md` documents `researchTime`; implementation uses `researchDuration`~~ | ~~Low~~ **Resolved 2026-07-25** | Schema docs |
 | ~~`Technology.schema.md` / `docs/gameplay/research.md` do not reflect new `TechnologyCategory` values~~ | ~~Low~~ **Resolved 2026-07-25** | Documentation |
 | No end-to-end integration test for **Research → Building → Production** (M10 industrial chain) | **Medium — Gate 2 target** | Regression testing |
+| **Production graph cycle detection** not validated (recipe input/output DAG) | **Low — Gate 2 target** | Content validation |
 | Phase 3 plan item **Bonuses** not implemented (unlock-only via `requiredResearch`) | Low | Content design |
 | Finance / Agriculture / some Energy leaf technologies have no building or recipe unlock targets yet | Low | Content completeness |
 | M10 plan example **Airport** building not added | Info | **Deferred** — not critical; documented in Phase 2 review |
@@ -164,6 +165,21 @@ consumer_goods
 - **No duplicate production logic** — single path through use cases and simulation systems.
 - **Early chain unchanged** — wood/planks/steel recipes unaffected.
 - **Balancing** — base prices and durations set in YAML; tuning deferred to M10 Phase 9 per plan.
+- **Production graph acyclicity not checked at Gate 1** — validation confirms individual recipe chains (tier 2–5 ladder) but does not traverse the full resource/recipe graph for cycles (e.g. A → B → C → A). The technology tree has an acyclic test (`m10ResearchExpansion.test.ts`); an equivalent **production graph** check is recommended before Gate 2 as content complexity grows.
+
+## Production graph (Gate 1 scope)
+
+Gate 1 verified **linear chain integrity** per recipe:
+
+```text
+Recipe inputs → resource → recipe outputs
+```
+
+Gate 1 did **not** verify global acyclicity across all recipes. Recommended Gate 2 check:
+
+```text
+resource A ──recipe──► resource B ──recipe──► resource C ──recipe──► resource A  ✗ cycle
+```
 
 ---
 
@@ -349,6 +365,7 @@ No simulation shortcuts or hardcoded M10 logic found in `src/simulation/`.
 | Research candidate (AI) | Sorted `technologies.getAll()` | ✅ |
 | Production / research execution | Tick-based `ManualClock` in tests; no `Math.random` in simulation code paths | ✅ |
 | Technology dependency traversal | Acyclic — verified in content test | ✅ |
+| Production resource/recipe graph | Not checked for cycles at Gate 1 | ⚠️ Gate 2 target |
 
 No unordered `Map` iteration in hot paths without subsequent sort.
 
@@ -389,6 +406,7 @@ No unordered `Map` iteration in hot paths without subsequent sort.
 | Gap | Priority |
 | --- | -------- |
 | No end-to-end test for full M10 industrial chain (research → build → produce tier 5) | **High for M10** — primary regression test candidate before Gate 2 (reviewer consensus) |
+| No production graph cycle validation across recipe inputs/outputs | **Gate 2 target** — detect A → B → C → A resource loops |
 | No savegame round-trip test with M10 building/recipe IDs | Low |
 | ~~`GameSessionDashboardBuilder` research hint prerequisite gap~~ | **Resolved 2026-07-25** — `GameSessionDashboardBuilder.test.ts` |
 
@@ -429,6 +447,7 @@ No unordered `Map` iteration in hot paths without subsequent sort.
 | TD-M10-01 | Research dashboard hints omit `requiredResearch` prerequisite messaging | **Resolved 2026-07-25** |
 | TD-M10-02 | `Technology.schema.md` / gameplay research docs out of sync with `TechnologyDefinition` | **Resolved 2026-07-25** |
 | TD-M10-06 | Missing E2E test: Research → Building → Production (M10 industrial chain) | Open — **target before Gate 2** |
+| TD-M10-07 | No production graph acyclicity validation (recipe resource cycles) | Open — **target before Gate 2** |
 | TD-M10-03 | No technology bonus/effect system (unlock-only) | By design per schema v1 |
 | TD-M10-04 | M10 plan `Airport` building not in catalog | Deferred |
 | TD-M10-05 | `M10_CONTENT_EXPANSION_PLAN.md` status not updated to "In Progress" | Cosmetic |
@@ -437,12 +456,22 @@ No unordered `Map` iteration in hot paths without subsequent sort.
 
 # Recommendations Before Phase 4
 
+All pre-Phase 4 items identified in the Gate 1 review and subsequent reviewer feedback are **complete** (commit `20138e0`):
+
 1. ~~**Fix research hint prerequisites** in `GameSessionDashboardBuilder.#readResearchHints`~~ — **Done (2026-07-25)**; `GameSessionDashboardBuilder.test.ts` added.
 2. ~~**Sync `Technology.schema.md`**~~ — **Done (2026-07-25)**.
 3. ~~**Update `docs/gameplay/research.md`**~~ — **Done (2026-07-25)**.
-4. **Add M10 industrial-chain integration test** — Research → Building → Production through tier 5; **primary M10 regression test; target before Gate 2** (reviewer consensus).
-5. **Proceed with Phase 4 (Transport)** — vehicles, routes, distribution; no M10 Phase 1–3 blockers identified.
-6. **Schedule Gate 2** after Phase 8 per plan — economy, AI, world systems.
+
+Phase 4 transport expansion subsequently shipped in commit `f53bcc6`.
+
+---
+
+# Recommendations Before Gate 2
+
+1. **Add M10 industrial-chain integration test** — Research → Building → Production through tier 5; primary M10 regression test (reviewer consensus).
+2. **Add production graph cycle validation** — traverse recipe `inputs`/`outputs` as a directed resource graph; fail on cycles (analogous to `assertAcyclicTechnologyTree` in `m10ResearchExpansion.test.ts`).
+3. Continue M10 Phases 5–8 per `M10_CONTENT_EXPANSION_PLAN.md`.
+4. **Schedule Gate 2** after Phase 8 per plan — economy, AI, world systems.
 
 ---
 
@@ -451,3 +480,20 @@ No unordered `Map` iteration in hot paths without subsequent sort.
 M10 Phases 1–3 satisfy the Gate 0 mandate: **content-driven expansion without architectural shortcuts**. Production chains, building catalog, and research tree load, validate, and integrate with existing deterministic use cases and V3 savegames. Identified gaps are documentation and UX polish items, not structural defects.
 
 **`READY FOR PHASE 4`**
+
+---
+
+# Post-Gate 1 Amendment (2026-07-25)
+
+Reviewer feedback incorporated after initial Gate 1 publication:
+
+| Topic | Gate 1 status | Follow-up |
+| ----- | ------------- | --------- |
+| Research hint prerequisites | Gap identified | **Resolved** in `20138e0` |
+| `researchTime` vs `researchDuration` schema drift | Gap identified | **Resolved** in `20138e0` |
+| Research docs (5 vs 11 categories) | Gap identified | **Resolved** in `20138e0` |
+| Production graph cycle detection | **Not in Gate 1 scope** | **Recommend before Gate 2** — validate recipe resource DAG for cycles |
+| E2E Research → Building → Production | Gap identified | Open — **before Gate 2** |
+| Airport building | Deferred | Accepted — not critical |
+
+Phase 4 (transport routes) completed in `f53bcc6` without additional Gate 1 blockers.
