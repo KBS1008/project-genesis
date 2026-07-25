@@ -1,0 +1,27 @@
+id: employee_executive_director
+version: 1
+displayName: Executive Director
+category: administration
+profession: executive_director
+cost: 5000
+salary: 600
+productivity: 1.1
+description: Führt die Konzernstrategie aus der Zentrale.
+statistics:
+  productivity: 1.1
+  efficiency: 1.2
+  stamina: 0.95
+  intelligence: 1.35
+  reliability: 1.2
+traits:
+  - leadership
+requirements:
+  research:
+    - executive_leadership
+  buildings:
+    - corporate_headquarters
+tags:
+  - worker
+  - administration
+  - department_executive
+enabled: true

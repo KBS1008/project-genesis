@@ -1,0 +1,25 @@
+id: employee_maintenance_technician
+version: 1
+displayName: Wartungstechniker
+category: engineering
+profession: maintenance_technician
+cost: 1600
+salary: 240
+productivity: 1.1
+description: Reduziert Ausfallzeiten in Wartungs- und Produktionsanlagen.
+statistics:
+  productivity: 1.1
+  efficiency: 1.15
+  stamina: 1.0
+  intelligence: 1.05
+  reliability: 1.2
+requirements:
+  research:
+    - process_automation
+  buildings:
+    - maintenance_facility
+tags:
+  - worker
+  - engineering
+  - department_operations
+enabled: true

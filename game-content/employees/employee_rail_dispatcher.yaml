@@ -1,0 +1,25 @@
+id: employee_rail_dispatcher
+version: 1
+displayName: Schienendisponent
+category: logistics
+profession: rail_dispatcher
+cost: 1900
+salary: 275
+productivity: 1.1
+description: Steuert Schienentransporte und Terminaldurchsatz.
+statistics:
+  productivity: 1.1
+  efficiency: 1.18
+  stamina: 1.05
+  intelligence: 1.05
+  reliability: 1.2
+requirements:
+  research:
+    - intermodal_logistics
+  buildings:
+    - rail_terminal
+tags:
+  - worker
+  - logistics
+  - department_logistics
+enabled: true

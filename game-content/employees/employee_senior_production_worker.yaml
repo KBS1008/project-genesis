@@ -1,0 +1,25 @@
+id: employee_senior_production_worker
+version: 1
+displayName: Erfahrener Produktionsmitarbeiter
+category: production
+profession: senior_production_worker
+cost: 1400
+salary: 200
+productivity: 1.12
+description: Spezialisiert auf industrielle Fertigungsanlagen der Mittelstufen.
+statistics:
+  productivity: 1.12
+  efficiency: 1.05
+  stamina: 1.1
+  intelligence: 0.95
+  reliability: 1.15
+requirements:
+  research:
+    - advanced_metallurgy
+  buildings:
+    - machine_shop
+tags:
+  - worker
+  - production
+  - department_operations
+enabled: true

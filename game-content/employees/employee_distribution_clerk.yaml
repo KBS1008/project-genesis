@@ -1,0 +1,25 @@
+id: employee_distribution_clerk
+version: 1
+displayName: Distributionsmitarbeiter
+category: logistics
+profession: distribution_clerk
+cost: 1500
+salary: 220
+productivity: 1.08
+description: Verwaltet Bestände und Auslieferungen im Verteilzentrum.
+statistics:
+  productivity: 1.08
+  efficiency: 1.15
+  stamina: 1.1
+  intelligence: 0.95
+  reliability: 1.1
+requirements:
+  research:
+    - warehouse_systems
+  buildings:
+    - distribution_center
+tags:
+  - worker
+  - logistics
+  - department_logistics
+enabled: true

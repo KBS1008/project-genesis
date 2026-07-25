@@ -1,0 +1,25 @@
+id: employee_senior_engineer
+version: 1
+displayName: Senior-Ingenieur
+category: engineering
+profession: senior_engineer
+cost: 2200
+salary: 320
+productivity: 1.2
+description: Optimiert komplexe Montage- und Elektronikprozesse.
+statistics:
+  productivity: 1.2
+  efficiency: 1.15
+  stamina: 0.9
+  intelligence: 1.25
+  reliability: 1.1
+requirements:
+  research:
+    - precision_machining
+  buildings:
+    - assembly_plant
+tags:
+  - worker
+  - engineering
+  - department_operations
+enabled: true

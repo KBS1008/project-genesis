@@ -1,0 +1,25 @@
+id: employee_hr_manager
+version: 1
+displayName: HR-Manager
+category: administration
+profession: hr_manager
+cost: 2000
+salary: 280
+productivity: 1.0
+description: Verwaltet Personalentwicklung und Schulungsprogramme.
+statistics:
+  productivity: 1.0
+  efficiency: 1.1
+  stamina: 1.0
+  intelligence: 1.15
+  reliability: 1.15
+requirements:
+  research:
+    - corporate_management
+  buildings:
+    - training_center
+tags:
+  - worker
+  - administration
+  - department_hr
+enabled: true

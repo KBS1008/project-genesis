@@ -1,0 +1,25 @@
+id: employee_senior_researcher
+version: 1
+displayName: Senior-Forscher
+category: research
+profession: senior_researcher
+cost: 2800
+salary: 380
+productivity: 1.2
+description: Leitet Forschungsprojekte am Forschungscampus.
+statistics:
+  productivity: 1.2
+  efficiency: 1.1
+  stamina: 0.95
+  intelligence: 1.35
+  reliability: 1.0
+requirements:
+  research:
+    - corporate_management
+  buildings:
+    - research_campus
+tags:
+  - worker
+  - research
+  - department_research
+enabled: true

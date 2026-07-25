@@ -1,0 +1,25 @@
+id: employee_operations_supervisor
+version: 1
+displayName: Produktionsleiter
+category: production
+profession: operations_supervisor
+cost: 1800
+salary: 260
+productivity: 1.15
+description: Koordiniert Produktionslinien und Schulungsprogramme im Betrieb.
+statistics:
+  productivity: 1.15
+  efficiency: 1.1
+  stamina: 1.0
+  intelligence: 1.0
+  reliability: 1.1
+requirements:
+  research:
+    - process_automation
+  buildings:
+    - training_center
+tags:
+  - worker
+  - production
+  - department_operations
+enabled: true

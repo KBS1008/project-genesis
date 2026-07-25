@@ -1,0 +1,25 @@
+id: employee_logistics_coordinator
+version: 1
+displayName: Logistikkoordinator
+category: logistics
+profession: logistics_coordinator
+cost: 1800
+salary: 260
+productivity: 1.1
+description: Plant Lagerflüsse und interne Transportketten.
+statistics:
+  productivity: 1.1
+  efficiency: 1.2
+  stamina: 1.05
+  intelligence: 1.05
+  reliability: 1.15
+requirements:
+  research:
+    - distribution_networks
+  buildings:
+    - logistics_hub
+tags:
+  - worker
+  - logistics
+  - department_logistics
+enabled: true

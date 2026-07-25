@@ -1,0 +1,25 @@
+id: employee_lab_director
+version: 1
+displayName: Laborleiter
+category: research
+profession: lab_director
+cost: 3500
+salary: 450
+productivity: 1.25
+description: Steuert universitäre Forschungsprogramme und Technologietransfer.
+statistics:
+  productivity: 1.25
+  efficiency: 1.15
+  stamina: 0.9
+  intelligence: 1.4
+  reliability: 1.05
+requirements:
+  research:
+    - executive_leadership
+  buildings:
+    - university
+tags:
+  - worker
+  - research
+  - department_research
+enabled: true

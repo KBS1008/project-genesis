@@ -1,0 +1,25 @@
+id: employee_port_operator
+version: 1
+displayName: Hafenlogistiker
+category: logistics
+profession: port_operator
+cost: 2000
+salary: 290
+productivity: 1.12
+description: Koordiniert See- und Containerumschlag im Hafen.
+statistics:
+  productivity: 1.12
+  efficiency: 1.15
+  stamina: 1.1
+  intelligence: 1.0
+  reliability: 1.15
+requirements:
+  research:
+    - intermodal_logistics
+  buildings:
+    - port
+tags:
+  - worker
+  - logistics
+  - department_logistics
+enabled: true
