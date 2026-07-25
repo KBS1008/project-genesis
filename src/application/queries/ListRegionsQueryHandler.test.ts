@@ -28,6 +28,7 @@ describe('ListRegionsQueryHandler', () => {
         'region_default',
         'region_east',
         'region_north',
+        'region_south',
       ]);
       expect(result.value[0]?.cityIds).toContain('city_port_harbor');
     }

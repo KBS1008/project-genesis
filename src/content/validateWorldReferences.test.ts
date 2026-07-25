@@ -62,6 +62,13 @@ function createValidWorldGraph(): {
       cityIds: ['city_test'],
       regionalResources: [],
       regionalDemand: [],
+      regionalModifiers: {
+        populationIndex: 50,
+        infrastructureLevel: 1,
+        educationIndex: 1,
+        energyAvailabilityModifier: 1,
+        environmentalModifier: 1,
+      },
       enabled: true,
       version: 1,
     }),

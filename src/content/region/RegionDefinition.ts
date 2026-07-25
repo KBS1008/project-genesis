@@ -24,6 +24,15 @@ export type RegionalDemandEntry = {
   readonly demandModifier: number;
 };
 
+/** Static regional simulation modifiers for population and infrastructure. */
+export type RegionalModifiers = {
+  readonly populationIndex: number;
+  readonly infrastructureLevel: number;
+  readonly educationIndex: number;
+  readonly energyAvailabilityModifier: number;
+  readonly environmentalModifier: number;
+};
+
 /** Validated properties of a static region definition. */
 export type RegionDefinitionProps = {
   readonly id: string;
@@ -36,6 +45,7 @@ export type RegionDefinitionProps = {
   readonly cityIds: readonly string[];
   readonly regionalResources: readonly RegionalResourceEntry[];
   readonly regionalDemand: readonly RegionalDemandEntry[];
+  readonly regionalModifiers: RegionalModifiers;
   readonly enabled: boolean;
   readonly version: number;
 };
@@ -54,6 +64,7 @@ export class RegionDefinition {
   readonly cityIds: readonly string[];
   readonly regionalResources: readonly RegionalResourceEntry[];
   readonly regionalDemand: readonly RegionalDemandEntry[];
+  readonly regionalModifiers: RegionalModifiers;
   readonly enabled: boolean;
   readonly version: number;
 
@@ -72,6 +83,7 @@ export class RegionDefinition {
     this.regionalDemand = Object.freeze(
       props.regionalDemand.map((entry) => Object.freeze({ ...entry })),
     );
+    this.regionalModifiers = Object.freeze({ ...props.regionalModifiers });
     this.enabled = props.enabled;
     this.version = props.version;
     Object.freeze(this);

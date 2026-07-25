@@ -1,0 +1,42 @@
+id: region_south
+name: Southern Coastal Belt
+description: Agricultural lowlands with export harbors and consumer demand.
+worldId: world_default
+biomeId: biome_coastal_lowlands
+mapPosition:
+  x: 0
+  y: -2
+neighborRegionIds:
+  - region_default
+  - region_east
+cityIds:
+  - city_south_agricultural_yard
+  - city_south_harbor
+regionalResources:
+  - resourceTypeId: wood
+    available: true
+    extractionModifier: 1.05
+  - resourceTypeId: planks
+    available: true
+    extractionModifier: 1.1
+  - resourceTypeId: consumer_goods
+    available: true
+    extractionModifier: 0.75
+regionalDemand:
+  - resourceTypeId: consumer_goods
+    baselineDemand: 60
+    demandModifier: 1.25
+  - resourceTypeId: planks
+    baselineDemand: 50
+    demandModifier: 1.05
+  - resourceTypeId: wood
+    baselineDemand: 40
+    demandModifier: 0.95
+regionalModifiers:
+  populationIndex: 55
+  infrastructureLevel: 0.95
+  educationIndex: 0.85
+  energyAvailabilityModifier: 1
+  environmentalModifier: 1.05
+enabled: true
+version: 1

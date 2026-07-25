@@ -27,5 +27,11 @@ regionalDemand:
   - resourceTypeId: wood
     baselineDemand: 50
     demandModifier: 1.1
+regionalModifiers:
+  populationIndex: 40
+  infrastructureLevel: 0.85
+  educationIndex: 0.9
+  energyAvailabilityModifier: 0.95
+  environmentalModifier: 1.1
 enabled: true
 version: 1

@@ -8,6 +8,7 @@ mapPosition:
   y: 0
 neighborRegionIds:
   - region_default
+  - region_south
 cityIds:
   - city_east_commercial_yard
   - city_industrial_hub
@@ -49,5 +50,11 @@ regionalDemand:
   - resourceTypeId: steel
     baselineDemand: 65
     demandModifier: 1.3
+regionalModifiers:
+  populationIndex: 80
+  infrastructureLevel: 1.4
+  educationIndex: 1
+  energyAvailabilityModifier: 1.2
+  environmentalModifier: 0.85
 enabled: true
 version: 1

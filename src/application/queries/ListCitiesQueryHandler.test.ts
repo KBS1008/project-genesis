@@ -30,6 +30,8 @@ describe('ListCitiesQueryHandler', () => {
         'city_industrial_hub',
         'city_north_trading_post',
         'city_port_harbor',
+        'city_south_agricultural_yard',
+        'city_south_harbor',
       ]);
     }
   });

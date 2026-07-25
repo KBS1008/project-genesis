@@ -1,0 +1,6 @@
+id: city_south_harbor
+name: South Harbor
+regionId: region_south
+category: MARKET_HUB
+enabled: true
+version: 1

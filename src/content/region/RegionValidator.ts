@@ -11,6 +11,7 @@ import {
   type MapPosition,
   type RegionDefinitionProps,
   type RegionalDemandEntry,
+  type RegionalModifiers,
   type RegionalResourceEntry,
 } from './RegionDefinition.js';
 
@@ -343,6 +344,79 @@ function readRegionalDemand(
   return Result.ok(entries);
 }
 
+const DEFAULT_REGIONAL_MODIFIERS: RegionalModifiers = Object.freeze({
+  populationIndex: 50,
+  infrastructureLevel: 1,
+  educationIndex: 1,
+  energyAvailabilityModifier: 1,
+  environmentalModifier: 1,
+});
+
+function readRegionalModifiers(
+  record: Record<string, unknown>,
+  filePath: string | undefined,
+): Result<RegionalModifiers, ContentLoadError> {
+  const value = record['regionalModifiers'];
+
+  if (value === undefined) {
+    return Result.ok(DEFAULT_REGIONAL_MODIFIERS);
+  }
+
+  if (!isRecord(value)) {
+    return Result.fail(
+      new ContentLoadError('Region field "regionalModifiers" must be an object.', {
+        ...contentContext(record, filePath),
+      }),
+    );
+  }
+
+  const populationIndexResult = readNumber(value, 'populationIndex', filePath, { min: 1 });
+
+  if (!populationIndexResult.ok) {
+    return Result.fail(populationIndexResult.error);
+  }
+
+  const infrastructureLevelResult = readNumber(value, 'infrastructureLevel', filePath, {
+    min: 0.01,
+  });
+
+  if (!infrastructureLevelResult.ok) {
+    return Result.fail(infrastructureLevelResult.error);
+  }
+
+  const educationIndexResult = readNumber(value, 'educationIndex', filePath, { min: 0.01 });
+
+  if (!educationIndexResult.ok) {
+    return Result.fail(educationIndexResult.error);
+  }
+
+  const energyAvailabilityModifierResult = readNumber(value, 'energyAvailabilityModifier', filePath, {
+    min: 0.01,
+  });
+
+  if (!energyAvailabilityModifierResult.ok) {
+    return Result.fail(energyAvailabilityModifierResult.error);
+  }
+
+  const environmentalModifierResult = readNumber(value, 'environmentalModifier', filePath, {
+    min: 0.01,
+  });
+
+  if (!environmentalModifierResult.ok) {
+    return Result.fail(environmentalModifierResult.error);
+  }
+
+  return Result.ok(
+    Object.freeze({
+      populationIndex: populationIndexResult.value,
+      infrastructureLevel: infrastructureLevelResult.value,
+      educationIndex: educationIndexResult.value,
+      energyAvailabilityModifier: energyAvailabilityModifierResult.value,
+      environmentalModifier: environmentalModifierResult.value,
+    }),
+  );
+}
+
 /**
  * Validates a parsed region definition object.
  */
@@ -416,6 +490,12 @@ export function validateRegionDefinition(
     return Result.fail(regionalDemandResult.error);
   }
 
+  const regionalModifiersResult = readRegionalModifiers(raw, filePath);
+
+  if (!regionalModifiersResult.ok) {
+    return Result.fail(regionalModifiersResult.error);
+  }
+
   const enabledResult = readBoolean(raw, 'enabled', filePath);
 
   if (!enabledResult.ok) {
@@ -439,6 +519,7 @@ export function validateRegionDefinition(
     cityIds: cityIdsResult.value,
     regionalResources: regionalResourcesResult.value,
     regionalDemand: regionalDemandResult.value,
+    regionalModifiers: regionalModifiersResult.value,
     enabled: enabledResult.value,
     version: versionResult.value,
   };

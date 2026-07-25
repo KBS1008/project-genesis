@@ -9,6 +9,7 @@ mapPosition:
 neighborRegionIds:
   - region_east
   - region_north
+  - region_south
 cityIds:
   - city_central_market
   - city_port_harbor
@@ -29,5 +30,11 @@ regionalDemand:
   - resourceTypeId: wood
     baselineDemand: 45
     demandModifier: 1.0
+regionalModifiers:
+  populationIndex: 65
+  infrastructureLevel: 1.2
+  educationIndex: 1.1
+  energyAvailabilityModifier: 1.15
+  environmentalModifier: 0.95
 enabled: true
 version: 1

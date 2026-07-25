@@ -10,6 +10,9 @@ regions:
   - regionId: region_north
     x: 0
     y: 2
+  - regionId: region_south
+    x: 0
+    y: -2
 connections:
   - fromRegionId: region_default
     toRegionId: region_east
@@ -17,8 +20,14 @@ connections:
   - fromRegionId: region_default
     toRegionId: region_north
     distance: 2
+  - fromRegionId: region_default
+    toRegionId: region_south
+    distance: 2
   - fromRegionId: region_east
     toRegionId: region_north
+    distance: 3
+  - fromRegionId: region_east
+    toRegionId: region_south
     distance: 3
 enabled: true
 version: 1

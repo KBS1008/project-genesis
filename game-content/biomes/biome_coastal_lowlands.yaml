@@ -1,0 +1,8 @@
+id: biome_coastal_lowlands
+name: Coastal Lowlands
+description: Fertile coastal plains with moderate logistics and construction overhead.
+category: COASTAL
+constructionCostModifier: 1.05
+transportDurationModifier: 0.9
+enabled: true
+version: 1

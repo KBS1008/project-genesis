@@ -4,5 +4,6 @@ regionIds:
   - region_default
   - region_east
   - region_north
+  - region_south
 enabled: true
 version: 1

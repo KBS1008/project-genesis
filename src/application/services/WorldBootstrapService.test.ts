@@ -72,11 +72,12 @@ describe('WorldBootstrapService', () => {
       expect(region).toBeDefined();
       expect(worldMap).toBeDefined();
       expect(world?.containsRegion(defaultRegionId.value)).toBe(true);
-      expect(regionRepository.findByWorldId(defaultWorldId.value)).toHaveLength(3);
+      expect(regionRepository.findByWorldId(defaultWorldId.value)).toHaveLength(4);
       expect(regionRepository.findAll().map((entry) => entry.getId().value)).toEqual([
         'region_default',
         'region_east',
         'region_north',
+        'region_south',
       ]);
       expect(cityRepository.findAll().map((entry) => entry.getId().value)).toEqual([
         'city_central_market',
@@ -84,8 +85,10 @@ describe('WorldBootstrapService', () => {
         'city_industrial_hub',
         'city_north_trading_post',
         'city_port_harbor',
+        'city_south_agricultural_yard',
+        'city_south_harbor',
       ]);
-      expect(worldMap?.getConnections()).toHaveLength(3);
+      expect(worldMap?.getConnections()).toHaveLength(5);
     }
   });
 
@@ -138,8 +141,8 @@ describe('WorldBootstrapService', () => {
     expect(firstBootstrap.ok).toBe(true);
     expect(secondBootstrap.ok).toBe(true);
     expect(worldRepository.findAll()).toHaveLength(1);
-    expect(regionRepository.findAll()).toHaveLength(3);
-    expect(cityRepository.findAll()).toHaveLength(5);
+    expect(regionRepository.findAll()).toHaveLength(4);
+    expect(cityRepository.findAll()).toHaveLength(7);
     expect(worldMapRepository.findAll()).toHaveLength(1);
   });
 });

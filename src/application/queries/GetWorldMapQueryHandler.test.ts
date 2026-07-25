@@ -30,8 +30,9 @@ describe('GetWorldMapQueryHandler', () => {
         'region_default',
         'region_east',
         'region_north',
+        'region_south',
       ]);
-      expect(result.value.connections).toHaveLength(3);
+      expect(result.value.connections).toHaveLength(5);
     }
   });
 
