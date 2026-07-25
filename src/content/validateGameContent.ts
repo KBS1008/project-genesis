@@ -38,6 +38,7 @@ import type { ResourceTypeRegistry } from './resource/ResourceTypeRegistry.js';
 import { WorldLoader } from './world/WorldLoader.js';
 import type { WorldRegistry } from './world/WorldRegistry.js';
 import { validateBuildingRecipeConsistency } from './validateBuildingRecipeConsistency.js';
+import { validateProductionGraphAcyclicity } from './validateProductionGraphAcyclicity.js';
 import { validateEmployeeReferences } from './validateEmployeeReferences.js';
 import { validateMilestoneReferences } from './validateMilestoneReferences.js';
 import { validateResearchReferences } from './validateResearchReferences.js';
@@ -88,7 +89,9 @@ export type GameContentLoadResult = {
  * 11. Recipes (with cross-reference validation)
  * 12. Transport routes
  *
- * Cross-registry validation runs after all loaders succeed.
+ * Cross-registry validation runs after all loaders succeed:
+ * world, employee, research, milestone, building/recipe consistency,
+ * production graph acyclicity, transport, economy, and NPC references.
  *
  * @param gameContentRoot - Path to the `game-content/` directory.
  * @param options - Optional validation options such as strict cross-reference checks.
@@ -279,6 +282,15 @@ export async function validateGameContent(
 
   if (!consistencyResult.ok) {
     return Result.fail(consistencyResult.error);
+  }
+
+  const productionGraphResult = validateProductionGraphAcyclicity(
+    recipesResult.value,
+    resourceTypesResult.value,
+  );
+
+  if (!productionGraphResult.ok) {
+    return Result.fail(productionGraphResult.error);
   }
 
   const transportRouteReferencesResult = validateTransportRouteReferences(
