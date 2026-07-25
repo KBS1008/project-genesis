@@ -14,6 +14,7 @@ import { createTechnologyId } from '../../domain/research/TechnologyId.js';
 import { bootstrapApplication } from '../bootstrap/bootstrapApplication.js';
 import { CreateCompanyUseCase } from '../use-cases/CreateCompanyUseCase.js';
 import { ResearchCompletionService } from './ResearchCompletionService.js';
+import { SupplyContractUnlockService } from './SupplyContractUnlockService.js';
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const gameContentRoot = path.resolve(testDirectory, '../../../game-content');
@@ -98,7 +99,22 @@ async function createServiceContext() {
   }
 
   const context = bootstrapResult.value;
-  const researchCompletionService = new ResearchCompletionService(context);
+  const supplyContractUnlockService = new SupplyContractUnlockService({
+    clock: context.clock,
+    supplyContractRepository: context.supplyContractRepository,
+    companyResearchRepository: context.companyResearchRepository,
+    buildingRepository: context.buildingRepository,
+    simulationEngine: context.simulationEngine,
+    gameContent: context.gameContent,
+  });
+  const researchCompletionService = new ResearchCompletionService({
+    clock: context.clock,
+    companyRepository: context.companyRepository,
+    companyResearchRepository: context.companyResearchRepository,
+    simulationEngine: context.simulationEngine,
+    gameContent: context.gameContent,
+    supplyContractUnlockService,
+  });
 
   return {
     context,

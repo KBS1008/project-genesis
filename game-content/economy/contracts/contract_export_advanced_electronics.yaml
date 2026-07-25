@@ -4,7 +4,7 @@ description: Consumer goods plants source advanced electronics through contract.
 kind: NPC_PURCHASE
 resourceId: advanced_electronics
 amount: 3
-paymentAmount: 1500
+paymentAmount: 1750
 intervalTicks: 38
 regionId: region_east
 requirements:

@@ -3,9 +3,9 @@ name: Market Rival
 description: Competes aggressively across markets, expansion, and pricing.
 profile: MARKET_RIVAL
 weights:
-  expansionWeight: 70
+  expansionWeight: 75
   productionWeight: 45
-  tradingWeight: 85
+  tradingWeight: 88
   researchWeight: 35
   riskTolerance: 85
   liquidityPreference: 25

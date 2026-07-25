@@ -4,7 +4,7 @@ description: Electronics suppliers purchase industrial machinery on contract.
 kind: NPC_PURCHASE
 resourceId: industrial_machinery
 amount: 4
-paymentAmount: 1200
+paymentAmount: 1440
 intervalTicks: 35
 regionId: region_east
 requirements:

@@ -4,8 +4,8 @@ description: Optimises transport networks, trading routes, and regional supply c
 profile: LOGISTICS_SPECIALIST
 weights:
   expansionWeight: 65
-  productionWeight: 55
-  tradingWeight: 70
+  productionWeight: 48
+  tradingWeight: 78
   researchWeight: 30
   riskTolerance: 45
   liquidityPreference: 50

@@ -4,7 +4,7 @@ description: Distribution buyers purchase finished planks on contract.
 kind: NPC_PURCHASE
 resourceId: planks
 amount: 10
-paymentAmount: 350
+paymentAmount: 504
 intervalTicks: 25
 regionId: region_default
 requirements:

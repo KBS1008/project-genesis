@@ -55,6 +55,7 @@ import type { CompanyPlanningPort } from '../../domain/brain/CompanyPlanningPort
 import { CompanyPlanningPipeline } from '../planning/CompanyPlanningPipeline.js';
 import { ProductionInventoryService } from '../services/ProductionInventoryService.js';
 import { ResearchCompletionService } from '../services/ResearchCompletionService.js';
+import { SupplyContractUnlockService } from '../services/SupplyContractUnlockService.js';
 import { MilestoneEvaluationService } from '../services/MilestoneEvaluationService.js';
 import { EnergyBalanceService } from '../services/EnergyBalanceService.js';
 import { EmployeeAllocationService } from '../services/EmployeeAllocationService.js';
@@ -232,6 +233,7 @@ export async function bootstrapApplication(
   };
 
   let researchCompletionService: ResearchCompletionService;
+  let supplyContractUnlockService: SupplyContractUnlockService;
   const resolveRegionalBaselineDemand = createRegionalBaselineDemandResolver(
     contentResult.value.regions,
   );
@@ -267,8 +269,18 @@ export async function bootstrapApplication(
       employeeAllocationService,
       onBuildingActivated: (building) => {
         transportLogisticsService.ensureStorageForBuilding(building);
+        supplyContractUnlockService.evaluateForCompany(building.getCompanyId());
       },
     }),
+  });
+
+  supplyContractUnlockService = new SupplyContractUnlockService({
+    clock,
+    supplyContractRepository,
+    companyResearchRepository,
+    buildingRepository,
+    simulationEngine,
+    gameContent: contentResult.value,
   });
 
   researchCompletionService = new ResearchCompletionService({
@@ -277,6 +289,7 @@ export async function bootstrapApplication(
     companyResearchRepository,
     simulationEngine,
     gameContent: contentResult.value,
+    supplyContractUnlockService,
   });
 
   companyDecisionExecutionService = new CompanyDecisionExecutionService({

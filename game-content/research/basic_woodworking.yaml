@@ -5,7 +5,7 @@ category: PRODUCTION
 requiredResearch: []
 requiredMilestones:
   - profit_100
-researchCost: 1000
-researchDuration: 60
+researchCost: 900
+researchDuration: 50
 enabled: true
 version: 1

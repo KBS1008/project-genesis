@@ -4,7 +4,7 @@ description: Regional retailers purchase finished consumer goods on contract.
 kind: NPC_PURCHASE
 resourceId: consumer_goods
 amount: 5
-paymentAmount: 2100
+paymentAmount: 4220
 intervalTicks: 40
 regionId: region_default
 requirements:

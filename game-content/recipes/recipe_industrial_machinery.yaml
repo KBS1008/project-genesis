@@ -12,7 +12,7 @@ inputs:
     amount: 2
 outputs:
   - resource: industrial_machinery
-    amount: 1
+    amount: 3
 duration: 100
 energy: 24
 workers: 3

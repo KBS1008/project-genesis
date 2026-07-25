@@ -4,7 +4,7 @@ description: Rail terminal buyers purchase steel freight on a recurring schedule
 kind: NPC_PURCHASE
 resourceId: steel
 amount: 12
-paymentAmount: 900
+paymentAmount: 1080
 intervalTicks: 26
 regionId: region_east
 requirements:

@@ -4,7 +4,7 @@ description: Machine shops sell steel to regional fabricators under contract.
 kind: NPC_PURCHASE
 resourceId: steel
 amount: 8
-paymentAmount: 520
+paymentAmount: 720
 intervalTicks: 30
 regionId: region_east
 requirements:

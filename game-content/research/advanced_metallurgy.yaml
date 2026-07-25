@@ -6,7 +6,7 @@ requiredResearch:
   - basic_woodworking
 requiredMilestones:
   - first_steel
-researchCost: 2500
-researchDuration: 90
+researchCost: 2200
+researchDuration: 80
 enabled: true
 version: 1

@@ -7,7 +7,7 @@ size:
   height: 3
 energyUsage: 25
 maintenanceCost: 8
-constructionCost: 12000
+constructionCost: 10800
 constructionTime: 150
 allowedRecipes:
   - recipe_steel

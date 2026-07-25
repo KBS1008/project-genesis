@@ -23,6 +23,7 @@ import { InMemoryProductionJobRepository } from '../../infrastructure/persistenc
 import { InMemoryResearchJobRepository } from '../../infrastructure/persistence/InMemoryResearchJobRepository.js';
 import { FinanceTransactionType } from '../../domain/finance/FinanceTransactionType.js';
 import { ResearchCompletionService } from '../services/ResearchCompletionService.js';
+import { SupplyContractUnlockService } from '../services/SupplyContractUnlockService.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
 import { createDefaultSimulationSystems } from '../../simulation/systems/createDefaultSimulationSystems.js';
 import { createTransportTestServices } from '../../../tests/helpers/createTransportTestServices.js';
@@ -63,6 +64,7 @@ async function createContext() {
   };
 
   let researchCompletionService: ResearchCompletionService;
+  let supplyContractUnlockService: SupplyContractUnlockService;
 
   const productionInventoryService = new ProductionInventoryService({
     inventoryRepository,
@@ -106,12 +108,22 @@ async function createContext() {
     }),
   });
 
+  supplyContractUnlockService = new SupplyContractUnlockService({
+    clock,
+    supplyContractRepository,
+    companyResearchRepository,
+    buildingRepository,
+    simulationEngine,
+    gameContent: contentResult.value,
+  });
+
   researchCompletionService = new ResearchCompletionService({
     clock,
     companyRepository,
     companyResearchRepository,
     simulationEngine,
     gameContent: contentResult.value,
+    supplyContractUnlockService,
   });
 
   return {
@@ -208,7 +220,7 @@ describe('StartResearchUseCase', () => {
     const financeAfterStart = context.financeRepository.findByCompanyId(
       requireCompanyId('company_001'),
     );
-    expect(financeAfterStart?.getCashBalance()).toBe(STARTING_MONEY - 1000);
+    expect(financeAfterStart?.getCashBalance()).toBe(STARTING_MONEY - 900);
 
     context.simulationEngine.tick();
     expect(started).toEqual(['research_job_001']);

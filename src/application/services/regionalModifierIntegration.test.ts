@@ -102,7 +102,7 @@ describe('regional modifier simulation wiring', () => {
 
       expect(job).toBeDefined();
       expect(job?.getStatus()).toBe(ResearchJobStatus.RUNNING);
-      expect(job?.getDuration()).toBe(55);
+      expect(job?.getDuration()).toBe(45);
     }
   });
 });

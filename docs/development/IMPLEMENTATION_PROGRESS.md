@@ -4,7 +4,7 @@ Version: 1.0.0
 
 Status: Active
 
-Last Updated: 2026-07-24
+Last Updated: 2026-07-25
 
 ---
 
@@ -32,7 +32,7 @@ Update this document whenever a meaningful implementation milestone is completed
 | Application layer                | Implemented (bootstrap, use cases, queries, dashboard facade, tutorial progress)                                                                                      |
 | UI                               | ✅ M9 complete (Phases 1–11) |
 | M9 User Interface                | ✅ Complete (Gate 0 ✅ · Gate 1 ✅ · Gate 2 ✅ · Gate 3 ✅) |
-| M10 Content Expansion            | 🟡 In Progress (Gate 0 ✅ · Phase 1 ✅ · Phase 2 ✅ · Phase 3 ✅ · Phase 4 ✅ · Phase 5 ✅ · Phase 6 ✅ · Phase 7 ✅ · Phase 8 ✅) |
+| M10 Content Expansion            | 🟡 In Progress (Gate 0 ✅ · Phase 1 ✅ · Phase 2 ✅ · Phase 3 ✅ · Phase 4 ✅ · Phase 5 ✅ · Phase 6 ✅ · Phase 7 ✅ · Phase 8 ✅ · Phase 9 ✅) |
 | Energy system                    | Partial (balance service, production gating, baseline grid)                                                                                                           |
 | Transport / logistics            | ✅ M6 completed — capacities, route durations, throughput queue (DD-022)                                                                                              |
 | World simulation                 | ✅ M7 completed — regions, map, biomes, cities, regional resources, save V2 (AUD-005)                                                                               |
@@ -43,7 +43,7 @@ Update this document whenever a meaningful implementation milestone is completed
 | M8 NPC Economy                   | ✅ Completed (Gate AUD-006, 2026-07-22) |
 | Phase 1 Core Domain              | ✅ Completed (Gate 2026-07-19) — see `PHASE1_CORE_DOMAIN_REPORT.md`                                                                                                   |
 
-**Tests:** 645 (run `pnpm test` for current count; `pnpm test:e2e` for M9 API flows)
+**Tests:** 666 (run `pnpm test` for current count; `pnpm test:e2e` for M9 API flows)
 
 ---
 
@@ -236,7 +236,8 @@ All **TD-M8-01 … TD-M8-06** resolved — see `docs/quality/M8_IMPLEMENTATION_R
 | Industries / scenarios          |       0 | Not started                                  |
 | Vehicles (content)              |       5 | `Vehicle.schema.md`, art library docs; DD-022 V1 waiver |
 | Content pipeline / registry     |      80 | Loaders, strict validation, M10 content tests |
-| **Milestone average**           |  **85** | Phase 9 balancing next                         |
+| Balancing (Phase 9)               |      70 | `SupplyContractUnlockService`, `m10Balancing.test.ts`, YAML tuning pass |
+| **Milestone average**           |  **88** | Phase 10 final integration next                |
 
 ### M11 – Polish ⚪ (0 %)
 
@@ -1173,15 +1174,14 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Planned Next Steps
 
-1. **M10 Phase 9 — Balancing:** simulation tuning, economy tuning, AI tuning, difficulty per `M10_CONTENT_EXPANSION_PLAN.md`
-2. **M10 E2E regression test:** Research → Building → Production industrial chain (Gate 1 follow-up)
-3. Session/auth model for multi-user API access
+1. **M10 Phase 10 — Final Integration:** performance, regression, savegames, documentation per `M10_CONTENT_EXPANSION_PLAN.md`
+2. Session/auth model for multi-user API access
 
 ---
 
 # Recently Completed (2026-07)
 
-- **M10 Phase 8 — World Expansion:** regional modifier profiles on all regions, `region_south` + coastal biome, 2 southern cities, expanded world map, `m10WorldExpansion.test.ts`
+- **M10 Phase 9 — Balancing:** `SupplyContractUnlockService` (TD-M10-09), export contract premium tuning, industrial recipe margins, research/smelter pacing, AI strategy differentiation, `m10Balancing.test.ts` (**666 tests**)
 - **M10 Phase 7 — AI Expansion:** 6 specialized company brain strategies, 6 NPC competitors, `NpcCompanyLoader`, `m10AIExpansion.test.ts`
 - **M10 Phase 6 — Economy Expansion:** regional demand profiles, 9 export contract templates, 3 trade cities, `SupplyContractTemplateLoader`, `m10EconomyExpansion.test.ts`
 - **M10 Phase 5 — Company Management:** 14 specialized employees across operations, research, HR, finance, executive, and logistics departments, `m10CompanyManagement.test.ts`

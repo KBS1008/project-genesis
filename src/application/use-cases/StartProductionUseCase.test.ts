@@ -22,6 +22,7 @@ import { InMemoryResearchJobRepository } from '../../infrastructure/persistence/
 import { ProductionInventoryService } from '../services/ProductionInventoryService.js';
 import { EnergyBalanceService } from '../services/EnergyBalanceService.js';
 import { ResearchCompletionService } from '../services/ResearchCompletionService.js';
+import { SupplyContractUnlockService } from '../services/SupplyContractUnlockService.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
 import { createDefaultSimulationSystems } from '../../simulation/systems/createDefaultSimulationSystems.js';
 import { createTransportTestServices } from '../../../tests/helpers/createTransportTestServices.js';
@@ -83,6 +84,7 @@ async function createContext() {
   });
 
   let researchCompletionService: ResearchCompletionService;
+  let supplyContractUnlockService: SupplyContractUnlockService;
 
   simulationEngine = new SimulationEngine({
     clock,
@@ -113,12 +115,22 @@ async function createContext() {
     }),
   });
 
+  supplyContractUnlockService = new SupplyContractUnlockService({
+    clock,
+    supplyContractRepository,
+    companyResearchRepository,
+    buildingRepository,
+    simulationEngine,
+    gameContent: contentResult.value,
+  });
+
   researchCompletionService = new ResearchCompletionService({
     clock,
     companyRepository,
     companyResearchRepository,
     simulationEngine,
     gameContent: contentResult.value,
+    supplyContractUnlockService,
   });
 
   const energyBalanceService = new EnergyBalanceService({
