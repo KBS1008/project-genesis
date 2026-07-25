@@ -3,7 +3,6 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { CityCategory } from './city/CityDefinition.js';
 import { createRegionalBaselineDemandResolver } from '../application/services/createRegionalBaselineDemandResolver.js';
-import { MARKET_BASELINE_DEMAND } from '../domain/market/MarketPriceConstants.js';
 import { validateGameContent } from './validateGameContent.js';
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
@@ -13,17 +12,17 @@ const REGION_DEMAND_PROFILES = Object.freeze([
   {
     regionId: 'region_default',
     resourceId: 'consumer_goods',
-    expectedDemand: 98,
+    expectedDemand: 127,
   },
   {
     regionId: 'region_east',
     resourceId: 'steel',
-    expectedDemand: 85,
+    expectedDemand: 136,
   },
   {
     regionId: 'region_north',
     resourceId: 'wood',
-    expectedDemand: 55,
+    expectedDemand: 44,
   },
 ]);
 
@@ -117,7 +116,7 @@ describe('M10 economy expansion content', () => {
       expect(resolveDemand(profile.regionId, profile.resourceId)).toBe(profile.expectedDemand);
     }
 
-    expect(resolveDemand('region_default', 'iron_ore')).toBe(MARKET_BASELINE_DEMAND);
+    expect(resolveDemand('region_default', 'iron_ore')).toBe(65);
 
     for (const city of PHASE_6_CITIES) {
       const definition = cities.get(city.id);

@@ -105,7 +105,7 @@ describe('SaveGameUseCase', () => {
       expect(restored.simulationEngine.state.tickNumber).toBe(
         context.simulationEngine.state.tickNumber,
       );
-      expect(finance?.getCashBalance()).toBe(STARTING_MONEY - 5000);
+      expect(finance?.getCashBalance()).toBe(STARTING_MONEY - 5700);
       expect(building?.getName()).toBe('Northern Sawmill');
       expect(building?.getPosition().x).toBe(2);
       expect(building?.getStatus()).toBe(BuildingStatus.UNDER_CONSTRUCTION);

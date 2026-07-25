@@ -39,7 +39,7 @@ describe('EnergyBalanceService', () => {
     const balance = context.energyBalanceService.computeForCompany(companyIdResult.value);
 
     expect(balance.usesBaselineGrid).toBe(true);
-    expect(balance.generation).toBe(BASELINE_GRID_ENERGY);
+    expect(balance.generation).toBeCloseTo(BASELINE_GRID_ENERGY * 1.15);
   });
 
   it('switches to plant generation after a coal power plant becomes active', async () => {

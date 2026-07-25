@@ -889,7 +889,7 @@ describe('GameStateSerializer', () => {
       expect(hydrateResult.value.simulationState.tickNumber).toBe(
         sourceContext.simulationEngine.state.tickNumber,
       );
-      expect(finance?.getCashBalance()).toBe(STARTING_MONEY - 5000);
+      expect(finance?.getCashBalance()).toBe(STARTING_MONEY - 5700);
       expect(building?.getName()).toBe('Northern Sawmill');
       expect(building?.getRegionId().value).toBe('region_default');
       expect(building?.getPosition().x).toBe(2);

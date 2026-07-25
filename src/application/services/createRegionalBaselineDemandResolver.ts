@@ -7,6 +7,7 @@
 import type { RegionRegistry } from '../../content/region/RegionRegistry.js';
 import { MARKET_BASELINE_DEMAND } from '../../domain/market/MarketPriceConstants.js';
 import { resolveRegionalBaselineDemand } from '../../domain/market/RegionalDemandResolver.js';
+import { resolveRegionalPopulationDemandScale } from '../../domain/region/RegionalModifierResolver.js';
 
 /** Resolves baseline demand for one resource in one region. */
 export type RegionalBaselineDemandResolver = (
@@ -25,6 +26,10 @@ export function createRegionalBaselineDemandResolver(
     ReadonlyMap<string, { readonly baselineDemand: number; readonly demandModifier: number }>
   >();
 
+  const modifiersByRegion = new Map(
+    regions.getAll().map((region) => [region.id, region.regionalModifiers] as const),
+  );
+
   for (const region of regions.getAll()) {
     const resourceDemand = new Map<
       string,
@@ -41,7 +46,11 @@ export function createRegionalBaselineDemandResolver(
   return (regionId: string, resourceId: string): number => {
     const regionDemand = demandByRegion.get(regionId);
     const entry = regionDemand?.get(resourceId);
+    const baseDemand = resolveRegionalBaselineDemand(entry, MARKET_BASELINE_DEMAND);
+    const populationScale = resolveRegionalPopulationDemandScale(
+      modifiersByRegion.get(regionId),
+    );
 
-    return resolveRegionalBaselineDemand(entry, MARKET_BASELINE_DEMAND);
+    return Math.round(baseDemand * populationScale);
   };
 }

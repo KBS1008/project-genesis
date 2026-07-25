@@ -16,9 +16,12 @@ import { Position } from '../../domain/building/Position.js';
 import { createCompanyId } from '../../domain/company/Company.js';
 import { FinanceTransactionType } from '../../domain/finance/FinanceTransactionType.js';
 import { ConstructionCostPolicy } from '../../domain/policies/building/ConstructionCostPolicy.js';
+import { resolveRegionalConstructionCost } from '../../domain/region/RegionalModifierResolver.js';
+import { DEFAULT_REGIONAL_MODIFIER_LOOKUP } from '../../domain/region/RegionalModifierResolver.js';
 import { BuildingPrerequisitesSpecification } from '../../domain/specifications/building/BuildingPrerequisitesSpecification.js';
 import type { ApplicationContext } from '../bootstrap/ApplicationContext.js';
 import type { PlaceBuildingCommand } from '../commands/PlaceBuildingCommand.js';
+import { createRegionalModifierResolver } from '../services/createRegionalModifierResolver.js';
 import { resolveBuildingRegionId } from '../services/BuildingRegionPlacement.js';
 
 /** Dependencies required by {@link PlaceBuildingUseCase}. */
@@ -48,6 +51,7 @@ export class PlaceBuildingUseCase {
   readonly #regionRepository: PlaceBuildingUseCaseDependencies['regionRepository'];
   readonly #simulationEngine: PlaceBuildingUseCaseDependencies['simulationEngine'];
   readonly #gameContent: PlaceBuildingUseCaseDependencies['gameContent'];
+  readonly #resolveRegionalModifiers: ReturnType<typeof createRegionalModifierResolver>;
   readonly #constructionCostPolicy = new ConstructionCostPolicy();
   readonly #buildingPrerequisitesSpecification = new BuildingPrerequisitesSpecification();
 
@@ -64,6 +68,10 @@ export class PlaceBuildingUseCase {
     this.#regionRepository = dependencies.regionRepository;
     this.#simulationEngine = dependencies.simulationEngine;
     this.#gameContent = dependencies.gameContent;
+    this.#resolveRegionalModifiers =
+      dependencies.gameContent?.regions === undefined
+        ? () => DEFAULT_REGIONAL_MODIFIER_LOOKUP
+        : createRegionalModifierResolver(dependencies.gameContent.regions);
   }
 
   /**
@@ -166,6 +174,12 @@ export class PlaceBuildingUseCase {
       return Result.fail(regionIdResult.error);
     }
 
+    const regionalModifiers = this.#resolveRegionalModifiers(regionIdResult.value.value);
+    const constructionCost = resolveRegionalConstructionCost(
+      costResult.value.cost,
+      regionalModifiers,
+    );
+
     const buildingResult = Building.create({
       id: buildingId,
       buildingTypeId,
@@ -190,7 +204,6 @@ export class PlaceBuildingUseCase {
       return Result.fail(beginConstructionResult.error);
     }
 
-    const constructionCost = costResult.value.cost;
     const debitResult = finance.debit(
       constructionCost,
       FinanceTransactionType.BUILDING_COST,

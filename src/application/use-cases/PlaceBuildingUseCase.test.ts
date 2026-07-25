@@ -236,7 +236,7 @@ describe('PlaceBuildingUseCase', () => {
 
     const finance = financeRepository.findByCompanyId(requireCompanyId('company_001'));
 
-    expect(finance?.getCashBalance()).toBe(STARTING_MONEY - 5000);
+    expect(finance?.getCashBalance()).toBe(STARTING_MONEY - 5700);
     expect(finance?.getTransactions().at(-1)?.transactionType).toBe(
       FinanceTransactionType.BUILDING_COST,
     );

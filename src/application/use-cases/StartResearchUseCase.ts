@@ -14,8 +14,14 @@ import { ResearchJobStatus } from '../../domain/research/ResearchJobStatus.js';
 import { createTechnologyId } from '../../domain/research/TechnologyId.js';
 import { RequiredResearchSpecification } from '../../domain/specifications/research/RequiredResearchSpecification.js';
 import { RequiredMilestonesSpecification } from '../../domain/specifications/research/RequiredMilestonesSpecification.js';
+import {
+  DEFAULT_REGIONAL_MODIFIER_LOOKUP,
+  resolveRegionalResearchDuration,
+} from '../../domain/region/RegionalModifierResolver.js';
 import type { ApplicationContext } from '../bootstrap/ApplicationContext.js';
 import type { StartResearchCommand } from '../commands/StartResearchCommand.js';
+import { createRegionalModifierResolver } from '../services/createRegionalModifierResolver.js';
+import { resolveCompanyRegionalResearchMultiplier } from '../services/resolveCompanyRegionalModifier.js';
 
 /** Dependencies required by {@link StartResearchUseCase}. */
 export type StartResearchUseCaseDependencies = Pick<
@@ -26,6 +32,7 @@ export type StartResearchUseCaseDependencies = Pick<
   | 'companyResearchRepository'
   | 'companyMilestonesRepository'
   | 'researchJobRepository'
+  | 'buildingRepository'
   | 'simulationEngine'
   | 'gameContent'
 >;
@@ -40,8 +47,10 @@ export class StartResearchUseCase {
   readonly #companyResearchRepository: StartResearchUseCaseDependencies['companyResearchRepository'];
   readonly #companyMilestonesRepository: StartResearchUseCaseDependencies['companyMilestonesRepository'];
   readonly #researchJobRepository: StartResearchUseCaseDependencies['researchJobRepository'];
+  readonly #buildingRepository: StartResearchUseCaseDependencies['buildingRepository'];
   readonly #simulationEngine: StartResearchUseCaseDependencies['simulationEngine'];
   readonly #gameContent: StartResearchUseCaseDependencies['gameContent'];
+  readonly #resolveRegionalModifiers: ReturnType<typeof createRegionalModifierResolver>;
   readonly #requiredResearchSpecification = new RequiredResearchSpecification();
   readonly #requiredMilestonesSpecification = new RequiredMilestonesSpecification();
 
@@ -55,8 +64,13 @@ export class StartResearchUseCase {
     this.#companyResearchRepository = dependencies.companyResearchRepository;
     this.#companyMilestonesRepository = dependencies.companyMilestonesRepository;
     this.#researchJobRepository = dependencies.researchJobRepository;
+    this.#buildingRepository = dependencies.buildingRepository;
     this.#simulationEngine = dependencies.simulationEngine;
     this.#gameContent = dependencies.gameContent;
+    this.#resolveRegionalModifiers =
+      dependencies.gameContent?.regions === undefined
+        ? () => DEFAULT_REGIONAL_MODIFIER_LOOKUP
+        : createRegionalModifierResolver(dependencies.gameContent.regions);
   }
 
   /**
@@ -187,11 +201,21 @@ export class StartResearchUseCase {
       );
     }
 
+    const researchMultiplier = resolveCompanyRegionalResearchMultiplier(
+      companyId,
+      this.#buildingRepository,
+      this.#resolveRegionalModifiers,
+    );
+    const researchDuration = resolveRegionalResearchDuration(technology.researchDuration, {
+      ...DEFAULT_REGIONAL_MODIFIER_LOOKUP,
+      educationIndex: researchMultiplier,
+    });
+
     const jobResult = ResearchJob.create({
       id: jobId,
       companyId,
       technologyId,
-      duration: technology.researchDuration,
+      duration: researchDuration,
       cost: technology.researchCost,
       clock: this.#clock,
     });

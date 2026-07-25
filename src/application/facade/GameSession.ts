@@ -77,6 +77,7 @@ export type PlaceBuildingInput = {
   readonly name: string;
   readonly x: number;
   readonly y: number;
+  readonly regionId?: string;
 };
 
 /** Input for market trades through the session facade. */
@@ -656,6 +657,7 @@ export class GameSession {
       name: input.name,
       x: input.x,
       y: input.y,
+      regionId: input.regionId,
     });
 
     if (!placeResult.ok) {

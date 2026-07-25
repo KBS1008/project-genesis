@@ -58,6 +58,32 @@ export function resolveRegionalPopulationDemandScale(
   return roundModifier(modifiers.populationIndex / DEFAULT_REGIONAL_MODIFIER_LOOKUP.populationIndex);
 }
 
+/**
+ * Applies regional infrastructure and environment modifiers to a base construction cost.
+ */
+export function resolveRegionalConstructionCost(
+  baseCost: number,
+  modifiers: RegionalModifierLookup = DEFAULT_REGIONAL_MODIFIER_LOOKUP,
+): number {
+  return Math.max(0, Math.round(baseCost * resolveRegionalConstructionCostMultiplier(modifiers)));
+}
+
+/**
+ * Applies regional education to research duration (higher education shortens duration).
+ */
+export function resolveRegionalResearchDuration(
+  baseDuration: number,
+  modifiers: RegionalModifierLookup = DEFAULT_REGIONAL_MODIFIER_LOOKUP,
+): number {
+  const multiplier = resolveRegionalResearchMultiplier(modifiers);
+
+  if (multiplier <= 0) {
+    return Math.max(1, baseDuration);
+  }
+
+  return Math.max(1, Math.round(baseDuration / multiplier));
+}
+
 function roundModifier(value: number): number {
   return Math.round(value * 100) / 100;
 }
