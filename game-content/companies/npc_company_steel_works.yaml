@@ -1,0 +1,9 @@
+id: npc_company_steel_works
+companyId: company_npc_steel
+name: Steel Works NPC
+ownerId: owner_system
+strategyDefinitionId: strategy_manufacturer
+tags:
+  - ai_competitor_industrial
+enabled: true
+version: 1

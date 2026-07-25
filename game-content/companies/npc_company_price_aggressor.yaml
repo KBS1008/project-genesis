@@ -1,0 +1,9 @@
+id: npc_company_price_aggressor
+companyId: company_npc_pricing
+name: Price Aggressor NPC
+ownerId: owner_system
+strategyDefinitionId: strategy_aggressive_pricing
+tags:
+  - ai_competitor_pricing
+enabled: true
+version: 1

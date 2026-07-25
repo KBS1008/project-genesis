@@ -1,0 +1,15 @@
+id: strategy_regional_expander
+name: Regional Expander
+description: Aggressively expands into new regions and infrastructure.
+profile: REGIONAL_EXPANDER
+weights:
+  expansionWeight: 95
+  productionWeight: 50
+  tradingWeight: 40
+  researchWeight: 35
+  riskTolerance: 65
+  liquidityPreference: 30
+tags:
+  - ai_focus_expansion
+enabled: true
+version: 1

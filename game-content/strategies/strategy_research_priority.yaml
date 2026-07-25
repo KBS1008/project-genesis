@@ -1,0 +1,15 @@
+id: strategy_research_priority
+name: Research Priority
+description: Focuses on technology leadership and long-term research investments.
+profile: RESEARCH_PRIORITY
+weights:
+  expansionWeight: 40
+  productionWeight: 55
+  tradingWeight: 25
+  researchWeight: 92
+  riskTolerance: 50
+  liquidityPreference: 60
+tags:
+  - ai_focus_research
+enabled: true
+version: 1

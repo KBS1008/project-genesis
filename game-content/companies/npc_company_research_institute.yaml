@@ -1,0 +1,9 @@
+id: npc_company_research_institute
+companyId: company_npc_research
+name: Research Institute NPC
+ownerId: owner_system
+strategyDefinitionId: strategy_research_priority
+tags:
+  - ai_competitor_research
+enabled: true
+version: 1

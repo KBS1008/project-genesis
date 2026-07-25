@@ -1,0 +1,9 @@
+id: npc_company_eastern_logistics
+companyId: company_npc_logistics
+name: Eastern Logistics NPC
+ownerId: owner_system
+strategyDefinitionId: strategy_logistics_specialist
+tags:
+  - ai_competitor_logistics
+enabled: true
+version: 1

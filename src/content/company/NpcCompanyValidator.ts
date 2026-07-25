@@ -1,26 +1,14 @@
 /**
- * @module @content/strategy/StrategyValidator
+ * @module @content/company/NpcCompanyValidator
  *
- * Validates parsed strategy content against schema rules.
+ * Validates parsed NPC company content against schema rules.
  */
 
 import { Result } from '../../common/result/Result.js';
 import { ContentLoadError } from '../errors/ContentLoadError.js';
-import {
-  StrategyDefinition,
-  type StrategyDefinitionProps,
-  type StrategyWeights,
-} from './StrategyDefinition.js';
+import { NpcCompanyDefinition, type NpcCompanyDefinitionProps } from './NpcCompanyDefinition.js';
 
 const GLOBAL_ID_PATTERN = /^[a-z0-9_]+$/;
-const WEIGHT_FIELDS = [
-  'expansionWeight',
-  'productionWeight',
-  'tradingWeight',
-  'researchWeight',
-  'riskTolerance',
-  'liquidityPreference',
-] as const;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -45,7 +33,7 @@ function readString(
 
   if (typeof value !== 'string' || value.length === 0) {
     return Result.fail(
-      new ContentLoadError(`Strategy field "${field}" must be a non-empty string.`, {
+      new ContentLoadError(`NPC company field "${field}" must be a non-empty string.`, {
         ...contentContext(record, filePath),
       }),
     );
@@ -54,17 +42,40 @@ function readString(
   return Result.ok(value);
 }
 
+function readGlobalId(
+  record: Record<string, unknown>,
+  field: string,
+  filePath: string | undefined,
+): Result<string, ContentLoadError> {
+  const valueResult = readString(record, field, filePath);
+
+  if (!valueResult.ok) {
+    return valueResult;
+  }
+
+  if (!GLOBAL_ID_PATTERN.test(valueResult.value)) {
+    return Result.fail(
+      new ContentLoadError(
+        `NPC company field "${field}" value "${valueResult.value}" must match ${GLOBAL_ID_PATTERN.toString()}.`,
+        { ...contentContext(record, filePath) },
+      ),
+    );
+  }
+
+  return valueResult;
+}
+
 function readNumber(
   record: Record<string, unknown>,
   field: string,
   filePath: string | undefined,
-  options: { min?: number; max?: number } = {},
+  options: { min?: number } = {},
 ): Result<number, ContentLoadError> {
   const value = record[field];
 
   if (typeof value !== 'number' || Number.isNaN(value)) {
     return Result.fail(
-      new ContentLoadError(`Strategy field "${field}" must be a number.`, {
+      new ContentLoadError(`NPC company field "${field}" must be a number.`, {
         ...contentContext(record, filePath),
       }),
     );
@@ -72,15 +83,7 @@ function readNumber(
 
   if (options.min !== undefined && value < options.min) {
     return Result.fail(
-      new ContentLoadError(`Strategy field "${field}" must be at least ${options.min}.`, {
-        ...contentContext(record, filePath),
-      }),
-    );
-  }
-
-  if (options.max !== undefined && value > options.max) {
-    return Result.fail(
-      new ContentLoadError(`Strategy field "${field}" must be at most ${options.max}.`, {
+      new ContentLoadError(`NPC company field "${field}" must be at least ${options.min}.`, {
         ...contentContext(record, filePath),
       }),
     );
@@ -98,45 +101,13 @@ function readBoolean(
 
   if (typeof value !== 'boolean') {
     return Result.fail(
-      new ContentLoadError(`Strategy field "${field}" must be a boolean.`, {
+      new ContentLoadError(`NPC company field "${field}" must be a boolean.`, {
         ...contentContext(record, filePath),
       }),
     );
   }
 
   return Result.ok(value);
-}
-
-function readWeights(
-  record: Record<string, unknown>,
-  filePath: string | undefined,
-): Result<StrategyWeights, ContentLoadError> {
-  const weightsRaw = record['weights'];
-
-  if (!isRecord(weightsRaw)) {
-    return Result.fail(
-      new ContentLoadError('Strategy field "weights" must be an object.', {
-        ...contentContext(record, filePath),
-      }),
-    );
-  }
-
-  const weights: Record<(typeof WEIGHT_FIELDS)[number], number> = {} as Record<
-    (typeof WEIGHT_FIELDS)[number],
-    number
-  >;
-
-  for (const field of WEIGHT_FIELDS) {
-    const weightResult = readNumber(weightsRaw, field, filePath, { min: 0, max: 100 });
-
-    if (!weightResult.ok) {
-      return Result.fail(weightResult.error);
-    }
-
-    weights[field] = weightResult.value;
-  }
-
-  return Result.ok(weights as StrategyWeights);
 }
 
 function readTags(
@@ -151,7 +122,7 @@ function readTags(
 
   if (!Array.isArray(value)) {
     return Result.fail(
-      new ContentLoadError('Strategy field "tags" must be an array.', {
+      new ContentLoadError('NPC company field "tags" must be an array.', {
         ...contentContext(record, filePath),
       }),
     );
@@ -163,7 +134,7 @@ function readTags(
   for (const entry of value) {
     if (typeof entry !== 'string' || entry.length === 0) {
       return Result.fail(
-        new ContentLoadError('Strategy field "tags" must contain non-empty strings.', {
+        new ContentLoadError('NPC company field "tags" must contain non-empty strings.', {
           ...contentContext(record, filePath),
         }),
       );
@@ -172,7 +143,7 @@ function readTags(
     if (!GLOBAL_ID_PATTERN.test(entry)) {
       return Result.fail(
         new ContentLoadError(
-          `Strategy field "tags" entry "${entry}" must match ${GLOBAL_ID_PATTERN.toString()}.`,
+          `NPC company field "tags" entry "${entry}" must match ${GLOBAL_ID_PATTERN.toString()}.`,
           { ...contentContext(record, filePath) },
         ),
       );
@@ -180,7 +151,7 @@ function readTags(
 
     if (seen.has(entry)) {
       return Result.fail(
-        new ContentLoadError(`Strategy field "tags" contains duplicate id "${entry}".`, {
+        new ContentLoadError(`NPC company field "tags" contains duplicate id "${entry}".`, {
           ...contentContext(record, filePath),
         }),
       );
@@ -195,31 +166,28 @@ function readTags(
 }
 
 /**
- * Validates a parsed strategy definition object.
+ * Validates a parsed NPC company definition object.
  */
-export function validateStrategyDefinition(
+export function validateNpcCompanyDefinition(
   raw: unknown,
   filePath?: string,
-): Result<StrategyDefinition, ContentLoadError> {
+): Result<NpcCompanyDefinition, ContentLoadError> {
   if (!isRecord(raw)) {
     return Result.fail(
-      new ContentLoadError('Strategy definition must be a YAML object.', { filePath }),
+      new ContentLoadError('NPC company definition must be a YAML object.', { filePath }),
     );
   }
 
-  const idResult = readString(raw, 'id', filePath);
+  const idResult = readGlobalId(raw, 'id', filePath);
 
   if (!idResult.ok) {
     return Result.fail(idResult.error);
   }
 
-  if (!GLOBAL_ID_PATTERN.test(idResult.value)) {
-    return Result.fail(
-      new ContentLoadError(
-        `Strategy id "${idResult.value}" must match ${GLOBAL_ID_PATTERN.toString()}.`,
-        { ...contentContext(raw, filePath) },
-      ),
-    );
+  const companyIdResult = readGlobalId(raw, 'companyId', filePath);
+
+  if (!companyIdResult.ok) {
+    return Result.fail(companyIdResult.error);
   }
 
   const nameResult = readString(raw, 'name', filePath);
@@ -228,22 +196,16 @@ export function validateStrategyDefinition(
     return Result.fail(nameResult.error);
   }
 
-  const descriptionResult = readString(raw, 'description', filePath);
+  const ownerIdResult = readGlobalId(raw, 'ownerId', filePath);
 
-  if (!descriptionResult.ok) {
-    return Result.fail(descriptionResult.error);
+  if (!ownerIdResult.ok) {
+    return Result.fail(ownerIdResult.error);
   }
 
-  const profileResult = readString(raw, 'profile', filePath);
+  const strategyDefinitionIdResult = readGlobalId(raw, 'strategyDefinitionId', filePath);
 
-  if (!profileResult.ok) {
-    return Result.fail(profileResult.error);
-  }
-
-  const weightsResult = readWeights(raw, filePath);
-
-  if (!weightsResult.ok) {
-    return Result.fail(weightsResult.error);
+  if (!strategyDefinitionIdResult.ok) {
+    return Result.fail(strategyDefinitionIdResult.error);
   }
 
   const tagsResult = readTags(raw, filePath);
@@ -264,16 +226,16 @@ export function validateStrategyDefinition(
     return Result.fail(versionResult.error);
   }
 
-  const props: StrategyDefinitionProps = {
+  const props: NpcCompanyDefinitionProps = {
     id: idResult.value,
+    companyId: companyIdResult.value,
     name: nameResult.value,
-    description: descriptionResult.value,
-    profile: profileResult.value,
-    weights: weightsResult.value,
+    ownerId: ownerIdResult.value,
+    strategyDefinitionId: strategyDefinitionIdResult.value,
     tags: tagsResult.value,
     enabled: enabledResult.value,
     version: versionResult.value,
   };
 
-  return Result.ok(new StrategyDefinition(props));
+  return Result.ok(new NpcCompanyDefinition(props));
 }

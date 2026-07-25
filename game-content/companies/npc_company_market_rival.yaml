@@ -1,0 +1,9 @@
+id: npc_company_market_rival
+companyId: company_npc_rival
+name: Market Rival NPC
+ownerId: owner_system
+strategyDefinitionId: strategy_market_rival
+tags:
+  - ai_competitor_rival
+enabled: true
+version: 1

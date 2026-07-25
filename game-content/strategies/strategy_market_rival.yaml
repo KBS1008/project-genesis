@@ -1,0 +1,15 @@
+id: strategy_market_rival
+name: Market Rival
+description: Competes aggressively across markets, expansion, and pricing.
+profile: MARKET_RIVAL
+weights:
+  expansionWeight: 70
+  productionWeight: 45
+  tradingWeight: 85
+  researchWeight: 35
+  riskTolerance: 85
+  liquidityPreference: 25
+tags:
+  - ai_focus_competition
+enabled: true
+version: 1

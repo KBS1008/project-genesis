@@ -23,7 +23,6 @@ import { SupplyContract, SupplyContractKind, createSupplyContractId } from '../.
 import type { ApplicationContext } from '../bootstrap/ApplicationContext.js';
 import type { StartNewGameCommand } from '../commands/StartNewGameCommand.js';
 import {
-  NEW_GAME_AUTONOMOUS_NPC_COMPANIES,
   NEW_GAME_STARTER_BUILDINGS,
   NEW_GAME_STARTER_RESOURCES,
   type NewGameStarterBuilding,
@@ -153,7 +152,7 @@ export class StartNewGameUseCase {
       this.#simulationEngine.enqueueEvents(contractResult.value.pullDomainEvents());
     }
 
-    for (const npcCompany of NEW_GAME_AUTONOMOUS_NPC_COMPANIES) {
+    for (const npcCompany of this.#gameContent.npcCompanies.getEnabled()) {
       const npcResult = this.#createCompany.execute({
         companyId: npcCompany.companyId,
         name: npcCompany.name,

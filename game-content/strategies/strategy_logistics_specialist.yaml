@@ -1,0 +1,15 @@
+id: strategy_logistics_specialist
+name: Logistics Specialist
+description: Optimises transport networks, trading routes, and regional supply chains.
+profile: LOGISTICS_SPECIALIST
+weights:
+  expansionWeight: 65
+  productionWeight: 55
+  tradingWeight: 70
+  researchWeight: 30
+  riskTolerance: 45
+  liquidityPreference: 50
+tags:
+  - ai_focus_transport
+enabled: true
+version: 1

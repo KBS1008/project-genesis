@@ -1,0 +1,9 @@
+id: npc_company_regional_traders
+companyId: company_npc_trader
+name: Regional Traders NPC
+ownerId: owner_system
+strategyDefinitionId: strategy_trading
+tags:
+  - ai_competitor_trading
+enabled: true
+version: 1

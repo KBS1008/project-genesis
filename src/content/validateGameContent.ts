@@ -23,6 +23,8 @@ import { MilestoneLoader } from './milestone/MilestoneLoader.js';
 import type { MilestoneRegistry } from './milestone/MilestoneRegistry.js';
 import { StrategyLoader } from './strategy/StrategyLoader.js';
 import type { StrategyRegistry } from './strategy/StrategyRegistry.js';
+import { NpcCompanyLoader } from './company/NpcCompanyLoader.js';
+import type { NpcCompanyRegistry } from './company/NpcCompanyRegistry.js';
 import { SupplyContractTemplateLoader } from './economy/SupplyContractTemplateLoader.js';
 import type { SupplyContractTemplateRegistry } from './economy/SupplyContractTemplateRegistry.js';
 import { RecipeLoader } from './recipe/RecipeLoader.js';
@@ -41,6 +43,7 @@ import { validateMilestoneReferences } from './validateMilestoneReferences.js';
 import { validateResearchReferences } from './validateResearchReferences.js';
 import { validateTransportRouteReferences } from './validateTransportRouteReferences.js';
 import { validateEconomyReferences } from './validateEconomyReferences.js';
+import { validateNpcCompanyReferences } from './validateNpcCompanyReferences.js';
 import { validateWorldReferences } from './validateWorldReferences.js';
 
 /** Options for loading and validating game content. */
@@ -65,6 +68,7 @@ export type GameContentLoadResult = {
   readonly transportRoutes: TransportRouteRegistry;
   readonly strategies: StrategyRegistry;
   readonly supplyContractTemplates: SupplyContractTemplateRegistry;
+  readonly npcCompanies: NpcCompanyRegistry;
 };
 
 /**
@@ -106,6 +110,7 @@ export async function validateGameContent(
   const recipeLoader = new RecipeLoader();
   const transportRouteLoader = new TransportRouteLoader();
   const strategyLoader = new StrategyLoader();
+  const npcCompanyLoader = new NpcCompanyLoader();
   const supplyContractTemplateLoader = new SupplyContractTemplateLoader();
 
   const resourceTypesResult = await resourceLoader.loadFromDirectory(
@@ -206,6 +211,14 @@ export async function validateGameContent(
     return Result.fail(strategiesResult.error);
   }
 
+  const npcCompaniesResult = await npcCompanyLoader.loadFromDirectory(
+    path.join(gameContentRoot, 'companies'),
+  );
+
+  if (!npcCompaniesResult.ok) {
+    return Result.fail(npcCompaniesResult.error);
+  }
+
   const supplyContractTemplatesResult = await supplyContractTemplateLoader.loadFromDirectory(
     path.join(gameContentRoot, 'economy', 'contracts'),
   );
@@ -289,6 +302,15 @@ export async function validateGameContent(
     return Result.fail(economyReferencesResult.error);
   }
 
+  const npcCompanyReferencesResult = validateNpcCompanyReferences(
+    npcCompaniesResult.value,
+    strategiesResult.value,
+  );
+
+  if (!npcCompanyReferencesResult.ok) {
+    return Result.fail(npcCompanyReferencesResult.error);
+  }
+
   return Result.ok({
     resourceTypes: resourceTypesResult.value,
     biomes: biomesResult.value,
@@ -304,5 +326,6 @@ export async function validateGameContent(
     transportRoutes: transportRoutesResult.value,
     strategies: strategiesResult.value,
     supplyContractTemplates: supplyContractTemplatesResult.value,
+    npcCompanies: npcCompaniesResult.value,
   });
 }

@@ -1,0 +1,15 @@
+id: strategy_operational_planner
+name: Operational Planner
+description: Prioritises production planning and operational efficiency.
+profile: OPERATIONAL_PLANNER
+weights:
+  expansionWeight: 45
+  productionWeight: 75
+  tradingWeight: 40
+  researchWeight: 60
+  riskTolerance: 35
+  liquidityPreference: 65
+tags:
+  - ai_focus_planning
+enabled: true
+version: 1

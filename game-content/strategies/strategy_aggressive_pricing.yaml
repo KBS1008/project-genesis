@@ -1,0 +1,15 @@
+id: strategy_aggressive_pricing
+name: Aggressive Pricing
+description: Pursues market share through aggressive trading and pricing pressure.
+profile: AGGRESSIVE_PRICING
+weights:
+  expansionWeight: 35
+  productionWeight: 30
+  tradingWeight: 95
+  researchWeight: 20
+  riskTolerance: 80
+  liquidityPreference: 20
+tags:
+  - ai_focus_pricing
+enabled: true
+version: 1

@@ -25,6 +25,7 @@ export type StrategyDefinitionProps = {
   readonly description: string;
   readonly profile: string;
   readonly weights: StrategyWeights;
+  readonly tags: readonly string[];
   readonly enabled: boolean;
   readonly version: number;
 };
@@ -38,6 +39,7 @@ export class StrategyDefinition {
   readonly description: string;
   readonly profile: string;
   readonly weights: StrategyWeights;
+  readonly tags: readonly string[];
   readonly enabled: boolean;
   readonly version: number;
 
@@ -47,6 +49,7 @@ export class StrategyDefinition {
     this.description = props.description;
     this.profile = props.profile;
     this.weights = Object.freeze({ ...props.weights });
+    this.tags = Object.freeze([...props.tags]);
     this.enabled = props.enabled;
     this.version = props.version;
     Object.freeze(this);
