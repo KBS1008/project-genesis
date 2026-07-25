@@ -32,7 +32,7 @@ Update this document whenever a meaningful implementation milestone is completed
 | Application layer                | Implemented (bootstrap, use cases, queries, dashboard facade, tutorial progress)                                                                                      |
 | UI                               | ✅ M9 complete (Phases 1–11) |
 | M9 User Interface                | ✅ Complete (Gate 0 ✅ · Gate 1 ✅ · Gate 2 ✅ · Gate 3 ✅) |
-| M10 Content Expansion            | 🟡 In Progress (Gate 0 ✅ · Phase 1 ✅ · Phase 2 ✅ · Phase 3 ✅ · Phase 4 ✅ · Phase 5 ✅ · Phase 6 ✅ · Phase 7 ✅ · Phase 8 ✅ · Phase 9 ✅) |
+| M10 Content Expansion            | ✅ Complete (Gate 0 ✅ · Gate 1 ✅ · Gate 2 ✅ · Gate 3 ✅ · Phases 1–10 ✅) |
 | Energy system                    | Partial (balance service, production gating, baseline grid)                                                                                                           |
 | Transport / logistics            | ✅ M6 completed — capacities, route durations, throughput queue (DD-022)                                                                                              |
 | World simulation                 | ✅ M7 completed — regions, map, biomes, cities, regional resources, save V2 (AUD-005)                                                                               |
@@ -43,7 +43,7 @@ Update this document whenever a meaningful implementation milestone is completed
 | M8 NPC Economy                   | ✅ Completed (Gate AUD-006, 2026-07-22) |
 | Phase 1 Core Domain              | ✅ Completed (Gate 2026-07-19) — see `PHASE1_CORE_DOMAIN_REPORT.md`                                                                                                   |
 
-**Tests:** 666 (run `pnpm test` for current count; `pnpm test:e2e` for M9 API flows)
+**Tests:** 670 (run `pnpm test` for current count; `pnpm test:e2e` for API E2E flows)
 
 ---
 
@@ -57,12 +57,12 @@ Trackable estimate of progress toward **Release 1.0** (`MILESTONE_PLAN.md`).
 
 | Metric                         |    Value | Notes                                                     |
 | ------------------------------ | -------: | --------------------------------------------------------- |
-| **Release progress (primary)** | **81 %** | Average of milestone completion % (see below)             |
+| **Release progress (primary)** | **80 %** | Average of milestone completion % (see below)             |
 | Deliverable work invested      |     73 % | Average including partial pre-work (e.g. dashboard in M9) |
 | Playable prototype readiness   |    ~85 % | M1–M7 core + M8 planning loop; not a release metric       |
-| Milestones completed           |   7 / 12 | M1, M2, M4, M5, M6, M7, M8                                    |
-| Milestones in progress         |   2 / 12 | M3, M9                                                |
-| Tests                          |      623 | `pnpm test`                                               |
+| Milestones completed           |   9 / 12 | M1, M2, M4, M5, M6, M7, M8, M9, M10                         |
+| Milestones in progress         |   1 / 12 | M3                                                |
+| Tests                          |      670 | `pnpm test`                                               |
 
 **Primary formula:**
 
@@ -85,10 +85,10 @@ Update deliverable rows when a step ships; set milestone % to the **average of i
 | M7  | World Simulation       | ✅ Completed   |      100 |     8,3 % |        8,3 % |
 | M8  | NPC Economy            | ✅ Completed   |      100 |     8,3 % |        8,3 % |
 | M9  | User Interface         | ✅ Completed   |      100 |     8,3 % |        8,3 % |
-| M10 | Content Expansion      | 🟡 In Progress |       78 |     8,3 % |        6,5 % |
+| M10 | Content Expansion      | ✅ Completed   |      100 |     8,3 % |        8,3 % |
 | M11 | Polish                 | ⚪ Planned     |        0 |     8,3 % |          0 % |
 | M12 | Release                | ⚪ Planned     |        0 |     8,3 % |          0 % |
-|     | **Total**              |                | **78 %** | **100 %** |     **78 %** |
+|     | **Total**              |                | **80 %** | **100 %** |     **80 %** |
 
 \*M9 is officially planned; dashboard, charts, tutorial and WebSocket from M4/M5 count as pre-work in the deliverable matrix below.
 
@@ -218,26 +218,31 @@ All **TD-M8-01 … TD-M8-06** resolved — see `docs/quality/M8_IMPLEMENTATION_R
 
 **Post-Phase 4 deferred (non-blocking):** `CompanyDashboardScreen` section split, legacy chart migration, optional per-domain queries for company tables, removal of unused `DashboardDetailPanel.tsx`.
 
-### M10 – Content Expansion 🟡 (~85 % · Gate 0 ✅ · Phases 1–8 ✅)
+### M10 – Content Expansion ✅ (100 % · Gate 0 ✅ · Gate 1 ✅ · Gate 2 ✅ · Gate 3 ✅)
 
 | Deliverable                     |      % | Evidence                                     |
 | ------------------------------- | -----: | -------------------------------------------- |
 | Gate 0 architecture review      |     100 | `docs/architecture/reviews/M10_GATE_0_REPORT.md` |
-| Production chain (Phase 1)      |      40 | Tier 2–5 industrial ladder in `game-content/` |
-| Building expansion (Phase 2)    |      55 | 12 new buildings across 5 categories         |
-| Research expansion (Phase 3)    |      70 | 21 technologies, 10 branches, research-gated unlocks |
-| Transport expansion (Phase 4)   |      60 | 14 logistics routes (road/rail/sea abstract network) |
-| Company management (Phase 5)  |      55 | 14 specialized employees across 7 department tags |
-| Economy expansion (Phase 6)     |      60 | Regional demand profiles, 9 export contracts, 3 trade cities |
-| AI expansion (Phase 7)            |      55 | 6 specialized strategies, 6 NPC competitors, `NpcCompanyLoader` |
-| World expansion (Phase 8)         |      60 | Regional modifiers, `region_south`, coastal biome, 7 cities |
-| Buildings / resources / recipes |      65 | 9 resources, 23 buildings, 7 recipes       |
-| Technologies / employees        |      75 | 21 technologies, 19 employee types           |
-| Industries / scenarios          |       0 | Not started                                  |
+| Gate 1 review (Phases 1–3)      |     100 | `docs/architecture/reviews/M10_IMPLEMENTATION_GATE_1_REPORT.md` |
+| Gate 2 review (Phases 4–8)      |     100 | `docs/architecture/reviews/M10_IMPLEMENTATION_GATE_2_REPORT.md` |
+| Gate 3 final review             |     100 | `docs/architecture/reviews/M10_FINAL_GATE_REPORT.md` |
+| Final implementation report     |     100 | `docs/implementation/M10_IMPLEMENTATION_REPORT.md` |
+| Production chain (Phase 1)      |     100 | Tier 2–5 industrial ladder in `game-content/` |
+| Building expansion (Phase 2)    |     100 | 12 new buildings across 5 categories         |
+| Research expansion (Phase 3)    |     100 | 21 technologies, 10 branches, research-gated unlocks |
+| Transport expansion (Phase 4)   |     100 | 14 logistics routes (road/rail/sea abstract network) |
+| Company management (Phase 5)  |     100 | 14 specialized employees across 7 department tags |
+| Economy expansion (Phase 6)     |     100 | Regional demand profiles, 9 export contracts, 3 trade cities |
+| AI expansion (Phase 7)            |     100 | 6 specialized strategies, 6 NPC competitors, `NpcCompanyLoader` |
+| World expansion (Phase 8)         |     100 | Regional modifiers, `region_south`, coastal biome, 7 cities |
+| Balancing (Phase 9)               |     100 | `SupplyContractUnlockService`, `m10Balancing.test.ts`, YAML tuning |
+| Final integration (Phase 10)      |     100 | Savegame round-trip, performance smoke, `m10FinalIntegration.test.ts`, E2E |
+| Buildings / resources / recipes |     100 | 9 resources, 23 buildings, 7 recipes       |
+| Technologies / employees        |     100 | 21 technologies, 19 employee types           |
+| Content pipeline / registry     |     100 | Loaders, strict validation, 10 M10 content tests |
+| Industries / scenarios          |       0 | Not started (out of M10 scope)               |
 | Vehicles (content)              |       5 | `Vehicle.schema.md`, art library docs; DD-022 V1 waiver |
-| Content pipeline / registry     |      80 | Loaders, strict validation, M10 content tests |
-| Balancing (Phase 9)               |      70 | `SupplyContractUnlockService`, `m10Balancing.test.ts`, YAML tuning pass |
-| **Milestone average**           |  **88** | Phase 10 final integration next                |
+| **Milestone average (gate)**    | **100** | Gate 3 verdict **M10 COMPLETE**              |
 
 ### M11 – Polish ⚪ (0 %)
 
@@ -1174,14 +1179,15 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Planned Next Steps
 
-1. **M10 Phase 10 — Final Integration:** performance, regression, savegames, documentation per `M10_CONTENT_EXPANSION_PLAN.md`
+1. **M11 — Polish:** animations, localization, optimization pass per `MILESTONE_PLAN.md`
 2. Session/auth model for multi-user API access
 
 ---
 
 # Recently Completed (2026-07)
 
-- **M10 Phase 9 — Balancing:** `SupplyContractUnlockService` (TD-M10-09), export contract premium tuning, industrial recipe margins, research/smelter pacing, AI strategy differentiation, `m10Balancing.test.ts` (**666 tests**)
+- **M10 Phase 10 — Final Integration:** `m10SavegameRoundTrip.test.ts`, `m10SimulationPerformance.test.ts`, `m10FinalIntegration.test.ts`, `M10_IMPLEMENTATION_REPORT.md`, Gate 3 **M10 COMPLETE** (**670 tests**, 3 E2E)
+- **M10 Phase 9 — Balancing:** `SupplyContractUnlockService` (TD-M10-09), export contract premium tuning, industrial recipe margins, research/smelter pacing, AI strategy differentiation, `m10Balancing.test.ts`
 - **M10 Phase 7 — AI Expansion:** 6 specialized company brain strategies, 6 NPC competitors, `NpcCompanyLoader`, `m10AIExpansion.test.ts`
 - **M10 Phase 6 — Economy Expansion:** regional demand profiles, 9 export contract templates, 3 trade cities, `SupplyContractTemplateLoader`, `m10EconomyExpansion.test.ts`
 - **M10 Phase 5 — Company Management:** 14 specialized employees across operations, research, HR, finance, executive, and logistics departments, `m10CompanyManagement.test.ts`
