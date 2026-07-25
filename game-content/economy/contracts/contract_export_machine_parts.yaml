@@ -1,0 +1,20 @@
+id: contract_export_machine_parts
+name: Precision Parts Export
+description: Assembly buyers source machine parts through a standing order.
+kind: NPC_PURCHASE
+resourceId: machine_parts
+amount: 6
+paymentAmount: 780
+intervalTicks: 32
+regionId: region_east
+requirements:
+  research:
+    - precision_machining
+  buildings:
+    - assembly_plant
+autoGrantOnNewGame: false
+tags:
+  - contract_export
+  - contract_industrial
+enabled: true
+version: 1

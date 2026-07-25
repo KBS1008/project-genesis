@@ -63,6 +63,7 @@ import { TickHistoryService } from '../services/TickHistoryService.js';
 import { PlayerEventLogService } from '../services/PlayerEventLogService.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
 import { createDefaultSimulationSystems } from '../../simulation/systems/createDefaultSimulationSystems.js';
+import { createRegionalBaselineDemandResolver } from '../services/createRegionalBaselineDemandResolver.js';
 import { FileSavegameStore } from '../../infrastructure/persistence/savegame/FileSavegameStore.js';
 import { GameStateSerializer } from '../../infrastructure/persistence/savegame/GameStateSerializer.js';
 import { ConsoleLogger } from '../../infrastructure/logging/ConsoleLogger.js';
@@ -231,6 +232,9 @@ export async function bootstrapApplication(
   };
 
   let researchCompletionService: ResearchCompletionService;
+  const resolveRegionalBaselineDemand = createRegionalBaselineDemandResolver(
+    contentResult.value.regions,
+  );
 
   simulationEngine = new SimulationEngine({
     clock,
@@ -251,6 +255,7 @@ export async function bootstrapApplication(
       companyBrainRepository,
       companyPlanningPort,
       companyDecisionExecutionPort,
+      resolveRegionalBaselineDemand,
       enqueueEvents,
       onProductionJobCompleted: (job) => {
         productionInventoryService.completeJob(job);

@@ -1,0 +1,20 @@
+id: contract_export_steel
+name: Industrial Steel Supply
+description: Machine shops sell steel to regional fabricators under contract.
+kind: NPC_PURCHASE
+resourceId: steel
+amount: 8
+paymentAmount: 520
+intervalTicks: 30
+regionId: region_east
+requirements:
+  research:
+    - advanced_metallurgy
+  buildings:
+    - machine_shop
+autoGrantOnNewGame: false
+tags:
+  - contract_export
+  - contract_industrial
+enabled: true
+version: 1

@@ -1,0 +1,20 @@
+id: contract_export_industrial_machinery
+name: Machinery Export Program
+description: Electronics suppliers purchase industrial machinery on contract.
+kind: NPC_PURCHASE
+resourceId: industrial_machinery
+amount: 4
+paymentAmount: 1200
+intervalTicks: 35
+regionId: region_east
+requirements:
+  research:
+    - industrial_assembly
+  buildings:
+    - electronics_factory
+autoGrantOnNewGame: false
+tags:
+  - contract_export
+  - contract_industrial
+enabled: true
+version: 1

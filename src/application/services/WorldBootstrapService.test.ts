@@ -79,7 +79,10 @@ describe('WorldBootstrapService', () => {
         'region_north',
       ]);
       expect(cityRepository.findAll().map((entry) => entry.getId().value)).toEqual([
+        'city_central_market',
+        'city_east_commercial_yard',
         'city_industrial_hub',
+        'city_north_trading_post',
         'city_port_harbor',
       ]);
       expect(worldMap?.getConnections()).toHaveLength(3);
@@ -136,7 +139,7 @@ describe('WorldBootstrapService', () => {
     expect(secondBootstrap.ok).toBe(true);
     expect(worldRepository.findAll()).toHaveLength(1);
     expect(regionRepository.findAll()).toHaveLength(3);
-    expect(cityRepository.findAll()).toHaveLength(2);
+    expect(cityRepository.findAll()).toHaveLength(5);
     expect(worldMapRepository.findAll()).toHaveLength(1);
   });
 });

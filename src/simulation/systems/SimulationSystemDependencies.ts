@@ -26,6 +26,12 @@ import type { CompanyDecisionExecutionPort } from '../../domain/brain/CompanyDec
 import type { SupplyContractRepository } from '../../domain/contract/SupplyContractRepository.js';
 import type { Building } from '../../domain/building/Building.js';
 
+/** Resolves baseline market demand for one resource in one region. */
+export type RegionalBaselineDemandResolver = (
+  regionId: string,
+  resourceId: string,
+) => number;
+
 /** Repository dependencies for simulation systems. */
 export type SimulationSystemDependencies = {
   readonly companyRepository: CompanyRepository;
@@ -43,6 +49,7 @@ export type SimulationSystemDependencies = {
   readonly companyBrainRepository?: CompanyBrainRepository;
   readonly companyPlanningPort?: CompanyPlanningPort;
   readonly companyDecisionExecutionPort?: CompanyDecisionExecutionPort;
+  readonly resolveRegionalBaselineDemand?: RegionalBaselineDemandResolver;
   readonly enqueueEvents: (events: readonly DomainEvent[]) => void;
   readonly onProductionJobCompleted?: ProductionJobCompletedHandler;
   readonly onResearchJobCompleted?: ResearchJobCompletedHandler;

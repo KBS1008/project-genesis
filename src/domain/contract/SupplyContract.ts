@@ -83,21 +83,76 @@ export class SupplyContract extends AggregateRoot<'SupplyContract'> {
   static createStarterNpcWoodPurchase(
     params: CreateStarterNpcWoodContractParams,
   ): Result<SupplyContract, ValidationError> {
-    const resourceIdResult = createResourceTypeId(STARTER_NPC_WOOD_CONTRACT_RESOURCE_ID);
+    return SupplyContract.createFromTemplate({
+      id: params.id,
+      companyId: params.companyId,
+      clock: params.clock,
+      kind: SupplyContractKind.NPC_PURCHASE,
+      resourceId: STARTER_NPC_WOOD_CONTRACT_RESOURCE_ID,
+      amount: STARTER_NPC_WOOD_CONTRACT_AMOUNT,
+      paymentAmount: STARTER_NPC_WOOD_CONTRACT_PAYMENT,
+      intervalTicks: NPC_PURCHASE_CONTRACT_INTERVAL_TICKS,
+    });
+  }
+
+  /** Creates a contract from static content template values. */
+  static createFromTemplate(params: {
+    readonly id: SupplyContractId;
+    readonly companyId: CompanyId;
+    readonly clock: Clock;
+    readonly kind: SupplyContractKind;
+    readonly resourceId: string;
+    readonly amount: number;
+    readonly paymentAmount: number;
+    readonly intervalTicks: number;
+  }): Result<SupplyContract, ValidationError> {
+    const resourceIdResult = createResourceTypeId(params.resourceId);
 
     if (!resourceIdResult.ok) {
       return Result.fail(resourceIdResult.error);
+    }
+
+    const amountResult = Guard.againstNegative(params.amount, 'Contract amount must not be negative.');
+
+    if (!amountResult.ok) {
+      return Result.fail(amountResult.error);
+    }
+
+    if (amountResult.value === 0) {
+      return Result.fail(new ValidationError('Contract amount must be greater than zero.'));
+    }
+
+    const paymentResult = Guard.againstNegative(
+      params.paymentAmount,
+      'Contract payment must not be negative.',
+    );
+
+    if (!paymentResult.ok) {
+      return Result.fail(paymentResult.error);
+    }
+
+    const intervalResult = Guard.againstNegative(
+      params.intervalTicks,
+      'Contract interval must not be negative.',
+    );
+
+    if (!intervalResult.ok) {
+      return Result.fail(intervalResult.error);
+    }
+
+    if (intervalResult.value === 0) {
+      return Result.fail(new ValidationError('Contract interval must be greater than zero.'));
     }
 
     return Result.ok(
       new SupplyContract({
         id: params.id,
         companyId: params.companyId,
-        kind: SupplyContractKind.NPC_PURCHASE,
+        kind: params.kind,
         resourceId: resourceIdResult.value.value,
-        amount: STARTER_NPC_WOOD_CONTRACT_AMOUNT,
-        paymentAmount: STARTER_NPC_WOOD_CONTRACT_PAYMENT,
-        intervalTicks: NPC_PURCHASE_CONTRACT_INTERVAL_TICKS,
+        amount: amountResult.value,
+        paymentAmount: paymentResult.value,
+        intervalTicks: intervalResult.value,
         createdAt: params.clock.now(),
         lastFulfilledTick: 0,
         active: true,

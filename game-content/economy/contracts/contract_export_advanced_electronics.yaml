@@ -1,0 +1,20 @@
+id: contract_export_advanced_electronics
+name: Advanced Electronics Export
+description: Consumer goods plants source advanced electronics through contract.
+kind: NPC_PURCHASE
+resourceId: advanced_electronics
+amount: 3
+paymentAmount: 1500
+intervalTicks: 38
+regionId: region_east
+requirements:
+  research:
+    - circuit_design
+  buildings:
+    - electronics_factory
+autoGrantOnNewGame: false
+tags:
+  - contract_export
+  - contract_high_tech
+enabled: true
+version: 1

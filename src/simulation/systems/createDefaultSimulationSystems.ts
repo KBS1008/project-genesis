@@ -73,6 +73,9 @@ export function createDefaultSimulationSystems(
       buildingRepository: dependencies.buildingRepository,
       buildingStorageRepository: dependencies.buildingStorageRepository,
       enqueueEvents: dependencies.enqueueEvents,
+      ...(dependencies.resolveRegionalBaselineDemand !== undefined
+        ? { resolveBaselineDemand: dependencies.resolveRegionalBaselineDemand }
+        : {}),
     }),
     new CompanyPlanningSystem({
       companyRepository: dependencies.companyRepository,

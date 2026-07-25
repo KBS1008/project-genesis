@@ -1,0 +1,6 @@
+id: city_central_market
+name: Central Market
+regionId: region_default
+category: MARKET_HUB
+enabled: true
+version: 1

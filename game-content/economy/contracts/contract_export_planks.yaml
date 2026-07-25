@@ -1,0 +1,20 @@
+id: contract_export_planks
+name: Regional Plank Export
+description: Distribution buyers purchase finished planks on contract.
+kind: NPC_PURCHASE
+resourceId: planks
+amount: 10
+paymentAmount: 350
+intervalTicks: 25
+regionId: region_default
+requirements:
+  research:
+    - distribution_networks
+  buildings:
+    - distribution_center
+autoGrantOnNewGame: false
+tags:
+  - contract_export
+  - contract_regional
+enabled: true
+version: 1

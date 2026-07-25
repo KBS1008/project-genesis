@@ -1,0 +1,21 @@
+id: contract_export_consumer_goods
+name: Consumer Goods Distribution
+description: Regional retailers purchase finished consumer goods on contract.
+kind: NPC_PURCHASE
+resourceId: consumer_goods
+amount: 5
+paymentAmount: 2100
+intervalTicks: 40
+regionId: region_default
+requirements:
+  research:
+    - distribution_networks
+  buildings:
+    - consumer_goods_plant
+    - distribution_center
+autoGrantOnNewGame: false
+tags:
+  - contract_export
+  - contract_consumer
+enabled: true
+version: 1

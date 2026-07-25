@@ -23,6 +23,8 @@ import { MilestoneLoader } from './milestone/MilestoneLoader.js';
 import type { MilestoneRegistry } from './milestone/MilestoneRegistry.js';
 import { StrategyLoader } from './strategy/StrategyLoader.js';
 import type { StrategyRegistry } from './strategy/StrategyRegistry.js';
+import { SupplyContractTemplateLoader } from './economy/SupplyContractTemplateLoader.js';
+import type { SupplyContractTemplateRegistry } from './economy/SupplyContractTemplateRegistry.js';
 import { RecipeLoader } from './recipe/RecipeLoader.js';
 import type { RecipeRegistry } from './recipe/RecipeRegistry.js';
 import { RegionLoader } from './region/RegionLoader.js';
@@ -38,6 +40,7 @@ import { validateEmployeeReferences } from './validateEmployeeReferences.js';
 import { validateMilestoneReferences } from './validateMilestoneReferences.js';
 import { validateResearchReferences } from './validateResearchReferences.js';
 import { validateTransportRouteReferences } from './validateTransportRouteReferences.js';
+import { validateEconomyReferences } from './validateEconomyReferences.js';
 import { validateWorldReferences } from './validateWorldReferences.js';
 
 /** Options for loading and validating game content. */
@@ -61,6 +64,7 @@ export type GameContentLoadResult = {
   readonly recipes: RecipeRegistry;
   readonly transportRoutes: TransportRouteRegistry;
   readonly strategies: StrategyRegistry;
+  readonly supplyContractTemplates: SupplyContractTemplateRegistry;
 };
 
 /**
@@ -102,6 +106,7 @@ export async function validateGameContent(
   const recipeLoader = new RecipeLoader();
   const transportRouteLoader = new TransportRouteLoader();
   const strategyLoader = new StrategyLoader();
+  const supplyContractTemplateLoader = new SupplyContractTemplateLoader();
 
   const resourceTypesResult = await resourceLoader.loadFromDirectory(
     path.join(gameContentRoot, 'resources'),
@@ -201,6 +206,14 @@ export async function validateGameContent(
     return Result.fail(strategiesResult.error);
   }
 
+  const supplyContractTemplatesResult = await supplyContractTemplateLoader.loadFromDirectory(
+    path.join(gameContentRoot, 'economy', 'contracts'),
+  );
+
+  if (!supplyContractTemplatesResult.ok) {
+    return Result.fail(supplyContractTemplatesResult.error);
+  }
+
   const worldReferencesResult = validateWorldReferences(
     worldsResult.value,
     regionsResult.value,
@@ -264,6 +277,18 @@ export async function validateGameContent(
     return Result.fail(transportRouteReferencesResult.error);
   }
 
+  const economyReferencesResult = validateEconomyReferences(
+    supplyContractTemplatesResult.value,
+    regionsResult.value,
+    resourceTypesResult.value,
+    buildingTypesResult.value,
+    technologiesResult.value,
+  );
+
+  if (!economyReferencesResult.ok) {
+    return Result.fail(economyReferencesResult.error);
+  }
+
   return Result.ok({
     resourceTypes: resourceTypesResult.value,
     biomes: biomesResult.value,
@@ -278,5 +303,6 @@ export async function validateGameContent(
     recipes: recipesResult.value,
     transportRoutes: transportRoutesResult.value,
     strategies: strategiesResult.value,
+    supplyContractTemplates: supplyContractTemplatesResult.value,
   });
 }

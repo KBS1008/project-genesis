@@ -1,0 +1,6 @@
+id: city_east_commercial_yard
+name: East Commercial Yard
+regionId: region_east
+category: MARKET_HUB
+enabled: true
+version: 1

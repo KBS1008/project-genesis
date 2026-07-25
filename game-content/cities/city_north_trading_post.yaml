@@ -1,0 +1,6 @@
+id: city_north_trading_post
+name: North Trading Post
+regionId: region_north
+category: MARKET_HUB
+enabled: true
+version: 1

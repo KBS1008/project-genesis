@@ -138,6 +138,20 @@ export function validateWorldReferences(
       }
     }
 
+    for (const entry of region.regionalDemand) {
+      const demandResult = validateReference(
+        region.id,
+        'regionalDemand.resourceTypeId',
+        entry.resourceTypeId,
+        resourceTypes.has.bind(resourceTypes),
+        'resource type',
+      );
+
+      if (!demandResult.ok) {
+        return demandResult;
+      }
+    }
+
     const world = worlds.get(region.worldId);
 
     if (world !== undefined && !world.regionIds.includes(region.id)) {

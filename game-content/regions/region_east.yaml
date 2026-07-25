@@ -9,6 +9,7 @@ mapPosition:
 neighborRegionIds:
   - region_default
 cityIds:
+  - city_east_commercial_yard
   - city_industrial_hub
 regionalResources:
   - resourceTypeId: iron_ore
@@ -29,5 +30,24 @@ regionalResources:
   - resourceTypeId: consumer_goods
     available: true
     extractionModifier: 0.6
+regionalDemand:
+  - resourceTypeId: advanced_electronics
+    baselineDemand: 50
+    demandModifier: 1.1
+  - resourceTypeId: consumer_goods
+    baselineDemand: 45
+    demandModifier: 1.0
+  - resourceTypeId: industrial_machinery
+    baselineDemand: 55
+    demandModifier: 1.15
+  - resourceTypeId: iron_ore
+    baselineDemand: 40
+    demandModifier: 0.9
+  - resourceTypeId: machine_parts
+    baselineDemand: 60
+    demandModifier: 1.2
+  - resourceTypeId: steel
+    baselineDemand: 65
+    demandModifier: 1.3
 enabled: true
 version: 1

@@ -82,6 +82,42 @@ describe('MarketSimulationSystem', () => {
     expect(market?.getPrice('wood')?.demand).toBe(50);
   });
 
+  it('uses regional baseline demand when a resolver is configured', () => {
+    const clock = new ManualClock(100);
+    const marketRepository = new InMemoryMarketRepository();
+    const buildingRepository = new InMemoryBuildingRepository();
+    const buildingStorageRepository = new InMemoryBuildingStorageRepository();
+
+    const marketResult = createRegionalMarket(clock);
+
+    expect(marketResult.ok).toBe(true);
+
+    if (!marketResult.ok) {
+      return;
+    }
+
+    marketRepository.save(marketResult.value);
+
+    const system = new MarketSimulationSystem({
+      marketRepository,
+      buildingRepository,
+      buildingStorageRepository,
+      enqueueEvents: () => undefined,
+      resolveBaselineDemand: (regionId, resourceId) => {
+        if (regionId === REGION_ID && resourceId === 'wood') {
+          return 80;
+        }
+
+        return 50;
+      },
+    });
+
+    system.execute({ tickNumber: MARKET_PRICE_UPDATE_INTERVAL_TICKS, clock });
+
+    const market = marketRepository.findByRegionId(REGION_ID);
+    expect(market?.getPrice('wood')?.demand).toBe(80);
+  });
+
   it('skips price updates between configured intervals', () => {
     const clock = new ManualClock(100);
     const marketRepository = new InMemoryMarketRepository();

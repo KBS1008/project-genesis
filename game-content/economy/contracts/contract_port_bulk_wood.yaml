@@ -1,0 +1,20 @@
+id: contract_port_bulk_wood
+name: Port Bulk Wood Contract
+description: Harbor buyers purchase bulk wood shipments through the port.
+kind: NPC_PURCHASE
+resourceId: wood
+amount: 15
+paymentAmount: 420
+intervalTicks: 28
+regionId: region_default
+requirements:
+  research:
+    - intermodal_logistics
+  buildings:
+    - port
+autoGrantOnNewGame: false
+tags:
+  - contract_trade
+  - contract_logistics
+enabled: true
+version: 1

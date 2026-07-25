@@ -10,6 +10,7 @@ import {
   RegionDefinition,
   type MapPosition,
   type RegionDefinitionProps,
+  type RegionalDemandEntry,
   type RegionalResourceEntry,
 } from './RegionDefinition.js';
 
@@ -272,6 +273,76 @@ function readRegionalResources(
   return Result.ok(entries);
 }
 
+function readRegionalDemand(
+  record: Record<string, unknown>,
+  filePath: string | undefined,
+): Result<RegionalDemandEntry[], ContentLoadError> {
+  const value = record['regionalDemand'];
+
+  if (value === undefined) {
+    return Result.ok([]);
+  }
+
+  if (!Array.isArray(value)) {
+    return Result.fail(
+      new ContentLoadError('Region field "regionalDemand" must be an array.', {
+        ...contentContext(record, filePath),
+      }),
+    );
+  }
+
+  const entries: RegionalDemandEntry[] = [];
+  const seen = new Set<string>();
+
+  for (const entry of value) {
+    if (!isRecord(entry)) {
+      return Result.fail(
+        new ContentLoadError('Region field "regionalDemand" must contain objects.', {
+          ...contentContext(record, filePath),
+        }),
+      );
+    }
+
+    const resourceTypeIdResult = readGlobalId(entry, 'resourceTypeId', filePath);
+
+    if (!resourceTypeIdResult.ok) {
+      return Result.fail(resourceTypeIdResult.error);
+    }
+
+    if (seen.has(resourceTypeIdResult.value)) {
+      return Result.fail(
+        new ContentLoadError(
+          `Region field "regionalDemand" contains duplicate resourceTypeId "${resourceTypeIdResult.value}".`,
+          { ...contentContext(record, filePath) },
+        ),
+      );
+    }
+
+    seen.add(resourceTypeIdResult.value);
+
+    const baselineDemandResult = readNumber(entry, 'baselineDemand', filePath, { min: 1 });
+
+    if (!baselineDemandResult.ok) {
+      return Result.fail(baselineDemandResult.error);
+    }
+
+    const demandModifierResult = readNumber(entry, 'demandModifier', filePath, { min: 0.01 });
+
+    if (!demandModifierResult.ok) {
+      return Result.fail(demandModifierResult.error);
+    }
+
+    entries.push({
+      resourceTypeId: resourceTypeIdResult.value,
+      baselineDemand: baselineDemandResult.value,
+      demandModifier: demandModifierResult.value,
+    });
+  }
+
+  entries.sort((left, right) => left.resourceTypeId.localeCompare(right.resourceTypeId));
+  return Result.ok(entries);
+}
+
 /**
  * Validates a parsed region definition object.
  */
@@ -339,6 +410,12 @@ export function validateRegionDefinition(
     return Result.fail(regionalResourcesResult.error);
   }
 
+  const regionalDemandResult = readRegionalDemand(raw, filePath);
+
+  if (!regionalDemandResult.ok) {
+    return Result.fail(regionalDemandResult.error);
+  }
+
   const enabledResult = readBoolean(raw, 'enabled', filePath);
 
   if (!enabledResult.ok) {
@@ -361,6 +438,7 @@ export function validateRegionDefinition(
     neighborRegionIds: neighborRegionIdsResult.value,
     cityIds: cityIdsResult.value,
     regionalResources: regionalResourcesResult.value,
+    regionalDemand: regionalDemandResult.value,
     enabled: enabledResult.value,
     version: versionResult.value,
   };

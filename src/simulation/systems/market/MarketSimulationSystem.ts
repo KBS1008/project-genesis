@@ -26,6 +26,7 @@ export type MarketSimulationSystemDependencies = {
   readonly buildingStorageRepository: BuildingStorageRepository;
   readonly enqueueEvents: (events: readonly DomainEvent[]) => void;
   readonly baselineDemand?: number;
+  readonly resolveBaselineDemand?: (regionId: string, resourceId: string) => number;
 };
 
 /**
@@ -40,6 +41,7 @@ export class MarketSimulationSystem implements SimulationSystem {
   readonly #buildingStorageRepository: BuildingStorageRepository;
   readonly #enqueueEvents: (events: readonly DomainEvent[]) => void;
   readonly #baselineDemand: number;
+  readonly #resolveBaselineDemand: ((regionId: string, resourceId: string) => number) | undefined;
 
   /**
    * @param dependencies - Repositories and event enqueue callback.
@@ -50,6 +52,7 @@ export class MarketSimulationSystem implements SimulationSystem {
     this.#buildingStorageRepository = dependencies.buildingStorageRepository;
     this.#enqueueEvents = dependencies.enqueueEvents;
     this.#baselineDemand = dependencies.baselineDemand ?? MARKET_BASELINE_DEMAND;
+    this.#resolveBaselineDemand = dependencies.resolveBaselineDemand;
   }
 
   execute(context: TickContext): void {
@@ -80,7 +83,8 @@ export class MarketSimulationSystem implements SimulationSystem {
           resourceId,
         );
         const totalSupply = regionalSupply;
-        const totalDemand = this.#baselineDemand;
+        const totalDemand =
+          this.#resolveBaselineDemand?.(regionId, resourceId) ?? this.#baselineDemand;
 
         market.updateSupplyDemand(resourceId, totalSupply, totalDemand, context.clock);
 

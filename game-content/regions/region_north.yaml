@@ -8,7 +8,8 @@ mapPosition:
   y: 2
 neighborRegionIds:
   - region_default
-cityIds: []
+cityIds:
+  - city_north_trading_post
 regionalResources:
   - resourceTypeId: stone
     available: true
@@ -16,5 +17,15 @@ regionalResources:
   - resourceTypeId: wood
     available: true
     extractionModifier: 0.9
+regionalDemand:
+  - resourceTypeId: planks
+    baselineDemand: 40
+    demandModifier: 0.9
+  - resourceTypeId: stone
+    baselineDemand: 35
+    demandModifier: 0.8
+  - resourceTypeId: wood
+    baselineDemand: 50
+    demandModifier: 1.1
 enabled: true
 version: 1

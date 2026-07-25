@@ -10,6 +10,7 @@ neighborRegionIds:
   - region_east
   - region_north
 cityIds:
+  - city_central_market
   - city_port_harbor
 regionalResources:
   - resourceTypeId: wood
@@ -18,5 +19,15 @@ regionalResources:
   - resourceTypeId: planks
     available: true
     extractionModifier: 1.0
+regionalDemand:
+  - resourceTypeId: consumer_goods
+    baselineDemand: 70
+    demandModifier: 1.4
+  - resourceTypeId: planks
+    baselineDemand: 55
+    demandModifier: 1.1
+  - resourceTypeId: wood
+    baselineDemand: 45
+    demandModifier: 1.0
 enabled: true
 version: 1

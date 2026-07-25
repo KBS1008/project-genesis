@@ -19,8 +19,7 @@ import { BuildingStatus } from '../../domain/building/BuildingStatus.js';
 import { Position } from '../../domain/building/Position.js';
 import { createCompanyId } from '../../domain/company/Company.js';
 import type { CompanyId } from '../../domain/company/CompanyId.js';
-import { SupplyContract, createSupplyContractId } from '../../domain/contract/SupplyContract.js';
-import { STARTER_NPC_WOOD_CONTRACT_ID } from '../../domain/contract/SupplyContractConstants.js';
+import { SupplyContract, SupplyContractKind, createSupplyContractId } from '../../domain/contract/SupplyContract.js';
 import type { ApplicationContext } from '../bootstrap/ApplicationContext.js';
 import type { StartNewGameCommand } from '../commands/StartNewGameCommand.js';
 import {
@@ -124,24 +123,35 @@ export class StartNewGameUseCase {
     this.#inventoryRepository.save(inventory);
     this.#simulationEngine.enqueueEvents(inventory.pullDomainEvents());
 
-    const contractIdResult = createSupplyContractId(STARTER_NPC_WOOD_CONTRACT_ID);
+    for (const template of this.#gameContent.supplyContractTemplates.getEnabled()) {
+      if (!template.autoGrantOnNewGame) {
+        continue;
+      }
 
-    if (!contractIdResult.ok) {
-      return Result.fail(contractIdResult.error);
+      const contractIdResult = createSupplyContractId(template.id);
+
+      if (!contractIdResult.ok) {
+        return Result.fail(contractIdResult.error);
+      }
+
+      const contractResult = SupplyContract.createFromTemplate({
+        id: contractIdResult.value,
+        companyId,
+        clock: this.#clock,
+        kind: SupplyContractKind.NPC_PURCHASE,
+        resourceId: template.resourceId,
+        amount: template.amount,
+        paymentAmount: template.paymentAmount,
+        intervalTicks: template.intervalTicks,
+      });
+
+      if (!contractResult.ok) {
+        return Result.fail(contractResult.error);
+      }
+
+      this.#supplyContractRepository.save(contractResult.value);
+      this.#simulationEngine.enqueueEvents(contractResult.value.pullDomainEvents());
     }
-
-    const contractResult = SupplyContract.createStarterNpcWoodPurchase({
-      id: contractIdResult.value,
-      companyId,
-      clock: this.#clock,
-    });
-
-    if (!contractResult.ok) {
-      return Result.fail(contractResult.error);
-    }
-
-    this.#supplyContractRepository.save(contractResult.value);
-    this.#simulationEngine.enqueueEvents(contractResult.value.pullDomainEvents());
 
     for (const npcCompany of NEW_GAME_AUTONOMOUS_NPC_COMPANIES) {
       const npcResult = this.#createCompany.execute({

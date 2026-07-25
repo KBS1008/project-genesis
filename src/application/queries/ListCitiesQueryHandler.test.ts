@@ -25,7 +25,10 @@ describe('ListCitiesQueryHandler', () => {
 
     if (result.ok) {
       expect(result.value.map((city) => city.id)).toEqual([
+        'city_central_market',
+        'city_east_commercial_yard',
         'city_industrial_hub',
+        'city_north_trading_post',
         'city_port_harbor',
       ]);
     }
@@ -48,8 +51,11 @@ describe('ListCitiesQueryHandler', () => {
     expect(filteredResult.ok).toBe(true);
 
     if (filteredResult.ok) {
-      expect(filteredResult.value).toHaveLength(1);
-      expect(filteredResult.value[0]?.id).toBe('city_port_harbor');
+      expect(filteredResult.value).toHaveLength(2);
+      expect(filteredResult.value.map((city) => city.id)).toEqual([
+        'city_central_market',
+        'city_port_harbor',
+      ]);
     }
 
     const missingRegionResult = handler.execute({ regionId: 'region_missing' });

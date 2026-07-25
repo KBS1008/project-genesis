@@ -1,0 +1,18 @@
+id: contract_npc_wood_001
+name: Local Wood Purchase Agreement
+description: Starter NPC buyer purchases wood on a recurring schedule.
+kind: NPC_PURCHASE
+resourceId: wood
+amount: 5
+paymentAmount: 125
+intervalTicks: 20
+regionId: region_default
+requirements:
+  research: []
+  buildings: []
+autoGrantOnNewGame: true
+tags:
+  - contract_starter
+  - contract_export
+enabled: true
+version: 1

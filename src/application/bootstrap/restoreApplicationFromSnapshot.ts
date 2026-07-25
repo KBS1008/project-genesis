@@ -36,6 +36,7 @@ import type { GameSaveSnapshotV3 } from '../persistence/GameSaveSnapshotV3.js';
 import { validateSnapshotWorldGraph } from '../persistence/validateSnapshotWorldGraph.js';
 import { SimulationEngine } from '../../simulation/engine/SimulationEngine.js';
 import { createDefaultSimulationSystems } from '../../simulation/systems/createDefaultSimulationSystems.js';
+import { createRegionalBaselineDemandResolver } from '../services/createRegionalBaselineDemandResolver.js';
 import { MarketTradeService } from '../services/MarketTradeService.js';
 import { CompanyDecisionExecutionService } from '../services/CompanyDecisionExecutionService.js';
 import type { CompanyDecisionExecutionPort } from '../../domain/brain/CompanyDecisionExecutionPort.js';
@@ -208,6 +209,9 @@ export async function restoreApplicationFromSnapshot(
   };
 
   let researchCompletionService: ResearchCompletionService;
+  const resolveRegionalBaselineDemand = createRegionalBaselineDemandResolver(
+    contentResult.value.regions,
+  );
 
   simulationEngine = new SimulationEngine({
     clock,
@@ -230,6 +234,7 @@ export async function restoreApplicationFromSnapshot(
       companyBrainRepository,
       companyPlanningPort,
       companyDecisionExecutionPort,
+      resolveRegionalBaselineDemand,
       enqueueEvents,
       onProductionJobCompleted: (job) => {
         productionInventoryService.completeJob(job);

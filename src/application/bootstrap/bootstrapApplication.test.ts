@@ -18,7 +18,7 @@ describe('bootstrapApplication', () => {
       expect(result.value.gameContent.regions.has('region_default')).toBe(true);
       expect(result.value.worldRepository.findAll()).toHaveLength(1);
       expect(result.value.regionRepository.findAll()).toHaveLength(3);
-      expect(result.value.cityRepository.findAll()).toHaveLength(2);
+      expect(result.value.cityRepository.findAll()).toHaveLength(5);
       expect(result.value.worldMapRepository.findAll()).toHaveLength(1);
       expect(result.value.marketRepository.findAll().length).toBeGreaterThanOrEqual(3);
       expect(result.value.clock.now()).toBe(0);

@@ -17,6 +17,13 @@ export type RegionalResourceEntry = {
   readonly extractionModifier: number;
 };
 
+/** Regional market demand entry for one resource. */
+export type RegionalDemandEntry = {
+  readonly resourceTypeId: string;
+  readonly baselineDemand: number;
+  readonly demandModifier: number;
+};
+
 /** Validated properties of a static region definition. */
 export type RegionDefinitionProps = {
   readonly id: string;
@@ -28,6 +35,7 @@ export type RegionDefinitionProps = {
   readonly neighborRegionIds: readonly string[];
   readonly cityIds: readonly string[];
   readonly regionalResources: readonly RegionalResourceEntry[];
+  readonly regionalDemand: readonly RegionalDemandEntry[];
   readonly enabled: boolean;
   readonly version: number;
 };
@@ -45,6 +53,7 @@ export class RegionDefinition {
   readonly neighborRegionIds: readonly string[];
   readonly cityIds: readonly string[];
   readonly regionalResources: readonly RegionalResourceEntry[];
+  readonly regionalDemand: readonly RegionalDemandEntry[];
   readonly enabled: boolean;
   readonly version: number;
 
@@ -59,6 +68,9 @@ export class RegionDefinition {
     this.cityIds = Object.freeze([...props.cityIds]);
     this.regionalResources = Object.freeze(
       props.regionalResources.map((entry) => Object.freeze({ ...entry })),
+    );
+    this.regionalDemand = Object.freeze(
+      props.regionalDemand.map((entry) => Object.freeze({ ...entry })),
     );
     this.enabled = props.enabled;
     this.version = props.version;

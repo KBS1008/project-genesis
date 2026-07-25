@@ -1,0 +1,20 @@
+id: contract_rail_steel_freight
+name: Rail Steel Freight Contract
+description: Rail terminal buyers purchase steel freight on a recurring schedule.
+kind: NPC_PURCHASE
+resourceId: steel
+amount: 12
+paymentAmount: 900
+intervalTicks: 26
+regionId: region_east
+requirements:
+  research:
+    - intermodal_logistics
+  buildings:
+    - rail_terminal
+autoGrantOnNewGame: false
+tags:
+  - contract_trade
+  - contract_logistics
+enabled: true
+version: 1
