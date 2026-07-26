@@ -2,11 +2,13 @@
 
 **Project:** Project Genesis
 
-**Version:** 1.0
+**Document Version:** 2.0
 
 **Status:** Active
 
 **Milestone:** M11 – Visual Production & User Experience
+
+**Owner:** Project Genesis Team
 
 ---
 
@@ -15,31 +17,36 @@
 This document is the master production backlog for every visual asset of
 Project Genesis.
 
-It serves as the single source of truth for:
+It serves as the authoritative production plan for:
 
-- UI mockups
-- production artwork
-- icons
-- charts
-- maps
-- illustrations
-- branding
-- marketing material
+- UI Mockups
+- Icons
+- Maps
+- Charts
+- Illustrations
+- Branding
+- Marketing Assets
+- Steam Assets
 
 Every visual asset shall be tracked here.
 
 ---
 
-# Workflow
+# Production Philosophy
 
-Every asset follows the same lifecycle.
+Unlike software development, visual assets are not implemented in multiple
+planned versions.
+
+Every asset represents one production target.
+
+The default workflow is:
 
 ```text
 Planned
 
 ↓
 
-In Progress
+Production
 
 ↓
 
@@ -52,11 +59,23 @@ Approved
 ↓
 
 Integrated
+```
+
+Only when changes are requested after review shall a revision be created.
+
+Example:
+
+MM-001_Main_Menu.png
 
 ↓
 
-Released
-```
+MM-001_Main_Menu_Rev1.png
+
+↓
+
+MM-001_Main_Menu_Rev2.png
+
+There are no predefined v1 / v2 / Final stages.
 
 ---
 
@@ -65,9 +84,59 @@ Released
 | Status | Meaning |
 |----------|----------|
 | ☐ | Planned |
-| ◐ | In Progress |
+| ◐ | In Production |
+| 👀 | In Review |
 | ☑ | Approved |
 | 🚀 | Integrated |
+
+---
+
+# Production Rules
+
+Every asset shall have:
+
+- unique identifier
+- unique filename
+- unique storage location
+- review status
+- integration status
+
+Every approved asset becomes the production reference.
+
+---
+
+# Naming Convention
+
+Format:
+
+<AREA>-<NUMBER>_<DESCRIPTION>.png
+
+Examples:
+
+MM-001_Main_Menu.png
+
+MM-002_New_Game_Dialog.png
+
+DB-001_Executive_Dashboard.png
+
+WM-001_World_Map.png
+
+Revision example:
+
+MM-001_Main_Menu_Rev1.png
+
+---
+
+# Repository Structure
+
+docs/
+└── design/
+    ├── mockups/
+    ├── icons/
+    ├── charts/
+    ├── maps/
+    ├── illustrations/
+    └── branding/
 
 ---
 
@@ -75,389 +144,379 @@ Released
 
 ## Main Menu
 
-☐ MM-001_Main_Menu_v1
-
-☐ MM-001_Main_Menu_v2
-
-☐ MM-001_Main_Menu_Final
+☐ MM-001_Main_Menu.png
 
 ---
 
 ## New Game
 
-☐ MM-002_New_Game_Dialog_v1
-
-☐ MM-002_New_Game_Dialog_v2
-
-☐ MM-002_New_Game_Dialog_v3
-
-☐ MM-002_New_Game_Dialog_v4
-
-☐ MM-002_New_Game_Dialog_v5
-
-☐ MM-002_New_Game_Dialog_Final
+☐ MM-002_New_Game_Dialog.png
 
 ---
 
 ## Load Game
 
-☐ MM-003_Load_Game_v1
-
-☐ MM-003_Load_Game_v2
-
-☐ MM-003_Load_Game_Final
+☐ MM-003_Load_Game.png
 
 ---
 
 ## Settings
 
-☐ MM-004_Settings_v1
-
-☐ MM-004_Settings_v2
-
-☐ MM-004_Settings_v3
-
-☐ MM-004_Settings_Final
+☐ MM-004_Settings.png
 
 ---
 
 ## Credits
 
-☐ MM-005_Credits_v1
-
-☐ MM-005_Credits_Final
+☐ MM-005_Credits.png
 
 ---
 
 ## Splash Screen
 
-☐ MM-006_Splash_v1
-
-☐ MM-006_Splash_Final
+☐ MM-006_Splash.png
 
 ---
 
 ## Loading Screen
 
-☐ MM-007_Loading_v1
-
-☐ MM-007_Loading_v2
-
-☐ MM-007_Loading_Final
+☐ MM-007_Loading.png
 
 ---
 
 # Sprint 2 — Dashboard
 
-☐ DB-001_Executive_Dashboard
+☐ DB-001_Executive_Dashboard.png
 
-☐ DB-002_KPI_Cards
+☐ DB-002_KPI_Cards.png
 
-☐ DB-003_Status_Panel
+☐ DB-003_Status_Panel.png
 
-☐ DB-004_Notifications
+☐ DB-004_Notifications.png
 
-☐ DB-005_Finance_Widget
+☐ DB-005_Finance_Widget.png
 
-☐ DB-006_Production_Widget
+☐ DB-006_Production_Widget.png
 
-☐ DB-007_Research_Widget
+☐ DB-007_Research_Widget.png
 
-☐ DB-008_Transport_Widget
+☐ DB-008_Transport_Widget.png
 
-☐ DB-009_Company_Overview
+☐ DB-009_Company_Overview.png
 
-☐ DB-010_Dashboard_Final
+☐ DB-010_Dashboard.png
 
 ---
 
 # Sprint 3 — World
 
-☐ WM-001_World_Map
+☐ WM-001_World_Map.png
 
-☐ WM-002_Region_View
+☐ WM-002_Region_View.png
 
-☐ WM-003_Trade_Overlay
+☐ WM-003_Trade_Overlay.png
 
-☐ WM-004_Resource_Overlay
+☐ WM-004_Resource_Overlay.png
 
-☐ WM-005_Population_Overlay
+☐ WM-005_Population_Overlay.png
 
-☐ WM-006_Infrastructure_Overlay
+☐ WM-006_Infrastructure_Overlay.png
 
-☐ WM-007_Climate_Overlay
+☐ WM-007_Climate_Overlay.png
 
-☐ WM-008_Selection
+☐ WM-008_Selection.png
 
-☐ WM-009_Inspector
+☐ WM-009_Inspector.png
 
-☐ WM-010_World_Final
+☐ WM-010_World.png
 
 ---
 
 # Sprint 4 — Production
 
-☐ PR-001_Production_Overview
+☐ PR-001_Production_Overview.png
 
-☐ PR-002_Factory
+☐ PR-002_Factory.png
 
-☐ PR-003_Recipe
+☐ PR-003_Recipe.png
 
-☐ PR-004_Inventory
+☐ PR-004_Inventory.png
 
-☐ PR-005_Warehouse
+☐ PR-005_Warehouse.png
 
-☐ PR-006_Build_Queue
+☐ PR-006_Build_Queue.png
 
-☐ PR-007_Construction
+☐ PR-007_Construction.png
 
-☐ PR-008_Analytics
+☐ PR-008_Analytics.png
 
-☐ PR-009_Efficiency
+☐ PR-009_Efficiency.png
 
-☐ PR-010_Production_Final
+☐ PR-010_Production.png
 
 ---
 
 # Sprint 5 — Research
 
-☐ RS-001_Tech_Tree
+☐ RS-001_Tech_Tree.png
 
-☐ RS-002_Research_Card
+☐ RS-002_Research_Card.png
 
-☐ RS-003_Queue
+☐ RS-003_Queue.png
 
-☐ RS-004_Technology_Details
+☐ RS-004_Technology_Details.png
 
-☐ RS-005_Blueprint
+☐ RS-005_Blueprint.png
 
-☐ RS-006_Unlock
+☐ RS-006_Unlock.png
 
-☐ RS-007_Research_Final
+☐ RS-007_Research.png
 
 ---
 
 # Sprint 6 — Economy
 
-☐ EC-001_Market
+☐ EC-001_Market.png
 
-☐ EC-002_Contracts
+☐ EC-002_Contracts.png
 
-☐ EC-003_Finance
+☐ EC-003_Finance.png
 
-☐ EC-004_Cash_Flow
+☐ EC-004_Cash_Flow.png
 
-☐ EC-005_Price_Chart
+☐ EC-005_Price_Chart.png
 
-☐ EC-006_Trade
+☐ EC-006_Trade.png
 
-☐ EC-007_Comparison
+☐ EC-007_Comparison.png
 
-☐ EC-008_Reports
+☐ EC-008_Reports.png
 
-☐ EC-009_Economy_Final
+☐ EC-009_Economy.png
 
 ---
 
 # Sprint 7 — Logistics
 
-☐ TR-001_Transport
+☐ TR-001_Transport.png
 
-☐ TR-002_Warehouse
+☐ TR-002_Warehouse.png
 
-☐ TR-003_Routes
+☐ TR-003_Routes.png
 
-☐ TR-004_Vehicles
+☐ TR-004_Vehicles.png
 
-☐ TR-005_Traffic
+☐ TR-005_Traffic.png
 
-☐ TR-006_Distribution
+☐ TR-006_Distribution.png
 
-☐ TR-007_Logistics_Final
+☐ TR-007_Logistics.png
 
 ---
 
 # Sprint 8 — Company
 
-☐ CP-001_Company
+☐ CP-001_Company.png
 
-☐ CP-002_Departments
+☐ CP-002_Departments.png
 
-☐ CP-003_Employees
+☐ CP-003_Employees.png
 
-☐ CP-004_Managers
+☐ CP-004_Managers.png
 
-☐ CP-005_Statistics
+☐ CP-005_Statistics.png
 
-☐ CP-006_Company_Final
+☐ CP-006_Company.png
 
 ---
 
 # Sprint 9 — Reports
 
-☐ RP-001_Report_Center
+☐ RP-001_Report_Center.png
 
-☐ RP-002_Finance_Report
+☐ RP-002_Finance_Report.png
 
-☐ RP-003_Production_Report
+☐ RP-003_Production_Report.png
 
-☐ RP-004_Research_Report
+☐ RP-004_Research_Report.png
 
-☐ RP-005_Transport_Report
+☐ RP-005_Transport_Report.png
 
-☐ RP-006_Economy_Report
+☐ RP-006_Economy_Report.png
 
-☐ RP-007_Company_Report
+☐ RP-007_Company_Report.png
 
-☐ RP-008_Report_Final
+☐ RP-008_Reports.png
 
 ---
 
 # Sprint 10 — Charts
 
-☐ CH-001_Cashflow
+☐ CH-001_Cashflow.svg
 
-☐ CH-002_Profit
+☐ CH-002_Profit.svg
 
-☐ CH-003_Revenue
+☐ CH-003_Revenue.svg
 
-☐ CH-004_Production
+☐ CH-004_Production.svg
 
-☐ CH-005_Research
+☐ CH-005_Research.svg
 
-☐ CH-006_Transport
+☐ CH-006_Transport.svg
 
-☐ CH-007_Market
+☐ CH-007_Market.svg
 
-☐ CH-008_Population
+☐ CH-008_Population.svg
 
-☐ CH-009_Energy
+☐ CH-009_Energy.svg
 
-☐ CH-010_Charts_Final
+☐ CH-010_Charts.svg
 
 ---
 
 # Sprint 11 — Maps
 
-☐ MAP-001_Political
+☐ MAP-001_Political.png
 
-☐ MAP-002_Resources
+☐ MAP-002_Resources.png
 
-☐ MAP-003_Trade
+☐ MAP-003_Trade.png
 
-☐ MAP-004_Infrastructure
+☐ MAP-004_Infrastructure.png
 
-☐ MAP-005_Energy
+☐ MAP-005_Energy.png
 
-☐ MAP-006_Climate
+☐ MAP-006_Climate.png
 
-☐ MAP-007_Industry
+☐ MAP-007_Industry.png
 
-☐ MAP-008_Maps_Final
+☐ MAP-008_Maps.png
 
 ---
 
 # Sprint 12 — Icons
 
-☐ ICON-001_Resources
+☐ ICON-001_Resources.svg
 
-☐ ICON-002_Buildings
+☐ ICON-002_Buildings.svg
 
-☐ ICON-003_Transport
+☐ ICON-003_Transport.svg
 
-☐ ICON-004_Economy
+☐ ICON-004_Economy.svg
 
-☐ ICON-005_Research
+☐ ICON-005_Research.svg
 
-☐ ICON-006_UI
+☐ ICON-006_UI.svg
 
-☐ ICON-007_Notifications
+☐ ICON-007_Notifications.svg
 
-☐ ICON-008_Status
+☐ ICON-008_Status.svg
 
-☐ ICON-009_Menu
+☐ ICON-009_Menu.svg
 
-☐ ICON-010_Icons_Final
+☐ ICON-010_Icons.svg
 
 ---
 
 # Sprint 13 — Branding
 
-☐ BR-001_Logo
+☐ BR-001_Logo.png
 
-☐ BR-002_Splash
+☐ BR-002_Splash.png
 
-☐ BR-003_Loading
+☐ BR-003_Loading.png
 
-☐ BR-004_Backgrounds
+☐ BR-004_Backgrounds.png
 
-☐ BR-005_Main_Illustration
+☐ BR-005_Main_Illustration.png
 
-☐ BR-006_Steam_Capsule
+☐ BR-006_Steam_Capsule.png
 
-☐ BR-007_Header
+☐ BR-007_Header.png
 
-☐ BR-008_Website
+☐ BR-008_Website.png
 
-☐ BR-009_Press_Kit
+☐ BR-009_Press_Kit.png
 
-☐ BR-010_Branding_Final
+☐ BR-010_Branding.png
 
 ---
 
 # Sprint 14 — Marketing
 
-☐ MK-001_Screenshot_Set
+☐ MK-001_Screenshot_Set.png
 
-☐ MK-002_Trailer_Scenes
+☐ MK-002_Trailer_Scenes.png
 
-☐ MK-003_Website
+☐ MK-003_Website.png
 
-☐ MK-004_Steam
+☐ MK-004_Steam.png
 
-☐ MK-005_Store_Banners
+☐ MK-005_Store_Banners.png
 
-☐ MK-006_Press_Images
+☐ MK-006_Press_Images.png
 
-☐ MK-007_Key_Art
+☐ MK-007_Key_Art.png
 
-☐ MK-008_Marketing_Final
-
----
-
-# Production Statistics
-
-| Category | Planned | Approved | Integrated |
-|----------|---------:|----------:|------------:|
-| Main Menu | 19 | 0 | 0 |
-| Dashboard | 10 | 0 | 0 |
-| World | 10 | 0 | 0 |
-| Production | 10 | 0 | 0 |
-| Research | 7 | 0 | 0 |
-| Economy | 9 | 0 | 0 |
-| Logistics | 7 | 0 | 0 |
-| Company | 6 | 0 | 0 |
-| Reports | 8 | 0 | 0 |
-| Charts | 10 | 0 | 0 |
-| Maps | 8 | 0 | 0 |
-| Icons | 10 | 0 | 0 |
-| Branding | 10 | 0 | 0 |
-| Marketing | 8 | 0 | 0 |
+☐ MK-008_Marketing.png
 
 ---
 
-# Review Rules
+# Asset Documentation
+
+Every completed asset shall be documented with:
+
+Asset ID
+
+Filename
+
+Storage Path
+
+Status
+
+Review Date
+
+Revision Count
+
+---
+
+Example
+
+Asset ID:
+MM-001
+
+Filename:
+MM-001_Main_Menu.png
+
+Storage:
+
+docs/design/mockups/main-menu/
+
+Status:
+
+☑ Approved
+
+Revision Count:
+
+0
+
+---
+
+# Review Criteria
 
 Every asset must pass:
 
-- Design Review
-- UX Review
-- Accessibility Review
-- Visual Consistency Review
-- Naming Validation
-- Integration Validation
+✓ Design Review
 
-Only then may it be marked as **Approved**.
+✓ UX Review
+
+✓ Accessibility Review
+
+✓ Naming Validation
+
+✓ Visual Consistency Review
+
+✓ Integration Review
 
 ---
 
@@ -465,10 +524,11 @@ Only then may it be marked as **Approved**.
 
 The Visual Production Backlog is complete when:
 
-- Every asset is marked **Approved**
-- All production assets are integrated
-- All placeholder graphics have been replaced
-- Mockups match the implemented UI
-- The Design System (DD-039), Visual Asset Pipeline (DD-040), and User Experience Principles (DD-041) are fully reflected in the final assets.
+- every asset is approved
+- every asset is integrated
+- all placeholder graphics are replaced
+- the implementation matches the approved mockups
+- DD-039, DD-040 and DD-041 are fully reflected in the final product
 
-This document shall be updated continuously throughout Milestone M11.
+This document shall be maintained throughout Milestone M11 and serves as the
+single source of truth for visual production.

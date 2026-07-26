@@ -4,7 +4,9 @@
 
 **Milestone:** M11
 
-**Status:** Planned
+**Status:** In Progress
+
+**Tooling:** Visual Asset Manager implemented — see `docs/development/VISUAL_ASSET_MANAGER_GUIDE.md`
 
 **Estimated Duration:** 8–12 Weeks
 
@@ -462,6 +464,8 @@ Steam Assets
 Deliverables
 
 Production Asset Library
+
+Visual Asset Manager (`/dev/visual-assets`) for backlog-driven imports and document sync
 
 ---
 

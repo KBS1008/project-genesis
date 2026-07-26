@@ -43,7 +43,7 @@ Update this document whenever a meaningful implementation milestone is completed
 | M8 NPC Economy                   | ✅ Completed (Gate AUD-006, 2026-07-22) |
 | Phase 1 Core Domain              | ✅ Completed (Gate 2026-07-19) — see `PHASE1_CORE_DOMAIN_REPORT.md`                                                                                                   |
 
-**Tests:** 670 (run `pnpm test` for current count; `pnpm test:e2e` for API E2E flows)
+**Tests:** 688 (run `pnpm test` for current count; `pnpm test:e2e` for API E2E flows)
 
 ---
 
@@ -244,14 +244,18 @@ All **TD-M8-01 … TD-M8-06** resolved — see `docs/quality/M8_IMPLEMENTATION_R
 | Vehicles (content)              |       5 | `Vehicle.schema.md`, art library docs; DD-022 V1 waiver |
 | **Milestone average (gate)**    | **100** | Gate 3 verdict **M10 COMPLETE**              |
 
-### M11 – Polish ⚪ (0 %)
+### M11 – Visual Production & UX 🟡 (~15 %)
 
 | Deliverable                  |     % | Next step     |
 | ---------------------------- | ----: | ------------- |
+| Design foundation docs       |   100 | 8 docs under `docs/design/` |
+| Visual production backlog    |   100 | `VISUAL_PRODUCTION_BACKLOG.md` v2 |
+| **Visual Asset Manager**     | **100** | `/dev/visual-assets` — see `VISUAL_ASSET_MANAGER_GUIDE.md` |
+| Mockup production (Sprint 1+) |    10 | Main menu mockups started |
 | Animations / effects / audio |     0 | Art docs only |
 | Localization / balancing     |     0 | Not started   |
 | Optimization pass            |     0 | Not started   |
-| **Milestone average**        | **0** | After M9–M10  |
+| **Milestone average**        | **~15** | Visual pipeline tooling shipped |
 
 ### M12 – Release ⚪ (0 %)
 
