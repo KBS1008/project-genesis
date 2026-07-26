@@ -7,6 +7,7 @@ import {
   Body,
   Controller,
   Get,
+  Inject,
   Param,
   Post,
   Query,
@@ -47,7 +48,10 @@ function parseUploadedFile(file: Express.Multer.File | undefined): Buffer {
 @Controller('api/dev/visual-assets')
 @UseGuards(DevOnlyGuard)
 export class VisualAssetsController {
-  constructor(private readonly visualAssetsService: VisualAssetsApiService) {}
+  constructor(
+    @Inject(VisualAssetsApiService)
+    private readonly visualAssetsService: VisualAssetsApiService,
+  ) {}
 
   @Get()
   listAssets() {

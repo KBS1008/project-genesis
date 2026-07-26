@@ -54,10 +54,27 @@ type ApiErrorResponse = {
 };
 
 async function parseApiResponse<T>(response: Response): Promise<T> {
-  const payload = (await response.json()) as ApiSuccessResponse<T> | ApiErrorResponse;
-  if (!response.ok || payload.ok === false) {
-    throw new Error(payload.ok === false ? payload.error : 'Request failed.');
+  let payload: ApiSuccessResponse<T> | ApiErrorResponse | Record<string, unknown> = {};
+  try {
+    payload = (await response.json()) as ApiSuccessResponse<T> | ApiErrorResponse;
+  } catch {
+    throw new Error(`Request failed (${response.status}).`);
   }
+
+  if (!response.ok || ('ok' in payload && payload.ok === false)) {
+    const apiError =
+      'ok' in payload && payload.ok === false
+        ? payload.error
+        : typeof payload.message === 'string'
+          ? payload.message
+          : 'Request failed.';
+    throw new Error(apiError);
+  }
+
+  if (!('data' in payload)) {
+    throw new Error('Request failed: invalid API response.');
+  }
+
   return payload.data;
 }
 
