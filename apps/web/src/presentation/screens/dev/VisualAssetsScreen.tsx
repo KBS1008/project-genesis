@@ -48,6 +48,7 @@ export function VisualAssetsScreen() {
   const [plan, setPlan] = useState<VisualAssetImportPlan | null>(null);
   const [acceptWarnings, setAcceptWarnings] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [validating, setValidating] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -121,6 +122,7 @@ export function VisualAssetsScreen() {
       return;
     }
     setBusy(true);
+    setValidating(true);
     setError(null);
     setSuccess(null);
     try {
@@ -135,6 +137,7 @@ export function VisualAssetsScreen() {
       setPlan(null);
       setError(validationError instanceof Error ? validationError.message : 'Validation failed.');
     } finally {
+      setValidating(false);
       setBusy(false);
     }
   }, [selectedItem, file, status, acceptWarnings]);
@@ -177,6 +180,8 @@ export function VisualAssetsScreen() {
   const onFileSelected = (nextFile: File | null) => {
     setFile(nextFile);
     setSuccess(null);
+    setAcceptWarnings(false);
+    setPlan(null);
   };
 
   return (
@@ -340,6 +345,12 @@ export function VisualAssetsScreen() {
                   <img className="vam-preview" src={previewUrl} alt="Upload preview" />
                 ) : null}
 
+                {validating ? <p className="vam-validating">Validating upload...</p> : null}
+
+                {file !== null && !validating && plan === null && error === null ? (
+                  <p className="vam-validating">Waiting for validation result...</p>
+                ) : null}
+
                 {plan !== null ? (
                   <div className="vam-plan">
                     <p>
@@ -374,7 +385,13 @@ export function VisualAssetsScreen() {
 
                 <Button
                   variant="primary"
-                  disabled={busy || selectedItem === null || file === null || plan === null}
+                  disabled={
+                    busy ||
+                    validating ||
+                    selectedItem === null ||
+                    file === null ||
+                    plan === null
+                  }
                   onClick={() => void handleImport()}
                 >
                   Save asset

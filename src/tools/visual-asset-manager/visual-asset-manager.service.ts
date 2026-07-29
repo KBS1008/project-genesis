@@ -221,15 +221,6 @@ export class VisualAssetManagerService {
       throw new Error(validation.errors.join(' '));
     }
 
-    const duplicatePath = findDuplicateByHash(
-      this.paths.designRoot,
-      validation.sha256,
-      this.paths.projectRoot,
-    );
-    if (duplicatePath !== null) {
-      throw new Error(`Duplicate file detected at ${duplicatePath}.`);
-    }
-
     const destinationDir = resolveDestinationDirectory(entry.assetId);
     const targetDirectory = join(this.paths.designRoot, destinationDir);
     const { revision, canonicalFilename } = resolveNextRevision(
@@ -240,6 +231,19 @@ export class VisualAssetManagerService {
       /\\/g,
       '/',
     );
+
+    const duplicatePath = findDuplicateByHash(
+      this.paths.designRoot,
+      validation.sha256,
+      this.paths.projectRoot,
+    );
+    if (
+      duplicatePath !== null &&
+      duplicatePath !== targetRelativePath &&
+      !isSameAssetDuplicate(entry.assetId, input.backlogFilename, duplicatePath)
+    ) {
+      throw new Error(`Duplicate file detected at ${duplicatePath}.`);
+    }
 
     return {
       assetId: entry.assetId,
@@ -280,6 +284,18 @@ export class VisualAssetManagerService {
       // Best-effort rollback; original error is more important.
     }
   }
+}
+
+function isSameAssetDuplicate(
+  assetId: string,
+  backlogFilename: string,
+  duplicatePath: string,
+): boolean {
+  const normalized = duplicatePath.replace(/\\/g, '/').toLowerCase();
+  return (
+    normalized.includes(assetId.toLowerCase()) ||
+    normalized.includes(backlogFilename.toLowerCase())
+  );
 }
 
 /** Build default paths from repository root. */

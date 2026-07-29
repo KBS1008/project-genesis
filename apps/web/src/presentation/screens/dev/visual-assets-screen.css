@@ -105,6 +105,12 @@
   border-radius: 0.25rem;
 }
 
+.vam-validating {
+  margin: 0;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
 .vam-plan {
   background: rgba(255, 255, 255, 0.04);
   border-radius: 0.5rem;

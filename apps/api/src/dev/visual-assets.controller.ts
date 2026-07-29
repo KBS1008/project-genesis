@@ -7,6 +7,7 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
   Inject,
   Param,
   Post,
@@ -16,10 +17,11 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { readFileSync } from 'node:fs';
 import type { VisualAssetStatus } from '../../../../src/tools/visual-asset-manager/index.js';
-import { MAX_UPLOAD_BYTES } from '../../../../src/tools/visual-asset-manager/constants.js';
 import { toApiSuccess } from '../common/api-response.js';
 import { DevOnlyGuard } from './dev-only.guard.js';
+import { visualAssetUploadOptions } from './visual-asset-upload.options.js';
 import { VisualAssetsApiService } from './visual-assets-api.service.js';
 
 const VALID_STATUSES = new Set<VisualAssetStatus>([
@@ -38,10 +40,26 @@ function parseStatus(value: string | undefined): VisualAssetStatus {
 }
 
 function parseUploadedFile(file: Express.Multer.File | undefined): Buffer {
-  if (file === undefined || file.buffer.length === 0) {
+  if (file === undefined) {
     throw new BadRequestException('Image file is required.');
   }
-  return file.buffer;
+
+  if (file.buffer !== undefined && file.buffer.length > 0) {
+    return file.buffer;
+  }
+
+  if (typeof file.path === 'string' && file.path.length > 0) {
+    try {
+      const buffer = readFileSync(file.path);
+      if (buffer.length > 0) {
+        return buffer;
+      }
+    } catch {
+      // Fall through to shared error below.
+    }
+  }
+
+  throw new BadRequestException('Image file is required.');
 }
 
 /** Developer-only visual asset management endpoints. */
@@ -73,7 +91,8 @@ export class VisualAssetsController {
   }
 
   @Post('validate')
-  @UseInterceptors(FileInterceptor('file', { limits: { fileSize: MAX_UPLOAD_BYTES } }))
+  @HttpCode(200)
+  @UseInterceptors(FileInterceptor('file', visualAssetUploadOptions))
   validateImport(
     @UploadedFile() file: Express.Multer.File | undefined,
     @Body('backlogFilename') backlogFilename?: string,
@@ -99,7 +118,8 @@ export class VisualAssetsController {
   }
 
   @Post('import')
-  @UseInterceptors(FileInterceptor('file', { limits: { fileSize: MAX_UPLOAD_BYTES } }))
+  @HttpCode(200)
+  @UseInterceptors(FileInterceptor('file', visualAssetUploadOptions))
   importAsset(
     @UploadedFile() file: Express.Multer.File | undefined,
     @Body('backlogFilename') backlogFilename?: string,
