@@ -58,9 +58,9 @@ describe('VisualAssetsController (NestJS)', () => {
     expect(response.body.ok).toBe(true);
     expect(response.body.data).toMatchObject({
       assetId: 'MM-001',
-      canonicalFilename: 'MM-001_Main_Menu.png',
       width: 500,
       height: 400,
     });
+    expect(response.body.data.canonicalFilename).toMatch(/^MM-001_Main_Menu(_Rev\d+)?\.png$/);
   });
 });

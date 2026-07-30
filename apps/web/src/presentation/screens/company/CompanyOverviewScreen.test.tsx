@@ -1,55 +1,17 @@
 // @vitest-environment jsdom
 
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { CompanyOverviewScreen } from '@/presentation/screens/company/CompanyOverviewScreen';
+import { renderPresentation } from '@/presentation/testing/presentation-test-harness';
 
-vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
-  useGameWorkspace: () => ({
-    viewData: {
-      session: { hasGame: true },
-    },
-    companyViewData: {
-      companyName: 'Test Corp',
-      headerSubtitle: 'Tick 1',
-      labels: {
-        resource: (id: string) => id,
-        building: (id: string) => id,
-        recipe: (id: string) => id,
-        technology: (id: string) => id,
-        employee: (id: string) => id,
-      },
-      overview: { cards: [] },
-      inventoryItems: [],
-      financeTransactions: [],
-      productionJobs: [],
-      researchJobs: [],
-      logisticsStatusMessage: null,
-      detail: {
-        hasFinance: false,
-        financeEntries: [],
-      },
-    },
-    regions: [],
-    navigateToTarget: vi.fn(),
-  }),
-}));
-
-vi.mock('@/presentation/hooks/useScreenQuery', () => ({
-  TICK_QUERY_DEBOUNCE_MS: 250,
-  useScreenQuery: () => ({
-    data: [],
-    isLoading: false,
-    errorMessage: null,
-  }),
+vi.mock('@/presentation/screens/dashboard/ExecutiveDashboardScreen', () => ({
+  ExecutiveDashboardScreen: () => <div>Executive Dashboard Mock</div>,
 }));
 
 describe('CompanyOverviewScreen', () => {
-  it('renders company overview sections', () => {
-    render(<CompanyOverviewScreen onOpenOperations={() => {}} />);
-
-    expect(screen.getByText('Test Corp')).toBeInTheDocument();
-    expect(screen.getByText('Finanzübersicht')).toBeInTheDocument();
-    expect(screen.getByText('Regionale Präsenz')).toBeInTheDocument();
+  it('delegates to the executive dashboard screen', () => {
+    renderPresentation(<CompanyOverviewScreen onOpenOperations={() => {}} />);
+    expect(screen.getByText('Executive Dashboard Mock')).toBeInTheDocument();
   });
 });

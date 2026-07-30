@@ -1,0 +1,328 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`svg generator snapshots > renders stable output for brand-lockup 1`] = `
+"<?xml version="1.0" encoding="UTF-8"?>
+<svg aria-labelledby="brand-lockup-title brand-lockup-desc" height="800" id="brand-lockup" role="img" viewBox="0 0 1200 800" width="1200" xmlns="http://www.w3.org/2000/svg">
+  <title id="brand-lockup-title">Snapshot brand-lockup</title>
+  <desc id="brand-lockup-desc">Deterministic snapshot test</desc>
+  <rect fill="#08131f" height="800" width="1200" x="0" y="0"></rect>
+  <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="36" font-weight="700" x="40" y="60">Snapshot brand-lockup</text>
+  <g id="brand-lockup-section-0">
+    <rect fill="#102132" height="100" rx="12" stroke="#2d5d8f" width="1120" x="40" y="120"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" x="60" y="160">Primary logo</text>
+  </g>
+  <g id="brand-lockup-section-1">
+    <rect fill="#102132" height="100" rx="12" stroke="#2d5d8f" width="1120" x="40" y="240"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" x="60" y="280">Wordmark</text>
+  </g>
+  <g id="brand-lockup-section-2">
+    <rect fill="#102132" height="100" rx="12" stroke="#2d5d8f" width="1120" x="40" y="360"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" x="60" y="400">Clear space</text>
+  </g>
+  <g id="brand-lockup-section-3">
+    <rect fill="#102132" height="100" rx="12" stroke="#2d5d8f" width="1120" x="40" y="480"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" x="60" y="520">Color variants</text>
+  </g>
+</svg>"
+`;
+
+exports[`svg generator snapshots > renders stable output for chart-library 1`] = `
+"<?xml version="1.0" encoding="UTF-8"?>
+<svg aria-labelledby="ch-010-charts-title ch-010-charts-desc" height="900" id="ch-010-charts" role="img" viewBox="0 0 1600 900" width="1600" xmlns="http://www.w3.org/2000/svg">
+  <title id="ch-010-charts-title">Snapshot chart-library</title>
+  <desc id="ch-010-charts-desc">Reference sheet for Project Genesis chart components, states, and data-binding placeholders.</desc>
+  <rect fill="#08131f" height="900" width="1600" x="0" y="0"></rect>
+  <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="42" font-weight="700" x="40" y="60">Snapshot chart-library</text>
+  <text fill="#9fc7ff" font-family="Segoe UI, Arial, sans-serif" font-size="18" x="40" y="90">Deterministic snapshot test</text>
+  <g id="line-chart">
+    <rect fill="#102132" height="250" rx="12" stroke="#2d5d8f" width="480" x="40" y="110"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="700" x="60" y="145">Line Chart</text>
+    <polyline fill="none" points="80,248.409 143.333,226.25 206.667,238.182 270,197.273 333.333,210.909 396.667,170 460,190.455" stroke="#38a3ff" stroke-width="3"></polyline>
+  </g>
+  <g id="area-chart">
+    <rect fill="#102132" height="250" rx="12" stroke="#2d5d8f" width="480" x="560" y="110"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="700" x="580" y="145">Area Chart</text>
+    <path d="M80 320 L80 280 L140 250 L200 260 L260 210 L320 230 L380 190 L440 210 L440 320 Z" fill="#38a3ff" opacity="0.35"></path>
+    <polyline fill="none" points="80,257.955 140,238.75 200,249.091 260,213.636 320,225.455 380,190 440,207.727" stroke="#38a3ff" stroke-width="3"></polyline>
+  </g>
+  <g id="bar-chart">
+    <rect fill="#102132" height="250" rx="12" stroke="#2d5d8f" width="480" x="1080" y="110"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="700" x="1100" y="145">Bar Chart</text>
+    <rect fill="#38a3ff" height="51.429" width="40" x="1200" y="268.571"></rect>
+    <rect fill="#42c16b" height="94.286" width="40" x="1280" y="225.714"></rect>
+    <rect fill="#f0b429" height="42.857" width="40" x="1360" y="277.143"></rect>
+    <rect fill="#e25555" height="120" width="40" x="1440" y="200"></rect>
+  </g>
+  <g id="stacked-bar">
+    <rect fill="#102132" height="250" rx="12" stroke="#2d5d8f" width="480" x="40" y="390"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="700" x="60" y="425">Stacked Bar Chart</text>
+    <rect fill="#38a3ff" height="80" width="40" x="120" y="480"></rect>
+    <rect fill="#38a3ff" height="120" width="40" x="200" y="440"></rect>
+    <rect fill="#38a3ff" height="60" width="40" x="280" y="500"></rect>
+    <rect fill="#38a3ff" height="100" width="40" x="360" y="460"></rect>
+    <rect fill="#42c16b" height="60" width="40" x="120" y="420"></rect>
+    <rect fill="#42c16b" height="40" width="40" x="200" y="400"></rect>
+    <rect fill="#42c16b" height="80" width="40" x="280" y="420"></rect>
+    <rect fill="#42c16b" height="72" width="40" x="360" y="388"></rect>
+  </g>
+  <g id="pie-chart">
+    <rect fill="#102132" height="250" rx="12" stroke="#2d5d8f" width="480" x="560" y="390"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="700" x="580" y="425">Pie Chart</text>
+    <circle cx="800" cy="520" fill="#1a3348" r="90"></circle>
+    <path d="M 800 520 L 800 430 A 90 90 0 0 1 872.812 572.901 Z" fill="#38a3ff"></path>
+    <path d="M 800 520 L 872.812 572.901 A 90 90 0 0 1 747.099 592.812 Z" fill="#42c16b"></path>
+    <path d="M 800 520 L 747.099 592.812 A 90 90 0 0 1 714.405 492.188 Z" fill="#f0b429"></path>
+    <path d="M 800 520 L 714.405 492.188 A 90 90 0 0 1 800 430 Z" fill="#e25555"></path>
+  </g>
+  <g id="donut-chart">
+    <rect fill="#102132" height="250" rx="12" stroke="#2d5d8f" width="480" x="1080" y="390"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="700" x="1100" y="425">Donut Chart</text>
+    <path d="M 1320 430 A 90 90 0 0 1 1392.812 572.901 L 1356.406 546.45 A 45 45 0 0 0 1320 475 Z" fill="#38a3ff"></path>
+    <path d="M 1392.812 572.901 A 90 90 0 0 1 1267.099 592.812 L 1293.55 556.406 A 45 45 0 0 0 1356.406 546.45 Z" fill="#42c16b"></path>
+    <path d="M 1267.099 592.812 A 90 90 0 0 1 1234.405 492.188 L 1277.202 506.094 A 45 45 0 0 0 1293.55 556.406 Z" fill="#f0b429"></path>
+    <path d="M 1234.405 492.188 A 90 90 0 0 1 1320 430 L 1320 475 A 45 45 0 0 0 1277.202 506.094 Z" fill="#e25555"></path>
+  </g>
+  <g id="scatter-plot">
+    <rect fill="#102132" height="180" rx="12" stroke="#2d5d8f" width="480" x="40" y="670"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="700" x="60" y="705">Scatter Plot</text>
+    <circle cx="100" cy="660" fill="#38a3ff" r="6"></circle>
+    <circle cx="160" cy="570" fill="#42c16b" r="6"></circle>
+    <circle cx="220" cy="612" fill="#f0b429" r="6"></circle>
+    <circle cx="280" cy="480" fill="#e25555" r="6"></circle>
+    <circle cx="340" cy="528" fill="#38a3ff" r="6"></circle>
+    <circle cx="400" cy="390" fill="#42c16b" r="6"></circle>
+  </g>
+  <g id="gauge">
+    <rect fill="#102132" height="180" rx="12" stroke="#2d5d8f" width="480" x="560" y="670"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="700" x="580" y="705">Gauge</text>
+    <path d="M 720 760 A 80 80 0 1 1 842.866 692.454" fill="none" stroke="#38a3ff" stroke-linecap="round" stroke-width="16"></path>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="700" x="770" y="770">68%</text>
+  </g>
+  <g id="sparkline">
+    <rect fill="#102132" height="180" rx="12" stroke="#2d5d8f" width="480" x="1080" y="670"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="700" x="1100" y="705">Sparkline / Progress</text>
+    <polyline fill="none" points="1120,780 1183.333,760 1246.667,770 1310,740 1373.333,746.667 1436.667,720 1500,726.667" stroke="#42c16b" stroke-width="2"></polyline>
+    <rect fill="#1a3348" height="12" rx="6" width="360" x="1120" y="790"></rect>
+    <rect fill="#42c16b" height="12" rx="6" width="250" x="1120" y="790"></rect>
+  </g>
+  <text fill="#9fc7ff" font-family="Segoe UI, Arial, sans-serif" font-size="16" x="40" y="870">Chart anatomy: axes, legend, labels, semantic colors, responsive viewBox</text>
+  <text fill="#9fc7ff" font-family="Segoe UI, Arial, sans-serif" font-size="16" x="40" y="895">DD-042 placeholders: {{revenueHistory}} {{productionHistory}} {{marketShare}} {{playerName}} {{companyName}}</text>
+  <text fill="#9fc7ff" font-family="Segoe UI, Arial, sans-serif" font-size="14" x="40" y="920">Accessibility: every chart includes title/desc metadata and non-color semantic labels.</text>
+</svg>"
+`;
+
+exports[`svg generator snapshots > renders stable output for component-library 1`] = `
+"<?xml version="1.0" encoding="UTF-8"?>
+<svg aria-labelledby="component-library-title component-library-desc" height="800" id="component-library" role="img" viewBox="0 0 1200 800" width="1200" xmlns="http://www.w3.org/2000/svg">
+  <title id="component-library-title">Snapshot component-library</title>
+  <desc id="component-library-desc">Deterministic snapshot test</desc>
+  <rect fill="#08131f" height="800" width="1200" x="0" y="0"></rect>
+  <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="36" font-weight="700" x="40" y="60">Snapshot component-library</text>
+  <g id="component-library-section-0">
+    <rect fill="#102132" height="100" rx="12" stroke="#2d5d8f" width="1120" x="40" y="120"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" x="60" y="160">Buttons</text>
+  </g>
+  <g id="component-library-section-1">
+    <rect fill="#102132" height="100" rx="12" stroke="#2d5d8f" width="1120" x="40" y="240"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" x="60" y="280">Inputs</text>
+  </g>
+  <g id="component-library-section-2">
+    <rect fill="#102132" height="100" rx="12" stroke="#2d5d8f" width="1120" x="40" y="360"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" x="60" y="400">Cards</text>
+  </g>
+  <g id="component-library-section-3">
+    <rect fill="#102132" height="100" rx="12" stroke="#2d5d8f" width="1120" x="40" y="480"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" x="60" y="520">Tables</text>
+  </g>
+  <g id="component-library-section-4">
+    <rect fill="#102132" height="100" rx="12" stroke="#2d5d8f" width="1120" x="40" y="600"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" x="60" y="640">Tabs</text>
+  </g>
+</svg>"
+`;
+
+exports[`svg generator snapshots > renders stable output for finance-widget-library 1`] = `
+"<?xml version="1.0" encoding="UTF-8"?>
+<svg aria-labelledby="finance-widget-library-title finance-widget-library-desc" height="800" id="finance-widget-library" role="img" viewBox="0 0 1200 800" width="1200" xmlns="http://www.w3.org/2000/svg">
+  <title id="finance-widget-library-title">Snapshot finance-widget-library</title>
+  <desc id="finance-widget-library-desc">Deterministic snapshot test</desc>
+  <rect fill="#08131f" height="800" width="1200" x="0" y="0"></rect>
+  <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="36" font-weight="700" x="40" y="60">Snapshot finance-widget-library</text>
+  <g id="finance-widget-library-section-0">
+    <rect fill="#102132" height="100" rx="12" stroke="#2d5d8f" width="1120" x="40" y="120"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" x="60" y="160">Cash balance {{availableCash}}</text>
+  </g>
+  <g id="finance-widget-library-section-1">
+    <rect fill="#102132" height="100" rx="12" stroke="#2d5d8f" width="1120" x="40" y="240"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" x="60" y="280">Profit trend</text>
+  </g>
+  <g id="finance-widget-library-section-2">
+    <rect fill="#102132" height="100" rx="12" stroke="#2d5d8f" width="1120" x="40" y="360"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" x="60" y="400">Tax reserve</text>
+  </g>
+  <g id="finance-widget-library-section-3">
+    <rect fill="#102132" height="100" rx="12" stroke="#2d5d8f" width="1120" x="40" y="480"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" x="60" y="520">Contract summary</text>
+  </g>
+</svg>"
+`;
+
+exports[`svg generator snapshots > renders stable output for icon-sheet 1`] = `
+"<?xml version="1.0" encoding="UTF-8"?>
+<svg aria-labelledby="icon-sheet-title icon-sheet-desc" height="800" id="icon-sheet" role="img" viewBox="0 0 1200 800" width="1200" xmlns="http://www.w3.org/2000/svg">
+  <title id="icon-sheet-title">Snapshot icon-sheet</title>
+  <desc id="icon-sheet-desc">Deterministic snapshot test</desc>
+  <rect fill="#08131f" height="800" width="1200" x="0" y="0"></rect>
+  <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="36" font-weight="700" x="40" y="60">Snapshot icon-sheet</text>
+  <g id="icon-sheet-section-0">
+    <rect fill="#102132" height="100" rx="12" stroke="#2d5d8f" width="1120" x="40" y="120"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" x="60" y="160">16px grid</text>
+  </g>
+  <g id="icon-sheet-section-1">
+    <rect fill="#102132" height="100" rx="12" stroke="#2d5d8f" width="1120" x="40" y="240"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" x="60" y="280">24px grid</text>
+  </g>
+  <g id="icon-sheet-section-2">
+    <rect fill="#102132" height="100" rx="12" stroke="#2d5d8f" width="1120" x="40" y="360"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" x="60" y="400">32px stroke/fill preview</text>
+  </g>
+  <g id="icon-sheet-section-3">
+    <rect fill="#102132" height="100" rx="12" stroke="#2d5d8f" width="1120" x="40" y="480"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" x="60" y="520">State variants</text>
+  </g>
+</svg>"
+`;
+
+exports[`svg generator snapshots > renders stable output for kpi-card-library 1`] = `
+"<?xml version="1.0" encoding="UTF-8"?>
+<svg aria-labelledby="kpi-card-library-title kpi-card-library-desc" height="800" id="kpi-card-library" role="img" viewBox="0 0 1200 800" width="1200" xmlns="http://www.w3.org/2000/svg">
+  <title id="kpi-card-library-title">Snapshot kpi-card-library</title>
+  <desc id="kpi-card-library-desc">Deterministic snapshot test</desc>
+  <rect fill="#08131f" height="800" width="1200" x="0" y="0"></rect>
+  <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="36" font-weight="700" x="40" y="60">Snapshot kpi-card-library</text>
+  <g id="kpi-card-library-section-0">
+    <rect fill="#102132" height="100" rx="12" stroke="#2d5d8f" width="1120" x="40" y="120"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" x="60" y="160">Primary KPI</text>
+  </g>
+  <g id="kpi-card-library-section-1">
+    <rect fill="#102132" height="100" rx="12" stroke="#2d5d8f" width="1120" x="40" y="240"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" x="60" y="280">Delta indicator</text>
+  </g>
+  <g id="kpi-card-library-section-2">
+    <rect fill="#102132" height="100" rx="12" stroke="#2d5d8f" width="1120" x="40" y="360"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" x="60" y="400">Sparkline slot</text>
+  </g>
+  <g id="kpi-card-library-section-3">
+    <rect fill="#102132" height="100" rx="12" stroke="#2d5d8f" width="1120" x="40" y="480"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" x="60" y="520">{{revenue}} placeholder</text>
+  </g>
+</svg>"
+`;
+
+exports[`svg generator snapshots > renders stable output for map-overlay 1`] = `
+"<?xml version="1.0" encoding="UTF-8"?>
+<svg aria-labelledby="map-overlay-title map-overlay-desc" height="800" id="map-overlay" role="img" viewBox="0 0 1200 800" width="1200" xmlns="http://www.w3.org/2000/svg">
+  <title id="map-overlay-title">Snapshot map-overlay</title>
+  <desc id="map-overlay-desc">Deterministic snapshot test</desc>
+  <rect fill="#08131f" height="800" width="1200" x="0" y="0"></rect>
+  <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="36" font-weight="700" x="40" y="60">Snapshot map-overlay</text>
+  <g id="map-overlay-section-0">
+    <rect fill="#102132" height="100" rx="12" stroke="#2d5d8f" width="1120" x="40" y="120"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" x="60" y="160">Region outlines</text>
+  </g>
+  <g id="map-overlay-section-1">
+    <rect fill="#102132" height="100" rx="12" stroke="#2d5d8f" width="1120" x="40" y="240"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" x="60" y="280">Route lines</text>
+  </g>
+  <g id="map-overlay-section-2">
+    <rect fill="#102132" height="100" rx="12" stroke="#2d5d8f" width="1120" x="40" y="360"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" x="60" y="400">Markers</text>
+  </g>
+  <g id="map-overlay-section-3">
+    <rect fill="#102132" height="100" rx="12" stroke="#2d5d8f" width="1120" x="40" y="480"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" x="60" y="520">Heatmap legend</text>
+  </g>
+  <g id="map-overlay-section-4">
+    <rect fill="#102132" height="100" rx="12" stroke="#2d5d8f" width="1120" x="40" y="600"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" x="60" y="640">Inspector callout</text>
+  </g>
+</svg>"
+`;
+
+exports[`svg generator snapshots > renders stable output for notifications-library 1`] = `
+"<?xml version="1.0" encoding="UTF-8"?>
+<svg aria-labelledby="notifications-library-title notifications-library-desc" height="800" id="notifications-library" role="img" viewBox="0 0 1200 800" width="1200" xmlns="http://www.w3.org/2000/svg">
+  <title id="notifications-library-title">Snapshot notifications-library</title>
+  <desc id="notifications-library-desc">Deterministic snapshot test</desc>
+  <rect fill="#08131f" height="800" width="1200" x="0" y="0"></rect>
+  <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="36" font-weight="700" x="40" y="60">Snapshot notifications-library</text>
+  <g id="notifications-library-section-0">
+    <rect fill="#102132" height="100" rx="12" stroke="#2d5d8f" width="1120" x="40" y="120"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" x="60" y="160">Info toast</text>
+  </g>
+  <g id="notifications-library-section-1">
+    <rect fill="#102132" height="100" rx="12" stroke="#2d5d8f" width="1120" x="40" y="240"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" x="60" y="280">Success toast</text>
+  </g>
+  <g id="notifications-library-section-2">
+    <rect fill="#102132" height="100" rx="12" stroke="#2d5d8f" width="1120" x="40" y="360"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" x="60" y="400">Warning toast</text>
+  </g>
+  <g id="notifications-library-section-3">
+    <rect fill="#102132" height="100" rx="12" stroke="#2d5d8f" width="1120" x="40" y="480"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" x="60" y="520">Error toast</text>
+  </g>
+</svg>"
+`;
+
+exports[`svg generator snapshots > renders stable output for status-panel-library 1`] = `
+"<?xml version="1.0" encoding="UTF-8"?>
+<svg aria-labelledby="status-panel-library-title status-panel-library-desc" height="800" id="status-panel-library" role="img" viewBox="0 0 1200 800" width="1200" xmlns="http://www.w3.org/2000/svg">
+  <title id="status-panel-library-title">Snapshot status-panel-library</title>
+  <desc id="status-panel-library-desc">Deterministic snapshot test</desc>
+  <rect fill="#08131f" height="800" width="1200" x="0" y="0"></rect>
+  <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="36" font-weight="700" x="40" y="60">Snapshot status-panel-library</text>
+  <g id="status-panel-library-section-0">
+    <rect fill="#102132" height="100" rx="12" stroke="#2d5d8f" width="1120" x="40" y="120"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" x="60" y="160">Info state</text>
+  </g>
+  <g id="status-panel-library-section-1">
+    <rect fill="#102132" height="100" rx="12" stroke="#2d5d8f" width="1120" x="40" y="240"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" x="60" y="280">Success state</text>
+  </g>
+  <g id="status-panel-library-section-2">
+    <rect fill="#102132" height="100" rx="12" stroke="#2d5d8f" width="1120" x="40" y="360"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" x="60" y="400">Warning state</text>
+  </g>
+  <g id="status-panel-library-section-3">
+    <rect fill="#102132" height="100" rx="12" stroke="#2d5d8f" width="1120" x="40" y="480"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" x="60" y="520">Danger state</text>
+  </g>
+</svg>"
+`;
+
+exports[`svg generator snapshots > renders stable output for technical-diagram 1`] = `
+"<?xml version="1.0" encoding="UTF-8"?>
+<svg aria-labelledby="technical-diagram-title technical-diagram-desc" height="800" id="technical-diagram" role="img" viewBox="0 0 1200 800" width="1200" xmlns="http://www.w3.org/2000/svg">
+  <title id="technical-diagram-title">Snapshot technical-diagram</title>
+  <desc id="technical-diagram-desc">Deterministic snapshot test</desc>
+  <rect fill="#08131f" height="800" width="1200" x="0" y="0"></rect>
+  <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="36" font-weight="700" x="40" y="60">Snapshot technical-diagram</text>
+  <g id="technical-diagram-section-0">
+    <rect fill="#102132" height="100" rx="12" stroke="#2d5d8f" width="1120" x="40" y="120"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" x="60" y="160">Pipeline stage</text>
+  </g>
+  <g id="technical-diagram-section-1">
+    <rect fill="#102132" height="100" rx="12" stroke="#2d5d8f" width="1120" x="40" y="240"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" x="60" y="280">Service node</text>
+  </g>
+  <g id="technical-diagram-section-2">
+    <rect fill="#102132" height="100" rx="12" stroke="#2d5d8f" width="1120" x="40" y="360"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" x="60" y="400">Data store</text>
+  </g>
+  <g id="technical-diagram-section-3">
+    <rect fill="#102132" height="100" rx="12" stroke="#2d5d8f" width="1120" x="40" y="480"></rect>
+    <text fill="#f4f8fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" x="60" y="520">Integration arrow</text>
+  </g>
+</svg>"
+`;

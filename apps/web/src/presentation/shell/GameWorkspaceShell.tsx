@@ -3,6 +3,7 @@
 import type { ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { PGStatusBar } from '@/presentation/components/layout';
 import { PrimaryNavigation } from '@/presentation/navigation/PrimaryNavigation';
 import { labelPrimaryScreen } from '@/presentation/navigation/PrimaryNavigation';
 import { Button } from '@/presentation/primitives/Button';
@@ -13,6 +14,7 @@ import { formatSimulationTime, formatTick } from '@/presentation/formatting/pres
 import { NotificationIndicator } from '@/presentation/shell/NotificationIndicator';
 import { SaveGameDialog } from '@/presentation/screens/menu/SaveGameDialog';
 import { SimulationControlsBar } from '@/presentation/shell/SimulationControlsBar';
+import { useTheme } from '@/presentation/theme';
 import { useGameWorkspace } from '@/presentation/state/GameWorkspaceProvider';
 
 function EntitySelectionBanner() {
@@ -135,6 +137,38 @@ function WorkspaceHeader() {
   );
 }
 
+function WorkspaceStatusBar() {
+  const { viewData, companyViewData, isLiveConnected, isSessionDirty } = useGameWorkspace();
+  const { theme, toggleTheme } = useTheme();
+
+  return (
+    <PGStatusBar
+      left={
+        <>
+          <span>{viewData.session.companyName ?? 'Keine Session'}</span>
+          {isLiveConnected ? <span>Live</span> : null}
+          {isSessionDirty ? <span>Ungespeichert</span> : null}
+        </>
+      }
+      center={
+        <span>
+          Tick {formatTick(viewData.simulation.tickNumber)} · {formatSimulationTime(viewData.simulation.simulationTime)}
+        </span>
+      }
+      right={
+        <>
+          {companyViewData.kpis?.availableCashLabel !== undefined ? (
+            <span>{companyViewData.kpis.availableCashLabel}</span>
+          ) : null}
+          <Button variant="secondary" onClick={toggleTheme} aria-label="Theme umschalten">
+            {theme === 'dark' ? 'Hell' : 'Dunkel'}
+          </Button>
+        </>
+      }
+    />
+  );
+}
+
 /** Game workspace layout with header, navigation, and session actions. */
 export function GameWorkspaceShell({ children }: { readonly children: ReactNode }) {
   const { isLoading } = useGameWorkspace();
@@ -151,6 +185,7 @@ export function GameWorkspaceShell({ children }: { readonly children: ReactNode 
       <main className="pg-workspace-screen" id="game-workspace-main">
         {isLoading ? <LoadingState label="Session wird geladen…" /> : children}
       </main>
+      <WorkspaceStatusBar />
     </div>
   );
 }

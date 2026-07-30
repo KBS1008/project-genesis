@@ -6,7 +6,7 @@
 
 **Status:** In Progress
 
-**Tooling:** Visual Asset Manager implemented — see `docs/development/VISUAL_ASSET_MANAGER_GUIDE.md`
+**Tooling:** Visual Asset Manager, SVG Generator, and UI Foundation (Phase 1) — see respective guides under `docs/development/`
 
 **Estimated Duration:** 8–12 Weeks
 
@@ -100,6 +100,8 @@ Polished UX
 ## Goal
 
 Implement the design system defined during M10.
+
+**Status:** Phase 1 UI Foundation complete — see `docs/development/UI_FOUNDATION_GUIDE.md`
 
 ---
 
@@ -466,6 +468,8 @@ Deliverables
 Production Asset Library
 
 Visual Asset Manager (`/dev/visual-assets`) for backlog-driven imports and document sync
+
+SVG Generator (`/dev/svg-generator`) for typed template-based SVG reference assets
 
 ---
 
