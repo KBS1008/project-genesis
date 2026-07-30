@@ -1,6 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
+import { Fragment } from 'react';
 import { Button } from '@/presentation/primitives/Button';
 import { EmptyState } from '@/presentation/primitives/EmptyState';
 
@@ -53,10 +54,10 @@ export function PGInspectorPanel({
           </div>
           <dl className="pg-inspector-list">
             {entries.map((entry) => (
-              <div key={entry.label} className="pg-inspector-row">
+              <Fragment key={entry.label}>
                 <dt>{entry.label}</dt>
                 <dd className={entry.valueClass}>{entry.value}</dd>
-              </div>
+              </Fragment>
             ))}
           </dl>
           {relatedItems !== undefined && relatedItems.length > 0 ? (

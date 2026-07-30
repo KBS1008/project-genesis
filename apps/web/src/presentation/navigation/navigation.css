@@ -25,7 +25,7 @@
 
 .pg-primary-nav-link:hover {
   color: var(--text);
-  background: rgba(37, 99, 235, 0.06);
+  background: var(--surface-nav-hover);
 }
 
 .pg-primary-nav-link:focus-visible {
@@ -35,8 +35,8 @@
 
 .pg-primary-nav-link.is-active {
   color: var(--accent);
-  border-color: rgba(37, 99, 235, 0.25);
-  background: rgba(37, 99, 235, 0.08);
+  border-color: var(--border-nav-active);
+  background: var(--surface-nav-active);
 }
 
 .pg-workspace {
@@ -64,7 +64,7 @@
   padding: 0.5rem 0.875rem;
   border-radius: var(--radius-sm);
   background: var(--accent);
-  color: #fff;
+  color: var(--color-on-accent);
   text-decoration: none;
   z-index: 1200;
 }
@@ -116,7 +116,7 @@
 
 .pg-workspace-pill-live {
   color: var(--color-success);
-  border-color: rgba(22, 163, 74, 0.35);
+  border-color: var(--border-success-subtle);
 }
 
 .pg-workspace-screen {
@@ -136,7 +136,7 @@
   display: grid;
   place-items: center;
   padding: var(--space-md);
-  background: rgba(17, 24, 39, 0.45);
+  background: var(--surface-overlay);
 }
 
 .pg-dialog {
@@ -172,7 +172,7 @@
   padding: 0.625rem 0.875rem;
   border: 1px dashed var(--border);
   border-radius: var(--radius-sm);
-  background: rgba(37, 99, 235, 0.04);
+  background: var(--surface-selection);
   font-size: var(--text-small);
 }
 
@@ -236,6 +236,6 @@ button.pg-query-row:focus-visible {
 }
 
 .pg-query-header {
-  background: rgba(37, 99, 235, 0.05);
+  background: var(--surface-query-header);
   font-weight: 600;
 }

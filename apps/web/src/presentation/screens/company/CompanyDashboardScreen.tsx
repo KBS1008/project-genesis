@@ -10,6 +10,7 @@ import type {
 } from '@/presentation/adapters/view-data/company-dashboard-view-data';
 import { formatProgress } from '@/presentation/formatting/presentation-formatters';
 import { useGameWorkspace } from '@/presentation/state/GameWorkspaceProvider';
+import { useTheme } from '@/presentation/theme';
 import {
   CompanyDetailPanel,
   normalizeDetailSelection,
@@ -309,13 +310,6 @@ function SidebarActions({
   );
 }
 
-const THEME_STORAGE_KEY = 'pg-theme';
-type ThemeMode = 'light' | 'dark';
-
-function applyTheme(theme: ThemeMode): void {
-  document.documentElement.dataset.theme = theme;
-}
-
 /** Company dashboard screen consuming workspace view-data. */
 export function CompanyDashboardScreen({
   hideHeader = false,
@@ -326,30 +320,9 @@ export function CompanyDashboardScreen({
 }) {
   const { companyViewData, isLoading, isBusy, isLiveConnected, runCommand, navigation } =
     useGameWorkspace();
-  const [theme, setTheme] = useState<ThemeMode>('light');
+  const { theme, toggleTheme } = useTheme();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [detailSelection, setDetailSelection] = useState<DetailSelection>({ kind: 'overview' });
-
-  useEffect(() => {
-    const storedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
-
-    if (storedTheme === 'light' || storedTheme === 'dark') {
-      setTheme(storedTheme);
-      applyTheme(storedTheme);
-      return;
-    }
-
-    applyTheme('light');
-  }, []);
-
-  const toggleTheme = useCallback(() => {
-    setTheme((current) => {
-      const nextTheme: ThemeMode = current === 'light' ? 'dark' : 'light';
-      window.localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
-      applyTheme(nextTheme);
-      return nextTheme;
-    });
-  }, []);
 
   useEffect(() => {
     setDetailSelection((current) =>

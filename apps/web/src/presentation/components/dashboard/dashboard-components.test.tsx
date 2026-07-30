@@ -50,7 +50,7 @@ describe('dashboard components', () => {
       />,
     );
 
-    await user.click(screen.getByRole('button', { name: 'Öffnen' }));
+    await user.click(screen.getByRole('button', { name: 'Berichte öffnen' }));
     expect(onAction).toHaveBeenCalledWith('open-reports');
   });
 

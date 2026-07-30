@@ -42,7 +42,7 @@ export function PGReportWidget({
                 <strong>{action.label}</strong>
                 {action.description !== undefined ? <p>{action.description}</p> : null}
               </div>
-              <Button variant="secondary" onClick={() => onAction(action.id)}>
+              <Button variant="secondary" aria-label={`${action.label} öffnen`} onClick={() => onAction(action.id)}>
                 Öffnen
               </Button>
             </div>

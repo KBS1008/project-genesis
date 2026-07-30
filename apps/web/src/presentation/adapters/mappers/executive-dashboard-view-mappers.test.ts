@@ -106,12 +106,14 @@ function createDashboardFixture(): CompanyDashboardViewData {
 
 describe('buildExecutiveDashboardViewData', () => {
   it('maps KPI cards and runtime notifications from company view-data', () => {
-    const dashboard = buildExecutiveDashboardViewData(createDashboardFixture(), [], []);
+    const dashboard = buildExecutiveDashboardViewData(createDashboardFixture(), [], [], 'player_001');
 
     expect(dashboard.companyName).toBe('Acme Industries');
+    expect(dashboard.playerSummary).toBe('player_001');
     expect(dashboard.kpiCards.length).toBeGreaterThan(0);
     expect(dashboard.kpiCards[0]?.placeholder).toBe('{{availableCash}}');
     expect(dashboard.notifications.some((entry) => entry.id === 'energy-deficit')).toBe(true);
+    expect(dashboard.notifications.find((entry) => entry.id === 'energy-deficit')?.message).toBe('Defizit');
     expect(dashboard.notifications.some((entry) => entry.id === 'tax-blocked')).toBe(true);
     expect(dashboard.reportActions).toHaveLength(4);
   });

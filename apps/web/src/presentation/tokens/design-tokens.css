@@ -25,6 +25,20 @@
   --color-info: #0ea5e9;
   --color-energy: #facc15;
 
+  /* Semantic surfaces */
+  --color-on-accent: #ffffff;
+  --surface-overlay: color-mix(in srgb, var(--color-text) 45%, transparent);
+  --surface-nav-hover: color-mix(in srgb, var(--color-primary) 6%, transparent);
+  --surface-nav-active: color-mix(in srgb, var(--color-primary) 8%, transparent);
+  --border-nav-active: color-mix(in srgb, var(--color-primary) 25%, transparent);
+  --surface-selection: color-mix(in srgb, var(--color-primary) 4%, transparent);
+  --surface-query-header: color-mix(in srgb, var(--color-primary) 5%, transparent);
+  --border-success-subtle: color-mix(in srgb, var(--color-success) 35%, var(--color-border));
+  --surface-info-subtle: color-mix(in srgb, var(--color-info) 10%, transparent);
+  --surface-success-subtle: color-mix(in srgb, var(--color-success) 10%, transparent);
+  --surface-warning-subtle: color-mix(in srgb, var(--color-warning) 12%, transparent);
+  --surface-error-subtle: color-mix(in srgb, var(--color-error) 10%, transparent);
+
   /* Aliases */
   --bg: var(--color-bg);
   --bg-elevated: var(--color-surface);

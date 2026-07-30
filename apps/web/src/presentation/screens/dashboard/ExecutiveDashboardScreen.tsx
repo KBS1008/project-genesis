@@ -92,7 +92,12 @@ export function ExecutiveDashboardScreen({
       return null;
     }
 
-    return buildExecutiveDashboardViewData(companyViewData, regions, buildingsQuery.data);
+    return buildExecutiveDashboardViewData(
+      companyViewData,
+      regions,
+      buildingsQuery.data,
+      viewData.session.playerId,
+    );
   }, [buildingsQuery.data, companyViewData, regions]);
 
   const inspectorDetail = useMemo(
@@ -135,9 +140,7 @@ export function ExecutiveDashboardScreen({
                 relatedItems={inspectorDetail.relatedItems}
                 onClose={clearEntitySelection}
               />
-            ) : (
-              <PGInspectorPanel />
-            )
+            ) : undefined
           }
         >
           <div className="pg-executive-dashboard">

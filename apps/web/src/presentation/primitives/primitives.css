@@ -40,7 +40,7 @@
 
 .pg-button-primary {
   background: var(--accent);
-  color: #fff;
+  color: var(--color-on-accent);
 }
 
 .pg-button-primary:hover:not(:disabled) {
@@ -112,21 +112,21 @@
 }
 
 .pg-status-banner-info {
-  background: rgba(14, 165, 233, 0.1);
+  background: var(--surface-info-subtle);
   color: var(--color-info);
 }
 
 .pg-status-banner-success {
-  background: rgba(22, 163, 74, 0.1);
+  background: var(--surface-success-subtle);
   color: var(--color-success);
 }
 
 .pg-status-banner-warning {
-  background: rgba(245, 158, 11, 0.12);
+  background: var(--surface-warning-subtle);
   color: var(--color-warning);
 }
 
 .pg-status-banner-error {
-  background: rgba(220, 38, 38, 0.1);
+  background: var(--surface-error-subtle);
   color: var(--color-error);
 }

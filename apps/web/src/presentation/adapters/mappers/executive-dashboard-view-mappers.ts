@@ -110,7 +110,7 @@ function buildNotifications(companyViewData: CompanyDashboardViewData) {
     notifications.push({
       id: 'energy-deficit',
       title: 'Energiedefizit',
-      message: 'Der Energiebedarf übersteigt die aktuelle Erzeugung.',
+      message: kpis?.energyTrend ?? 'Energieunterdeckung',
       tone: 'warning' as const,
     });
   }
@@ -119,7 +119,7 @@ function buildNotifications(companyViewData: CompanyDashboardViewData) {
     notifications.push({
       id: 'tax-blocked',
       title: 'Steuerzahlung blockiert',
-      message: 'Nicht genügend Liquidität für die anstehende Steuerzahlung.',
+      message: kpis.taxTrendLabel,
       tone: 'error' as const,
     });
   }
@@ -141,6 +141,7 @@ export function buildExecutiveDashboardViewData(
   companyViewData: CompanyDashboardViewData,
   regions: readonly RegionDto[],
   buildings: readonly BuildingListRowViewData[],
+  playerId: string | null,
 ): ExecutiveDashboardViewData {
   const regionNames = new Map(regions.map((region) => [region.id, region.name]));
   const normalizedBuildings = Object.freeze(
@@ -193,7 +194,7 @@ export function buildExecutiveDashboardViewData(
     headerSubtitle: companyViewData.headerSubtitle,
     tickLabel: companyViewData.tickLabel,
     simulationTimeLabel: companyViewData.simulationTimeLabel,
-    playerSummary: companyViewData.companyName ?? 'Spieler',
+    playerSummary: playerId ?? '—',
     companySummary: `${companyViewData.buildingCount} Gebäude · Tick ${companyViewData.tickLabel}`,
     kpiCards: buildKpiCards(companyViewData),
     statusItems: Object.freeze([

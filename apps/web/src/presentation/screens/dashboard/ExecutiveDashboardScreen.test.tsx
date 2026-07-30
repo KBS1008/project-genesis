@@ -8,7 +8,7 @@ import { renderPresentation } from '@/presentation/testing/presentation-test-har
 vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
   useGameWorkspace: () => ({
     viewData: {
-      session: { hasGame: true },
+      session: { hasGame: true, playerId: 'player_001' },
     },
     companyViewData: {
       companyName: 'Test Corp',
