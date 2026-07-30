@@ -144,25 +144,25 @@ docs/
 
 ## Main Menu
 
-☐ MM-001_Main_Menu.png
+☑ MM-001_Main_Menu.png
 
 ---
 
 ## New Game
 
-☐ MM-002_New_Game_Dialog.png
+☑ MM-002_New_Game_Dialog.png
 
 ---
 
 ## Load Game
 
-☐ MM-003_Load_Game.png
+☑ MM-003_Load_Game.png
 
 ---
 
 ## Settings
 
-☐ MM-004_Settings.png
+☑ MM-004_Settings.png
 
 ---
 
@@ -174,25 +174,25 @@ docs/
 
 ## Splash Screen
 
-☐ MM-006_Splash.png
+☑ MM-006_Splash.png
 
 ---
 
 ## Loading Screen
 
-☐ MM-007_Loading.png
+☑ MM-007_Loading.png
 
 ---
 
 # Sprint 2 — Dashboard
 
-☐ DB-001_Executive_Dashboard.png
+☑ DB-001_Executive_Dashboard.png
 
-☐ DB-002_KPI_Cards.png
+☑ DB-002_KPI_Cards.png
 
-☐ DB-003_Status_Panel.png
+☑ DB-003_Status_Panel.png
 
-☐ DB-004_Notifications.png
+☑ DB-004_Notifications.png
 
 ☐ DB-005_Finance_Widget.png
 
@@ -370,7 +370,7 @@ docs/
 
 ☐ CH-009_Energy.svg
 
-☐ CH-010_Charts.svg
+◐ CH-010_Charts.svg
 
 ---
 
