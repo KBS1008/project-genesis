@@ -1,75 +1,100 @@
 'use client';
 
-import { useState } from 'react';
-import packageInfo from '../../../../package.json';
-import { Button } from '@/presentation/primitives/Button';
-import { StatusBanner } from '@/presentation/primitives/StatusBanner';
+import { useCallback, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useNotifications } from '@/presentation/notifications/NotificationProvider';
+import { CreditsPanel } from './CreditsPanel';
 import { LoadGamePanel } from './LoadGamePanel';
+import { MainMenuHome } from './MainMenuHome';
+import { MenuLoadingScreen } from './MenuLoadingScreen';
 import { NewGamePanel } from './NewGamePanel';
+import { SettingsPanel } from './SettingsPanel';
+import { SplashScreen } from './SplashScreen';
+import { loadMenuSettings } from './menu-settings';
+import type { MenuPanelView } from './menu-flow';
+import { useMenuBootstrap } from './useMenuBootstrap';
 import './menu.css';
 
-type MenuView = 'home' | 'new-game' | 'load-game' | 'settings';
-
-/** Entry screen with new-game, load-game, and settings stub. */
+/** Main menu flow: splash → loading → home and sub-panels (MM-001–MM-007). */
 export function MainMenuScreen() {
-  const [view, setView] = useState<MenuView>('home');
+  const router = useRouter();
+  const { showNotification } = useNotifications();
+  const bootstrap = useMenuBootstrap();
+  const [panel, setPanel] = useState<MenuPanelView>('home');
+  const animationsEnabled = loadMenuSettings().menuAnimationsEnabled;
+
+  const handleContinue = useCallback(() => {
+    router.push('/game');
+  }, [router]);
+
+  const handleExit = useCallback(() => {
+    showNotification({
+      tone: 'info',
+      message: 'Sie können diesen Browser-Tab schließen, um Project Genesis zu beenden.',
+    });
+  }, [showNotification]);
+
+  const animationClass = animationsEnabled ? 'pg-main-menu-animated' : 'pg-main-menu-reduced-motion';
+
+  if (bootstrap.phase === 'splash') {
+    return (
+      <div className={`pg-main-menu ${animationClass}`}>
+        <SplashScreen />
+      </div>
+    );
+  }
+
+  if (bootstrap.phase === 'loading') {
+    return (
+      <div className={`pg-main-menu ${animationClass}`}>
+        <MenuLoadingScreen />
+      </div>
+    );
+  }
 
   return (
-    <div className="pg-main-menu">
+    <div className={`pg-main-menu ${animationClass}`}>
       <div className="pg-main-menu-card">
-        {view === 'home' ? (
-          <>
-            <div className="pg-main-menu-brand">
-              <h1>Project Genesis</h1>
-              <p>Deterministische Wirtschafts- und Industriesimulation</p>
-            </div>
-
-            <div className="pg-main-menu-actions">
-              <Button onClick={() => setView('new-game')}>Neues Spiel</Button>
-              <Button variant="secondary" onClick={() => setView('load-game')}>
-                Spiel laden
-              </Button>
-              <Button variant="secondary" onClick={() => setView('settings')}>
-                Einstellungen
-              </Button>
-            </div>
-
-            <div className="pg-main-menu-footer">
-              <span>Version {packageInfo.version}</span>
-              <span>M9 · Phase 4</span>
-            </div>
-          </>
+        {panel === 'home' ? (
+          <MainMenuHome
+            sessionStatus={bootstrap.sessionStatus}
+            errorMessage={bootstrap.errorMessage}
+            onNavigate={setPanel}
+            onContinue={handleContinue}
+            onExit={handleExit}
+          />
         ) : null}
 
-        {view === 'new-game' ? (
+        {panel === 'new-game' ? (
           <NewGamePanel
             onCancel={() => {
-              setView('home');
+              setPanel('home');
             }}
           />
         ) : null}
 
-        {view === 'load-game' ? (
+        {panel === 'load-game' ? (
           <LoadGamePanel
             onCancel={() => {
-              setView('home');
+              setPanel('home');
             }}
           />
         ) : null}
 
-        {view === 'settings' ? (
-          <div className="pg-main-menu-panel">
-            <h2>Einstellungen</h2>
-            <StatusBanner tone="info" message="Einstellungen werden in einer späteren Phase ergänzt." />
-            <Button
-              variant="secondary"
-              onClick={() => {
-                setView('home');
-              }}
-            >
-              Zurück
-            </Button>
-          </div>
+        {panel === 'settings' ? (
+          <SettingsPanel
+            onCancel={() => {
+              setPanel('home');
+            }}
+          />
+        ) : null}
+
+        {panel === 'credits' ? (
+          <CreditsPanel
+            onCancel={() => {
+              setPanel('home');
+            }}
+          />
         ) : null}
       </div>
     </div>

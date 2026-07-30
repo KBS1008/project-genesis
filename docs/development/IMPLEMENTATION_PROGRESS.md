@@ -43,7 +43,7 @@ Update this document whenever a meaningful implementation milestone is completed
 | M8 NPC Economy                   | ✅ Completed (Gate AUD-006, 2026-07-22) |
 | Phase 1 Core Domain              | ✅ Completed (Gate 2026-07-19) — see `PHASE1_CORE_DOMAIN_REPORT.md`                                                                                                   |
 
-**Tests:** 729 (run `pnpm test` for current count; `pnpm test:e2e` for API E2E flows)
+**Tests:** 748 (run `pnpm test` for current count; `pnpm test:e2e` for API E2E flows)
 
 ---
 
@@ -244,7 +244,7 @@ All **TD-M8-01 … TD-M8-06** resolved — see `docs/quality/M8_IMPLEMENTATION_R
 | Vehicles (content)              |       5 | `Vehicle.schema.md`, art library docs; DD-022 V1 waiver |
 | **Milestone average (gate)**    | **100** | Gate 3 verdict **M10 COMPLETE**              |
 
-### M11 – Visual Production & UX 🟡 (~35 %)
+### M11 – Visual Production & UX 🟡 (~50 %)
 
 | Deliverable                  |     % | Next step     |
 | ---------------------------- | ----: | ------------- |
@@ -253,11 +253,12 @@ All **TD-M8-01 … TD-M8-06** resolved — see `docs/quality/M8_IMPLEMENTATION_R
 | **Visual Asset Manager**     | **100** | `/dev/visual-assets` — see `VISUAL_ASSET_MANAGER_GUIDE.md` |
 | **SVG Generator**            | **100** | `/dev/svg-generator` — see `SVG_GENERATOR_GUIDE.md` |
 | **UI Foundation (Phase 1)**  | **100** | Design tokens, PG widgets, executive dashboard — see `UI_FOUNDATION_GUIDE.md` |
+| **Application Shell (Phase 2)** | **100** | PGSidebar, PGGlobalSearch, PGContextMenu, main menu MM-001–MM-007 — see `MAIN_MENU_IMPLEMENTATION_GUIDE.md` |
 | Mockup production (Sprint 1+) |    10 | Main menu mockups started |
 | Animations / effects / audio |     0 | Art docs only |
 | Localization / balancing     |     0 | Not started   |
 | Optimization pass            |     0 | Not started   |
-| **Milestone average**        | **~35** | UI foundation + visual pipeline tooling shipped |
+| **Milestone average**        | **~50** | UI foundation + shell + main menu shipped |
 
 ### M12 – Release ⚪ (0 %)
 

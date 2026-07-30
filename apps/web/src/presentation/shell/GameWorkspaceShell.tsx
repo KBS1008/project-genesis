@@ -4,8 +4,14 @@ import type { ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { PGStatusBar } from '@/presentation/components/layout';
-import { PrimaryNavigation } from '@/presentation/navigation/PrimaryNavigation';
-import { labelPrimaryScreen } from '@/presentation/navigation/PrimaryNavigation';
+import {
+  ContextMenuProvider,
+  GlobalSearchProvider,
+  PGSidebar,
+  useContextMenu,
+  useGlobalSearch,
+} from '@/presentation/components/shell';
+import { labelPrimaryScreen } from '@/presentation/navigation/label-primary-screen';
 import { Button } from '@/presentation/primitives/Button';
 import { LoadingState } from '@/presentation/primitives/LoadingState';
 import { useDialog } from '@/presentation/dialog/DialogProvider';
@@ -40,6 +46,7 @@ function WorkspaceHeader() {
   const router = useRouter();
   const { openConfirmDialog } = useDialog();
   const { showNotification } = useNotifications();
+  const { openSearch } = useGlobalSearch();
   const {
     navigation,
     viewData,
@@ -104,6 +111,9 @@ function WorkspaceHeader() {
           <span className="pg-workspace-pill">{simulation.speedLabel}</span>
           <NotificationIndicator />
           <div className="pg-workspace-toolbar">
+            <Button variant="secondary" onClick={openSearch} aria-label="Globale Suche öffnen">
+              Suche
+            </Button>
             <Button
               variant="secondary"
               disabled={!session.hasGame}
@@ -169,23 +179,56 @@ function WorkspaceStatusBar() {
   );
 }
 
-/** Game workspace layout with header, navigation, and session actions. */
-export function GameWorkspaceShell({ children }: { readonly children: ReactNode }) {
-  const { isLoading } = useGameWorkspace();
+function WorkspaceMain({ children }: { readonly children: ReactNode }) {
+  const { isLoading, navigation, clearEntitySelection } = useGameWorkspace();
+  const { openSearch } = useGlobalSearch();
+  const { openContextMenu } = useContextMenu();
 
   return (
-    <div className="pg-workspace">
-      <a className="pg-skip-link" href="#game-workspace-main">
-        Zum Inhalt springen
-      </a>
-      <WorkspaceHeader />
+    <div
+      className="pg-application-shell-main"
+      onContextMenu={(event) => {
+        openContextMenu(event, [
+          {
+            id: 'open-search',
+            label: 'Globale Suche',
+            onSelect: openSearch,
+          },
+          {
+            id: 'clear-selection',
+            label: 'Auswahl aufheben',
+            disabled: navigation.entitySelection.kind === 'none',
+            onSelect: clearEntitySelection,
+          },
+        ]);
+      }}
+    >
       <SimulationControlsBar />
-      <PrimaryNavigation />
       <EntitySelectionBanner />
       <main className="pg-workspace-screen" id="game-workspace-main">
         {isLoading ? <LoadingState label="Session wird geladen…" /> : children}
       </main>
-      <WorkspaceStatusBar />
     </div>
+  );
+}
+
+/** Game workspace layout with header, sidebar, and session actions. */
+export function GameWorkspaceShell({ children }: { readonly children: ReactNode }) {
+  return (
+    <ContextMenuProvider>
+      <GlobalSearchProvider>
+        <div className="pg-application-shell pg-workspace">
+          <a className="pg-skip-link" href="#game-workspace-main">
+            Zum Inhalt springen
+          </a>
+          <WorkspaceHeader />
+          <div className="pg-application-shell-body">
+            <PGSidebar />
+            <WorkspaceMain>{children}</WorkspaceMain>
+          </div>
+          <WorkspaceStatusBar />
+        </div>
+      </GlobalSearchProvider>
+    </ContextMenuProvider>
   );
 }

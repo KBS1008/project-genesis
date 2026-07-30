@@ -208,6 +208,10 @@ Status
 
 Approved
 
+Implementation
+
+Complete — React screens MM-001–MM-007 (`MAIN_MENU_IMPLEMENTATION_GUIDE.md`)
+
 Description
 
 Industrial skyline background.
@@ -1040,6 +1044,10 @@ Status
 
 Approved
 
+Implementation
+
+Complete — `SettingsPanel.tsx` (M11 Phase 2)
+
 _Auto-added by Visual Asset Manager._
 
 ### UI-MM-006
@@ -1052,6 +1060,10 @@ Status
 
 Approved
 
+Implementation
+
+Complete — `SplashScreen.tsx` (M11 Phase 2)
+
 _Auto-added by Visual Asset Manager._
 
 ### UI-MM-007
@@ -1063,6 +1075,10 @@ UI-MM-007
 Status
 
 Approved
+
+Implementation
+
+Complete — `MenuLoadingScreen.tsx` (M11 Phase 2)
 
 _Auto-added by Visual Asset Manager._
 
@@ -1123,5 +1139,93 @@ UI-CH-010
 Status
 
 In Production
+
+_Auto-added by Visual Asset Manager._
+
+### UI-MM-005
+
+ID
+
+UI-MM-005
+
+Status
+
+Approved
+
+Implementation
+
+Complete — `CreditsPanel.tsx` (M11 Phase 2)
+
+_Auto-added by Visual Asset Manager._
+
+### UI-DB-006
+
+ID
+
+UI-DB-006
+
+Status
+
+Approved
+
+_Auto-added by Visual Asset Manager._
+
+### UI-DB-007
+
+ID
+
+UI-DB-007
+
+Status
+
+Approved
+
+_Auto-added by Visual Asset Manager._
+
+### UI-DB-008
+
+ID
+
+UI-DB-008
+
+Status
+
+Approved
+
+_Auto-added by Visual Asset Manager._
+
+### UI-DB-009
+
+ID
+
+UI-DB-009
+
+Status
+
+Approved
+
+_Auto-added by Visual Asset Manager._
+
+### UI-DB-010
+
+ID
+
+UI-DB-010
+
+Status
+
+Approved
+
+_Auto-added by Visual Asset Manager._
+
+### UI-DB-005
+
+ID
+
+UI-DB-005
+
+Status
+
+Approved
 
 _Auto-added by Visual Asset Manager._

@@ -3,5 +3,6 @@
 @import '../presentation/components/layout/layout-components.css';
 @import '../presentation/components/dashboard/dashboard-components.css';
 @import '../presentation/shell/shell.css';
+@import '../presentation/components/shell/shell-components.css';
 @import '../presentation/navigation/navigation.css';
 @import './dashboard.css';

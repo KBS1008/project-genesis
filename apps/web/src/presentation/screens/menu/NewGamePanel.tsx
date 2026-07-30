@@ -8,12 +8,10 @@ import { StatusBanner } from '@/presentation/primitives/StatusBanner';
 import { useTransientFormState } from '@/presentation/state/useTransientFormState';
 import { translatePresentationError } from '@/presentation/notifications/translatePresentationError';
 
-const DEFAULT_COMPANY_NAME = 'Genesis Industries';
-
 /** Collects a company name and starts a new session. */
 export function NewGamePanel({ onCancel }: { readonly onCancel: () => void }) {
   const router = useRouter();
-  const form = useTransientFormState({ companyName: DEFAULT_COMPANY_NAME });
+  const form = useTransientFormState({ companyName: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -57,6 +55,7 @@ export function NewGamePanel({ onCancel }: { readonly onCancel: () => void }) {
           name="companyName"
           type="text"
           autoComplete="off"
+          placeholder="Unternehmensname eingeben"
           value={form.value.companyName}
           disabled={isSubmitting}
           onChange={(event) => {
