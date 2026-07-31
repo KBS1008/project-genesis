@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useFocusTrap } from '@/presentation/hooks/useFocusTrap';
 import type { GlobalSearchItem } from './global-search-types';
 
 type PGGlobalSearchProps = {
@@ -16,10 +17,13 @@ type PGGlobalSearchProps = {
 /** Command palette for screen navigation and entity lookup. */
 export function PGGlobalSearch({ items, filterItems, onClose, onSelect }: PGGlobalSearchProps) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const [query, setQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
 
   const results = useMemo(() => filterItems(items, query), [filterItems, items, query]);
+
+  useFocusTrap(panelRef, true);
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -72,6 +76,7 @@ export function PGGlobalSearch({ items, filterItems, onClose, onSelect }: PGGlob
       }}
     >
       <div
+        ref={panelRef}
         className="pg-global-search-panel"
         role="dialog"
         aria-modal="true"

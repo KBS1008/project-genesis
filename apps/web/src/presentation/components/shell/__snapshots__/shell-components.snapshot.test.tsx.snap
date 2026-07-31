@@ -1,0 +1,342 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`shell and menu snapshots > matches MainMenuHome snapshot 1`] = `
+<div>
+  <div
+    class="pg-shell"
+  >
+    <div
+      class="pg-main-menu-home pg-menu-animate-in"
+    >
+      <div
+        class="pg-main-menu-brand"
+      >
+        <h1>
+          Project Genesis
+        </h1>
+        <p>
+          Deterministische Wirtschafts- und Industriesimulation
+        </p>
+      </div>
+      <p
+        class="pg-main-menu-continue-hint"
+        role="status"
+      >
+        Fortsetzen als 
+        Nordindustrie AG
+      </p>
+      <div
+        class="pg-main-menu-actions"
+      >
+        <button
+          class="pg-button pg-button-primary"
+          type="button"
+        >
+          Neues Spiel
+        </button>
+        <button
+          class="pg-button pg-button-secondary"
+          type="button"
+        >
+          Fortsetzen
+        </button>
+        <button
+          class="pg-button pg-button-secondary"
+          type="button"
+        >
+          Spiel laden
+        </button>
+        <button
+          class="pg-button pg-button-secondary"
+          type="button"
+        >
+          Einstellungen
+        </button>
+        <button
+          class="pg-button pg-button-secondary"
+          type="button"
+        >
+          Credits
+        </button>
+        <button
+          class="pg-button pg-button-secondary"
+          type="button"
+        >
+          Beenden
+        </button>
+      </div>
+      <div
+        class="pg-main-menu-footer"
+      >
+        <span>
+          Version 
+          0.1.0
+        </span>
+        <span>
+          M11 · Application Shell
+        </span>
+      </div>
+    </div>
+    <div
+      aria-live="polite"
+      aria-relevant="additions"
+      class="pg-notification-host"
+    />
+  </div>
+</div>
+`;
+
+exports[`shell and menu snapshots > matches PGGlobalSearch snapshot 1`] = `
+<div>
+  <div
+    class="pg-shell"
+  >
+    <div
+      class="pg-global-search-backdrop"
+      role="presentation"
+    >
+      <div
+        aria-label="Globale Suche"
+        aria-modal="true"
+        class="pg-global-search-panel"
+        role="dialog"
+      >
+        <input
+          aria-controls="pg-global-search-results"
+          aria-label="Globale Suche"
+          class="pg-global-search-input"
+          placeholder="Bildschirme und Entitäten suchen…"
+          type="search"
+          value=""
+        />
+        <div
+          aria-label="Suchergebnisse"
+          class="pg-global-search-results"
+          id="pg-global-search-results"
+          role="listbox"
+        >
+          <button
+            aria-selected="true"
+            class="pg-global-search-result is-active"
+            role="option"
+            type="button"
+          >
+            <span>
+              Welt
+            </span>
+            <small>
+              Bildschirm
+               · 
+              Regionen, Karten und globale Übersicht.
+            </small>
+          </button>
+          <button
+            aria-selected="false"
+            class="pg-global-search-result"
+            role="option"
+            type="button"
+          >
+            <span>
+              Unternehmen
+            </span>
+            <small>
+              Bildschirm
+               · 
+              Unternehmens-Dashboard und KPIs.
+            </small>
+          </button>
+          <button
+            aria-selected="false"
+            class="pg-global-search-result"
+            role="option"
+            type="button"
+          >
+            <span>
+              Märkte
+            </span>
+            <small>
+              Bildschirm
+               · 
+              Preise, Angebot und Nachfrage.
+            </small>
+          </button>
+          <button
+            aria-selected="false"
+            class="pg-global-search-result"
+            role="option"
+            type="button"
+          >
+            <span>
+              Produktion
+            </span>
+            <small>
+              Bildschirm
+               · 
+              Laufende Jobs und Rezepte.
+            </small>
+          </button>
+          <button
+            aria-selected="false"
+            class="pg-global-search-result"
+            role="option"
+            type="button"
+          >
+            <span>
+              Gebäude
+            </span>
+            <small>
+              Bildschirm
+               · 
+              Standorte, Bau und Kapazität.
+            </small>
+          </button>
+          <button
+            aria-selected="false"
+            class="pg-global-search-result"
+            role="option"
+            type="button"
+          >
+            <span>
+              Forschung
+            </span>
+            <small>
+              Bildschirm
+               · 
+              Technologien und Fortschritt.
+            </small>
+          </button>
+          <button
+            aria-selected="false"
+            class="pg-global-search-result"
+            role="option"
+            type="button"
+          >
+            <span>
+              Transport
+            </span>
+            <small>
+              Bildschirm
+               · 
+              Routen und Lieferketten.
+            </small>
+          </button>
+          <button
+            aria-selected="false"
+            class="pg-global-search-result"
+            role="option"
+            type="button"
+          >
+            <span>
+              Finanzen
+            </span>
+            <small>
+              Bildschirm
+               · 
+              Cashflow, Steuern und Verträge.
+            </small>
+          </button>
+          <button
+            aria-selected="false"
+            class="pg-global-search-result"
+            role="option"
+            type="button"
+          >
+            <span>
+              Berichte
+            </span>
+            <small>
+              Bildschirm
+               · 
+              Historie, Trends und Auswertungen.
+            </small>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div
+      aria-live="polite"
+      aria-relevant="additions"
+      class="pg-notification-host"
+    />
+  </div>
+</div>
+`;
+
+exports[`shell and menu snapshots > matches PGSidebar snapshot 1`] = `
+<div>
+  <nav
+    aria-label="Hauptnavigation"
+    class="pg-sidebar"
+  >
+    <p
+      class="pg-sidebar-title"
+    >
+      Navigation
+    </p>
+    <button
+      class="pg-sidebar-link"
+      title="Regionen, Karten und globale Übersicht."
+      type="button"
+    >
+      Welt
+    </button>
+    <button
+      aria-current="page"
+      class="pg-sidebar-link is-active"
+      title="Unternehmens-Dashboard und KPIs."
+      type="button"
+    >
+      Unternehmen
+    </button>
+    <button
+      class="pg-sidebar-link"
+      title="Preise, Angebot und Nachfrage."
+      type="button"
+    >
+      Märkte
+    </button>
+    <button
+      class="pg-sidebar-link"
+      title="Laufende Jobs und Rezepte."
+      type="button"
+    >
+      Produktion
+    </button>
+    <button
+      class="pg-sidebar-link"
+      title="Standorte, Bau und Kapazität."
+      type="button"
+    >
+      Gebäude
+    </button>
+    <button
+      class="pg-sidebar-link"
+      title="Technologien und Fortschritt."
+      type="button"
+    >
+      Forschung
+    </button>
+    <button
+      class="pg-sidebar-link"
+      title="Routen und Lieferketten."
+      type="button"
+    >
+      Transport
+    </button>
+    <button
+      class="pg-sidebar-link"
+      title="Cashflow, Steuern und Verträge."
+      type="button"
+    >
+      Finanzen
+    </button>
+    <button
+      class="pg-sidebar-link"
+      title="Historie, Trends und Auswertungen."
+      type="button"
+    >
+      Berichte
+    </button>
+  </nav>
+</div>
+`;

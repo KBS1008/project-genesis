@@ -100,6 +100,29 @@ describe('shell components', () => {
     expect(onSelect).toHaveBeenCalledWith(expect.objectContaining({ id: 'screen:finance' }));
   });
 
+  it('PGGlobalSearch traps focus within the dialog', async () => {
+    const user = userEvent.setup();
+    const items = buildGlobalSearchIndex(EMPTY_COMPANY_DASHBOARD_VIEW_DATA, []);
+
+    renderPresentation(
+      <PGGlobalSearch
+        items={items}
+        filterItems={(allItems) => allItems}
+        onClose={vi.fn()}
+        onSelect={vi.fn()}
+      />,
+    );
+
+    const searchbox = screen.getByRole('searchbox');
+    const lastOption = screen.getAllByRole('option').at(-1)!;
+
+    await user.click(lastOption);
+    expect(document.activeElement).toBe(lastOption);
+
+    await user.tab();
+    expect(document.activeElement).toBe(searchbox);
+  });
+
   it('PGContextMenu invokes item handlers', async () => {
     const user = userEvent.setup();
     const onSelect = vi.fn();

@@ -99,8 +99,8 @@
   --focus-ring: 2px solid var(--accent);
   --focus-ring-offset: 2px;
 
-  /* Layout */
-  --sidebar-width: 15.5rem;
+  /* Layout — sidebar width per DD-044 (260–300px) */
+  --sidebar-width: 16.25rem;
   --detail-width: 22rem;
   --inspector-width: 20rem;
   --status-bar-height: 2.5rem;

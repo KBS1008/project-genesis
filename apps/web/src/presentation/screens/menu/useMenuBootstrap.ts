@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { fetchSessionStatus, type SessionStatusDto } from '@/presentation/adapters/api/query-client';
 import { translatePresentationError } from '@/presentation/notifications/translatePresentationError';
 import {
@@ -48,7 +48,21 @@ export function useMenuBootstrap(): MenuBootstrapState {
     }
 
     let active = true;
+    let loadingTimer: ReturnType<typeof window.setTimeout> | null = null;
     const startedAt = Date.now();
+
+    const scheduleHome = (nextState: MenuBootstrapState) => {
+      const elapsed = Date.now() - startedAt;
+      const remaining = Math.max(MENU_LOADING_MIN_DURATION_MS - elapsed, 0);
+
+      loadingTimer = window.setTimeout(() => {
+        if (!active) {
+          return;
+        }
+
+        setState(nextState);
+      }, remaining);
+    };
 
     void fetchSessionStatus()
       .then((sessionStatus) => {
@@ -56,44 +70,29 @@ export function useMenuBootstrap(): MenuBootstrapState {
           return;
         }
 
-        const elapsed = Date.now() - startedAt;
-        const remaining = Math.max(MENU_LOADING_MIN_DURATION_MS - elapsed, 0);
-
-        window.setTimeout(() => {
-          if (!active) {
-            return;
-          }
-
-          setState({
-            phase: 'home',
-            sessionStatus,
-            errorMessage: null,
-          });
-        }, remaining);
+        scheduleHome({
+          phase: 'home',
+          sessionStatus,
+          errorMessage: null,
+        });
       })
       .catch((error: unknown) => {
         if (!active) {
           return;
         }
 
-        const elapsed = Date.now() - startedAt;
-        const remaining = Math.max(MENU_LOADING_MIN_DURATION_MS - elapsed, 0);
-
-        window.setTimeout(() => {
-          if (!active) {
-            return;
-          }
-
-          setState({
-            phase: 'home',
-            sessionStatus: null,
-            errorMessage: translatePresentationError(error),
-          });
-        }, remaining);
+        scheduleHome({
+          phase: 'home',
+          sessionStatus: null,
+          errorMessage: translatePresentationError(error),
+        });
       });
 
     return () => {
       active = false;
+      if (loadingTimer !== null) {
+        window.clearTimeout(loadingTimer);
+      }
     };
   }, [state.phase]);
 
