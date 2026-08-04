@@ -191,6 +191,94 @@
   margin-top: var(--space-md);
 }
 
+.pg-world-connection-active {
+  stroke: var(--accent);
+}
+
+.pg-world-resource-heat {
+  fill: var(--success);
+  pointer-events: none;
+}
+
+.pg-world-building-marker {
+  fill: var(--accent);
+  stroke: var(--bg-elevated);
+  stroke-width: 1.5;
+  cursor: pointer;
+}
+
+.pg-world-presence-badge {
+  fill: var(--accent);
+}
+
+.pg-world-presence-label {
+  fill: var(--color-on-accent, #fff);
+  font-size: 9px;
+  font-weight: 700;
+  pointer-events: none;
+}
+
+.pg-world-layer-group-label {
+  margin: var(--space-sm) 0 var(--space-xs);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.pg-world-legend {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-sm);
+  background: var(--bg);
+  min-width: 10rem;
+}
+
+.pg-world-legend-title {
+  margin: 0 0 var(--space-xs);
+  font-size: var(--text-caption);
+  color: var(--muted);
+}
+
+.pg-world-legend-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: var(--text-caption);
+}
+
+.pg-world-legend-list li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.pg-world-legend-swatch {
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.pg-world-legend-swatch-resources {
+  background: color-mix(in srgb, var(--success) 55%, transparent);
+}
+
+.pg-world-legend-swatch-buildings {
+  background: var(--accent);
+}
+
+.pg-world-legend-swatch-transport {
+  background: color-mix(in srgb, var(--accent) 65%, var(--border));
+}
+
+.pg-world-legend-swatch-presence {
+  background: var(--accent);
+}
+
 @media (max-width: 56.25rem) {
   .pg-world-layout {
     grid-template-columns: 1fr;

@@ -2,7 +2,7 @@
 
 import type { WorldLayerViewData } from '@/presentation/adapters/view-data/world-view-data';
 
-/** Toggle panel for framework world map layers. */
+/** Toggle panel for framework and operations world map layers. */
 export function PGWorldLayerManager({
   layers,
   onToggleLayer,
@@ -10,11 +10,38 @@ export function PGWorldLayerManager({
   readonly layers: readonly WorldLayerViewData[];
   readonly onToggleLayer: (layerId: WorldLayerViewData['id']) => void;
 }) {
+  const frameworkLayers = layers.filter((layer) => layer.group === 'framework');
+  const operationsLayers = layers.filter((layer) => layer.group === 'operations');
+
   return (
     <aside className="pg-world-layer-panel" aria-label="Ebenen">
       <h3 className="pg-world-layer-title">Ebenen</h3>
+
+      <p className="pg-world-layer-group-label">Kartenbasis</p>
       <ul className="pg-world-layer-list">
-        {layers.map((layer) => (
+        {frameworkLayers.map((layer) => (
+          <li key={layer.id} className="pg-world-layer-item">
+            <label>
+              <input
+                type="checkbox"
+                checked={layer.enabled}
+                onChange={() => {
+                  onToggleLayer(layer.id);
+                }}
+              />
+              <span>
+                <strong>{layer.label}</strong>
+                <br />
+                {layer.description}
+              </span>
+            </label>
+          </li>
+        ))}
+      </ul>
+
+      <p className="pg-world-layer-group-label">Betrieb</p>
+      <ul className="pg-world-layer-list">
+        {operationsLayers.map((layer) => (
           <li key={layer.id} className="pg-world-layer-item">
             <label>
               <input

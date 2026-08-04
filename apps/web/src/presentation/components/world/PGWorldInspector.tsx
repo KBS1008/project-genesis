@@ -3,7 +3,7 @@
 import type { WorldInspectorViewData } from '@/presentation/adapters/view-data/world-view-data';
 import { PGInspectorPanel } from '@/presentation/components/layout';
 
-/** Region inspector for the world framework (overview sections only, Phase 4A). */
+/** Region inspector for the world map (overview + operations sections, Phase 4A/4B). */
 export function PGWorldInspector({
   inspector,
   onClose,

@@ -1,21 +1,42 @@
 'use client';
 
 import { useCallback } from 'react';
+import {
+  mapWorldOverlayViewData,
+  mapWorldRegionInspectorViewData,
+  mapWorldRegionOperationsViewData,
+} from '@/presentation/adapters/mappers/world-overlay-mappers';
+import { mapWorldMapViewData } from '@/presentation/adapters/mappers/world-view-mappers';
 import { mapRegionDetailViewData } from '@/presentation/adapters/mappers/workspace-view-mappers';
-import { mapWorldInspectorViewData, mapWorldMapViewData } from '@/presentation/adapters/mappers/world-view-mappers';
-import { fetchRegionDetails } from '@/presentation/adapters/api/query-client';
+import {
+  fetchBuildingList,
+  fetchProductionJobs,
+  fetchRegionDetails,
+  fetchTransportOrders,
+} from '@/presentation/adapters/api/query-client';
 import { fetchWorldMap } from '@/presentation/adapters/api/world-client';
+import { EMPTY_WORLD_OVERLAY } from '@/presentation/adapters/view-data/world-view-data';
 import { PGWorldWorkspace } from '@/presentation/components/world';
+import { buildBuildingNavigationTarget } from '@/presentation/navigation/entity-navigation';
 import { useScreenQuery } from '@/presentation/hooks/useScreenQuery';
 import { ScreenQueryFrame } from '@/presentation/screens/shared/ScreenQueryFrame';
 import { EmptyState } from '@/presentation/primitives/EmptyState';
 import { useGameWorkspace } from '@/presentation/state/GameWorkspaceProvider';
 
-/** World screen with interactive map framework (Phase 4A). */
+/** World screen with interactive map framework and operations overlays (Phase 4A/4B). */
 export function WorldScreen() {
-  const { viewData, navigation, selectEntity, clearEntitySelection, regions } = useGameWorkspace();
+  const {
+    viewData,
+    navigation,
+    selectEntity,
+    clearEntitySelection,
+    navigateToTarget,
+    regions,
+    companyViewData,
+  } = useGameWorkspace();
   const selectedRegionId =
     navigation.entitySelection.kind === 'region' ? navigation.entitySelection.id : null;
+  const labels = companyViewData.labels;
 
   const mapQuery = useScreenQuery(
     'world-map',
@@ -23,15 +44,56 @@ export function WorldScreen() {
     viewData.session.hasGame,
   );
 
+  const overlayQuery = useScreenQuery(
+    `world-overlay:${mapQuery.data?.mapId ?? 'none'}`,
+    async () => {
+      if (mapQuery.data === null) {
+        return EMPTY_WORLD_OVERLAY;
+      }
+
+      const regionIds = mapQuery.data.regions.map((region) => region.id);
+      const [buildings, transportOrders, regionDetails] = await Promise.all([
+        fetchBuildingList(),
+        fetchTransportOrders(),
+        Promise.all(regionIds.map((regionId) => fetchRegionDetails(regionId))),
+      ]);
+
+      return mapWorldOverlayViewData(
+        mapQuery.data.regions,
+        buildings,
+        transportOrders,
+        regionDetails,
+        labels.building,
+        labels.recipe,
+      );
+    },
+    viewData.session.hasGame && mapQuery.data !== null,
+  );
+
   const loadRegionInspector = useCallback(async () => {
     if (selectedRegionId === null) {
       return null;
     }
 
-    return mapWorldInspectorViewData(
-      mapRegionDetailViewData(await fetchRegionDetails(selectedRegionId)),
+    const [detailDto, buildings, transportOrders, productionJobs] = await Promise.all([
+      fetchRegionDetails(selectedRegionId),
+      fetchBuildingList(),
+      fetchTransportOrders(),
+      fetchProductionJobs(),
+    ]);
+
+    const detail = mapRegionDetailViewData(detailDto);
+    const operations = mapWorldRegionOperationsViewData(
+      selectedRegionId,
+      buildings,
+      transportOrders,
+      productionJobs,
+      labels.building,
+      labels.recipe,
     );
-  }, [selectedRegionId]);
+
+    return mapWorldRegionInspectorViewData(detail, operations);
+  }, [labels.building, labels.recipe, selectedRegionId]);
 
   const inspectorQuery = useScreenQuery(
     `world-inspector:${selectedRegionId ?? 'none'}`,
@@ -54,8 +116,8 @@ export function WorldScreen() {
   return (
     <ScreenQueryFrame
       hasGame={viewData.session.hasGame}
-      isLoading={mapQuery.isLoading}
-      errorMessage={mapQuery.errorMessage}
+      isLoading={mapQuery.isLoading || overlayQuery.isLoading}
+      errorMessage={mapQuery.errorMessage ?? overlayQuery.errorMessage}
       loadingLabel="Weltkarte wird geladen…"
     >
       {mapQuery.data === null ? (
@@ -64,10 +126,14 @@ export function WorldScreen() {
         <PGWorldWorkspace
           world={viewData.world}
           map={mapQuery.data}
+          overlays={overlayQuery.data ?? EMPTY_WORLD_OVERLAY}
           selectedRegionId={selectedRegionId}
           inspector={inspectorQuery.data}
           onSelectRegion={(regionId) => {
             selectEntity({ kind: 'region', id: regionId });
+          }}
+          onSelectBuilding={(buildingId) => {
+            navigateToTarget(buildBuildingNavigationTarget(buildingId));
           }}
           onClearSelection={clearEntitySelection}
         />
