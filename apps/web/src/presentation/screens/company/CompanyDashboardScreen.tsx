@@ -20,7 +20,7 @@ import { CompanyOperationsPanels } from '@/presentation/screens/company/CompanyO
 import { CompanyOperationsCharts } from '@/presentation/screens/company/CompanyOperationsCharts';
 import { CompanyOperationsInspector } from '@/presentation/screens/company/CompanyOperationsInspector';
 import { PGOperationsSidebar } from '@/presentation/screens/company/PGOperationsSidebar';
-import { TutorialPanel } from '@/components/TutorialPanel';
+import { PGTutorialPanel } from '@/presentation/components/dashboard/PGTutorialPanel';
 
 /** Company dashboard screen consuming workspace view-data. */
 export function CompanyDashboardScreen({
@@ -227,7 +227,7 @@ export function CompanyDashboardScreen({
             />
           ) : null}
 
-          {hasGame ? <TutorialPanel tutorial={companyViewData.tutorial} /> : null}
+          {hasGame ? <PGTutorialPanel tutorial={companyViewData.tutorial} /> : null}
 
           <CompanyOperationsCharts companyViewData={companyViewData} hasGame={hasGame} />
 

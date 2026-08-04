@@ -67,8 +67,6 @@ describe('adapter dependency rules', () => {
 
     legacyImports.sort();
 
-    expect(legacyImports).toEqual([
-      'apps/web/src/presentation/screens/company/CompanyDashboardScreen.tsx',
-    ]);
+    expect(legacyImports).toEqual([]);
   });
 });

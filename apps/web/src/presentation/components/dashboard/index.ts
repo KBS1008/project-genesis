@@ -14,4 +14,5 @@ export { PGEmployeesWidget } from './PGEmployeesWidget';
 export { PGEconomyWidget } from './PGEconomyWidget';
 export { PGMarketWidget } from './PGMarketWidget';
 export { PGInventoryWidget, type PGInventoryWarehouseBlock } from './PGInventoryWidget';
+export { PGTutorialPanel } from './PGTutorialPanel';
 export * from './charts';

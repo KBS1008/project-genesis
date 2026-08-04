@@ -1,4 +1,4 @@
-/** Outline SVG icons for the dashboard shell (ICON_GUIDELINES: flat, geometric, consistent stroke). */
+/** Outline SVG icons for dashboard surfaces (ICON_GUIDELINES: flat, geometric, consistent stroke). */
 
 export type DashboardIconName =
   | 'cash'

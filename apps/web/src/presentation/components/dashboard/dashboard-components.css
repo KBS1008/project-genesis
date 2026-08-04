@@ -451,3 +451,112 @@
   display: grid;
   gap: var(--space-lg);
 }
+
+.pg-tutorial-panel {
+  margin: var(--space-md) 0;
+  padding: var(--space-md) 1.1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-elevated);
+  box-shadow: var(--shadow-soft);
+}
+
+.pg-tutorial-panel-complete {
+  border-color: var(--border-success-subtle);
+}
+
+.pg-tutorial-header {
+  display: flex;
+  gap: 0.85rem;
+  align-items: flex-start;
+  margin-bottom: 0.85rem;
+}
+
+.pg-tutorial-header h2 {
+  margin: 0 0 0.25rem;
+  font-size: 1.05rem;
+}
+
+.pg-tutorial-header p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.pg-tutorial-complete-icon {
+  width: 1.75rem;
+  height: 1.75rem;
+  color: var(--success);
+  flex-shrink: 0;
+}
+
+.pg-tutorial-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.pg-tutorial-step {
+  display: grid;
+  grid-template-columns: 1.75rem 1fr;
+  gap: 0.65rem;
+  align-items: start;
+  padding: 0.65rem 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+}
+
+.pg-tutorial-step.is-active {
+  border-color: color-mix(in srgb, var(--color-info) 35%, var(--border));
+  background: var(--surface-info-subtle);
+}
+
+.pg-tutorial-step.is-complete {
+  opacity: 0.78;
+}
+
+.pg-tutorial-step-marker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  margin-top: 0.1rem;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border);
+  background: var(--color-panel);
+}
+
+.pg-tutorial-step.is-complete .pg-tutorial-step-marker {
+  border-color: var(--border-success-subtle);
+  background: var(--surface-success-subtle);
+  color: var(--success);
+}
+
+.pg-tutorial-step.is-active .pg-tutorial-step-marker {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+.pg-tutorial-step-icon {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
+.pg-tutorial-step-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.pg-tutorial-step-body strong {
+  font-size: 0.95rem;
+}
+
+.pg-tutorial-step-body span {
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}

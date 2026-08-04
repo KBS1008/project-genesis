@@ -216,7 +216,7 @@ All **TD-M8-01 … TD-M8-06** resolved — see `docs/quality/M8_IMPLEMENTATION_R
 | Accessibility baseline              |      80 | Focus management, ARIA landmarks, reduced motion, keyboard navigation    |
 | **Milestone average (gate)**        | **100** | Gate 3 verdict **M9 COMPLETE**                                           |
 
-**Post-Phase 4 deferred (non-blocking):** `CompanyDashboardScreen` section split, legacy chart migration, optional per-domain queries for company tables, removal of unused `DashboardDetailPanel.tsx`.
+**Post-Phase 4 deferred (non-blocking):** `CompanyDashboardScreen` section split (optional orchestrator shrink).
 
 ### M10 – Content Expansion ✅ (100 % · Gate 0 ✅ · Gate 1 ✅ · Gate 2 ✅ · Gate 3 ✅)
 
