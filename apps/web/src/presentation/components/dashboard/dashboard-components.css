@@ -323,6 +323,21 @@
   border-color: var(--border-warning-subtle);
 }
 
+.pg-meta-pill-live {
+  color: var(--success);
+  border-color: var(--border-success-subtle);
+}
+
+.pg-meta-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.55rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  font-size: var(--text-caption);
+  font-weight: 600;
+}
+
 .pg-operations-panels {
   display: grid;
   gap: var(--space-lg);

@@ -1,7 +1,7 @@
 # M11 Phase 3 — CompanyDashboardScreen Audit
 
 **Date:** 2026-08-04  
-**File:** `apps/web/src/presentation/screens/company/CompanyDashboardScreen.tsx` (~1,072 lines)  
+**File:** `apps/web/src/presentation/screens/company/CompanyDashboardScreen.tsx` (~260 lines)  
 **Purpose:** Migration map for Phase 3 consolidation (Option A — incremental)
 
 ---
@@ -10,13 +10,13 @@
 
 | ID | Section | Lines (approx) | Legacy | Target (PG / presentation) | Priority |
 |----|---------|----------------|--------|----------------------------|----------|
-| S1 | `KpiStrip` | 31–130 | `kpi-strip`, `dashboard.css` | `OperationsKpiStrip` + `PGKpiCard` | **P2** ✅ this sprint |
-| S2 | `OverviewStrip` | 132–171 | `overview-strip` | `OperationsOverviewStrip` + `PGKpiCard` grid | **P2** ✅ this sprint |
-| S3 | `LogisticsBanner` | 173–193 | `logistics-banner` | `OperationsLogisticsBanner` + `StatusBanner` | **P2** ✅ this sprint |
-| S4 | Busy loading overlay | 432–439 | `loading-overlay`, `dashboard.css` | `PGLoadingOverlay` + `LoadingState` | **P1** ✅ this sprint |
-| S5 | Initial load skeleton | 590–602 | `card-loading`, `skeleton-block` | `PGWidgetSurface` / `PGSkeleton` | P1 partial (tables remain) |
-| S6 | Header + theme toggle | 450–525 | `header`, `theme-toggle` | Remove when embedded; shell `useTheme()` | **P1** ✅ this sprint |
-| S7 | `SidebarActions` | 240–311 | `toolbar-group`, `HintButton` | Future: `PGSidebarActions` panel | P5 |
+| S1 | `KpiStrip` | 31–130 | `kpi-strip`, `dashboard.css` | `OperationsKpiStrip` + `PGKpiCard` | **P2** ✅ |
+| S2 | `OverviewStrip` | 132–171 | `overview-strip` | `OperationsOverviewStrip` + `PGKpiCard` grid | **P2** ✅ |
+| S3 | `LogisticsBanner` | 173–193 | `logistics-banner` | `OperationsLogisticsBanner` + `StatusBanner` | **P2** ✅ |
+| S4 | Busy loading overlay | 432–439 | `loading-overlay`, `dashboard.css` | `PGLoadingOverlay` + `LoadingState` | **P1** ✅ |
+| S5 | Initial load skeleton | 590–602 | `card-loading`, `skeleton-block` | `PGWidgetSurface` / `PGSkeleton` | **P1** ✅ |
+| S6 | Header + theme toggle | 450–525 | `header`, `theme-toggle` | `pg-operations-header` + `Button` | **P1** ✅ |
+| S7 | `SidebarActions` | 240–311 | `toolbar-group`, `HintButton` | `PGOperationsSidebar` | **S7** ✅ |
 | S8 | Charts (7 components) | 565–586 | `@/components/*Chart*` | `presentation/charts/PG*Chart*` | **P4** ✅ |
 | S9 | `TutorialPanel` | 563 | `@/components/TutorialPanel` | Defer or move to `presentation/` | P6 |
 | S10 | Buildings table | 605–657 | `DataTable`, `card` | `PGBuildingsWidget` | **P3** ✅ |
@@ -28,7 +28,7 @@
 | S16 | Transport table | 860–906 | `DataTable` | `PGSupplyChainWidget` (detailed) | **P3** ✅ |
 | S17 | Finance transactions | 908–947 | `DataTable` | `PGFinanceWidget` (ledger mode) | **P3** ✅ |
 | S18 | Inventory + warehouse | 949–1053 | `DataTable` | `PGInventoryWidget` | **P3** ✅ |
-| S19 | `CompanyDetailPanel` | 1058–1065 | side panel | `PGInspectorPanel` alignment | P3+ |
+| S19 | `CompanyDetailPanel` | 1058–1065 | side panel | `CompanyOperationsInspector` + `PGInspectorPanel` | **S19** ✅ |
 | S20 | `ConstructionStatus` | 221–237 | `progress-bar` | `BuildingConstructionStatus` | **P3** ✅ |
 
 ---
@@ -37,10 +37,10 @@
 
 | Path | Notes |
 |------|-------|
-| `apps/web/src/app/dashboard.css` | Loaded via `globals.css` |
-| `apps/web/src/components/DataTable.tsx` | Used throughout S10–S18 |
-| `apps/web/src/components/TickHistoryCharts.tsx` etc. | S8 — **removed**; replaced by `presentation/components/dashboard/charts/` |
-| `apps/web/src/components/icons/DashboardIcons.tsx` | S1 legacy icons |
+| `apps/web/src/app/dashboard.css` | **Removed** — replaced by `legacy-dashboard.css` + `operations-dashboard-layout.css` |
+| `apps/web/src/components/DataTable.tsx` | MarketScreen only (S13 inspector uses PGMarketWidget) |
+| `apps/web/src/components/TickHistoryCharts.tsx` etc. | **Removed** |
+| `apps/web/src/components/icons/DashboardIcons.tsx` | TutorialPanel (S9) |
 
 ---
 
@@ -48,17 +48,15 @@
 
 | Issue | Location | Fix phase |
 |-------|----------|-----------|
-| Hardcoded `5 %` tax fallback | L706 | P3 (S12) |
-| Inline `rgba` energy pill | L483, L519 | P1 (token class) |
-| `aria-hidden` on busy overlay | L433 | P1 (`PGLoadingOverlay`) |
-| Duplicate theme controls | L467–474, L508–515 | P1 (remove when `hideHeader`) |
+| Hardcoded `5 %` tax fallback | economy mapper | **Fixed** (P3) |
+| Inline `rgba` energy pill | header pills | **Fixed** (P1 token class) |
+| `aria-hidden` on busy overlay | loading | **Fixed** (`PGLoadingOverlay`) |
+| Duplicate theme controls | embedded header | **Fixed** (P1) |
 
 ---
 
-## This sprint scope (P1 + P2)
+## Remaining for Gate 3
 
-- ✅ S1–S4, S6 migrated to PG components
-- Audit document created
-- Tests for mappers + operations strips + loading overlay
-
-**Not in this sprint:** charts (S8), tables (S10–S18), tutorial (S9), World Module.
+- S9 TutorialPanel → `presentation/` (optional)
+- MarketScreen `MarketPricesTable` → PG widget
+- Gate 3 review document

@@ -1,0 +1,276 @@
+/**
+ * Residual legacy styles for TutorialPanel and MarketPricesTable (DataTable).
+ * Operations dashboard layout lives in operations-dashboard-layout.css.
+ */
+
+.tutorial-panel {
+  margin: var(--space-md) 0;
+  padding: var(--space-md) 1.1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-elevated);
+  box-shadow: var(--shadow-soft);
+}
+
+.tutorial-panel-complete {
+  border-color: var(--border-success-subtle);
+}
+
+.tutorial-header {
+  display: flex;
+  gap: 0.85rem;
+  align-items: flex-start;
+  margin-bottom: 0.85rem;
+}
+
+.tutorial-header h2 {
+  margin: 0 0 0.25rem;
+  font-size: 1.05rem;
+}
+
+.tutorial-header p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.tutorial-complete-icon {
+  width: 1.75rem;
+  height: 1.75rem;
+  color: var(--success);
+  flex-shrink: 0;
+}
+
+.tutorial-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.tutorial-step {
+  display: grid;
+  grid-template-columns: 1.75rem 1fr;
+  gap: 0.65rem;
+  align-items: start;
+  padding: 0.65rem 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+}
+
+.tutorial-step.is-active {
+  border-color: color-mix(in srgb, var(--color-info) 35%, var(--border));
+  background: var(--surface-info-subtle);
+}
+
+.tutorial-step.is-complete {
+  opacity: 0.78;
+}
+
+.tutorial-step-marker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  margin-top: 0.1rem;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border);
+  background: var(--color-panel);
+}
+
+.tutorial-step.is-complete .tutorial-step-marker {
+  border-color: var(--border-success-subtle);
+  background: var(--surface-success-subtle);
+  color: var(--success);
+}
+
+.tutorial-step.is-active .tutorial-step-marker {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+.tutorial-step-icon {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
+.tutorial-step-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.tutorial-step-body strong {
+  font-size: 0.95rem;
+}
+
+.tutorial-step-body span {
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.dashboard-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.market-trend {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.market-trend-up {
+  color: var(--success);
+}
+
+.market-trend-down {
+  color: var(--danger);
+}
+
+.market-trend-stable {
+  color: var(--muted);
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.table-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.table-search {
+  flex: 1;
+}
+
+.table-search-input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-elevated);
+  color: var(--text);
+  font: inherit;
+}
+
+.table-search-input:focus {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.table-result-count {
+  color: var(--muted);
+  font-size: var(--text-caption);
+  white-space: nowrap;
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+.table-sort-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.table-sort-button.numeric {
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.table-sort-indicator {
+  color: var(--muted);
+  font-size: 0.65rem;
+  line-height: 1;
+}
+
+.table-sticky thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--bg-elevated);
+  box-shadow: 0 1px 0 var(--border);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 0.55rem 0.5rem;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  font-size: var(--text-body);
+}
+
+th.numeric,
+td.numeric {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+th {
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+tbody tr.table-row-selectable {
+  cursor: pointer;
+}
+
+tbody tr.table-row-selected {
+  background: var(--surface-selection);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.empty-state {
+  margin: 0.5rem 0 0;
+  padding: 0.85rem;
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--border);
+  background: var(--color-bg);
+  color: var(--muted);
+  font-size: var(--text-small);
+  line-height: 1.5;
+}
+
+.empty-state strong {
+  display: block;
+  color: var(--text);
+  margin-bottom: 0.35rem;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

@@ -95,6 +95,42 @@
   padding: var(--space-xs) 0;
 }
 
+.pg-inspector-section {
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--border);
+}
+
+.pg-inspector-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.pg-inspector-section-title {
+  margin: 0;
+  font-size: var(--text-small);
+  font-weight: 600;
+}
+
+.pg-inspector-footer {
+  margin-top: var(--space-md);
+}
+
+.pg-inspector-related .kv-value-success {
+  color: var(--success);
+}
+
+.pg-inspector-related .kv-value-warning {
+  color: var(--warning);
+}
+
+.pg-inspector-related .kv-value-error {
+  color: var(--danger);
+}
+
 .pg-dashboard-grid {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));

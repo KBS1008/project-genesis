@@ -69,7 +69,6 @@ describe('adapter dependency rules', () => {
 
     expect(legacyImports).toEqual([
       'apps/web/src/presentation/screens/company/CompanyDashboardScreen.tsx',
-      'apps/web/src/presentation/screens/company/CompanyDetailPanel.tsx',
       'apps/web/src/presentation/screens/market/MarketScreen.tsx',
     ]);
   });

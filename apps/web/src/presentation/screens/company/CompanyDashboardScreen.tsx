@@ -1,125 +1,26 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { callApi } from '@/presentation/adapters/api/client';
 import {
   buildOperationsKpiCards,
   buildOperationsOverviewCards,
 } from '@/presentation/adapters/mappers/company-operations-view-mappers';
-import type { SidebarHintsViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
 import { PGLoadingOverlay } from '@/presentation/components/foundation/PGLoadingOverlay';
+import { Button } from '@/presentation/primitives/Button';
 import { useGameWorkspace } from '@/presentation/state/GameWorkspaceProvider';
 import { useTheme } from '@/presentation/theme';
 import {
-  CompanyDetailPanel,
   normalizeDetailSelection,
   type DetailSelection,
-} from '@/presentation/screens/company/CompanyDetailPanel';
+} from '@/presentation/screens/company/company-detail-selection';
 import { OperationsKpiStrip } from '@/presentation/screens/company/OperationsKpiStrip';
 import { OperationsLogisticsBanner } from '@/presentation/screens/company/OperationsLogisticsBanner';
 import { OperationsOverviewStrip } from '@/presentation/screens/company/OperationsOverviewStrip';
 import { CompanyOperationsPanels } from '@/presentation/screens/company/CompanyOperationsPanels';
 import { CompanyOperationsCharts } from '@/presentation/screens/company/CompanyOperationsCharts';
+import { CompanyOperationsInspector } from '@/presentation/screens/company/CompanyOperationsInspector';
+import { PGOperationsSidebar } from '@/presentation/screens/company/PGOperationsSidebar';
 import { TutorialPanel } from '@/components/TutorialPanel';
-
-function HintButton({
-  label,
-  disabled,
-  reason,
-  variant = 'primary',
-  onClick,
-}: {
-  readonly label: string;
-  readonly disabled: boolean;
-  readonly reason: string | null;
-  readonly variant?: 'primary' | 'secondary';
-  readonly onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      className={variant === 'secondary' ? 'btn-secondary' : undefined}
-      disabled={disabled}
-      title={reason ?? undefined}
-      onClick={onClick}
-    >
-      {label}
-    </button>
-  );
-}
-
-function SidebarActions({
-  hasGame,
-  hints,
-  runAction,
-}: {
-  readonly hasGame: boolean;
-  readonly hints: SidebarHintsViewData;
-  readonly runAction: (action: () => Promise<void>, successMessage: string) => Promise<void>;
-}) {
-  return (
-    <>
-      <p className="sidebar-title">Aktionen</p>
-
-      <div className="toolbar-group">
-        <span className="toolbar-label">Personal</span>
-        {hints.hireEmployee.length === 0 ? (
-          <p className="empty-state">Keine Einstellungsoptionen verfügbar.</p>
-        ) : (
-          hints.hireEmployee.map((hint) => (
-            <HintButton
-              key={hint.employeeTypeId}
-              label={`${hint.name} (${hint.costLabel})`}
-              disabled={!hasGame || !hint.canHire}
-              reason={hint.reason}
-              onClick={() => {
-                void runAction(
-                  () =>
-                    callApi('/api/employees/hire', {
-                      method: 'POST',
-                      body: JSON.stringify({
-                        employeeTypeId: hint.employeeTypeId,
-                        displayName: hint.defaultDisplayName,
-                      }),
-                    }),
-                  `${hint.name} eingestellt.`,
-                );
-              }}
-            />
-          ))
-        )}
-        {hints.assignEmployee.filter((hint) => hint.canAssign).length === 0 ? (
-          <p className="empty-state">Keine Zuweisungen möglich.</p>
-        ) : (
-          hints.assignEmployee
-            .filter((hint) => hint.canAssign)
-            .map((hint) => (
-              <HintButton
-                key={`${hint.employeeId}-${hint.buildingId}`}
-                label={`${hint.employeeName} → ${hint.buildingName}`}
-                variant="secondary"
-                disabled={!hasGame}
-                reason={hint.reason}
-                onClick={() => {
-                  void runAction(
-                    () =>
-                      callApi('/api/employees/assign', {
-                        method: 'POST',
-                        body: JSON.stringify({
-                          employeeId: hint.employeeId,
-                          buildingId: hint.buildingId,
-                        }),
-                      }),
-                    `${hint.employeeName} zugewiesen.`,
-                  );
-                }}
-              />
-            ))
-        )}
-      </div>
-    </>
-  );
-}
 
 /** Company dashboard screen consuming workspace view-data. */
 export function CompanyDashboardScreen({
@@ -222,50 +123,49 @@ export function CompanyDashboardScreen({
       : null;
 
   return (
-    <div className={`layout${isBusy ? ' is-busy' : ''}`}>
+    <div className={`pg-operations-layout${isBusy ? ' is-busy' : ''}`}>
       <PGLoadingOverlay active={isBusy} />
 
       {sidebarOpen ? (
         <button
           type="button"
-          className="sidebar-backdrop"
+          className="pg-operations-sidebar-backdrop"
           aria-label="Seitenleiste schließen"
           onClick={() => setSidebarOpen(false)}
         />
       ) : null}
 
       {hideHeader ? null : (
-        <header className="header">
-          <div>
-            <p className="eyebrow">Deterministic Economy Simulation</p>
+        <header className="pg-operations-header">
+          <div className="pg-operations-header-copy">
+            <p className="pg-workspace-subtitle">Deterministic Economy Simulation</p>
             <h1>{companyViewData.companyName ?? 'Project Genesis'}</h1>
-            <p className="header-subtitle">{companyViewData.headerSubtitle}</p>
+            <p className="pg-operations-header-subtitle">{companyViewData.headerSubtitle}</p>
           </div>
-          <div className="header-actions">
-            <button
-              type="button"
-              className="btn-secondary mobile-only"
+          <div className="pg-operations-header-actions">
+            <Button
+              variant="secondary"
+              className="pg-operations-mobile-only"
               aria-expanded={sidebarOpen}
               aria-controls="dashboard-sidebar"
               onClick={() => setSidebarOpen((open) => !open)}
             >
               Aktionen
-            </button>
-            <button
-              type="button"
-              className="btn-secondary theme-toggle"
+            </Button>
+            <Button
+              variant="secondary"
               aria-label={theme === 'light' ? 'Dark Mode aktivieren' : 'Light Mode aktivieren'}
               onClick={toggleTheme}
             >
               {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
-            </button>
+            </Button>
             {isLiveConnected ? (
-              <span className="meta-pill meta-pill-live" title="Live-Updates aktiv">
+              <span className="pg-meta-pill pg-meta-pill-live" title="Live-Updates aktiv">
                 Live
               </span>
             ) : null}
             {companyViewData.energyHasDeficit ? (
-              <span className="meta-pill pg-meta-pill-warning" title="Energiedefizit">
+              <span className="pg-meta-pill pg-meta-pill-warning" title="Energiedefizit">
                 Energie-Defizit
               </span>
             ) : null}
@@ -274,43 +174,39 @@ export function CompanyDashboardScreen({
       )}
 
       {hideHeader ? (
-        <div className="header-actions workspace-toolbar">
+        <div className="pg-operations-toolbar">
           {onBackToOverview ? (
-            <button type="button" className="btn-secondary" onClick={onBackToOverview}>
+            <Button variant="secondary" onClick={onBackToOverview}>
               Zur Übersicht
-            </button>
+            </Button>
           ) : null}
-          <button
-            type="button"
-            className="btn-secondary mobile-only"
+          <Button
+            variant="secondary"
+            className="pg-operations-mobile-only"
             aria-expanded={sidebarOpen}
             aria-controls="dashboard-sidebar"
             onClick={() => setSidebarOpen((open) => !open)}
           >
             Aktionen
-          </button>
+          </Button>
           {companyViewData.energyHasDeficit ? (
-            <span className="meta-pill pg-meta-pill-warning" title="Energiedefizit">
+            <span className="pg-meta-pill pg-meta-pill-warning" title="Energiedefizit">
               Energie-Defizit
             </span>
           ) : null}
         </div>
       ) : null}
 
-      <div className={`dashboard-body${hideHeader ? ' dashboard-body-embedded' : ''}`}>
+      <div className={`pg-operations-body${hideHeader ? ' pg-operations-body-embedded' : ''}`}>
         <aside
           id="dashboard-sidebar"
-          className={`dashboard-sidebar${sidebarOpen ? ' is-open' : ''}`}
+          className={`pg-operations-sidebar${sidebarOpen ? ' is-open' : ''}`}
           aria-label="Dashboard-Aktionen"
         >
-          <SidebarActions
-            hasGame={hasGame}
-            hints={companyViewData.hints}
-            runAction={runAction}
-          />
+          <PGOperationsSidebar hasGame={hasGame} hints={companyViewData.hints} runAction={runAction} />
         </aside>
 
-        <div className="dashboard-content">
+        <div className="pg-operations-content">
           {hasGame && operationsKpiCards !== null ? (
             <OperationsKpiStrip
               cards={operationsKpiCards}
@@ -335,7 +231,7 @@ export function CompanyDashboardScreen({
 
           <CompanyOperationsCharts companyViewData={companyViewData} hasGame={hasGame} />
 
-          <div className="dashboard-panels">
+          <div className="pg-operations-panels-layout">
             <CompanyOperationsPanels
               companyViewData={companyViewData}
               hasGame={hasGame}
@@ -344,7 +240,7 @@ export function CompanyDashboardScreen({
               onSelectDetail={selectDetail}
             />
 
-            <CompanyDetailPanel
+            <CompanyOperationsInspector
               detail={companyViewData.detail}
               marketPrices={companyViewData.marketPrices}
               selection={detailSelection}

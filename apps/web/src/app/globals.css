@@ -5,4 +5,5 @@
 @import '../presentation/shell/shell.css';
 @import '../presentation/components/shell/shell-components.css';
 @import '../presentation/navigation/navigation.css';
-@import './dashboard.css';
+@import '../presentation/screens/company/operations-dashboard-layout.css';
+@import './legacy-dashboard.css';
