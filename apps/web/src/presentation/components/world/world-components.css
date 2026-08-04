@@ -1,0 +1,198 @@
+.pg-world-workspace {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  min-height: 0;
+}
+
+.pg-world-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.pg-world-header-copy {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--text-small);
+}
+
+.pg-world-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 14rem;
+  gap: var(--space-md);
+  min-height: 28rem;
+}
+
+.pg-world-map-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  min-width: 0;
+}
+
+.pg-world-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.pg-world-toolbar-status {
+  margin: 0;
+  font-size: var(--text-caption);
+  color: var(--muted);
+}
+
+.pg-world-viewport {
+  position: relative;
+  flex: 1;
+  min-height: 22rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
+  overflow: hidden;
+  touch-action: none;
+  cursor: grab;
+}
+
+.pg-world-viewport.is-dragging {
+  cursor: grabbing;
+}
+
+.pg-world-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.pg-world-layer-grid line {
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.pg-world-region {
+  fill: color-mix(in srgb, var(--accent) 12%, var(--bg));
+  stroke: var(--border);
+  stroke-width: 1.5;
+  transition: fill var(--duration-fast) var(--ease-standard);
+}
+
+.pg-world-region:hover {
+  fill: color-mix(in srgb, var(--accent) 22%, var(--bg));
+}
+
+.pg-world-region.is-selected {
+  fill: color-mix(in srgb, var(--accent) 28%, var(--bg));
+  stroke: var(--accent);
+}
+
+.pg-world-connection {
+  stroke: color-mix(in srgb, var(--accent) 55%, var(--border));
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.pg-world-label {
+  fill: var(--text);
+  font-size: 11px;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.pg-world-label-sub {
+  fill: var(--muted);
+  font-size: 9px;
+  font-weight: 500;
+}
+
+.pg-world-selection-ring {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 3;
+  pointer-events: none;
+}
+
+.pg-world-layer-panel {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg);
+  padding: var(--space-sm);
+}
+
+.pg-world-layer-title {
+  margin: 0 0 var(--space-sm);
+  font-size: var(--text-small);
+  font-weight: 600;
+}
+
+.pg-world-layer-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.pg-world-layer-item label {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  font-size: var(--text-small);
+  cursor: pointer;
+}
+
+.pg-world-layer-item span {
+  color: var(--muted);
+  font-size: var(--text-caption);
+  line-height: 1.35;
+}
+
+.pg-world-minimap {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-elevated);
+  padding: var(--space-xs);
+}
+
+.pg-world-minimap-title {
+  margin: 0 0 var(--space-xs);
+  font-size: var(--text-caption);
+  color: var(--muted);
+}
+
+.pg-world-minimap-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.pg-world-minimap-region {
+  fill: color-mix(in srgb, var(--accent) 35%, var(--bg));
+  stroke: var(--border);
+  stroke-width: 0.5;
+}
+
+.pg-world-minimap-region.is-selected {
+  fill: var(--accent);
+}
+
+.pg-world-minimap-viewport {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 2;
+}
+
+.pg-world-region-table {
+  margin-top: var(--space-md);
+}
+
+@media (max-width: 56.25rem) {
+  .pg-world-layout {
+    grid-template-columns: 1fr;
+  }
+}
