@@ -18,6 +18,8 @@ export function PGProductionWidget({
   activeCount,
   hint,
   jobs,
+  onJobClick,
+  selectedJobId,
   state = 'idle',
   errorMessage,
   emptyTitle = 'Keine aktiven Produktionsjobs',
@@ -26,6 +28,8 @@ export function PGProductionWidget({
   readonly activeCount: number;
   readonly hint?: string;
   readonly jobs: readonly PGProductionRow[];
+  readonly onJobClick?: (jobId: string) => void;
+  readonly selectedJobId?: string | null;
 }) {
   return (
     <section className="pg-widget pg-production-widget" aria-labelledby="pg-production-widget-title">
@@ -47,6 +51,8 @@ export function PGProductionWidget({
             id: job.id,
             cells: [job.buildingLabel, job.recipeLabel, job.statusLabel, job.progressLabel],
           }))}
+          selectedRowId={selectedJobId}
+          onRowClick={onJobClick}
         />
       </PGWidgetSurface>
     </section>

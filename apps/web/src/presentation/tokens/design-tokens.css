@@ -34,6 +34,7 @@
   --surface-selection: color-mix(in srgb, var(--color-primary) 4%, transparent);
   --surface-query-header: color-mix(in srgb, var(--color-primary) 5%, transparent);
   --border-success-subtle: color-mix(in srgb, var(--color-success) 35%, var(--color-border));
+  --border-warning-subtle: color-mix(in srgb, var(--color-warning) 35%, var(--color-border));
   --surface-info-subtle: color-mix(in srgb, var(--color-info) 10%, transparent);
   --surface-success-subtle: color-mix(in srgb, var(--color-success) 10%, transparent);
   --surface-warning-subtle: color-mix(in srgb, var(--color-warning) 12%, transparent);

@@ -1,26 +1,33 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import { EmptyState } from '@/presentation/primitives/EmptyState';
 
 /** Tabular read-only query results for M9 inspection screens. */
 export function QueryRows({
   rows,
   columns,
+  columnCount = columns.length,
   onRowClick,
   selectedRowId,
+  ariaLabel = 'Abfrageergebnisse',
 }: {
-  readonly rows: readonly { readonly id: string; readonly cells: readonly string[] }[];
+  readonly rows: readonly { readonly id: string; readonly cells: readonly (string | ReactNode)[] }[];
   readonly columns: readonly string[];
+  readonly columnCount?: number;
   readonly onRowClick?: (rowId: string) => void;
   readonly selectedRowId?: string | null;
+  readonly ariaLabel?: string;
 }) {
   if (rows.length === 0) {
     return <EmptyState title="Keine Daten vorhanden." />;
   }
 
+  const gridStyle = { gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))` };
+
   return (
-    <div className="pg-query-table" role="table" aria-label="Abfrageergebnisse">
-      <div className="pg-query-row pg-query-header" role="row">
+    <div className="pg-query-table" role="table" aria-label={ariaLabel}>
+      <div className="pg-query-row pg-query-header" role="row" style={gridStyle}>
         {columns.map((column) => (
           <span key={column} role="columnheader">
             {column}
@@ -38,6 +45,7 @@ export function QueryRows({
               type="button"
               className={className}
               role="row"
+              style={gridStyle}
               aria-current={isSelected ? 'true' : undefined}
               onClick={() => {
                 onRowClick(row.id);
@@ -53,7 +61,7 @@ export function QueryRows({
         }
 
         return (
-          <div key={row.id} className={className} role="row">
+          <div key={row.id} className={className} role="row" style={gridStyle}>
             {row.cells.map((cell, index) => (
               <span key={`${row.id}-${index}`} role="cell">
                 {cell}

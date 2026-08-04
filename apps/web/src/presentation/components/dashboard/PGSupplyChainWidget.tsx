@@ -11,6 +11,8 @@ export type PGSupplyChainRow = {
   readonly amountLabel: string;
   readonly statusLabel: string;
   readonly progressLabel: string;
+  readonly recipeLabel?: string;
+  readonly durationLabel?: string;
 };
 
 /** Supply chain / transport widget (DB-008). */
@@ -19,6 +21,9 @@ export function PGSupplyChainWidget({
   activeCount,
   hint,
   orders,
+  onOrderClick,
+  selectedOrderId,
+  detailed = false,
   state = 'idle',
   errorMessage,
   emptyTitle = 'Keine aktiven Transporte',
@@ -27,6 +32,9 @@ export function PGSupplyChainWidget({
   readonly activeCount: number;
   readonly hint?: string;
   readonly orders: readonly PGSupplyChainRow[];
+  readonly onOrderClick?: (orderId: string) => void;
+  readonly selectedOrderId?: string | null;
+  readonly detailed?: boolean;
 }) {
   return (
     <section className="pg-widget pg-supply-chain-widget" aria-labelledby="pg-supply-chain-widget-title">
@@ -43,17 +51,34 @@ export function PGSupplyChainWidget({
         emptyTitle={emptyTitle}
       >
         <QueryRows
-          columns={['Route', 'Ressource', 'Menge', 'Status', 'Fortschritt']}
+          columns={
+            detailed
+              ? ['Ressource', 'Menge', 'Route', 'Produktion', 'Status', 'Dauer (Ticks)', 'Fortschritt']
+              : ['Route', 'Ressource', 'Menge', 'Status', 'Fortschritt']
+          }
+          columnCount={detailed ? 7 : 5}
           rows={orders.map((order) => ({
             id: order.id,
-            cells: [
-              order.routeLabel,
-              order.resourceLabel,
-              order.amountLabel,
-              order.statusLabel,
-              order.progressLabel,
-            ],
+            cells: detailed
+              ? [
+                  order.resourceLabel,
+                  order.amountLabel,
+                  order.routeLabel,
+                  order.recipeLabel ?? '—',
+                  order.statusLabel,
+                  order.durationLabel ?? '—',
+                  order.progressLabel,
+                ]
+              : [
+                  order.routeLabel,
+                  order.resourceLabel,
+                  order.amountLabel,
+                  order.statusLabel,
+                  order.progressLabel,
+                ],
           }))}
+          selectedRowId={selectedOrderId}
+          onRowClick={onOrderClick}
         />
       </PGWidgetSurface>
     </section>

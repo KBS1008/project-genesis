@@ -2,13 +2,12 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { callApi } from '@/presentation/adapters/api/client';
-import type {
-  BuildingRowViewData,
-  KpiStripViewData,
-  OverviewStripViewData,
-  SidebarHintsViewData,
-} from '@/presentation/adapters/view-data/company-dashboard-view-data';
-import { formatProgress } from '@/presentation/formatting/presentation-formatters';
+import {
+  buildOperationsKpiCards,
+  buildOperationsOverviewCards,
+} from '@/presentation/adapters/mappers/company-operations-view-mappers';
+import type { SidebarHintsViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
+import { PGLoadingOverlay } from '@/presentation/components/foundation/PGLoadingOverlay';
 import { useGameWorkspace } from '@/presentation/state/GameWorkspaceProvider';
 import { useTheme } from '@/presentation/theme';
 import {
@@ -16,181 +15,18 @@ import {
   normalizeDetailSelection,
   type DetailSelection,
 } from '@/presentation/screens/company/CompanyDetailPanel';
+import { OperationsKpiStrip } from '@/presentation/screens/company/OperationsKpiStrip';
+import { OperationsLogisticsBanner } from '@/presentation/screens/company/OperationsLogisticsBanner';
+import { OperationsOverviewStrip } from '@/presentation/screens/company/OperationsOverviewStrip';
+import { CompanyOperationsPanels } from '@/presentation/screens/company/CompanyOperationsPanels';
 import { TickHistoryCharts } from '@/components/TickHistoryCharts';
 import { InventoryHistoryChart } from '@/components/InventoryHistoryChart';
 import { MarketPriceHistoryChart } from '@/components/MarketPriceHistoryChart';
 import { MarketSupplyDemandChart } from '@/components/MarketSupplyDemandChart';
 import { MarketPressureHistoryChart } from '@/components/MarketPressureHistoryChart';
 import { PriceIndexHistoryChart } from '@/components/PriceIndexHistoryChart';
-import { MarketPricesTable } from '@/components/MarketPricesTable';
 import { EnergyHistoryChart } from '@/components/EnergyHistoryChart';
-import { DataTable } from '@/components/DataTable';
 import { TutorialPanel } from '@/components/TutorialPanel';
-import { DashboardIcon } from '@/components/icons/DashboardIcons';
-
-function KpiStrip({
-  kpis,
-  onSelectFinance,
-  onSelectLogistics,
-}: {
-  readonly kpis: KpiStripViewData;
-  readonly onSelectFinance: () => void;
-  readonly onSelectLogistics: () => void;
-}) {
-  return (
-    <section className="kpi-strip" aria-label="Kennzahlen">
-      <button type="button" className="kpi-card kpi-card-button" onClick={onSelectFinance}>
-        <span className="kpi-icon" aria-hidden="true">
-          <DashboardIcon name="cash" className="dashboard-icon" />
-        </span>
-        <div className="kpi-body">
-          <span className="kpi-label">Verfügbar</span>
-          <strong className="kpi-value">{kpis.availableCashLabel}</strong>
-          <span className="kpi-trend">{kpis.availableCashTrend}</span>
-        </div>
-      </button>
-      <article className={`kpi-card${kpis.energyHasDeficit ? ' kpi-warning' : ''}`}>
-        <span className="kpi-icon" aria-hidden="true">
-          <DashboardIcon name="energy" className="dashboard-icon" />
-        </span>
-        <div className="kpi-body">
-          <span className="kpi-label">Energie-Reserve</span>
-          <strong className="kpi-value">{kpis.energyReserveLabel}</strong>
-          <span className="kpi-trend">{kpis.energyTrend}</span>
-        </div>
-      </article>
-      <button
-        type="button"
-        className={`kpi-card kpi-card-button${kpis.activeTransportCount > 0 ? ' kpi-active' : ''}`}
-        onClick={onSelectLogistics}
-      >
-        <span className="kpi-icon" aria-hidden="true">
-          <DashboardIcon name="transport" className="dashboard-icon" />
-        </span>
-        <div className="kpi-body">
-          <span className="kpi-label">Transporte</span>
-          <strong className="kpi-value">{kpis.activeTransportCount}</strong>
-          <span className="kpi-trend">{kpis.activeTransportTrend}</span>
-        </div>
-      </button>
-      <button type="button" className="kpi-card kpi-card-button" onClick={onSelectLogistics}>
-        <span className="kpi-icon" aria-hidden="true">
-          <DashboardIcon name="warehouse" className="dashboard-icon" />
-        </span>
-        <div className="kpi-body">
-          <span className="kpi-label">Im Lagerhaus</span>
-          <strong className="kpi-value">{kpis.warehouseTotalUnits}</strong>
-          <span className="kpi-trend">{kpis.warehouseCapacityHint}</span>
-        </div>
-      </button>
-      <article className="kpi-card">
-        <span className="kpi-icon" aria-hidden="true">
-          <DashboardIcon name="onsite" className="dashboard-icon" />
-        </span>
-        <div className="kpi-body">
-          <span className="kpi-label">Am Standort</span>
-          <strong className="kpi-value">{kpis.onSiteResourceLines}</strong>
-          <span className="kpi-trend">{kpis.onSiteHint}</span>
-        </div>
-      </article>
-      <article className="kpi-card">
-        <span className="kpi-icon" aria-hidden="true">
-          <DashboardIcon name="employees" className="dashboard-icon" />
-        </span>
-        <div className="kpi-body">
-          <span className="kpi-label">Mitarbeiter</span>
-          <strong className="kpi-value">
-            {kpis.assignedEmployeeCount}/{kpis.employeeCount}
-          </strong>
-          <span className="kpi-trend">{kpis.payrollLabel}</span>
-        </div>
-      </article>
-      <article className="kpi-card">
-        <span className="kpi-icon" aria-hidden="true">
-          <DashboardIcon name="info" className="dashboard-icon" />
-        </span>
-        <div className="kpi-body">
-          <span className="kpi-label">Preisindex</span>
-          <strong className="kpi-value">{kpis.priceIndexLabel}</strong>
-          <span className="kpi-trend">{kpis.priceIndexHint}</span>
-        </div>
-      </article>
-      <article className={`kpi-card${kpis.taxPaymentBlocked ? ' kpi-warning' : ''}`}>
-        <span className="kpi-icon" aria-hidden="true">
-          <DashboardIcon name="cash" className="dashboard-icon" />
-        </span>
-        <div className="kpi-body">
-          <span className="kpi-label">Steuer / Verträge</span>
-          <strong className="kpi-value">{kpis.corporateTaxRateLabel}</strong>
-          <span className="kpi-trend">{kpis.taxTrendLabel}</span>
-        </div>
-      </article>
-    </section>
-  );
-}
-
-function OverviewStrip({
-  overview,
-  onSelectLogistics,
-}: {
-  readonly overview: OverviewStripViewData;
-  readonly onSelectLogistics: () => void;
-}) {
-  return (
-    <section className="overview-strip" aria-label="Überblick">
-      {overview.cards.map((card) => {
-        const content = (
-          <>
-            <span className="overview-label">{card.label}</span>
-            <strong className="overview-value">{card.value}</strong>
-            <span className="overview-hint">{card.hint}</span>
-          </>
-        );
-
-        if (card.label === 'Transport') {
-          return (
-            <button
-              key={card.label}
-              type="button"
-              className="overview-card overview-card-button"
-              onClick={onSelectLogistics}
-            >
-              {content}
-            </button>
-          );
-        }
-
-        return (
-          <article key={card.label} className="overview-card">
-            {content}
-          </article>
-        );
-      })}
-    </section>
-  );
-}
-
-function LogisticsBanner({
-  message,
-  onSelectLogistics,
-}: {
-  readonly message: string | null;
-  readonly onSelectLogistics: () => void;
-}) {
-  if (message === null || message.length === 0) {
-    return null;
-  }
-
-  return (
-    <button
-      type="button"
-      className="logistics-banner logistics-banner-button"
-      onClick={onSelectLogistics}
-    >
-      {message}
-    </button>
-  );
-}
 
 function HintButton({
   label,
@@ -215,25 +51,6 @@ function HintButton({
     >
       {label}
     </button>
-  );
-}
-
-function ConstructionStatus({ building }: { readonly building: BuildingRowViewData }) {
-  if (!building.isUnderConstruction) {
-    return <>{building.statusLabel}</>;
-  }
-
-  return (
-    <div className="progress-cell">
-      <span>{building.statusLabel}</span>
-      <div className="progress-bar" aria-hidden="true">
-        <div
-          className="progress-fill"
-          style={{ width: `${Math.round(building.constructionProgressPercent)}%` }}
-        />
-      </div>
-      <span className="progress-label">{formatProgress(building.constructionProgressPercent)}</span>
-    </div>
   );
 }
 
@@ -373,6 +190,7 @@ export function CompanyDashboardScreen({
   );
 
   const { hasGame, labels } = companyViewData;
+
   const marketPricesForTable = companyViewData.marketPrices.map((price) => ({
     resourceId: price.resourceId,
     basePrice: price.basePrice,
@@ -382,21 +200,11 @@ export function CompanyDashboardScreen({
     totalSupply: price.totalSupply,
     baselineDemand: price.baselineDemand,
     pressureIndex: price.pressureIndex,
-    changeFromBase: 0,
-    changePercent: 0,
+    changeFromBase: price.lastPrice - price.basePrice,
+    changePercent:
+      price.basePrice === 0 ? 0 : ((price.lastPrice - price.basePrice) / price.basePrice) * 100,
     trend: price.trend,
   }));
-
-  const selectedRowKey =
-    detailSelection.kind === 'overview' ||
-    detailSelection.kind === 'finance' ||
-    detailSelection.kind === 'logistics'
-      ? null
-      : detailSelection.kind === 'transaction'
-        ? `transaction:${detailSelection.id}`
-        : detailSelection.kind === 'warehouse'
-          ? `warehouse:${detailSelection.id}`
-          : `${detailSelection.kind}:${detailSelection.id}`;
 
   const selectDetail = useCallback(
     (
@@ -427,16 +235,16 @@ export function CompanyDashboardScreen({
     setDetailSelection({ kind: 'overview' });
   }, []);
 
+  const operationsKpiCards =
+    companyViewData.kpis !== null ? buildOperationsKpiCards(companyViewData.kpis) : null;
+  const operationsOverviewCards =
+    companyViewData.overview !== null
+      ? buildOperationsOverviewCards(companyViewData.overview)
+      : null;
+
   return (
     <div className={`layout${isBusy ? ' is-busy' : ''}`}>
-      {isBusy ? (
-        <div className="loading-overlay" aria-hidden="true">
-          <div className="loading-panel">
-            <span className="spinner" />
-            <span>Aktion wird ausgeführt…</span>
-          </div>
-        </div>
-      ) : null}
+      <PGLoadingOverlay active={isBusy} />
 
       {sidebarOpen ? (
         <button
@@ -478,10 +286,7 @@ export function CompanyDashboardScreen({
               </span>
             ) : null}
             {companyViewData.energyHasDeficit ? (
-              <span
-                className="meta-pill"
-                style={{ color: 'var(--color-warning)', borderColor: 'rgba(245, 158, 11, 0.45)' }}
-              >
+              <span className="meta-pill pg-meta-pill-warning" title="Energiedefizit">
                 Energie-Defizit
               </span>
             ) : null}
@@ -505,19 +310,8 @@ export function CompanyDashboardScreen({
           >
             Aktionen
           </button>
-          <button
-            type="button"
-            className="btn-secondary theme-toggle"
-            aria-label={theme === 'light' ? 'Dark Mode aktivieren' : 'Light Mode aktivieren'}
-            onClick={toggleTheme}
-          >
-            {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
-          </button>
           {companyViewData.energyHasDeficit ? (
-            <span
-              className="meta-pill"
-              style={{ color: 'var(--color-warning)', borderColor: 'rgba(245, 158, 11, 0.45)' }}
-            >
+            <span className="meta-pill pg-meta-pill-warning" title="Energiedefizit">
               Energie-Defizit
             </span>
           ) : null}
@@ -538,24 +332,22 @@ export function CompanyDashboardScreen({
         </aside>
 
         <div className="dashboard-content">
-          {hasGame && companyViewData.kpis ? (
-            <KpiStrip
-              kpis={companyViewData.kpis}
+          {hasGame && operationsKpiCards !== null ? (
+            <OperationsKpiStrip
+              cards={operationsKpiCards}
               onSelectFinance={selectFinanceDetail}
               onSelectLogistics={selectLogisticsDetail}
             />
           ) : null}
 
-          <div className="status-bar">
-            <LogisticsBanner
-              message={companyViewData.logisticsStatusMessage}
-              onSelectLogistics={selectLogisticsDetail}
-            />
-          </div>
+          <OperationsLogisticsBanner
+            message={companyViewData.logisticsStatusMessage}
+            onSelectLogistics={selectLogisticsDetail}
+          />
 
-          {hasGame && companyViewData.overview ? (
-            <OverviewStrip
-              overview={companyViewData.overview}
+          {hasGame && operationsOverviewCards !== null ? (
+            <OperationsOverviewStrip
+              cards={operationsOverviewCards}
               onSelectLogistics={selectLogisticsDetail}
             />
           ) : null}
@@ -586,474 +378,13 @@ export function CompanyDashboardScreen({
           {hasGame ? <PriceIndexHistoryChart points={companyViewData.chartPoints} /> : null}
 
           <div className="dashboard-panels">
-            <div className="dashboard-tables">
-              {isLoading ? (
-                <>
-                  <section className="card card-loading">
-                    <div className="skeleton-block" style={{ width: '40%' }} />
-                    <div
-                      className="skeleton-block"
-                      style={{ width: '70%', marginTop: '0.75rem' }}
-                    />
-                  </section>
-                  <section className="card card-loading">
-                    <div className="skeleton-block" style={{ width: '55%' }} />
-                  </section>
-                </>
-              ) : (
-                <>
-                  <section className="card">
-                    <div className="section-header">
-                      <h2>Gebäude</h2>
-                      <p>Alle Standorte, Baufortschritt und Status.</p>
-                    </div>
-                    <div className="table-wrap">
-                      {!hasGame ? (
-                        <p className="empty-state">
-                          <strong>Noch keine Gebäude.</strong>
-                          Nutzen Sie die Aktionen in der Seitenleiste, um ein Gebäude zu platzieren.
-                        </p>
-                      ) : (
-                        <DataTable
-                          searchable
-                          searchPlaceholder="Gebäude suchen…"
-                          columns={[
-                            { key: 'name', label: 'Name' },
-                            { key: 'buildingTypeId', label: 'Typ' },
-                            { key: 'status', label: 'Status' },
-                            { key: 'position', label: 'Pos' },
-                          ]}
-                          rows={companyViewData.buildings.map((building) => ({
-                            name: building.name,
-                            buildingTypeId: building.buildingTypeLabel,
-                            status: building.statusLabel,
-                            position: building.positionLabel,
-                          }))}
-                          rowKeys={companyViewData.buildings.map((building) => `building:${building.id}`)}
-                          selectedRowKey={selectedRowKey}
-                          onRowSelect={(rowKey) => {
-                            selectDetail('building', rowKey.slice('building:'.length));
-                          }}
-                          emptyText="Noch keine Gebäude."
-                          emptyHint="Platzieren Sie über die Seitenleiste Ihr erstes Gebäude."
-                          renderCell={(key, row) => {
-                            if (key !== 'status') {
-                              return row[key];
-                            }
-
-                            const building = companyViewData.buildings.find(
-                              (entry) => entry.name === row.name && entry.statusLabel === row.status,
-                            );
-
-                            return building ? (
-                              <ConstructionStatus building={building} />
-                            ) : (
-                              row.status
-                            );
-                          }}
-                        />
-                      )}
-                    </div>
-                  </section>
-
-                  <section className="card">
-                    <div className="section-header">
-                      <h2>Mitarbeiter</h2>
-                      <p>Eingestelltes Personal, Gehälter und Gebäudezuweisungen.</p>
-                    </div>
-                    <div className="table-wrap">
-                      {!hasGame ? (
-                        <p className="empty-state">
-                          <strong>Noch keine Mitarbeiter.</strong>
-                          Stellen Sie Personal über die Seitenleiste ein.
-                        </p>
-                      ) : (
-                        <DataTable
-                          searchable
-                          searchPlaceholder="Mitarbeiter suchen…"
-                          columns={[
-                            { key: 'displayName', label: 'Name' },
-                            { key: 'employeeTypeId', label: 'Typ' },
-                            { key: 'salary', label: 'Gehalt', numeric: true },
-                            { key: 'productivity', label: 'Produktivität', numeric: true },
-                            { key: 'assignment', label: 'Zuweisung' },
-                          ]}
-                          rows={companyViewData.employees.map((employee) => ({
-                            displayName: employee.displayName,
-                            employeeTypeId: employee.employeeTypeLabel,
-                            salary: employee.salaryLabel,
-                            productivity: employee.productivityLabel,
-                            assignment: employee.assignmentLabel,
-                          }))}
-                          rowKeys={companyViewData.employees.map((employee) => `employee:${employee.id}`)}
-                          selectedRowKey={selectedRowKey}
-                          onRowSelect={(rowKey) => {
-                            selectDetail('employee', rowKey.slice('employee:'.length));
-                          }}
-                          emptyText="Noch keine Mitarbeiter."
-                          emptyHint="Stellen Sie Produktions- oder Logistikpersonal ein."
-                        />
-                      )}
-                    </div>
-                  </section>
-
-                  <section
-                    className={`card${companyViewData.economy?.taxPaymentBlocked ? ' card-warning' : ''}`}
-                  >
-                    <div className="section-header">
-                      <h2>Wirtschaft</h2>
-                      <p>
-                        Unternehmenssteuer {companyViewData.economy?.corporateTaxRateLabel ?? '5 %'} alle{' '}
-                        {companyViewData.economy?.taxIntervalTicks ?? 30} Ticks · Preisindex{' '}
-                        {companyViewData.economy?.priceIndexLabel ?? '1,00'} (neutral 1,00). Lieferverträge
-                        entnehmen Ressourcen nur aus dem Standort-Inventar, nicht aus Lagerhaus-Beständen.
-                      </p>
-                    </div>
-                    {companyViewData.economy?.taxPaymentBlocked &&
-                    companyViewData.economy.pendingTaxLabel ? (
-                      <p className="empty-state kv-value-warning" role="status">
-                        <strong>Steuer offen:</strong> {companyViewData.economy.pendingTaxLabel} fällig, aber
-                        die Kasse reicht nicht — die Abbuchung wird übersprungen, bis genug Cash vorhanden
-                        ist.
-                      </p>
-                    ) : null}
-                    <div className="table-wrap">
-                      {!hasGame || (companyViewData.economy?.contracts.length ?? 0) === 0 ? (
-                        <p className="empty-state">
-                          <strong>Keine Lieferverträge.</strong>
-                          NPC-Verträge erscheinen nach Spielstart automatisch.
-                        </p>
-                      ) : (
-                        <DataTable
-                          searchable={false}
-                          columns={[
-                            { key: 'resourceId', label: 'Ressource' },
-                            { key: 'amount', label: 'Menge', numeric: true },
-                            { key: 'paymentAmount', label: 'Zahlung', numeric: true },
-                            { key: 'intervalTicks', label: 'Intervall', numeric: true },
-                            { key: 'status', label: 'Status' },
-                          ]}
-                          rows={(companyViewData.economy?.contracts ?? []).map((contract) => ({
-                            resourceId: contract.resourceLabel,
-                            amount: contract.amount,
-                            paymentAmount: contract.paymentLabel,
-                            intervalTicks: contract.intervalLabel,
-                            status: contract.statusLabel,
-                          }))}
-                          rowKeys={(companyViewData.economy?.contracts ?? []).map(
-                            (contract) => `contract:${contract.id}`,
-                          )}
-                          emptyText="Keine Verträge."
-                        />
-                      )}
-                    </div>
-                  </section>
-
-                  <section className="card">
-                    <div className="section-header">
-                      <h2>Markt</h2>
-                      <p>
-                        Preise, Angebot, Nachfrage und Trend je Ressource. Handelsgebühr: 2&nbsp;%
-                        (min. 1 GC) pro Transaktion.
-                      </p>
-                    </div>
-                    <div className="table-wrap">
-                      {!hasGame ? (
-                        <p className="empty-state">
-                          <strong>Noch keine Marktdaten.</strong>
-                          Starten Sie ein Spiel, um dynamische Preise zu sehen.
-                        </p>
-                      ) : (
-                        <MarketPricesTable
-                          marketPrices={marketPricesForTable}
-                          labelResource={labels.resource}
-                        />
-                      )}
-                    </div>
-                  </section>
-
-                  <div className="table-grid">
-                    <section className="card">
-                      <div className="section-header">
-                        <h2>Produktion</h2>
-                        <p>Laufende und wartende Fertigungsaufträge.</p>
-                      </div>
-                      <div className="table-wrap">
-                        {!hasGame ? (
-                          <p className="empty-state">
-                            <strong>Keine laufende Produktion.</strong>
-                            Starten Sie einen Auftrag über die Seitenleiste.
-                          </p>
-                        ) : (
-                          <DataTable
-                            searchable
-                            searchPlaceholder="Produktion suchen…"
-                            columns={[
-                              { key: 'recipeId', label: 'Rezept' },
-                              { key: 'buildingId', label: 'Gebäude' },
-                              { key: 'status', label: 'Status' },
-                              { key: 'progress', label: 'Fortschritt', numeric: true },
-                            ]}
-                            rows={companyViewData.productionJobs.map((job) => ({
-                              recipeId: job.recipeLabel,
-                              buildingId: job.buildingLabel,
-                              status: job.statusLabel,
-                              progress: job.progressLabel,
-                            }))}
-                            rowKeys={companyViewData.productionJobs.map((job) => `production:${job.id}`)}
-                            selectedRowKey={selectedRowKey}
-                            onRowSelect={(rowKey) => {
-                              selectDetail('production', rowKey.slice('production:'.length));
-                            }}
-                            emptyText="Keine laufende Produktion."
-                            emptyHint="Bauen Sie eine Fabrik und starten Sie ein Rezept."
-                          />
-                        )}
-                      </div>
-                    </section>
-
-                    <section className="card">
-                      <div className="section-header">
-                        <h2>Forschung</h2>
-                        <p>Aktive Technologieprojekte und abgeschlossene Forschung.</p>
-                      </div>
-                      <div className="table-wrap">
-                        {!hasGame ? (
-                          <p className="empty-state">
-                            <strong>Keine laufende Forschung.</strong>
-                            Starten Sie ein Projekt in der Seitenleiste.
-                          </p>
-                        ) : (
-                          <>
-                            {companyViewData.completedResearchLabels.length > 0 ? (
-                              <p className="research-done">
-                                Abgeschlossen: {companyViewData.completedResearchLabels.join(', ')}
-                              </p>
-                            ) : null}
-                            <DataTable
-                              searchable
-                              searchPlaceholder="Forschung suchen…"
-                              columns={[
-                                { key: 'technologyId', label: 'Technologie' },
-                                { key: 'status', label: 'Status' },
-                                { key: 'progress', label: 'Fortschritt', numeric: true },
-                              ]}
-                              rows={companyViewData.researchJobs.map((job) => ({
-                                technologyId: job.technologyLabel,
-                                status: job.statusLabel,
-                                progress: job.progressLabel,
-                              }))}
-                              rowKeys={companyViewData.researchJobs.map((job) => `research:${job.id}`)}
-                              selectedRowKey={selectedRowKey}
-                              onRowSelect={(rowKey) => {
-                                selectDetail('research', rowKey.slice('research:'.length));
-                              }}
-                              emptyText="Keine laufende Forschung."
-                              emptyHint="Erforschen Sie neue Technologien für bessere Produktion."
-                            />
-                          </>
-                        )}
-                      </div>
-                    </section>
-                  </div>
-
-                  <section className="card">
-                    <div className="section-header">
-                      <h2>Transport &amp; Logistik</h2>
-                      <p>
-                        Interner Transport vom Lagerhaus zum Produktionsgebäude (Dauer aus Routen-Content).
-                        Produktion startet nach Ankunft aller Lieferungen.
-                      </p>
-                    </div>
-                    <div className="table-wrap">
-                      {!hasGame ? (
-                        <p className="empty-state">
-                          <strong>Keine aktiven Transporte.</strong>
-                          Kaufen Sie Material am Markt — es landet im Lagerhaus.
-                        </p>
-                      ) : (
-                        <DataTable
-                          searchable
-                          searchPlaceholder="Transporte suchen…"
-                          columns={[
-                            { key: 'resourceId', label: 'Ressource' },
-                            { key: 'amount', label: 'Menge', numeric: true },
-                            { key: 'route', label: 'Route' },
-                            { key: 'recipeName', label: 'Produktion' },
-                            { key: 'status', label: 'Status' },
-                            { key: 'durationTicks', label: 'Dauer (Ticks)', numeric: true },
-                            { key: 'progress', label: 'Fortschritt', numeric: true },
-                          ]}
-                          rows={companyViewData.transportOrders.map((order) => ({
-                            resourceId: order.resourceLabel,
-                            amount: order.amountLabel,
-                            route: order.routeLabel,
-                            recipeName: order.recipeLabel,
-                            status: order.statusLabel,
-                            durationTicks: order.durationLabel,
-                            progress: order.progressLabel,
-                          }))}
-                          rowKeys={companyViewData.transportOrders.map((order) => `transport:${order.id}`)}
-                          selectedRowKey={selectedRowKey}
-                          onRowSelect={(rowKey) => {
-                            selectDetail('transport', rowKey.slice('transport:'.length));
-                          }}
-                          emptyText="Keine aktiven Transporte."
-                          emptyHint="Material am Standort oder Lager leer — Marktkäufe lösen Transport aus."
-                        />
-                      )}
-                    </div>
-                  </section>
-
-                  <section className="card">
-                    <div className="section-header">
-                      <h2>Finanzbuchungen</h2>
-                      <p>Ledger-Einträge des Unternehmenskontos — neueste zuerst.</p>
-                    </div>
-                    <div className="table-wrap">
-                      {!hasGame ? (
-                        <p className="empty-state">
-                          <strong>Keine Buchungen.</strong>
-                          Starten Sie ein Spiel, um Finanzbewegungen zu sehen.
-                        </p>
-                      ) : (
-                        <DataTable
-                          searchable
-                          searchPlaceholder="Buchungen suchen…"
-                          columns={[
-                            { key: 'transactionType', label: 'Typ' },
-                            { key: 'amount', label: 'Betrag', numeric: true },
-                            { key: 'balanceAfter', label: 'Saldo', numeric: true },
-                            { key: 'timestamp', label: 'Zeit', numeric: true },
-                          ]}
-                          rows={companyViewData.financeTransactions.map((transaction) => ({
-                            transactionType: transaction.typeLabel,
-                            amount: transaction.amountLabel,
-                            balanceAfter: transaction.balanceLabel,
-                            timestamp: transaction.timestampLabel,
-                          }))}
-                          rowKeys={companyViewData.financeTransactions.map(
-                            (transaction) => `transaction:${transaction.id}`,
-                          )}
-                          selectedRowKey={selectedRowKey}
-                          onRowSelect={(rowKey) => {
-                            selectDetail('transaction', rowKey.slice('transaction:'.length));
-                          }}
-                          emptyText="Noch keine Buchungen."
-                          emptyHint="Bauen, handeln oder forschen, um Buchungen zu erzeugen."
-                        />
-                      )}
-                    </div>
-                  </section>
-
-                  <div className="table-grid">
-                    <section className="card">
-                      <div className="section-header">
-                        <h2>Inventar (Standort)</h2>
-                        <p>
-                          Material direkt an Produktionsgebäuden — bereit für sofortige Nutzung.
-                        </p>
-                      </div>
-                      <div className="table-wrap">
-                        {companyViewData.inventoryItems.length === 0 ? (
-                          <p className="empty-state">
-                            <strong>Inventar erscheint nach Spielstart.</strong>
-                          </p>
-                        ) : (
-                          <DataTable
-                            searchable
-                            searchPlaceholder="Inventar suchen…"
-                            columns={[
-                              { key: 'resourceId', label: 'Ressource' },
-                              { key: 'reserved', label: 'Reserviert', numeric: true },
-                              { key: 'available', label: 'Verfügbar', numeric: true },
-                            ]}
-                            rows={companyViewData.inventoryItems.map((item) => ({
-                              resourceId: item.resourceLabel,
-                              reserved: item.reserved,
-                              available: item.available,
-                            }))}
-                            emptyText="Am Standort ist kein Material."
-                            emptyHint="Produzieren oder transportieren Sie Ressourcen zum Standort."
-                          />
-                        )}
-                      </div>
-                    </section>
-
-                    <section className="card">
-                      <div className="section-header">
-                        <h2>Lagerhaus</h2>
-                        <p>
-                          Marktkäufe landen hier. Transport bringt Material zum Produktionsstandort.
-                        </p>
-                      </div>
-                      <div className="table-wrap">
-                        {!hasGame ? (
-                          <p className="empty-state">
-                            <strong>Kein Lagerhaus aktiv.</strong>
-                            Bauen Sie ein Lagerhaus, um Marktkäufe zu lagern.
-                          </p>
-                        ) : companyViewData.warehouseStorage.length === 0 ? (
-                          <p className="empty-state">
-                            <strong>Kein Lagerhaus aktiv oder Lager leer.</strong>
-                            Kaufen Sie Ressourcen am Markt.
-                          </p>
-                        ) : (
-                          <>
-                            <DataTable
-                              searchable
-                              searchPlaceholder="Lagerhäuser suchen…"
-                              columns={[
-                                { key: 'buildingName', label: 'Lagerhaus' },
-                                { key: 'resourceLines', label: 'Zeilen', numeric: true },
-                                { key: 'totalUnits', label: 'Einheiten', numeric: true },
-                              ]}
-                              rows={companyViewData.warehouseStorage.map((storage) => ({
-                                buildingName: storage.buildingLabel,
-                                resourceLines: storage.items.length,
-                                totalUnits: storage.items.reduce(
-                                  (total, item) => total + item.quantity,
-                                  0,
-                                ),
-                              }))}
-                              rowKeys={companyViewData.warehouseStorage.map(
-                                (storage) => `warehouse:${storage.id}`,
-                              )}
-                              selectedRowKey={selectedRowKey}
-                              onRowSelect={(rowKey) => {
-                                selectDetail('warehouse', rowKey.slice('warehouse:'.length));
-                              }}
-                              emptyText="Kein Lagerhaus aktiv."
-                              emptyHint="Schalten Sie das Lagerhaus-Meilenstein frei und bauen Sie es."
-                            />
-                            {companyViewData.warehouseStorage.map((storage) => (
-                              <div key={storage.id} className="warehouse-block">
-                                <h3 className="warehouse-name">{storage.buildingLabel}</h3>
-                                <DataTable
-                                  searchable
-                                  searchPlaceholder="Lager suchen…"
-                                  columns={[
-                                    { key: 'resourceId', label: 'Ressource' },
-                                    { key: 'reserved', label: 'Reserviert', numeric: true },
-                                    { key: 'available', label: 'Verfügbar', numeric: true },
-                                  ]}
-                                  rows={storage.items.map((item) => ({
-                                    resourceId: item.resourceLabel,
-                                    reserved: item.reserved,
-                                    available: item.available,
-                                  }))}
-                                  emptyText="Lager ist leer."
-                                />
-                              </div>
-                            ))}
-                          </>
-                        )}
-                      </div>
-                    </section>
-                  </div>
-                </>
-              )}
-            </div>
+            <CompanyOperationsPanels
+              companyViewData={companyViewData}
+              hasGame={hasGame}
+              isLoading={isLoading}
+              selection={detailSelection}
+              onSelectDetail={selectDetail}
+            />
 
             <CompanyDetailPanel
               detail={companyViewData.detail}

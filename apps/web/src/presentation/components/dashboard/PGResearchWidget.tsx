@@ -18,6 +18,8 @@ export function PGResearchWidget({
   hint,
   jobs,
   completedLabels,
+  onJobClick,
+  selectedJobId,
   state = 'idle',
   errorMessage,
   emptyTitle = 'Keine aktiven Forschungsjobs',
@@ -27,6 +29,8 @@ export function PGResearchWidget({
   readonly hint?: string;
   readonly jobs: readonly PGResearchRow[];
   readonly completedLabels?: readonly string[];
+  readonly onJobClick?: (jobId: string) => void;
+  readonly selectedJobId?: string | null;
 }) {
   return (
     <section className="pg-widget pg-research-widget" aria-labelledby="pg-research-widget-title">
@@ -48,6 +52,8 @@ export function PGResearchWidget({
             id: job.id,
             cells: [job.technologyLabel, job.statusLabel, job.progressLabel],
           }))}
+          selectedRowId={selectedJobId}
+          onRowClick={onJobClick}
         />
         {completedLabels !== undefined && completedLabels.length > 0 ? (
           <div className="pg-widget-tags">
