@@ -57,6 +57,5 @@
 
 ## Remaining for Gate 3
 
-- S9 TutorialPanel → `presentation/` (optional)
-- MarketScreen `MarketPricesTable` → PG widget
-- Gate 3 review document
+- S9 TutorialPanel → `presentation/` (optional, tracked C2)
+- Gate 3 review document — **done** (`M11_GATE_3_DASHBOARD_REVIEW.md`, PASS WITH CORRECTIONS)

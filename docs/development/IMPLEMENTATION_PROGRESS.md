@@ -254,11 +254,12 @@ All **TD-M8-01 … TD-M8-06** resolved — see `docs/quality/M8_IMPLEMENTATION_R
 | **SVG Generator**            | **100** | `/dev/svg-generator` — see `SVG_GENERATOR_GUIDE.md` |
 | **UI Foundation (Phase 1)**  | **100** | Design tokens, PG widgets, executive dashboard — see `UI_FOUNDATION_GUIDE.md` |
 | **Application Shell (Phase 2)** | **100** | PGSidebar, PGGlobalSearch, PGContextMenu, main menu MM-001–MM-007 — see `MAIN_MENU_IMPLEMENTATION_GUIDE.md` |
+| **Dashboard System (Phase 3)** | **100** | Operations + executive PG consolidation, charts, inspector, sidebar — see `M11_GATE_3_DASHBOARD_REVIEW.md` |
 | Mockup production (Sprint 1+) |    10 | Main menu mockups started |
 | Animations / effects / audio |     0 | Art docs only |
 | Localization / balancing     |     0 | Not started   |
 | Optimization pass            |     0 | Not started   |
-| **Milestone average**        | **~50** | UI foundation + shell + main menu shipped |
+| **Milestone average**        | **~58** | UI foundation + shell + main menu + dashboard shipped |
 
 ### M12 – Release ⚪ (0 %)
 
