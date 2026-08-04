@@ -1,0 +1,76 @@
+.pg-chart-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-md);
+}
+
+.pg-chart-strip-wide {
+  grid-template-columns: 1fr;
+}
+
+.pg-chart-widget {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1rem 0.65rem;
+  box-shadow: var(--shadow-soft);
+  min-width: 0;
+}
+
+.pg-chart-widget-wide {
+  min-width: 0;
+}
+
+.pg-chart-widget-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xs);
+}
+
+.pg-chart-widget-title {
+  margin: 0;
+  font-size: var(--text-small);
+  font-weight: 600;
+  color: var(--text);
+}
+
+.pg-chart-widget-value {
+  font-size: var(--text-caption);
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  text-align: right;
+}
+
+.pg-chart-widget-canvas {
+  width: 100%;
+  min-height: 11.25rem;
+}
+
+.pg-chart-tooltip {
+  padding: 0.45rem 0.6rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  box-shadow: var(--shadow-soft);
+  font-size: var(--text-caption);
+}
+
+.pg-chart-tooltip-label {
+  display: block;
+  color: var(--muted);
+  margin-bottom: 0.15rem;
+}
+
+.pg-chart-tooltip strong {
+  display: block;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 64rem) {
+  .pg-chart-strip {
+    grid-template-columns: 1fr;
+  }
+}

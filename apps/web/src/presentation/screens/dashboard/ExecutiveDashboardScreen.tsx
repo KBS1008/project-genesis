@@ -24,6 +24,7 @@ import { Card } from '@/presentation/primitives/Card';
 import { EmptyState } from '@/presentation/primitives/EmptyState';
 import { useScreenQuery } from '@/presentation/hooks/useScreenQuery';
 import { ScreenQueryFrame } from '@/presentation/screens/shared/ScreenQueryFrame';
+import { ExecutiveDashboardCharts } from '@/presentation/screens/company/CompanyOperationsCharts';
 import { useGameWorkspace } from '@/presentation/state/GameWorkspaceProvider';
 import type { EntitySelection } from '@/presentation/state/navigation-state';
 import type { EntityDetailViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
@@ -183,6 +184,12 @@ export function ExecutiveDashboardScreen({
                 </div>
               </section>
             ) : null}
+
+            <ExecutiveDashboardCharts
+              chartPoints={companyViewData.chartPoints}
+              marketPrices={companyViewData.marketPrices}
+              labels={companyViewData.labels}
+            />
 
             <PGDashboardGrid>
               <PGDashboardGridItem span={8}>

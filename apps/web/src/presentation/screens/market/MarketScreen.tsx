@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { MarketPriceHistoryChart } from '@/components/MarketPriceHistoryChart';
+import { PGMarketPriceHistoryChart } from '@/presentation/components/dashboard/charts';
 import { MarketPricesTable } from '@/components/MarketPricesTable';
 import { buildNameResolver } from '@/presentation/adapters/mappers/workspace-view-mappers';
 import { buyResource, sellResource } from '@/presentation/adapters/api/market-client';
@@ -271,7 +271,7 @@ export function MarketScreen() {
           </div>
         </Card>
 
-        <MarketPriceHistoryChart
+        <PGMarketPriceHistoryChart
           points={companyViewData.chartPoints}
           labelResource={labels.resource}
         />

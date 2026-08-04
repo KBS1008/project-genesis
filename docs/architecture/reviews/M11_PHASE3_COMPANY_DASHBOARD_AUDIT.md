@@ -17,7 +17,7 @@
 | S5 | Initial load skeleton | 590–602 | `card-loading`, `skeleton-block` | `PGWidgetSurface` / `PGSkeleton` | P1 partial (tables remain) |
 | S6 | Header + theme toggle | 450–525 | `header`, `theme-toggle` | Remove when embedded; shell `useTheme()` | **P1** ✅ this sprint |
 | S7 | `SidebarActions` | 240–311 | `toolbar-group`, `HintButton` | Future: `PGSidebarActions` panel | P5 |
-| S8 | Charts (7 components) | 565–586 | `@/components/*Chart*` | `PGChartWidget` wrap (Phase 3 P4) | P4 |
+| S8 | Charts (7 components) | 565–586 | `@/components/*Chart*` | `presentation/charts/PG*Chart*` | **P4** ✅ |
 | S9 | `TutorialPanel` | 563 | `@/components/TutorialPanel` | Defer or move to `presentation/` | P6 |
 | S10 | Buildings table | 605–657 | `DataTable`, `card` | `PGBuildingsWidget` | **P3** ✅ |
 | S11 | Employees table | 659–698 | `DataTable` | `PGEmployeesWidget` | **P3** ✅ |
@@ -39,7 +39,7 @@
 |------|-------|
 | `apps/web/src/app/dashboard.css` | Loaded via `globals.css` |
 | `apps/web/src/components/DataTable.tsx` | Used throughout S10–S18 |
-| `apps/web/src/components/TickHistoryCharts.tsx` etc. | S8 |
+| `apps/web/src/components/TickHistoryCharts.tsx` etc. | S8 — **removed**; replaced by `presentation/components/dashboard/charts/` |
 | `apps/web/src/components/icons/DashboardIcons.tsx` | S1 legacy icons |
 
 ---

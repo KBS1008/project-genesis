@@ -7,8 +7,8 @@ import { MarketScreen } from '@/presentation/screens/market/MarketScreen';
 
 const runCommand = vi.fn();
 
-vi.mock('@/components/MarketPriceHistoryChart', () => ({
-  MarketPriceHistoryChart: () => <div data-testid="market-history-chart" />,
+vi.mock('@/presentation/components/dashboard/charts', () => ({
+  PGMarketPriceHistoryChart: () => <div data-testid="market-history-chart" />,
 }));
 
 vi.mock('@/components/MarketPricesTable', () => ({

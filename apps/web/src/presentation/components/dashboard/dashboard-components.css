@@ -1,3 +1,5 @@
+@import './charts/chart-components.css';
+
 .pg-skeleton {
   display: grid;
   gap: var(--space-sm);
@@ -427,4 +429,10 @@
 .pg-warehouse-block-title {
   margin: 0 0 var(--space-sm);
   font-size: var(--text-body);
+}
+
+.pg-operations-charts,
+.pg-executive-charts {
+  display: grid;
+  gap: var(--space-lg);
 }

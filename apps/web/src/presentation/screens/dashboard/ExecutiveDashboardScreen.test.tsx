@@ -57,6 +57,8 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
         taxIntervalTicks: 10,
       },
       overview: { cards: [] },
+      chartPoints: [],
+      marketPrices: [],
       inventoryItems: [],
       financeTransactions: [],
       productionJobs: [],

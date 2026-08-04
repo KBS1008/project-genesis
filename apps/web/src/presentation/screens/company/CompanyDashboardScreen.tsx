@@ -19,13 +19,7 @@ import { OperationsKpiStrip } from '@/presentation/screens/company/OperationsKpi
 import { OperationsLogisticsBanner } from '@/presentation/screens/company/OperationsLogisticsBanner';
 import { OperationsOverviewStrip } from '@/presentation/screens/company/OperationsOverviewStrip';
 import { CompanyOperationsPanels } from '@/presentation/screens/company/CompanyOperationsPanels';
-import { TickHistoryCharts } from '@/components/TickHistoryCharts';
-import { InventoryHistoryChart } from '@/components/InventoryHistoryChart';
-import { MarketPriceHistoryChart } from '@/components/MarketPriceHistoryChart';
-import { MarketSupplyDemandChart } from '@/components/MarketSupplyDemandChart';
-import { MarketPressureHistoryChart } from '@/components/MarketPressureHistoryChart';
-import { PriceIndexHistoryChart } from '@/components/PriceIndexHistoryChart';
-import { EnergyHistoryChart } from '@/components/EnergyHistoryChart';
+import { CompanyOperationsCharts } from '@/presentation/screens/company/CompanyOperationsCharts';
 import { TutorialPanel } from '@/components/TutorialPanel';
 
 function HintButton({
@@ -189,22 +183,7 @@ export function CompanyDashboardScreen({
     [runCommand],
   );
 
-  const { hasGame, labels } = companyViewData;
-
-  const marketPricesForTable = companyViewData.marketPrices.map((price) => ({
-    resourceId: price.resourceId,
-    basePrice: price.basePrice,
-    lastPrice: price.lastPrice,
-    tradeVolume: 0,
-    updatedAt: 0,
-    totalSupply: price.totalSupply,
-    baselineDemand: price.baselineDemand,
-    pressureIndex: price.pressureIndex,
-    changeFromBase: price.lastPrice - price.basePrice,
-    changePercent:
-      price.basePrice === 0 ? 0 : ((price.lastPrice - price.basePrice) / price.basePrice) * 100,
-    trend: price.trend,
-  }));
+  const { hasGame } = companyViewData;
 
   const selectDetail = useCallback(
     (
@@ -354,28 +333,7 @@ export function CompanyDashboardScreen({
 
           {hasGame ? <TutorialPanel tutorial={companyViewData.tutorial} /> : null}
 
-          {hasGame ? <TickHistoryCharts points={companyViewData.chartPoints} /> : null}
-
-          {hasGame ? <InventoryHistoryChart points={companyViewData.chartPoints} /> : null}
-
-          {hasGame ? <EnergyHistoryChart points={companyViewData.chartPoints} /> : null}
-
-          {hasGame ? (
-            <MarketPriceHistoryChart points={companyViewData.chartPoints} labelResource={labels.resource} />
-          ) : null}
-
-          {hasGame ? (
-            <MarketSupplyDemandChart
-              marketPrices={marketPricesForTable}
-              labelResource={labels.resource}
-            />
-          ) : null}
-
-          {hasGame ? (
-            <MarketPressureHistoryChart points={companyViewData.chartPoints} labelResource={labels.resource} />
-          ) : null}
-
-          {hasGame ? <PriceIndexHistoryChart points={companyViewData.chartPoints} /> : null}
+          <CompanyOperationsCharts companyViewData={companyViewData} hasGame={hasGame} />
 
           <div className="dashboard-panels">
             <CompanyOperationsPanels
