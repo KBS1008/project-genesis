@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import type { MarketPriceReadModel } from '@/presentation/adapters/api/client';
 import type { PGOperationsTableRow } from '@/presentation/components/dashboard/PGOperationsTable';
 import type { PGMarketTrend } from '@/presentation/components/dashboard/PGMarketTrendBadge';
 import type { PGInventoryWarehouseBlock } from '@/presentation/components/dashboard/PGInventoryWidget';
@@ -14,6 +15,50 @@ import { PGMarketTrendBadge } from '@/presentation/components/dashboard/PGMarket
 
 function joinSearchParts(parts: readonly (string | number)[]): string {
   return parts.map((part) => String(part)).join(' ');
+}
+
+type MarketPriceRowSource = {
+  readonly resourceId: string;
+  readonly resourceLabel: string;
+  readonly lastPrice: number;
+  readonly changePercent: number;
+  readonly totalSupply: number;
+  readonly baselineDemand: number;
+  readonly pressureIndex: number;
+  readonly trend: PGMarketTrend;
+  readonly tradeVolume: number;
+};
+
+function buildMarketPriceRow(price: MarketPriceRowSource): PGOperationsTableRow {
+  return Object.freeze({
+    id: price.resourceId,
+    cells: Object.freeze([
+      price.resourceLabel,
+      `${price.lastPrice.toLocaleString('de-DE')} GC`,
+      `${price.changePercent > 0 ? '+' : ''}${price.changePercent.toLocaleString('de-DE')} %`,
+      String(price.totalSupply),
+      String(price.baselineDemand),
+      price.pressureIndex.toLocaleString('de-DE', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }),
+      <PGMarketTrendBadge
+        key={`trend-${price.resourceId}`}
+        trend={price.trend}
+        changePercent={price.changePercent}
+      />,
+      String(price.tradeVolume),
+    ]) as readonly (string | ReactNode)[],
+    searchText: joinSearchParts([
+      price.resourceLabel,
+      price.lastPrice,
+      price.totalSupply,
+      price.baselineDemand,
+      price.pressureIndex,
+      price.trend,
+      price.tradeVolume,
+    ]),
+  });
 }
 
 export type OperationsEconomyPanelViewData = {
@@ -136,35 +181,40 @@ export function mapOperationsMarketRows(
       const changePercent =
         price.basePrice === 0 ? 0 : (changeFromBase / price.basePrice) * 100;
 
-      return Object.freeze({
-        id: price.resourceId,
-        cells: Object.freeze([
-          price.resourceLabel,
-          `${price.lastPrice.toLocaleString('de-DE')} GC`,
-          `${changePercent > 0 ? '+' : ''}${changePercent.toLocaleString('de-DE')} %`,
-          String(price.totalSupply),
-          String(price.baselineDemand),
-          price.pressureIndex.toLocaleString('de-DE', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          }),
-          <PGMarketTrendBadge
-            key={`trend-${price.resourceId}`}
-            trend={price.trend as PGMarketTrend}
-            changePercent={changePercent}
-          />,
-          '0',
-        ]) as readonly (string | ReactNode)[],
-        searchText: joinSearchParts([
-          price.resourceLabel,
-          price.lastPrice,
-          price.totalSupply,
-          price.baselineDemand,
-          price.pressureIndex,
-          price.trend,
-        ]),
+      return buildMarketPriceRow({
+        resourceId: price.resourceId,
+        resourceLabel: price.resourceLabel,
+        lastPrice: price.lastPrice,
+        changePercent,
+        totalSupply: price.totalSupply,
+        baselineDemand: price.baselineDemand,
+        pressureIndex: price.pressureIndex,
+        trend: price.trend,
+        tradeVolume: 0,
       });
     }),
+  );
+}
+
+/** Maps regional market price read-models to PG market table rows. */
+export function mapMarketPriceRows(
+  prices: readonly MarketPriceReadModel[],
+  labelResource: (resourceId: string) => string,
+): readonly PGOperationsTableRow[] {
+  return Object.freeze(
+    prices.map((price) =>
+      buildMarketPriceRow({
+        resourceId: price.resourceId,
+        resourceLabel: labelResource(price.resourceId),
+        lastPrice: price.lastPrice,
+        changePercent: price.changePercent,
+        totalSupply: price.totalSupply,
+        baselineDemand: price.baselineDemand,
+        pressureIndex: price.pressureIndex,
+        trend: price.trend,
+        tradeVolume: price.tradeVolume,
+      }),
+    ),
   );
 }
 

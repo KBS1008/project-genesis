@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { PGMarketPriceHistoryChart } from '@/presentation/components/dashboard/charts';
-import { MarketPricesTable } from '@/components/MarketPricesTable';
+import { PGMarketWidget } from '@/presentation/components/dashboard';
+import { mapMarketPriceRows } from '@/presentation/adapters/mappers/company-operations-table-mappers';
 import { buildNameResolver } from '@/presentation/adapters/mappers/workspace-view-mappers';
 import { buyResource, sellResource } from '@/presentation/adapters/api/market-client';
 import { fetchMarketPrices } from '@/presentation/adapters/api/query-client';
@@ -101,6 +102,11 @@ export function MarketScreen() {
     tradeForm.value.resourceId.length > 0
       ? labels.resource(tradeForm.value.resourceId)
       : 'Ressource';
+  const marketRows = useMemo(
+    () =>
+      marketQuery.data !== null ? mapMarketPriceRows(marketQuery.data, labels.resource) : [],
+    [labels.resource, marketQuery.data],
+  );
 
   const submitTrade = (side: 'buy' | 'sell') => {
     const amount = tradeForm.value.amount;
@@ -129,33 +135,33 @@ export function MarketScreen() {
       loadingLabel="Marktdaten werden geladen…"
     >
       <div className="pg-market-screen">
-        <Card title="Regionaler Markt">
-          <div className="pg-market-toolbar">
-            <div className="pg-market-field">
-              <label htmlFor="market-region-select">Region</label>
-              <select
-                id="market-region-select"
-                value={regionId}
-                onChange={(event) => {
-                  setSelectedRegionId(event.target.value);
-                }}
-                aria-label="Regionale Marktauswahl"
-              >
-                {regions.map((region) => (
-                  <option key={region.id} value={region.id}>
-                    {region.name}
-                  </option>
-                ))}
-              </select>
-            </div>
+        <div className="pg-market-toolbar">
+          <div className="pg-market-field">
+            <label htmlFor="market-region-select">Region</label>
+            <select
+              id="market-region-select"
+              value={regionId}
+              onChange={(event) => {
+                setSelectedRegionId(event.target.value);
+              }}
+              aria-label="Regionale Marktauswahl"
+            >
+              {regions.map((region) => (
+                <option key={region.id} value={region.id}>
+                  {region.name}
+                </option>
+              ))}
+            </select>
           </div>
+        </div>
 
-          {marketQuery.data !== null && marketQuery.data.length > 0 ? (
-            <MarketPricesTable marketPrices={marketQuery.data} labelResource={labels.resource} />
-          ) : (
-            <EmptyState title="Keine Marktpreise" hint="Für diese Region liegen keine Preise vor." />
-          )}
-        </Card>
+        <PGMarketWidget
+          title="Regionaler Markt"
+          rows={marketRows}
+          state={viewData.session.hasGame ? 'idle' : 'empty'}
+          emptyTitle="Keine Marktpreise"
+          emptyHint="Für diese Region liegen keine Preise vor."
+        />
 
         <div className="pg-market-context-grid">
           <Card title="Unternehmenskontext">

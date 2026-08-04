@@ -11,10 +11,6 @@ vi.mock('@/presentation/components/dashboard/charts', () => ({
   PGMarketPriceHistoryChart: () => <div data-testid="market-history-chart" />,
 }));
 
-vi.mock('@/components/MarketPricesTable', () => ({
-  MarketPricesTable: () => <div data-testid="market-prices-table" />,
-}));
-
 vi.mock('@/presentation/hooks/useScreenQuery', () => ({
   TICK_QUERY_DEBOUNCE_MS: 250,
   useScreenQuery: () => ({
@@ -87,9 +83,10 @@ describe('MarketScreen', () => {
   it('renders regional market context, prices, and trade controls', () => {
     render(<MarketScreen />);
 
-    expect(screen.getByText('Regionaler Markt')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Regionaler Markt' })).toBeInTheDocument();
     expect(screen.getByLabelText('Regionale Marktauswahl')).toHaveValue('region_001');
-    expect(screen.getByTestId('market-prices-table')).toBeInTheDocument();
+    expect(screen.getByRole('cell', { name: 'Holz' })).toBeInTheDocument();
+    expect(screen.getByRole('cell', { name: '12 GC' })).toBeInTheDocument();
     expect(screen.getByText('100.000 GC')).toBeInTheDocument();
     expect(screen.getByLabelText('Handelsressource auswählen')).toHaveValue('wood');
     expect(screen.getByRole('button', { name: 'Kaufen' })).toBeEnabled();

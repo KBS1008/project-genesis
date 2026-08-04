@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { EconomySectionViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
 import {
   buildOperationsEconomyPanel,
+  mapMarketPriceRows,
   mapOperationsEmployeeRows,
   mapOperationsFinanceLedgerRows,
   mapOperationsProductionJobs,
@@ -80,5 +81,31 @@ describe('company-operations-table-mappers', () => {
     ]);
 
     expect(rows[0]?.cells).toEqual(['Kauf', '-50 GC', '950 GC', 'Tick 12']);
+  });
+
+  it('mapMarketPriceRows maps regional prices with trade volume', () => {
+    const rows = mapMarketPriceRows(
+      [
+        {
+          resourceId: 'wood',
+          basePrice: 10,
+          lastPrice: 12,
+          tradeVolume: 25,
+          updatedAt: 1,
+          totalSupply: 100,
+          baselineDemand: 80,
+          pressureIndex: 1.1,
+          changeFromBase: 2,
+          changePercent: 20,
+          trend: 'UP',
+        },
+      ],
+      (resourceId) => (resourceId === 'wood' ? 'Holz' : resourceId),
+    );
+
+    expect(rows[0]?.id).toBe('wood');
+    expect(rows[0]?.cells[0]).toBe('Holz');
+    expect(rows[0]?.cells[1]).toBe('12 GC');
+    expect(rows[0]?.cells[7]).toBe('25');
   });
 });

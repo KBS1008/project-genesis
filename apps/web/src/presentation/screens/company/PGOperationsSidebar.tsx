@@ -1,6 +1,6 @@
 'use client';
 
-import { callApi } from '@/presentation/adapters/api/client';
+import { assignEmployee, hireEmployee } from '@/presentation/adapters/api/employees-client';
 import type { SidebarHintsViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
 import { Button } from '@/presentation/primitives/Button';
 import { EmptyState } from '@/presentation/primitives/EmptyState';
@@ -35,12 +35,9 @@ export function PGOperationsSidebar({
                 onClick={() => {
                   void runAction(
                     () =>
-                      callApi('/api/employees/hire', {
-                        method: 'POST',
-                        body: JSON.stringify({
-                          employeeTypeId: hint.employeeTypeId,
-                          displayName: hint.defaultDisplayName,
-                        }),
+                      hireEmployee({
+                        employeeTypeId: hint.employeeTypeId,
+                        displayName: hint.defaultDisplayName,
                       }),
                     `${hint.name} eingestellt.`,
                   );
@@ -66,12 +63,9 @@ export function PGOperationsSidebar({
                   onClick={() => {
                     void runAction(
                       () =>
-                        callApi('/api/employees/assign', {
-                          method: 'POST',
-                          body: JSON.stringify({
-                            employeeId: hint.employeeId,
-                            buildingId: hint.buildingId,
-                          }),
+                        assignEmployee({
+                          employeeId: hint.employeeId,
+                          buildingId: hint.buildingId,
                         }),
                       `${hint.employeeName} zugewiesen.`,
                     );
