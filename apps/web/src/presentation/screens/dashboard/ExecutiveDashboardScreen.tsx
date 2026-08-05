@@ -104,7 +104,10 @@ export function ExecutiveDashboardScreen({
       companyViewData,
       regions,
       buildingsQuery.data,
-      viewData.session.playerId,
+      {
+        playerId: viewData.session.playerId,
+        playerName: null,
+      },
     );
   }, [buildingsQuery.data, companyViewData, regions]);
 

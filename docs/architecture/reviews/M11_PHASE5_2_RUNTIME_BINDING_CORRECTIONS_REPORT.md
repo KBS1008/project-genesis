@@ -7,61 +7,60 @@
 
 ---
 
-# Executive Summary
+# Summary
 
-Phase 5.2 implements the audit corrections without redesigning the presentation architecture. All changes reuse existing API contracts, ViewData, mappers, and `useScreenQuery` infrastructure.
+Phase 5.2 closes the actionable findings from the Phase 5.1 runtime binding audit. All fixes reuse the existing ViewData, mapper, provider, and `useScreenQuery` architecture — no new gameplay, screens, or DTO families were introduced.
 
-**Final statement:** **RUNTIME BINDING CORRECTIONS COMPLETE**
-
----
-
-# Corrections Applied
-
-| ID | Finding | Fix |
-|----|---------|-----|
-| **C1 / MAJ-01** | Finance screen static query key | `finance:${tickKey}` + `TICK_QUERY_DEBOUNCE_MS` |
-| **C2 / MIN-01** | Executive notifications missing timestamps | `timestampLabel` from `simulationTimeLabel` |
-| **C3 / MIN-03** | Transport route `'Fallback'` label | Replaced with `'—'` |
-| **C4 / MIN-05** | Unused `lastSocketTickRef` | Removed from provider |
-| **C5** | No tick-key architecture guard | `presentation-tick-sync-rules.test.ts` |
-| **DOC-01** | DD-038 event name drift | Updated to `dashboard:refresh` |
-| **DOC-02** | Incomplete tick-sync docs | Updated `UI_DEVELOPMENT_GUIDE` + `SIMULATION_INTEGRATION_GUIDE` |
+**Final statement:** **RUNTIME BINDING CORRECTIONS READY**
 
 ---
 
-# Deferred (unchanged scope)
+# Corrections Implemented
 
-| ID | Reason |
-|----|--------|
-| MIN-02 | Player display name requires player profile contract — out of binding correction scope |
-| MIN-04 | Executive buildings double-fetch — optional optimization, not a binding error |
-| Rec. 6 | Selective refresh via socket tick payload — future performance work |
-
----
-
-# Testing
-
-| Test | Result |
-|------|--------|
-| `presentation-tick-sync-rules.test.ts` | ✅ Enforces tick keys on all screen queries |
-| `executive-dashboard-view-mappers.test.ts` | ✅ Notification timestamp |
-| Full suite | Run `pnpm test` |
+| ID | Requirement | Implementation |
+|----|-------------|----------------|
+| **C1** | Finance tick refresh | `FinanceScreen` → `finance:${tickKey}` + `TICK_QUERY_DEBOUNCE_MS` |
+| **C2** | Tick-sync architecture guard | `tests/architecture/presentation-tick-sync-rules.test.ts` |
+| **C3** | Notification timestamps | `timestampLabel` from `simulationTimeLabel` (simulation time, not browser time) |
+| **C4** | Transport fallback label | Route-ID empty state `'—'` instead of `'Fallback'` |
+| **C5** | Player identity | `resolvePlayerSummary()` prefers `playerName`, falls back to `playerId` |
+| **C6** | Duplicate building queries | Documented in `RUNTIME_VIEWDATA_GUIDE.md` — different ViewData shapes, same API |
+| **C7** | Unused socket tick ref | Removed `lastSocketTickRef`; WebSocket triggers debounced full refresh |
 
 ---
 
-# Files Changed
+# Tests
 
-| File | Change |
-|------|--------|
-| `screens/query/QueryScreens.tsx` | Finance tick sync |
-| `executive-dashboard-view-mappers.ts` | Notification timestamps |
-| `company-dashboard-view-mappers.ts` | Route-ID fallback |
-| `GameWorkspaceProvider.tsx` | Dead ref removal |
-| `tests/architecture/presentation-tick-sync-rules.test.ts` | New guard |
-| `DD-038-Presentation-Architecture.md` | Socket event name |
-| `UI_DEVELOPMENT_GUIDE.md` | Tick-sync screen list |
-| `SIMULATION_INTEGRATION_GUIDE.md` | Finance in tick list |
+| Test file | Coverage |
+|-----------|----------|
+| `QueryScreens.test.tsx` | Finance tick-aware query key + debounce |
+| `presentation-tick-sync-rules.test.ts` | All gameplay screens include `tickKey` |
+| `executive-dashboard-view-mappers.test.ts` | Notification timestamps + player identity |
+| `company-dashboard-view-mappers.test.ts` | Transport route empty-state label |
+| Existing suite | Must remain green (`pnpm test`) |
 
 ---
 
-**RUNTIME BINDING CORRECTIONS COMPLETE**
+# Documentation
+
+| Document | Update |
+|----------|--------|
+| `RUNTIME_VIEWDATA_GUIDE.md` | **New** — ViewData sources, tick keys, C5/C6 binding rules |
+| `IMPLEMENTATION_PROGRESS.md` | Phase 5.2 deliverable marked complete |
+| `DD-038-Presentation-Architecture.md` | Socket event `dashboard:refresh` aligned with code |
+| `UI_DEVELOPMENT_GUIDE.md` | Full tick-sync screen list |
+| `SIMULATION_INTEGRATION_GUIDE.md` | Finance added to tick-sensitive screens |
+
+---
+
+# Remaining Risks
+
+| Risk | Severity | Notes |
+|------|----------|-------|
+| Player display name | Low | No API field yet — `playerId` fallback documented until profile contract exists |
+| Executive + provider building drift within debounce window | Low | Acceptable; both refresh on same tick cycle |
+| Full workspace reload on every socket event | Low | Debounced 250 ms; selective refresh deferred |
+
+---
+
+**RUNTIME BINDING CORRECTIONS READY**

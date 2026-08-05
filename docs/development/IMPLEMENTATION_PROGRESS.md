@@ -259,7 +259,7 @@ All **TD-M8-01 … TD-M8-06** resolved — see `docs/quality/M8_IMPLEMENTATION_R
 | **Visual Asset Integration (Phase 4C)** | **100** | Registry, runtime backgrounds, dashboard mapping — see `VISUAL_ASSET_INTEGRATION_GUIDE.md` |
 | **Simulation Integration (Phase 5)** | **100** | Auto tick loop, command guard, tick-synced screens — see `SIMULATION_INTEGRATION_GUIDE.md` |
 | **Runtime Binding Audit (Phase 5.1)** | **100** | Read-only binding inventory — see `M11_PHASE5_1_RUNTIME_BINDING_AUDIT_REPORT.md` |
-| **Runtime Binding Corrections (Phase 5.2)** | **100** | Finance tick sync, notification timestamps, architecture guard — see `M11_PHASE5_2_RUNTIME_BINDING_CORRECTIONS_REPORT.md` |
+| **Runtime Binding Corrections (Phase 5.2)** | **100** | Finance tick sync, player identity, architecture guard — see `RUNTIME_VIEWDATA_GUIDE.md`, `M11_PHASE5_2_RUNTIME_BINDING_CORRECTIONS_REPORT.md` |
 | Mockup production (Sprint 1+) |    10 | Main menu mockups started |
 | Animations / effects / audio |     0 | Art docs only |
 | Localization / balancing     |     0 | Not started   |
@@ -1190,7 +1190,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Recently Completed (2026-08)
 
-- **M11 Phase 5.2 — Runtime Binding Corrections:** Finance tick sync, executive notification timestamps, transport fallback cleanup, tick-sync architecture test — **RUNTIME BINDING CORRECTIONS COMPLETE**
+- **M11 Phase 5.2 — Runtime Binding Corrections:** Finance tick sync, notification timestamps, player identity resolver, transport fallback cleanup, tick-sync architecture test, `RUNTIME_VIEWDATA_GUIDE.md` — **RUNTIME BINDING CORRECTIONS READY**
 - **M11 Phase 5.1 — Runtime Binding Audit:** read-only inventory of all scoped UI bindings; 1 major tick-sync gap (Finance screen), 8 minor/doc findings — `M11_PHASE5_1_RUNTIME_BINDING_AUDIT_REPORT.md` — **RUNTIME BINDING AUDIT COMPLETE**
 - **M11 Phase 5 — Simulation Integration Layer:** client auto-tick loop, command generation guard, tick-synced World/Executive queries, `SIMULATION_INTEGRATION_GUIDE.md`, `M11_PHASE5_SIMULATION_INTEGRATION_REPORT.md` — **SIMULATION INTEGRATION READY**
 

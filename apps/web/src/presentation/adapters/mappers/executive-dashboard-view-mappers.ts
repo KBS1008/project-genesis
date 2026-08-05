@@ -140,12 +140,31 @@ function buildNotifications(companyViewData: CompanyDashboardViewData) {
   return Object.freeze(notifications);
 }
 
+export type PlayerIdentityInput = {
+  readonly playerId: string | null;
+  readonly playerName?: string | null;
+};
+
+/** Resolves the executive player summary from runtime identity fields. */
+export function resolvePlayerSummary(identity: PlayerIdentityInput): string {
+  const trimmedName = identity.playerName?.trim();
+  if (trimmedName !== undefined && trimmedName.length > 0) {
+    return trimmedName;
+  }
+
+  if (identity.playerId !== null && identity.playerId.length > 0) {
+    return identity.playerId;
+  }
+
+  return '—';
+}
+
 /** Builds executive dashboard view-data from company dashboard state. */
 export function buildExecutiveDashboardViewData(
   companyViewData: CompanyDashboardViewData,
   regions: readonly RegionDto[],
   buildings: readonly BuildingListRowViewData[],
-  playerId: string | null,
+  playerIdentity: PlayerIdentityInput,
 ): ExecutiveDashboardViewData {
   const regionNames = new Map(regions.map((region) => [region.id, region.name]));
   const normalizedBuildings = Object.freeze(
@@ -198,7 +217,7 @@ export function buildExecutiveDashboardViewData(
     headerSubtitle: companyViewData.headerSubtitle,
     tickLabel: companyViewData.tickLabel,
     simulationTimeLabel: companyViewData.simulationTimeLabel,
-    playerSummary: playerId ?? '—',
+    playerSummary: resolvePlayerSummary(playerIdentity),
     companySummary: `${companyViewData.buildingCount} Gebäude · Tick ${companyViewData.tickLabel}`,
     kpiCards: buildKpiCards(companyViewData),
     statusItems: Object.freeze([

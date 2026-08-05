@@ -124,6 +124,7 @@ Run: `pnpm test -- simulation`
 ## Related documents
 
 - `docs/decisions/DD-038-Presentation-Architecture.md`
+- `docs/development/RUNTIME_VIEWDATA_GUIDE.md`
 - `docs/architecture/reviews/M11_PHASE5_SIMULATION_INTEGRATION_REPORT.md`
 - `docs/development/DASHBOARD_IMPLEMENTATION_GUIDE.md`
 - `docs/development/WORLD_MODULE_IMPLEMENTATION_GUIDE.md`

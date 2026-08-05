@@ -393,13 +393,15 @@ Corrected Finance screen query
 
 `presentation-tick-sync-rules.test.ts`
 
+`RUNTIME_VIEWDATA_GUIDE.md`
+
 Phase 5.2 corrections report
 
 ---
 
 Review
 
-**RUNTIME BINDING CORRECTIONS COMPLETE**
+**RUNTIME BINDING CORRECTIONS READY**
 
 ---
 

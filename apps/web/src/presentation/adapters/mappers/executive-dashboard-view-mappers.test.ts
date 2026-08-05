@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildExecutiveDashboardViewData } from '@/presentation/adapters/mappers/executive-dashboard-view-mappers';
+import { buildExecutiveDashboardViewData, resolvePlayerSummary } from '@/presentation/adapters/mappers/executive-dashboard-view-mappers';
 import type { CompanyDashboardViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
 
 function createDashboardFixture(): CompanyDashboardViewData {
@@ -106,7 +106,9 @@ function createDashboardFixture(): CompanyDashboardViewData {
 
 describe('buildExecutiveDashboardViewData', () => {
   it('maps KPI cards and runtime notifications from company view-data', () => {
-    const dashboard = buildExecutiveDashboardViewData(createDashboardFixture(), [], [], 'player_001');
+    const dashboard = buildExecutiveDashboardViewData(createDashboardFixture(), [], [], {
+      playerId: 'player_001',
+    });
 
     expect(dashboard.companyName).toBe('Acme Industries');
     expect(dashboard.playerSummary).toBe('player_001');
@@ -117,5 +119,21 @@ describe('buildExecutiveDashboardViewData', () => {
     expect(dashboard.notifications.find((entry) => entry.id === 'energy-deficit')?.timestampLabel).toBe('Tag 3');
     expect(dashboard.notifications.some((entry) => entry.id === 'tax-blocked')).toBe(true);
     expect(dashboard.reportActions).toHaveLength(4);
+  });
+});
+
+describe('resolvePlayerSummary', () => {
+  it('prefers runtime playerName when available', () => {
+    expect(
+      resolvePlayerSummary({
+        playerId: 'player_001',
+        playerName: 'Alex Operator',
+      }),
+    ).toBe('Alex Operator');
+  });
+
+  it('falls back to playerId until a display name contract exists', () => {
+    expect(resolvePlayerSummary({ playerId: 'player_001', playerName: null })).toBe('player_001');
+    expect(resolvePlayerSummary({ playerId: null, playerName: null })).toBe('—');
   });
 });
