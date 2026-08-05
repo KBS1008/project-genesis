@@ -258,11 +258,12 @@ All **TD-M8-01 … TD-M8-06** resolved — see `docs/quality/M8_IMPLEMENTATION_R
 | **World Module (Phase 4A/4B)** | **100** | Map framework + operations overlays — see `WORLD_MODULE_IMPLEMENTATION_GUIDE.md` |
 | **Visual Asset Integration (Phase 4C)** | **100** | Registry, runtime backgrounds, dashboard mapping — see `VISUAL_ASSET_INTEGRATION_GUIDE.md` |
 | **Simulation Integration (Phase 5)** | **100** | Auto tick loop, command guard, tick-synced screens — see `SIMULATION_INTEGRATION_GUIDE.md` |
+| **Runtime Binding Audit (Phase 5.1)** | **100** | Read-only binding inventory — see `M11_PHASE5_1_RUNTIME_BINDING_AUDIT_REPORT.md` |
 | Mockup production (Sprint 1+) |    10 | Main menu mockups started |
 | Animations / effects / audio |     0 | Art docs only |
 | Localization / balancing     |     0 | Not started   |
 | Optimization pass            |     0 | Not started   |
-| **Milestone average**        | **~70** | UI foundation + shell + dashboard + world + asset integration + simulation integration shipped |
+| **Milestone average**        | **~72** | UI foundation through Phase 5.1 runtime binding audit shipped |
 
 ### M12 – Release ⚪ (0 %)
 
@@ -1188,6 +1189,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Recently Completed (2026-08)
 
+- **M11 Phase 5.1 — Runtime Binding Audit:** read-only inventory of all scoped UI bindings; 1 major tick-sync gap (Finance screen), 8 minor/doc findings — `M11_PHASE5_1_RUNTIME_BINDING_AUDIT_REPORT.md` — **RUNTIME BINDING AUDIT COMPLETE**
 - **M11 Phase 5 — Simulation Integration Layer:** client auto-tick loop, command generation guard, tick-synced World/Executive queries, `SIMULATION_INTEGRATION_GUIDE.md`, `M11_PHASE5_SIMULATION_INTEGRATION_REPORT.md` — **SIMULATION INTEGRATION READY**
 
 # Recently Completed (2026-07)

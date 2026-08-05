@@ -337,6 +337,38 @@ Review
 
 ---
 
+# Phase 5.1 – Runtime Binding Audit
+
+**Status:** ✅ Complete (2026-08-05)
+
+Read-only audit of:
+
+Application Shell through Save/Load UI
+
+ViewData contracts and presentation mappers
+
+Tick synchronization coverage
+
+Legacy fallback inventory
+
+---
+
+Deliverables
+
+Binding classification report
+
+Findings matrix (MAJ-01 Finance tick gap)
+
+Phase 5.2 recommendation list
+
+---
+
+Review
+
+**RUNTIME BINDING AUDIT COMPLETE**
+
+---
+
 # Phase 6 – Production UX
 
 Implement:
