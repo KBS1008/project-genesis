@@ -118,7 +118,27 @@ Features:
 - Lazy preload — non-critical assets load on demand
 - Fallback chain — `fallbackId` on registry entries
 - In-memory cache — `getVisualAssetLoadState(assetId)`
-- Theme-ready — `theme: 'any' | 'light' | 'dark'` on entries (variants reserved)
+- **Format control** — `format: 'png' | 'svg' | 'webp'` per entry
+- **WebP preference** — `webp` path + automatic `image-set()` / `<picture>` fallback
+- **Theme variants** — optional `themeVariants: { light, dark }` paths (reserved for future mockups)
+
+### Registry entry shape
+
+```typescript
+{
+  id: 'MM-006',
+  type: 'runtime',
+  component: 'SplashScreen',
+  preload: true,
+  theme: 'default',
+  format: 'png',
+  path: '/assets/main-menu/MM-006.png',
+  webp: '/assets/main-menu/MM-006.webp',
+  themeVariants: null, // e.g. { light: '...', dark: '...' }
+}
+```
+
+Screens resolve assets only by ID — format and theme selection stay in the loader.
 
 ---
 
@@ -127,10 +147,12 @@ Features:
 After importing new design files:
 
 ```bash
-pnpm exec tsx tools/sync-runtime-visual-assets.ts
+pnpm sync-visual-assets
 ```
 
-Then register the asset in `visual-asset-registry.ts` and update `VISUAL_ASSET_CATALOG.md`.
+This copies PNG/SVG sources into `apps/web/public/assets/` and **generates WebP variants** for all main-menu PNGs (quality 82, ~90% smaller). The runtime loader prefers WebP automatically when the browser supports it.
+
+Then register new assets in `visual-asset-registry.ts` and update `VISUAL_ASSET_CATALOG.md`.
 
 ---
 

@@ -1,14 +1,21 @@
 export type {
   VisualAssetCategory,
   VisualAssetEntry,
+  VisualAssetFormat,
   VisualAssetLoadState,
   VisualAssetPriority,
+  VisualAssetResolveOptions,
+  VisualAssetSources,
   VisualAssetTheme,
+  VisualAssetThemePaths,
+  VisualAssetThemeVariant,
+  VisualAssetType,
 } from '@/presentation/assets/visual-asset-types';
 
 export {
   getVisualAssetEntry,
   listVisualAssetsByCategory,
+  listVisualAssetsByType,
   PRELOAD_VISUAL_ASSET_IDS,
   RUNTIME_VISUAL_ASSET_IDS,
   VISUAL_ASSET_REGISTRY,
@@ -20,7 +27,10 @@ export {
   preloadCriticalVisualAssets,
   preloadVisualAssets,
   resetVisualAssetLoaderCache,
+  resolveVisualAssetBackgroundImage,
+  resolveVisualAssetSources,
   resolveVisualAssetUrl,
+  setWebpSupportForTests,
 } from '@/presentation/assets/visual-asset-loader';
 
 export { DASHBOARD_MOCKUP_COMPONENT_MAP } from '@/presentation/assets/dashboard-asset-mapping';
