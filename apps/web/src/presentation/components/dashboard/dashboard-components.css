@@ -364,6 +364,11 @@
 .pg-operations-table {
   display: grid;
   gap: var(--space-sm);
+  min-width: 0;
+}
+
+.pg-market-widget .pg-operations-table {
+  overflow-x: auto;
 }
 
 .pg-operations-table-search {

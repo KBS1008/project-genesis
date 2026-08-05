@@ -165,11 +165,21 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
+  min-width: 0;
+}
+
+.pg-query-table-wide {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.pg-query-table-wide .pg-query-row {
+  min-width: max(100%, calc(var(--pg-query-columns, 4) * 6.25rem));
 }
 
 .pg-query-row {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(var(--pg-query-columns, 4), minmax(0, 1fr));
   gap: var(--space-sm);
   align-items: center;
   padding: 0.625rem 0.75rem;
@@ -179,6 +189,29 @@
   text-align: left;
   font: inherit;
   color: inherit;
+}
+
+.pg-query-row > [role='cell'],
+.pg-query-row > [role='columnheader'] {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pg-query-table-wide .pg-query-row > :first-child {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.pg-query-row > [role='cell']:has(.pg-market-trend) {
+  overflow: visible;
+}
+
+.pg-query-row > [role='cell']:nth-child(n + 2),
+.pg-query-row > [role='columnheader']:nth-child(n + 2) {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
 button.pg-query-row {

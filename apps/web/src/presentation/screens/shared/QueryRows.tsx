@@ -23,10 +23,15 @@ export function QueryRows({
     return <EmptyState title="Keine Daten vorhanden." />;
   }
 
-  const gridStyle = { gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))` };
+  const gridStyle = {
+    '--pg-query-columns': String(columnCount),
+  } as React.CSSProperties;
+
+  const tableClassName =
+    columnCount > 4 ? 'pg-query-table pg-query-table-wide' : 'pg-query-table';
 
   return (
-    <div className="pg-query-table" role="table" aria-label={ariaLabel}>
+    <div className={tableClassName} role="table" aria-label={ariaLabel}>
       <div className="pg-query-row pg-query-header" role="row" style={gridStyle}>
         {columns.map((column) => (
           <span key={column} role="columnheader">
