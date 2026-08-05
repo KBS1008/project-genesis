@@ -1,0 +1,73 @@
+.pg-visual-asset-background {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.pg-visual-asset-background-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--bg) 35%, transparent) 0%,
+      color-mix(in srgb, var(--bg) 72%, transparent) 55%,
+      color-mix(in srgb, var(--bg) 88%, transparent) 100%
+    );
+}
+
+.pg-main-menu-with-assets {
+  position: relative;
+  overflow: hidden;
+}
+
+.pg-main-menu-with-assets > .pg-main-menu-card,
+.pg-main-menu-with-assets > .pg-menu-splash,
+.pg-main-menu-with-assets > .pg-menu-loading {
+  position: relative;
+  z-index: 1;
+}
+
+.pg-menu-splash-brand-mark {
+  width: min(12rem, 60%);
+  margin: 0 auto var(--space-md);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow);
+}
+
+.pg-world-with-assets {
+  position: relative;
+}
+
+.pg-world-asset-frame {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent);
+  z-index: 0;
+}
+
+.pg-world-layout,
+.pg-world-header,
+.pg-world-toolbar,
+.pg-world-region-table {
+  position: relative;
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pg-visual-asset-background {
+    background-attachment: scroll;
+  }
+}
+
+@media (max-width: 48rem) {
+  .pg-visual-asset-background {
+    background-position: center top;
+  }
+}

@@ -254,12 +254,14 @@ All **TD-M8-01 … TD-M8-06** resolved — see `docs/quality/M8_IMPLEMENTATION_R
 | **SVG Generator**            | **100** | `/dev/svg-generator` — see `SVG_GENERATOR_GUIDE.md` |
 | **UI Foundation (Phase 1)**  | **100** | Design tokens, PG widgets, executive dashboard — see `UI_FOUNDATION_GUIDE.md` |
 | **Application Shell (Phase 2)** | **100** | PGSidebar, PGGlobalSearch, PGContextMenu, main menu MM-001–MM-007 — see `MAIN_MENU_IMPLEMENTATION_GUIDE.md` |
-| **Dashboard System (Phase 3)** | **100** | Operations + executive PG consolidation, charts, inspector, sidebar — see `M11_GATE_3_DASHBOARD_REVIEW.md` |
+| **Dashboard System (Phase 3)** | **100** | Gate 3 corrections closed — see `M11_GATE_3_DASHBOARD_REVIEW.md`, `DASHBOARD_IMPLEMENTATION_GUIDE.md` |
+| **World Module (Phase 4A/4B)** | **100** | Map framework + operations overlays — see `WORLD_MODULE_IMPLEMENTATION_GUIDE.md` |
+| **Visual Asset Integration (Phase 4C)** | **100** | Registry, runtime backgrounds, dashboard mapping — see `VISUAL_ASSET_INTEGRATION_GUIDE.md` |
 | Mockup production (Sprint 1+) |    10 | Main menu mockups started |
 | Animations / effects / audio |     0 | Art docs only |
 | Localization / balancing     |     0 | Not started   |
 | Optimization pass            |     0 | Not started   |
-| **Milestone average**        | **~58** | UI foundation + shell + main menu + dashboard shipped |
+| **Milestone average**        | **~65** | UI foundation + shell + dashboard + world + asset integration shipped |
 
 ### M12 – Release ⚪ (0 %)
 
@@ -1030,34 +1032,25 @@ Coordinates use cases between domain, infrastructure and simulation.
 
 ## Web Module (`apps/web/`)
 
-| Item                       | Path                                         |
-| -------------------------- | -------------------------------------------- |
-| Next.js app                | `src/app/page.tsx`, `src/app/layout.tsx`     |
-| Dashboard shell            | `src/components/DashboardShell.tsx`          |
-| Detail panel               | `src/components/DashboardDetailPanel.tsx`    |
-| Tick history charts        | `src/components/TickHistoryCharts.tsx`       |
-| Inventory history chart    | `src/components/InventoryHistoryChart.tsx`   |
-| Energy history chart       | `src/components/EnergyHistoryChart.tsx`      |
-| Market price history chart | `src/components/MarketPriceHistoryChart.tsx` |
-| Data table                 | `src/components/DataTable.tsx`               |
-| Dashboard socket client    | `src/lib/dashboard-socket.ts`                |
-| API client                 | `src/lib/api.ts`                             |
-| Styles                     | `src/app/dashboard.css`                      |
+| Item | Path |
+| ---- | ---- |
+| Next.js app | `src/app/page.tsx`, `src/app/layout.tsx` |
+| Presentation screens | `src/presentation/screens/` |
+| PG dashboard / world components | `src/presentation/components/` |
+| Dashboard shell alias | `src/components/DashboardShell.tsx` (re-export) |
+| API adapters | `src/presentation/adapters/api/` |
+| Deprecated shims | `src/lib/api.ts`, `src/lib/dashboard-socket.ts` |
+| Styles | `src/app/globals.css`, `operations-dashboard-layout.css`, `dashboard-components.css`, `world-components.css` |
 
 **Behaviour:**
 
 - `pnpm dev` starts API (`:3001`) and Next.js (`:3000`) in parallel.
 - Next.js rewrites `/api/*` to the NestJS backend.
-- Dashboard layout per `DASHBOARD_STYLE_GUIDE.md`: sidebar actions, KPI strip, overview strip, sticky detail panel, table area.
-- Dashboard actions: new game, tick / 10× tick, build, produce, research, market buy/sell, save/load.
-- Line charts (Recharts) for cash, energy reserve and active transports; KPI trend arrows from tick history.
-- Inventory, energy (generation/consumption/reserve) and market price history charts from tick metrics.
-- Drill-down: selectable table rows update the detail panel (buildings, production, transport, research).
-- Sortable, searchable tables with sticky headers and numeric alignment.
-- Live dashboard refresh via WebSocket (`dashboard:refresh` → automatic refetch).
-- Finance drill-down: KPI cash card, Finanzbuchungen table, detail panel focus for account and single transactions.
-- Light/dark theme toggle; separate on-site inventory and warehouse storage panels.
-- Content-driven toolbar hints with disable reasons; energy panel; localized resource/building names.
+- Operations dashboard: `CompanyDashboardScreen` — PG widgets, charts, inspector, sidebar, `PGTutorialPanel`.
+- Executive dashboard: `ExecutiveDashboardScreen` — widget grid + PG charts.
+- World screen: `WorldScreen` — interactive map framework + operations overlays (Phase 4A/4B).
+- All screens consume view-data via `GameWorkspaceProvider`; commands via typed API clients + `runCommand`.
+- Live refresh via WebSocket (`dashboard:refresh` → session refetch).
 
 ---
 

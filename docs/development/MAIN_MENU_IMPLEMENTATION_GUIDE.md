@@ -97,6 +97,22 @@ Menu animations use design tokens:
 
 ---
 
+## Visual assets (Phase 4C)
+
+Approved menu backgrounds are served from `/assets/main-menu/` via the visual asset registry:
+
+| Screen | Asset ID | Component |
+|--------|----------|-----------|
+| Splash | MM-006 | `SplashScreen` + `PGVisualAssetBackground` |
+| Loading | MM-007 | `MenuLoadingScreen` |
+| Home | MM-001 | `MainMenuScreen` |
+
+Preload: `useVisualAssetPreload(PRELOAD_VISUAL_ASSET_IDS)` on menu mount. UI text remains React strings — PNGs are decorative backgrounds only.
+
+See `VISUAL_ASSET_INTEGRATION_GUIDE.md`.
+
+---
+
 ## Testing
 
 | Test file | Coverage |

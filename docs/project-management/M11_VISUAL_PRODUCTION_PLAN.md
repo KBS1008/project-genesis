@@ -191,6 +191,8 @@ Navigation Review
 
 # Phase 3 – Dashboard System
 
+**Status:** ✅ Complete (2026-08-04) — Gate 3 corrections C1–C5 closed; see `M11_GATE_3_DASHBOARD_REVIEW.md` and `DASHBOARD_IMPLEMENTATION_GUIDE.md`.
+
 Implement:
 
 Company Dashboard
@@ -260,6 +262,40 @@ Inspector Panel
 Deliverables
 
 Interactive World Visualization
+
+---
+
+# Phase 4C – Visual Asset Integration
+
+**Status:** ✅ Complete (2026-08-05)
+
+Integrate:
+
+Runtime asset registry
+
+Main menu backgrounds (MM-001–MM-007)
+
+Dashboard mockup → PG component mapping
+
+World SVG overlay registry
+
+Public asset pipeline
+
+---
+
+Deliverables
+
+Runtime backgrounds visible in main menu
+
+Asset registry + loader
+
+Integration guide + Phase 4C report
+
+---
+
+Review
+
+Visual Asset Integration Review
 
 ---
 

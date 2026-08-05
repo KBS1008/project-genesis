@@ -70,6 +70,12 @@ Building marker click → `buildBuildingNavigationTarget(buildingId)` via `navig
 
 No new gameplay logic, economy simulation, or production calculations in presentation components — mappers only.
 
+### Visual assets (Phase 4C)
+
+World map graphics are **procedural SVG** (registry IDs `WM-SVG-GRID`, `WM-SVG-LEGEND`). WM-001–010 mockups remain planned references. Decorative frame: `pg-world-asset-frame` in `PGWorldWorkspace`.
+
+See `VISUAL_ASSET_INTEGRATION_GUIDE.md`.
+
 ---
 
 See also: `DASHBOARD_IMPLEMENTATION_GUIDE.md`, `M11_PHASE_3_WORLD_AND_REGIONAL_VISUALIZATION.md`.

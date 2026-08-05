@@ -2,6 +2,11 @@
 
 import { useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { PRELOAD_VISUAL_ASSET_IDS } from '@/presentation/assets';
+import {
+  PGVisualAssetBackground,
+  useVisualAssetPreload,
+} from '@/presentation/components/assets';
 import { useNotifications } from '@/presentation/notifications/NotificationProvider';
 import { CreditsPanel } from './CreditsPanel';
 import { LoadGamePanel } from './LoadGamePanel';
@@ -23,6 +28,8 @@ export function MainMenuScreen() {
   const [panel, setPanel] = useState<MenuPanelView>('home');
   const animationsEnabled = loadMenuSettings().menuAnimationsEnabled;
 
+  useVisualAssetPreload(PRELOAD_VISUAL_ASSET_IDS);
+
   const handleContinue = useCallback(() => {
     router.push('/game');
   }, [router]);
@@ -35,10 +42,11 @@ export function MainMenuScreen() {
   }, [showNotification]);
 
   const animationClass = animationsEnabled ? 'pg-main-menu-animated' : 'pg-main-menu-reduced-motion';
+  const shellClassName = `pg-main-menu pg-main-menu-with-assets ${animationClass}`;
 
   if (bootstrap.phase === 'splash') {
     return (
-      <div className={`pg-main-menu ${animationClass}`}>
+      <div className={shellClassName}>
         <SplashScreen />
       </div>
     );
@@ -46,14 +54,15 @@ export function MainMenuScreen() {
 
   if (bootstrap.phase === 'loading') {
     return (
-      <div className={`pg-main-menu ${animationClass}`}>
+      <div className={shellClassName}>
         <MenuLoadingScreen />
       </div>
     );
   }
 
   return (
-    <div className={`pg-main-menu ${animationClass}`}>
+    <div className={shellClassName}>
+      <PGVisualAssetBackground assetId="MM-001" />
       <div className="pg-main-menu-card">
         {panel === 'home' ? (
           <MainMenuHome

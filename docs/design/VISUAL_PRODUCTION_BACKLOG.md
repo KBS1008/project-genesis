@@ -144,67 +144,67 @@ docs/
 
 ## Main Menu
 
-☑ MM-001_Main_Menu.png
+🚀 MM-001_Main_Menu.png — runtime background `/assets/main-menu/MM-001.png`
 
 ---
 
 ## New Game
 
-☑ MM-002_New_Game_Dialog.png
+🚀 MM-002_New_Game_Dialog.png — registry reference + synced runtime copy
 
 ---
 
 ## Load Game
 
-☑ MM-003_Load_Game.png
+🚀 MM-003_Load_Game.png — registry reference + synced runtime copy
 
 ---
 
 ## Settings
 
-☑ MM-004_Settings.png
+🚀 MM-004_Settings.png — registry reference + synced runtime copy
 
 ---
 
 ## Credits
 
-☐ MM-005_Credits.png
+🚀 MM-005_Credits.png — registry reference + synced runtime copy
 
 ---
 
 ## Splash Screen
 
-☑ MM-006_Splash.png
+🚀 MM-006_Splash.png — runtime splash background
 
 ---
 
 ## Loading Screen
 
-☑ MM-007_Loading.png
+🚀 MM-007_Loading.png — runtime loading background
 
 ---
 
 # Sprint 2 — Dashboard
 
-☑ DB-001_Executive_Dashboard.png
+☑ DB-001_Executive_Dashboard.png — PG reference (`ExecutiveDashboardScreen`)
 
-☑ DB-002_KPI_Cards.png
+☑ DB-002_KPI_Cards.png — PG reference (`PGKpiCard`)
 
-☑ DB-003_Status_Panel.png
+☑ DB-003_Status_Panel.png — PG reference (`PGStatusPanel`)
 
-☑ DB-004_Notifications.png
+☑ DB-004_Notifications.png — PG reference (`PGNotificationCenter`)
 
-☐ DB-005_Finance_Widget.png
+☑ DB-005_Finance_Widget.png — PG reference (`PGFinanceWidget`)
 
-☐ DB-006_Production_Widget.png
+☑ DB-006_Production_Widget.png — PG reference (`PGProductionWidget`)
 
-☐ DB-007_Research_Widget.png
+☑ DB-007_Research_Widget.png — PG reference (`PGResearchWidget`)
 
-☐ DB-008_Transport_Widget.png
+☑ DB-008_Transport_Widget.png — PG reference (`PGSupplyChainWidget`)
 
-☐ DB-009_Company_Overview.png
+☑ DB-009_Company_Overview.png — PG reference (`PGCompanyWidget`)
 
-☐ DB-010_Dashboard.png
+☑ DB-010_Dashboard.png — PG reference (`PGReportWidget`)
 
 ---
 

@@ -28,7 +28,8 @@
     "test:watch": "vitest",
     "coverage": "vitest run --coverage",
     "typecheck": "tsc --noEmit && pnpm --filter @project-genesis/api typecheck && pnpm --filter @project-genesis/web typecheck",
-    "validate-content": "tsx tools/validate-content.ts"
+    "validate-content": "tsx tools/validate-content.ts",
+    "sync-visual-assets": "tsx tools/sync-runtime-visual-assets.ts"
   },
   "keywords": [
     "simulation",

@@ -136,6 +136,8 @@
 
 .pg-menu-splash,
 .pg-menu-loading {
+  position: relative;
+  z-index: 1;
   width: min(32rem, 100%);
   min-height: 18rem;
   display: grid;

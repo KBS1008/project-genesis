@@ -4,7 +4,21 @@ Project: Project Genesis
 
 Document Version: 1.0
 
-Status: Planning
+Status: Active — Phase 4C integration complete (2026-08-05)
+
+
+
+Phase 4C Runtime Summary
+
+| Category | Count | Runtime |
+|----------|------:|---------|
+| A — Runtime (MM, BR) | 8 | `/assets/main-menu/*.png` via registry |
+| B — UI Reference (DB, WM planned) | 12 | PG components |
+| C — SVG Runtime (CH, WM-SVG) | 3 | public SVG + procedural SVG |
+| D — Documentation | — | ADR / pipeline docs |
+
+Registry: `apps/web/src/presentation/assets/visual-asset-registry.ts`  
+Guide: `docs/development/VISUAL_ASSET_INTEGRATION_GUIDE.md`
 
 
 

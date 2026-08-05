@@ -81,7 +81,8 @@ export function PGWorldWorkspace({
         />
       }
     >
-      <div className="pg-world-workspace">
+      <div className="pg-world-workspace pg-world-with-assets">
+        <div className="pg-world-asset-frame" aria-hidden="true" data-asset-id="WM-SVG-GRID" />
         <header className="pg-world-header">
           <div>
             <h2 className="pg-widget-title">{world.worldName}</h2>
