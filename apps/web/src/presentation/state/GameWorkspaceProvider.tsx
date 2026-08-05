@@ -15,6 +15,7 @@ import { connectDashboardSocket } from '@/presentation/adapters/api/dashboard-so
 import type { GameSessionDashboard } from '@/presentation/adapters/api/client';
 import type { RegionDto } from '@/presentation/adapters/api/query-client';
 import { fetchEventLog } from '@/presentation/adapters/api/query-client';
+import { advanceSimulation } from '@/presentation/adapters/api/simulation-client';
 import { loadWorkspaceQueries } from '@/presentation/adapters/queries/load-workspace-queries';
 import type { EntityNavigationTarget } from '@/presentation/navigation/entity-navigation';
 import type { PrimaryScreenId } from '@/presentation/navigation/primary-screens';
@@ -46,6 +47,7 @@ export type GameWorkspaceContextValue = {
   readonly selectEntity: (selection: EntitySelection) => void;
   readonly clearEntitySelection: () => void;
   readonly refreshSession: () => Promise<void>;
+  readonly runSimulationTick: () => Promise<void>;
   readonly runCommand: (
     action: () => Promise<void>,
     successMessage: string,
@@ -103,6 +105,8 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
   const [isSessionDirty, setIsSessionDirty] = useState(false);
   const isBusyRef = useRef(false);
   const refreshTimerRef = useRef<number | null>(null);
+  const commandGenerationRef = useRef(0);
+  const lastSocketTickRef = useRef<number | null>(null);
 
   useEffect(() => {
     return () => {
@@ -149,16 +153,37 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
     }, SOCKET_REFRESH_DEBOUNCE_MS);
   }, [refreshSession, showNotification]);
 
+  const runSimulationTick = useCallback(async (): Promise<void> => {
+    try {
+      await advanceSimulation(1);
+      await refreshSession();
+      setIsSessionDirty(true);
+    } catch (error: unknown) {
+      showNotification({
+        tone: 'error',
+        message: translatePresentationError(error),
+      });
+      throw error;
+    }
+  }, [refreshSession, showNotification]);
+
   const runCommand = useCallback(
     async (
       action: () => Promise<void>,
       successMessage: string,
       options?: { readonly clearsDirty?: boolean },
     ): Promise<void> => {
+      const generation = ++commandGenerationRef.current;
+
       try {
         setIsBusy(true);
         showNotification({ tone: 'info', message: 'Bitte warten…' });
         await action();
+
+        if (generation !== commandGenerationRef.current) {
+          return;
+        }
+
         await refreshSession();
         setIsSessionDirty(options?.clearsDirty === true ? false : true);
 
@@ -173,12 +198,16 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
 
         showNotification({ tone: 'success', message: successMessage, eventLogId });
       } catch (error: unknown) {
-        showNotification({
-          tone: 'error',
-          message: translatePresentationError(error),
-        });
+        if (generation === commandGenerationRef.current) {
+          showNotification({
+            tone: 'error',
+            message: translatePresentationError(error),
+          });
+        }
       } finally {
-        setIsBusy(false);
+        if (generation === commandGenerationRef.current) {
+          setIsBusy(false);
+        }
       }
     },
     [refreshSession, showNotification],
@@ -253,7 +282,8 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
 
   useEffect(() => {
     const socket = connectDashboardSocket(
-      () => {
+      (payload) => {
+        lastSocketTickRef.current = payload.tickNumber;
         scheduleRefreshSession();
       },
       (connected) => {
@@ -317,6 +347,7 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
       selectEntity,
       clearEntitySelection,
       refreshSession,
+      runSimulationTick,
       runCommand,
       markSessionSaved,
       navigateToTarget,
@@ -334,6 +365,7 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
       selectEntity,
       clearEntitySelection,
       refreshSession,
+      runSimulationTick,
       runCommand,
       markSessionSaved,
       navigateToTarget,

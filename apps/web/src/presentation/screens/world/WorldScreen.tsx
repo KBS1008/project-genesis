@@ -18,7 +18,7 @@ import { fetchWorldMap } from '@/presentation/adapters/api/world-client';
 import { EMPTY_WORLD_OVERLAY } from '@/presentation/adapters/view-data/world-view-data';
 import { PGWorldWorkspace } from '@/presentation/components/world';
 import { buildBuildingNavigationTarget } from '@/presentation/navigation/entity-navigation';
-import { useScreenQuery } from '@/presentation/hooks/useScreenQuery';
+import { useScreenQuery, TICK_QUERY_DEBOUNCE_MS } from '@/presentation/hooks/useScreenQuery';
 import { ScreenQueryFrame } from '@/presentation/screens/shared/ScreenQueryFrame';
 import { EmptyState } from '@/presentation/primitives/EmptyState';
 import { useGameWorkspace } from '@/presentation/state/GameWorkspaceProvider';
@@ -37,15 +37,17 @@ export function WorldScreen() {
   const selectedRegionId =
     navigation.entitySelection.kind === 'region' ? navigation.entitySelection.id : null;
   const labels = companyViewData.labels;
+  const tickKey = viewData.simulation.tickNumber ?? 0;
 
   const mapQuery = useScreenQuery(
-    'world-map',
+    `world-map:${tickKey}`,
     () => fetchWorldMap().then((map) => mapWorldMapViewData(map, regions)),
     viewData.session.hasGame,
+    { debounceMs: TICK_QUERY_DEBOUNCE_MS },
   );
 
   const overlayQuery = useScreenQuery(
-    `world-overlay:${mapQuery.data?.mapId ?? 'none'}`,
+    `world-overlay:${mapQuery.data?.mapId ?? 'none'}:${tickKey}`,
     async () => {
       if (mapQuery.data === null) {
         return EMPTY_WORLD_OVERLAY;
@@ -68,6 +70,7 @@ export function WorldScreen() {
       );
     },
     viewData.session.hasGame && mapQuery.data !== null,
+    { debounceMs: TICK_QUERY_DEBOUNCE_MS },
   );
 
   const loadRegionInspector = useCallback(async () => {
@@ -96,9 +99,10 @@ export function WorldScreen() {
   }, [labels.building, labels.recipe, selectedRegionId]);
 
   const inspectorQuery = useScreenQuery(
-    `world-inspector:${selectedRegionId ?? 'none'}`,
+    `world-inspector:${selectedRegionId ?? 'none'}:${tickKey}`,
     loadRegionInspector,
     selectedRegionId !== null && viewData.session.hasGame,
+    { debounceMs: TICK_QUERY_DEBOUNCE_MS },
   );
 
   if (!viewData.session.hasGame) {

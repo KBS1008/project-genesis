@@ -86,9 +86,9 @@ Update deliverable rows when a step ships; set milestone % to the **average of i
 | M8  | NPC Economy            | ✅ Completed   |      100 |     8,3 % |        8,3 % |
 | M9  | User Interface         | ✅ Completed   |      100 |     8,3 % |        8,3 % |
 | M10 | Content Expansion      | ✅ Completed   |      100 |     8,3 % |        8,3 % |
-| M11 | Polish                 | ⚪ Planned     |        0 |     8,3 % |          0 % |
+| M11 | Polish                 | 🟡 In Progress |       70 |     8,3 % |        5,8 % |
 | M12 | Release                | ⚪ Planned     |        0 |     8,3 % |          0 % |
-|     | **Total**              |                | **80 %** | **100 %** |     **80 %** |
+|     | **Total**              |                | **86 %** | **100 %** |     **86 %** |
 
 \*M9 is officially planned; dashboard, charts, tutorial and WebSocket from M4/M5 count as pre-work in the deliverable matrix below.
 
@@ -244,7 +244,7 @@ All **TD-M8-01 … TD-M8-06** resolved — see `docs/quality/M8_IMPLEMENTATION_R
 | Vehicles (content)              |       5 | `Vehicle.schema.md`, art library docs; DD-022 V1 waiver |
 | **Milestone average (gate)**    | **100** | Gate 3 verdict **M10 COMPLETE**              |
 
-### M11 – Visual Production & UX 🟡 (~50 %)
+### M11 – Visual Production & UX 🟡 (~70 %)
 
 | Deliverable                  |     % | Next step     |
 | ---------------------------- | ----: | ------------- |
@@ -257,11 +257,12 @@ All **TD-M8-01 … TD-M8-06** resolved — see `docs/quality/M8_IMPLEMENTATION_R
 | **Dashboard System (Phase 3)** | **100** | Gate 3 corrections closed — see `M11_GATE_3_DASHBOARD_REVIEW.md`, `DASHBOARD_IMPLEMENTATION_GUIDE.md` |
 | **World Module (Phase 4A/4B)** | **100** | Map framework + operations overlays — see `WORLD_MODULE_IMPLEMENTATION_GUIDE.md` |
 | **Visual Asset Integration (Phase 4C)** | **100** | Registry, runtime backgrounds, dashboard mapping — see `VISUAL_ASSET_INTEGRATION_GUIDE.md` |
+| **Simulation Integration (Phase 5)** | **100** | Auto tick loop, command guard, tick-synced screens — see `SIMULATION_INTEGRATION_GUIDE.md` |
 | Mockup production (Sprint 1+) |    10 | Main menu mockups started |
 | Animations / effects / audio |     0 | Art docs only |
 | Localization / balancing     |     0 | Not started   |
 | Optimization pass            |     0 | Not started   |
-| **Milestone average**        | **~65** | UI foundation + shell + dashboard + world + asset integration shipped |
+| **Milestone average**        | **~70** | UI foundation + shell + dashboard + world + asset integration + simulation integration shipped |
 
 ### M12 – Release ⚪ (0 %)
 
@@ -1184,6 +1185,10 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 2. Session/auth model for multi-user API access
 
 ---
+
+# Recently Completed (2026-08)
+
+- **M11 Phase 5 — Simulation Integration Layer:** client auto-tick loop, command generation guard, tick-synced World/Executive queries, `SIMULATION_INTEGRATION_GUIDE.md`, `M11_PHASE5_SIMULATION_INTEGRATION_REPORT.md` — **SIMULATION INTEGRATION READY**
 
 # Recently Completed (2026-07)
 

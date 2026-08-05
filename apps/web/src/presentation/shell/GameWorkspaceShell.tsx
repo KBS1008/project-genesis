@@ -20,6 +20,7 @@ import { formatSimulationTime, formatTick } from '@/presentation/formatting/pres
 import { NotificationIndicator } from '@/presentation/shell/NotificationIndicator';
 import { SaveGameDialog } from '@/presentation/screens/menu/SaveGameDialog';
 import { SimulationControlsBar } from '@/presentation/shell/SimulationControlsBar';
+import { SimulationTickLoop } from '@/presentation/simulation';
 import { useTheme } from '@/presentation/theme';
 import { useGameWorkspace } from '@/presentation/state/GameWorkspaceProvider';
 
@@ -204,6 +205,7 @@ function WorkspaceMain({ children }: { readonly children: ReactNode }) {
       }}
     >
       <SimulationControlsBar />
+      <SimulationTickLoop />
       <EntitySelectionBanner />
       <main className="pg-workspace-screen" id="game-workspace-main">
         {isLoading ? <LoadingState label="Session wird geladen…" /> : children}

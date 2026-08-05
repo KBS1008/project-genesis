@@ -22,7 +22,7 @@ import { isPrimaryScreenId } from '@/presentation/navigation/primary-screens';
 import { Button } from '@/presentation/primitives/Button';
 import { Card } from '@/presentation/primitives/Card';
 import { EmptyState } from '@/presentation/primitives/EmptyState';
-import { useScreenQuery } from '@/presentation/hooks/useScreenQuery';
+import { useScreenQuery, TICK_QUERY_DEBOUNCE_MS } from '@/presentation/hooks/useScreenQuery';
 import { ScreenQueryFrame } from '@/presentation/screens/shared/ScreenQueryFrame';
 import { ExecutiveDashboardCharts } from '@/presentation/screens/company/CompanyOperationsCharts';
 import { useGameWorkspace } from '@/presentation/state/GameWorkspaceProvider';
@@ -78,6 +78,8 @@ export function ExecutiveDashboardScreen({
     [regions],
   );
 
+  const tickKey = viewData.simulation.tickNumber ?? 0;
+
   const loadBuildings = useCallback(
     () =>
       fetchBuildingList().then((buildings) =>
@@ -86,7 +88,12 @@ export function ExecutiveDashboardScreen({
     [companyViewData.labels, regionNames],
   );
 
-  const buildingsQuery = useScreenQuery('executive-dashboard-buildings', loadBuildings, viewData.session.hasGame);
+  const buildingsQuery = useScreenQuery(
+    `executive-dashboard-buildings:${tickKey}`,
+    loadBuildings,
+    viewData.session.hasGame,
+    { debounceMs: TICK_QUERY_DEBOUNCE_MS },
+  );
 
   const dashboard = useMemo(() => {
     if (buildingsQuery.data === null) {

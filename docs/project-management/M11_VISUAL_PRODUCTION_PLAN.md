@@ -305,7 +305,39 @@ Map Review
 
 ---
 
-# Phase 5 – Production UX
+# Phase 5 – Simulation Integration Layer
+
+**Status:** ✅ Complete (2026-08-05)
+
+Integrate:
+
+Client auto-tick loop (speed-scaled)
+
+Command generation guard (DD-038)
+
+Tick-synchronized World + Executive queries
+
+WebSocket + provider refresh pipeline
+
+---
+
+Deliverables
+
+`presentation/simulation/*` integration module
+
+`SIMULATION_INTEGRATION_GUIDE.md`
+
+Phase 5 implementation report
+
+---
+
+Review
+
+**SIMULATION INTEGRATION READY**
+
+---
+
+# Phase 6 – Production UX
 
 Implement:
 
@@ -337,7 +369,7 @@ Production UX Review
 
 ---
 
-# Phase 6 – Research UX
+# Phase 7 – Research UX
 
 Implement:
 
@@ -373,7 +405,7 @@ Gameplay UX Audit
 
 ---
 
-# Phase 7 – Economy & Finance
+# Phase 8 – Economy & Finance
 
 Implement:
 
@@ -405,7 +437,7 @@ Economy UX Review
 
 ---
 
-# Phase 8 – Logistics
+# Phase 9 – Logistics
 
 Implement:
 
@@ -437,7 +469,7 @@ Transport Review
 
 ---
 
-# Phase 9 – Animation & Polish
+# Phase 10 – Animation & Polish
 
 Implement:
 
@@ -479,7 +511,7 @@ Visual Polish Audit
 
 ---
 
-# Phase 10 – Asset Production
+# Phase 11 – Asset Production
 
 Generate:
 
@@ -517,7 +549,7 @@ Asset Review
 
 ---
 
-# Phase 11 – Integration
+# Phase 12 – Integration
 
 Replace placeholders
 
@@ -545,7 +577,7 @@ Integration Review
 
 ---
 
-# Phase 12 – Final Polish
+# Phase 13 – Final Polish
 
 Bug fixing
 
