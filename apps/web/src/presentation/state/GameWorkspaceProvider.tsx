@@ -30,6 +30,7 @@ import {
   buildNavigationQueryString,
   parseNavigationState,
   recoverInvalidEntitySelection,
+  sanitizeNavigationState,
   type EntitySelection,
   type NavigationState,
 } from './navigation-state';
@@ -296,20 +297,22 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
 
   const navigateToTarget = useCallback(
     (target: EntityNavigationTarget) => {
-      replaceNavigation({
+      replaceNavigation(sanitizeNavigationState({
         screen: target.screen,
         entitySelection: target.entitySelection,
-      });
+      }));
     },
     [replaceNavigation],
   );
 
   const navigateToScreen = useCallback(
     (screen: PrimaryScreenId) => {
-      replaceNavigation({
-        screen,
-        entitySelection: navigation.entitySelection,
-      });
+      replaceNavigation(
+        sanitizeNavigationState({
+          screen,
+          entitySelection: navigation.entitySelection,
+        }),
+      );
     },
     [navigation.entitySelection, replaceNavigation],
   );

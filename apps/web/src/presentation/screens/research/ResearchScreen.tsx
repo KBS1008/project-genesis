@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { buildNameResolver, mapResearchJobRowsViewData } from '@/presentation/adapters/mappers/workspace-view-mappers';
 import { startResearch } from '@/presentation/adapters/api/gameplay-client';
 import { fetchResearchJobs } from '@/presentation/adapters/api/query-client';
@@ -18,8 +18,9 @@ import '../shared/operation-screen.css';
 
 /** Research screen with catalog, prerequisites, active jobs, and completion display. */
 export function ResearchScreen() {
-  const { viewData, companyViewData, isBusy, runCommand } = useGameWorkspace();
-  const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
+  const { viewData, companyViewData, navigation, isBusy, runCommand, selectEntity } = useGameWorkspace();
+  const selectedJobId =
+    navigation.entitySelection.kind === 'research' ? navigation.entitySelection.id : null;
   const labels = useMemo(
     () => buildNameResolver(companyViewData.labels),
     [companyViewData.labels],
@@ -79,7 +80,9 @@ export function ResearchScreen() {
               cells: [row.title, row.statusLabel, row.progressLabel],
             }))}
             selectedRowId={selectedJobId}
-            onRowClick={setSelectedJobId}
+            onRowClick={(jobId) => {
+              selectEntity({ kind: 'research', id: jobId });
+            }}
           />
         </Card>
 

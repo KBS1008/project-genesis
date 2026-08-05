@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { mapBuildingListRow } from '@/presentation/adapters/mappers/company-dashboard-view-mappers';
 import { placeBuilding } from '@/presentation/adapters/api/gameplay-client';
 import { fetchBuildingList } from '@/presentation/adapters/api/query-client';
@@ -19,8 +19,9 @@ import '../shared/operation-screen.css';
 
 /** Buildings screen with owned list, detail, construction catalog, and placement workflow. */
 export function BuildingsScreen() {
-  const { viewData, companyViewData, regions, isBusy, runCommand } = useGameWorkspace();
-  const [selectedBuildingId, setSelectedBuildingId] = useState<string | null>(null);
+  const { viewData, companyViewData, regions, navigation, isBusy, runCommand, selectEntity } = useGameWorkspace();
+  const selectedBuildingId =
+    navigation.entitySelection.kind === 'building' ? navigation.entitySelection.id : null;
   const regionNames = useMemo(
     () => new Map(regions.map((region) => [region.id, region.name])),
     [regions],
@@ -119,7 +120,9 @@ export function BuildingsScreen() {
               ],
             }))}
             selectedRowId={selectedBuildingId}
-            onRowClick={setSelectedBuildingId}
+            onRowClick={(buildingId) => {
+              selectEntity({ kind: 'building', id: buildingId });
+            }}
           />
         </Card>
 

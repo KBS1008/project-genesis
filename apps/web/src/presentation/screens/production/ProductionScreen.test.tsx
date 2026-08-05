@@ -6,6 +6,9 @@ import { describe, expect, it, vi } from 'vitest';
 import { ProductionScreen } from '@/presentation/screens/production/ProductionScreen';
 
 const runCommand = vi.fn();
+const selectEntity = vi.fn();
+
+const defaultNavigation = { screen: 'production' as const, entitySelection: { kind: 'none' as const } };
 
 vi.mock('@/presentation/hooks/useScreenQuery', () => ({
   TICK_QUERY_DEBOUNCE_MS: 250,
@@ -48,6 +51,8 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
     },
     isBusy: false,
     runCommand,
+    navigation: defaultNavigation,
+    selectEntity,
   }),
 }));
 

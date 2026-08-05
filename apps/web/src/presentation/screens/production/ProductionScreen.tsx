@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { buildNameResolver, mapProductionJobRowsViewData } from '@/presentation/adapters/mappers/workspace-view-mappers';
 import { startProduction } from '@/presentation/adapters/api/gameplay-client';
 import { fetchProductionJobs } from '@/presentation/adapters/api/query-client';
@@ -19,8 +19,9 @@ import '../shared/operation-screen.css';
 
 /** Production screen with facilities, active jobs, and start-production workflow. */
 export function ProductionScreen() {
-  const { viewData, companyViewData, isBusy, runCommand } = useGameWorkspace();
-  const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
+  const { viewData, companyViewData, navigation, isBusy, runCommand, selectEntity } = useGameWorkspace();
+  const selectedJobId =
+    navigation.entitySelection.kind === 'production' ? navigation.entitySelection.id : null;
   const labels = useMemo(
     () => buildNameResolver(companyViewData.labels),
     [companyViewData.labels],
@@ -69,7 +70,9 @@ export function ProductionScreen() {
               cells: [row.title, row.statusLabel, row.progressLabel],
             }))}
             selectedRowId={selectedJobId}
-            onRowClick={setSelectedJobId}
+            onRowClick={(jobId) => {
+              selectEntity({ kind: 'production', id: jobId });
+            }}
           />
         </Card>
 

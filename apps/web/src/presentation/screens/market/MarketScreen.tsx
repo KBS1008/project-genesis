@@ -57,7 +57,7 @@ function resolveTradeValidation(
 
 /** Regional market screen with prices, history, inventory context, and buy/sell forms. */
 export function MarketScreen() {
-  const { viewData, companyViewData, regions, isBusy, runCommand } = useGameWorkspace();
+  const { viewData, companyViewData, regions, isBusy, runCommand, navigation, selectEntity } = useGameWorkspace();
   const defaultRegionId = regions[0]?.id ?? viewData.world?.regions[0]?.id ?? '';
   const [selectedRegionId, setSelectedRegionId] = useState(defaultRegionId);
   const tradeForm = useTransientFormState({ resourceId: '', amount: 5 });
@@ -73,6 +73,12 @@ export function MarketScreen() {
     viewData.session.hasGame && regionId.length > 0,
     { debounceMs: TICK_QUERY_DEBOUNCE_MS },
   );
+
+  useEffect(() => {
+    if (navigation.entitySelection.kind === 'resource') {
+      tradeForm.patch({ resourceId: navigation.entitySelection.id });
+    }
+  }, [navigation.entitySelection, tradeForm.patch]);
 
   useEffect(() => {
     if (defaultRegionId.length > 0 && selectedRegionId.length === 0) {
@@ -207,7 +213,11 @@ export function MarketScreen() {
                 id="market-resource-select"
                 value={tradeForm.value.resourceId}
                 onChange={(event) => {
-                  tradeForm.patch({ resourceId: event.target.value });
+                  const resourceId = event.target.value;
+                  tradeForm.patch({ resourceId });
+                  if (resourceId.length > 0) {
+                    selectEntity({ kind: 'resource', id: resourceId });
+                  }
                 }}
                 aria-label="Handelsressource auswählen"
               >

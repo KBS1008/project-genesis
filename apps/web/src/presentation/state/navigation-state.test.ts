@@ -5,7 +5,9 @@ import {
   buildSessionSnapshots,
   parseNavigationState,
   recoverInvalidEntitySelection,
+  sanitizeNavigationState,
   serializeNavigationState,
+  isEntitySelectionCompatibleWithScreen,
 } from '@/presentation/state/navigation-state';
 
 describe('navigation-state', () => {
@@ -54,6 +56,29 @@ describe('navigation-state', () => {
     );
 
     expect(invalidState.entitySelection).toEqual({ kind: 'none' });
+  });
+
+  it('clears incompatible entity selections when switching screens', () => {
+    expect(
+      sanitizeNavigationState({
+        screen: 'finance',
+        entitySelection: { kind: 'building', id: 'building-1' },
+      }).entitySelection,
+    ).toEqual({ kind: 'none' });
+
+    expect(
+      sanitizeNavigationState({
+        screen: 'buildings',
+        entitySelection: { kind: 'building', id: 'building-1' },
+      }).entitySelection,
+    ).toEqual({ kind: 'building', id: 'building-1' });
+
+    expect(
+      isEntitySelectionCompatibleWithScreen('markets', { kind: 'resource', id: 'iron-ore' }),
+    ).toBe(true);
+    expect(
+      isEntitySelectionCompatibleWithScreen('markets', { kind: 'region', id: 'region-1' }),
+    ).toBe(false);
   });
 
   it('builds readonly session snapshots without storing domain aggregates', () => {

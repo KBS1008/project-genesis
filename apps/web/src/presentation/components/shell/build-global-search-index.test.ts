@@ -49,6 +49,10 @@ describe('buildGlobalSearchIndex', () => {
 
     expect(items.some((item) => item.id === 'building:building-1')).toBe(true);
     expect(items.some((item) => item.id === 'region:region-1')).toBe(true);
+
+    const buildingItem = items.find((item) => item.id === 'building:building-1');
+    expect(buildingItem?.screen).toBe('buildings');
+    expect(buildingItem?.entityKind).toBe('building');
   });
 });
 

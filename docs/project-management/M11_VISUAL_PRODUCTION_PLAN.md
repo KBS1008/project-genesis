@@ -405,6 +405,38 @@ Review
 
 ---
 
+# Phase 5.3 – Shared Selection & UI Synchronization
+
+**Status:** ✅ Complete (2026-08-05)
+
+Implement one authoritative URL-backed selection model:
+
+World Map ↔ Inspector ↔ Dashboard widgets ↔ Global Search ↔ Context Menu
+
+Screen–entity compatibility sanitization on navigation
+
+Bidirectional sync on operation screens
+
+---
+
+Deliverables
+
+`navigation-state.ts` — `sanitizeNavigationState`, compatibility rules
+
+`entity-navigation.ts` — screen-specific navigation builders
+
+`entity-selection-labels.ts` — selection banner labels
+
+Phase 5.3 synchronization report
+
+---
+
+Review
+
+**SHARED SELECTION SYNCHRONIZATION READY**
+
+---
+
 # Phase 6 – Production UX
 
 Implement:

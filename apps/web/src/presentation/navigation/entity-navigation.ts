@@ -14,8 +14,16 @@ export function buildRegionNavigationTarget(regionId: string): EntityNavigationT
   };
 }
 
-/** Builds navigation state for inspecting a building on the company screen. */
+/** Builds navigation state for inspecting a building on the buildings screen. */
 export function buildBuildingNavigationTarget(buildingId: string): EntityNavigationTarget {
+  return {
+    screen: 'buildings',
+    entitySelection: { kind: 'building', id: buildingId },
+  };
+}
+
+/** Builds navigation state for inspecting a building in company operations. */
+export function buildCompanyBuildingNavigationTarget(buildingId: string): EntityNavigationTarget {
   return {
     screen: 'company',
     entitySelection: { kind: 'building', id: buildingId },
@@ -35,6 +43,30 @@ export function buildTransportNavigationTarget(orderId: string): EntityNavigatio
   return {
     screen: 'transport',
     entitySelection: { kind: 'transport', id: orderId },
+  };
+}
+
+/** Builds navigation state for inspecting a research job. */
+export function buildResearchNavigationTarget(jobId: string): EntityNavigationTarget {
+  return {
+    screen: 'research',
+    entitySelection: { kind: 'research', id: jobId },
+  };
+}
+
+/** Builds navigation state for inspecting an employee in company operations. */
+export function buildEmployeeNavigationTarget(employeeId: string): EntityNavigationTarget {
+  return {
+    screen: 'company',
+    entitySelection: { kind: 'employee', id: employeeId },
+  };
+}
+
+/** Builds navigation state for a market resource on the markets screen. */
+export function buildResourceNavigationTarget(resourceId: string): EntityNavigationTarget {
+  return {
+    screen: 'markets',
+    entitySelection: { kind: 'resource', id: resourceId },
   };
 }
 

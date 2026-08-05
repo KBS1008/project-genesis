@@ -6,6 +6,9 @@ import { describe, expect, it, vi } from 'vitest';
 import { MarketScreen } from '@/presentation/screens/market/MarketScreen';
 
 const runCommand = vi.fn();
+const selectEntity = vi.fn();
+
+const defaultNavigation = { screen: 'markets' as const, entitySelection: { kind: 'none' as const } };
 
 vi.mock('@/presentation/components/dashboard/charts', () => ({
   PGMarketPriceHistoryChart: () => <div data-testid="market-history-chart" />,
@@ -76,6 +79,8 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
     regions: [{ id: 'region_001', name: 'Heartland' }],
     isBusy: false,
     runCommand,
+    navigation: defaultNavigation,
+    selectEntity,
   }),
 }));
 

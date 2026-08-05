@@ -47,7 +47,7 @@ export function buildGlobalSearchIndex(
       label: building.name,
       description: `${building.buildingTypeLabel} · ${building.regionLabel}`,
       keywords: [building.id, building.buildingTypeLabel, building.regionLabel, 'gebäude'],
-      screen: 'company' as const,
+      screen: 'buildings' as const,
       entityKind: 'building' as const,
       entityId: building.id,
     })),

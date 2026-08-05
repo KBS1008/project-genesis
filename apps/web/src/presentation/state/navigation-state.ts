@@ -178,6 +178,58 @@ export function recoverInvalidEntitySelection(
   };
 }
 
+/** Returns whether an entity selection belongs on the given primary screen. */
+export function isEntitySelectionCompatibleWithScreen(
+  screen: PrimaryScreenId,
+  selection: EntitySelection,
+): boolean {
+  if (selection.kind === 'none') {
+    return true;
+  }
+
+  switch (screen) {
+    case 'world':
+      return selection.kind === 'region';
+    case 'markets':
+      return selection.kind === 'resource';
+    case 'production':
+      return selection.kind === 'production';
+    case 'transport':
+      return selection.kind === 'transport';
+    case 'research':
+      return selection.kind === 'research';
+    case 'buildings':
+      return selection.kind === 'building';
+    case 'reports':
+      return selection.kind === 'event';
+    case 'company':
+      return (
+        selection.kind === 'building' ||
+        selection.kind === 'production' ||
+        selection.kind === 'transport' ||
+        selection.kind === 'research' ||
+        selection.kind === 'employee' ||
+        selection.kind === 'resource'
+      );
+    case 'finance':
+      return false;
+    default:
+      return false;
+  }
+}
+
+/** Clears entity selections that do not belong on the active screen. */
+export function sanitizeNavigationState(state: NavigationState): NavigationState {
+  if (isEntitySelectionCompatibleWithScreen(state.screen, state.entitySelection)) {
+    return state;
+  }
+
+  return {
+    ...state,
+    entitySelection: { kind: 'none' },
+  };
+}
+
 /** Maps dashboard read models to entity IDs used for selection validation. */
 export function buildEntityCatalogFromDashboard(dashboard: {
   readonly buildings: readonly { readonly id: string }[];

@@ -5,7 +5,17 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { TransportScreen } from '@/presentation/screens/transport/TransportScreen';
 
-const selectEntity = vi.fn();
+const { navigationState, selectEntity } = vi.hoisted(() => {
+  const selectEntity = vi.fn();
+
+  return {
+    selectEntity,
+    navigationState: {
+      screen: 'transport' as const,
+      entitySelection: { kind: 'none' as const },
+    },
+  };
+});
 
 vi.mock('@/presentation/hooks/useScreenQuery', () => ({
   TICK_QUERY_DEBOUNCE_MS: 250,
@@ -51,7 +61,7 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
         ]),
       },
     },
-    navigation: { entitySelection: { kind: 'none' } },
+    navigation: navigationState,
     isBusy: false,
     selectEntity,
   }),
@@ -59,6 +69,7 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
 
 describe('TransportScreen', () => {
   it('renders logistics summary and transport orders', () => {
+    navigationState.entitySelection = { kind: 'none' };
     render(<TransportScreen />);
 
     expect(screen.getByText('Transportaufträge')).toBeInTheDocument();
@@ -67,6 +78,7 @@ describe('TransportScreen', () => {
   });
 
   it('selects a transport order for route inspection', async () => {
+    navigationState.entitySelection = { kind: 'none' };
     const user = userEvent.setup();
     selectEntity.mockClear();
 
@@ -75,6 +87,13 @@ describe('TransportScreen', () => {
     await user.click(screen.getByRole('row', { name: /Lager → Werk/ }));
 
     expect(selectEntity).toHaveBeenCalledWith({ kind: 'transport', id: 'transport_001' });
+  });
+
+  it('shows route detail when URL selects a transport order', () => {
+    navigationState.entitySelection = { kind: 'transport', id: 'transport_001' };
+
+    render(<TransportScreen />);
+
     expect(screen.getByText('Route-ID')).toBeInTheDocument();
   });
 });

@@ -4,6 +4,8 @@ import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { ResearchScreen } from '@/presentation/screens/research/ResearchScreen';
 
+const selectEntity = vi.fn();
+const defaultNavigation = { screen: 'research' as const, entitySelection: { kind: 'none' as const } };
 vi.mock('@/presentation/hooks/useScreenQuery', () => ({
   TICK_QUERY_DEBOUNCE_MS: 250,
   useScreenQuery: () => ({
@@ -44,6 +46,8 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
     },
     isBusy: false,
     runCommand: vi.fn(),
+    navigation: defaultNavigation,
+    selectEntity,
   }),
 }));
 

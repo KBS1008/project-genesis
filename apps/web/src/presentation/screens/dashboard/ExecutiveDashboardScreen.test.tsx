@@ -9,6 +9,7 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
   useGameWorkspace: () => ({
     viewData: {
       session: { hasGame: true, playerId: 'player_001' },
+      simulation: { tickNumber: 1 },
     },
     companyViewData: {
       companyName: 'Test Corp',

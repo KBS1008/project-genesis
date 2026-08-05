@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { mapTransportJobRowsViewData } from '@/presentation/adapters/mappers/workspace-view-mappers';
 import { fetchTransportOrders } from '@/presentation/adapters/api/query-client';
 import type { JobRowViewData } from '@/presentation/adapters/view-data/workspace-view-data';
@@ -17,7 +17,8 @@ import '../shared/operation-screen.css';
 /** Transport screen with logistics summary, active orders, route inspection, and detail. */
 export function TransportScreen() {
   const { viewData, companyViewData, navigation, isBusy, selectEntity } = useGameWorkspace();
-  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  const selectedOrderId =
+    navigation.entitySelection.kind === 'transport' ? navigation.entitySelection.id : null;
   const tickKey = viewData.simulation.tickNumber ?? 0;
   const ordersQuery = useScreenQuery(
     `transport:${tickKey}`,
@@ -38,12 +39,6 @@ export function TransportScreen() {
       completed: rows.filter((row) => row.statusLabel === 'COMPLETED').length,
     });
   }, [ordersQuery.data]);
-
-  useEffect(() => {
-    if (navigation.entitySelection.kind === 'transport') {
-      setSelectedOrderId(navigation.entitySelection.id);
-    }
-  }, [navigation.entitySelection]);
 
   return (
     <ScreenQueryFrame
@@ -81,7 +76,6 @@ export function TransportScreen() {
             }))}
             selectedRowId={selectedOrderId}
             onRowClick={(orderId) => {
-              setSelectedOrderId(orderId);
               selectEntity({ kind: 'transport', id: orderId });
             }}
           />

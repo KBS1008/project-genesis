@@ -16,7 +16,13 @@ import {
   PGSupplyChainWidget,
 } from '@/presentation/components/dashboard';
 import { PGDashboardGrid, PGDashboardGridItem, PGInspectorPanel, PGWorkspaceFrame } from '@/presentation/components/layout';
-import { buildBuildingNavigationTarget, buildRegionNavigationTarget } from '@/presentation/navigation/entity-navigation';
+import {
+  buildCompanyBuildingNavigationTarget,
+  buildProductionNavigationTarget,
+  buildRegionNavigationTarget,
+  buildResearchNavigationTarget,
+  buildTransportNavigationTarget,
+} from '@/presentation/navigation/entity-navigation';
 import type { PrimaryScreenId } from '@/presentation/navigation/primary-screens';
 import { isPrimaryScreenId } from '@/presentation/navigation/primary-screens';
 import { Button } from '@/presentation/primitives/Button';
@@ -208,7 +214,7 @@ export function ExecutiveDashboardScreen({
                   buildings={dashboard.buildings}
                   regionalPresence={dashboard.regionalPresence}
                   onBuildingClick={(buildingId) => {
-                    navigateToTarget(buildBuildingNavigationTarget(buildingId));
+                    navigateToTarget(buildCompanyBuildingNavigationTarget(buildingId));
                     onOpenOperations();
                   }}
                   onRegionClick={(regionId) => {
@@ -237,6 +243,12 @@ export function ExecutiveDashboardScreen({
                   activeCount={dashboard.productionJobs.length}
                   hint={dashboard.productionHint ?? undefined}
                   jobs={dashboard.productionJobs}
+                  selectedJobId={
+                    navigation.entitySelection.kind === 'production' ? navigation.entitySelection.id : null
+                  }
+                  onJobClick={(jobId) => {
+                    navigateToTarget(buildProductionNavigationTarget(jobId));
+                  }}
                 />
               </PGDashboardGridItem>
 
@@ -246,6 +258,12 @@ export function ExecutiveDashboardScreen({
                   hint={dashboard.researchHint ?? undefined}
                   jobs={dashboard.researchJobs}
                   completedLabels={dashboard.completedResearchLabels}
+                  selectedJobId={
+                    navigation.entitySelection.kind === 'research' ? navigation.entitySelection.id : null
+                  }
+                  onJobClick={(jobId) => {
+                    navigateToTarget(buildResearchNavigationTarget(jobId));
+                  }}
                 />
               </PGDashboardGridItem>
 
@@ -254,6 +272,12 @@ export function ExecutiveDashboardScreen({
                   activeCount={dashboard.transportOrders.length}
                   hint={dashboard.transportHint ?? undefined}
                   orders={dashboard.transportOrders}
+                  selectedOrderId={
+                    navigation.entitySelection.kind === 'transport' ? navigation.entitySelection.id : null
+                  }
+                  onOrderClick={(orderId) => {
+                    navigateToTarget(buildTransportNavigationTarget(orderId));
+                  }}
                 />
               </PGDashboardGridItem>
 

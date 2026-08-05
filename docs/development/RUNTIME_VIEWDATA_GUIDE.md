@@ -1,7 +1,7 @@
 # Runtime ViewData Guide
 
 **Project:** Project Genesis  
-**Milestone:** M11 Phase 5.2  
+**Milestone:** M11 Phase 5.3  
 **Audience:** Frontend developers binding UI to simulation state
 
 ---
@@ -97,6 +97,36 @@ Missing optional runtime fields use `'—'` per UI guidelines — never debug pl
 
 ---
 
+## URL-backed entity selection (Phase 5.3)
+
+One authoritative selection model drives World Map, Inspector, Dashboard widgets, Global Search, and Context Menu:
+
+```text
+URL ?screen=…&entity=kind:id  ↔  GameWorkspaceProvider.navigation  ↔  screen local state
+```
+
+| Mechanism | Role |
+|-----------|------|
+| `parseNavigationState` / `serializeNavigationState` | URL ↔ `NavigationState` |
+| `selectEntity` / `clearEntitySelection` | Update selection on current screen |
+| `navigateToTarget` / `build*NavigationTarget` | Cross-screen navigation with selection |
+| `sanitizeNavigationState` | Clears entity when screen and kind mismatch |
+| `recoverInvalidEntitySelection` | Clears stale IDs after catalog load |
+| `formatEntitySelectionLabel` | Human-readable selection banner |
+
+**Screen compatibility:** `isEntitySelectionCompatibleWithScreen()` — e.g. `markets` accepts only `resource`, `buildings` only `building`, `company` accepts building/production/transport/research/employee/resource.
+
+**Building navigation split:**
+
+| Builder | Screen | Use case |
+|---------|--------|----------|
+| `buildBuildingNavigationTarget` | `buildings` | World map markers, global search |
+| `buildCompanyBuildingNavigationTarget` | `company` | Executive regional-presence widget |
+
+Screens with bidirectional sync: Production, Research, Transport, Buildings, Markets (resource dropdown), Reports (events), Company operations (`DetailSelection`).
+
+---
+
 ## Related documents
 
 - `docs/decisions/DD-038-Presentation-Architecture.md`
@@ -104,3 +134,4 @@ Missing optional runtime fields use `'—'` per UI guidelines — never debug pl
 - `docs/development/SIMULATION_INTEGRATION_GUIDE.md`
 - `docs/architecture/reviews/M11_PHASE5_1_RUNTIME_BINDING_AUDIT_REPORT.md`
 - `docs/architecture/reviews/M11_PHASE5_2_RUNTIME_BINDING_CORRECTIONS_REPORT.md`
+- `docs/architecture/reviews/M11_PHASE5_3_SELECTION_AND_SYNCHRONIZATION_REPORT.md`

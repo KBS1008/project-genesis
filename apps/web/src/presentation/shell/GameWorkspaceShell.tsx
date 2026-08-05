@@ -23,19 +23,23 @@ import { SimulationControlsBar } from '@/presentation/shell/SimulationControlsBa
 import { SimulationTickLoop } from '@/presentation/simulation';
 import { useTheme } from '@/presentation/theme';
 import { useGameWorkspace } from '@/presentation/state/GameWorkspaceProvider';
+import { formatEntitySelectionLabel } from '@/presentation/navigation/entity-selection-labels';
 
 function EntitySelectionBanner() {
-  const { navigation, clearEntitySelection } = useGameWorkspace();
+  const { navigation, companyViewData, regions, clearEntitySelection } = useGameWorkspace();
+  const selectionLabel = formatEntitySelectionLabel(
+    navigation.entitySelection,
+    companyViewData,
+    regions,
+  );
 
-  if (navigation.entitySelection.kind === 'none') {
+  if (selectionLabel === null) {
     return null;
   }
 
   return (
     <div className="pg-selection-banner" role="status">
-      <span>
-        Auswahl: {navigation.entitySelection.kind} · {navigation.entitySelection.id}
-      </span>
+      <span>Auswahl: {selectionLabel}</span>
       <button type="button" aria-label="Auswahl aufheben" onClick={clearEntitySelection}>
         Auswahl aufheben
       </button>

@@ -30,7 +30,7 @@ export function CompanyDashboardScreen({
   readonly hideHeader?: boolean;
   readonly onBackToOverview?: () => void;
 }) {
-  const { companyViewData, isLoading, isBusy, isLiveConnected, runCommand, navigation } =
+  const { companyViewData, isLoading, isBusy, isLiveConnected, runCommand, navigation, selectEntity, clearEntitySelection } =
     useGameWorkspace();
   const { theme, toggleTheme } = useTheme();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -99,21 +99,25 @@ export function CompanyDashboardScreen({
       id: string,
     ) => {
       setDetailSelection({ kind, id });
+      selectEntity({ kind, id });
     },
-    [],
+    [selectEntity],
   );
 
   const selectFinanceDetail = useCallback(() => {
     setDetailSelection({ kind: 'finance' });
-  }, []);
+    clearEntitySelection();
+  }, [clearEntitySelection]);
 
   const selectLogisticsDetail = useCallback(() => {
     setDetailSelection({ kind: 'logistics' });
-  }, []);
+    clearEntitySelection();
+  }, [clearEntitySelection]);
 
   const clearDetailSelection = useCallback(() => {
     setDetailSelection({ kind: 'overview' });
-  }, []);
+    clearEntitySelection();
+  }, [clearEntitySelection]);
 
   const operationsKpiCards =
     companyViewData.kpis !== null ? buildOperationsKpiCards(companyViewData.kpis) : null;

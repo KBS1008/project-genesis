@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { buildEventNavigationTarget } from '@/presentation/navigation/entity-navigation';
 import { buildNavigationQueryString } from '@/presentation/state/navigation-state';
 import { Button } from '@/presentation/primitives/Button';
 import { useNotifications } from '@/presentation/notifications/NotificationProvider';
@@ -25,10 +26,7 @@ export function NotificationIndicator() {
           const query =
             latestEventId === undefined
               ? '?screen=reports'
-              : buildNavigationQueryString({
-                  screen: 'reports',
-                  entitySelection: { kind: 'event', id: latestEventId },
-                });
+              : buildNavigationQueryString(buildEventNavigationTarget(latestEventId));
           router.push(`/game${query}`);
         }}
       >
