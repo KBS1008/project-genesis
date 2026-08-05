@@ -140,7 +140,7 @@ fetchBuildingList().then((buildings) =>
 
 ## Tick refresh
 
-Include `viewData.simulation.tickNumber` in the query key when the screen must refresh after simulation ticks (markets, buildings, production, research). Pass `{ debounceMs: TICK_QUERY_DEBOUNCE_MS }` to avoid unbounded refetch queues during high simulation speeds.
+Include `viewData.simulation.tickNumber` in the query key when the screen must refresh after simulation ticks (markets, buildings, production, research, transport, finance, reports/events, world map/overlays/inspector, executive buildings). Pass `{ debounceMs: TICK_QUERY_DEBOUNCE_MS }` to avoid unbounded refetch queues during high simulation speeds.
 
 Live dashboard refreshes are debounced in `GameWorkspaceProvider` (250 ms).
 

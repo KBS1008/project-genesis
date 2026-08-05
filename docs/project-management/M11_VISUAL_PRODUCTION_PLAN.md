@@ -369,6 +369,40 @@ Review
 
 ---
 
+# Phase 5.2 – Runtime Binding Corrections
+
+**Status:** ✅ Complete (2026-08-05)
+
+Implement audit corrections:
+
+Finance tick synchronization (MAJ-01)
+
+Executive notification timestamps
+
+Transport route fallback cleanup
+
+Tick-sync architecture test
+
+Documentation alignment (DD-038, guides)
+
+---
+
+Deliverables
+
+Corrected Finance screen query
+
+`presentation-tick-sync-rules.test.ts`
+
+Phase 5.2 corrections report
+
+---
+
+Review
+
+**RUNTIME BINDING CORRECTIONS COMPLETE**
+
+---
+
 # Phase 6 – Production UX
 
 Implement:

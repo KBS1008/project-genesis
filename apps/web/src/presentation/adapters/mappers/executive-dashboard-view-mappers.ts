@@ -105,6 +105,7 @@ function buildKpiCards(companyViewData: CompanyDashboardViewData): readonly Exec
 function buildNotifications(companyViewData: CompanyDashboardViewData) {
   const notifications = [];
   const kpis = companyViewData.kpis;
+  const timestampLabel = companyViewData.simulationTimeLabel;
 
   if (companyViewData.energyHasDeficit) {
     notifications.push({
@@ -112,6 +113,7 @@ function buildNotifications(companyViewData: CompanyDashboardViewData) {
       title: 'Energiedefizit',
       message: kpis?.energyTrend ?? 'Energieunterdeckung',
       tone: 'warning' as const,
+      timestampLabel,
     });
   }
 
@@ -121,6 +123,7 @@ function buildNotifications(companyViewData: CompanyDashboardViewData) {
       title: 'Steuerzahlung blockiert',
       message: kpis.taxTrendLabel,
       tone: 'error' as const,
+      timestampLabel,
     });
   }
 
@@ -130,6 +133,7 @@ function buildNotifications(companyViewData: CompanyDashboardViewData) {
       title: 'Logistik',
       message: companyViewData.logisticsStatusMessage,
       tone: 'info' as const,
+      timestampLabel,
     });
   }
 

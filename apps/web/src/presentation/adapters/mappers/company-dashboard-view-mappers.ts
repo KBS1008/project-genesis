@@ -483,7 +483,7 @@ function mapCompanyDetail(
           kv('Quelle', order.sourceBuildingName),
           kv('Ziel', order.destinationBuildingName),
           kv('Status', formatTransportStatus(order.status)),
-          kv('Route-ID', order.routeId ?? 'Fallback'),
+          kv('Route-ID', order.routeId ?? '—'),
           kv('Dauer', `${order.durationTicks} Ticks`),
           kv('Fortschritt', formatProgress(order.progress)),
           kv('Produktionsjob', order.productionJobId),

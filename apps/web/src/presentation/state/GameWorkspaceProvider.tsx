@@ -106,7 +106,6 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
   const isBusyRef = useRef(false);
   const refreshTimerRef = useRef<number | null>(null);
   const commandGenerationRef = useRef(0);
-  const lastSocketTickRef = useRef<number | null>(null);
 
   useEffect(() => {
     return () => {
@@ -282,8 +281,7 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
 
   useEffect(() => {
     const socket = connectDashboardSocket(
-      (payload) => {
-        lastSocketTickRef.current = payload.tickNumber;
+      () => {
         scheduleRefreshSession();
       },
       (connected) => {

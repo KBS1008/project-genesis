@@ -5,17 +5,19 @@ import { Card } from '@/presentation/primitives/Card';
 import { mapFinanceRowsViewData } from '@/presentation/adapters/mappers/workspace-view-mappers';
 import { fetchFinanceTransactions } from '@/presentation/adapters/api/query-client';
 import type { FinanceRowViewData } from '@/presentation/adapters/view-data/workspace-view-data';
-import { useScreenQuery } from '@/presentation/hooks/useScreenQuery';
+import { useScreenQuery, TICK_QUERY_DEBOUNCE_MS } from '@/presentation/hooks/useScreenQuery';
 import { QueryRows } from '@/presentation/screens/shared/QueryRows';
 import { ScreenQueryFrame } from '@/presentation/screens/shared/ScreenQueryFrame';
 
 /** Finance screen backed by finance transaction queries. */
 export function FinanceScreen() {
   const { viewData } = useGameWorkspace();
+  const tickKey = viewData.simulation.tickNumber ?? 0;
   const { data, isLoading, errorMessage } = useScreenQuery(
-    'finance',
+    `finance:${tickKey}`,
     () => fetchFinanceTransactions().then(mapFinanceRowsViewData),
     viewData.session.hasGame,
+    { debounceMs: TICK_QUERY_DEBOUNCE_MS },
   );
 
   return (

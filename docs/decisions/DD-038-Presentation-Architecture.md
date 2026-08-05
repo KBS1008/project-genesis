@@ -166,7 +166,7 @@ Components use semantic token names (`--color-primary`, `--text-body`) rather th
 
 ## Simulation ↔ UI synchronization
 
-- **Primary refresh:** Socket.io `dashboard-updated` event → refetch dashboard query.
+- **Primary refresh:** Socket.io `dashboard:refresh` event → debounced refetch via `GameWorkspaceProvider.scheduleRefreshSession()`.
 - **Fallback:** manual refresh after command success.
 - **Paused state:** UI reflects server pause flag; rendering frequency must not advance simulation (Phase 5).
 - **Stale commands:** disable action buttons while a mutation is in flight; ignore out-of-order responses by request generation counter (Phase 5).

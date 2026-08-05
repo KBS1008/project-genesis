@@ -114,6 +114,7 @@ describe('buildExecutiveDashboardViewData', () => {
     expect(dashboard.kpiCards[0]?.placeholder).toBe('{{availableCash}}');
     expect(dashboard.notifications.some((entry) => entry.id === 'energy-deficit')).toBe(true);
     expect(dashboard.notifications.find((entry) => entry.id === 'energy-deficit')?.message).toBe('Defizit');
+    expect(dashboard.notifications.find((entry) => entry.id === 'energy-deficit')?.timestampLabel).toBe('Tag 3');
     expect(dashboard.notifications.some((entry) => entry.id === 'tax-blocked')).toBe(true);
     expect(dashboard.reportActions).toHaveLength(4);
   });

@@ -76,7 +76,7 @@ API mutation or tick
 
 Tick-sensitive screens also key `useScreenQuery` off `viewData.simulation.tickNumber` with `TICK_QUERY_DEBOUNCE_MS` (250 ms):
 
-- Market, Production, Research, Transport, Buildings, Reports
+- Market, Production, Research, Transport, Buildings, Finance, Reports
 - **World map** (Phase 5): map, overlay, inspector queries
 - **Executive dashboard** (Phase 5): buildings query
 
