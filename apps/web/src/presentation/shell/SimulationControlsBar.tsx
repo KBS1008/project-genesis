@@ -26,12 +26,18 @@ export function SimulationControlsBar() {
       return;
     }
 
-    void runCommand(() => setSimulationSpeed(speed), `Simulationsgeschwindigkeit ×${speed}.`);
+    void runCommand(
+      () => setSimulationSpeed(speed),
+      `Simulationsgeschwindigkeit ×${speed}.`,
+      { commandId: 'simulation.speed' },
+    );
   };
 
   const handleStep = () => {
     const executeStep = () => {
-      void runCommand(() => stepSimulation(), 'Simulationsschritt ausgeführt.');
+      void runCommand(() => stepSimulation(), 'Simulationsschritt ausgeführt.', {
+        commandId: 'simulation.step',
+      });
     };
 
     if (!simulation.isPaused) {
@@ -61,7 +67,9 @@ export function SimulationControlsBar() {
             disabled={disabled}
             aria-label="Simulation fortsetzen"
             onClick={() => {
-              void runCommand(() => resumeSimulation(), 'Simulation fortgesetzt.');
+              void runCommand(() => resumeSimulation(), 'Simulation fortgesetzt.', {
+                commandId: 'simulation.resume',
+              });
             }}
           >
             Fortsetzen
@@ -72,7 +80,9 @@ export function SimulationControlsBar() {
             disabled={disabled}
             aria-label="Simulation pausieren"
             onClick={() => {
-              void runCommand(() => pauseSimulation(), 'Simulation pausiert.');
+              void runCommand(() => pauseSimulation(), 'Simulation pausiert.', {
+                commandId: 'simulation.pause',
+              });
             }}
           >
             Pausieren

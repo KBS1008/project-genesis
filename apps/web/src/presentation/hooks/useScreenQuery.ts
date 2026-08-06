@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { deriveScreenScopeFromQueryKey } from '@/presentation/commands/query-scopes';
+import { useQueryInvalidationToken } from '@/presentation/commands/useQueryInvalidation';
 import { useDebouncedValue } from '@/presentation/hooks/useDebouncedValue';
 import { translatePresentationError } from '@/presentation/notifications/translatePresentationError';
 
@@ -25,6 +27,8 @@ export function useScreenQuery<T>(
   options?: ScreenQueryOptions,
 ): ScreenQueryState<T> {
   const debouncedKey = useDebouncedValue(queryKey, options?.debounceMs ?? 0);
+  const screenScope = deriveScreenScopeFromQueryKey(queryKey);
+  const invalidationToken = useQueryInvalidationToken(screenScope === null ? [] : [screenScope]);
   const loaderRef = useRef(loader);
   loaderRef.current = loader;
   const [data, setData] = useState<T | null>(null);
@@ -65,7 +69,7 @@ export function useScreenQuery<T>(
     return () => {
       active = false;
     };
-  }, [debouncedKey, enabled]);
+  }, [debouncedKey, enabled, invalidationToken]);
 
   return { data, isLoading, errorMessage };
 }

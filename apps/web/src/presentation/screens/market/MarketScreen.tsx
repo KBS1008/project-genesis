@@ -130,6 +130,7 @@ export function MarketScreen() {
       side === 'buy'
         ? `${amount}× ${selectedResourceLabel} gekauft.`
         : `${amount}× ${selectedResourceLabel} verkauft.`,
+      { commandId: side === 'buy' ? 'market.buy' : 'market.sell' },
     );
   };
 

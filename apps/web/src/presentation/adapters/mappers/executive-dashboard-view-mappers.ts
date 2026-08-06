@@ -1,3 +1,4 @@
+import type { PGNotificationItem } from '@/presentation/components/dashboard/PGNotificationCenter';
 import type { RegionDto } from '@/presentation/adapters/api/query-client';
 import type {
   BuildingListRowViewData,
@@ -102,42 +103,10 @@ function buildKpiCards(companyViewData: CompanyDashboardViewData): readonly Exec
   ]);
 }
 
-function buildNotifications(companyViewData: CompanyDashboardViewData) {
-  const notifications = [];
-  const kpis = companyViewData.kpis;
-  const timestampLabel = companyViewData.simulationTimeLabel;
-
-  if (companyViewData.energyHasDeficit) {
-    notifications.push({
-      id: 'energy-deficit',
-      title: 'Energiedefizit',
-      message: kpis?.energyTrend ?? 'Energieunterdeckung',
-      tone: 'warning' as const,
-      timestampLabel,
-    });
-  }
-
-  if (kpis?.taxPaymentBlocked === true) {
-    notifications.push({
-      id: 'tax-blocked',
-      title: 'Steuerzahlung blockiert',
-      message: kpis.taxTrendLabel,
-      tone: 'error' as const,
-      timestampLabel,
-    });
-  }
-
-  if (companyViewData.logisticsStatusMessage !== null) {
-    notifications.push({
-      id: 'logistics-status',
-      title: 'Logistik',
-      message: companyViewData.logisticsStatusMessage,
-      tone: 'info' as const,
-      timestampLabel,
-    });
-  }
-
-  return Object.freeze(notifications);
+function buildNotifications(
+  notifications: readonly PGNotificationItem[],
+): readonly PGNotificationItem[] {
+  return Object.freeze([...notifications]);
 }
 
 export type PlayerIdentityInput = {
@@ -165,6 +134,7 @@ export function buildExecutiveDashboardViewData(
   regions: readonly RegionDto[],
   buildings: readonly BuildingListRowViewData[],
   playerIdentity: PlayerIdentityInput,
+  notifications: readonly PGNotificationItem[] = Object.freeze([]),
 ): ExecutiveDashboardViewData {
   const regionNames = new Map(regions.map((region) => [region.id, region.name]));
   const normalizedBuildings = Object.freeze(
@@ -246,7 +216,7 @@ export function buildExecutiveDashboardViewData(
         tone: 'default',
       },
     ]),
-    notifications: buildNotifications(companyViewData),
+    notifications: buildNotifications(notifications),
     financeRows,
     recentTransactions: Object.freeze(companyViewData.financeTransactions.slice(0, 5)),
     productionJobs: companyViewData.productionJobs,

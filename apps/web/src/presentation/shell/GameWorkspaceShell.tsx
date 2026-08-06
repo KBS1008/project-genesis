@@ -15,7 +15,6 @@ import { labelPrimaryScreen } from '@/presentation/navigation/label-primary-scre
 import { Button } from '@/presentation/primitives/Button';
 import { LoadingState } from '@/presentation/primitives/LoadingState';
 import { useDialog } from '@/presentation/dialog/DialogProvider';
-import { useNotifications } from '@/presentation/notifications/NotificationProvider';
 import { formatSimulationTime, formatTick } from '@/presentation/formatting/presentation-formatters';
 import { NotificationIndicator } from '@/presentation/shell/NotificationIndicator';
 import { SaveGameDialog } from '@/presentation/screens/menu/SaveGameDialog';
@@ -23,7 +22,7 @@ import { SimulationControlsBar } from '@/presentation/shell/SimulationControlsBa
 import { SimulationTickLoop } from '@/presentation/simulation';
 import { useTheme } from '@/presentation/theme';
 import { useGameWorkspace } from '@/presentation/state/GameWorkspaceProvider';
-import { formatEntitySelectionLabel } from '@/presentation/navigation/entity-selection-labels';
+import { SimulationCriticalAnnouncer } from '@/presentation/notifications/SimulationCriticalAnnouncer';
 
 function EntitySelectionBanner() {
   const { navigation, companyViewData, regions, clearEntitySelection } = useGameWorkspace();
@@ -50,7 +49,6 @@ function EntitySelectionBanner() {
 function WorkspaceHeader() {
   const router = useRouter();
   const { openConfirmDialog } = useDialog();
-  const { showNotification } = useNotifications();
   const { openSearch } = useGlobalSearch();
   const {
     navigation,
@@ -59,7 +57,6 @@ function WorkspaceHeader() {
     isLiveConnected,
     isSessionDirty,
     markSessionSaved,
-    refreshSession,
   } = useGameWorkspace();
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
   const screenLabel = labelPrimaryScreen(navigation.screen);
@@ -143,8 +140,6 @@ function WorkspaceHeader() {
           }}
           onSaved={(filePath) => {
             markSessionSaved(filePath);
-            void refreshSession();
-            showNotification({ tone: 'success', message: 'Spielstand gespeichert.' });
           }}
         />
       ) : null}
@@ -155,19 +150,33 @@ function WorkspaceHeader() {
 function WorkspaceStatusBar() {
   const { viewData, companyViewData, isLiveConnected, isSessionDirty } = useGameWorkspace();
   const { theme, toggleTheme } = useTheme();
+  const { session, simulation } = viewData;
+  const simulationStatusLabel = simulation.isPaused
+    ? 'Simulation pausiert'
+    : session.hasGame
+      ? 'Simulation aktiv'
+      : 'Keine Session';
 
   return (
     <PGStatusBar
       left={
         <>
-          <span>{viewData.session.companyName ?? 'Keine Session'}</span>
-          {isLiveConnected ? <span>Live</span> : null}
-          {isSessionDirty ? <span>Ungespeichert</span> : null}
+          <span aria-label="Unternehmen">{session.companyName ?? 'Keine Session'}</span>
+          <span aria-label="Simulationstatus">{simulationStatusLabel}</span>
+          <span aria-label="Verbindungsstatus">
+            {isLiveConnected ? 'Live verbunden' : 'Nicht live'}
+          </span>
+          <span aria-label="Autosave-Status">
+            {isSessionDirty ? 'Ungespeichert' : 'Gespeichert'}
+          </span>
         </>
       }
       center={
-        <span>
-          Tick {formatTick(viewData.simulation.tickNumber)} · {formatSimulationTime(viewData.simulation.simulationTime)}
+        <span
+          aria-label={`Tick ${formatTick(simulation.tickNumber)} · Simulationszeit ${formatSimulationTime(simulation.simulationTime)} · Geschwindigkeit ${simulation.speedLabel}`}
+        >
+          Tick {formatTick(simulation.tickNumber)} · {formatSimulationTime(simulation.simulationTime)} ·{' '}
+          {simulation.speedLabel}
         </span>
       }
       right={
@@ -233,6 +242,7 @@ export function GameWorkspaceShell({ children }: { readonly children: ReactNode 
             <WorkspaceMain>{children}</WorkspaceMain>
           </div>
           <WorkspaceStatusBar />
+          <SimulationCriticalAnnouncer />
         </div>
       </GlobalSearchProvider>
     </ContextMenuProvider>

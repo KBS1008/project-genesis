@@ -437,6 +437,38 @@ Review
 
 ---
 
+# Phase 5.4A – Commands & Query Invalidation
+
+**Status:** ✅ Complete (2026-08-06)
+
+Unified command execution pipeline:
+
+Typed clients → scoped invalidation → ViewData refresh
+
+Centralized query invalidation store
+
+Duplicate submission prevention
+
+---
+
+Deliverables
+
+`presentation/commands/*` — registry, invalidation, execution
+
+`refresh-workspace-scopes.ts` — selective workspace refresh
+
+`COMMAND_EXECUTION_GUIDE.md`
+
+Phase 5.4A commands report
+
+---
+
+Review
+
+**COMMAND PIPELINE READY**
+
+---
+
 # Phase 6 – Production UX
 
 Implement:

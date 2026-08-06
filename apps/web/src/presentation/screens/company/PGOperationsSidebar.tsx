@@ -1,7 +1,7 @@
 'use client';
 
 import { assignEmployee, hireEmployee } from '@/presentation/adapters/api/employees-client';
-import type { SidebarHintsViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
+import type { CommandId } from '@/presentation/commands';
 import { Button } from '@/presentation/primitives/Button';
 import { EmptyState } from '@/presentation/primitives/EmptyState';
 
@@ -13,7 +13,11 @@ export function PGOperationsSidebar({
 }: {
   readonly hasGame: boolean;
   readonly hints: SidebarHintsViewData;
-  readonly runAction: (action: () => Promise<void>, successMessage: string) => Promise<void>;
+  readonly runAction: (
+    action: () => Promise<void>,
+    successMessage: string,
+    options?: { readonly commandId?: CommandId },
+  ) => Promise<void>;
 }) {
   return (
     <>
@@ -40,6 +44,7 @@ export function PGOperationsSidebar({
                         displayName: hint.defaultDisplayName,
                       }),
                     `${hint.name} eingestellt.`,
+                    { commandId: 'employees.hire' },
                   );
                 }}
               >
@@ -68,6 +73,7 @@ export function PGOperationsSidebar({
                           buildingId: hint.buildingId,
                         }),
                       `${hint.employeeName} zugewiesen.`,
+                      { commandId: 'employees.assign' },
                     );
                   }}
                 >

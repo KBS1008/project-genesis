@@ -46,6 +46,7 @@ export function ResearchScreen() {
     void runCommand(
       () => startResearch({ technologyId: hint.technologyId }),
       `Forschung „${hint.name}“ gestartet.`,
+      { commandId: 'research.start' },
     );
   };
 

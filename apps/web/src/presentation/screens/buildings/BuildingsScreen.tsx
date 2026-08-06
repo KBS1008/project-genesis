@@ -95,6 +95,7 @@ export function BuildingsScreen() {
           y,
         }),
       `${name.trim()} in Bau gegeben.`,
+      { commandId: 'construction.placeBuilding' },
     );
   };
 

@@ -51,6 +51,7 @@ export function ProductionScreen() {
           recipeId: hint.recipeId,
         }),
       `${hint.recipeName} gestartet.`,
+      { commandId: 'production.start' },
     );
   };
 

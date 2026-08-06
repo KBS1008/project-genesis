@@ -77,6 +77,8 @@ export function ExecutiveDashboardScreen({
     navigateToTarget,
     navigateToScreen,
     clearEntitySelection,
+    simulationNotificationItems,
+    executeNotificationAction,
   } = useGameWorkspace();
 
   const regionNames = useMemo(
@@ -114,8 +116,9 @@ export function ExecutiveDashboardScreen({
         playerId: viewData.session.playerId,
         playerName: null,
       },
+      simulationNotificationItems,
     );
-  }, [buildingsQuery.data, companyViewData, regions]);
+  }, [buildingsQuery.data, companyViewData, regions, simulationNotificationItems, viewData.session.playerId]);
 
   const inspectorDetail = useMemo(
     () => resolveInspectorDetail(companyViewData.detail, navigation.entitySelection),
@@ -225,7 +228,10 @@ export function ExecutiveDashboardScreen({
 
               <PGDashboardGridItem span={4}>
                 <PGStatusPanel items={dashboard.statusItems} />
-                <PGNotificationCenter notifications={dashboard.notifications} />
+                <PGNotificationCenter
+                  notifications={dashboard.notifications}
+                  onAction={executeNotificationAction}
+                />
               </PGDashboardGridItem>
 
               <PGDashboardGridItem span={6}>

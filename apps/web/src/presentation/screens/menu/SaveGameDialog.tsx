@@ -13,6 +13,7 @@ import { Button } from '@/presentation/primitives/Button';
 import { StatusBanner } from '@/presentation/primitives/StatusBanner';
 import { useDialog } from '@/presentation/dialog/DialogProvider';
 import { useTransientFormState } from '@/presentation/state/useTransientFormState';
+import { useGameWorkspace } from '@/presentation/state/GameWorkspaceProvider';
 import { translatePresentationError } from '@/presentation/notifications/translatePresentationError';
 
 import './menu.css';
@@ -29,6 +30,7 @@ export function SaveGameDialog({
 }) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const { openConfirmDialog } = useDialog();
+  const { runCommand } = useGameWorkspace();
   const form = useTransientFormState({ fileName: savePathToFileName(defaultSavePath) });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -45,7 +47,11 @@ export function SaveGameDialog({
       setErrorMessage(null);
 
       try {
-        await saveGame({ filePath });
+        await runCommand(
+          () => saveGame({ filePath }),
+          'Spielstand gespeichert.',
+          { clearsDirty: true, commandId: 'session.save' },
+        );
         onSaved(filePath);
         onClose();
       } catch (error: unknown) {
@@ -54,7 +60,7 @@ export function SaveGameDialog({
         setIsSubmitting(false);
       }
     },
-    [onClose, onSaved],
+    [onClose, onSaved, runCommand],
   );
 
   const handleSubmit = useCallback(async () => {

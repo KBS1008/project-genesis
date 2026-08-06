@@ -20,7 +20,7 @@ import { CompanyOperationsPanels } from '@/presentation/screens/company/CompanyO
 import { CompanyOperationsCharts } from '@/presentation/screens/company/CompanyOperationsCharts';
 import { CompanyOperationsInspector } from '@/presentation/screens/company/CompanyOperationsInspector';
 import { PGOperationsSidebar } from '@/presentation/screens/company/PGOperationsSidebar';
-import { PGTutorialPanel } from '@/presentation/components/dashboard/PGTutorialPanel';
+import type { CommandId } from '@/presentation/commands';
 
 /** Company dashboard screen consuming workspace view-data. */
 export function CompanyDashboardScreen({
@@ -77,8 +77,12 @@ export function CompanyDashboardScreen({
   }, [navigation.entitySelection]);
 
   const runAction = useCallback(
-    async (action: () => Promise<void>, successMessage: string) => {
-      await runCommand(action, successMessage);
+    async (
+      action: () => Promise<void>,
+      successMessage: string,
+      options?: { readonly commandId?: CommandId },
+    ) => {
+      await runCommand(action, successMessage, options);
       setSidebarOpen(false);
     },
     [runCommand],
