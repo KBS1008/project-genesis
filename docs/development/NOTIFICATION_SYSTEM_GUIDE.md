@@ -35,6 +35,16 @@ Event log API + company ViewData runtime alerts
 | Event log | `fetchEventLog()` → `EventLogEntryDto` | SESSION, SIMULATION, BUILDING, PRODUCTION, RESEARCH, TRANSPORT, TRADE, EMPLOYEE |
 | Runtime alerts | `CompanyDashboardViewData` | Energy deficit, tax blocked, logistics status |
 
+### Event log entity linkage (Phase 6.2)
+
+`EventLogEntryDto` may include optional `entityId` and `entityType` when the application layer records authoritative gameplay references:
+
+| Category | `entityType` | `entityId` |
+|----------|--------------|------------|
+| PRODUCTION (start / completion) | `production` | Production job id (e.g. `production_001`) |
+
+Presentation maps these fields into `SimulationNotification.entityId` for deep-link navigation (`open-production` → shared selection). Do not parse entity ids from human-readable message text.
+
 Inventory: `APPLICATION_EVENT_INVENTORY` in `event-inventory.ts`
 
 ---

@@ -23,7 +23,18 @@ function mapSeverity(
     return 'success';
   }
 
-  if (category === 'BUILDING' || category === 'RESEARCH') {
+  if (category === 'BUILDING') {
+    return 'success';
+  }
+
+  if (category === 'RESEARCH') {
+    return 'success';
+  }
+
+  if (
+    category === 'PRODUCTION' &&
+    (message.includes('abgeschlossen') || message.includes('gestartet'))
+  ) {
     return 'success';
   }
 
@@ -82,7 +93,7 @@ function mapEntityType(category: string): SimulationNotification['entityType'] {
 /** Maps one authoritative event log entry to a simulation notification. */
 export function mapEventLogEntryToNotification(entry: EventLogEntryDto): SimulationNotification {
   const title = formatEventCategory(entry.category);
-  const entityId = null;
+  const entityId = entry.entityId ?? null;
 
   return Object.freeze({
     notificationId: entry.id,
@@ -92,7 +103,7 @@ export function mapEventLogEntryToNotification(entry: EventLogEntryDto): Simulat
     simulationTimestamp: entry.occurredAt,
     tickNumber: entry.tickNumber,
     entityId,
-    entityType: mapEntityType(entry.category),
+    entityType: entry.entityType ?? mapEntityType(entry.category),
     action: mapAction(entry.category, entry.message),
     readState: 'unread',
     eventLogId: entry.id,

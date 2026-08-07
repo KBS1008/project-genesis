@@ -20,12 +20,21 @@ export type MilestoneCatalogEntry = {
   readonly completed: boolean;
 };
 
+/** Presentation-level production operational state (derived from domain status + runtime constraints). */
+export type ProductionOperationalState =
+  | 'WAITING'
+  | 'RUNNING'
+  | 'FINISHED'
+  | 'STALLED_ENERGY'
+  | 'STALLED_WORKFORCE';
+
 /** Production job summary for the browser dashboard. */
 export type ProductionJobSessionReadModel = {
   readonly id: string;
   readonly buildingId: string;
   readonly recipeId: string;
   readonly status: string;
+  readonly operationalState: ProductionOperationalState;
   readonly progress: number;
   readonly awaitingTransport: boolean;
   readonly activeTransportCount: number;

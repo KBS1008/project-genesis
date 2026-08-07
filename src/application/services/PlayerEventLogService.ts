@@ -4,7 +4,10 @@
  * Bounded in-memory player-visible event log for the active browser session.
  */
 
-import type { EventLogEntryReadModel } from '../read-models/EventLogEntryReadModel.js';
+import type {
+  EventLogEntityType,
+  EventLogEntryReadModel,
+} from '../read-models/EventLogEntryReadModel.js';
 
 const DEFAULT_MAX_ENTRIES = 200;
 const DEFAULT_QUERY_LIMIT = 50;
@@ -16,6 +19,8 @@ export type AppendPlayerEventInput = {
   readonly category: string;
   readonly message: string;
   readonly severity?: EventLogEntryReadModel['severity'];
+  readonly entityId?: string;
+  readonly entityType?: EventLogEntityType;
 };
 
 export type PlayerEventLogQuery = {
@@ -57,6 +62,8 @@ export class PlayerEventLogService {
       category: input.category,
       message: input.message,
       severity: input.severity ?? 'INFO',
+      ...(input.entityId === undefined ? {} : { entityId: input.entityId }),
+      ...(input.entityType === undefined ? {} : { entityType: input.entityType }),
     } satisfies EventLogEntryReadModel);
 
     this.#entries.push(entry);

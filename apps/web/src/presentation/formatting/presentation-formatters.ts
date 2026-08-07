@@ -82,7 +82,19 @@ export function formatTransportStatus(status: string): string {
   return status;
 }
 
-export function formatProductionStatus(status: string, awaitingTransport: boolean): string {
+export function formatProductionStatus(
+  status: string,
+  awaitingTransport: boolean,
+  operationalState?: string,
+): string {
+  if (operationalState === 'STALLED_ENERGY') {
+    return 'Energie fehlt';
+  }
+
+  if (operationalState === 'STALLED_WORKFORCE') {
+    return 'Keine Mitarbeiter';
+  }
+
   if (status === 'WAITING' && awaitingTransport) {
     return 'Wartet auf Transport';
   }

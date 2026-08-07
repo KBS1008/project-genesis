@@ -6,6 +6,25 @@ Version: 1.0
 
 ---
 
+# Runtime implementation status (M11 Phase 6.2)
+
+This schema document describes the **target** production model. The **current runtime** (2026-08-07) implements a subset:
+
+| Concept | Status |
+|---------|--------|
+| Recipe (content) | **CURRENTLY IMPLEMENTED** |
+| Production job (`WAITING` → `RUNNING` → `FINISHED`) | **CURRENTLY IMPLEMENTED** |
+| Presentation operational state (`STALLED_ENERGY`, `STALLED_WORKFORCE`) | **CURRENTLY IMPLEMENTED** (read-model only, not domain status) |
+| Production queue | **NOT YET IMPLEMENTED** |
+| `CANCELLED` job status (enum exists) | **NOT YET IMPLEMENTED** |
+| `BLOCKED` domain status | **NOT YET IMPLEMENTED** (stalls are presentation-level) |
+| Cancel / pause production | **NOT YET IMPLEMENTED** |
+| One job per building enforcement | **UNSPECIFIED** — concurrent jobs per building are currently allowed |
+
+Planned / future sections below remain design references until explicitly implemented in a later milestone phase.
+
+---
+
 # Zweck
 
 Die Produktionslogik trennt zwischen:

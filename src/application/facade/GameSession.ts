@@ -38,12 +38,14 @@ import { GetEventLogQueryHandler } from '../queries/GetEventLogQueryHandler.js';
 import path from 'node:path';
 import { createCompanyId } from '../../domain/company/Company.js';
 import { ProductionJobStatus } from '../../domain/production/ProductionJobStatus.js';
+import type { ProductionJob } from '../../domain/production/ProductionJob.js';
 import { TransportOrderStatus } from '../../domain/transport/TransportOrderStatus.js';
 import type { BuildingReadModel } from '../read-models/BuildingReadModel.js';
 import type {
   GameSessionDashboard,
   MilestoneCatalogEntry,
   ProductionJobSessionReadModel,
+  ProductionOperationalState,
   ResearchJobSessionReadModel,
   TransportOrderSessionReadModel,
   EmployeeSessionReadModel,
@@ -58,7 +60,10 @@ import type { CityReadModel } from '../read-models/CityReadModel.js';
 import type { SessionStatusReadModel } from '../read-models/SessionStatusReadModel.js';
 import type { SimulationStatusReadModel } from '../read-models/SimulationStatusReadModel.js';
 import type { SaveMetadataReadModel } from '../read-models/SaveMetadataReadModel.js';
-import type { EventLogEntryReadModel } from '../read-models/EventLogEntryReadModel.js';
+import type {
+  EventLogEntityType,
+  EventLogEntryReadModel,
+} from '../read-models/EventLogEntryReadModel.js';
 import type { CompanyReadModel } from '../read-models/CompanyReadModel.js';
 import type { InventoryReadModel } from '../read-models/InventoryReadModel.js';
 import type { FinanceReadModel } from '../read-models/FinanceReadModel.js';
@@ -156,6 +161,7 @@ export class GameSession {
   #researchSequence = 0;
   #employeeSequence = 0;
   readonly #loggedCompletedTransportIds = new Set<string>();
+  readonly #loggedCompletedProductionJobIds = new Set<string>();
 
   private constructor(context: ApplicationContext, gameContentRoot: string, savePath: string) {
     this.#context = context;
@@ -209,6 +215,7 @@ export class GameSession {
     this.#context.tickHistoryService.clear(DEFAULT_COMPANY_ID);
     this.#context.playerEventLogService.clear(DEFAULT_COMPANY_ID);
     this.#loggedCompletedTransportIds.clear();
+    this.#loggedCompletedProductionJobIds.clear();
     this.#recordTickSnapshot();
     this.#recordPlayerEvent('SESSION', `Neues Spiel gestartet: ${name}.`);
     return Result.ok(undefined);
@@ -690,6 +697,9 @@ export class GameSession {
     this.#recordPlayerEvent(
       'PRODUCTION',
       `Produktion gestartet: ${input.recipeId} auf ${input.buildingId}.`,
+      'INFO',
+      jobId,
+      'production',
     );
     return Result.ok(startResult.value.value);
   }
@@ -857,6 +867,7 @@ export class GameSession {
     this.#syncSessionState();
     this.#context.playerEventLogService.clear(this.#activeCompanyId);
     this.#loggedCompletedTransportIds.clear();
+    this.#loggedCompletedProductionJobIds.clear();
 
     if (
       this.#activeCompanyId !== undefined &&
@@ -873,6 +884,7 @@ export class GameSession {
         this.#seedLoggedCompletedTransports(
           this.#readTransportOrders(this.#activeCompanyId, buildingsResult.value, productionJobs),
         );
+        this.#seedLoggedCompletedProductionJobs(productionJobs);
       }
 
       this.#recordPlayerEvent('SESSION', `Spielstand geladen: ${targetPath}.`);
@@ -1027,6 +1039,7 @@ export class GameSession {
     }
 
     this.#recordCompletedTransportEvents(transportOrders);
+    this.#recordCompletedProductionEvents(productionJobs);
 
     this.#context.tickHistoryService.record(
       this.#dashboardBuilder.captureTickMetrics({
@@ -1116,6 +1129,7 @@ export class GameSession {
             buildingId: job.getBuildingId().value,
             recipeId: job.getRecipeId().value,
             status: job.getStatus(),
+            operationalState: this.#resolveProductionOperationalState(job),
             progress: job.getProgress(),
             awaitingTransport:
               job.getStatus() === ProductionJobStatus.WAITING && linkedTransportCount > 0,
@@ -1238,6 +1252,8 @@ export class GameSession {
     category: string,
     message: string,
     severity: EventLogEntryReadModel['severity'] = 'INFO',
+    entityId?: string,
+    entityType?: EventLogEntityType,
   ): string {
     if (this.#activeCompanyId === undefined) {
       return '';
@@ -1250,7 +1266,76 @@ export class GameSession {
       category,
       message,
       severity,
+      ...(entityId === undefined ? {} : { entityId }),
+      ...(entityType === undefined ? {} : { entityType }),
     });
+  }
+
+  #resolveProductionOperationalState(job: ProductionJob): ProductionOperationalState {
+    const status = job.getStatus();
+
+    if (status === ProductionJobStatus.FINISHED) {
+      return 'FINISHED';
+    }
+
+    if (status === ProductionJobStatus.WAITING) {
+      return 'WAITING';
+    }
+
+    if (status !== ProductionJobStatus.RUNNING) {
+      return 'RUNNING';
+    }
+
+    const recipeId = job.getRecipeId().value;
+
+    if (
+      !this.#context.energyBalanceService.canAffordRecipeEnergy(job.getCompanyId(), recipeId)
+    ) {
+      return 'STALLED_ENERGY';
+    }
+
+    if (
+      this.#context.employeeAllocationService.getWorkerEfficiency(
+        job.getBuildingId(),
+        recipeId,
+      ) <= 0
+    ) {
+      return 'STALLED_WORKFORCE';
+    }
+
+    return 'RUNNING';
+  }
+
+  #seedLoggedCompletedProductionJobs(jobs: readonly ProductionJobSessionReadModel[]): void {
+    for (const job of jobs) {
+      if (job.status === ProductionJobStatus.FINISHED) {
+        this.#loggedCompletedProductionJobIds.add(job.id);
+      }
+    }
+  }
+
+  #recordCompletedProductionEvents(jobs: readonly ProductionJobSessionReadModel[]): void {
+    for (const job of jobs) {
+      if (job.status !== ProductionJobStatus.FINISHED) {
+        continue;
+      }
+
+      if (this.#loggedCompletedProductionJobIds.has(job.id)) {
+        continue;
+      }
+
+      this.#loggedCompletedProductionJobIds.add(job.id);
+      const recipe = this.#context.gameContent.recipes.get(job.recipeId);
+      const recipeLabel = recipe?.name ?? job.recipeId;
+
+      this.#recordPlayerEvent(
+        'PRODUCTION',
+        `Produktion abgeschlossen: ${recipeLabel}.`,
+        'INFO',
+        job.id,
+        'production',
+      );
+    }
   }
 
   #seedLoggedCompletedTransports(orders: readonly TransportOrderSessionReadModel[]): void {

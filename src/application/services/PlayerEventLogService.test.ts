@@ -27,6 +27,25 @@ describe('PlayerEventLogService', () => {
     expect(entries.map((entry) => entry.id)).toEqual(['event_0002', 'event_0001']);
   });
 
+  it('stores optional entity linkage fields', () => {
+    const log = new PlayerEventLogService();
+
+    log.append({
+      companyId: 'company_001',
+      tickNumber: 4,
+      occurredAt: 400,
+      category: 'PRODUCTION',
+      message: 'Produktion abgeschlossen: Bretter.',
+      entityId: 'production_001',
+      entityType: 'production',
+    });
+
+    const entry = log.getEntries({ companyId: 'company_001' })[0];
+
+    expect(entry?.entityId).toBe('production_001');
+    expect(entry?.entityType).toBe('production');
+  });
+
   it('filters by category and enforces the ring buffer', () => {
     const log = new PlayerEventLogService(2);
 

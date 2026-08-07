@@ -50,6 +50,38 @@ describe('mapEventLogEntryToNotification', () => {
     expect(notification.action).toBe('retry-save');
   });
 
+  it('maps production completion with authoritative entity linkage', () => {
+    const notification = mapEventLogEntryToNotification(
+      createEntry({
+        category: 'PRODUCTION',
+        message: 'Produktion abgeschlossen: Bretter herstellen.',
+        entityId: 'production_001',
+        entityType: 'production',
+      }),
+    );
+
+    expect(notification.severity).toBe('success');
+    expect(notification.entityId).toBe('production_001');
+    expect(notification.entityType).toBe('production');
+    expect(notification.action).toBe('open-production');
+    expect(notification.simulationTimestamp).toBe(360);
+  });
+
+  it('maps production started events with entity linkage', () => {
+    const notification = mapEventLogEntryToNotification(
+      createEntry({
+        category: 'PRODUCTION',
+        message: 'Produktion gestartet: recipe_planks auf building_001.',
+        entityId: 'production_001',
+        entityType: 'production',
+      }),
+    );
+
+    expect(notification.severity).toBe('success');
+    expect(notification.entityId).toBe('production_001');
+    expect(notification.action).toBe('open-production');
+  });
+
   it('maps production blocked events to production action', () => {
     const notification = mapEventLogEntryToNotification(
       createEntry({ category: 'PRODUCTION', message: 'Produktion blockiert' }),

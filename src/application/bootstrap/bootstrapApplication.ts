@@ -385,6 +385,7 @@ export async function bootstrapApplication(
     companyDecisionExecutionService,
     companyPlanningPipeline,
     energyBalanceService,
+    employeeAllocationService,
     transportLogisticsService,
     tickHistoryService,
     playerEventLogService,

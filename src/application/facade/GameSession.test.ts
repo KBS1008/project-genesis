@@ -365,4 +365,136 @@ describe('GameSession', () => {
       ).toBe(false);
     }
   });
+
+  it('records production completion in the player event log with entity linkage', async () => {
+    const session = await createSession();
+    session.startNewGame('Production Completion Corp');
+
+    const placeResult = session.placeBuilding({
+      buildingTypeId: 'sawmill',
+      name: 'Completion Sawmill',
+      x: 2,
+      y: 2,
+    });
+
+    expect(placeResult.ok).toBe(true);
+
+    if (!placeResult.ok) {
+      return;
+    }
+
+    const buildingId = placeResult.value;
+    completeConstructionWithTicks(session, 120);
+
+    const hireOne = session.hireEmployee({
+      employeeTypeId: 'employee_production_worker',
+      displayName: 'Worker A',
+    });
+    const hireTwo = session.hireEmployee({
+      employeeTypeId: 'employee_production_worker',
+      displayName: 'Worker B',
+    });
+
+    expect(hireOne.ok).toBe(true);
+    expect(hireTwo.ok).toBe(true);
+
+    if (!hireOne.ok || !hireTwo.ok) {
+      return;
+    }
+
+    session.assignEmployee({ employeeId: hireOne.value, buildingId });
+    session.assignEmployee({ employeeId: hireTwo.value, buildingId });
+
+    const productionResult = session.startProduction({
+      buildingId,
+      recipeId: 'recipe_planks',
+    });
+
+    expect(productionResult.ok).toBe(true);
+
+    const tickResult = session.tick(70);
+
+    expect(tickResult.ok).toBe(true);
+
+    const jobsResult = session.listProductionJobs();
+
+    expect(jobsResult.ok).toBe(true);
+
+    if (jobsResult.ok) {
+      expect(jobsResult.value[0]?.status).toBe('FINISHED');
+    }
+
+    const eventLogResult = session.getEventLog(20, 'PRODUCTION');
+
+    expect(eventLogResult.ok).toBe(true);
+
+    if (eventLogResult.ok) {
+      const completionEvents = eventLogResult.value.filter((entry) =>
+        entry.message.includes('abgeschlossen'),
+      );
+
+      expect(completionEvents).toHaveLength(1);
+      expect(completionEvents[0]?.entityId).toBe('production_001');
+      expect(completionEvents[0]?.entityType).toBe('production');
+
+      const startEvents = eventLogResult.value.filter((entry) =>
+        entry.message.includes('gestartet'),
+      );
+
+      expect(startEvents[0]?.entityId).toBe('production_001');
+    }
+
+    const duplicateTick = session.tick(1);
+
+    expect(duplicateTick.ok).toBe(true);
+
+    const eventLogAfter = session.getEventLog(20, 'PRODUCTION');
+
+    expect(eventLogAfter.ok).toBe(true);
+
+    if (eventLogAfter.ok) {
+      expect(
+        eventLogAfter.value.filter((entry) => entry.message.includes('abgeschlossen')),
+      ).toHaveLength(1);
+    }
+  });
+
+  it('exposes stalled workforce state for running jobs without assigned workers', async () => {
+    const session = await createSession();
+    session.startNewGame('Production Stall Corp');
+
+    const placeResult = session.placeBuilding({
+      buildingTypeId: 'sawmill',
+      name: 'Stall Sawmill',
+      x: 3,
+      y: 3,
+    });
+
+    expect(placeResult.ok).toBe(true);
+
+    if (!placeResult.ok) {
+      return;
+    }
+
+    completeConstructionWithTicks(session, 120);
+
+    const productionResult = session.startProduction({
+      buildingId: placeResult.value,
+      recipeId: 'recipe_planks',
+    });
+
+    expect(productionResult.ok).toBe(true);
+
+    session.tick(5);
+
+    const jobsResult = session.listProductionJobs();
+
+    expect(jobsResult.ok).toBe(true);
+
+    if (jobsResult.ok) {
+      expect(jobsResult.value[0]?.status).toBe('RUNNING');
+      expect(jobsResult.value[0]?.operationalState).toBe('STALLED_WORKFORCE');
+      expect(jobsResult.value[0]?.progress).toBe(0);
+    }
+  });
 });

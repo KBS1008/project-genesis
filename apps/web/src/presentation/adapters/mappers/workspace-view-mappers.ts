@@ -157,7 +157,11 @@ export function mapProductionJobRowsViewData(
       Object.freeze({
         id: job.id,
         title: labelRecipe(job.recipeId),
-        statusLabel: job.awaitingTransport ? `${job.status} (Transport)` : job.status,
+        statusLabel: formatProductionStatus(
+          job.status,
+          job.awaitingTransport,
+          job.operationalState,
+        ),
         progressLabel: `${Math.round(job.progress)}%`,
       }),
     ),

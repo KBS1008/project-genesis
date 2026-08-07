@@ -717,7 +717,7 @@ export function buildCompanyDashboardViewData(
         id: job.id,
         buildingLabel: building?.name ?? job.buildingId,
         recipeLabel: labels.recipe(job.recipeId),
-        statusLabel: formatProductionStatus(job.status, job.awaitingTransport),
+        statusLabel: formatProductionStatus(job.status, job.awaitingTransport, job.operationalState),
         progressLabel: formatProgress(job.progress),
       });
     }),

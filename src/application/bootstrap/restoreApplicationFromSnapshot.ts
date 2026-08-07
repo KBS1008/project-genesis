@@ -346,6 +346,7 @@ export async function restoreApplicationFromSnapshot(
     companyDecisionExecutionService,
     companyPlanningPipeline,
     energyBalanceService,
+    employeeAllocationService,
     transportLogisticsService,
     tickHistoryService,
     playerEventLogService,

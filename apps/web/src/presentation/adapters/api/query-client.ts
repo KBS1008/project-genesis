@@ -82,6 +82,16 @@ export type EventLogEntryDto = {
   readonly category: string;
   readonly message: string;
   readonly severity: 'INFO' | 'WARNING' | 'ERROR';
+  readonly entityId?: string;
+  readonly entityType?:
+    | 'building'
+    | 'production'
+    | 'research'
+    | 'transport'
+    | 'resource'
+    | 'employee'
+    | 'event'
+    | 'none';
 };
 
 export function fetchSessionStatus(): Promise<SessionStatusDto> {

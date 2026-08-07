@@ -77,6 +77,7 @@ export type ProductionJobSessionReadModel = {
   readonly buildingId: string;
   readonly recipeId: string;
   readonly status: string;
+  readonly operationalState: 'WAITING' | 'RUNNING' | 'FINISHED' | 'STALLED_ENERGY' | 'STALLED_WORKFORCE';
   readonly progress: number;
   readonly awaitingTransport: boolean;
   readonly activeTransportCount: number;

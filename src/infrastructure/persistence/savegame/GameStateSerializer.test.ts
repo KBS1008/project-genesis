@@ -28,6 +28,8 @@ import { InMemoryFinanceRepository } from '../InMemoryFinanceRepository.js';
 import { InMemoryInventoryRepository } from '../InMemoryInventoryRepository.js';
 import { InMemoryMarketRepository } from '../InMemoryMarketRepository.js';
 import { InMemoryProductionJobRepository } from '../InMemoryProductionJobRepository.js';
+import { createProductionJobId } from '../../../domain/production/ProductionJob.js';
+import { ProductionJobStatus } from '../../../domain/production/ProductionJobStatus.js';
 import { InMemoryResearchJobRepository } from '../InMemoryResearchJobRepository.js';
 import { InMemoryTransportOrderRepository } from '../InMemoryTransportOrderRepository.js';
 import { InMemoryEmployeeRepository } from '../InMemoryEmployeeRepository.js';
@@ -655,6 +657,79 @@ describe('GameStateSerializer', () => {
           ]),
         }),
       ]);
+    });
+
+    it('restores a running production job with non-zero progress', () => {
+      const parseResult = serializer.parse(
+        createMinimalSnapshot({
+          companies: Object.freeze([
+            Object.freeze({
+              id: 'company_001',
+              name: 'Genesis Industries',
+              ownerId: 'player_001',
+              foundedAt: 0,
+              status: 'ACTIVE',
+            }),
+          ]),
+          buildings: Object.freeze([
+            Object.freeze({
+              id: 'building_001',
+              buildingTypeId: 'sawmill',
+              companyId: 'company_001',
+              regionId: DEFAULT_REGION_ID,
+              name: 'Sawmill',
+              position: Object.freeze({ x: 0, y: 0 }),
+              level: 1,
+              createdAt: 0,
+              status: BuildingStatus.ACTIVE,
+              constructionDuration: 0,
+              constructionProgress: 100,
+              constructionStartTime: undefined,
+              constructionEndTime: 0,
+            }),
+          ]),
+          productionJobs: Object.freeze([
+            Object.freeze({
+              id: 'production_001',
+              buildingId: 'building_001',
+              companyId: 'company_001',
+              recipeId: 'recipe_planks',
+              duration: 60,
+              status: ProductionJobStatus.RUNNING,
+              progress: 42,
+              createdAt: 10,
+              startTime: 20,
+              endTime: undefined,
+            }),
+          ]),
+        }),
+      );
+
+      expect(parseResult.ok).toBe(true);
+
+      if (!parseResult.ok) {
+        return;
+      }
+
+      const target = createEmptyHydrateTarget();
+      const hydrateResult = serializer.hydrate(parseResult.value, target);
+
+      expect(hydrateResult.ok).toBe(true);
+
+      const jobIdResult = createProductionJobId('production_001');
+
+      expect(jobIdResult.ok).toBe(true);
+
+      if (!jobIdResult.ok) {
+        return;
+      }
+
+      const restoredJob = target.productionJobRepository.findById(jobIdResult.value);
+
+      expect(restoredJob?.getStatus()).toBe(ProductionJobStatus.RUNNING);
+      expect(restoredJob?.getProgress()).toBe(42);
+      expect(restoredJob?.getRecipeId().value).toBe('recipe_planks');
+      expect(restoredJob?.getStartTime()).toBe(20);
     });
 
     it('restores assigned and unassigned employees after buildings', () => {

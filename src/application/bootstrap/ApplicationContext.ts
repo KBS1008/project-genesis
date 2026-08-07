@@ -24,6 +24,7 @@ import type { MarketTradeService } from '../services/MarketTradeService.js';
 import type { CompanyDecisionExecutionService } from '../services/CompanyDecisionExecutionService.js';
 import type { CompanyPlanningPipeline } from '../planning/CompanyPlanningPipeline.js';
 import type { EnergyBalanceService } from '../services/EnergyBalanceService.js';
+import type { EmployeeAllocationService } from '../services/EmployeeAllocationService.js';
 import type { TransportLogisticsService } from '../services/TransportLogisticsService.js';
 import type { TickHistoryService } from '../services/TickHistoryService.js';
 import type { PlayerEventLogService } from '../services/PlayerEventLogService.js';
@@ -66,6 +67,7 @@ export type ApplicationContext = {
   readonly companyDecisionExecutionService: CompanyDecisionExecutionService;
   readonly companyPlanningPipeline: CompanyPlanningPipeline;
   readonly energyBalanceService: EnergyBalanceService;
+  readonly employeeAllocationService: EmployeeAllocationService;
   readonly transportLogisticsService: TransportLogisticsService;
   readonly tickHistoryService: TickHistoryService;
   readonly playerEventLogService: PlayerEventLogService;
