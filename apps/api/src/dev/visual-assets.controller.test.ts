@@ -47,20 +47,20 @@ describe('VisualAssetsController (NestJS)', () => {
   });
 
   it('POST /api/dev/visual-assets/validate accepts multipart uploads', async () => {
-    const png = createTestPng(500, 400);
+    const png = createTestPng(1920, 1080);
     const response = await request(app.getHttpServer())
       .post('/api/dev/visual-assets/validate')
-      .field('backlogFilename', 'MM-001_Main_Menu.png')
-      .field('status', 'in-review')
-      .attach('file', png, 'MM-001_Main_Menu.png');
+      .field('backlogFilename', 'WM-001_World_Map.png')
+      .field('status', 'in-production')
+      .attach('file', png, 'WM-001_World_Map.png');
 
     expect(response.status).toBe(200);
     expect(response.body.ok).toBe(true);
     expect(response.body.data).toMatchObject({
-      assetId: 'MM-001',
-      width: 500,
-      height: 400,
+      assetId: 'WM-001',
+      width: 1920,
+      height: 1080,
     });
-    expect(response.body.data.canonicalFilename).toMatch(/^MM-001_Main_Menu(_Rev\d+)?\.png$/);
+    expect(response.body.data.canonicalFilename).toMatch(/^WM-001_World_Map\.png$/);
   });
 });

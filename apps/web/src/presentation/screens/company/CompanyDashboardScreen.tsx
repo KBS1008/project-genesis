@@ -81,9 +81,10 @@ export function CompanyDashboardScreen({
     async (
       action: () => Promise<void>,
       successMessage: string,
-      options?: { readonly commandId?: CommandId },
+      commandId: CommandId,
+      options?: { readonly clearsDirty?: boolean },
     ) => {
-      await runCommand(action, successMessage, options);
+      await runCommand(action, successMessage, { commandId, ...options });
       setSidebarOpen(false);
     },
     [runCommand],

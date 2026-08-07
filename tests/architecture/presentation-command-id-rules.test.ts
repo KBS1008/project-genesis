@@ -8,9 +8,7 @@ const scanRoots = [
   path.join(projectRoot, 'apps/web/src/presentation/shell'),
 ];
 
-const APPROVED_EXCEPTION_FILES = new Set([
-  'apps/web/src/presentation/screens/company/CompanyDashboardScreen.tsx',
-]);
+const APPROVED_EXCEPTION_FILES = new Set<string>();
 
 async function collectSourceFiles(directory: string): Promise<string[]> {
   const entries = await readdir(directory, { withFileTypes: true });

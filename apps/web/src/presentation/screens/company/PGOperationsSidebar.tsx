@@ -17,7 +17,8 @@ export function PGOperationsSidebar({
   readonly runAction: (
     action: () => Promise<void>,
     successMessage: string,
-    options?: { readonly commandId?: CommandId },
+    commandId: CommandId,
+    options?: { readonly clearsDirty?: boolean },
   ) => Promise<void>;
 }) {
   return (
@@ -45,7 +46,7 @@ export function PGOperationsSidebar({
                         displayName: hint.defaultDisplayName,
                       }),
                     `${hint.name} eingestellt.`,
-                    { commandId: 'employees.hire' },
+                    'employees.hire',
                   );
                 }}
               >
@@ -74,7 +75,7 @@ export function PGOperationsSidebar({
                           buildingId: hint.buildingId,
                         }),
                       `${hint.employeeName} zugewiesen.`,
-                      { commandId: 'employees.assign' },
+                      'employees.assign',
                     );
                   }}
                 >
