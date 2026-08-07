@@ -4,7 +4,7 @@
 **Milestone:** M11 — Visual Production & User Experience  
 **Gate:** Phase 5 Final Gate (5.5 + 5.6 Closeout)  
 **Review date:** 2026-08-07  
-**Commit audited:** `d0505a3` (`master`, synced with `origin/master`)  
+**Commit audited:** `d0505a3` (initial gate); polish corrections `65364f5`; **Phase 5 closed** at `65364f5`  
 **Reviewer:** Independent read-only audit  
 **References:** Phase 5.1–5.6 reports, `SIMULATION_INTEGRATION_GUIDE.md`, gate prompt `M11_PHASE_5_6_E2E_VALIDATION_AND_CLOSEOUT.md`
 
@@ -14,17 +14,17 @@
 
 M11 Phase 5 delivers a coherent Simulation Integration Layer: simulation state flows through REST contracts into immutable ViewData, shared URL-backed selection, a unified `runCommand` pipeline, simulation-driven notifications, and resilient runtime behavior (stale data, reconnect, command gating) without full-page reloads.
 
-Repository inspection and test execution confirm that Phase 5.4 gate corrections C1–C4 and C6 are **resolved** in code and tests. C5 (authoritative gameplay `entityId` on event log entries) remains **accepted deferred**. Phase 5.6 API E2E (6 tests) and presentation closeout (7 tests) pass. Production web build passes. Full test suite: **865 / 866** (one dev-tooling failure).
+Repository inspection and test execution confirm that Phase 5.4 gate corrections C1–C4 and C6 are **resolved** in code and tests. C5 (authoritative gameplay `entityId` on event log entries) remains **accepted deferred** and **does not block Phase 5**. Phase 5.6 API E2E (6 tests) and presentation closeout (7 tests) pass. Production web build passes. Full test suite: **868 / 868** (after polish commit `65364f5`).
 
-No **Critical** or **Major** Phase 5 gaps were found. Remaining items are minor corrections, accepted deferrals, or advisory improvements.
+No **Critical** or **Major** Phase 5 gaps were found. The four **Minor** gate findings (P5-GATE-01 … P5-GATE-04) were resolved in the M11 polish track (`65364f5`) and were **not** Phase 5 scope. **Offen bleiben nur** C5 and advisory/tooling items — all explicitly non-blocking.
 
 ---
 
 ## 2. Gate Decision
 
-**PASS WITH MINOR CORRECTIONS**
+**PASS**
 
-Phase 5 is operationally complete. Only non-blocking Minor and Advisory findings remain.
+Phase 5 is **closed**. Minor corrections from the initial gate review are resolved. Only accepted deferred (C5) and advisory/tooling follow-ups remain in `M11_POLISH_MAINTENANCE_BACKLOG.md`.
 
 ---
 
@@ -253,7 +253,7 @@ Executed: 2026-08-07 (review environment)
 
 | Suite | Files | Tests | Passed | Failed | Skipped |
 |-------|-------|-------|--------|--------|---------|
-| Full `pnpm test` | 236 | 866 | 865 | 1 | 0 |
+| Full `pnpm test` | 238 | 868 | 868 | 0 | 0 |
 | Presentation (`apps/web/src/presentation`) | 66 | 179 | 179 | 0 | 0 |
 | Architecture tests | 6 | 8 | 8 | 0 | 0 |
 | Phase 5 API E2E | 1 | 6 | 6 | 0 | 0 |
@@ -267,9 +267,9 @@ Executed: 2026-08-07 (review environment)
 | `pnpm typecheck` (root) | **FAIL** — pre-existing errors in `src/tools/visual-asset-manager/`, `tools/sync-runtime-visual-assets.ts` |
 | Web package lint during build | **PASS** (ESLint during `next build`) |
 
-**Failed test (non-blocking):**
+**Failed test (non-blocking):** None at `65364f5`.
 
-`apps/api/src/dev/visual-assets.controller.test.ts` — multipart validate returns 400 (dev tooling only).
+**Previously (pre-polish):** `visual-assets.controller.test.ts` — resolved in POLISH-02.
 
 **Warnings:** Axe `colorContrast` internal warnings in test output (tests still pass). Next.js ESLint plugin not detected (build warning).
 
@@ -284,7 +284,7 @@ Executed: 2026-08-07 (review environment)
 | `COMMAND_EXECUTION_GUIDE.md` | Aligns with `execute-command.ts` pipeline |
 | `NOTIFICATION_SYSTEM_GUIDE.md` | Aligns with notification modules |
 | `RUNTIME_VIEWDATA_GUIDE.md` | Finance tick sync documented and implemented |
-| `IMPLEMENTATION_PROGRESS.md` | Phase 5.6 row present; test count 866 |
+| `IMPLEMENTATION_PROGRESS.md` | Phase 5 closed; test count 868; backlog for C5 + advisory only |
 | Phase 5 reports | Final report claims verified except partial E2E coverage noted above |
 
 Note: Prompt references `M11_PHASE5_RUNTIME_BINDING_AUDIT.md`; repository file is `M11_PHASE5_1_RUNTIME_BINDING_AUDIT_REPORT.md` (naming only).
@@ -293,13 +293,17 @@ Note: Prompt references `M11_PHASE5_RUNTIME_BINDING_AUDIT.md`; repository file i
 
 ## 19. Deferred Items
 
-| ID | Source | Description | Reason | Risk | Target | Blocking |
-|----|--------|-------------|--------|------|--------|----------|
-| C5 | 5.4 gate | Event log lacks gameplay `entityId` / `entityType` | Backend read-model extension | Notification deep-links use screen-level navigation only | Post-M11 backend + presentation | **NO** |
-| DEV-VA-TEST | 5.6 baseline | `visual-assets.controller.test.ts` multipart failure | Dev endpoint/fixture drift | Dev tooling only | M11 dev maintenance | **NO** |
-| TYPECHECK-TOOLS | Pre-existing | Root `pnpm typecheck` failures in visual-asset-manager tools | Out of Phase 5 scope | Dev/CI hygiene | M11 tooling | **NO** |
-| RESPONSIVE-SWEEP | 5.6 prompt | Full breakpoint manual validation | Not automated in 5.6 | Layout issues at edge breakpoints | M11 polish | **NO** |
-| ESLINT-CMDID | 5.5 recommendation | Optional ESLint rule mirroring architecture test | Architecture test sufficient today | Missed `commandId` in new screens | Optional | **NO** |
+**Offen bleiben nur** die unten als **Blocking: NO** markierten Punkte. Gate-Minor-Korrekturen und DEV-VA-TEST sind in `65364f5` erledigt.
+
+| ID | Source | Description | Status | Blocking |
+|----|--------|-------------|--------|----------|
+| **C5** | 5.4 gate | Event log lacks gameplay `entityId` / `entityType` | **OPEN — accepted deferred** (POLISH-09) | **NO** |
+| TYPECHECK-TOOLS | Pre-existing | Root `pnpm typecheck` failures in visual-asset-manager tools | OPEN — advisory (POLISH-05) | **NO** |
+| NOTIF-ACTIONS-UX | 5.4 gate / P5-GATE-06 | Notification actions UI beyond executive dashboard | OPEN — advisory (POLISH-06) | **NO** |
+| RESPONSIVE-SWEEP | 5.6 prompt | Full breakpoint manual validation | OPEN — advisory (POLISH-08) | **NO** |
+| ESLINT-CMDID | 5.5 recommendation | Optional ESLint rule mirroring architecture test | OPEN — advisory (POLISH-07) | **NO** |
+| DEV-VA-TEST | 5.6 baseline | `visual-assets.controller.test.ts` | **RESOLVED** — POLISH-02 (`65364f5`) | **NO** |
+| P5-GATE-01 … 04 | Gate review | Minor corrections | **RESOLVED** — POLISH-01 … 04 (`65364f5`) | **NO** |
 
 ---
 
@@ -307,42 +311,30 @@ Note: Prompt references `M11_PHASE5_RUNTIME_BINDING_AUDIT.md`; repository file i
 
 ### P5-GATE-01
 
-**Severity:** MINOR  
+**Severity:** MINOR — **RESOLVED** (`65364f5`, POLISH-01)  
 **Area:** Commands  
-**Evidence:** `tests/architecture/presentation-command-id-rules.test.ts` — `APPROVED_EXCEPTION_FILES` includes `CompanyDashboardScreen.tsx`; `runAction` delegates to `runCommand` without guaranteed `commandId`  
-**Problem:** `custom` commandId may trigger broader invalidation than specialized commands  
-**Impact:** Potential extra refresh work from operations sidebar actions  
-**Required Correction:** Wire explicit `commandId` on sidebar `runAction` calls or narrow `custom` scope  
+**Evidence:** `presentation-command-id-rules.test.ts` — no approved exception for `CompanyDashboardScreen.tsx`  
 **Blocking:** NO
 
 ### P5-GATE-02
 
-**Severity:** MINOR  
+**Severity:** MINOR — **RESOLVED** (`65364f5`, POLISH-02)  
 **Area:** Build / test  
-**Evidence:** `apps/api/src/dev/visual-assets.controller.test.ts` — expected 200, received 400  
-**Problem:** Dev visual asset validate endpoint test out of sync with controller validation  
-**Impact:** Full CI suite reports 1 failure; no gameplay impact  
-**Required Correction:** Fix dev test fixture or endpoint validation in a dev-tooling pass  
+**Evidence:** `visual-assets.controller.test.ts` — 3/3 pass with `WM-001_World_Map.png`  
 **Blocking:** NO
 
 ### P5-GATE-03
 
-**Severity:** MINOR  
+**Severity:** MINOR — **RESOLVED** (`65364f5`, POLISH-03)  
 **Area:** Resilience / E2E  
-**Evidence:** Reconnect verified in `workspace-runtime-state.test.ts` and provider wiring; no test simulates socket disconnect/reconnect end-to-end  
-**Problem:** Reconnect workflow lacks automated E2E with mocked socket  
-**Impact:** Regression risk on reconnect path without manual QA  
-**Required Correction:** Add presentation integration test mocking `connectDashboardSocket` disconnect/reconnect cycle  
+**Evidence:** `dashboard-reconnect.integration.test.tsx`  
 **Blocking:** NO
 
 ### P5-GATE-04
 
-**Severity:** MINOR  
+**Severity:** MINOR — **RESOLVED** (`65364f5`, POLISH-04)  
 **Area:** E2E / world interaction  
-**Evidence:** `m11-phase5-closeout.integration.test.ts` tests `buildRegionNavigationTarget` only; no automated search→camera→inspector chain  
-**Problem:** World interaction workflow partially validated  
-**Impact:** Camera/highlight regressions require manual verification  
-**Required Correction:** Extend closeout or E2E with harness-level world selection tests  
+**Evidence:** `world-search-selection.integration.test.ts`  
 **Blocking:** NO
 
 ### P5-GATE-05
@@ -379,45 +371,52 @@ Note: Prompt references `M11_PHASE5_RUNTIME_BINDING_AUDIT.md`; repository file i
 
 ## 21. Required Corrections
 
-Non-blocking corrections recommended before or during M11 polish:
+### Resolved in M11 polish (`65364f5`) — not Phase 5 scope
 
-1. **P5-GATE-01** — Add explicit `commandId` to `CompanyDashboardScreen.runAction` sidebar paths  
-2. **P5-GATE-02** — Repair or quarantine `visual-assets.controller.test.ts`  
-3. **P5-GATE-03** — Add reconnect integration test with mocked socket lifecycle  
-4. **P5-GATE-04** — Add world search/selection integration coverage where harness supports it
+| ID | Status | Evidence |
+|----|--------|----------|
+| P5-GATE-01 | **RESOLVED** | Required `commandId` on `CompanyDashboardScreen.runAction` — POLISH-01 |
+| P5-GATE-02 | **RESOLVED** | `visual-assets.controller.test.ts` repaired — POLISH-02 |
+| P5-GATE-03 | **RESOLVED** | `dashboard-reconnect.integration.test.tsx` — POLISH-03 |
+| P5-GATE-04 | **RESOLVED** | `world-search-selection.integration.test.ts` — POLISH-04 |
 
-No corrections block closing Phase 5.
+### Not required for Phase 5 close (tracked in maintenance backlog)
+
+- **C5** — `entityId` / `entityType` on event log backend (POLISH-09) — **ACCEPTED DEFERRED**, blocking: **NO**
+- **P5-GATE-05 … P5-GATE-07** — advisory/tooling (POLISH-05 … POLISH-08) — blocking: **NO**
+
+No open item blocks closing Phase 5.
 
 ---
 
 ## 22. Remaining Risks
 
-| Risk | Mitigation |
-|------|------------|
-| Entity-specific notification navigation without backend `entityId` | Screen-level actions; C5 tracked |
-| Reconnect regressions without socket E2E | Unit/state tests + manual QA |
-| Dev test failure noise in CI | Isolate dev suite or fix fixture |
-| `custom` commandId broad refresh | Documented exception; minor perf |
+| Risk | Mitigation | Blocks Phase 5? |
+|------|------------|-----------------|
+| Entity-specific notification navigation without backend `entityId` (C5) | Screen-level actions; POLISH-09 tracked | **NO** |
+| Root typecheck / dev tooling hygiene (P5-GATE-05) | M11 tooling pass | **NO** |
+| Notification actions only on executive dashboard (P5-GATE-06) | Optional UX expansion | **NO** |
+| Manual responsive sweep not recorded (POLISH-08) | M11 polish QA | **NO** |
 
 ---
 
 ## 23. Recommendations
 
-1. Close Phase 5 and proceed to next M11 module after stakeholder sign-off on this gate review  
-2. Extend `EventLogEntryDto` with optional `entityId` / `entityType` to close C5  
-3. Add reconnect and world-interaction integration tests in M11 polish pass  
-4. Fix dev tooling typecheck and visual-assets controller test in parallel track  
-5. Consider ESLint rule for `commandId` alongside architecture test
+1. Proceed to the next M11 module — Phase 5 is closed  
+2. Track C5 and advisory items only via `M11_POLISH_MAINTENANCE_BACKLOG.md`  
+3. When backend adds `entityId` / `entityType` to event log entries, close POLISH-09 (C5)  
+4. Address dev tooling typecheck in a separate maintenance pass (POLISH-05)
 
 ---
 
 ## 24. Final Conclusion
 
-M11 Phase 5 Simulation Integration Layer is **verified complete** for production gameplay integration:
+M11 Phase 5 Simulation Integration Layer is **closed** and verified for production gameplay integration:
 
 - End-to-end data flow architecture-compliant  
 - Commands, notifications, selection, and resilience unified on existing provider model  
-- 865/866 tests pass; production web build passes  
-- Phase 5.4 corrections reconciled; C5 explicitly deferred without blocking normal play  
+- **868/868** tests pass; production web build passes  
+- Phase 5.4 corrections reconciled; gate minors resolved in polish `65364f5`  
+- **Offen bleiben nur** C5 (accepted deferred) und Advisory-/Tooling-Themen — **nicht blockierend**
 
-**M11 PHASE 5 READY WITH MINOR CORRECTIONS**
+**M11 PHASE 5 CLOSED — SIMULATION INTEGRATION READY**

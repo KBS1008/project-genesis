@@ -43,7 +43,7 @@ Update this document whenever a meaningful implementation milestone is completed
 | M8 NPC Economy                   | ✅ Completed (Gate AUD-006, 2026-07-22) |
 | Phase 1 Core Domain              | ✅ Completed (Gate 2026-07-19) — see `PHASE1_CORE_DOMAIN_REPORT.md`                                                                                                   |
 
-**Tests:** 866 (`pnpm test`; 865 passed — 1 dev visual-assets controller test failure non-blocking)
+**Tests:** 868 (`pnpm test`; Phase 5 gate + polish complete at `65364f5`)
 
 ---
 
@@ -264,7 +264,7 @@ All **TD-M8-01 … TD-M8-06** resolved — see `docs/quality/M8_IMPLEMENTATION_R
 | **Commands & Query Invalidation (Phase 5.4A)** | **100** | Unified command pipeline, scoped refresh — see `COMMAND_EXECUTION_GUIDE.md`, `M11_PHASE5_4A_COMMANDS_REPORT.md` |
 | **Simulation Events & Notifications (Phase 5.4B)** | **100** | Event log + runtime alerts → notification center, toasts, status bar — see `NOTIFICATION_SYSTEM_GUIDE.md`, `M11_PHASE5_4B_EVENTS_NOTIFICATIONS_REPORT.md` |
 | **Runtime Resilience & Performance (Phase 5.5)** | **100** | Stale data, reconnect, sync coalescing, commandId guard — see `RUNTIME_RESILIENCE_AND_PERFORMANCE_GUIDE.md`, `M11_PHASE5_5_RESILIENCE_PERFORMANCE_REPORT.md` |
-| **E2E Validation & Closeout (Phase 5.6)** | **100** | API E2E + presentation closeout, production build, final report — see `M11_PHASE5_SIMULATION_INTEGRATION_FINAL_REPORT.md` |
+| **E2E Validation & Closeout (Phase 5.6)** | **100** | API E2E + presentation closeout — **Phase 5 CLOSED** — see `M11_GATE_PHASE5_FINAL_REVIEW.md`, `M11_POLISH_MAINTENANCE_BACKLOG.md` |
 | Mockup production (Sprint 1+) |    10 | Main menu mockups started |
 | Animations / effects / audio |     0 | Art docs only |
 | Localization / balancing     |     0 | Not started   |
@@ -1195,6 +1195,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Recently Completed (2026-08)
 
+- **M11 Phase 5 — CLOSED:** Final gate **PASS** (`M11_GATE_PHASE5_FINAL_REVIEW.md`); polish minors resolved (`65364f5`); **868 tests** — **M11 PHASE 5 CLOSED — SIMULATION INTEGRATION READY**. Offen: nur C5 + Advisory/Tooling (`M11_POLISH_MAINTENANCE_BACKLOG.md`)
 - **M11 Phase 5.6 — E2E Validation & Closeout:** API E2E simulation flow (6 tests), presentation closeout suite (7 tests), production web build, finding reconciliation, `M11_PHASE5_SIMULATION_INTEGRATION_FINAL_REPORT.md` — **SIMULATION INTEGRATION READY**
 - **M11 Phase 5.5 — Runtime Resilience & Performance:** stale ViewData policy, WebSocket reconnect recovery, command gating, notification sync coalescing, commandId architecture test — **RUNTIME RESILIENCE READY**
 - **M11 Phase 5.4B — Simulation Events & Notifications:** unified `SimulationNotification` model, event log + runtime alert mapping, notification center actions, status bar binding, critical announcer, deduped toasts — **SIMULATION EVENTS READY**

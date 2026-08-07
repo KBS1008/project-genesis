@@ -3,7 +3,9 @@
 **Project:** Project Genesis  
 **Milestone:** M11 Phase 5 — Simulation Integration Layer (canonical overview)  
 **Audience:** Frontend and full-stack developers  
-**Status:** Phase 5.6 closeout — **SIMULATION INTEGRATION READY**
+**Status:** Phase 5 **CLOSED** — **SIMULATION INTEGRATION READY** (gate `65364f5`)
+
+Offen bleiben nur nicht blockierende Follow-ups: **C5** (`entityId`/`entityType` im Event-Log-Backend) und Advisory-/Tooling-Themen — siehe `M11_POLISH_MAINTENANCE_BACKLOG.md`.
 
 ---
 
