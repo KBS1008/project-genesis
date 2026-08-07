@@ -5,16 +5,16 @@ import type {
 } from '@/presentation/adapters/api/client';
 import type { RegionDetailsDto } from '@/presentation/adapters/api/query-client';
 import type { RegionDetailViewData } from '@/presentation/adapters/view-data/workspace-view-data';
-import type {
-  WorldBuildingMarkerViewData,
-  WorldInspectorViewData,
-  WorldMapRegionCellViewData,
-  WorldOverlayViewData,
-  WorldRegionMetricViewData,
-  WorldRegionOperationsViewData,
-  WorldTransportFlowViewData,
+import {
+  WORLD_MAP_CELL_SIZE,
+  type WorldBuildingMarkerViewData,
+  type WorldInspectorViewData,
+  type WorldMapRegionCellViewData,
+  type WorldOverlayViewData,
+  type WorldRegionMetricViewData,
+  type WorldRegionOperationsViewData,
+  type WorldTransportFlowViewData,
 } from '@/presentation/adapters/view-data/world-view-data';
-import { WORLD_MAP_CELL_SIZE } from '@/presentation/adapters/view-data/world-view-data';
 
 function connectionKey(fromRegionId: string, toRegionId: string): string {
   return `${fromRegionId}->${toRegionId}`;

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { fetchSessionStatus, type SessionStatusDto } from '@/presentation/adapters/api/query-client';
 import { translatePresentationError } from '@/presentation/notifications/translatePresentationError';
 import {
@@ -48,7 +48,7 @@ export function useMenuBootstrap(): MenuBootstrapState {
     }
 
     let active = true;
-    let loadingTimer: ReturnType<typeof window.setTimeout> | null = null;
+    let loadingTimer: number | null = null;
     const startedAt = Date.now();
 
     const scheduleHome = (nextState: MenuBootstrapState) => {

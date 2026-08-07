@@ -22,7 +22,13 @@ import { SimulationControlsBar } from '@/presentation/shell/SimulationControlsBa
 import { SimulationTickLoop } from '@/presentation/simulation';
 import { useTheme } from '@/presentation/theme';
 import { useGameWorkspace } from '@/presentation/state/GameWorkspaceProvider';
+import { formatEntitySelectionLabel } from '@/presentation/navigation/entity-selection-labels';
 import { SimulationCriticalAnnouncer } from '@/presentation/notifications/SimulationCriticalAnnouncer';
+import {
+  formatDashboardConnectionLabel,
+  formatWorkspaceDataFreshnessLabel,
+} from '@/presentation/runtime/workspace-runtime-state';
+import { WorkspaceRuntimeBanner } from '@/presentation/shell/WorkspaceRuntimeBanner';
 
 function EntitySelectionBanner() {
   const { navigation, companyViewData, regions, clearEntitySelection } = useGameWorkspace();
@@ -148,7 +154,13 @@ function WorkspaceHeader() {
 }
 
 function WorkspaceStatusBar() {
-  const { viewData, companyViewData, isLiveConnected, isSessionDirty } = useGameWorkspace();
+  const {
+    viewData,
+    companyViewData,
+    connectionState,
+    runtimeState,
+    isSessionDirty,
+  } = useGameWorkspace();
   const { theme, toggleTheme } = useTheme();
   const { session, simulation } = viewData;
   const simulationStatusLabel = simulation.isPaused
@@ -164,7 +176,10 @@ function WorkspaceStatusBar() {
           <span aria-label="Unternehmen">{session.companyName ?? 'Keine Session'}</span>
           <span aria-label="Simulationstatus">{simulationStatusLabel}</span>
           <span aria-label="Verbindungsstatus">
-            {isLiveConnected ? 'Live verbunden' : 'Nicht live'}
+            {formatDashboardConnectionLabel(connectionState)}
+          </span>
+          <span aria-label="Datenstatus">
+            {formatWorkspaceDataFreshnessLabel(runtimeState.dataFreshness)}
           </span>
           <span aria-label="Autosave-Status">
             {isSessionDirty ? 'Ungespeichert' : 'Gespeichert'}
@@ -194,7 +209,7 @@ function WorkspaceStatusBar() {
 }
 
 function WorkspaceMain({ children }: { readonly children: ReactNode }) {
-  const { isLoading, navigation, clearEntitySelection } = useGameWorkspace();
+  const { isLoading, navigation, clearEntitySelection, runtimeState } = useGameWorkspace();
   const { openSearch } = useGlobalSearch();
   const { openContextMenu } = useContextMenu();
 
@@ -219,8 +234,13 @@ function WorkspaceMain({ children }: { readonly children: ReactNode }) {
     >
       <SimulationControlsBar />
       <SimulationTickLoop />
+      <WorkspaceRuntimeBanner />
       <EntitySelectionBanner />
-      <main className="pg-workspace-screen" id="game-workspace-main">
+      <main
+        className="pg-workspace-screen"
+        id="game-workspace-main"
+        aria-busy={runtimeState.isAriaBusy}
+      >
         {isLoading ? <LoadingState label="Session wird geladen…" /> : children}
       </main>
     </div>

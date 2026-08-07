@@ -82,6 +82,7 @@ function mapEntityType(category: string): SimulationNotification['entityType'] {
 /** Maps one authoritative event log entry to a simulation notification. */
 export function mapEventLogEntryToNotification(entry: EventLogEntryDto): SimulationNotification {
   const title = formatEventCategory(entry.category);
+  const entityId = null;
 
   return Object.freeze({
     notificationId: entry.id,
@@ -90,7 +91,7 @@ export function mapEventLogEntryToNotification(entry: EventLogEntryDto): Simulat
     message: entry.message,
     simulationTimestamp: entry.occurredAt,
     tickNumber: entry.tickNumber,
-    entityId: entry.id,
+    entityId,
     entityType: mapEntityType(entry.category),
     action: mapAction(entry.category, entry.message),
     readState: 'unread',

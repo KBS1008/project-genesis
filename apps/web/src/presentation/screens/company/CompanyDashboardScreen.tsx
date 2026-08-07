@@ -6,6 +6,7 @@ import {
   buildOperationsOverviewCards,
 } from '@/presentation/adapters/mappers/company-operations-view-mappers';
 import { PGLoadingOverlay } from '@/presentation/components/foundation/PGLoadingOverlay';
+import { PGTutorialPanel } from '@/presentation/components/dashboard/PGTutorialPanel';
 import { Button } from '@/presentation/primitives/Button';
 import { useGameWorkspace } from '@/presentation/state/GameWorkspaceProvider';
 import { useTheme } from '@/presentation/theme';
@@ -103,9 +104,21 @@ export function CompanyDashboardScreen({
       id: string,
     ) => {
       setDetailSelection({ kind, id });
-      selectEntity({ kind, id });
+
+      if (
+        kind === 'building' ||
+        kind === 'production' ||
+        kind === 'transport' ||
+        kind === 'research' ||
+        kind === 'employee'
+      ) {
+        selectEntity({ kind, id });
+        return;
+      }
+
+      clearEntitySelection();
     },
-    [selectEntity],
+    [selectEntity, clearEntitySelection],
   );
 
   const selectFinanceDetail = useCallback(() => {

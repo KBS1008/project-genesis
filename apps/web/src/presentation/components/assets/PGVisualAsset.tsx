@@ -63,7 +63,6 @@ export function PGVisualAssetImage({
 
   if (sources.webp === null) {
     return (
-      // eslint-disable-next-line @next/next/no-img-element -- registry serves static public assets outside next/image config
       <img src={sources.primary} alt={alt} className={className} loading={loading} decoding="async" />
     );
   }
@@ -71,7 +70,6 @@ export function PGVisualAssetImage({
   return (
     <picture>
       <source srcSet={sources.webp} type="image/webp" />
-      {/* eslint-disable-next-line @next/next/no-img-element -- registry serves static public assets outside next/image config */}
       <img src={sources.primary} alt={alt} className={className} loading={loading} decoding="async" />
     </picture>
   );

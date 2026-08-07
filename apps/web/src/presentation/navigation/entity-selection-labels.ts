@@ -28,27 +28,30 @@ export function formatEntitySelectionLabel(
   switch (selection.kind) {
     case 'region':
       return `${kindLabel}: ${regions.find((region) => region.id === selection.id)?.name ?? selection.id}`;
-    case 'building':
+    case 'building': {
       const buildingRow = companyViewData.buildings.find((entry) => entry.id === selection.id);
       const buildingDetail = companyViewData.detail.buildings.get(selection.id);
       return `${kindLabel}: ${buildingRow?.name ?? buildingDetail?.title ?? selection.id}`;
+    }
     case 'resource':
       return `${kindLabel}: ${companyViewData.labels.resource(selection.id)}`;
-    case 'production':
+    case 'production': {
       const production = companyViewData.detail.productionJobs.get(selection.id);
       return `${kindLabel}: ${production?.title ?? selection.id}`;
-    case 'transport':
+    }
+    case 'transport': {
       const transport = companyViewData.detail.transportOrders.get(selection.id);
       return `${kindLabel}: ${transport?.title ?? selection.id}`;
-    case 'research':
+    }
+    case 'research': {
       const research = companyViewData.detail.researchJobs.get(selection.id);
       return `${kindLabel}: ${research?.title ?? selection.id}`;
-    case 'employee':
+    }
+    case 'employee': {
       const employee = companyViewData.detail.employees.get(selection.id);
       return `${kindLabel}: ${employee?.title ?? selection.id}`;
+    }
     case 'event':
-      return `${kindLabel}: ${selection.id}`;
-    default:
       return `${kindLabel}: ${selection.id}`;
   }
 }

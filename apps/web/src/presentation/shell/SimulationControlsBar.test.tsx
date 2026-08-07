@@ -38,6 +38,7 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
       saves: [],
     },
     isBusy: false,
+    canRunCommands: true,
     runCommand,
   }),
 }));

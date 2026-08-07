@@ -1,12 +1,9 @@
-import type { EntityNavigationTarget } from '@/presentation/navigation/entity-navigation';
 import {
   buildBuildingNavigationTarget,
   buildEventNavigationTarget,
-  buildProductionNavigationTarget,
   buildRegionNavigationTarget,
-  buildResearchNavigationTarget,
   buildResourceNavigationTarget,
-  buildTransportNavigationTarget,
+  type EntityNavigationTarget,
 } from '@/presentation/navigation/entity-navigation';
 import type { PrimaryScreenId } from '@/presentation/navigation/primary-screens';
 import type { SimulationNotificationActionKind } from './simulation-notification-types';

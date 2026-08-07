@@ -51,6 +51,27 @@ describe('dashboard accessibility', () => {
     expect(await axe(container)).toHaveNoViolations();
   });
 
+  it('PGNotificationCenter with action buttons has no axe violations', async () => {
+    const { container } = renderPresentation(
+      <PGNotificationCenter
+        notifications={[
+          {
+            id: 'alert-2',
+            title: 'Produktion blockiert',
+            message: 'Rohstoff fehlt',
+            tone: 'warning',
+            actionKind: 'open-production',
+            actionLabel: 'Produktion öffnen',
+          },
+        ]}
+        onAction={() => {}}
+      />,
+    );
+
+    expect(screen.getByRole('button', { name: 'Produktion öffnen' })).toBeInTheDocument();
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
   it('PGReportWidget has no axe violations', async () => {
     const { container } = renderPresentation(
       <PGReportWidget

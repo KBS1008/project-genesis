@@ -1,5 +1,9 @@
-import type { CommandId, CommandStatus } from './command-types';
-import { PresentationCommandError, toPresentationCommandError } from './command-types';
+import {
+  toPresentationCommandError,
+  type CommandId,
+  type CommandStatus,
+  type PresentationCommandError,
+} from './command-types';
 import { partitionInvalidationScopes, resolveCommandScopes } from './command-scopes';
 import { queryInvalidationStore } from './query-invalidation';
 import {

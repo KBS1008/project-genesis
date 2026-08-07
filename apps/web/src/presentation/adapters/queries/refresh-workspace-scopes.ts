@@ -1,5 +1,8 @@
-import { fetchDashboard, fetchDashboardHistory } from '@/presentation/adapters/api/client';
-import type { GameSessionDashboard } from '@/presentation/adapters/api/client';
+import {
+  fetchDashboard,
+  fetchDashboardHistory,
+  type GameSessionDashboard,
+} from '@/presentation/adapters/api/client';
 import {
   fetchRegionList,
   fetchSaveList,
@@ -52,7 +55,15 @@ export async function refreshWorkspaceScopes(
   input: WorkspaceRefreshInput,
 ): Promise<WorkspaceRefreshResult> {
   const scopeSet = new Set(input.scopes);
-  const result: WorkspaceRefreshResult = {};
+  const patch: {
+    dashboard?: GameSessionDashboard;
+    companyViewData?: CompanyDashboardViewData;
+    session?: SessionStatusViewData;
+    simulation?: SimulationStatusViewData;
+    world?: WorldOverviewViewData | null;
+    saves?: readonly SaveSlotViewData[];
+    regions?: readonly RegionDto[];
+  } = {};
 
   if (scopeSet.has('workspace.dashboard')) {
     const [dashboard, history] = await Promise.all([
@@ -60,8 +71,8 @@ export async function refreshWorkspaceScopes(
       fetchDashboardHistory({ limit: 200 }),
     ]);
 
-    result.dashboard = dashboard;
-    result.companyViewData = buildCompanyDashboardViewData(dashboard, history.points);
+    patch.dashboard = dashboard;
+    patch.companyViewData = buildCompanyDashboardViewData(dashboard, history.points);
   }
 
   const needsSession = scopeSet.has('workspace.session');
@@ -70,10 +81,10 @@ export async function refreshWorkspaceScopes(
 
   if (needsSession) {
     const simulation = await fetchSimulationStatus();
-    result.simulation = mapSimulationStatusViewData(simulation);
+    patch.simulation = mapSimulationStatusViewData(simulation);
 
     const session = await fetchSessionStatus();
-    result.session = mapSessionStatusViewData(session);
+    patch.session = mapSessionStatusViewData(session);
   }
 
   if (needsWorld) {
@@ -82,16 +93,16 @@ export async function refreshWorkspaceScopes(
       fetchRegionList(),
     ]);
 
-    result.world = mapWorldOverviewViewData(worldOverview, regions);
-    result.regions = Object.freeze(regions);
+    patch.world = mapWorldOverviewViewData(worldOverview, regions);
+    patch.regions = Object.freeze(regions);
   }
 
   if (needsSaves) {
     const saves = await fetchSaveList();
-    result.saves = Object.freeze(saves.map(mapSaveSlotViewData));
+    patch.saves = Object.freeze(saves.map(mapSaveSlotViewData));
   }
 
-  return Object.freeze(result);
+  return Object.freeze(patch) as WorkspaceRefreshResult;
 }
 
 /** Rebuilds workspace view slices from DTO snapshots for full-session refresh paths. */

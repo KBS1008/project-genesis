@@ -8,7 +8,7 @@ const fetchSessionStatus = vi.fn();
 const fetchSaveList = vi.fn();
 
 vi.mock('@/presentation/adapters/api/client', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/presentation/adapters/api/client')>();
+  const actual = (await importOriginal()) as Record<string, unknown>;
 
   return {
     ...actual,

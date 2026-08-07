@@ -1,6 +1,7 @@
 'use client';
 
 import { assignEmployee, hireEmployee } from '@/presentation/adapters/api/employees-client';
+import type { SidebarHintsViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
 import type { CommandId } from '@/presentation/commands';
 import { Button } from '@/presentation/primitives/Button';
 import { EmptyState } from '@/presentation/primitives/EmptyState';

@@ -48,7 +48,9 @@ export function SaveGameDialog({
 
       try {
         await runCommand(
-          () => saveGame({ filePath }),
+          async () => {
+            await saveGame({ filePath });
+          },
           'Spielstand gespeichert.',
           { clearsDirty: true, commandId: 'session.save' },
         );

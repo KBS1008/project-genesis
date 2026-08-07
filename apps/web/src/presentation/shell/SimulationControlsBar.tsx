@@ -16,9 +16,9 @@ import './simulation-controls.css';
 /** Persistent simulation controls for pause, resume, step, and speed. */
 export function SimulationControlsBar() {
   const { openConfirmDialog } = useDialog();
-  const { viewData, isBusy, runCommand } = useGameWorkspace();
+  const { viewData, isBusy, canRunCommands, runCommand } = useGameWorkspace();
   const { session, simulation } = viewData;
-  const disabled = !session.hasGame || isBusy;
+  const disabled = !session.hasGame || isBusy || !canRunCommands;
   const activeSpeed = simulation.speedMultiplier;
 
   const handleSpeedChange = (speed: SimulationSpeedOption) => {

@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import type { EventLogEntryDto } from '@/presentation/adapters/api/query-client';
-import type { CompanyDashboardViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
-import { EMPTY_COMPANY_DASHBOARD_VIEW_DATA } from '@/presentation/adapters/view-data/company-dashboard-view-data';
+import {
+  EMPTY_COMPANY_DASHBOARD_VIEW_DATA,
+  type CompanyDashboardViewData,
+} from '@/presentation/adapters/view-data/company-dashboard-view-data';
 import { buildSimulationNotificationFeed } from './sync-simulation-notifications';
 
 function createRuntimeFixture(): CompanyDashboardViewData {

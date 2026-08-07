@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import type { CompanyDetailViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
 import { CompanyOperationsInspector } from '@/presentation/screens/company/CompanyOperationsInspector';

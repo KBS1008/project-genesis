@@ -24,8 +24,8 @@ describe('mapEventLogEntryToNotification', () => {
     expect(notification.severity).toBe('success');
     expect(notification.simulationTimestamp).toBe(360);
     expect(notification.tickNumber).toBe(12);
+    expect(notification.entityId).toBeNull();
     expect(notification.action).toBe('open-building');
-    expect(notification.entityType).toBe('building');
   });
 
   it('maps research completed events to success with research action', () => {

@@ -96,7 +96,7 @@ function MetricLineChart({
                 <PGChartTooltip label={`Tick ${label ?? ''}`}>
                   <PGChartTooltipValue
                     name={config.label}
-                    value={config.formatValue(payload[0]?.value ?? 0)}
+                    value={config.formatValue(Number(payload[0]?.value ?? 0))}
                   />
                 </PGChartTooltip>
               );

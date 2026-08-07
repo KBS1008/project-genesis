@@ -44,6 +44,11 @@ import type {
 import { MAX_SIMULATION_NOTIFICATION_HISTORY } from '@/presentation/notifications/simulation-notification-types';
 import { translatePresentationError } from '@/presentation/notifications/translatePresentationError';
 import { useNotifications } from '@/presentation/notifications/NotificationProvider';
+import type { DashboardConnectionState, WorkspaceRuntimeState } from '@/presentation/runtime/workspace-runtime-state';
+import {
+  deriveWorkspaceRuntimeState,
+} from '@/presentation/runtime/workspace-runtime-state';
+import { NotificationSyncSession } from '@/presentation/runtime/notification-sync-session';
 import { buildEntityCatalogRegionIds } from '@/presentation/adapters/mappers/workspace-view-mappers';
 import type { CompanyDashboardViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
 import { EMPTY_COMPANY_DASHBOARD_VIEW_DATA } from '@/presentation/adapters/view-data/company-dashboard-view-data';
@@ -67,6 +72,11 @@ export type GameWorkspaceContextValue = {
   readonly isBusy: boolean;
   readonly isLiveConnected: boolean;
   readonly isSessionDirty: boolean;
+  readonly connectionState: DashboardConnectionState;
+  readonly runtimeState: WorkspaceRuntimeState;
+  readonly recoverableError: string | null;
+  readonly canRunCommands: boolean;
+  readonly retryRuntimeRecovery: () => Promise<void>;
   readonly navigateToScreen: (screen: PrimaryScreenId) => void;
   readonly selectEntity: (selection: EntitySelection) => void;
   readonly clearEntitySelection: () => void;
@@ -135,6 +145,9 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
   const [isLoading, setIsLoading] = useState(true);
   const [isBusy, setIsBusy] = useState(false);
   const [isLiveConnected, setIsLiveConnected] = useState(false);
+  const [connectionState, setConnectionState] = useState<DashboardConnectionState>('disconnected');
+  const [isDataStale, setIsDataStale] = useState(false);
+  const [recoverableError, setRecoverableError] = useState<string | null>(null);
   const [isSessionDirty, setIsSessionDirty] = useState(false);
   const [simulationNotificationItems, setSimulationNotificationItems] = useState<
     readonly PGNotificationItem[]
@@ -148,10 +161,26 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
   const simulationNotificationsRef = useRef<readonly SimulationNotification[]>(Object.freeze([]));
   const companyViewDataRef = useRef(companyViewData);
   const criticalAnnouncementTimerRef = useRef<number | null>(null);
+  const notificationSyncSessionRef = useRef(new NotificationSyncSession());
+  const hasLoadedSessionRef = useRef(false);
+
+  const runtimeState = useMemo(
+    () =>
+      deriveWorkspaceRuntimeState({
+        hasGame: viewData.session.hasGame,
+        isLoading,
+        isBusy,
+        connectionState,
+        isDataStale,
+        recoverableError,
+        fatalError: null,
+      }),
+    [connectionState, isBusy, isDataStale, isLoading, recoverableError, viewData.session.hasGame],
+  );
 
   useEffect(() => {
-    companyViewDataRef.current = companyViewData;
-  }, [companyViewData]);
+    setIsLiveConnected(connectionState === 'connected');
+  }, [connectionState]);
 
   const applyNotificationFeed = useCallback(
     (feed: ReturnType<typeof buildSimulationNotificationFeed>): void => {
@@ -191,26 +220,31 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
     [showNotification],
   );
 
+  useEffect(() => {
+    companyViewDataRef.current = companyViewData;
+  }, [companyViewData]);
+
   const syncSimulationNotifications = useCallback(async (): Promise<void> => {
-    try {
-      const entries = await fetchEventLog({ limit: MAX_SIMULATION_NOTIFICATION_HISTORY });
-      const feed = buildSimulationNotificationFeed({
-        eventLogEntries: entries,
-        companyViewData: companyViewDataRef.current,
-        previouslySeenIds: seenNotificationIdsRef.current,
-      });
+    await notificationSyncSessionRef.current.run(async () => {
+      try {
+        const entries = await fetchEventLog({ limit: MAX_SIMULATION_NOTIFICATION_HISTORY });
+        const feed = buildSimulationNotificationFeed({
+          eventLogEntries: entries,
+          companyViewData: companyViewDataRef.current,
+          previouslySeenIds: seenNotificationIdsRef.current,
+        });
 
-      applyNotificationFeed(feed);
-    } catch {
-      // Event log is optional for notification surfacing; dashboard runtime alerts still apply.
-      const feed = buildSimulationNotificationFeed({
-        eventLogEntries: Object.freeze([]),
-        companyViewData: companyViewDataRef.current,
-        previouslySeenIds: seenNotificationIdsRef.current,
-      });
+        applyNotificationFeed(feed);
+      } catch {
+        const feed = buildSimulationNotificationFeed({
+          eventLogEntries: Object.freeze([]),
+          companyViewData: companyViewDataRef.current,
+          previouslySeenIds: seenNotificationIdsRef.current,
+        });
 
-      applyNotificationFeed(feed);
-    }
+        applyNotificationFeed(feed);
+      }
+    });
   }, [applyNotificationFeed]);
 
   const dismissSimulationNotification = useCallback((notificationId: string): void => {
@@ -251,6 +285,9 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
     setCompanyViewData(result.companyViewData);
     setRegions(result.regions);
     companyViewDataRef.current = result.companyViewData;
+    hasLoadedSessionRef.current = true;
+    setIsDataStale(false);
+    setRecoverableError(null);
     await syncSimulationNotifications();
   }, [syncSimulationNotifications]);
 
@@ -291,25 +328,66 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
         return;
       }
 
-      const patch = await refreshWorkspaceScopes({
-        scopes,
-        currentSession: viewData.session,
-        currentSimulation: viewData.simulation,
-        currentWorld: viewData.world,
-        currentSaves: viewData.saves,
-        currentRegions: regions,
-      });
+      try {
+        const patch = await refreshWorkspaceScopes({
+          scopes,
+          currentSession: viewData.session,
+          currentSimulation: viewData.simulation,
+          currentWorld: viewData.world,
+          currentSaves: viewData.saves,
+          currentRegions: regions,
+        });
 
-      applyWorkspaceRefresh(patch);
+        applyWorkspaceRefresh(patch);
 
-      if (patch.companyViewData !== undefined) {
-        companyViewDataRef.current = patch.companyViewData;
+        if (patch.companyViewData !== undefined) {
+          companyViewDataRef.current = patch.companyViewData;
+        }
+
+        setIsDataStale(false);
+        setRecoverableError(null);
+        await syncSimulationNotifications();
+      } catch (error: unknown) {
+        if (hasLoadedSessionRef.current) {
+          setIsDataStale(true);
+        }
+
+        setRecoverableError(translatePresentationError(error));
+        throw error;
       }
-
-      await syncSimulationNotifications();
     },
     [applyWorkspaceRefresh, regions, syncSimulationNotifications, viewData],
   );
+
+  const retryRuntimeRecovery = useCallback(async (): Promise<void> => {
+    setRecoverableError(null);
+
+    try {
+      await refreshWorkspaceScopeSlices([
+        'workspace.dashboard',
+        'workspace.session',
+        'workspace.world',
+      ]);
+      invalidateScreenQueryScopes([
+        'screen.buildings',
+        'screen.production',
+        'screen.research',
+        'screen.transport',
+        'screen.markets',
+        'screen.finance',
+        'screen.events',
+        'screen.world-map',
+        'screen.world-overlay',
+        'screen.world-inspector',
+        'screen.executive-buildings',
+      ]);
+    } catch (error: unknown) {
+      showNotification({
+        tone: 'error',
+        message: translatePresentationError(error),
+      });
+    }
+  }, [refreshWorkspaceScopeSlices, showNotification]);
 
   const scheduleRefreshSession = useCallback((): void => {
     if (refreshTimerRef.current !== null) {
@@ -370,7 +448,6 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
         'screen.executive-buildings',
       ]);
       setIsSessionDirty(true);
-      await syncSimulationNotifications();
     } catch (error: unknown) {
       showNotification({
         tone: 'error',
@@ -378,7 +455,7 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
       });
       throw error;
     }
-  }, [refreshWorkspaceScopeSlices, showNotification, syncSimulationNotifications]);
+  }, [refreshWorkspaceScopeSlices, showNotification]);
 
   const runCommand = useCallback(
     async (
@@ -386,7 +463,7 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
       successMessage: string,
       options?: { readonly clearsDirty?: boolean; readonly commandId?: CommandId },
     ): Promise<void> => {
-      if (isBusyRef.current) {
+      if (isBusyRef.current || !runtimeState.canRunCommands) {
         return;
       }
 
@@ -416,7 +493,6 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
 
         if (result.status === 'success') {
           setIsSessionDirty(options?.clearsDirty === true ? false : true);
-          await syncSimulationNotifications();
           showNotification({ tone: 'success', message: successMessage });
           return;
         }
@@ -433,7 +509,7 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
         }
       }
     },
-    [refreshWorkspaceScopeSlices, showNotification, syncSimulationNotifications],
+    [refreshWorkspaceScopeSlices, runtimeState.canRunCommands, showNotification],
   );
 
   const markSessionSaved = useCallback((savePath?: string) => {
@@ -508,15 +584,23 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
       () => {
         scheduleRefreshSession();
       },
-      (connected) => {
-        setIsLiveConnected(connected);
+      (nextConnectionState) => {
+        setConnectionState(nextConnectionState);
+
+        if (nextConnectionState === 'disconnected' && hasLoadedSessionRef.current) {
+          setIsDataStale(true);
+        }
+
+        if (nextConnectionState === 'connected' && hasLoadedSessionRef.current) {
+          void retryRuntimeRecovery();
+        }
       },
     );
 
     return () => {
       socket.disconnect();
     };
-  }, [scheduleRefreshSession]);
+  }, [retryRuntimeRecovery, scheduleRefreshSession]);
 
   const navigateToTarget = useCallback(
     (target: EntityNavigationTarget) => {
@@ -581,7 +665,9 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
 
       if (resolution.commandId === 'session.save') {
         void runCommand(
-          () => saveGame({ filePath: viewData.session.savePath }),
+          async () => {
+            await saveGame({ filePath: viewData.session.savePath });
+          },
           'Spielstand gespeichert.',
           { clearsDirty: true, commandId: 'session.save' },
         );
@@ -606,6 +692,11 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
       isBusy,
       isLiveConnected,
       isSessionDirty,
+      connectionState,
+      runtimeState,
+      recoverableError,
+      canRunCommands: runtimeState.canRunCommands,
+      retryRuntimeRecovery,
       navigateToScreen,
       selectEntity,
       clearEntitySelection,
@@ -628,6 +719,10 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
       isBusy,
       isLiveConnected,
       isSessionDirty,
+      connectionState,
+      runtimeState,
+      recoverableError,
+      retryRuntimeRecovery,
       navigateToScreen,
       selectEntity,
       clearEntitySelection,

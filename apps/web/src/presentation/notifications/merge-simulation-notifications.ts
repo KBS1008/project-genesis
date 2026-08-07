@@ -1,5 +1,7 @@
-import type { SimulationNotification } from './simulation-notification-types';
-import { MAX_SIMULATION_NOTIFICATION_HISTORY } from './simulation-notification-types';
+import {
+  MAX_SIMULATION_NOTIFICATION_HISTORY,
+  type SimulationNotification,
+} from './simulation-notification-types';
 
 /** Merges event-log and runtime notifications without duplicates. */
 export function mergeSimulationNotifications(

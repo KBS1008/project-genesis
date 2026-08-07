@@ -81,7 +81,7 @@ export function PGEnergyHistoryChart({
                       <PGChartTooltipValue
                         key={entry.name}
                         name={String(entry.name ?? '')}
-                        value={`${(entry.value ?? 0).toFixed(1)} MW`}
+                        value={`${Number(entry.value ?? 0).toFixed(1)} MW`}
                         color={entry.color}
                       />
                     ))}

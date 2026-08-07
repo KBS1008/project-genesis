@@ -62,11 +62,12 @@ async function parseApiResponse<T>(response: Response): Promise<T> {
   }
 
   if (!response.ok || ('ok' in payload && payload.ok === false)) {
+    const record = payload as Record<string, unknown>;
     const apiError =
       'ok' in payload && payload.ok === false
-        ? payload.error
-        : typeof payload.message === 'string'
-          ? payload.message
+        ? (payload as ApiErrorResponse).error
+        : typeof record.message === 'string'
+          ? record.message
           : 'Request failed.';
     throw new Error(apiError);
   }
@@ -75,7 +76,7 @@ async function parseApiResponse<T>(response: Response): Promise<T> {
     throw new Error('Request failed: invalid API response.');
   }
 
-  return payload.data;
+  return (payload as ApiSuccessResponse<T>).data;
 }
 
 /** Loads all backlog assets. */

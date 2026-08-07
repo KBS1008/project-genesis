@@ -1,6 +1,5 @@
 // @vitest-environment jsdom
 
-import { screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { axe } from 'vitest-axe';
 import * as matchers from 'vitest-axe/matchers';
