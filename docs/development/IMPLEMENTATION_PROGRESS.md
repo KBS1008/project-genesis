@@ -43,7 +43,7 @@ Update this document whenever a meaningful implementation milestone is completed
 | M8 NPC Economy                   | ✅ Completed (Gate AUD-006, 2026-07-22) |
 | Phase 1 Core Domain              | ✅ Completed (Gate 2026-07-19) — see `PHASE1_CORE_DOMAIN_REPORT.md`                                                                                                   |
 
-**Tests:** 874 (`pnpm test`; Phase 6.2 runtime corrections)
+**Tests:** 882 (`pnpm test`; Phase 6.3 production operations UI)
 
 ---
 
@@ -266,6 +266,7 @@ All **TD-M8-01 … TD-M8-06** resolved — see `docs/quality/M8_IMPLEMENTATION_R
 | **Runtime Resilience & Performance (Phase 5.5)** | **100** | Stale data, reconnect, sync coalescing, commandId guard — see `RUNTIME_RESILIENCE_AND_PERFORMANCE_GUIDE.md`, `M11_PHASE5_5_RESILIENCE_PERFORMANCE_REPORT.md` |
 | **E2E Validation & Closeout (Phase 5.6)** | **100** | API E2E + presentation closeout — **Phase 5 CLOSED** — see `M11_GATE_PHASE5_FINAL_REVIEW.md`, `M11_POLISH_MAINTENANCE_BACKLOG.md` |
 | **Production System Audit (Phase 6.1)** | **100** | Read-only audit — **PRODUCTION SYSTEM READY FOR TARGETED INTEGRATION** — see `M11_PHASE6_1_PRODUCTION_SYSTEM_AUDIT.md` |
+| **Production Operations UI (Phase 6.3)** | **100** | PR-001–PR-003 on `ProductionScreen`, recipe catalog read model — **PRODUCTION OPERATIONS UI READY** — see `M11_PHASE6_3_PRODUCTION_OPERATIONS_UI_REPORT.md` |
 | **Production Runtime Corrections (Phase 6.2)** | **100** | Completion events, entity linkage, stalled visibility — **PRODUCTION RUNTIME CORRECTIONS READY** — see `M11_PHASE6_2_PRODUCTION_RUNTIME_EVENT_CORRECTIONS_REPORT.md` |
 | Mockup production (Sprint 1+) |    10 | Main menu mockups started |
 | Animations / effects / audio |     0 | Art docs only |
@@ -1198,6 +1199,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Recently Completed (2026-08)
 
+- **M11 Phase 6.3 — Production Operations UI:** PR-001 overview, PR-002 factories, PR-003 recipe catalog on `ProductionScreen` — **PRODUCTION OPERATIONS UI READY** — `M11_PHASE6_3_PRODUCTION_OPERATIONS_UI_REPORT.md`
 - **M11 Phase 6.2 — Production Runtime & Event Corrections:** completion player events, notification `entityId`, stalled `operationalState`, save/load test — **PRODUCTION RUNTIME CORRECTIONS READY** — `M11_PHASE6_2_PRODUCTION_RUNTIME_EVENT_CORRECTIONS_REPORT.md`
 - **M11 Phase 6.1 — Production System Audit:** read-only audit of domain, API, presentation, tests — **PRODUCTION SYSTEM READY FOR TARGETED INTEGRATION**; next package **6.2 Runtime & Event Corrections** — `M11_PHASE6_1_PRODUCTION_SYSTEM_AUDIT.md`
 - **M11 Phase 5 — CLOSED:** Final gate **PASS** (`M11_GATE_PHASE5_FINAL_REVIEW.md`); polish minors resolved (`65364f5`); **868 tests** — **M11 PHASE 5 CLOSED — SIMULATION INTEGRATION READY**. Offen: nur C5 + Advisory/Tooling (`M11_POLISH_MAINTENANCE_BACKLOG.md`)

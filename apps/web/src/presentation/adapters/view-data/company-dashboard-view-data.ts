@@ -179,6 +179,16 @@ export type ProductionHintViewData = {
   readonly reason: string | null;
 };
 
+export type RecipeCatalogEntryViewData = {
+  readonly id: string;
+  readonly name: string;
+  readonly durationLabel: string;
+  readonly energyLabel: string;
+  readonly inputLabels: readonly string[];
+  readonly outputLabels: readonly string[];
+  readonly buildingTypeLabels: readonly string[];
+};
+
 export type ResearchHintViewData = {
   readonly technologyId: string;
   readonly name: string;
@@ -315,6 +325,7 @@ export type CompanyDashboardViewData = {
   readonly economy: EconomySectionViewData | null;
   readonly productionJobs: readonly ProductionJobRowViewData[];
   readonly completedResearchLabels: readonly string[];
+  readonly recipeCatalog: readonly RecipeCatalogEntryViewData[];
   readonly researchJobs: readonly ResearchJobRowViewData[];
   readonly transportOrders: readonly TransportOrderRowViewData[];
   readonly financeTransactions: readonly FinanceTransactionRowViewData[];
@@ -367,6 +378,7 @@ export const EMPTY_COMPANY_DASHBOARD_VIEW_DATA: CompanyDashboardViewData = Objec
   economy: null,
   productionJobs: Object.freeze([]),
   completedResearchLabels: Object.freeze([]),
+  recipeCatalog: Object.freeze([]),
   researchJobs: Object.freeze([]),
   transportOrders: Object.freeze([]),
   financeTransactions: Object.freeze([]),

@@ -36,6 +36,7 @@ import type {
   PlaceBuildingHint,
   ProductionHint,
   ProductionJobSessionReadModel,
+  RecipeCatalogEntryReadModel,
   ResearchHint,
   TransportOrderSessionReadModel,
   EmployeeSessionReadModel,
@@ -79,6 +80,34 @@ export class GameSessionDashboardBuilder {
   constructor(context: ApplicationContext, energyBalanceService: EnergyBalanceService) {
     this.#context = context;
     this.#energyBalanceService = energyBalanceService;
+  }
+
+  /** Returns enabled recipe definitions for read-only production UI surfaces. */
+  readRecipeCatalog(): readonly RecipeCatalogEntryReadModel[] {
+    return Object.freeze(
+      this.#context.gameContent.recipes
+        .getAll()
+        .filter((recipe) => recipe.enabled)
+        .map((recipe) =>
+          Object.freeze({
+            id: recipe.id,
+            name: recipe.name,
+            durationTicks: recipe.duration,
+            energyPerTick: recipe.duration > 0 ? recipe.energy / recipe.duration : 0,
+            inputs: Object.freeze(
+              recipe.inputs.map((entry) =>
+                Object.freeze({ resourceId: entry.resource, amount: entry.amount }),
+              ),
+            ),
+            outputs: Object.freeze(
+              recipe.outputs.map((entry) =>
+                Object.freeze({ resourceId: entry.resource, amount: entry.amount }),
+              ),
+            ),
+            buildingTypeIds: Object.freeze([...recipe.buildingTypes]),
+          }),
+        ),
+    );
   }
 
   /** Returns localized display names for all enabled content entries. */

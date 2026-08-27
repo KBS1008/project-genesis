@@ -11,6 +11,7 @@ import {
   formatEventCategory,
   formatEventSeverity,
   formatNumber,
+  formatProductionStatus,
   formatTick,
   formatTransactionAmount,
   formatTransactionType,
@@ -29,6 +30,9 @@ import type {
   FinanceRowViewData,
   JobRowViewData,
   MarketRowViewData,
+  ProductionFactoryGroupViewData,
+  ProductionJobRowViewData,
+  ProductionOverviewSummaryViewData,
   RegionDetailViewData,
   SaveSlotViewData,
   SessionStatusViewData,
@@ -150,21 +154,119 @@ export function mapMarketRowsViewData(
 
 export function mapProductionJobRowsViewData(
   jobs: readonly ProductionJobSessionReadModel[],
-  labelRecipe: (recipeId: string) => string,
-): readonly JobRowViewData[] {
+  labels: {
+    readonly recipe: (recipeId: string) => string;
+    readonly building: (buildingId: string) => string;
+  },
+): readonly ProductionJobRowViewData[] {
   return Object.freeze(
     jobs.map((job) =>
       Object.freeze({
         id: job.id,
-        title: labelRecipe(job.recipeId),
+        title: labels.recipe(job.recipeId),
+        buildingLabel: labels.building(job.buildingId),
         statusLabel: formatProductionStatus(
           job.status,
           job.awaitingTransport,
           job.operationalState,
         ),
         progressLabel: `${Math.round(job.progress)}%`,
+        progressPercent: Math.max(0, Math.min(100, job.progress)),
+        operationalState: job.operationalState,
       }),
     ),
+  );
+}
+
+export function mapProductionOverviewSummary(
+  jobs: readonly ProductionJobSessionReadModel[],
+): ProductionOverviewSummaryViewData {
+  let runningCount = 0;
+  let waitingCount = 0;
+  let stalledEnergyCount = 0;
+  let stalledWorkforceCount = 0;
+  let finishedCount = 0;
+
+  for (const job of jobs) {
+    if (job.status === 'FINISHED') {
+      finishedCount += 1;
+      continue;
+    }
+
+    if (job.operationalState === 'STALLED_ENERGY') {
+      stalledEnergyCount += 1;
+      continue;
+    }
+
+    if (job.operationalState === 'STALLED_WORKFORCE') {
+      stalledWorkforceCount += 1;
+      continue;
+    }
+
+    if (job.status === 'WAITING') {
+      waitingCount += 1;
+      continue;
+    }
+
+    if (job.status === 'RUNNING') {
+      runningCount += 1;
+    }
+  }
+
+  return Object.freeze({
+    activeCount: jobs.filter((job) => job.status !== 'FINISHED').length,
+    runningCount,
+    waitingCount,
+    stalledEnergyCount,
+    stalledWorkforceCount,
+    finishedCount,
+  });
+}
+
+export function mapProductionFactoryGroups(
+  jobs: readonly ProductionJobSessionReadModel[],
+  labels: {
+    readonly recipe: (recipeId: string) => string;
+    readonly building: (buildingId: string) => string;
+  },
+  buildings: readonly {
+    readonly id: string;
+    readonly name: string;
+    readonly buildingTypeLabel: string;
+  }[],
+): readonly ProductionFactoryGroupViewData[] {
+  const groups = new Map<string, ProductionFactoryGroupViewData['jobs'][number][]>();
+
+  for (const job of jobs) {
+    const existing = groups.get(job.buildingId) ?? [];
+
+    existing.push(
+      Object.freeze({
+        id: job.id,
+        recipeLabel: labels.recipe(job.recipeId),
+        statusLabel: formatProductionStatus(
+          job.status,
+          job.awaitingTransport,
+          job.operationalState,
+        ),
+        progressLabel: `${Math.round(job.progress)}%`,
+        progressPercent: Math.max(0, Math.min(100, job.progress)),
+      }),
+    );
+    groups.set(job.buildingId, existing);
+  }
+
+  return Object.freeze(
+    [...groups.entries()].map(([buildingId, factoryJobs]) => {
+      const building = buildings.find((entry) => entry.id === buildingId);
+
+      return Object.freeze({
+        buildingId,
+        buildingLabel: building?.name ?? labels.building(buildingId),
+        buildingTypeLabel: building?.buildingTypeLabel ?? '—',
+        jobs: Object.freeze(factoryJobs),
+      });
+    }),
   );
 }
 

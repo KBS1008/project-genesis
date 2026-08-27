@@ -87,6 +87,7 @@ function createDashboardFixture(): GameSessionDashboard {
       assignEmployee: [],
     },
     tutorial: null,
+    recipeCatalog: [],
   };
 }
 

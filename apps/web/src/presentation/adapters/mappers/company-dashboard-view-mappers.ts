@@ -23,6 +23,7 @@ import {
   type MarketPriceChartViewData,
   type OverviewStripViewData,
   type ProductionJobRowViewData,
+  type RecipeCatalogEntryViewData,
   type ResearchJobRowViewData,
   type SidebarHintsViewData,
   type TickMetricsViewData,
@@ -429,7 +430,11 @@ function mapCompanyDetail(
           relatedJobs.map((job) =>
             Object.freeze({
               primary: labels.recipe(job.recipeId),
-              secondary: formatProductionStatus(job.status, job.awaitingTransport),
+              secondary: formatProductionStatus(
+                job.status,
+                job.awaitingTransport,
+                job.operationalState,
+              ),
             }),
           ),
         ),
@@ -452,7 +457,11 @@ function mapCompanyDetail(
           kv('Job-ID', job.id),
           kv('Gebäude', building?.name ?? job.buildingId),
           kv('Gebäudetyp', building ? labels.building(building.buildingTypeId) : '—'),
-          kv('Status', formatProductionStatus(job.status, job.awaitingTransport)),
+          kv('Status', formatProductionStatus(
+            job.status,
+            job.awaitingTransport,
+            job.operationalState,
+          )),
           kv('Fortschritt', formatProgress(job.progress)),
           kv('Transporte aktiv', String(job.activeTransportCount)),
           ...(job.awaitingTransport ? [kv('Hinweis', 'Wartet auf Materialtransport')] : []),
@@ -685,6 +694,35 @@ function mapCompanyDetail(
   });
 }
 
+function mapRecipeCatalog(
+  dashboard: GameSessionDashboard,
+  labels: ContentLabelsViewData,
+): readonly RecipeCatalogEntryViewData[] {
+  return Object.freeze(
+    dashboard.recipeCatalog.map((entry) =>
+      Object.freeze({
+        id: entry.id,
+        name: entry.name,
+        durationLabel: `${entry.durationTicks} Ticks`,
+        energyLabel: `${formatNumber(entry.energyPerTick)} / Tick`,
+        inputLabels: Object.freeze(
+          entry.inputs.map(
+            (input) => `${labels.resource(input.resourceId)} × ${input.amount}`,
+          ),
+        ),
+        outputLabels: Object.freeze(
+          entry.outputs.map(
+            (output) => `${labels.resource(output.resourceId)} × ${output.amount}`,
+          ),
+        ),
+        buildingTypeLabels: Object.freeze(
+          entry.buildingTypeIds.map((buildingTypeId) => labels.building(buildingTypeId)),
+        ),
+      }),
+    ),
+  );
+}
+
 /** Maps dashboard DTO and tick history into immutable company view-data. */
 export function buildCompanyDashboardViewData(
   dashboard: GameSessionDashboard | null,
@@ -819,6 +857,7 @@ export function buildCompanyDashboardViewData(
     completedResearchLabels: Object.freeze(
       dashboard.completedResearch.map((technologyId) => labels.technology(technologyId)),
     ),
+    recipeCatalog: mapRecipeCatalog(dashboard, labels),
     researchJobs,
     transportOrders,
     financeTransactions,

@@ -459,6 +459,24 @@ describe('GameSession', () => {
     }
   });
 
+  it('includes recipe catalog on dashboard for production UI surfaces', async () => {
+    const session = await createSession();
+    session.startNewGame('Recipe Catalog Corp');
+
+    const dashboardResult = session.getDashboard();
+
+    expect(dashboardResult.ok).toBe(true);
+
+    if (dashboardResult.ok) {
+      expect(dashboardResult.value.recipeCatalog.length).toBeGreaterThan(0);
+      expect(
+        dashboardResult.value.recipeCatalog.some((entry) => entry.id === 'recipe_planks'),
+      ).toBe(true);
+      expect(dashboardResult.value.recipeCatalog[0]?.inputs.length).toBeGreaterThan(0);
+      expect(dashboardResult.value.recipeCatalog[0]?.outputs.length).toBeGreaterThan(0);
+    }
+  });
+
   it('exposes stalled workforce state for running jobs without assigned workers', async () => {
     const session = await createSession();
     session.startNewGame('Production Stall Corp');

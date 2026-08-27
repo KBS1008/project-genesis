@@ -304,6 +304,16 @@ export type TutorialProgressReadModel = {
   readonly completed: boolean;
 };
 
+export type RecipeCatalogEntryReadModel = {
+  readonly id: string;
+  readonly name: string;
+  readonly durationTicks: number;
+  readonly energyPerTick: number;
+  readonly inputs: readonly { readonly resourceId: string; readonly amount: number }[];
+  readonly outputs: readonly { readonly resourceId: string; readonly amount: number }[];
+  readonly buildingTypeIds: readonly string[];
+};
+
 export type GameSessionContentNames = {
   readonly resources: readonly ContentNameEntry[];
   readonly buildings: readonly ContentNameEntry[];
@@ -336,6 +346,7 @@ export type GameSessionDashboard = {
   readonly economy: EconomyReadModel | null;
   readonly hints: GameSessionDashboardHints;
   readonly tutorial: TutorialProgressReadModel | null;
+  readonly recipeCatalog: readonly RecipeCatalogEntryReadModel[];
 };
 
 type ApiSuccessResponse<T> = {

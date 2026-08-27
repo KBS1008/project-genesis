@@ -339,6 +339,7 @@ export class GameSession {
       kpis,
       economy,
       hints: this.#dashboardBuilder.readHints(hintInput),
+      recipeCatalog: this.#dashboardBuilder.readRecipeCatalog(),
       tutorial: this.#dashboardBuilder.readTutorialProgress({
         hasCompany: true,
         buildings: buildingsResult.value,
@@ -1090,6 +1091,7 @@ export class GameSession {
       economy: null,
       hints: emptyHints,
       tutorial: null,
+      recipeCatalog: this.#dashboardBuilder.readRecipeCatalog(),
     };
   }
 

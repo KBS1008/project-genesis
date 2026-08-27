@@ -70,6 +70,7 @@ function createDashboardFixture(): CompanyDashboardViewData {
       assignEmployee: [],
     },
     tutorial: null,
+    recipeCatalog: [],
     buildings: [],
     employees: [],
     economy: null,

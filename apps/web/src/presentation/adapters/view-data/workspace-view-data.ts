@@ -67,6 +67,40 @@ export type JobRowViewData = {
   readonly progressLabel: string;
 };
 
+export type ProductionJobRowViewData = {
+  readonly id: string;
+  readonly title: string;
+  readonly buildingLabel: string;
+  readonly statusLabel: string;
+  readonly progressLabel: string;
+  readonly progressPercent: number;
+  readonly operationalState: string;
+};
+
+export type ProductionOverviewSummaryViewData = {
+  readonly activeCount: number;
+  readonly runningCount: number;
+  readonly waitingCount: number;
+  readonly stalledEnergyCount: number;
+  readonly stalledWorkforceCount: number;
+  readonly finishedCount: number;
+};
+
+export type ProductionFactoryJobViewData = {
+  readonly id: string;
+  readonly recipeLabel: string;
+  readonly statusLabel: string;
+  readonly progressLabel: string;
+  readonly progressPercent: number;
+};
+
+export type ProductionFactoryGroupViewData = {
+  readonly buildingId: string;
+  readonly buildingLabel: string;
+  readonly buildingTypeLabel: string;
+  readonly jobs: readonly ProductionFactoryJobViewData[];
+};
+
 export type FinanceRowViewData = {
   readonly id: string;
   readonly typeLabel: string;

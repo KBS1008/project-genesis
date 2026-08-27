@@ -90,6 +90,7 @@ describe('refreshWorkspaceScopes', () => {
         assignEmployee: [],
       },
       tutorial: null,
+      recipeCatalog: [],
       notifications: [],
     });
     fetchDashboardHistory.mockResolvedValue({ points: [] });
