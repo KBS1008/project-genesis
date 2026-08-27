@@ -37,7 +37,7 @@ Verified in code at `c3ae71e`:
 
 Verified by tests (see §13–§16): completion event logging, duplicate-tick prevention, stalled workforce read model, serializer round-trip, notification entity linkage, and existing API E2E flows that call production endpoints.
 
-**Not verified by a dedicated automated test in this repository:** `STALLED_ENERGY` operational state; Nest controller production start **happy path** (success `200` after valid building).
+**Not verified by a dedicated automated test in this repository:** `STALLED_ENERGY` operational state; Nest controller production start **happy path** (success `200` after valid building). Neither blocks release; see §20 for distinction vs G-04/G-05 and 6.3 hardening.
 
 **Final decision:** **PRODUCTION RUNTIME CORRECTIONS READY**
 
@@ -246,39 +246,75 @@ All other project tests passed as part of the full **874** run; individual file 
 
 ## 17. Deferred Items
 
-- Production cost finance posting (G-05)
-- Concurrent jobs per building rule (G-04)
+### Gameplay semantics (G-04, G-05) — deferred, not Phase 6.3 blockers
+
+- Concurrent jobs per building / production queues (G-04)
+- `productionCost` finance posting (G-05)
+- C5 broader `entityId` linkage for non-production event categories (out of 6.2 scope)
+
+These are intentional **out-of-scope** exclusions for 6.2 and **do not block Phase 6.3**. Concurrent jobs/queues and `productionCost` require dedicated gameplay-semantics decisions; they should **not** be resolved ad hoc while implementing Sprint 4 UI (PR-001–PR-003). See §20.
+
+### Test coverage gaps — not release blockers
+
 - Nest controller dedicated production start happy-path (G-13 partial)
 - Automated test for `STALLED_ENERGY` operational state
-- C5 broader `entityId` linkage for non-production event categories (out of 6.2 scope)
+
+Neither prevents the 6.2 release decision. The `STALLED_ENERGY` gap is the one worth closing as **test hardening before or alongside early 6.3 work** — see §20.
 
 ---
 
 ## 18. Remaining Risks
 
-| Risk | Basis |
-|------|-------|
-| Finished jobs remain in repository | Pre-existing domain behavior; completion events deduplicated via `#loggedCompletedProductionJobIds` |
-| Stalled state is read-model only | Domain status stays `RUNNING`; no `BLOCKED` domain status added |
-| `STALLED_ENERGY` untested | Implemented in `#resolveProductionOperationalState` but no asserting test at `c3ae71e` |
-| Multi `session/new` in Nest tests | Observed in `game.controller.test.ts` conditional setup; no happy-path controller test added |
+| Risk | Basis | Blocks 6.3? |
+|------|-------|-------------|
+| Finished jobs remain in repository | Pre-existing domain behavior; completion events deduplicated via `#loggedCompletedProductionJobIds` | No |
+| Stalled state is read-model only | Domain status stays `RUNNING`; no `BLOCKED` domain status added | No |
+| `STALLED_ENERGY` untested | Implemented in `#resolveProductionOperationalState` but no asserting test at `c3ae71e` | No — but UI in 6.3 will surface this state; resolver branch not regression-protected |
+| No Nest `POST production/start` happy-path test | Facade (`GameSession.test.ts`) and E2E (m9/m10/m11) cover the path indirectly | No |
+| Multi `session/new` in Nest tests | Observed in `game.controller.test.ts` conditional setup | No |
 
 ---
 
 ## 19. Recommendations
 
-1. Proceed to **Phase 6.3** — PR-001/002/003 on existing `ProductionScreen`.
-2. Clarify concurrent jobs and `productionCost` semantics before G-04/G-05 implementation.
-3. Add `STALLED_ENERGY` integration test when energy-deficit scenario is easy to fixture.
-4. If repeated `session/new` API coverage is required, address `StartNewGameUseCase` / test app reset strategy first.
+1. **Proceed to Phase 6.3** — PR-001/002/003 on existing `ProductionScreen` (no G-04/G-05 prerequisite).
+2. **Before or at the start of 6.3:** add a small `GameSession` integration test for `STALLED_ENERGY` (energy deficit while job `RUNNING`) so PR-001–003 do not build on an operational-state resolver branch without automated regression coverage.
+3. **Schedule separately from 6.3 UI:** design clarification for concurrent jobs (G-04) and `productionCost` semantics (G-05) — only when implementing those features, not during mockup integration.
+4. **Optional later:** Nest controller `POST /api/production/start` happy-path once `session/new` reset strategy is reliable; E2E/facade coverage is sufficient for current gate.
 
 ---
 
-## 20. Final Decision
+## 20. Readiness Before Phase 6.3 — Two Distinct Categories
+
+Phase 6.3 entry should treat **gameplay deferred items** and **test gaps** differently. Both were visible at `c3ae71e`; neither invalidates the 6.2 runtime correction package.
+
+### A. Gameplay semantics (G-04, G-05) — real deferred items, not 6.3 blockers
+
+| Item | Status | Relation to 6.3 |
+|------|--------|-----------------|
+| G-04 Concurrent jobs / queues | **DEFERRED** — no enforcement code; queue **NOT YET IMPLEMENTED** in schema | **Not a blocker.** Rule must be decided in a gameplay/design pass, not while wiring PR-001–003. |
+| G-05 `productionCost` | **DEFERRED** — no posting hook; label only in formatters | **Not a blocker.** Charge timing, accounts, and failure behavior need explicit semantics before any finance integration. |
+
+The 6.2 scope table and §17 deliberately exclude both. Phase 6.3 mockup work (status display, stalled labels, job panels) does not require resolving queue policy or production cost accounting.
+
+### B. Test gaps — not release blockers; one hardening item for 6.3
+
+| Gap | Implementation | Automated verification | Blocks 6.2 release? | Note for 6.3 |
+|-----|----------------|------------------------|---------------------|--------------|
+| `STALLED_ENERGY` | Present — `#resolveProductionOperationalState` + `formatProductionStatus` (`Energie fehlt`) | **Missing** — only `STALLED_WORKFORCE` tested in `GameSession.test.ts` | **No** | **Hardening recommended:** Phase 6.3 will present this operational state in production UI (PR-001–003). Without a test, the energy-deficit resolver branch is not regression-protected while UI depends on it. |
+| Nest `POST /api/production/start` happy path | Controller endpoints exist | **Missing** at controller layer — validation/rejection only in `game.controller.test.ts` | **No** | Happy path covered indirectly via `GameSession.test.ts` (`starts production after construction completes`) and m9/m10/m11 E2E flows. Controller-only gap is acceptable at this gate. |
+
+**Summary:** G-04/G-05 stay out of the 6.3 critical path. The `STALLED_ENERGY` test is the single item worth pulling forward as a small hardening step before or parallel to the first 6.3 UI tasks.
+
+---
+
+## 21. Final Decision
 
 **PRODUCTION RUNTIME CORRECTIONS READY**
 
 Evidence: implementation at `c3ae71e`; full test suite **874 / 874** on 2026-08-27; Phase 6.2–targeted cases listed in §13–§16 all passed.
+
+**Phase 6.3:** Cleared to start. Resolve G-04/G-05 only in their own gameplay-semantics work packages. Prefer adding `STALLED_ENERGY` test hardening early in 6.3 so operational-state UI is regression-backed.
 
 ---
 
