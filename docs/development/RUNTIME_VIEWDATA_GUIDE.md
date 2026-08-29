@@ -120,7 +120,8 @@ URL ?screen=…&entity=kind:id  ↔  GameWorkspaceProvider.navigation  ↔  scre
 
 | Builder | Screen | Use case |
 |---------|--------|----------|
-| `buildBuildingNavigationTarget` | `buildings` | World map markers, global search |
+| `buildBuildingNavigationTarget` | `buildings` | Global search, explicit buildings navigation |
+| `buildProductionBuildingNavigationTarget` | `production` | World map building markers (Phase 6.4) |
 | `buildCompanyBuildingNavigationTarget` | `company` | Executive regional-presence widget |
 
 Screens with bidirectional sync: Production, Research, Transport, Buildings, Markets (resource dropdown), Reports (events), Company operations (`DetailSelection`).

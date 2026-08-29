@@ -64,7 +64,11 @@ Presentation-only overlays on the world map: resources, buildings, transport flo
 
 ### Navigation
 
-Building marker click → `buildBuildingNavigationTarget(buildingId)` via `navigateToTarget`.
+Building marker click → `buildProductionBuildingNavigationTarget(buildingId)` via `navigateToTarget` (Phase 6.4 — opens Production with building context).
+
+Buildings screen remains available through primary navigation.
+
+Company inspector **Produktion öffnen** and related production job items provide building-scoped Production navigation from operations context.
 
 ### Out of scope
 

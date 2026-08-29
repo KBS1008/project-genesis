@@ -402,6 +402,72 @@ describe('GameController (NestJS)', () => {
     expect(response.body.ok).toBe(false);
   });
 
+  it('POST /api/production/start starts production on an active building', async () => {
+    let buildings = await request(app.getHttpServer()).get('/api/buildings');
+    let targetSawmill = buildings.body.data.find(
+      (entry: { buildingTypeId: string; status: string }) => entry.buildingTypeId === 'sawmill',
+    );
+
+    if (targetSawmill === undefined) {
+      const placeResponse = await request(app.getHttpServer()).post('/api/buildings/place').send({
+        buildingTypeId: 'sawmill',
+        name: `Happy Path Sawmill ${Date.now()}`,
+        x: 60,
+        y: 20,
+      });
+
+      expect(placeResponse.status).toBe(200);
+      expect(placeResponse.body.ok).toBe(true);
+
+      targetSawmill = { id: placeResponse.body.data as string, status: 'UNDER_CONSTRUCTION' };
+    }
+
+    for (let attempt = 0; attempt < 25 && targetSawmill.status !== 'ACTIVE'; attempt += 1) {
+      await request(app.getHttpServer()).post('/api/simulation/tick').send({ count: 10 });
+
+      buildings = await request(app.getHttpServer()).get('/api/buildings');
+      targetSawmill = buildings.body.data.find(
+        (entry: { id: string }) => entry.id === targetSawmill.id,
+      );
+    }
+
+    expect(targetSawmill?.status).toBe('ACTIVE');
+
+    const buildingId = targetSawmill.id as string;
+
+    const buyWood = await request(app.getHttpServer())
+      .post('/api/market/buy')
+      .send({ resourceId: 'wood', amount: 20 });
+
+    expect(buyWood.status).toBe(200);
+
+    const jobsBefore = await request(app.getHttpServer()).get('/api/production/jobs');
+    const countBefore = jobsBefore.body.data.length as number;
+
+    const response = await request(app.getHttpServer()).post('/api/production/start').send({
+      buildingId,
+      recipeId: 'recipe_planks',
+    });
+
+    expect(response.status).toBe(200);
+    expect(response.body.ok).toBe(true);
+
+    const jobsAfter = await request(app.getHttpServer()).get('/api/production/jobs');
+    expect(jobsAfter.body.data.length).toBeGreaterThan(countBefore);
+
+    const createdJob = jobsAfter.body.data.find(
+      (job: { buildingId: string; recipeId: string }) =>
+        job.buildingId === buildingId && job.recipeId === 'recipe_planks',
+    );
+
+    expect(createdJob).toMatchObject({
+      id: expect.any(String),
+      buildingId,
+      recipeId: 'recipe_planks',
+      status: expect.stringMatching(/^(WAITING|RUNNING)$/),
+    });
+  });
+
   it('POST /api/research/start validates required fields', async () => {
     await request(app.getHttpServer()).post('/api/session/new').send({ name: 'Research Validation Corp' });
 

@@ -515,4 +515,74 @@ describe('GameSession', () => {
       expect(jobsResult.value[0]?.progress).toBe(0);
     }
   });
+
+  it('exposes stalled energy state when company energy deficit blocks running jobs', async () => {
+    const session = await createSession();
+    session.startNewGame('Production Energy Stall Corp');
+
+    const placeProductionSawmill = session.placeBuilding({
+      buildingTypeId: 'sawmill',
+      name: 'Energy Stall Sawmill',
+      x: 0,
+      y: 0,
+    });
+
+    expect(placeProductionSawmill.ok).toBe(true);
+
+    if (!placeProductionSawmill.ok) {
+      return;
+    }
+
+    const productionBuildingId = placeProductionSawmill.value;
+    completeConstructionWithTicks(session, 120);
+
+    const hireOne = session.hireEmployee({
+      employeeTypeId: 'employee_production_worker',
+      displayName: 'Energy Worker A',
+    });
+    const hireTwo = session.hireEmployee({
+      employeeTypeId: 'employee_production_worker',
+      displayName: 'Energy Worker B',
+    });
+
+    expect(hireOne.ok).toBe(true);
+    expect(hireTwo.ok).toBe(true);
+
+    if (!hireOne.ok || !hireTwo.ok) {
+      return;
+    }
+
+    session.assignEmployee({ employeeId: hireOne.value, buildingId: productionBuildingId });
+    session.assignEmployee({ employeeId: hireTwo.value, buildingId: productionBuildingId });
+
+    const productionResult = session.startProduction({
+      buildingId: productionBuildingId,
+      recipeId: 'recipe_planks',
+    });
+
+    expect(productionResult.ok).toBe(true);
+
+    for (let index = 0; index < 6; index += 1) {
+      const placeHeadquarters = session.placeBuilding({
+        buildingTypeId: 'headquarters',
+        name: `Energy Load HQ ${index + 1}`,
+        x: 30 + index * 5,
+        y: 30,
+      });
+
+      expect(placeHeadquarters.ok).toBe(true);
+    }
+
+    const jobsResult = session.listProductionJobs();
+
+    expect(jobsResult.ok).toBe(true);
+
+    if (jobsResult.ok) {
+      const job = jobsResult.value.find((entry) => entry.buildingId === productionBuildingId);
+
+      expect(job?.status).toBe('RUNNING');
+      expect(job?.operationalState).toBe('STALLED_ENERGY');
+      expect(job?.progress).toBe(0);
+    }
+  });
 });

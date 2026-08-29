@@ -43,7 +43,7 @@ Update this document whenever a meaningful implementation milestone is completed
 | M8 NPC Economy                   | ✅ Completed (Gate AUD-006, 2026-07-22) |
 | Phase 1 Core Domain              | ✅ Completed (Gate 2026-07-19) — see `PHASE1_CORE_DOMAIN_REPORT.md`                                                                                                   |
 
-**Tests:** 891 (`pnpm test`; Phase 6.4 facility & inspector integration)
+**Tests:** 897 (`pnpm test`; Phase 6.6 production E2E validation & closeout)
 
 ---
 
@@ -268,6 +268,7 @@ All **TD-M8-01 … TD-M8-06** resolved — see `docs/quality/M8_IMPLEMENTATION_R
 | **Production System Audit (Phase 6.1)** | **100** | Read-only audit — **PRODUCTION SYSTEM READY FOR TARGETED INTEGRATION** — see `M11_PHASE6_1_PRODUCTION_SYSTEM_AUDIT.md` |
 | **Production Runtime Corrections (Phase 6.2)** | **100** | Completion events, entity linkage, stalled visibility — **PRODUCTION RUNTIME CORRECTIONS READY** — see `M11_PHASE6_2_PRODUCTION_RUNTIME_EVENT_CORRECTIONS_REPORT.md` |
 | **Facility & Inspector Integration (Phase 6.4)** | **100** | Building → Production context, inspector navigation, thin warehouse link — **FACILITY INTEGRATION READY** — see `M11_PHASE6_4_FACILITY_INSPECTOR_INTEGRATION_REPORT.md` |
+| **Production E2E Validation & Closeout (Phase 6.6)** | **100** | E2E vertical slice, save/load active job, test hardening, UX-06.4-01 confirmed — **M11 PRODUCTION TRACK CLOSED** — see `M11_PHASE6_6_PRODUCTION_E2E_VALIDATION_CLOSEOUT_REPORT.md` |
 | **Production Operations UI (Phase 6.3)** | **100** | PR-001–PR-003 on `ProductionScreen`, recipe catalog read model — **PRODUCTION OPERATIONS UI READY** — see `M11_PHASE6_3_PRODUCTION_OPERATIONS_UI_REPORT.md` |
 | Mockup production (Sprint 1+) |    10 | Main menu mockups started |
 | Animations / effects / audio |     0 | Art docs only |
@@ -1200,6 +1201,7 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Recently Completed (2026-08)
 
+- **M11 Phase 6.6 — Production E2E Validation & Closeout:** vertical slice E2E, in-progress save/load, `STALLED_ENERGY` GameSession test, controller/widget/world regression — **M11 PRODUCTION TRACK CLOSED — PASS** — `M11_PHASE6_6_PRODUCTION_E2E_VALIDATION_CLOSEOUT_REPORT.md`
 - **M11 Phase 6.4 — Facility & Inspector Integration:** building-scoped Production context, inspector/world navigation, thin warehouse link — **FACILITY INTEGRATION READY** — `M11_PHASE6_4_FACILITY_INSPECTOR_INTEGRATION_REPORT.md`
 - **M11 Phase 6.3 — Production Operations UI:** PR-001 overview, PR-002 factories, PR-003 recipe catalog on `ProductionScreen` — **PRODUCTION OPERATIONS UI READY** — `M11_PHASE6_3_PRODUCTION_OPERATIONS_UI_REPORT.md`
 - **M11 Phase 6.2 — Production Runtime & Event Corrections:** completion player events, notification `entityId`, stalled `operationalState`, save/load test — **PRODUCTION RUNTIME CORRECTIONS READY** — `M11_PHASE6_2_PRODUCTION_RUNTIME_EVENT_CORRECTIONS_REPORT.md`
