@@ -23,6 +23,7 @@ export type CompanyInspectorViewData = {
     readonly primary: string;
     readonly secondary: string;
     readonly secondaryClass?: string;
+    readonly entityRef?: { readonly kind: 'production'; readonly id: string };
   }[];
   readonly sections?: readonly CompanyInspectorSectionViewData[];
   readonly showClose: boolean;

@@ -3,11 +3,13 @@ import {
   buildBuildingNavigationTarget,
   buildCompanyBuildingNavigationTarget,
   buildEmployeeNavigationTarget,
+  buildProductionBuildingNavigationTarget,
   buildProductionNavigationTarget,
   buildRegionNavigationTarget,
   buildResearchNavigationTarget,
   buildResourceNavigationTarget,
   buildTransportNavigationTarget,
+  buildWarehouseNavigationTarget,
 } from './entity-navigation';
 
 describe('entity-navigation', () => {
@@ -32,6 +34,16 @@ describe('entity-navigation', () => {
     expect(buildProductionNavigationTarget('production_001')).toEqual({
       screen: 'production',
       entitySelection: { kind: 'production', id: 'production_001' },
+    });
+
+    expect(buildProductionBuildingNavigationTarget('building_001')).toEqual({
+      screen: 'production',
+      entitySelection: { kind: 'building', id: 'building_001' },
+    });
+
+    expect(buildWarehouseNavigationTarget('building_001')).toEqual({
+      screen: 'company',
+      entitySelection: { kind: 'warehouse', id: 'building_001' },
     });
 
     expect(buildTransportNavigationTarget('transport_001')).toEqual({

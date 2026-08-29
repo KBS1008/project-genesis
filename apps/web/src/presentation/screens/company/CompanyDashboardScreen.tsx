@@ -20,7 +20,10 @@ import { OperationsOverviewStrip } from '@/presentation/screens/company/Operatio
 import { CompanyOperationsPanels } from '@/presentation/screens/company/CompanyOperationsPanels';
 import { CompanyOperationsCharts } from '@/presentation/screens/company/CompanyOperationsCharts';
 import { CompanyOperationsInspector } from '@/presentation/screens/company/CompanyOperationsInspector';
-import { PGOperationsSidebar } from '@/presentation/screens/company/PGOperationsSidebar';
+import {
+  buildProductionBuildingNavigationTarget,
+  buildProductionNavigationTarget,
+} from '@/presentation/navigation/entity-navigation';
 import type { CommandId } from '@/presentation/commands';
 
 /** Company dashboard screen consuming workspace view-data. */
@@ -31,7 +34,7 @@ export function CompanyDashboardScreen({
   readonly hideHeader?: boolean;
   readonly onBackToOverview?: () => void;
 }) {
-  const { companyViewData, isLoading, isBusy, isLiveConnected, runCommand, navigation, selectEntity, clearEntitySelection } =
+  const { companyViewData, isLoading, isBusy, isLiveConnected, runCommand, navigation, selectEntity, clearEntitySelection, navigateToTarget } =
     useGameWorkspace();
   const { theme, toggleTheme } = useTheme();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -74,6 +77,11 @@ export function CompanyDashboardScreen({
 
     if (selection.kind === 'employee') {
       setDetailSelection({ kind: 'employee', id: selection.id });
+      return;
+    }
+
+    if (selection.kind === 'warehouse') {
+      setDetailSelection({ kind: 'warehouse', id: selection.id });
     }
   }, [navigation.entitySelection]);
 
@@ -269,6 +277,12 @@ export function CompanyDashboardScreen({
               onClearSelection={clearDetailSelection}
               onSelectFinance={selectFinanceDetail}
               onSelectLogistics={selectLogisticsDetail}
+              onOpenProductionForBuilding={(buildingId) => {
+                navigateToTarget(buildProductionBuildingNavigationTarget(buildingId));
+              }}
+              onSelectProductionJob={(jobId) => {
+                navigateToTarget(buildProductionNavigationTarget(jobId));
+              }}
             />
           </div>
         </div>

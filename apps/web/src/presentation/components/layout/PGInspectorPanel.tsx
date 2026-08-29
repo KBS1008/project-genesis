@@ -22,6 +22,7 @@ export type PGInspectorRelatedItem = {
   readonly primary: string;
   readonly secondary: string;
   readonly secondaryClass?: string;
+  readonly entityRef?: { readonly kind: 'production'; readonly id: string };
 };
 
 /** Right-side inspector panel for entity details and contextual metadata. */
@@ -33,6 +34,7 @@ export function PGInspectorPanel({
   footer,
   relatedTitle,
   relatedItems,
+  onRelatedItemClick,
   onClose,
   emptyTitle = 'Keine Auswahl',
   emptyHint = 'Wählen Sie ein Element aus, um Details anzuzeigen.',
@@ -44,6 +46,7 @@ export function PGInspectorPanel({
   readonly footer?: ReactNode;
   readonly relatedTitle?: string;
   readonly relatedItems?: readonly PGInspectorRelatedItem[];
+  readonly onRelatedItemClick?: (item: PGInspectorRelatedItem) => void;
   readonly onClose?: () => void;
   readonly emptyTitle?: string;
   readonly emptyHint?: string;
@@ -115,8 +118,23 @@ export function PGInspectorPanel({
               <ul>
                 {relatedItems.map((item) => (
                   <li key={`${item.primary}-${item.secondary}`}>
-                    <strong>{item.primary}</strong>
-                    <span className={item.secondaryClass}>{item.secondary}</span>
+                    {onRelatedItemClick !== undefined && item.entityRef !== undefined ? (
+                      <button
+                        type="button"
+                        className="pg-inspector-related-button"
+                        onClick={() => {
+                          onRelatedItemClick(item);
+                        }}
+                      >
+                        <strong>{item.primary}</strong>
+                        <span className={item.secondaryClass}>{item.secondary}</span>
+                      </button>
+                    ) : (
+                      <>
+                        <strong>{item.primary}</strong>
+                        <span className={item.secondaryClass}>{item.secondary}</span>
+                      </>
+                    )}
                   </li>
                 ))}
               </ul>

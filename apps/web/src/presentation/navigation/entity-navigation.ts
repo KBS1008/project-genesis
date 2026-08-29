@@ -38,6 +38,22 @@ export function buildProductionNavigationTarget(jobId: string): EntityNavigation
   };
 }
 
+/** Builds navigation state for production scoped to a building facility. */
+export function buildProductionBuildingNavigationTarget(buildingId: string): EntityNavigationTarget {
+  return {
+    screen: 'production',
+    entitySelection: { kind: 'building', id: buildingId },
+  };
+}
+
+/** Builds navigation state for inspecting warehouse storage at a building. */
+export function buildWarehouseNavigationTarget(buildingId: string): EntityNavigationTarget {
+  return {
+    screen: 'company',
+    entitySelection: { kind: 'warehouse', id: buildingId },
+  };
+}
+
 /** Builds navigation state for inspecting a transport order. */
 export function buildTransportNavigationTarget(orderId: string): EntityNavigationTarget {
   return {

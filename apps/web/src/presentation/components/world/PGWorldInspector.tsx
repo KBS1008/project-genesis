@@ -3,13 +3,20 @@
 import type { WorldInspectorViewData } from '@/presentation/adapters/view-data/world-view-data';
 import { PGInspectorPanel } from '@/presentation/components/layout';
 
+export type WorldInspectorSectionAction = {
+  readonly actionLabel: string;
+  readonly onAction: () => void;
+};
+
 /** Region inspector for the world map (overview + operations sections, Phase 4A/4B). */
 export function PGWorldInspector({
   inspector,
   onClose,
+  sectionActions,
 }: {
   readonly inspector: WorldInspectorViewData | null;
   readonly onClose?: () => void;
+  readonly sectionActions?: Readonly<Record<string, WorldInspectorSectionAction>>;
 }) {
   if (inspector === null) {
     return (
@@ -29,6 +36,8 @@ export function PGWorldInspector({
         id: section.id,
         title: section.title,
         entries: section.entries,
+        actionLabel: sectionActions?.[section.id]?.actionLabel,
+        onAction: sectionActions?.[section.id]?.onAction,
       }))}
       relatedTitle={inspector.relatedTitle}
       relatedItems={inspector.relatedItems}

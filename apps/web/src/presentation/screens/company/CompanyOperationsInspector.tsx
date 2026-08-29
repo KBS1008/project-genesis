@@ -9,6 +9,7 @@ import type {
 } from '@/presentation/adapters/view-data/company-dashboard-view-data';
 import { PGMarketWidget } from '@/presentation/components/dashboard';
 import { PGInspectorPanel } from '@/presentation/components/layout';
+import { Button } from '@/presentation/primitives/Button';
 import type { DetailSelection } from '@/presentation/screens/company/company-detail-selection';
 
 /** Operations dashboard inspector aligned with PGInspectorPanel (S19). */
@@ -19,6 +20,8 @@ export function CompanyOperationsInspector({
   onClearSelection,
   onSelectFinance,
   onSelectLogistics,
+  onOpenProductionForBuilding,
+  onSelectProductionJob,
 }: {
   readonly detail: CompanyDetailViewData;
   readonly marketPrices: readonly MarketPriceChartViewData[];
@@ -26,6 +29,8 @@ export function CompanyOperationsInspector({
   readonly onClearSelection: () => void;
   readonly onSelectFinance: () => void;
   readonly onSelectLogistics: () => void;
+  readonly onOpenProductionForBuilding?: (buildingId: string) => void;
+  readonly onSelectProductionJob?: (jobId: string) => void;
 }) {
   const inspector = useMemo(
     () => resolveCompanyDetailInspector(detail, marketPrices, selection),
@@ -47,6 +52,20 @@ export function CompanyOperationsInspector({
   const marketRows =
     inspector.marketPrices !== undefined ? mapOperationsMarketRows(inspector.marketPrices) : [];
 
+  const productionFooter =
+    selection.kind === 'building' && onOpenProductionForBuilding !== undefined
+      ? (
+          <Button
+            variant="secondary"
+            onClick={() => {
+              onOpenProductionForBuilding(selection.id);
+            }}
+          >
+            Produktion öffnen
+          </Button>
+        )
+      : undefined;
+
   return (
     <PGInspectorPanel
       title={inspector.title}
@@ -55,6 +74,15 @@ export function CompanyOperationsInspector({
       sections={sections}
       relatedTitle={inspector.relatedTitle}
       relatedItems={inspector.relatedItems}
+      onRelatedItemClick={
+        onSelectProductionJob !== undefined
+          ? (item) => {
+              if (item.entityRef?.kind === 'production') {
+                onSelectProductionJob(item.entityRef.id);
+              }
+            }
+          : undefined
+      }
       onClose={inspector.showClose ? onClearSelection : undefined}
       emptyTitle={selection.kind === 'overview' ? 'Keine aktive Session.' : 'Keine Auswahl'}
       emptyHint={
@@ -63,9 +91,16 @@ export function CompanyOperationsInspector({
           : 'Wählen Sie ein Element aus, um Details anzuzeigen.'
       }
       footer={
-        marketRows.length > 0 ? (
-          <PGMarketWidget title="Marktpreise" rows={marketRows} />
-        ) : undefined
+        marketRows.length > 0 || productionFooter !== undefined
+          ? (
+              <>
+                {productionFooter}
+                {marketRows.length > 0 ? (
+                  <PGMarketWidget title="Marktpreise" rows={marketRows} />
+                ) : null}
+              </>
+            )
+          : undefined
       }
     />
   );

@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
   mapWorldOverlayViewData,
   mapWorldRegionInspectorViewData,
@@ -17,7 +17,9 @@ import {
 import { fetchWorldMap } from '@/presentation/adapters/api/world-client';
 import { EMPTY_WORLD_OVERLAY } from '@/presentation/adapters/view-data/world-view-data';
 import { PGWorldWorkspace } from '@/presentation/components/world';
-import { buildBuildingNavigationTarget } from '@/presentation/navigation/entity-navigation';
+import {
+  buildProductionBuildingNavigationTarget,
+} from '@/presentation/navigation/entity-navigation';
 import { useScreenQuery, TICK_QUERY_DEBOUNCE_MS } from '@/presentation/hooks/useScreenQuery';
 import { ScreenQueryFrame } from '@/presentation/screens/shared/ScreenQueryFrame';
 import { EmptyState } from '@/presentation/primitives/EmptyState';
@@ -105,6 +107,19 @@ export function WorldScreen() {
     { debounceMs: TICK_QUERY_DEBOUNCE_MS },
   );
 
+  const inspectorSectionActions = useMemo(
+    () =>
+      Object.freeze({
+        production: Object.freeze({
+          actionLabel: 'Produktion öffnen',
+          onAction: () => {
+            navigateToTarget({ screen: 'production', entitySelection: { kind: 'none' } });
+          },
+        }),
+      }),
+    [navigateToTarget],
+  );
+
   if (!viewData.session.hasGame) {
     return (
       <EmptyState title="Keine Session aktiv" hint="Starten Sie ein Spiel über das Hauptmenü." />
@@ -133,11 +148,12 @@ export function WorldScreen() {
           overlays={overlayQuery.data ?? EMPTY_WORLD_OVERLAY}
           selectedRegionId={selectedRegionId}
           inspector={inspectorQuery.data}
+          inspectorSectionActions={inspectorSectionActions}
           onSelectRegion={(regionId) => {
             selectEntity({ kind: 'region', id: regionId });
           }}
           onSelectBuilding={(buildingId) => {
-            navigateToTarget(buildBuildingNavigationTarget(buildingId));
+            navigateToTarget(buildProductionBuildingNavigationTarget(buildingId));
           }}
           onClearSelection={clearEntitySelection}
         />

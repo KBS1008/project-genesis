@@ -277,11 +277,18 @@ export type DetailKeyValueViewData = readonly [
   valueClass?: string,
 ];
 
+export type EntityDetailRelatedItemViewData = {
+  readonly primary: string;
+  readonly secondary: string;
+  readonly secondaryClass?: string;
+  readonly entityRef?: { readonly kind: 'production'; readonly id: string };
+};
+
 export type EntityDetailViewData = {
   readonly title: string;
   readonly subtitle: string;
   readonly entries: readonly DetailKeyValueViewData[];
-  readonly relatedItems?: readonly { readonly primary: string; readonly secondary: string }[];
+  readonly relatedItems?: readonly EntityDetailRelatedItemViewData[];
   readonly relatedTitle?: string;
 };
 

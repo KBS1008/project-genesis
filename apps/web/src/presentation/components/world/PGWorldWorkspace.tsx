@@ -28,6 +28,7 @@ export function PGWorldWorkspace({
   onSelectRegion,
   onSelectBuilding,
   onClearSelection,
+  inspectorSectionActions,
 }: {
   readonly world: WorldOverviewViewData;
   readonly map: WorldMapViewData;
@@ -37,6 +38,7 @@ export function PGWorldWorkspace({
   readonly onSelectRegion: (regionId: string) => void;
   readonly onSelectBuilding?: (buildingId: string) => void;
   readonly onClearSelection?: () => void;
+  readonly inspectorSectionActions?: Readonly<Record<string, { readonly actionLabel: string; readonly onAction: () => void }>>;
 }) {
   const { layers, toggleLayer, isLayerEnabled } = useWorldLayers();
   const {
@@ -73,6 +75,7 @@ export function PGWorldWorkspace({
       inspector={
         <PGWorldInspector
           inspector={inspector}
+          sectionActions={inspectorSectionActions}
           onClose={
             onClearSelection !== undefined && selectedRegionId !== null
               ? onClearSelection

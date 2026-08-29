@@ -435,6 +435,7 @@ function mapCompanyDetail(
                 job.awaitingTransport,
                 job.operationalState,
               ),
+              entityRef: Object.freeze({ kind: 'production' as const, id: job.id }),
             }),
           ),
         ),

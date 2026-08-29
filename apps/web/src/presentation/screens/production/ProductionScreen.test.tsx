@@ -1,15 +1,33 @@
 // @vitest-environment jsdom
 
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import type { ProductionJobSessionReadModel } from '@/presentation/adapters/api/client';
+import type { NavigationState } from '@/presentation/state/navigation-state';
 import { ProductionScreen } from '@/presentation/screens/production/ProductionScreen';
 
-const runCommand = vi.fn();
-const selectEntity = vi.fn();
+const workspaceState = vi.hoisted(() => {
+  const runCommand = vi.fn();
+  const selectEntity = vi.fn();
+  const clearEntitySelection = vi.fn();
+  const navigateToTarget = vi.fn();
+  let navigation: NavigationState = {
+    screen: 'production',
+    entitySelection: { kind: 'none' },
+  };
 
-const defaultNavigation = { screen: 'production' as const, entitySelection: { kind: 'none' as const } };
+  return {
+    runCommand,
+    selectEntity,
+    clearEntitySelection,
+    navigateToTarget,
+    getNavigation: () => navigation,
+    setNavigation: (value: NavigationState) => {
+      navigation = value;
+    },
+  };
+});
 
 const productionJobsFixture: readonly ProductionJobSessionReadModel[] = Object.freeze([
   Object.freeze({
@@ -101,8 +119,25 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
             canStart: true,
             reason: null,
           },
+          {
+            buildingId: 'building_006',
+            recipeId: 'recipe_planks',
+            buildingName: 'Sägewerk Süd',
+            recipeName: 'Bretter herstellen',
+            canStart: false,
+            reason: 'Material fehlt',
+          },
         ],
       },
+      warehouseStorage: [
+        {
+          id: 'building_005',
+          buildingLabel: 'Sägewerk Nord',
+          capacityLabel: '10/100',
+          usedLabel: '10',
+          items: [{ resourceLabel: 'wood', quantity: 10, reserved: 0, available: 10 }],
+        },
+      ],
       recipeCatalog: [
         {
           id: 'recipe_planks',
@@ -131,14 +166,17 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
       },
     },
     isBusy: false,
-    runCommand,
-    navigation: defaultNavigation,
-    selectEntity,
+    runCommand: workspaceState.runCommand,
+    navigation: workspaceState.getNavigation(),
+    selectEntity: workspaceState.selectEntity,
+    clearEntitySelection: workspaceState.clearEntitySelection,
+    navigateToTarget: workspaceState.navigateToTarget,
   }),
 }));
 
 describe('ProductionScreen', () => {
   it('renders PR-001 overview metrics from authoritative job state', () => {
+    workspaceState.setNavigation({ screen: 'production', entitySelection: { kind: 'none' } });
     render(<ProductionScreen />);
 
     expect(screen.getByLabelText('Produktionsübersicht')).toBeInTheDocument();
@@ -147,6 +185,7 @@ describe('ProductionScreen', () => {
   });
 
   it('renders PR-002 factory groups and PR-003 recipe catalog', () => {
+    workspaceState.setNavigation({ screen: 'production', entitySelection: { kind: 'none' } });
     render(<ProductionScreen />);
 
     expect(screen.getByText('Fabriken')).toBeInTheDocument();
@@ -156,6 +195,7 @@ describe('ProductionScreen', () => {
   });
 
   it('shows stalled energy status and progress for active jobs', () => {
+    workspaceState.setNavigation({ screen: 'production', entitySelection: { kind: 'none' } });
     render(<ProductionScreen />);
 
     expect(screen.getAllByText('Energie fehlt').length).toBeGreaterThan(0);
@@ -163,25 +203,78 @@ describe('ProductionScreen', () => {
   });
 
   it('selects a production job for entity navigation', async () => {
+    workspaceState.setNavigation({ screen: 'production', entitySelection: { kind: 'none' } });
     const user = userEvent.setup();
-    selectEntity.mockClear();
+    workspaceState.selectEntity.mockClear();
 
     render(<ProductionScreen />);
 
     await user.click(screen.getByRole('row', { name: /Energie fehlt/ }));
 
-    expect(selectEntity).toHaveBeenCalledWith({ kind: 'production', id: 'production_001' });
+    expect(workspaceState.selectEntity).toHaveBeenCalledWith({
+      kind: 'production',
+      id: 'production_001',
+    });
   });
 
   it('starts production from recipe-scoped hints', async () => {
+    workspaceState.setNavigation({ screen: 'production', entitySelection: { kind: 'none' } });
     const user = userEvent.setup();
-    runCommand.mockClear();
+    workspaceState.runCommand.mockClear();
 
     render(<ProductionScreen />);
 
     await user.click(screen.getByRole('button', { name: /Bretter herstellen/ }));
-    await user.click(screen.getByRole('button', { name: 'Starten' }));
+    await user.click(screen.getAllByRole('button', { name: 'Starten' })[0]!);
 
-    expect(runCommand).toHaveBeenCalledTimes(1);
+    expect(workspaceState.runCommand).toHaveBeenCalledTimes(1);
+  });
+
+  it('scopes jobs, hints, and overview to selected building context', () => {
+    workspaceState.setNavigation({
+      screen: 'production',
+      entitySelection: { kind: 'building', id: 'building_005' },
+    });
+    render(<ProductionScreen />);
+
+    expect(screen.getByLabelText('Produktionskontext: Sägewerk Nord')).toBeInTheDocument();
+    const jobsTable = screen.getByRole('table', { name: 'Aktive Produktionsjobs' });
+    expect(within(jobsTable).getAllByRole('row')).toHaveLength(3);
+    expect(screen.queryByText('Sägewerk Süd')).not.toBeInTheDocument();
+    expect(screen.getAllByRole('button', { name: 'Starten' })).toHaveLength(1);
+    expect(screen.queryByText('Material fehlt')).not.toBeInTheDocument();
+  });
+
+  it('clears building filter via shared selection', async () => {
+    workspaceState.setNavigation({
+      screen: 'production',
+      entitySelection: { kind: 'building', id: 'building_005' },
+    });
+    const user = userEvent.setup();
+    workspaceState.clearEntitySelection.mockClear();
+
+    render(<ProductionScreen />);
+
+    await user.click(screen.getByRole('button', { name: 'Alle Standorte' }));
+
+    expect(workspaceState.clearEntitySelection).toHaveBeenCalledTimes(1);
+  });
+
+  it('links warehouse detail when authoritative storage exists for building', async () => {
+    workspaceState.setNavigation({
+      screen: 'production',
+      entitySelection: { kind: 'building', id: 'building_005' },
+    });
+    const user = userEvent.setup();
+    workspaceState.navigateToTarget.mockClear();
+
+    render(<ProductionScreen />);
+
+    await user.click(screen.getByRole('button', { name: 'Lagerdetails öffnen' }));
+
+    expect(workspaceState.navigateToTarget).toHaveBeenCalledWith({
+      screen: 'company',
+      entitySelection: { kind: 'warehouse', id: 'building_005' },
+    });
   });
 });

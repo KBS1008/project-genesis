@@ -95,6 +95,28 @@
   padding: var(--space-xs) 0;
 }
 
+.pg-inspector-related-button {
+  display: grid;
+  gap: var(--space-2xs);
+  width: 100%;
+  padding: var(--space-xs);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.pg-inspector-related-button:hover {
+  background: var(--bg-elevated);
+}
+
+.pg-inspector-related-button:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
 .pg-inspector-section {
   margin-top: var(--space-md);
   padding-top: var(--space-md);

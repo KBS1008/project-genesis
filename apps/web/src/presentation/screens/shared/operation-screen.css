@@ -145,6 +145,23 @@
   background: var(--bg);
 }
 
+.pg-production-factory-card.is-selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.pg-production-building-context {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding: var(--space-sm);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-elevated);
+}
+
 .pg-production-factory-header {
   display: flex;
   flex-wrap: wrap;

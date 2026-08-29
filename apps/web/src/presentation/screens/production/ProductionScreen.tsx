@@ -2,6 +2,12 @@
 
 import { useMemo, useState } from 'react';
 import {
+  filterProductionHintsByBuildingId,
+  filterProductionJobsByBuildingId,
+  isProductionBuildingFilterActive,
+  resolveProductionContextBuildingId,
+} from '@/presentation/adapters/mappers/production-building-context';
+import {
   buildNameResolver,
   mapProductionFactoryGroups,
   mapProductionJobRowsViewData,
@@ -12,6 +18,7 @@ import { fetchProductionJobs } from '@/presentation/adapters/api/query-client';
 import type { ProductionHintViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
 import type { RecipeCatalogEntryViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
 import { useScreenQuery, TICK_QUERY_DEBOUNCE_MS } from '@/presentation/hooks/useScreenQuery';
+import { buildWarehouseNavigationTarget } from '@/presentation/navigation/entity-navigation';
 import { Button } from '@/presentation/primitives/Button';
 import { Card } from '@/presentation/primitives/Card';
 import { EmptyState } from '@/presentation/primitives/EmptyState';
@@ -26,8 +33,16 @@ import '../../components/dashboard/dashboard-components.css';
 
 /** Production screen with overview, factories, recipe catalog, and start workflow (PR-001–PR-003). */
 export function ProductionScreen() {
-  const { viewData, companyViewData, navigation, isBusy, runCommand, selectEntity } =
-    useGameWorkspace();
+  const {
+    viewData,
+    companyViewData,
+    navigation,
+    isBusy,
+    runCommand,
+    selectEntity,
+    clearEntitySelection,
+    navigateToTarget,
+  } = useGameWorkspace();
   const [selectedRecipeId, setSelectedRecipeId] = useState<string | null>(null);
   const selectedJobId =
     navigation.entitySelection.kind === 'production' ? navigation.entitySelection.id : null;
@@ -47,31 +62,59 @@ export function ProductionScreen() {
     viewData.session.hasGame,
     { debounceMs: TICK_QUERY_DEBOUNCE_MS },
   );
+  const rawJobs = jobsQuery.data ?? [];
+  const isBuildingFilterActive = isProductionBuildingFilterActive(navigation.entitySelection);
+  const contextBuildingId = resolveProductionContextBuildingId(
+    navigation.entitySelection,
+    rawJobs,
+  );
+  const scopedRawJobs = useMemo(() => {
+    if (!isBuildingFilterActive || contextBuildingId === null) {
+      return rawJobs;
+    }
+
+    return filterProductionJobsByBuildingId(rawJobs, contextBuildingId);
+  }, [contextBuildingId, isBuildingFilterActive, rawJobs]);
+  const contextBuildingLabel =
+    contextBuildingId === null
+      ? null
+      : (buildingLabelById.get(contextBuildingId) ?? contextBuildingId);
+  const contextWarehouse =
+    contextBuildingId === null
+      ? null
+      : companyViewData.warehouseStorage.find((entry) => entry.id === contextBuildingId) ?? null;
   const productionJobs = useMemo(
     () =>
-      mapProductionJobRowsViewData(jobsQuery.data ?? [], {
+      mapProductionJobRowsViewData(scopedRawJobs, {
         recipe: labels.recipe,
         building: (buildingId) => buildingLabelById.get(buildingId) ?? buildingId,
       }),
-    [jobsQuery.data, labels.recipe, buildingLabelById],
+    [scopedRawJobs, labels.recipe, buildingLabelById],
   );
   const overviewSummary = useMemo(
-    () => mapProductionOverviewSummary(jobsQuery.data ?? []),
-    [jobsQuery.data],
+    () => mapProductionOverviewSummary(scopedRawJobs),
+    [scopedRawJobs],
   );
   const factoryGroups = useMemo(
     () =>
       mapProductionFactoryGroups(
-        jobsQuery.data ?? [],
+        scopedRawJobs,
         {
           recipe: labels.recipe,
           building: (buildingId) => buildingLabelById.get(buildingId) ?? buildingId,
         },
         companyViewData.buildings,
       ),
-    [jobsQuery.data, labels.recipe, buildingLabelById, companyViewData.buildings],
+    [scopedRawJobs, labels.recipe, buildingLabelById, companyViewData.buildings],
   );
   const productionHints = companyViewData.hints.production;
+  const scopedProductionHints = useMemo(() => {
+    if (!isBuildingFilterActive || contextBuildingId === null) {
+      return productionHints;
+    }
+
+    return filterProductionHintsByBuildingId(productionHints, contextBuildingId);
+  }, [contextBuildingId, isBuildingFilterActive, productionHints]);
   const selectedJobDetail =
     selectedJobId === null
       ? null
@@ -82,8 +125,8 @@ export function ProductionScreen() {
       : companyViewData.recipeCatalog.find((entry) => entry.id === selectedRecipeId) ?? null;
   const recipeHintsForSelection =
     selectedRecipeId === null
-      ? productionHints
-      : productionHints.filter((hint) => hint.recipeId === selectedRecipeId);
+      ? scopedProductionHints
+      : scopedProductionHints.filter((hint) => hint.recipeId === selectedRecipeId);
 
   const startJob = (hint: ProductionHintViewData) => {
     if (!hint.canStart || isBusy) {
@@ -109,6 +152,24 @@ export function ProductionScreen() {
       loadingLabel="Produktionsdaten werden geladen…"
     >
       <div className="pg-operation-screen">
+        {isBuildingFilterActive && contextBuildingLabel !== null ? (
+          <div
+            className="pg-production-building-context"
+            role="status"
+            aria-label={`Produktionskontext: ${contextBuildingLabel}`}
+          >
+            <span>Standort: <strong>{contextBuildingLabel}</strong></span>
+            <Button
+              variant="secondary"
+              onClick={() => {
+                clearEntitySelection();
+              }}
+            >
+              Alle Standorte
+            </Button>
+          </div>
+        ) : null}
+
         <div className="pg-operation-summary-grid" aria-label="Produktionsübersicht">
           <Card title="Aktive Jobs">
             <p className="pg-operation-metric">{overviewSummary.activeCount}</p>
@@ -140,8 +201,16 @@ export function ProductionScreen() {
           <Card title="Aktive Produktionsjobs">
             {productionJobs.length === 0 ? (
               <EmptyState
-                title="Keine Produktionsjobs"
-                hint="Starten Sie ein Rezept an einer Fabrik."
+                title={
+                  isBuildingFilterActive
+                    ? 'Keine Produktionsjobs an diesem Standort'
+                    : 'Keine Produktionsjobs'
+                }
+                hint={
+                  isBuildingFilterActive
+                    ? 'Starten Sie ein Rezept an dieser Fabrik oder wählen Sie einen anderen Standort.'
+                    : 'Starten Sie ein Rezept an einer Fabrik.'
+                }
               />
             ) : (
               <QueryRows
@@ -172,13 +241,27 @@ export function ProductionScreen() {
           <Card title="Fabriken">
             {factoryGroups.length === 0 ? (
               <EmptyState
-                title="Keine Fabrikaktivität"
-                hint="Produktionsjobs erscheinen hier nach Gebäude gruppiert."
+                title={
+                  isBuildingFilterActive
+                    ? 'Keine Fabrikaktivität an diesem Standort'
+                    : 'Keine Fabrikaktivität'
+                }
+                hint={
+                  isBuildingFilterActive
+                    ? 'An diesem Standort sind derzeit keine Produktionsjobs sichtbar.'
+                    : 'Produktionsjobs erscheinen hier nach Gebäude gruppiert.'
+                }
               />
             ) : (
               <div className="pg-production-factory-list">
                 {factoryGroups.map((factory) => (
-                  <section key={factory.buildingId} className="pg-production-factory-card">
+                  <section
+                    key={factory.buildingId}
+                    className={`pg-production-factory-card${
+                      contextBuildingId === factory.buildingId ? ' is-selected' : ''
+                    }`}
+                    aria-current={contextBuildingId === factory.buildingId ? 'true' : undefined}
+                  >
                     <div className="pg-production-factory-header">
                       <strong>{factory.buildingLabel}</strong>
                       <span>{factory.buildingTypeLabel}</span>
@@ -211,6 +294,28 @@ export function ProductionScreen() {
             )}
           </Card>
         </div>
+
+        {contextWarehouse !== null ? (
+          <Card title="Lager am Standort">
+            <p className="pg-operation-hint-copy">
+              <strong>{contextWarehouse.buildingLabel}</strong>
+              <span>
+                {contextWarehouse.capacityLabel !== '—'
+                  ? `Kapazität ${contextWarehouse.capacityLabel}`
+                  : `${contextWarehouse.usedLabel} Einheiten belegt`}
+              </span>
+              <span>{contextWarehouse.items.length} Lagerzeilen</span>
+            </p>
+            <Button
+              variant="secondary"
+              onClick={() => {
+                navigateToTarget(buildWarehouseNavigationTarget(contextWarehouse.id));
+              }}
+            >
+              Lagerdetails öffnen
+            </Button>
+          </Card>
+        ) : null}
 
         <Card title="Rezeptkatalog">
           {companyViewData.recipeCatalog.length === 0 ? (
@@ -314,7 +419,9 @@ export function ProductionScreen() {
               title="Keine Produktionsoptionen"
               hint={
                 selectedRecipeId === null
-                  ? 'Es sind derzeit keine Rezepte an Gebäuden startbar.'
+                  ? isBuildingFilterActive
+                    ? 'Für diesen Standort sind derzeit keine Rezepte startbar.'
+                    : 'Es sind derzeit keine Rezepte an Gebäuden startbar.'
                   : 'Für dieses Rezept sind keine Gebäude startbereit.'
               }
             />
@@ -345,7 +452,7 @@ export function ProductionScreen() {
           )}
         </Card>
 
-        {productionHints.some((hint) => !hint.canStart && hint.reason !== null) ? (
+        {scopedProductionHints.some((hint) => !hint.canStart && hint.reason !== null) ? (
           <StatusBanner
             tone="info"
             message="Blockierte Jobs und Materialengpässe werden über die Hinweise der einzelnen Rezepte angezeigt."

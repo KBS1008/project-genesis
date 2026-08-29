@@ -55,4 +55,38 @@ describe('company-detail-inspector-mappers', () => {
     expect(inspector.relatedItems?.[0]?.secondaryClass).toBe('kv-value-error');
     expect(inspector.showClose).toBe(true);
   });
+
+  it('resolveCompanyDetailInspector maps building focus with production related items', () => {
+    const inspector = resolveCompanyDetailInspector(
+      {
+        ...BASE_DETAIL,
+        buildings: new Map([
+          [
+            'building_005',
+            {
+              title: 'Sägewerk Nord',
+              subtitle: 'Gebäude · Sägewerk',
+              entries: Object.freeze([['Status', 'ACTIVE'] as const]),
+              relatedItems: Object.freeze([
+                {
+                  primary: 'Bretter herstellen',
+                  secondary: 'Energie fehlt',
+                  entityRef: Object.freeze({ kind: 'production' as const, id: 'production_001' }),
+                },
+              ]),
+            },
+          ],
+        ]),
+      },
+      [],
+      { kind: 'building', id: 'building_005' },
+    );
+
+    expect(inspector.title).toBe('Sägewerk Nord');
+    expect(inspector.relatedTitle).toBe('Produktion an diesem Standort');
+    expect(inspector.relatedItems?.[0]?.entityRef).toEqual({
+      kind: 'production',
+      id: 'production_001',
+    });
+  });
 });
