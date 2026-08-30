@@ -3,34 +3,35 @@
 **Project:** Project Genesis  
 **Milestone:** M11 — Visual Production & User Experience  
 **Phase:** 6.6 — Production E2E Validation & Closeout  
-**Report type:** Validation / test hardening / documentation alignment / formal closeout  
+**Report type:** Formal completion / closeout report for **external Gate Review**  
 **Report date:** 2026-08-29  
-**Phase entry baseline:** `cf4d424` — *Add M11 Phase 6.5 remaining production UX scope audit.*  
-**Phase 6.5 gate decision:** **OPTION B — READY FOR PRODUCTION CLOSEOUT**  
-**Final working tree:** uncommitted at report time (Phase 6.6 validation package)
+**Verified by:** Repository inspection + executed tests on 2026-08-29
+
+---
+
+## Gate Review Handover
+
+**Workflow:** Implementation → Cursor Report → **ChatGPT Gate Review** → optional Delta Fix → next workstream
+
+This document is the **Cursor completion report** for Phase 6.6. It records the **actual** repository state at verified HEAD `072e01b`. It does **not** self-approve the milestone; the external Gate Decision belongs to the reviewer.
+
+**Recommended gate outcome (pending external review):** **OPTION A — M11 PRODUCTION TRACK CLOSED — PASS**
 
 ---
 
 ## 1. Executive Summary
 
-Phase 6.6 validated the implemented M11 Production vertical slice end-to-end, closed the known test gaps from Phase 6.5, aligned World/navigation documentation with Phase 6.4 behavior, and produced a formal Production Track closeout.
+| Question | Answer |
+|----------|--------|
+| Was Phase 6.6 implemented as intended? | **Yes** — validation, test hardening, documentation alignment, and formal closeout only. No new Production features. |
+| Does the supported Production vertical slice work? | **Yes** — proven by API E2E closeout flow through real Nest/API/application paths. |
+| Is active Production save/load validated? | **Yes** — in-progress job round-trip with identity, linkage, progress, post-load completion. |
+| Were known Phase-6.5 test gaps resolved? | **Yes** — `STALLED_ENERGY` GameSession, controller happy path, `PGProductionWidget`, World navigation regression, E2E save/load. |
+| What happened with UX-06.4-01? | **CONFIRMED** — World building marker → Production with building context retained; regression test added. |
+| Did the full test suite pass? | **Yes** — **897 / 897** tests, **243** files, exit 0 (2026-08-29). |
+| Is Production ready to close? | **Recommended: Yes** — supported slice validated; remaining gaps are explicitly deferred. |
 
-**No new Production features were implemented.** Work was limited to integration/E2E tests, targeted unit/presentation tests, documentation alignment, and closeout registers.
-
-**Key outcomes:**
-
-| Area | Result |
-|------|--------|
-| Production E2E vertical slice | Validated via `m11-phase6-production-closeout-flow.test.ts` |
-| In-progress save/load | Validated (identity, linkage, progress, post-load completion) |
-| `STALLED_ENERGY` GameSession coverage | Added and passing |
-| Controller production-start happy path | Added and passing |
-| `PGProductionWidget` dedicated test | Added and passing |
-| World building click regression | Added and passing |
-| UX-06.4-01 | **CONFIRM CURRENT BEHAVIOR** |
-| Full regression | **897 / 897 PASS** (243 files) |
-
-**Final closeout decision:** **OPTION A — M11 PRODUCTION TRACK CLOSED — PASS**
+Phase 6.6 delivered **one implementation commit** (`072e01b`) containing **9 files**: 5 new/strengthened test files, 1 new E2E flow, 3 documentation updates. **No runtime Production code changed.**
 
 ---
 
@@ -38,315 +39,549 @@ Phase 6.6 validated the implemented M11 Production vertical slice end-to-end, cl
 
 | Item | Value |
 |------|-------|
-| Phase entry branch | `master` |
-| Phase entry HEAD | `cf4d424` |
-| Phase 6.4 implementation | `0532c4a` |
-| Phase 6.5 audit | `cf4d424` (read-only) |
-| Phase 6.6 final HEAD | uncommitted (pre-commit report) |
-| Tests at phase entry (6.5) | **891 / 891** (240 files) |
-| Tests after Phase 6.6 | **897 / 897** (243 files) |
-| Net test change | **+6 tests**, **+3 files** |
+| Branch | `master` |
+| Phase 6.5 audit HEAD | `0532c4a` |
+| Phase 6.6 entry HEAD | `cf4d424` — *Add M11 Phase 6.5 remaining production UX scope audit.* |
+| Phase 6.6 implementation commit | `072e01b` — *Complete M11 Phase 6.6 production E2E validation and closeout.* |
+| Final verified HEAD | `072e01b` |
+| `git status` at report time | Clean for Phase-6.6 files; unrelated local changes exist outside `072e01b` (design assets, prompts) |
+
+### Phase-6.6 commit scope (`072e01b`)
+
+```
+apps/api/src/e2e/m11-phase6-production-closeout-flow.test.ts          (new)
+apps/api/src/game/game.controller.test.ts                             (+66 lines)
+apps/web/src/presentation/components/dashboard/PGProductionWidget.test.tsx (new)
+apps/web/src/presentation/screens/world/WorldScreen.test.tsx         (new)
+src/application/facade/GameSession.test.ts                          (+70 lines)
+docs/architecture/reviews/M11_PHASE6_6_PRODUCTION_E2E_VALIDATION_CLOSEOUT_REPORT.md
+docs/development/IMPLEMENTATION_PROGRESS.md
+docs/development/RUNTIME_VIEWDATA_GUIDE.md
+docs/development/WORLD_MODULE_IMPLEMENTATION_GUIDE.md
+```
 
 ---
 
-## 3. Phase-6.6 Pre-Implementation Classification
+## 3. Phase 6.6 Intended Scope
 
-| Item | Classification | Outcome |
-|------|----------------|---------|
-| **A** Production end-to-end happy path | **IMPLEMENT** | API E2E closeout flow |
-| **B** Production completion → inventory output | **IMPLEMENT** | Covered in E2E closeout flow |
-| **C** Production completion → event / notification linkage | **IMPLEMENT** | E2E completion `entityId`; start linkage in `GameSession.test.ts` |
-| **D** In-progress Production save/load round-trip | **IMPLEMENT** | E2E closeout flow |
-| **E** `STALLED_ENERGY` GameSession integration | **IMPLEMENT** | `GameSession.test.ts` |
-| **F** Production start controller happy-path | **IMPLEMENT** | `game.controller.test.ts` |
-| **G** `PGProductionWidget` dedicated coverage | **IMPLEMENT** | `PGProductionWidget.test.tsx` |
-| **H** UX-06.4-01 World Building primary-click | **CONFIRM CURRENT BEHAVIOR** | No runtime change |
-| **I** World navigation documentation alignment | **DOCUMENTATION ONLY** | Guides updated |
-| **J** Deferred register / closeout documentation | **DOCUMENTATION ONLY** | This report |
+| Scope item | Intended | Verified status |
+|------------|----------|-----------------|
+| **A** Production E2E vertical slice | Validate full supported loop | **DONE** — `m11-phase6-production-closeout-flow.test.ts` |
+| **B** In-progress save/load | Operational round-trip | **DONE** — same E2E |
+| **C** `STALLED_ENERGY` GameSession | Live integration fixture | **DONE** — `GameSession.test.ts` |
+| **D** Controller production-start happy path | Focused `200` test | **DONE** — `game.controller.test.ts` |
+| **E** `PGProductionWidget` | Dedicated presentation test | **DONE** — `PGProductionWidget.test.tsx` |
+| **F** UX-06.4-01 | Formal decision | **CONFIRMED** — no runtime change |
+| **G** World navigation regression | Meaningful coverage | **DONE** — `WorldScreen.test.tsx` |
+| **H** Documentation alignment | World/navigation docs | **DONE** — 2 guides + progress |
+| **I** Deferred register | Explicit preservation | **DONE** — §23 |
 
 ---
 
-## 4. Changes Made
+## 4. Phase 6.6 Change Inventory
 
-### Tests added / strengthened
+| File | Layer | Change | Purpose |
+|------|-------|--------|---------|
+| `apps/api/src/e2e/m11-phase6-production-closeout-flow.test.ts` | E2E | New | Production vertical slice + in-progress save/load + completion |
+| `src/application/facade/GameSession.test.ts` | Test / Application integration | Extended | `STALLED_ENERGY` live resolver path |
+| `apps/api/src/game/game.controller.test.ts` | Test / API | Extended | `POST /api/production/start` success path |
+| `apps/web/src/presentation/components/dashboard/PGProductionWidget.test.tsx` | Test / Presentation | New | Widget summary, empty state, navigation callback |
+| `apps/web/src/presentation/screens/world/WorldScreen.test.tsx` | Test / Presentation / Navigation | New | Building marker → production navigation contract |
+| `docs/architecture/reviews/M11_PHASE6_6_PRODUCTION_E2E_VALIDATION_CLOSEOUT_REPORT.md` | Documentation | New | Formal closeout report |
+| `docs/development/IMPLEMENTATION_PROGRESS.md` | Documentation | Updated | Phase 6.6 entry, test count |
+| `docs/development/WORLD_MODULE_IMPLEMENTATION_GUIDE.md` | Documentation | Updated | World marker → Production navigation |
+| `docs/development/RUNTIME_VIEWDATA_GUIDE.md` | Documentation | Updated | Navigation helper table |
 
-| File | Purpose |
-|------|---------|
-| `apps/api/src/e2e/m11-phase6-production-closeout-flow.test.ts` | Full Production vertical slice + in-progress save/load + completion inventory/event |
-| `src/application/facade/GameSession.test.ts` | `STALLED_ENERGY` integration via live energy deficit |
-| `apps/api/src/game/game.controller.test.ts` | `POST /api/production/start` success path |
-| `apps/web/src/presentation/components/dashboard/PGProductionWidget.test.tsx` | Widget summary, empty state, navigation callback |
-| `apps/web/src/presentation/screens/world/WorldScreen.test.tsx` | Building marker → production navigation contract |
+### Unexpected architecture changes
 
-### Documentation updated
+**None.** Phase 6.6 did not modify:
 
-| File | Change |
-|------|--------|
-| `docs/development/WORLD_MODULE_IMPLEMENTATION_GUIDE.md` | World marker → `buildProductionBuildingNavigationTarget` (Phase 6.4) |
-| `docs/development/RUNTIME_VIEWDATA_GUIDE.md` | Navigation helper row for world building markers |
-| `docs/development/IMPLEMENTATION_PROGRESS.md` | Phase 6.6 entry and test count |
+- Production domain / state machine
+- Command architecture
+- Selection architecture
+- Event architecture
+- DTO/read models
+- Production APIs
+- Presentation runtime components (`ProductionScreen`, `WorldScreen` implementation, etc.)
 
-### Runtime code
-
-**None.** Phase 6.6 did not change Production domain, API semantics, or UI behavior.
+All changes are **Test** or **Documentation** layers.
 
 ---
 
 ## 5. Production E2E Vertical Slice
 
-**Test:** `apps/api/src/e2e/m11-phase6-production-closeout-flow.test.ts`  
+**Test file:** `apps/api/src/e2e/m11-phase6-production-closeout-flow.test.ts`  
+**Harness:** `createApiTestApp()` — real NestJS `AppModule`, real `GameSession`, real simulation/content  
 **Save fixture:** `saves/e2e-m11-phase6-production-closeout.json`
 
-| Step | Validated |
-|------|-----------|
-| New game | `POST /api/session/new` |
-| Building placement + activation | Sawmill placed; ticks until `ACTIVE` |
-| Workers | Hire + assign production workers |
-| Production start | `POST /api/production/start` → stable job id, recipe/building linkage |
-| Tick-driven progress | Progress > 0 after 10 ticks (authoritative simulation) |
-| Completion | Job reaches `FINISHED` after further ticks |
-| Inventory output | `planks` quantity increases |
-| Completion event | Exactly one `abgeschlossen` event with `entityId === jobId` |
-| No duplicate completion | Extra ticks do not emit second completion event |
+### Tested flow
 
-**Note:** Production **start** event `entityId` linkage is validated in `GameSession.test.ts`. The player event log is not persisted across save/load in the current architecture; the E2E flow validates post-load **completion** entity linkage only.
+```
+POST /api/session/new
+→ POST /api/buildings/place (sawmill)
+→ tick until ACTIVE
+→ market buy wood (if needed)
+→ hire + assign 2 production workers
+→ POST /api/production/start (recipe_planks)
+→ GET /api/production/jobs (stable id + linkage)
+→ POST /api/simulation/tick { count: 10 } (progress > 0)
+→ POST /api/session/save
+→ POST /api/session/new (discard session)
+→ POST /api/session/load
+→ verify restored in-progress job
+→ POST /api/simulation/tick { count: 80 }
+→ job FINISHED, planks increased
+→ GET /api/events/log?category=PRODUCTION
+→ exactly one completion event with entityId
+→ extra ticks → no duplicate completion event
+```
+
+### Coverage classification
+
+| Criterion | Classification | Evidence |
+|-----------|----------------|----------|
+| 1. Valid Production start | **VERIFIED E2E** | `startResponse.status === 200` |
+| 2. Stable job identity | **VERIFIED E2E** | `jobId` captured after start, reused after load |
+| 3. Recipe linkage | **VERIFIED E2E** | `recipeId: 'recipe_planks'` asserted |
+| 4. Building linkage | **VERIFIED E2E** | `buildingId` from placement asserted |
+| 5. Authoritative tick advancement | **VERIFIED E2E** | `POST /api/simulation/tick` only |
+| 6. Progress | **VERIFIED E2E** | `progress > 0` after 10 ticks (not hardcoded %) |
+| 7. Completion | **VERIFIED E2E** | `status === 'FINISHED'` |
+| 8. Inventory output | **VERIFIED E2E** | `planksAfter > planksBefore` |
+| 9. Completion event | **VERIFIED E2E** | message contains `abgeschlossen` |
+| 10. Stable entity linkage | **VERIFIED E2E** (completion) | `entityId === jobId` |
+| 11. Notification linkage | **VERIFIED UNIT** (pre-existing) | `map-event-log-notification.test.ts`; not re-tested in 6.6 E2E |
 
 ---
 
-## 6. Save/Load In-Progress Production Validation
+## 6. Production Start Validation
 
-Within the closeout E2E flow:
+| Item | Detail |
+|------|--------|
+| E2E success test | `m11-phase6-production-closeout-flow.test.ts` |
+| Controller success test | `game.controller.test.ts` → `POST /api/production/start starts production on an active building` |
+| Application path | `game.controller.ts` → `GameSession.startProduction` → `StartProductionUseCase.execute` |
+| Eligibility fixture | Active `sawmill`, `recipe_planks`, wood via starter inventory or market buy, 2 workers assigned (E2E) |
+| Stable assertions | Job id string, `buildingId`, `recipeId`, status `WAITING` or `RUNNING` (controller) |
 
-1. Job started and advanced to `RUNNING` with `progress > 0`
-2. `POST /api/session/save` with dedicated file path
-3. Session replaced, then `POST /api/session/load`
-4. Restored job preserves: `id`, `buildingId`, `recipeId`, `status: RUNNING`, meaningful `progress`
-5. Simulation continues; job completes after load
-6. Completion side effects occur once (inventory + event)
+**Controller happy-path status:** **RESOLVED**
 
 ---
 
-## 7. `STALLED_ENERGY` Integration Coverage
+## 7. Tick / Progress / Completion Validation
+
+| Property | Evidence |
+|----------|----------|
+| Authoritative simulation tick | All advancement via `POST /api/simulation/tick` or `GameSession.tick()` |
+| No browser-time simulation | No `setTimeout`/`Date.now()` production progression in tests |
+| Progress from runtime | E2E asserts `progress > 0` and `>= progressBeforeSave` after load — derived from fixture ticks, not fixed 42% |
+| Completion via simulation | `recipe_planks` duration 60 ticks; E2E uses 10 + 80 ticks post-load (workers assigned) |
+| Final state authoritative | `GET /api/production/jobs` returns `FINISHED` |
+
+**Relevant tests:**
+
+- `m11-phase6-production-closeout-flow.test.ts`
+- `GameSession.test.ts` → `starts production after construction completes`
+- `GameSession.test.ts` → `records production completion in the player event log with entity linkage`
+
+---
+
+## 8. Inventory Completion Validation
+
+### Before production (E2E)
+
+- `planksBefore` read from `GET /api/dashboard` inventory items
+- Wood ensured ≥ 10 via `ensureInventoryMinimum` (market buy if needed)
+
+### During production
+
+- Input reservation/consumption not explicitly asserted in Phase-6.6 E2E (existing semantics unchanged)
+- Serializer/unit coverage for inventory exists elsewhere in repository
+
+### After completion (E2E)
+
+- `planksAfter > planksBefore` — output inventory increase verified
+
+| Aspect | Classification |
+|--------|----------------|
+| Output after completion | **E2E verified** |
+| Input reservation semantics | **Not covered in 6.6** (pre-existing behavior, not a closeout gap) |
+
+---
+
+## 9. Event / Notification Validation
+
+### Start events
+
+| Level | Status | Evidence |
+|-------|--------|----------|
+| Start event + `entityId` | **VERIFIED INTEGRATION** | `GameSession.test.ts` → `records production completion...` asserts `gestartet` event `entityId === 'production_001'` |
+| Start event after save/load | **NOT APPLICABLE** | `PlayerEventLogService` is in-memory; not serialized in savegame |
+
+### Completion events
+
+| Level | Status | Evidence |
+|-------|--------|----------|
+| Completion event exists | **VERIFIED E2E** | E2E closeout flow |
+| `entityId` on completion | **VERIFIED E2E** | `entityId === jobId` |
+| Exactly once | **VERIFIED E2E** | Extra 5 ticks → still length 1 |
+| Post-load no duplicate | **VERIFIED E2E** | Completion recorded once after load+finish |
+| Integration duplicate guard | **VERIFIED INTEGRATION** | `GameSession.test.ts` extra tick after completion |
+
+### Notification mapping (separate from E2E)
+
+| Level | Status | Evidence |
+|-------|--------|----------|
+| Production completion → notification `entityId` | **VERIFIED UNIT** | `map-event-log-notification.test.ts` |
+| Production start → notification `entityId` | **VERIFIED UNIT** | same file, `maps production started events` |
+
+Phase 6.6 did **not** add new notification architecture. Phase 6.2 behavior remains regression-protected by existing unit tests.
+
+---
+
+## 10. Save/Load In-Progress Production Validation
+
+**Test:** `m11-phase6-production-closeout-flow.test.ts` (not serializer unit tests alone)
+
+| Property | Status | Evidence |
+|----------|--------|----------|
+| Job ID preserved | **PASS** | `expect(restoredJob).toMatchObject({ id: jobId, ... })` |
+| Recipe ID preserved | **PASS** | `recipeId: 'recipe_planks'` |
+| Building ID preserved | **PASS** | `buildingId` from placement |
+| Status valid after load | **PASS** | `status: 'RUNNING'` |
+| Progress preserved | **PASS** | `progress >= progressBeforeSave` |
+| Job remains runnable | **PASS** | Further ticks advance to `FINISHED` |
+| Completion works after load | **PASS** | `finishedJob?.status === 'FINISHED'` |
+| Inventory output correct | **PASS** | `planksAfter > planksBefore` |
+| Completion event not duplicated | **PASS** | Single `abgeschlossen` with `entityId === jobId`; extra ticks unchanged |
+
+---
+
+## 11. STALLED_ENERGY Validation
+
+**Phase 6.5 gap:** Resolver implemented; only `STALLED_WORKFORCE` tested in `GameSession.test.ts`.
+
+**Phase 6.6 resolution:** **RESOLVED**
 
 **Test:** `GameSession > exposes stalled energy state when company energy deficit blocks running jobs`
 
-**Approach:** Start production on an active sawmill with assigned workers while energy is sufficient, then place six instant-active `headquarters` buildings (`constructionTime: 0`) to create a company energy deficit without advancing simulation ticks on the running job.
+| Check | Result |
+|-------|--------|
+| New test added | Yes |
+| Exercises `#resolveProductionOperationalState` | Yes — via `listProductionJobs()` read model |
+| Real energy deficit | Yes — six instant-active `headquarters` buildings (`constructionTime: 0`) placed after production start |
+| Does not mock `operationalState` | Correct — uses live `EnergyBalanceService` |
+| Assertions | `RUNNING` + `STALLED_ENERGY` + `progress === 0` |
 
-**Assertions:**
-
-- `status === 'RUNNING'`
-- `operationalState === 'STALLED_ENERGY'`
-- `progress === 0`
-
-This exercises `#resolveProductionOperationalState` and `EnergyBalanceService` through real `GameSession` dependencies — not formatter-only coverage.
+**Closeout-blocking:** No
 
 ---
 
-## 8. Controller Happy-Path Coverage
+## 12. Controller Happy-Path Validation
+
+**Status:** **RESOLVED**
 
 **Test:** `POST /api/production/start starts production on an active building`
 
-Validates:
-
-- Active sawmill fixture (reuse or place + tick until `ACTIVE`)
-- Wood availability via market buy when needed
-- `200` response with created job queryable via `GET /api/production/jobs`
-- Stable `buildingId` / `recipeId` linkage
-
-Test is resilient to shared NestJS app state across the controller suite (reuses existing sawmill when present).
+- Reuses existing sawmill or places + ticks until `ACTIVE` (resilient to shared Nest test app state)
+- Market buy for wood when needed
+- Asserts `200`, job count increase, stable `buildingId`/`recipeId` linkage
 
 ---
 
-## 9. `PGProductionWidget` Coverage
+## 13. PGProductionWidget Validation
 
-**Test:** `apps/web/src/presentation/components/dashboard/PGProductionWidget.test.tsx`
+**Status:** **RESOLVED**
 
-| Case | Assertion |
-|------|-----------|
-| Summary render | Heading, active count, hint text, job row labels |
-| Navigation | `onJobClick` called with job id on row click |
-| Empty state | `Keine aktiven Produktionsjobs` when `jobs=[]` |
+**Test:** `PGProductionWidget.test.tsx` (2 cases)
 
----
+| Behavior | Asserted |
+|----------|----------|
+| Summary render | Heading `Produktion`, active count `2`, hint text |
+| Job row content | Building label, status label (`Energie fehlt`) |
+| Navigation callback | `onJobClick('production_001')` on row click |
+| Empty state | `Keine aktiven Produktionsjobs` |
 
-## 10. UX-06.4-01 Decision
-
-### Previous behavior (pre-6.4)
-
-World building marker → Buildings context/screen.
-
-### Current behavior (post-6.4, confirmed in 6.6)
-
-World building marker → `ProductionScreen` with building context via `buildProductionBuildingNavigationTarget`.
-
-### Authoritative evidence
-
-- `WorldScreen.tsx` — `onSelectBuilding` → `buildProductionBuildingNavigationTarget`
-- `entity-navigation.ts` — helper implementation
-- `WorldScreen.test.tsx` — regression coverage
-- Phase 6.4 report — intentional integration deliverable
-- Buildings screen remains available via sidebar; company inspector retains **Produktion öffnen**
-
-### Final decision
-
-**CONFIRM CURRENT BEHAVIOR**
-
-| Item | Value |
-|------|-------|
-| Code change | None |
-| Test coverage | `WorldScreen.test.tsx` added |
-| Documentation | `WORLD_MODULE_IMPLEMENTATION_GUIDE.md`, `RUNTIME_VIEWDATA_GUIDE.md` aligned |
+Not a shallow snapshot-only test — uses semantic roles and text assertions.
 
 ---
 
-## 11. Documentation Changes
+## 14. UX-06.4-01 Final Decision
 
-| Document | Update |
-|----------|--------|
-| `WORLD_MODULE_IMPLEMENTATION_GUIDE.md` | World marker navigation target corrected |
-| `RUNTIME_VIEWDATA_GUIDE.md` | Navigation helper table extended |
-| `IMPLEMENTATION_PROGRESS.md` | Phase 6.6 closeout entry |
-| Historical Phase 6.1–6.5 reports | Unchanged (historical records) |
+### Status: **CONFIRMED**
 
----
+World Building primary interaction → **Production with Building context** (Phase 6.4 behavior intentionally retained).
 
-## 12. Defects Found During Closeout
+### Evidence reviewed
 
-**None in supported Production runtime behavior.**
+| Source | Finding |
+|--------|---------|
+| `WorldScreen.tsx` L155–156 | `onSelectBuilding` → `navigateToTarget(buildProductionBuildingNavigationTarget(buildingId))` |
+| `entity-navigation.ts` | `buildProductionBuildingNavigationTarget` helper |
+| `WORLD_MODULE_IMPLEMENTATION_GUIDE.md` | Updated in 6.6 to document Production navigation |
+| `RUNTIME_VIEWDATA_GUIDE.md` | Navigation helper table entry |
+| Phase 6.4 report | Intentional integration deliverable |
+| Company inspector | **Produktion öffnen** remains available |
+| Sidebar | Buildings screen still reachable |
 
-Test-only adjustments during closeout:
+### Code change in Phase 6.6
 
-| Issue | Resolution |
-|-------|------------|
-| `STALLED_ENERGY` fixture attempted start under pre-existing deficit | Rewrote fixture: start while sufficient energy, then add instant load buildings |
-| Controller happy-path flaked on shared session state | Reuse/tick existing sawmill instead of assuming fresh `session/new` |
-| E2E asserted start events after save/load | Removed — event log is not persisted; completion linkage validated post-load |
+**None** for UX behavior. Only regression test + documentation alignment.
 
----
+### Test coverage
 
-## 13. Closeout Decision Matrix
-
-| Area | Status | Evidence | Closeout Blocking? |
-|------|--------|----------|-------------------|
-| Production start | PASS | E2E + controller + existing flows | No |
-| Tick/progress | PASS | E2E progress > 0; existing simulation tests | No |
-| Completion | PASS | E2E job `FINISHED` | No |
-| Inventory output | PASS | E2E planks increase | No |
-| Events | PASS | E2E single completion `entityId`; `GameSession` start+completion | No |
-| Notifications/entity linkage | PASS | Phase 6.2 + E2E completion linkage | No |
-| Save/load active job | PASS | E2E in-progress round-trip | No |
-| Operational states | PASS | `STALLED_ENERGY` + existing `STALLED_WORKFORCE` | No |
-| Building context | PASS | Phase 6.4 integration + tests | No |
-| World navigation | PASS | UX-06.4-01 confirmed + `WorldScreen.test.tsx` | No |
-| Production widget | PASS | `PGProductionWidget.test.tsx` | No |
-| Full regression suite | PASS | **897 / 897** | No |
+`WorldScreen.test.tsx` — component integration test proving `navigateToTarget({ screen: 'production', entitySelection: { kind: 'building', id } })`.
 
 ---
 
-## 14. Deferred Item Matrix
+## 15. World Navigation Regression Status
 
-| Item | Final M11 Status | Reason | Future Prerequisite |
-|------|------------------|--------|---------------------|
-| G-04 | DEFERRED | One-job-per-building semantics undefined | Gameplay design decision |
-| G-05 | DEFERRED | `productionCost` finance timing/unit undefined | Gameplay/finance decision |
-| PR-004 full UI | DEFERRED | Read-only inventory use cases covered on dashboard | Optional mockup sprint |
-| PR-005 full UI | DEFERRED | Thin warehouse linkage sufficient for M11 | Optional mockup sprint |
-| PR-006 Queue | DEFERRED | No queue domain/commands; depends on G-04 | G-04 + domain design |
-| PR-007 full UI | DEFERRED / outside Production | Core construction exists | Separate construction UX |
-| PR-008 Analytics | DEFERRED | No production history/time-series read model | Analytics data layer |
-| PR-009 Efficiency | DEFERRED | No authoritative efficiency KPI/formula | Gameplay KPI design |
-| PR-010 | NOT APPLICABLE | Superseded by incremental Production delivery | — |
-| CH-004 | DEFERRED | Asset depends on analytics/data | PR-008 |
-| Cancel/Pause | DEFERRED | Gameplay semantics undefined | Gameplay design |
-| World Production Overlay | DEFERRED | Beyond M11 integration scope | World UX sprint |
-| UX-06.4-01 | CONFIRMED | World marker → Production context is supported UX | — |
+| Level | Present | File |
+|-------|---------|------|
+| Helper unit test | Pre-existing | `entity-navigation.test.ts` |
+| `WorldScreen` integration test | **Added in 6.6** | `WorldScreen.test.tsx` |
+| Full browser E2E | Not added | Not required for closeout |
+
+**Coverage level:** Component integration — sufficient for user-visible navigation contract.
 
 ---
 
-## 15. Architecture Compliance
+## 16. Documentation Alignment
 
-| Check | Result |
-|-------|--------|
-| New Selection store | **No** |
+| Document | Phase-6.6 change | Alignment |
+|----------|------------------|-----------|
+| `WORLD_MODULE_IMPLEMENTATION_GUIDE.md` | Updated | Building marker → Production context |
+| `RUNTIME_VIEWDATA_GUIDE.md` | Updated | `buildProductionBuildingNavigationTarget` row |
+| `IMPLEMENTATION_PROGRESS.md` | Updated | Phase 6.6 closeout entry, 897 tests |
+| `M11_VISUAL_PRODUCTION_PLAN.md` | Unchanged | Historical phase plan; no drift introduced |
+| `VISUAL_PRODUCTION_BACKLOG.md` | Unchanged | Deferred items remain unchecked |
+| Phase 6.1–6.5 reports | Unchanged | Historical records preserved |
+
+### Known remaining documentation notes
+
+- `NOTIFICATION_SYSTEM_GUIDE.md` still references `buildBuildingNavigationTarget` for `open-building` — pre-existing; not modified in 6.6. **DOCUMENTATION ONLY**, non-blocking.
+
+---
+
+## 17. Architecture Compliance
+
+| Architecture risk | Phase 6.6 introduced? |
+|-------------------|----------------------|
+| New selection store | **No** |
 | New global state | **No** |
 | New command pipeline | **No** |
 | New event bus | **No** |
 | New Production state machine | **No** |
 | Direct React → Domain access | **No** |
-| Duplicate DTO/provider architecture | **No** |
-| Browser-time Production behavior | **No** |
-| Arbitrary refresh timers | **No** |
+| Parallel DTO/provider architecture | **No** |
+| Browser-time Production simulation | **No** |
+| Arbitrary refresh timer | **No** |
+| Duplicate persistence model | **No** |
+
+**Continued reuse verified:** `GameWorkspaceProvider`, `useScreenQuery`, `runCommand`, shared `entitySelection`, `navigateToTarget`, scoped query invalidation, Production ViewData/mappers, authoritative simulation tick — all unchanged in Phase 6.6.
 
 ---
 
-## 16. Exact Targeted Test Results
+## 18. Defects Found / Fixed
+
+**No closeout defects discovered in supported Production runtime behavior.**
+
+Phase 6.6 implementation adjusted **test fixtures only** during development (not committed as separate defect fixes):
+
+| Issue | Resolution | Layer |
+|-------|------------|-------|
+| `STALLED_ENERGY` fixture attempted start under energy deficit | Start production first, then add instant `headquarters` load | Test |
+| Controller test flaked on shared session state | Reuse/tick existing sawmill instead of assuming fresh `session/new` | Test |
+| E2E asserted start events after save/load | Removed — event log not persisted across load | Test expectation |
+
+---
+
+## 19. Exact Targeted Test Results
+
+**Date:** 2026-08-29
 
 | Command | Result |
 |---------|--------|
-| `vitest run src/application/facade/GameSession.test.ts -t "stalled energy"` | 1 passed |
-| `vitest run apps/web/src/presentation/components/dashboard/PGProductionWidget.test.tsx` | 2 passed |
-| `vitest run apps/web/src/presentation/screens/world/WorldScreen.test.tsx` | 1 passed |
-| `vitest run apps/api/src/game/game.controller.test.ts` | 20 passed |
-| `vitest run apps/api/src/e2e/m11-phase6-production-closeout-flow.test.ts` | 1 passed |
+| `pnpm exec vitest run apps/api/src/e2e/m11-phase6-production-closeout-flow.test.ts` | 1 passed (~3.8s) |
+| `pnpm exec vitest run src/application/facade/GameSession.test.ts` | 12 passed (~7.1s) |
+| `pnpm exec vitest run apps/api/src/game/game.controller.test.ts` | 20 passed (~1.3s) |
+| `pnpm exec vitest run apps/web/src/presentation/components/dashboard/PGProductionWidget.test.tsx` | 2 passed |
+| `pnpm exec vitest run apps/web/src/presentation/screens/world/WorldScreen.test.tsx` | 1 passed |
+| Combined Phase-6.6 files (5 files) | **36 passed** |
 
 ---
 
-## 17. Exact Full Regression Results
+## 20. Exact Full Regression Results
 
 | Command | Result | Duration |
 |---------|--------|----------|
-| `pnpm test` | **243** files, **897** tests, **897 / 897 PASS**, exit 0 | ~126s |
+| `pnpm test` | **243** files, **897** tests, **897 / 897 PASS**, exit 0 | ~102s |
 
-Phase 6.5 baseline: 240 files, 891 tests.
-
----
-
-## 18. Remaining Risks
-
-| Risk | Severity | Notes |
-|------|----------|-------|
-| Player event log not persisted across save/load | Low | Documented; completion events after load work via runtime recording |
-| G-04/G-05 undefined semantics | Medium (deferred) | Explicitly out of M11 closeout scope |
-| PR-004–PR-010 full mockup parity | Low | Deferred; not required for Production track closeout |
-| Shared NestJS test app state in controller suite | Low | Happy-path test hardened to reuse fixtures |
+| Baseline | Count |
+|----------|-------|
+| Phase 6.5 (2026-08-29) | 240 files, 891 tests |
+| Phase 6.6 net change | +3 files, +6 tests |
 
 ---
 
-## 19. M11 Production Track Delivered Scope
+## 21. Optional Repository Checks
 
-### Runtime / Integration
-
-- Production start, tick progression, inventory integration
-- Operational states (`STALLED_ENERGY`, `STALLED_WORKFORCE`, etc.)
-- Completion events and notification entity linkage
-- Save/load support for in-progress jobs
-
-### Production Operations UX
-
-- PR-001 Overview, PR-002 Factory, PR-003 Recipe on `ProductionScreen`
-
-### Cross-System Integration
-
-- Building context, Company Inspector, World integration
-- Shared selection, `PGProductionWidget`, thin warehouse linkage
-
-### Validation (Phase 6.6)
-
-- Production E2E closeout flow
-- Persistence validation for active jobs
-- Operational-state regression (`STALLED_ENERGY`)
-- Controller, widget, and world navigation regression tests
-
-**Not claimed:** PR-004–PR-010 full visual parity, queues, cancel/pause, analytics, efficiency KPIs.
+| Command | Result | Notes |
+|---------|--------|-------|
+| `pnpm typecheck` | **FAIL** | Pre-existing errors in `svg-generator`, `visual-asset-manager`, `GameSession.ts` regionId typing, etc. — **not introduced by Phase 6.6** (no runtime files changed) |
+| `pnpm lint` | **Not executed** | — |
+| `pnpm build` | **Not executed** | — |
 
 ---
 
-## 20. Final Closeout Decision
+## 22. Closeout Decision Matrix
 
-## OPTION A — M11 PRODUCTION TRACK CLOSED
+| Area | Status | Evidence Level | Evidence | Closeout Blocking? |
+|------|--------|----------------|----------|-------------------|
+| Production start | PASS | E2E + Integration + Unit | Closeout E2E, controller test, `GameSession` | No |
+| Recipe/building linkage | PASS | E2E | Closeout E2E `toMatchObject` | No |
+| Tick/progress | PASS | E2E | `progress > 0`; simulation tick API | No |
+| Completion | PASS | E2E | `FINISHED` status | No |
+| Inventory output | PASS | E2E | Planks increase | No |
+| Completion event | PASS | E2E + Integration | E2E + `GameSession` completion test | No |
+| Event exactly once | PASS | E2E + Integration | Extra tick assertions | No |
+| Notification/entity linkage | PASS | Unit (pre-existing) | `map-event-log-notification.test.ts` | No |
+| Save/load active job | PASS | E2E | Closeout flow save/load section | No |
+| Post-load continuation | PASS | E2E | Completion after load | No |
+| STALLED_ENERGY | PASS | Integration | `GameSession.test.ts` | No |
+| Controller happy path | PASS | Integration (API) | `game.controller.test.ts` | No |
+| PGProductionWidget | PASS | Unit (presentation) | `PGProductionWidget.test.tsx` | No |
+| Building context | PASS | Pre-6.4/6.4 | Phase 6.4 integration (unchanged) | No |
+| World navigation | PASS | Component integration | `WorldScreen.test.tsx` | No |
+| Full regression suite | PASS | Full suite | 897/897 | No |
 
-**M11 PRODUCTION TRACK CLOSED — PASS**
+---
 
-Supported Production vertical slice works end-to-end, relevant tests pass, save/load of in-progress jobs is validated, architecture compliance is preserved, and remaining gaps are safely deferred with explicit registers.
+## 23. Deferred Item Matrix
 
-**Recommended next action:** Leave Production feature development and proceed to the next project milestone/workstream according to the current project roadmap (M11 polish/backlog items outside Production closeout, or M12 release preparation per `MILESTONE_PLAN.md`).
+| Item | Final M11 Status | Implemented in 6.6? | Reason | Future Prerequisite |
+|------|------------------|--------------------:|--------|---------------------|
+| G-04 | DEFERRED | No | One-job-per-building semantics undefined | Gameplay design decision |
+| G-05 | DEFERRED | No | `productionCost` finance timing/unit undefined | Gameplay/finance decision |
+| PR-004 full UI | DEFERRED | No | Read-only inventory on dashboard sufficient | Optional mockup sprint |
+| PR-005 full UI | DEFERRED | No | Thin warehouse linkage sufficient | Optional mockup sprint |
+| PR-006 Queue | DEFERRED | No | No queue domain/commands; depends on G-04 | G-04 + domain design |
+| PR-007 full UI | DEFERRED | No | Core construction exists | Separate construction UX |
+| PR-008 Analytics | DEFERRED | No | No production history/time-series read model | Analytics data layer |
+| PR-009 Efficiency | DEFERRED | No | No authoritative KPI/formula | Gameplay KPI design |
+| PR-010 | NOT APPLICABLE | No | Superseded by PR-001–003 + Phase 6.4 | — |
+| CH-004 | DEFERRED | No | Depends on analytics/data | PR-008 |
+| Cancel/Pause | DEFERRED | No | Gameplay semantics undefined | Gameplay design |
+| World Production Overlay | DEFERRED | No | Beyond M11 integration scope | World UX sprint |
+| UX-06.4-01 | CONFIRMED | No (behavior unchanged) | Production context navigation retained | — |
+
+---
+
+## 24. Remaining Risks
+
+| Risk | Classification | Notes |
+|------|----------------|-------|
+| Player event log not persisted across save/load | **NON-BLOCKING** | Architectural; completion events work post-load via runtime recording |
+| G-04 / G-05 undefined semantics | **DEFERRED GAMEPLAY** | Explicitly out of M11 closeout |
+| PR-004–PR-010 full mockup parity | **DEFERRED UX** | Not closeout blockers |
+| `pnpm typecheck` failures | **NON-BLOCKING** | Pre-existing; unrelated to Phase 6.6 |
+| `NOTIFICATION_SYSTEM_GUIDE.md` navigation reference | **DOCUMENTATION ONLY** | Minor drift vs World guide |
+
+---
+
+## 25. M11 Production Delivered Scope
+
+### Runtime
+
+- Production start, job lifecycle, tick-driven progression
+- Inventory integration, operational states (`STALLED_ENERGY`, `STALLED_WORKFORCE`, etc.)
+- Completion events, entity linkage, save/load for in-progress jobs
+
+### Operations UX
+
+- PR-001 Production Overview, PR-002 Factory, PR-003 Recipe (`ProductionScreen`)
+
+### Cross-System UX
+
+- Building → Production context (Phase 6.4)
+- Company Inspector integration, shared Production entity selection
+- World integration (building marker → Production)
+- Thin Warehouse linkage, `PGProductionWidget`
+- Search/notification navigation (Phase 5.x, regression-protected)
+
+### Validation (including Phase 6.6)
+
+- E2E Production lifecycle closeout flow
+- In-progress persistence round-trip
+- Operational-state regression (`STALLED_ENERGY`, `STALLED_WORKFORCE`)
+- Controller, widget, world navigation regression tests
+- Full suite 897/897
+
+**Not delivered:** PR-004–PR-010 full surfaces, queues, cancel/pause, analytics, efficiency KPIs, World Production Overlay.
+
+---
+
+## 26. Final Closeout Decision
+
+## OPTION A — M11 PRODUCTION TRACK CLOSED — PASS
+
+**Rationale:**
+
+- Supported Production vertical slice validated end-to-end through real API/application paths
+- In-progress save/load operational round-trip validated
+- Phase-6.5 test gaps resolved
+- Full regression suite passes (897/897)
+- No architectural blockers introduced
+- Remaining items are genuinely deferred with explicit registers
+
+**Recommended next action:** Leave Production feature development and determine the next project workstream from the current project roadmap (`MILESTONE_PLAN.md` — e.g. M11 polish, M12 release preparation, or deferred backlog packages requiring gameplay decisions).
+
+*Final Gate Decision: pending external ChatGPT Gate Review.*
+
+---
+
+## 27. Definition of Done Checklist
+
+- [x] Repository baseline verified
+- [x] Phase-6.6 changed files identified
+- [x] Phase 6.1–6.5 context reviewed
+- [x] Production start evidence verified
+- [x] Recipe/building linkage verified
+- [x] Tick/progress evidence verified
+- [x] Completion evidence verified
+- [x] Inventory output evidence verified
+- [x] Completion event evidence verified
+- [x] Entity linkage verified (completion E2E; start integration; notification unit)
+- [x] In-progress save/load verified
+- [x] Post-load continuation verified
+- [x] Duplicate completion after load checked
+- [x] STALLED_ENERGY coverage verified
+- [x] Controller happy path verified
+- [x] PGProductionWidget coverage verified
+- [x] UX-06.4-01 final status established (**CONFIRMED**)
+- [x] World navigation regression coverage verified
+- [x] Documentation alignment checked
+- [x] Deferred register verified
+- [x] Architecture compliance verified
+- [x] Targeted tests executed
+- [x] Full `pnpm test` executed
+- [x] Actual test counts documented
+- [x] Remaining risks classified
+- [x] M11 Production delivered scope documented
+- [x] Formal recommended closeout decision provided
+
+---
+
+## 28. Changed Files
+
+All files in Phase-6.6 commit `072e01b`:
+
+1. `apps/api/src/e2e/m11-phase6-production-closeout-flow.test.ts`
+2. `apps/api/src/game/game.controller.test.ts`
+3. `apps/web/src/presentation/components/dashboard/PGProductionWidget.test.tsx`
+4. `apps/web/src/presentation/screens/world/WorldScreen.test.tsx`
+5. `src/application/facade/GameSession.test.ts`
+6. `docs/architecture/reviews/M11_PHASE6_6_PRODUCTION_E2E_VALIDATION_CLOSEOUT_REPORT.md`
+7. `docs/development/IMPLEMENTATION_PROGRESS.md`
+8. `docs/development/RUNTIME_VIEWDATA_GUIDE.md`
+9. `docs/development/WORLD_MODULE_IMPLEMENTATION_GUIDE.md`
