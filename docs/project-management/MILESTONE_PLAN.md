@@ -378,20 +378,27 @@ Expand gameplay content.
 
 ---
 
-# M11 – Polish
+# M11 – Visual Production & UX
+
+> **Alias:** MILESTONE_PLAN originally named this milestone “Polish”. Implementation and progress tracking use **Visual Production & UX** (`M11_VISUAL_PRODUCTION_PLAN.md`).
 
 ## Goal
 
-Prepare the game for release.
+Prepare the game for release-quality presentation — UI foundation, simulation integration, and Production operations.
 
-### Deliverables
+### Deliverables (delivered scope)
 
-- Animations
-- Effects
-- Audio
-- Localization
-- Balancing
-- Optimization
+- UI Foundation, Application Shell, Dashboard, World module (Phases 1–4)
+- Visual Asset Integration (Phase 4C)
+- Simulation Integration Layer (Phase 5, Gate 5 PASS)
+- Production operations track (Phase 6, **PRODUCTION TRACK CLOSED**)
+- Gate 4 final milestone closeout
+
+### Deliverables (deferred beyond M11)
+
+- Animations, effects, audio, localization, balancing (MILESTONE_PLAN polish items)
+- Full mockup parity (Phases 7–9), asset PNG backlog (Phase 11)
+- Production PR-004–010, G-04/G-05, queue, analytics, efficiency
 
 ### Exit Criteria
 
@@ -401,7 +408,7 @@ Prepare the game for release.
 
 ### Status
 
-⚪ Planned
+✅ **Complete** — Gate 4 PASS (2026-08-30) — see `docs/architecture/reviews/M11_FINAL_MILESTONE_CLOSEOUT_GATE4_REPORT.md`
 
 ---
 

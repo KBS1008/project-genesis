@@ -87,7 +87,7 @@ Actions reuse shared selection and navigation — no duplicated routing.
 | Action | Resolution |
 |--------|------------|
 | `open-region` | `buildRegionNavigationTarget` |
-| `open-building` | `buildBuildingNavigationTarget` |
+| `open-building` | `buildBuildingNavigationTarget` (Buildings screen) — *World map building markers use `buildProductionBuildingNavigationTarget` per `WORLD_MODULE_IMPLEMENTATION_GUIDE.md`* |
 | `open-production` | production screen + entity selection |
 | `open-research` | research screen + entity selection |
 | `open-transport` | transport screen + entity selection |

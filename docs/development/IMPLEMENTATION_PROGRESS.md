@@ -43,7 +43,7 @@ Update this document whenever a meaningful implementation milestone is completed
 | M8 NPC Economy                   | ✅ Completed (Gate AUD-006, 2026-07-22) |
 | Phase 1 Core Domain              | ✅ Completed (Gate 2026-07-19) — see `PHASE1_CORE_DOMAIN_REPORT.md`                                                                                                   |
 
-**Tests:** 897 (`pnpm test`; Phase 6.6 production E2E validation & closeout)
+**Tests:** 897 (`pnpm test`; M11 Gate 4 final closeout — 2026-08-30)
 
 ---
 
@@ -86,9 +86,9 @@ Update deliverable rows when a step ships; set milestone % to the **average of i
 | M8  | NPC Economy            | ✅ Completed   |      100 |     8,3 % |        8,3 % |
 | M9  | User Interface         | ✅ Completed   |      100 |     8,3 % |        8,3 % |
 | M10 | Content Expansion      | ✅ Completed   |      100 |     8,3 % |        8,3 % |
-| M11 | Polish                 | 🟡 In Progress |       74 |     8,3 % |        6,2 % |
+| M11 | Visual Production & UX | ✅ Completed   |      100 |     8,3 % |        8,3 % |
 | M12 | Release                | ⚪ Planned     |        0 |     8,3 % |          0 % |
-|     | **Total**              |                | **86 %** | **100 %** |     **86 %** |
+|     | **Total**              |                | **92 %** | **100 %** |     **92 %** |
 
 \*M9 is officially planned; dashboard, charts, tutorial and WebSocket from M4/M5 count as pre-work in the deliverable matrix below.
 
@@ -244,10 +244,10 @@ All **TD-M8-01 … TD-M8-06** resolved — see `docs/quality/M8_IMPLEMENTATION_R
 | Vehicles (content)              |       5 | `Vehicle.schema.md`, art library docs; DD-022 V1 waiver |
 | **Milestone average (gate)**    | **100** | Gate 3 verdict **M10 COMPLETE**              |
 
-### M11 – Visual Production & UX 🟡 (~74 %)
+### M11 – Visual Production & UX ✅ (100 % — Gate 4 PASS, 2026-08-30)
 
-| Deliverable                  |     % | Next step     |
-| ---------------------------- | ----: | ------------- |
+| Deliverable                  |     % | Evidence / status |
+| ---------------------------- | ----: | ----------------- |
 | Design foundation docs       |   100 | 8 docs under `docs/design/` |
 | Visual production backlog    |   100 | `VISUAL_PRODUCTION_BACKLOG.md` v2 |
 | **Visual Asset Manager**     | **100** | `/dev/visual-assets` — see `VISUAL_ASSET_MANAGER_GUIDE.md` |
@@ -265,16 +265,17 @@ All **TD-M8-01 … TD-M8-06** resolved — see `docs/quality/M8_IMPLEMENTATION_R
 | **Simulation Events & Notifications (Phase 5.4B)** | **100** | Event log + runtime alerts → notification center, toasts, status bar — see `NOTIFICATION_SYSTEM_GUIDE.md`, `M11_PHASE5_4B_EVENTS_NOTIFICATIONS_REPORT.md` |
 | **Runtime Resilience & Performance (Phase 5.5)** | **100** | Stale data, reconnect, sync coalescing, commandId guard — see `RUNTIME_RESILIENCE_AND_PERFORMANCE_GUIDE.md`, `M11_PHASE5_5_RESILIENCE_PERFORMANCE_REPORT.md` |
 | **E2E Validation & Closeout (Phase 5.6)** | **100** | API E2E + presentation closeout — **Phase 5 CLOSED** — see `M11_GATE_PHASE5_FINAL_REVIEW.md`, `M11_POLISH_MAINTENANCE_BACKLOG.md` |
-| **Production System Audit (Phase 6.1)** | **100** | Read-only audit — **PRODUCTION SYSTEM READY FOR TARGETED INTEGRATION** — see `M11_PHASE6_1_PRODUCTION_SYSTEM_AUDIT.md` |
-| **Production Runtime Corrections (Phase 6.2)** | **100** | Completion events, entity linkage, stalled visibility — **PRODUCTION RUNTIME CORRECTIONS READY** — see `M11_PHASE6_2_PRODUCTION_RUNTIME_EVENT_CORRECTIONS_REPORT.md` |
-| **Facility & Inspector Integration (Phase 6.4)** | **100** | Building → Production context, inspector navigation, thin warehouse link — **FACILITY INTEGRATION READY** — see `M11_PHASE6_4_FACILITY_INSPECTOR_INTEGRATION_REPORT.md` |
-| **Production E2E Validation & Closeout (Phase 6.6)** | **100** | E2E vertical slice, save/load active job, test hardening, UX-06.4-01 confirmed — **M11 PRODUCTION TRACK CLOSED** — see `M11_PHASE6_6_PRODUCTION_E2E_VALIDATION_CLOSEOUT_REPORT.md` |
-| **Production Operations UI (Phase 6.3)** | **100** | PR-001–PR-003 on `ProductionScreen`, recipe catalog read model — **PRODUCTION OPERATIONS UI READY** — see `M11_PHASE6_3_PRODUCTION_OPERATIONS_UI_REPORT.md` |
-| Mockup production (Sprint 1+) |    10 | Main menu mockups started |
-| Animations / effects / audio |     0 | Art docs only |
-| Localization / balancing     |     0 | Not started   |
-| Optimization pass            |     0 | Not started   |
-| **Milestone average**        | **~80** | UI foundation through Phase 5.6 simulation integration closeout |
+| **Production System Audit (Phase 6.1)** | **100** | Read-only audit — see `M11_PHASE6_1_PRODUCTION_SYSTEM_AUDIT.md` |
+| **Production Runtime Corrections (Phase 6.2)** | **100** | Completion events, entity linkage, stalled visibility — see `M11_PHASE6_2_PRODUCTION_RUNTIME_EVENT_CORRECTIONS_REPORT.md` |
+| **Production Operations UI (Phase 6.3)** | **100** | PR-001–PR-003 on `ProductionScreen` — see `M11_PHASE6_3_PRODUCTION_OPERATIONS_UI_REPORT.md` |
+| **Facility & Inspector Integration (Phase 6.4)** | **100** | Building → Production context, inspector/world navigation — see `M11_PHASE6_4_FACILITY_INSPECTOR_INTEGRATION_REPORT.md` |
+| **Production E2E Validation & Closeout (Phase 6.6)** | **100** | **M11 PRODUCTION TRACK CLOSED — PASS** — see `M11_PHASE6_6_PRODUCTION_E2E_VALIDATION_CLOSEOUT_REPORT.md` |
+| **Gate 4 Final Milestone Closeout (Phase 13)** | **100** | Exit criteria validated, deferred register — **M11 MILESTONE CLOSED — PASS** — see `M11_FINAL_MILESTONE_CLOSEOUT_GATE4_REPORT.md` |
+| Mockup parity (Phases 7–9) |    30 | Runtime screens exist; full mockup parity **deferred beyond M11** |
+| Animations / effects / audio |     0 | **Deferred beyond M11** |
+| Localization / balancing     |     0 | **Deferred beyond M11** |
+| Optimization pass            |    50 | Qualitative guardrails only; formal M12 validation **deferred** |
+| **Milestone average**        | **100** | Formal closure at Gate 4 |
 
 ### M12 – Release ⚪ (0 %)
 
@@ -1193,14 +1194,16 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Planned Next Steps
 
-1. **M11 Sprint 4 follow-on** (PR-004 Inventory or PR-006 Build Queue) per backlog
-2. **M11 — Polish:** animations, localization, optimization pass per `MILESTONE_PLAN.md`
+1. **M12 Release Preparation Entry Audit** — before M12 implementation (see `MILESTONE_PLAN.md` M12)
+2. Typecheck / web build stabilization (POLISH-05 + `warehouse` EntitySelection) — M12 prep
 3. Session/auth model for multi-user API access
 
 ---
 
 # Recently Completed (2026-08)
 
+- **M11 Gate 4 — Final Milestone Closeout:** exit criteria validated against repository evidence, 897/897 regression, deferred register finalized — **M11 MILESTONE CLOSED — PASS** — `M11_FINAL_MILESTONE_CLOSEOUT_GATE4_REPORT.md`
+- **Post-M11 Production Roadmap Audit:** Production closed ≠ M11 closed; recommended Gate 4 closeout — `POST_M11_PRODUCTION_ROADMAP_NEXT_WORKSTREAM_AUDIT.md`
 - **M11 Phase 6.6 — Production E2E Validation & Closeout:** vertical slice E2E, in-progress save/load, `STALLED_ENERGY` GameSession test, controller/widget/world regression — **M11 PRODUCTION TRACK CLOSED — PASS** — `M11_PHASE6_6_PRODUCTION_E2E_VALIDATION_CLOSEOUT_REPORT.md`
 - **M11 Phase 6.4 — Facility & Inspector Integration:** building-scoped Production context, inspector/world navigation, thin warehouse link — **FACILITY INTEGRATION READY** — `M11_PHASE6_4_FACILITY_INSPECTOR_INTEGRATION_REPORT.md`
 - **M11 Phase 6.3 — Production Operations UI:** PR-001 overview, PR-002 factories, PR-003 recipe catalog on `ProductionScreen` — **PRODUCTION OPERATIONS UI READY** — `M11_PHASE6_3_PRODUCTION_OPERATIONS_UI_REPORT.md`

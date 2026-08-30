@@ -806,3 +806,32 @@ Project Genesis shall provide a production-quality interface with:
 - unified user experience
 
 This milestone concludes the transition from technical prototype to production-quality presentation.
+
+---
+
+# Final Closeout Status (Gate 4 — 2026-08-30)
+
+**Gate recommendation:** **OPTION A — M11 MILESTONE CLOSED — PASS**
+
+See `docs/architecture/reviews/M11_FINAL_MILESTONE_CLOSEOUT_GATE4_REPORT.md` for full evidence.
+
+## Delivered (M11 scope)
+
+- Phases 1–6.6: UI foundation, shell, dashboard, world, visual asset integration, simulation integration (Gate 5 PASS), Production track (Phase 6.6 CLOSED)
+- Gate 4 / Phase 13: formal milestone validation
+- Partial runtime for Research, Economy, Logistics screens (M9 baseline)
+
+## Deferred beyond M11
+
+- Phases 7–12 full visual plan scope (mockup parity, animations, audio, localization, asset PNG backlog)
+- Production PR-004–010, G-04/G-05, queue, analytics, efficiency, cancel/pause
+- POLISH-05–09 maintenance backlog items
+- Formal M12 performance validation and release candidate
+
+## Superseded
+
+- Original MILESTONE_PLAN “Polish-only” deliverable list — reconciled with Visual Production & UX implementation track
+
+## Gate outcome
+
+M11 exit criteria satisfied per reconciled contract. **Recommended next action:** M12 Release Preparation Entry Audit — do not start M12 features until entry audit completes.
