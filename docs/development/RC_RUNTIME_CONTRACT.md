@@ -3,7 +3,7 @@
 **Project:** Project Genesis  
 **Version:** 0.1.0 (pre-release)  
 **Status:** Active — M12.1 Dual-Runtime RC Contract  
-**Last Updated:** 2026-08-30
+**Last Updated:** 2026-08-30 (M12.2 doc correction)
 
 ---
 
@@ -151,7 +151,9 @@ project-genesis/          ← monorepo root (must contain game-content/)
 | Development | `pnpm dev:api` / `pnpm start` | `AppDevModule` (includes dev tooling routes) | `tsx src/main.dev.ts` executes TypeScript source |
 | **RC / Production** | `NODE_ENV=production pnpm start:prod` | `AppModule` (gameplay only) | `node` executes compiled `dist/` |
 
-Dev-only routes (`/api/dev/visual-assets`, `/api/dev/svg-generator`) return **403 Forbidden** when `NODE_ENV=production`.
+Production `AppModule` does **not** register `DevModule`. Dev-only routes (`/api/dev/visual-assets`, `/api/dev/svg-generator`) are therefore **unavailable** in the compiled RC API runtime and return **404 Not Found**.
+
+In development (`AppDevModule` via `tsx src/main.dev.ts`), those routes are registered. `DevOnlyGuard` would return **403 Forbidden** if `NODE_ENV=production` while DevModule were loaded — that guard applies only to the development module path, not the production RC path above.
 
 ---
 
