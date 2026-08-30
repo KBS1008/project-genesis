@@ -160,6 +160,16 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
   const dismissedNotificationIdsRef = useRef<Set<string>>(new Set());
   const simulationNotificationsRef = useRef<readonly SimulationNotification[]>(Object.freeze([]));
   const companyViewDataRef = useRef(companyViewData);
+  const viewDataRef = useRef(viewData);
+  const regionsRef = useRef(regions);
+  const hadDisconnectRef = useRef(false);
+  const refreshSessionRef = useRef<(() => Promise<void>) | null>(null);
+  const refreshWorkspaceScopeSlicesRef = useRef<
+    ((scopes: readonly WorkspaceQueryScope[]) => Promise<void>) | null
+  >(null);
+  const retryRuntimeRecoveryRef = useRef<(() => Promise<void>) | null>(null);
+  const scheduleRefreshSessionRef = useRef<(() => void) | null>(null);
+  const showNotificationRef = useRef(showNotification);
   const criticalAnnouncementTimerRef = useRef<number | null>(null);
   const notificationSyncSessionRef = useRef(new NotificationSyncSession());
   const hasLoadedSessionRef = useRef(false);
@@ -223,6 +233,18 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
   useEffect(() => {
     companyViewDataRef.current = companyViewData;
   }, [companyViewData]);
+
+  useEffect(() => {
+    viewDataRef.current = viewData;
+  }, [viewData]);
+
+  useEffect(() => {
+    regionsRef.current = regions;
+  }, [regions]);
+
+  useEffect(() => {
+    showNotificationRef.current = showNotification;
+  }, [showNotification]);
 
   const syncSimulationNotifications = useCallback(async (): Promise<void> => {
     await notificationSyncSessionRef.current.run(async () => {
@@ -331,11 +353,11 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
       try {
         const patch = await refreshWorkspaceScopes({
           scopes,
-          currentSession: viewData.session,
-          currentSimulation: viewData.simulation,
-          currentWorld: viewData.world,
-          currentSaves: viewData.saves,
-          currentRegions: regions,
+          currentSession: viewDataRef.current.session,
+          currentSimulation: viewDataRef.current.simulation,
+          currentWorld: viewDataRef.current.world,
+          currentSaves: viewDataRef.current.saves,
+          currentRegions: regionsRef.current,
         });
 
         applyWorkspaceRefresh(patch);
@@ -356,7 +378,7 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
         throw error;
       }
     },
-    [applyWorkspaceRefresh, regions, syncSimulationNotifications, viewData],
+    [applyWorkspaceRefresh, syncSimulationNotifications],
   );
 
   const retryRuntimeRecovery = useCallback(async (): Promise<void> => {
@@ -422,13 +444,18 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
           ]);
         })
         .catch((error: unknown) => {
-          showNotification({
+          showNotificationRef.current({
             tone: 'error',
             message: translatePresentationError(error),
           });
         });
     }, SOCKET_REFRESH_DEBOUNCE_MS);
-  }, [refreshWorkspaceScopeSlices, showNotification]);
+  }, [refreshWorkspaceScopeSlices]);
+
+  refreshSessionRef.current = refreshSession;
+  refreshWorkspaceScopeSlicesRef.current = refreshWorkspaceScopeSlices;
+  retryRuntimeRecoveryRef.current = retryRuntimeRecovery;
+  scheduleRefreshSessionRef.current = scheduleRefreshSession;
 
   const runSimulationTick = useCallback(async (): Promise<void> => {
     try {
@@ -532,13 +559,14 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
     let active = true;
 
     setIsLoading(true);
-    void refreshSession()
+    void refreshSessionRef
+      .current?.()
       .catch((error: unknown) => {
         if (!active) {
           return;
         }
 
-        showNotification({
+        showNotificationRef.current({
           tone: 'error',
           message: translatePresentationError(error),
         });
@@ -552,7 +580,7 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
     return () => {
       active = false;
     };
-  }, [refreshSession, showNotification]);
+  }, []);
 
   useEffect(() => {
     isBusyRef.current = isBusy;
@@ -582,17 +610,23 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
   useEffect(() => {
     const socket = connectDashboardSocket(
       () => {
-        scheduleRefreshSession();
+        scheduleRefreshSessionRef.current?.();
       },
       (nextConnectionState) => {
         setConnectionState(nextConnectionState);
 
         if (nextConnectionState === 'disconnected' && hasLoadedSessionRef.current) {
           setIsDataStale(true);
+          hadDisconnectRef.current = true;
         }
 
-        if (nextConnectionState === 'connected' && hasLoadedSessionRef.current) {
-          void retryRuntimeRecovery();
+        if (
+          nextConnectionState === 'connected' &&
+          hasLoadedSessionRef.current &&
+          hadDisconnectRef.current
+        ) {
+          hadDisconnectRef.current = false;
+          void retryRuntimeRecoveryRef.current?.();
         }
       },
     );
@@ -600,7 +634,7 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
     return () => {
       socket.disconnect();
     };
-  }, [retryRuntimeRecovery, scheduleRefreshSession]);
+  }, []);
 
   const navigateToTarget = useCallback(
     (target: EntityNavigationTarget) => {

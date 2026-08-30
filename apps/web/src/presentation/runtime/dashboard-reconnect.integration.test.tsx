@@ -13,6 +13,7 @@ import { EMPTY_COMPANY_DASHBOARD_VIEW_DATA } from '@/presentation/adapters/view-
 
 let connectionHandler: ((state: DashboardConnectionState) => void) | undefined;
 let refreshHandler: ((payload: DashboardRefreshPayload) => void) | undefined;
+const disconnectSpy = vi.fn();
 
 const refreshWorkspaceScopes = vi.fn(async () =>
   Object.freeze({
@@ -84,7 +85,7 @@ vi.mock('@/presentation/adapters/api/dashboard-socket', () => ({
     refreshHandler = onRefresh;
     connectionHandler = onConnectionChange;
     onConnectionChange?.('connected');
-    return { disconnect: vi.fn() };
+    return { disconnect: disconnectSpy };
   },
 }));
 
@@ -123,8 +124,34 @@ describe('dashboard reconnect integration', () => {
   beforeEach(() => {
     connectionHandler = undefined;
     refreshHandler = undefined;
+    disconnectSpy.mockClear();
     loadWorkspaceQueries.mockClear();
     refreshWorkspaceScopes.mockClear();
+  });
+
+  it('does not recover on initial socket connect or disconnect socket on tick refresh', async () => {
+    render(
+      <NotificationProvider>
+        <GameWorkspaceProvider>
+          <RuntimeProbe />
+        </GameWorkspaceProvider>
+      </NotificationProvider>,
+    );
+
+    await waitFor(() => {
+      expect(loadWorkspaceQueries).toHaveBeenCalled();
+    });
+
+    expect(refreshWorkspaceScopes).not.toHaveBeenCalled();
+    expect(disconnectSpy).not.toHaveBeenCalled();
+
+    refreshHandler?.({ tickNumber: 13 });
+
+    await waitFor(() => {
+      expect(refreshWorkspaceScopes).toHaveBeenCalled();
+    });
+
+    expect(disconnectSpy).not.toHaveBeenCalled();
   });
 
   it('preserves view data, blocks commands on disconnect, and recovers on reconnect', async () => {

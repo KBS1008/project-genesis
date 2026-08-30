@@ -1,7 +1,6 @@
 'use client';
 
 import { PGKpiCard } from '@/presentation/components/dashboard/PGKpiCard';
-import { PGDashboardGrid, PGDashboardGridItem } from '@/presentation/components/layout';
 import type {
   OperationsKpiAction,
   OperationsKpiCardViewData,
@@ -37,7 +36,7 @@ export function OperationsKpiStrip({
 }: OperationsKpiStripProps) {
   return (
     <section className="pg-operations-kpi-strip" aria-label="Kennzahlen">
-      <PGDashboardGrid>
+      <div className="pg-kpi-grid">
         {cards.map((card) => {
           const onClick = resolveAction(card.action, onSelectFinance, onSelectLogistics);
           const kpiCard = (
@@ -52,25 +51,24 @@ export function OperationsKpiStrip({
 
           if (onClick === undefined) {
             return (
-              <PGDashboardGridItem key={card.id} span={3}>
+              <div key={card.id}>
                 {kpiCard}
-              </PGDashboardGridItem>
+              </div>
             );
           }
 
           return (
-            <PGDashboardGridItem key={card.id} span={3}>
-              <button
-                type="button"
-                className={`pg-operations-kpi-button${card.isActive ? ' is-active' : ''}`.trim()}
-                onClick={onClick}
-              >
-                {kpiCard}
-              </button>
-            </PGDashboardGridItem>
+            <button
+              key={card.id}
+              type="button"
+              className={`pg-operations-kpi-button${card.isActive ? ' is-active' : ''}`.trim()}
+              onClick={onClick}
+            >
+              {kpiCard}
+            </button>
           );
         })}
-      </PGDashboardGrid>
+      </div>
     </section>
   );
 }

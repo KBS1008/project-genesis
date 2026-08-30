@@ -1,7 +1,11 @@
 .pg-operations-layout {
-  max-width: 90rem;
-  margin: 0 auto;
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 0;
   padding: var(--space-lg) var(--space-md) var(--space-2xl);
+  box-sizing: border-box;
 }
 
 .pg-operations-layout.is-busy {

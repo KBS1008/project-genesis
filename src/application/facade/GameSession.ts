@@ -665,7 +665,7 @@ export class GameSession {
       name: input.name,
       x: input.x,
       y: input.y,
-      regionId: input.regionId,
+      ...(input.regionId !== undefined ? { regionId: input.regionId } : {}),
     });
 
     if (!placeResult.ok) {

@@ -39,17 +39,15 @@ export function WorldScreen() {
   const selectedRegionId =
     navigation.entitySelection.kind === 'region' ? navigation.entitySelection.id : null;
   const labels = companyViewData.labels;
-  const tickKey = viewData.simulation.tickNumber ?? 0;
-
   const mapQuery = useScreenQuery(
-    `world-map:${tickKey}`,
+    'world-map',
     () => fetchWorldMap().then((map) => mapWorldMapViewData(map, regions)),
     viewData.session.hasGame,
     { debounceMs: TICK_QUERY_DEBOUNCE_MS },
   );
 
   const overlayQuery = useScreenQuery(
-    `world-overlay:${mapQuery.data?.mapId ?? 'none'}:${tickKey}`,
+    `world-overlay:${mapQuery.data?.mapId ?? 'none'}`,
     async () => {
       if (mapQuery.data === null) {
         return EMPTY_WORLD_OVERLAY;
@@ -101,7 +99,7 @@ export function WorldScreen() {
   }, [labels.building, labels.recipe, selectedRegionId]);
 
   const inspectorQuery = useScreenQuery(
-    `world-inspector:${selectedRegionId ?? 'none'}:${tickKey}`,
+    `world-inspector:${selectedRegionId ?? 'none'}`,
     loadRegionInspector,
     selectedRegionId !== null && viewData.session.hasGame,
     { debounceMs: TICK_QUERY_DEBOUNCE_MS },

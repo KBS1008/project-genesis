@@ -30,9 +30,8 @@ export function ReportsScreen() {
   const { viewData, navigation, selectEntity } = useGameWorkspace();
   const [categoryFilter, setCategoryFilter] = useState('');
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
-  const tickKey = viewData.simulation.tickNumber ?? 0;
   const eventQuery = useScreenQuery(
-    `events:${categoryFilter}:${tickKey}`,
+    `events:${categoryFilter}`,
     () =>
       fetchEventLog({
         limit: 100,

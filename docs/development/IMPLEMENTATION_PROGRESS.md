@@ -281,10 +281,11 @@ All **TD-M8-01 … TD-M8-06** resolved — see `docs/quality/M8_IMPLEMENTATION_R
 
 | Deliverable                               |     % | Next step                         |
 | ----------------------------------------- | ----: | --------------------------------- |
-| Release candidate / QA approval           |     0 | Not started                       |
+| Release candidate / QA approval           |     0 | Web production build **PASS** (`pnpm build:web`) — RC packaging not started |
 | Final documentation                       |     0 | Partial                           |
-| Stable savegames / performance validation |     0 | v1 saves exist; release gate open |
-| **Milestone average**                     | **0** | Final gate                        |
+| Stable savegames / performance validation |     0 | Good baseline; M12 formal validation open |
+| **Release build readiness (prep slice)**  | **100** | Warehouse EntitySelection + compile fixes — `M12_RELEASE_BUILD_READINESS_STABILIZATION_REPORT.md` |
+| **Milestone average**                     | **~25** | M12 Release Preparation Entry Audit next |
 
 ## Maintenance
 
@@ -1194,14 +1195,18 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Planned Next Steps
 
-1. **M12 Release Preparation Entry Audit** — before M12 implementation (see `MILESTONE_PLAN.md` M12)
-2. Typecheck / web build stabilization (POLISH-05 + `warehouse` EntitySelection) — M12 prep
+1. **M12 Release Preparation Entry Audit** — formal M12 deliverable/exit-criteria inventory before RC work
+2. Typecheck stabilization (POLISH-05 / `GameSession` safe type fix) — optional M12 prep slice
 3. Session/auth model for multi-user API access
 
 ---
 
 # Recently Completed (2026-08)
 
+- **M12 UI Stability Incident:** WebSocket lifecycle stabilization + stable query keys + scoped loading overlay — flicker/overlap resolved — `M12_UI_STABILITY_FLICKER_LAYOUT_INCIDENT_REPORT.md`
+- **M12 Dashboard Layout Containment:** workspace width contract + responsive KPI/overview grids + executive wrapper — `M12_DASHBOARD_LAYOUT_CONTAINMENT_DELTA_REPORT.md`
+- **M12 Runtime Flicker Fix:** `useScreenQuery` background refresh vs initial loading — playability restored — `M12_RUNTIME_FLICKER_PLAYABILITY_INCIDENT_REPORT.md`
+- **M12 Release Build Readiness:** warehouse EntitySelection integration, company screen compile fix, `pnpm build:web` PASS, 901 tests — `M12_RELEASE_BUILD_READINESS_STABILIZATION_REPORT.md`
 - **M11 Gate 4 — Final Milestone Closeout:** exit criteria validated against repository evidence, 897/897 regression, deferred register finalized — **M11 MILESTONE CLOSED — PASS** — `M11_FINAL_MILESTONE_CLOSEOUT_GATE4_REPORT.md`
 - **Post-M11 Production Roadmap Audit:** Production closed ≠ M11 closed; recommended Gate 4 closeout — `POST_M11_PRODUCTION_ROADMAP_NEXT_WORKSTREAM_AUDIT.md`
 - **M11 Phase 6.6 — Production E2E Validation & Closeout:** vertical slice E2E, in-progress save/load, `STALLED_ENERGY` GameSession test, controller/widget/world regression — **M11 PRODUCTION TRACK CLOSED — PASS** — `M11_PHASE6_6_PRODUCTION_E2E_VALIDATION_CLOSEOUT_REPORT.md`

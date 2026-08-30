@@ -8,7 +8,10 @@ import { translatePresentationError } from '@/presentation/notifications/transla
 
 export type ScreenQueryState<T> = {
   readonly data: T | null;
+  /** True only while waiting for the first successful result (no stale data to show). */
   readonly isLoading: boolean;
+  /** True while refetching after invalidation or key change when prior data is retained. */
+  readonly isRefreshing: boolean;
   readonly errorMessage: string | null;
 };
 
@@ -31,20 +34,34 @@ export function useScreenQuery<T>(
   const invalidationToken = useQueryInvalidationToken(screenScope === null ? [] : [screenScope]);
   const loaderRef = useRef(loader);
   loaderRef.current = loader;
+  const dataRef = useRef<T | null>(null);
   const [data, setData] = useState<T | null>(null);
   const [isLoading, setIsLoading] = useState(enabled);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    dataRef.current = data;
+  }, [data]);
 
   useEffect(() => {
     if (!enabled) {
       setData(null);
+      dataRef.current = null;
       setIsLoading(false);
+      setIsRefreshing(false);
       setErrorMessage(null);
       return;
     }
 
     let active = true;
-    setIsLoading(true);
+    const hasExistingData = dataRef.current !== null;
+
+    if (hasExistingData) {
+      setIsRefreshing(true);
+    } else {
+      setIsLoading(true);
+    }
     setErrorMessage(null);
 
     void loaderRef
@@ -52,17 +69,22 @@ export function useScreenQuery<T>(
       .then((result) => {
         if (active) {
           setData(result);
+          dataRef.current = result;
         }
       })
       .catch((error: unknown) => {
         if (active) {
-          setData(null);
+          if (!hasExistingData) {
+            setData(null);
+            dataRef.current = null;
+          }
           setErrorMessage(translatePresentationError(error));
         }
       })
       .finally(() => {
         if (active) {
           setIsLoading(false);
+          setIsRefreshing(false);
         }
       });
 
@@ -71,5 +93,5 @@ export function useScreenQuery<T>(
     };
   }, [debouncedKey, enabled, invalidationToken]);
 
-  return { data, isLoading, errorMessage };
+  return { data, isLoading, isRefreshing, errorMessage };
 }

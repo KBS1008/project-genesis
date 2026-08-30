@@ -8,9 +8,11 @@ import {
   filterGlobalSearchItems,
 } from '@/presentation/components/shell/build-global-search-index';
 import type { GlobalSearchItem } from '@/presentation/components/shell/global-search-types';
-import { buildRegionNavigationTarget } from '@/presentation/navigation/entity-navigation';
+import {
+  buildRegionNavigationTarget,
+  type EntityNavigationTarget,
+} from '@/presentation/navigation/entity-navigation';
 import { fitRegionCamera } from '@/presentation/hooks/world-camera-math';
-import type { EntityNavigationTarget } from '@/presentation/navigation/entity-navigation';
 
 const REGIONS = Object.freeze([
   Object.freeze({
@@ -128,8 +130,7 @@ describe('world search selection integration', () => {
     expect(inspector.title).toContain('Nordheim');
     expect(inspector.sections.some((section) => section.id === 'overview')).toBe(true);
 
-    const tickKey = 12;
-    const inspectorQueryKey = `world-inspector:${selectedRegionId}:${tickKey}`;
-    expect(inspectorQueryKey).toBe('world-inspector:region_north:12');
+    const inspectorQueryKey = `world-inspector:${selectedRegionId}`;
+    expect(inspectorQueryKey).toBe('world-inspector:region_north');
   });
 });

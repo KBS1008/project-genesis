@@ -8,6 +8,8 @@ import type { KpiStripViewData } from '@/presentation/adapters/view-data/company
 import { PGOperationsTable } from '@/presentation/components/dashboard/PGOperationsTable';
 import { PGLoadingOverlay } from '@/presentation/components/foundation/PGLoadingOverlay';
 import { OperationsKpiStrip } from '@/presentation/screens/company/OperationsKpiStrip';
+import { OperationsOverviewStrip } from '@/presentation/screens/company/OperationsOverviewStrip';
+import { buildOperationsOverviewCards } from '@/presentation/adapters/mappers/company-operations-view-mappers';
 import { renderPresentation } from '@/presentation/testing/presentation-test-harness';
 
 const SAMPLE_KPIS: KpiStripViewData = {
@@ -48,6 +50,36 @@ describe('operations dashboard components', () => {
     renderPresentation(<PGLoadingOverlay active label="Speichern…" />);
 
     expect(screen.getByRole('status', { name: 'Speichern…' })).toBeInTheDocument();
+  });
+
+  it('OperationsKpiStrip uses responsive KPI grid inside workspace width', () => {
+    const { container } = render(
+      <OperationsKpiStrip
+        cards={buildOperationsKpiCards(SAMPLE_KPIS)}
+        onSelectFinance={() => {}}
+        onSelectLogistics={() => {}}
+      />,
+    );
+
+    expect(container.querySelector('.pg-kpi-grid')).not.toBeNull();
+    expect(container.querySelector('.pg-dashboard-grid')).toBeNull();
+  });
+
+  it('OperationsOverviewStrip uses responsive KPI grid', () => {
+    const { container } = render(
+      <OperationsOverviewStrip
+        cards={buildOperationsOverviewCards({
+          cards: [
+            { label: 'Gebäude', value: '4', hint: 'Standorte' },
+            { label: 'Transport', value: '0', hint: 'Aktiv' },
+          ],
+        })}
+        onSelectLogistics={() => {}}
+      />,
+    );
+
+    expect(container.querySelector('.pg-kpi-grid')).not.toBeNull();
+    expect(container.querySelector('.pg-dashboard-grid')).toBeNull();
   });
 
   it('OperationsKpiStrip routes finance and logistics clicks', async () => {

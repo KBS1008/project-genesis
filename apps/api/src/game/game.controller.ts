@@ -344,7 +344,7 @@ export class GameController {
           name: body.name,
           x: body.x,
           y: body.y,
-          regionId: body.regionId,
+          ...(body.regionId !== undefined ? { regionId: body.regionId } : {}),
         }),
       ),
     );

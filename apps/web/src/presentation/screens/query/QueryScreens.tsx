@@ -12,9 +12,8 @@ import { ScreenQueryFrame } from '@/presentation/screens/shared/ScreenQueryFrame
 /** Finance screen backed by finance transaction queries. */
 export function FinanceScreen() {
   const { viewData } = useGameWorkspace();
-  const tickKey = viewData.simulation.tickNumber ?? 0;
   const { data, isLoading, errorMessage } = useScreenQuery(
-    `finance:${tickKey}`,
+    'finance',
     () => fetchFinanceTransactions().then(mapFinanceRowsViewData),
     viewData.session.hasGame,
     { debounceMs: TICK_QUERY_DEBOUNCE_MS },

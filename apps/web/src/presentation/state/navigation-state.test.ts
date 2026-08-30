@@ -74,11 +74,62 @@ describe('navigation-state', () => {
     ).toEqual({ kind: 'building', id: 'building-1' });
 
     expect(
+      sanitizeNavigationState({
+        screen: 'company',
+        entitySelection: { kind: 'warehouse', id: 'building-warehouse-1' },
+      }).entitySelection,
+    ).toEqual({ kind: 'warehouse', id: 'building-warehouse-1' });
+
+    expect(
       isEntitySelectionCompatibleWithScreen('markets', { kind: 'resource', id: 'iron-ore' }),
     ).toBe(true);
     expect(
       isEntitySelectionCompatibleWithScreen('markets', { kind: 'region', id: 'region-1' }),
     ).toBe(false);
+    expect(
+      isEntitySelectionCompatibleWithScreen('company', { kind: 'warehouse', id: 'building-1' }),
+    ).toBe(true);
+  });
+
+  it('parses and validates warehouse entity selections from URL params', () => {
+    const state = parseNavigationState(
+      new URLSearchParams('screen=company&entity=warehouse:building-wh-1'),
+    );
+
+    expect(state).toEqual({
+      screen: 'company',
+      entitySelection: { kind: 'warehouse', id: 'building-wh-1' },
+    });
+
+    const catalog = buildEntityCatalogFromDashboard({
+      buildings: [],
+      productionJobs: [],
+      transportOrders: [],
+      researchJobs: [],
+      employees: [],
+      marketPrices: [],
+      warehouseStorage: [{ buildingId: 'building-wh-1' }],
+    });
+
+    expect(
+      recoverInvalidEntitySelection(
+        {
+          screen: 'company',
+          entitySelection: { kind: 'warehouse', id: 'building-wh-1' },
+        },
+        catalog,
+      ).entitySelection,
+    ).toEqual({ kind: 'warehouse', id: 'building-wh-1' });
+
+    expect(
+      recoverInvalidEntitySelection(
+        {
+          screen: 'company',
+          entitySelection: { kind: 'warehouse', id: 'missing-warehouse' },
+        },
+        catalog,
+      ).entitySelection,
+    ).toEqual({ kind: 'none' });
   });
 
   it('builds readonly session snapshots without storing domain aggregates', () => {

@@ -11,7 +11,7 @@ const navigateToTarget = vi.fn();
 vi.mock('@/presentation/hooks/useScreenQuery', () => ({
   TICK_QUERY_DEBOUNCE_MS: 250,
   useScreenQuery: (key: string) => {
-    if (key.startsWith('world-map:')) {
+    if (key.startsWith('world-map')) {
       return {
         data: {
           mapId: 'map_001',

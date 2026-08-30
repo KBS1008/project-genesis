@@ -20,6 +20,7 @@ import { OperationsOverviewStrip } from '@/presentation/screens/company/Operatio
 import { CompanyOperationsPanels } from '@/presentation/screens/company/CompanyOperationsPanels';
 import { CompanyOperationsCharts } from '@/presentation/screens/company/CompanyOperationsCharts';
 import { CompanyOperationsInspector } from '@/presentation/screens/company/CompanyOperationsInspector';
+import { PGOperationsSidebar } from '@/presentation/screens/company/PGOperationsSidebar';
 import {
   buildProductionBuildingNavigationTarget,
   buildProductionNavigationTarget,

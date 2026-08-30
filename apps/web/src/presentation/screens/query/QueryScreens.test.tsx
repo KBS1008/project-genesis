@@ -34,11 +34,11 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
 }));
 
 describe('FinanceScreen', () => {
-  it('uses a tick-aware query key and debounce options', () => {
+  it('uses a stable query key and debounce options', () => {
     render(<FinanceScreen />);
 
     expect(useScreenQueryMock).toHaveBeenCalledWith(
-      'finance:12',
+      'finance',
       expect.any(Function),
       true,
       { debounceMs: 250 },

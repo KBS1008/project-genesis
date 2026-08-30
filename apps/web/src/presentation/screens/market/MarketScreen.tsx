@@ -65,10 +65,9 @@ export function MarketScreen() {
     () => buildNameResolver(companyViewData.labels),
     [companyViewData.labels],
   );
-  const tickKey = viewData.simulation.tickNumber ?? 0;
   const regionId = selectedRegionId.length > 0 ? selectedRegionId : defaultRegionId;
   const marketQuery = useScreenQuery(
-    `markets:${regionId}:${tickKey}`,
+    `markets:${regionId}`,
     () => fetchMarketPrices(regionId),
     viewData.session.hasGame && regionId.length > 0,
     { debounceMs: TICK_QUERY_DEBOUNCE_MS },

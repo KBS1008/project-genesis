@@ -12,7 +12,8 @@ export type EntitySelectionKind =
   | 'transport'
   | 'research'
   | 'employee'
-  | 'event';
+  | 'event'
+  | 'warehouse';
 
 export type EntitySelection =
   | { readonly kind: 'none' }
@@ -23,7 +24,8 @@ export type EntitySelection =
   | { readonly kind: 'transport'; readonly id: string }
   | { readonly kind: 'research'; readonly id: string }
   | { readonly kind: 'employee'; readonly id: string }
-  | { readonly kind: 'event'; readonly id: string };
+  | { readonly kind: 'event'; readonly id: string }
+  | { readonly kind: 'warehouse'; readonly id: string };
 
 export type NavigationState = {
   readonly screen: PrimaryScreenId;
@@ -38,6 +40,7 @@ export type EntityCatalog = {
   readonly transportIds: ReadonlySet<string>;
   readonly researchIds: ReadonlySet<string>;
   readonly employeeIds: ReadonlySet<string>;
+  readonly warehouseIds: ReadonlySet<string>;
 };
 
 export type ApplicationSessionSnapshot = {
@@ -72,6 +75,7 @@ const ENTITY_KINDS = new Set<EntitySelectionKind>([
   'research',
   'employee',
   'event',
+  'warehouse',
 ]);
 
 function parseEntitySelection(rawValue: string | null): EntitySelection {
@@ -156,6 +160,8 @@ function isEntityKnown(selection: EntitySelection, catalog: EntityCatalog): bool
       return catalog.researchIds.has(selection.id);
     case 'employee':
       return catalog.employeeIds.has(selection.id);
+    case 'warehouse':
+      return catalog.warehouseIds.has(selection.id);
     case 'event':
       return true;
     default:
@@ -209,7 +215,8 @@ export function isEntitySelectionCompatibleWithScreen(
         selection.kind === 'transport' ||
         selection.kind === 'research' ||
         selection.kind === 'employee' ||
-        selection.kind === 'resource'
+        selection.kind === 'resource' ||
+        selection.kind === 'warehouse'
       );
     case 'finance':
       return false;
@@ -238,6 +245,7 @@ export function buildEntityCatalogFromDashboard(dashboard: {
   readonly researchJobs: readonly { readonly id: string }[];
   readonly employees: readonly { readonly id: string }[];
   readonly marketPrices: readonly { readonly resourceId: string }[];
+  readonly warehouseStorage?: readonly { readonly buildingId: string }[];
 }): EntityCatalog {
   return {
     regionIds: new Set<string>(),
@@ -247,6 +255,9 @@ export function buildEntityCatalogFromDashboard(dashboard: {
     transportIds: new Set(dashboard.transportOrders.map((entry) => entry.id)),
     researchIds: new Set(dashboard.researchJobs.map((entry) => entry.id)),
     employeeIds: new Set(dashboard.employees.map((entry) => entry.id)),
+    warehouseIds: new Set(
+      (dashboard.warehouseStorage ?? []).map((entry) => entry.buildingId),
+    ),
   };
 }
 

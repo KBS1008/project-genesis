@@ -227,6 +227,10 @@
 .pg-executive-dashboard {
   display: grid;
   gap: var(--dashboard-gap);
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .pg-executive-summary {
@@ -236,8 +240,14 @@
 
 .pg-kpi-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
   gap: var(--grid-gap);
+  width: 100%;
+  min-width: 0;
+}
+
+.pg-kpi-grid > * {
+  min-width: 0;
 }
 
 .pg-executive-toolbar {
@@ -260,9 +270,9 @@
 }
 
 .pg-loading-overlay {
-  position: fixed;
+  position: absolute;
   inset: 0;
-  z-index: 1200;
+  z-index: 20;
   display: grid;
   place-items: center;
   background: var(--surface-overlay);

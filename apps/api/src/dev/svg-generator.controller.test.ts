@@ -4,7 +4,7 @@ import type { NestExpressApplication } from '@nestjs/platform-express';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { AppModule } from '../app.module.js';
+import { AppDevModule } from '../app.dev.module.js';
 import { ApiExceptionFilter } from '../common/api-exception.filter.js';
 
 describe('SvgGeneratorController (NestJS)', () => {
@@ -12,7 +12,7 @@ describe('SvgGeneratorController (NestJS)', () => {
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [AppDevModule],
     }).compile();
 
     app = moduleRef.createNestApplication<NestExpressApplication>();

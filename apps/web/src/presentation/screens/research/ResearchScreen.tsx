@@ -25,9 +25,8 @@ export function ResearchScreen() {
     () => buildNameResolver(companyViewData.labels),
     [companyViewData.labels],
   );
-  const tickKey = viewData.simulation.tickNumber ?? 0;
   const jobsQuery = useScreenQuery(
-    `research:${tickKey}`,
+    'research',
     () => fetchResearchJobs().then((jobs) => mapResearchJobRowsViewData(jobs, labels.technology)),
     viewData.session.hasGame,
     { debounceMs: TICK_QUERY_DEBOUNCE_MS },

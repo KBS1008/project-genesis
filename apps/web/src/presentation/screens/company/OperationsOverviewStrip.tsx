@@ -1,7 +1,6 @@
 'use client';
 
 import { PGKpiCard } from '@/presentation/components/dashboard/PGKpiCard';
-import { PGDashboardGrid, PGDashboardGridItem } from '@/presentation/components/layout';
 import type { OperationsOverviewCardViewData } from '@/presentation/adapters/mappers/company-operations-view-mappers';
 
 /** PG-based overview strip for the company operations dashboard. */
@@ -14,7 +13,7 @@ export function OperationsOverviewStrip({
 }) {
   return (
     <section className="pg-operations-overview-strip" aria-label="Überblick">
-      <PGDashboardGrid>
+      <div className="pg-kpi-grid">
         {cards.map((card) => {
           const kpiCard = (
             <PGKpiCard label={card.label} value={card.value} hint={card.hint} variant="default" />
@@ -22,21 +21,24 @@ export function OperationsOverviewStrip({
 
           if (card.action === 'logistics') {
             return (
-              <PGDashboardGridItem key={card.id} span={4}>
-                <button type="button" className="pg-operations-kpi-button" onClick={onSelectLogistics}>
-                  {kpiCard}
-                </button>
-              </PGDashboardGridItem>
+              <button
+                key={card.id}
+                type="button"
+                className="pg-operations-kpi-button"
+                onClick={onSelectLogistics}
+              >
+                {kpiCard}
+              </button>
             );
           }
 
           return (
-            <PGDashboardGridItem key={card.id} span={4}>
+            <div key={card.id}>
               {kpiCard}
-            </PGDashboardGridItem>
+            </div>
           );
         })}
-      </PGDashboardGrid>
+      </div>
     </section>
   );
 }

@@ -1,7 +1,30 @@
 {
-  "extends": "./tsconfig.json",
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "rootDir": "../..",
+    "outDir": "dist",
+    "declaration": false,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "types": ["node"],
     "noEmit": false
   },
-  "exclude": ["node_modules", "dist", "../../src/**/*.test.ts", "src/**/*.test.ts"]
+  "include": [
+    "src/main.ts",
+    "src/api-bootstrap.ts",
+    "src/app.module.ts",
+    "src/app.controller.ts",
+    "src/game/**/*.ts",
+    "src/dashboard/**/*.ts",
+    "src/common/**/*.ts",
+    "src/config/project-paths.ts",
+    "../../src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "../../src/tools/**",
+    "../../src/**/*.test.ts",
+    "src/**/*.test.ts"
+  ]
 }

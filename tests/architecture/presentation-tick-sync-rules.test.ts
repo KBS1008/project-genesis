@@ -41,12 +41,12 @@ function extractUseScreenQueryKeys(contents: string): string[] {
   return keys;
 }
 
-function isTickSynchronizedQueryKey(queryKeyLiteral: string): boolean {
+function embedsTickInQueryKey(queryKeyLiteral: string): boolean {
   return queryKeyLiteral.includes('tickKey') || queryKeyLiteral.includes('${tickKey}');
 }
 
 describe('presentation tick sync rules', () => {
-  it('requires tickKey in every gameplay screen useScreenQuery identity', async () => {
+  it('keeps useScreenQuery identity stable and defers tick sync to invalidation', async () => {
     const files = await collectScreenFiles(screensRoot);
     const violations: string[] = [];
 
@@ -60,7 +60,7 @@ describe('presentation tick sync rules', () => {
       const queryKeys = extractUseScreenQueryKeys(contents);
 
       for (const queryKey of queryKeys) {
-        if (!isTickSynchronizedQueryKey(queryKey)) {
+        if (embedsTickInQueryKey(queryKey)) {
           violations.push(`${path.relative(projectRoot, filePath)} → ${queryKey}`);
         }
       }

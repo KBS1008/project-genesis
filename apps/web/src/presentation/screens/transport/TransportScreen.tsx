@@ -19,9 +19,8 @@ export function TransportScreen() {
   const { viewData, companyViewData, navigation, isBusy, selectEntity } = useGameWorkspace();
   const selectedOrderId =
     navigation.entitySelection.kind === 'transport' ? navigation.entitySelection.id : null;
-  const tickKey = viewData.simulation.tickNumber ?? 0;
   const ordersQuery = useScreenQuery(
-    `transport:${tickKey}`,
+    'transport',
     () => fetchTransportOrders().then(mapTransportJobRowsViewData),
     viewData.session.hasGame,
     { debounceMs: TICK_QUERY_DEBOUNCE_MS },

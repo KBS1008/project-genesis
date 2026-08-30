@@ -26,9 +26,8 @@ export function BuildingsScreen() {
     () => new Map(regions.map((region) => [region.id, region.name])),
     [regions],
   );
-  const tickKey = viewData.simulation.tickNumber ?? 0;
   const buildingsQuery = useScreenQuery(
-    `buildings:${tickKey}`,
+    'buildings',
     () =>
       fetchBuildingList().then((buildings) =>
         buildings.map((building) =>

@@ -55,9 +55,8 @@ export function ProductionScreen() {
       new Map(companyViewData.buildings.map((building) => [building.id, building.name] as const)),
     [companyViewData.buildings],
   );
-  const tickKey = viewData.simulation.tickNumber ?? 0;
   const jobsQuery = useScreenQuery(
-    `production:${tickKey}`,
+    'production',
     () => fetchProductionJobs(),
     viewData.session.hasGame,
     { debounceMs: TICK_QUERY_DEBOUNCE_MS },

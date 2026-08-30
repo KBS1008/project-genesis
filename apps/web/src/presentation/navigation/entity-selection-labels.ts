@@ -11,6 +11,7 @@ const ENTITY_KIND_LABELS: Record<Exclude<EntitySelection['kind'], 'none'>, strin
   research: 'Forschung',
   employee: 'Mitarbeiter',
   event: 'Ereignis',
+  warehouse: 'Lagerhaus',
 };
 
 /** Resolves a human-readable label for the global selection banner. */
@@ -53,5 +54,9 @@ export function formatEntitySelectionLabel(
     }
     case 'event':
       return `${kindLabel}: ${selection.id}`;
+    case 'warehouse': {
+      const warehouse = companyViewData.detail.warehouseStorage.get(selection.id);
+      return `${kindLabel}: ${warehouse?.title ?? selection.id}`;
+    }
   }
 }

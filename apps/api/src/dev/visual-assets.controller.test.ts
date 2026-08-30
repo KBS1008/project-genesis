@@ -5,7 +5,7 @@ import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createTestPng } from '../../../../tests/fixtures/visual-asset-manager/create-test-png.js';
-import { AppModule } from '../app.module.js';
+import { AppDevModule } from '../app.dev.module.js';
 import { ApiExceptionFilter } from '../common/api-exception.filter.js';
 
 describe('VisualAssetsController (NestJS)', () => {
@@ -13,7 +13,7 @@ describe('VisualAssetsController (NestJS)', () => {
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [AppDevModule],
     }).compile();
 
     app = moduleRef.createNestApplication<NestExpressApplication>();

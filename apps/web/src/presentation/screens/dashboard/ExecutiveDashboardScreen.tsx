@@ -86,8 +86,6 @@ export function ExecutiveDashboardScreen({
     [regions],
   );
 
-  const tickKey = viewData.simulation.tickNumber ?? 0;
-
   const loadBuildings = useCallback(
     () =>
       fetchBuildingList().then((buildings) =>
@@ -97,7 +95,7 @@ export function ExecutiveDashboardScreen({
   );
 
   const buildingsQuery = useScreenQuery(
-    `executive-dashboard-buildings:${tickKey}`,
+    'executive-dashboard-buildings',
     loadBuildings,
     viewData.session.hasGame,
     { debounceMs: TICK_QUERY_DEBOUNCE_MS },
