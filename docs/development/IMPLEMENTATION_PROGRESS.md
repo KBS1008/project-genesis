@@ -277,17 +277,19 @@ All **TD-M8-01 … TD-M8-06** resolved — see `docs/quality/M8_IMPLEMENTATION_R
 | Optimization pass            |    50 | Qualitative guardrails only; formal M12 validation **deferred** |
 | **Milestone average**        | **100** | Formal closure at Gate 4 |
 
-### M12 – Release ⚪ (0 %)
+### M12 – Release 🟡 (in progress)
 
 | Deliverable                               |     % | Next step                         |
 | ----------------------------------------- | ----: | --------------------------------- |
-| Release candidate / QA approval           |     0 | Web production build **PASS** (`pnpm build:web`) — RC packaging not started |
+| Release candidate / QA approval           |    50 | **RC declared** `v1.0.0-rc.1` @ `442665c` — QA baseline opened; full QA approval pending (M12.7) |
 | Final documentation                       |     0 | Partial                           |
 | Stable savegames / performance validation |     0 | Good baseline; M12 formal validation open |
 | **Release build readiness (prep slice)**  | **100** | Warehouse EntitySelection + compile fixes — `M12_RELEASE_BUILD_READINESS_STABILIZATION_REPORT.md` |
 | **M12.1 dual-runtime RC contract**      | **100** | Compiled API path + `RC_RUNTIME_CONTRACT.md` — `M12_1_DUAL_RUNTIME_RC_CONTRACT_API_BUILD_STABILIZATION_REPORT.md` |
 | **M12.2 first RC baseline reproducibility** | **100** | Baseline `ce08704` validated — `M12_2_FIRST_RC_BASELINE_REPRODUCIBILITY_VALIDATION_REPORT.md` |
-| **Milestone average**                     | **~42** | RC packaging / QA / formal validation remain open |
+| **M12.3 release gate readiness audit**  | **100** | Gate matrix + RC path — `M12_3_RELEASE_GATE_READINESS_AUDIT.md` |
+| **M12.4 first RC validation & declaration** | **100** | Tag `v1.0.0-rc.1` @ `442665c` — `M12_4_FIRST_RELEASE_CANDIDATE_VALIDATION_DECLARATION_REPORT.md` |
+| **Milestone average**                     | **~56** | RC declared; V1 gates (QA, docs, savegame cert, performance, executive review) remain |
 
 ## Maintenance
 
