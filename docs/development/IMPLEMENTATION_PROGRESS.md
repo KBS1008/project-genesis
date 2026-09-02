@@ -281,7 +281,7 @@ All **TD-M8-01 … TD-M8-06** resolved — see `docs/quality/M8_IMPLEMENTATION_R
 
 | Deliverable                               |     % | Next step                         |
 | ----------------------------------------- | ----: | --------------------------------- |
-| Release candidate / QA approval           |    50 | **RC declared** `v1.0.0-rc.1` @ `442665c` — QA baseline opened; full QA approval pending (M12.7) |
+| Release candidate / QA approval           |   100 | **RC declared + QA approved** `v1.0.0-rc.1` @ `442665c` — `M12_7_FORMAL_QA_APPROVAL_REPORT.md` |
 | Final documentation                       |     0 | Partial                           |
 | Stable savegames / performance validation |   100 | **Savegames + performance certified** — `M12_5_*`, `M12_6_V1_PERFORMANCE_CONTRACT_VALIDATION_CERTIFICATION_REPORT.md` |
 | **Release build readiness (prep slice)**  | **100** | Warehouse EntitySelection + compile fixes — `M12_RELEASE_BUILD_READINESS_STABILIZATION_REPORT.md` |
@@ -291,7 +291,8 @@ All **TD-M8-01 … TD-M8-06** resolved — see `docs/quality/M8_IMPLEMENTATION_R
 | **M12.4 first RC validation & declaration** | **100** | Tag `v1.0.0-rc.1` @ `442665c` — `M12_4_FIRST_RELEASE_CANDIDATE_VALIDATION_DECLARATION_REPORT.md` |
 | **M12.5 savegame compatibility certification** | **100** | OPTION A PASS — `M12_5_V1_SAVEGAME_COMPATIBILITY_STABILITY_CERTIFICATION_REPORT.md` |
 | **M12.6 performance contract validation** | **100** | OPTION A PASS — `M12_6_V1_PERFORMANCE_CONTRACT_VALIDATION_CERTIFICATION_REPORT.md` |
-| **Milestone average**                     | **~75** | Savegames + performance closed; QA approval, final docs, executive review remain |
+| **M12.7 formal QA approval** | **100** | OPTION A PASS — `M12_7_FORMAL_QA_APPROVAL_REPORT.md` |
+| **Milestone average**                     | **~83** | QA approved; final documentation + executive review remain |
 
 ## Maintenance
 
