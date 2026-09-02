@@ -116,7 +116,7 @@ Opens at `http://127.0.0.1:3000`. Gameplay entry: `http://127.0.0.1:3000/game`.
 | `WEB_ORIGIN` | API CORS / WS origin (`main.ts`, gateway) | Runtime | `http://127.0.0.1:3000` | No |
 | `NODE_ENV` | API root module selection; dev route guard | Runtime | unset (development) | **Yes** — set to `production` for compiled RC API |
 
-No `.env.example` exists yet. Set variables explicitly in shell when non-default values are needed.
+No `.env.example` is required for local RC — defaults above are sufficient. See `docs/releases/V1_0_KNOWN_ISSUES.md` for scope notes.
 
 **Rebuild web** if you change `API_ORIGIN` or `NEXT_PUBLIC_API_ORIGIN` — both are resolved at build time.
 
@@ -204,6 +204,9 @@ pnpm --filter @project-genesis/api build
 
 # Related Documents
 
+- `README.md` — operator quick start
+- `docs/releases/V1_0_RELEASE_NOTES.md` — V1 release notes (draft)
+- `docs/releases/V1_0_KNOWN_ISSUES.md` — known non-blocking issues
 - `docs/architecture/reviews/M12_RELEASE_PREPARATION_ENTRY_AUDIT.md`
 - `docs/project-management/MILESTONE_PLAN.md`
 - `docs/project-management/QUALITY_GATES.md`

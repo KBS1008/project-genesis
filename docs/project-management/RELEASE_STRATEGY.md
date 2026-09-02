@@ -83,3 +83,22 @@ Release
 
 Post-Release Review
 ```
+
+---
+
+# Current Release Status (2026-09-02)
+
+| Item | Status |
+|------|--------|
+| Formal RC | `v1.0.0-rc.1` @ `442665c` |
+| Savegames / Performance / QA | Certified PASS (M12.5–M12.7) |
+| Final documentation | M12.8 |
+| Version 1.0 tag | **Not yet applied** — M12.9 Executive Review |
+| Package metadata | `0.1.0` until M12.9 |
+
+Operator documentation:
+
+- [`README.md`](../../README.md)
+- [`docs/development/RC_RUNTIME_CONTRACT.md`](../development/RC_RUNTIME_CONTRACT.md)
+- [`docs/releases/V1_0_RELEASE_NOTES.md`](../releases/V1_0_RELEASE_NOTES.md)
+- [`docs/releases/V1_0_KNOWN_ISSUES.md`](../releases/V1_0_KNOWN_ISSUES.md)

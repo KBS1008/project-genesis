@@ -87,8 +87,8 @@ Update deliverable rows when a step ships; set milestone % to the **average of i
 | M9  | User Interface         | ✅ Completed   |      100 |     8,3 % |        8,3 % |
 | M10 | Content Expansion      | ✅ Completed   |      100 |     8,3 % |        8,3 % |
 | M11 | Visual Production & UX | ✅ Completed   |      100 |     8,3 % |        8,3 % |
-| M12 | Release                | ⚪ Planned     |        0 |     8,3 % |          0 % |
-|     | **Total**              |                | **92 %** | **100 %** |     **92 %** |
+| M12 | Release                | 🟡 In Progress |       92 |     8,3 % |        7,6 % |
+|     | **Total**              |                | **~99 %** | **100 %** |    **~99 %** |
 
 \*M9 is officially planned; dashboard, charts, tutorial and WebSocket from M4/M5 count as pre-work in the deliverable matrix below.
 
@@ -282,7 +282,7 @@ All **TD-M8-01 … TD-M8-06** resolved — see `docs/quality/M8_IMPLEMENTATION_R
 | Deliverable                               |     % | Next step                         |
 | ----------------------------------------- | ----: | --------------------------------- |
 | Release candidate / QA approval           |   100 | **RC declared + QA approved** `v1.0.0-rc.1` @ `442665c` — `M12_7_FORMAL_QA_APPROVAL_REPORT.md` |
-| Final documentation                       |     0 | Partial                           |
+| Final documentation                       |   100 | **CLOSED / PASS** — `M12_8_FINAL_RELEASE_DOCUMENTATION_REPORT.md` |
 | Stable savegames / performance validation |   100 | **Savegames + performance certified** — `M12_5_*`, `M12_6_V1_PERFORMANCE_CONTRACT_VALIDATION_CERTIFICATION_REPORT.md` |
 | **Release build readiness (prep slice)**  | **100** | Warehouse EntitySelection + compile fixes — `M12_RELEASE_BUILD_READINESS_STABILIZATION_REPORT.md` |
 | **M12.1 dual-runtime RC contract**      | **100** | Compiled API path + `RC_RUNTIME_CONTRACT.md` — `M12_1_DUAL_RUNTIME_RC_CONTRACT_API_BUILD_STABILIZATION_REPORT.md` |
@@ -292,7 +292,8 @@ All **TD-M8-01 … TD-M8-06** resolved — see `docs/quality/M8_IMPLEMENTATION_R
 | **M12.5 savegame compatibility certification** | **100** | OPTION A PASS — `M12_5_V1_SAVEGAME_COMPATIBILITY_STABILITY_CERTIFICATION_REPORT.md` |
 | **M12.6 performance contract validation** | **100** | OPTION A PASS — `M12_6_V1_PERFORMANCE_CONTRACT_VALIDATION_CERTIFICATION_REPORT.md` |
 | **M12.7 formal QA approval** | **100** | OPTION A PASS — `M12_7_FORMAL_QA_APPROVAL_REPORT.md` |
-| **Milestone average**                     | **~83** | QA approved; final documentation + executive review remain |
+| **M12.8 final release documentation** | **100** | OPTION A PASS — `M12_8_FINAL_RELEASE_DOCUMENTATION_REPORT.md` |
+| **Milestone average**                     | **~92** | Final documentation closed; executive review remains |
 
 ## Maintenance
 
@@ -1202,8 +1203,8 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Planned Next Steps
 
-1. **M12 Release Preparation Entry Audit** — formal M12 deliverable/exit-criteria inventory before RC work
-2. Typecheck stabilization (POLISH-05 / `GameSession` safe type fix) — optional M12 prep slice
+1. **M12.9 — Executive Review & V1.0 Release Gate** — version metadata, final tag, milestone closure
+2. Typecheck stabilization (POLISH-05 / `GameSession` safe type fix) — optional post-V1 debt
 3. Session/auth model for multi-user API access
 
 ---
