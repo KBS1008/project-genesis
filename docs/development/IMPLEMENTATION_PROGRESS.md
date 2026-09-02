@@ -283,14 +283,15 @@ All **TD-M8-01 … TD-M8-06** resolved — see `docs/quality/M8_IMPLEMENTATION_R
 | ----------------------------------------- | ----: | --------------------------------- |
 | Release candidate / QA approval           |    50 | **RC declared** `v1.0.0-rc.1` @ `442665c` — QA baseline opened; full QA approval pending (M12.7) |
 | Final documentation                       |     0 | Partial                           |
-| Stable savegames / performance validation |    50 | **Savegames certified** — `M12_5_V1_SAVEGAME_COMPATIBILITY_STABILITY_CERTIFICATION_REPORT.md`; performance validation open (M12.6) |
+| Stable savegames / performance validation |   100 | **Savegames + performance certified** — `M12_5_*`, `M12_6_V1_PERFORMANCE_CONTRACT_VALIDATION_CERTIFICATION_REPORT.md` |
 | **Release build readiness (prep slice)**  | **100** | Warehouse EntitySelection + compile fixes — `M12_RELEASE_BUILD_READINESS_STABILIZATION_REPORT.md` |
 | **M12.1 dual-runtime RC contract**      | **100** | Compiled API path + `RC_RUNTIME_CONTRACT.md` — `M12_1_DUAL_RUNTIME_RC_CONTRACT_API_BUILD_STABILIZATION_REPORT.md` |
 | **M12.2 first RC baseline reproducibility** | **100** | Baseline `ce08704` validated — `M12_2_FIRST_RC_BASELINE_REPRODUCIBILITY_VALIDATION_REPORT.md` |
 | **M12.3 release gate readiness audit**  | **100** | Gate matrix + RC path — `M12_3_RELEASE_GATE_READINESS_AUDIT.md` |
 | **M12.4 first RC validation & declaration** | **100** | Tag `v1.0.0-rc.1` @ `442665c` — `M12_4_FIRST_RELEASE_CANDIDATE_VALIDATION_DECLARATION_REPORT.md` |
 | **M12.5 savegame compatibility certification** | **100** | OPTION A PASS — `M12_5_V1_SAVEGAME_COMPATIBILITY_STABILITY_CERTIFICATION_REPORT.md` |
-| **Milestone average**                     | **~63** | Stable Savegames closed; performance, QA, docs, executive review remain |
+| **M12.6 performance contract validation** | **100** | OPTION A PASS — `M12_6_V1_PERFORMANCE_CONTRACT_VALIDATION_CERTIFICATION_REPORT.md` |
+| **Milestone average**                     | **~75** | Savegames + performance closed; QA approval, final docs, executive review remain |
 
 ## Maintenance
 
