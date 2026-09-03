@@ -87,8 +87,8 @@ Update deliverable rows when a step ships; set milestone % to the **average of i
 | M9  | User Interface         | ✅ Completed   |      100 |     8,3 % |        8,3 % |
 | M10 | Content Expansion      | ✅ Completed   |      100 |     8,3 % |        8,3 % |
 | M11 | Visual Production & UX | ✅ Completed   |      100 |     8,3 % |        8,3 % |
-| M12 | Release                | 🟡 In Progress |       92 |     8,3 % |        7,6 % |
-|     | **Total**              |                | **~99 %** | **100 %** |    **~99 %** |
+| M12 | Release                | ✅ Completed   |      100 |     8,3 % |        8,3 % |
+|     | **Total**              |                | **100 %** | **100 %** |    **100 %** |
 
 \*M9 is officially planned; dashboard, charts, tutorial and WebSocket from M4/M5 count as pre-work in the deliverable matrix below.
 
@@ -277,23 +277,18 @@ All **TD-M8-01 … TD-M8-06** resolved — see `docs/quality/M8_IMPLEMENTATION_R
 | Optimization pass            |    50 | Qualitative guardrails only; formal M12 validation **deferred** |
 | **Milestone average**        | **100** | Formal closure at Gate 4 |
 
-### M12 – Release 🟡 (in progress)
+### M12 – Release ✅ (100 %)
 
-| Deliverable                               |     % | Next step                         |
-| ----------------------------------------- | ----: | --------------------------------- |
-| Release candidate / QA approval           |   100 | **RC declared + QA approved** `v1.0.0-rc.1` @ `442665c` — `M12_7_FORMAL_QA_APPROVAL_REPORT.md` |
-| Final documentation                       |   100 | **CLOSED / PASS** — `M12_8_FINAL_RELEASE_DOCUMENTATION_REPORT.md` |
-| Stable savegames / performance validation |   100 | **Savegames + performance certified** — `M12_5_*`, `M12_6_V1_PERFORMANCE_CONTRACT_VALIDATION_CERTIFICATION_REPORT.md` |
-| **Release build readiness (prep slice)**  | **100** | Warehouse EntitySelection + compile fixes — `M12_RELEASE_BUILD_READINESS_STABILIZATION_REPORT.md` |
-| **M12.1 dual-runtime RC contract**      | **100** | Compiled API path + `RC_RUNTIME_CONTRACT.md` — `M12_1_DUAL_RUNTIME_RC_CONTRACT_API_BUILD_STABILIZATION_REPORT.md` |
-| **M12.2 first RC baseline reproducibility** | **100** | Baseline `ce08704` validated — `M12_2_FIRST_RC_BASELINE_REPRODUCIBILITY_VALIDATION_REPORT.md` |
-| **M12.3 release gate readiness audit**  | **100** | Gate matrix + RC path — `M12_3_RELEASE_GATE_READINESS_AUDIT.md` |
-| **M12.4 first RC validation & declaration** | **100** | Tag `v1.0.0-rc.1` @ `442665c` — `M12_4_FIRST_RELEASE_CANDIDATE_VALIDATION_DECLARATION_REPORT.md` |
-| **M12.5 savegame compatibility certification** | **100** | OPTION A PASS — `M12_5_V1_SAVEGAME_COMPATIBILITY_STABILITY_CERTIFICATION_REPORT.md` |
-| **M12.6 performance contract validation** | **100** | OPTION A PASS — `M12_6_V1_PERFORMANCE_CONTRACT_VALIDATION_CERTIFICATION_REPORT.md` |
-| **M12.7 formal QA approval** | **100** | OPTION A PASS — `M12_7_FORMAL_QA_APPROVAL_REPORT.md` |
-| **M12.8 final release documentation** | **100** | OPTION A PASS — `M12_8_FINAL_RELEASE_DOCUMENTATION_REPORT.md` |
-| **Milestone average**                     | **~92** | Final documentation closed; executive review remains |
+| Deliverable                               |     % | Evidence                         |
+| ----------------------------------------- | ----: | -------------------------------- |
+| Release candidate / QA approval           |   100 | `v1.0.0-rc.1` @ `442665c` — `M12_7_FORMAL_QA_APPROVAL_REPORT.md` |
+| Final documentation                       |   100 | `M12_8_FINAL_RELEASE_DOCUMENTATION_REPORT.md` |
+| Stable savegames / performance validation |   100 | `M12_5_*`, `M12_6_*` |
+| **M12.9 executive review & V1.0 release** | **100** | Tag `v1.0.0` @ `c4bb643` — `M12_9_EXECUTIVE_REVIEW_V1_RELEASE_GATE_REPORT.md` |
+| **Milestone average**                     | **100** | **M12 CLOSED / PASS — V1.0 RELEASED** |
+
+**V1.0 release:** `v1.0.0` → `c4bb643df6fda7792906f34fbbb20ff07e9bfeef` (2026-09-03)  
+**Runtime certified RC:** `442665cd6437bdebff88fd1540cedc689238c240`
 
 ## Maintenance
 
@@ -1203,8 +1198,8 @@ Content loaders produce immutable definitions. Domain aggregates represent playe
 
 # Planned Next Steps
 
-1. **M12.9 — Executive Review & V1.0 Release Gate** — version metadata, final tag, milestone closure
-2. Typecheck stabilization (POLISH-05 / `GameSession` safe type fix) — optional post-V1 debt
+1. Post-V1 maintenance per `docs/releases/V1_0_KNOWN_ISSUES.md` backlog
+2. Typecheck stabilization (POLISH-05) — optional post-V1 debt
 3. Session/auth model for multi-user API access
 
 ---
