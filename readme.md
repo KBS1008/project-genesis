@@ -16,9 +16,10 @@ The project follows a **Documentation First** approach: architecture, gameplay d
 | **Savegame certification** | PASS (M12.5) |
 | **Performance validation** | PASS — qualitative contract (M12.6) |
 | **Formal QA approval** | PASS (M12.7) |
-| **Version 1.0** | **Not yet released** — pending Executive Review (M12.9) |
+| **Version 1.0** | **Approved for release** — Executive Review M12.9 |
+| **Git release tag** | `v1.0.0` on the final release commit |
 
-Package metadata remains `0.1.0` until the final release gate. Do not treat pre-release version numbers as the shipped product version.
+Product release version is git tag `v1.0.0`. Internal package metadata remains `0.1.0`. Runtime gameplay remains the QA-certified RC at `442665c`.
 
 ---
 

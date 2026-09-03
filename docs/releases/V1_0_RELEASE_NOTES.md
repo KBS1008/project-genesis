@@ -1,8 +1,9 @@
 # Project Genesis — V1.0 Release Notes (Draft)
 
-**Status:** Release candidate approved — **Version 1.0 not yet released**  
+**Status:** **Approved for V1.0 release** (Executive Review M12.9)  
 **Release candidate:** `v1.0.0-rc.1` @ `442665cd6437bdebff88fd1540cedc689238c240`  
-**Last updated:** 2026-09-02 (M12.8 Final Release Documentation)
+**Runtime certified commit:** `442665cd6437bdebff88fd1540cedc689238c240`  
+**Last updated:** 2026-09-03 (M12.9 Executive Review)
 
 ---
 
@@ -77,8 +78,9 @@ See [`V1_0_KNOWN_ISSUES.md`](V1_0_KNOWN_ISSUES.md).
 ## Release Status
 
 ```text
-V1.0 — NOT YET RELEASED
-Next gate: M12.9 — Executive Review & V1.0 Release Gate
+V1.0 — APPROVED FOR RELEASE
+Executive Review: M12.9 — APPROVED
+Git tag v1.0.0 identifies the final V1.0 release commit.
 ```
 
-Package version metadata remains `0.1.0` until M12.9.
+Product release version is the git tag `v1.0.0`. Internal package metadata remains `0.1.0`. Runtime gameplay source remains the QA-certified RC at `442665c`.
