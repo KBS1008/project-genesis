@@ -396,7 +396,9 @@ docs/
 
 # Sprint 12 — Icons
 
-☐ ICON-001_Resources.svg
+☑ ICON-001_Resources.svg — **family produced** (9 resource variants in `docs/design/icons/ICON-001_*.svg`, post-V1 2026-09-04)
+
+Resource variants: Wood, Planks, Stone, Iron_Ore, Steel, Machine_Parts, Advanced_Electronics, Industrial_Machinery, Consumer_Goods
 
 ☐ ICON-002_Buildings.svg
 

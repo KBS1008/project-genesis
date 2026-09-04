@@ -129,3 +129,111 @@ Entries are appended automatically — do not edit manually except for recovery.
 - Destination: `docs/design/charts/CH-010_Charts.svg`
 - Revision: 0
 - SHA-256: `ae888b4d874d83b8502ee124d06f617c08af2a34167a02d6cdb28cdba6192e7a`
+
+## 2026-07-30 — MM-004
+
+- Asset: `MM-004_Settings_Rev1.png`
+- Operation: Revised
+- Status: Approved
+- Destination: `docs/design/mockups/main-menu/MM-004_Settings_Rev1.png`
+- Revision: 1
+- SHA-256: `34724c92f17d84006ee5798cff623396ad46eaf3b5ea4ed4ce7a5b75479fd6d4`
+
+## 2026-07-30 — MM-004
+
+- Asset: `MM-004_Settings.png`
+- Operation: Added
+- Status: Approved
+- Destination: `docs/design/mockups/main-menu/MM-004_Settings.png`
+- Revision: 0
+- SHA-256: `34724c92f17d84006ee5798cff623396ad46eaf3b5ea4ed4ce7a5b75479fd6d4`
+
+## 2026-07-30 — MM-005
+
+- Asset: `MM-005_Credits.png`
+- Operation: Added
+- Status: Approved
+- Destination: `docs/design/mockups/main-menu/MM-005_Credits.png`
+- Revision: 0
+- SHA-256: `877ce852db0954f0f843fdc3d709ba773add49ee97404794fcd4c85dca2c0223`
+
+## 2026-07-30 — DB-006
+
+- Asset: `DB-006_Production_Widget.png`
+- Operation: Added
+- Status: Approved
+- Destination: `docs/design/mockups/dashboard/DB-006_Production_Widget.png`
+- Revision: 0
+- SHA-256: `ea370a279baa6d9b8bd9c240312d1b599138c037a754c5a500a15412c0cade3c`
+
+## 2026-07-30 — DB-007
+
+- Asset: `DB-007_Research_Widget.png`
+- Operation: Added
+- Status: Approved
+- Destination: `docs/design/mockups/dashboard/DB-007_Research_Widget.png`
+- Revision: 0
+- SHA-256: `a883cec22b6a6959864a068041302f2407d543660bd7ad5b662435591c0f3ab1`
+
+## 2026-07-30 — DB-008
+
+- Asset: `DB-008_Transport_Widget.png`
+- Operation: Added
+- Status: In Production
+- Destination: `docs/design/mockups/dashboard/DB-008_Transport_Widget.png`
+- Revision: 0
+- SHA-256: `bbe77e42c4420b58312e49c95b8c1888bc3ebbcce327f7c8591831c7cc6eaaa8`
+
+## 2026-07-30 — DB-009
+
+- Asset: `DB-009_Company_Overview.png`
+- Operation: Added
+- Status: In Production
+- Destination: `docs/design/mockups/dashboard/DB-009_Company_Overview.png`
+- Revision: 0
+- SHA-256: `b3b5ea2ef0a7b6df614e7554637e0411d6c1a88cc87cf69c5398f1400a3ade77`
+
+## 2026-07-30 — DB-010
+
+- Asset: `DB-010_Dashboard.png`
+- Operation: Added
+- Status: Approved
+- Destination: `docs/design/mockups/dashboard/DB-010_Dashboard.png`
+- Revision: 0
+- SHA-256: `2fdf3b1d192c4d0015fb080cff7485c91b95dc08ebf0ab80267a1e057526a184`
+
+## 2026-07-30 — DB-005
+
+- Asset: `DB-005_Finance_Widget.png`
+- Operation: Added
+- Status: Approved
+- Destination: `docs/design/mockups/dashboard/DB-005_Finance_Widget.png`
+- Revision: 0
+- SHA-256: `39b7dbfd87973883f12708215360af0ab642e98607fd42ab7adbeaf6064eec3f`
+
+## 2026-07-30 — DB-008
+
+- Asset: `DB-008_Transport_Widget_Rev1.png`
+- Operation: Revised
+- Status: Approved
+- Destination: `docs/design/mockups/dashboard/DB-008_Transport_Widget_Rev1.png`
+- Revision: 1
+- SHA-256: `bbe77e42c4420b58312e49c95b8c1888bc3ebbcce327f7c8591831c7cc6eaaa8`
+
+## 2026-07-30 — DB-009
+
+- Asset: `DB-009_Company_Overview_Rev1.png`
+- Operation: Revised
+- Status: Approved
+- Destination: `docs/design/mockups/dashboard/DB-009_Company_Overview_Rev1.png`
+- Revision: 1
+- SHA-256: `b3b5ea2ef0a7b6df614e7554637e0411d6c1a88cc87cf69c5398f1400a3ade77`
+
+## 2026-09-04 — ICON-001 (manual post-V1 production)
+
+- Family: ICON-001 Resource Icons
+- Operation: Manual SVG production (9 variants)
+- Status: Approved for review
+- Destination: `docs/design/icons/ICON-001_*.svg`
+- Note: Produced outside VAM import path; runtime integration pending
+- Variants: Wood, Planks, Stone, Iron_Ore, Steel, Machine_Parts, Advanced_Electronics, Industrial_Machinery, Consumer_Goods
