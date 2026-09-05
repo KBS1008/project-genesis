@@ -233,7 +233,40 @@ Entries are appended automatically — do not edit manually except for recovery.
 
 - Family: ICON-001 Resource Icons
 - Operation: Manual SVG production (9 variants)
-- Status: Approved for review
+- Status: **V1 draft rejected for visual quality** (superseded by V2 rework)
 - Destination: `docs/design/icons/ICON-001_*.svg`
 - Note: Produced outside VAM import path; runtime integration pending
 - Variants: Wood, Planks, Stone, Iron_Ore, Steel, Machine_Parts, Advanced_Electronics, Industrial_Machinery, Consumer_Goods
+
+## 2026-09-05 — ICON-001 V2 (approved-concept visual rework)
+
+- Family: ICON-001 Resource Icons
+- Operation: Visual rework — replace V1 artwork under established filenames
+- Status: **Superseded** — SVG V2 attempt abandoned in favour of final approved PNG artwork
+- Reference: Approved concept sheet (`docs/design/icons/nicht verwenden/Vorschlag_Icons.png`)
+- V1 classification: REJECTED_VISUAL_DRAFT (thin DashboardIcon-style outline icons)
+- V2 SVG classification: REJECTED_VISUAL_DRAFT (concept translation insufficient vs approved raster art)
+- Destination: `docs/design/icons/nicht verwenden/ICON-001_*.svg` (archived)
+- Runtime integration: PENDING
+
+## 2026-09-05 — ICON-001 Final PNG (approved artwork ingestion)
+
+- Family: ICON-001 Resource Icons
+- Operation: Final approved PNG ingestion and technical certification
+- Status: **Approved — source assets certified**
+- Medium: PNG (1254×1254 except wood 1366×1152)
+- Visual approval: Complete (produced and approved outside Cursor)
+- Destination: `docs/design/icons/ICON-001_*.png`
+- Variants: Wood, Planks, Stone, Iron_Ore, Steel, Machine_Parts, Advanced_Electronics, Industrial_Machinery, Consumer_Goods
+- Previous SVG attempts: Superseded — archived under `docs/design/icons/nicht verwenden/`
+- Runtime integration: PENDING
+- Runtime derivatives: NOT generated in this slice (recommended in integration slice; sizes TBD from UI audit — see runtime integration readiness audit)
+
+## 2026-09-05 — ICON-001 Wood canvas normalization
+
+- Asset: `ICON-001_Wood.png`
+- Operation: Technical canvas normalization (no artwork redesign)
+- Change: 1366×1152 RGB → 1254×1254 RGBA transparent
+- Method: Edge-connected neutral-background removal, scale-to-fit, centered on transparent canvas
+- SHA-256: `73ae60f5391c0ca6e70528d8b4cfdb95e8b28369695c7b654e8971dd661b4b7c`
+- Reason: Align wood with family production contract before WebP derivative generation
