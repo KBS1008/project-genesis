@@ -286,5 +286,5 @@ Entries are appended automatically — do not edit manually except for recovery.
 - Family: ICON-001 Resource Icons
 - Operation: Second runtime integration — warehouse detail resource rows only (`mapOperationsWarehouseBlocks` detail rows)
 - Registry / derivatives / ResourceIcon: unchanged reuse
-- Consumers integrated: `PGInventoryWidget` warehouse detail rows (pending external visual gate)
+- Consumers integrated: `PGInventoryWidget` warehouse detail rows — **COMPLETE / PASS**
 - Consumers deferred: market widget, market screen, production, transport, others

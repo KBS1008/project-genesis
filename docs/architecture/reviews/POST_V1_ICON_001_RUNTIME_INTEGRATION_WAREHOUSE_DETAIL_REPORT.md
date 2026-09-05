@@ -15,7 +15,9 @@ Twenty-three targeted tests pass. Asset infrastructure no-delta gate passes (18 
 
 A later populated-warehouse review proved ICON-001 artwork and consumer integration, but left **accidental header ellipsis** (`Re…` / `Ve…`) and remaining `Eisen…` truncation. That is a presentation-layout fail, not an icon fail. See **§ Final Narrow-Table Layout Delta**.
 
-**Decision:** OPTION A — FINAL VISUAL DELTA PASS / EXTERNAL GATE PENDING
+External user + ChatGPT visual review subsequently passed on the final narrow-table screenshot (`POST_V1_ICON_001_WAREHOUSE_DETAIL_NARROW_TABLE_RUNTIME.png`), including populated Warehouse Detail (Bretter, 0 / 5) and final `Ressource | Res. | Verf.` headers.
+
+**Decision:** OPTION A — WAREHOUSE DETAIL CLOSED / PASS
 
 ---
 
@@ -25,7 +27,7 @@ A later populated-warehouse review proved ICON-001 artwork and consumer integrat
 |------|-------|
 | Branch | `master` |
 | Starting HEAD | `8a906070fc1509f17fd54f6d9252a4679c93e7e5` |
-| Current HEAD | `8a906070fc1509f17fd54f6d9252a4679c93e7e5` (uncommitted) |
+| Closeout HEAD | `62f99baecbf6117aaf9c698f41e21dffee8f19c2` |
 | Site Inventory commit | `62fc61989c746445f77416df10a11e71fdb25b68` |
 | Readiness audit | `POST_V1_ICON_001_NEXT_CONSUMER_READINESS_AUDIT.md` (OPTION A) |
 
@@ -355,7 +357,46 @@ Operatives Dashboard · `PGInventoryWidget`: Site Inventory (left) and populated
 
 ---
 
-## R. Layout / Truncation Observation (superseded by §Y)
+---
+
+## R. External Visual Acceptance Record
+
+**Gate:** PASS (user + ChatGPT review, 2026-09-05)
+
+**Evidence:** `docs/architecture/reviews/evidence/POST_V1_ICON_001_WAREHOUSE_DETAIL_NARROW_TABLE_RUNTIME.png`
+
+### Site Inventory
+
+| Observation | Result |
+|-------------|--------|
+| Headers `Ressource / Res. / Verf.` deliberate and readable | ✓ |
+| Eisenerz readable | ✓ |
+| Stein readable | ✓ |
+| Holz readable | ✓ |
+| ICON-001 icons clean | ✓ |
+| Numeric values readable | ✓ |
+
+### Warehouse Detail
+
+| Observation | Result |
+|-------------|--------|
+| Populated warehouse proven | ✓ |
+| Bretter readable | ✓ |
+| Correct Bretter ICON-001 artwork | ✓ |
+| Icon size appropriate | ✓ |
+| Transparency clean | ✓ |
+| Vertical alignment clean | ✓ |
+| Reserved 0 readable | ✓ |
+| Available 5 readable | ✓ |
+| No clipping | ✓ |
+| No new horizontal scrolling | ✓ |
+
+**EXTERNAL VISUAL GATE = PASS**  
+**WAREHOUSE DETAIL = CLOSED / PASS**
+
+---
+
+## R2. Layout / Truncation Observation (superseded by §Y)
 
 Original integration noted aggressive truncation — **addressed** by §Y Visual Layout Delta for Site Inventory. Warehouse detail label readability uses the same scoped CSS when detail rows are populated. Header ellipsis (`Re…` / `Ve…`) and remaining `Eisen…` truncation **remained after §Y** and are addressed by **§ Final Narrow-Table Layout Delta**.
 
@@ -425,11 +466,11 @@ Shows `PGInventoryWidget` grid: Site Inventory with ICON-001 icons (left) + Lage
 
 | Document | Update |
 |----------|--------|
-| `VISUAL_ASSET_CATALOG.md` | Warehouse detail consumer added; pending external visual gate noted |
+| `VISUAL_ASSET_CATALOG.md` | Warehouse detail consumer integrated; external visual gate passed |
 | `VISUAL_ASSET_CHANGELOG.md` | Warehouse detail integration entry |
 | `VISUAL_PRODUCTION_BACKLOG.md` | Site inventory + warehouse detail; market deferred |
 
-Site Inventory remains COMPLETE / PASS. Warehouse: IMPLEMENTED / PENDING EXTERNAL VISUAL GATE.
+Site Inventory remains COMPLETE / PASS. Warehouse Detail: **COMPLETE / PASS**.
 
 ---
 
@@ -471,19 +512,20 @@ Site Inventory (closed), Market Widget, MarketScreen, Production, Transport, Con
 
 ## V. Remaining Issues
 
-1. **External visual gate:** Final screenshot with populated Bretter warehouse row is now captured (§ Final Narrow-Table Layout Delta). User + ChatGPT still perform the screenshot gate.
-2. **Header abbreviations:** Superseded by the final narrow-table delta. Compact labels `Res.` / `Verf.` replace accidental `Re…` / `Ve…`. Warehouse **summary** headers (`Lagerhaus` / `Einheiten`) may still ellipsis at this width — **out of scope**.
+None blocking. Warehouse Detail slice is closed.
+
+**Out of scope (non-blocking):** Warehouse **summary** headers (`Lagerhaus` / `Zeilen` / `Einheiten`) may still ellipsis at very narrow widths. This is not part of the ICON-001 resource-table contract.
 
 ---
 
 ## W. Recommended Next Step
 
-After user/ChatGPT visual gate on populated warehouse detail: run Warehouse Detail closeout commit (separate prompt). Do not start Market Widget until Warehouse is externally approved.
+Warehouse Detail closeout complete. Do not start Market Widget ICON-001 integration until explicitly authorized.
 
 ---
 
 ## X. Final Decision
 
-**OPTION A — FINAL VISUAL DELTA PASS / EXTERNAL GATE PENDING**
+**OPTION A — WAREHOUSE DETAIL CLOSED / PASS**
 
-ICON-001 artwork and warehouse consumer integration remain closed. The remaining table-layout fail is addressed by intentional compact headers and resource-first column sizing. Automated tests and `pnpm build:web` pass. ICON-001 assets have no sync delta. Final runtime screenshot includes Site Inventory and populated Warehouse Detail. **Do not claim external visual approval** — User + ChatGPT perform that gate.
+ICON-001 artwork and warehouse consumer integration closed. Narrow-table contract (`Ressource | Res. | Verf.`) externally approved. Automated tests and `pnpm build:web` pass. ICON-001 assets byte-stable. Final runtime screenshot (`POST_V1_ICON_001_WAREHOUSE_DETAIL_NARROW_TABLE_RUNTIME.png`) shows Site Inventory and populated Warehouse Detail (Bretter, 0 / 5). Closeout commit: `62f99ba`.

@@ -26,7 +26,7 @@ Family ID: **ICON-001** (resource variants).
 
 **Visual status:** Final approved PNG artwork certified. Runtime 48×48 PNG/WebP derivatives generated.
 
-**Runtime integration:** Site inventory + warehouse detail rows (`PGInventoryWidget`) — consumers 1–2 (2026-09-05). Warehouse detail pending external visual gate. Market deferred.
+**Runtime integration:** Site inventory + warehouse detail rows (`PGInventoryWidget`) — consumers 1–2 (2026-09-05). Warehouse detail **COMPLETE / PASS**. Market deferred.
 
 | Resource ID | Filename | Path | Status |
 |-------------|----------|------|--------|
