@@ -135,7 +135,7 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
           buildingLabel: 'Sägewerk Nord',
           capacityLabel: '10/100',
           usedLabel: '10',
-          items: [{ resourceLabel: 'wood', quantity: 10, reserved: 0, available: 10 }],
+          items: [{ resourceId: 'wood', resourceLabel: 'wood', quantity: 10, reserved: 0, available: 10 }],
         },
       ],
       recipeCatalog: [

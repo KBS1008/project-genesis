@@ -804,6 +804,7 @@ export function buildCompanyDashboardViewData(
   const inventoryItems: readonly InventoryItemRowViewData[] = Object.freeze(
     (dashboard.inventory?.items ?? []).map((item) =>
       Object.freeze({
+        resourceId: item.resourceId,
         resourceLabel: labels.resource(item.resourceId),
         quantity: item.quantity,
         reserved: item.reserved,
@@ -825,6 +826,7 @@ export function buildCompanyDashboardViewData(
         items: Object.freeze(
           storage.items.map((item) =>
             Object.freeze({
+              resourceId: item.resourceId,
               resourceLabel: labels.resource(item.resourceId),
               quantity: item.quantity,
               reserved: item.reserved,

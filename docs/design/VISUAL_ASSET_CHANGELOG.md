@@ -270,3 +270,13 @@ Entries are appended automatically — do not edit manually except for recovery.
 - Method: Edge-connected neutral-background removal, scale-to-fit, centered on transparent canvas
 - SHA-256: `73ae60f5391c0ca6e70528d8b4cfdb95e8b28369695c7b654e8971dd661b4b7c`
 - Reason: Align wood with family production contract before WebP derivative generation
+
+## 2026-09-05 — ICON-001 Site Inventory runtime integration
+
+- Family: ICON-001 Resource Icons
+- Operation: First runtime integration — site inventory table only
+- Registry: nine `ICON-001-<resource_id>` runtime entries (`preload: false`)
+- Runtime derivatives: 48×48 PNG + WebP in `apps/web/public/assets/icons/`
+- Component: `ResourceIcon` → `PGVisualAssetImage` via registry
+- Consumers integrated: `PGInventoryWidget` site inventory rows
+- Consumers deferred: warehouse detail, market, production, transport, others

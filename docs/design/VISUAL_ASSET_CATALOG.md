@@ -22,21 +22,25 @@ Guide: `docs/development/VISUAL_ASSET_INTEGRATION_GUIDE.md`
 
 ### ICON-001 Resource Icons (Post-V1 — final PNG 2026-09-05)
 
-Family ID: **ICON-001** (resource variants). Runtime integration pending.
+Family ID: **ICON-001** (resource variants).
 
-**Visual status:** Final approved PNG artwork ingested and technically certified. Previous SVG attempts superseded (archived).
+**Visual status:** Final approved PNG artwork certified. Runtime 48×48 PNG/WebP derivatives generated.
+
+**Runtime integration:** Site inventory table (`PGInventoryWidget`) — first consumer (2026-09-05). Additional consumers deferred.
 
 | Resource ID | Filename | Path | Status |
 |-------------|----------|------|--------|
-| wood | ICON-001_Wood.png | docs/design/icons/ | Approved — certified |
-| planks | ICON-001_Planks.png | docs/design/icons/ | Approved — certified |
-| stone | ICON-001_Stone.png | docs/design/icons/ | Approved — certified |
-| iron_ore | ICON-001_Iron_Ore.png | docs/design/icons/ | Approved — certified |
-| steel | ICON-001_Steel.png | docs/design/icons/ | Approved — certified |
-| machine_parts | ICON-001_Machine_Parts.png | docs/design/icons/ | Approved — certified |
-| advanced_electronics | ICON-001_Advanced_Electronics.png | docs/design/icons/ | Approved — certified |
-| industrial_machinery | ICON-001_Industrial_Machinery.png | docs/design/icons/ | Approved — certified |
-| consumer_goods | ICON-001_Consumer_Goods.png | docs/design/icons/ | Approved — certified |
+| wood | ICON-001_Wood.png | docs/design/icons/ | Approved — runtime integrated (site inventory) |
+| planks | ICON-001_Planks.png | docs/design/icons/ | Approved — runtime integrated (site inventory) |
+| stone | ICON-001_Stone.png | docs/design/icons/ | Approved — runtime integrated (site inventory) |
+| iron_ore | ICON-001_Iron_Ore.png | docs/design/icons/ | Approved — runtime integrated (site inventory) |
+| steel | ICON-001_Steel.png | docs/design/icons/ | Approved — runtime integrated (site inventory) |
+| machine_parts | ICON-001_Machine_Parts.png | docs/design/icons/ | Approved — runtime integrated (site inventory) |
+| advanced_electronics | ICON-001_Advanced_Electronics.png | docs/design/icons/ | Approved — runtime integrated (site inventory) |
+| industrial_machinery | ICON-001_Industrial_Machinery.png | docs/design/icons/ | Approved — runtime integrated (site inventory) |
+| consumer_goods | ICON-001_Consumer_Goods.png | docs/design/icons/ | Approved — runtime integrated (site inventory) |
+
+Runtime registry IDs: `ICON-001-<resource_id>` → `/assets/icons/ICON-001-<resource_id>.{png,webp}`
 
 
 

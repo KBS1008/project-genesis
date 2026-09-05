@@ -8,6 +8,49 @@ import type {
 
 const MAIN_MENU_BASE = '/assets/main-menu';
 const CHARTS_BASE = '/assets/charts';
+const ICONS_BASE = '/assets/icons';
+
+const ICON_001_RUNTIME_ASSETS = Object.freeze([
+  { resourceId: 'wood', label: 'Wood Resource Icon' },
+  { resourceId: 'planks', label: 'Planks Resource Icon' },
+  { resourceId: 'stone', label: 'Stone Resource Icon' },
+  { resourceId: 'iron_ore', label: 'Iron Ore Resource Icon' },
+  { resourceId: 'steel', label: 'Steel Resource Icon' },
+  { resourceId: 'machine_parts', label: 'Machine Parts Resource Icon' },
+  { resourceId: 'advanced_electronics', label: 'Advanced Electronics Resource Icon' },
+  { resourceId: 'industrial_machinery', label: 'Industrial Machinery Resource Icon' },
+  { resourceId: 'consumer_goods', label: 'Consumer Goods Resource Icon' },
+] as const);
+
+function icon001Filename(resourceId: string): string {
+  const suffix = resourceId
+    .split('_')
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join('_');
+
+  return `ICON-001_${suffix}.png`;
+}
+
+function icon001RegistryEntries(): Readonly<Record<string, VisualAssetEntry>> {
+  return Object.fromEntries(
+    ICON_001_RUNTIME_ASSETS.map(({ resourceId, label }) => {
+      const id = `ICON-001-${resourceId}`;
+
+      return [
+        id,
+        runtimePng(id, {
+          label,
+          component: 'PGInventoryWidget',
+          preload: false,
+          priority: 'normal',
+          designSource: `docs/design/icons/${icon001Filename(resourceId)}`,
+          notes: 'ICON-001 certified resource artwork — site inventory integration.',
+          baseDir: ICONS_BASE,
+        }),
+      ];
+    }),
+  );
+}
 
 function entry(
   partial: Omit<VisualAssetEntry, 'fallbackId' | 'themeVariants' | 'webp'> & {
@@ -259,6 +302,8 @@ export const VISUAL_ASSET_REGISTRY: Readonly<Record<string, VisualAssetEntry>> =
     designSource: 'docs/design/mockups/world/WM-002_Region_View.png',
     notes: 'Planned mockup — inspector uses PGInspectorPanel sections.',
   }),
+
+  ...icon001RegistryEntries(),
 });
 
 export const RUNTIME_VISUAL_ASSET_IDS = Object.freeze(

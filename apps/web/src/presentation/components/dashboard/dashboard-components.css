@@ -359,6 +359,28 @@
   gap: var(--space-lg);
 }
 
+.pg-resource-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-width: 0;
+  max-width: 100%;
+}
+
+.pg-resource-cell-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pg-resource-icon {
+  width: var(--icon-lg);
+  height: var(--icon-lg);
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
 @media (min-width: 64rem) {
   .pg-operations-panels-grid,
   .pg-inventory-widget-grid {

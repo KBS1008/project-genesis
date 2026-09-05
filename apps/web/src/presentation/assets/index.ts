@@ -33,4 +33,10 @@ export {
   setWebpSupportForTests,
 } from '@/presentation/assets/visual-asset-loader';
 
+export {
+  ICON_001_RESOURCE_IDS,
+  resourceIdToIconAssetId,
+  resolveResourceIconAssetId,
+} from '@/presentation/assets/resource-icon-asset-ids';
+
 export { DASHBOARD_MOCKUP_COMPONENT_MAP } from '@/presentation/assets/dashboard-asset-mapping';

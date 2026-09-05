@@ -55,6 +55,7 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
       },
       inventoryItems: [
         {
+          resourceId: 'wood',
           resourceLabel: 'Holz',
           quantity: 40,
           reserved: 0,

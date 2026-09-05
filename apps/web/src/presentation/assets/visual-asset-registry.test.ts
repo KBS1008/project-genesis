@@ -48,7 +48,33 @@ describe('visual-asset-registry', () => {
 
   it('marks critical boot assets for preload', () => {
     expect(PRELOAD_VISUAL_ASSET_IDS).toEqual(expect.arrayContaining(['MM-001', 'MM-006', 'MM-007']));
-    expect(RUNTIME_VISUAL_ASSET_IDS.length).toBeGreaterThanOrEqual(7);
+    expect(RUNTIME_VISUAL_ASSET_IDS.length).toBeGreaterThanOrEqual(16);
+  });
+
+  it('registers ICON-001 resource icons as runtime assets with icon paths', () => {
+    for (const resourceId of [
+      'wood',
+      'planks',
+      'stone',
+      'iron_ore',
+      'steel',
+      'machine_parts',
+      'advanced_electronics',
+      'industrial_machinery',
+      'consumer_goods',
+    ]) {
+      const assetId = `ICON-001-${resourceId}`;
+      const entry = getVisualAssetEntry(assetId);
+
+      expect(entry).toMatchObject({
+        type: 'runtime',
+        format: 'png',
+        preload: false,
+        component: 'PGInventoryWidget',
+        path: `/assets/icons/${assetId}.png`,
+        webp: `/assets/icons/${assetId}.webp`,
+      });
+    }
   });
 
   it('assigns exactly one type per registry entry', () => {

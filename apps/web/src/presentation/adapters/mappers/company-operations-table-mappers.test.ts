@@ -6,6 +6,7 @@ import {
   mapOperationsEmployeeRows,
   mapOperationsFinanceLedgerRows,
   mapOperationsProductionJobs,
+  mapOperationsSiteInventoryRows,
 } from '@/presentation/adapters/mappers/company-operations-table-mappers';
 
 const SAMPLE_ECONOMY: EconomySectionViewData = {
@@ -107,5 +108,40 @@ describe('company-operations-table-mappers', () => {
     expect(rows[0]?.cells[0]).toBe('Holz');
     expect(rows[0]?.cells[1]).toBe('12 GC');
     expect(rows[0]?.cells[7]).toBe('25');
+  });
+
+  it('mapOperationsSiteInventoryRows preserves resourceId and decorates the label cell', () => {
+    const rows = mapOperationsSiteInventoryRows([
+      {
+        resourceId: 'wood',
+        resourceLabel: 'Holz',
+        quantity: 40,
+        reserved: 5,
+        available: 35,
+      },
+    ]);
+
+    expect(rows[0]?.id).toBe('site-inventory:wood:0');
+    expect(rows[0]?.cells[1]).toBe('5');
+    expect(rows[0]?.cells[2]).toBe('35');
+
+    const labelCell = rows[0]?.cells[0];
+    expect(labelCell).toBeTruthy();
+    expect(typeof labelCell).toBe('object');
+  });
+
+  it('mapOperationsSiteInventoryRows leaves unknown resources as text-only cells', () => {
+    const rows = mapOperationsSiteInventoryRows([
+      {
+        resourceId: 'unknown_resource',
+        resourceLabel: 'Unbekannt',
+        quantity: 1,
+        reserved: 0,
+        available: 1,
+      },
+    ]);
+
+    expect(rows[0]?.searchText).toContain('Unbekannt');
+    expect(rows[0]?.cells[1]).toBe('0');
   });
 });

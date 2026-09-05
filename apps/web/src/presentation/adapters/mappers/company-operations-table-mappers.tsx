@@ -12,6 +12,7 @@ import type {
 } from '@/presentation/adapters/view-data/company-dashboard-view-data';
 import { BuildingConstructionStatus } from '@/presentation/screens/company/BuildingConstructionStatus';
 import { PGMarketTrendBadge } from '@/presentation/components/dashboard/PGMarketTrendBadge';
+import { ResourceIcon } from '@/presentation/components/assets/ResourceIcon';
 
 function joinSearchParts(parts: readonly (string | number)[]): string {
   return parts.map((part) => String(part)).join(' ');
@@ -303,8 +304,15 @@ export function mapOperationsSiteInventoryRows(
   return Object.freeze(
     items.map((item, index) =>
       Object.freeze({
-        id: `site-inventory:${item.resourceLabel}:${index}`,
-        cells: Object.freeze([item.resourceLabel, String(item.reserved), String(item.available)]),
+        id: `site-inventory:${item.resourceId}:${index}`,
+        cells: Object.freeze([
+          <span className="pg-resource-cell" key={`resource-${item.resourceId}`}>
+            <ResourceIcon resourceId={item.resourceId} />
+            <span className="pg-resource-cell-label">{item.resourceLabel}</span>
+          </span>,
+          String(item.reserved),
+          String(item.available),
+        ]) as readonly (string | ReactNode)[],
         searchText: joinSearchParts([item.resourceLabel, item.reserved, item.available]),
       }),
     ),

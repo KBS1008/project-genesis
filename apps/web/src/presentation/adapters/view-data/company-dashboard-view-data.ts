@@ -148,6 +148,7 @@ export type FinanceTransactionRowViewData = {
 };
 
 export type InventoryItemRowViewData = {
+  readonly resourceId: string;
   readonly resourceLabel: string;
   readonly quantity: number;
   readonly reserved: number;
