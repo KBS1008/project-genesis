@@ -3,6 +3,22 @@
 import type { ReactNode } from 'react';
 import { EmptyState } from '@/presentation/primitives/EmptyState';
 
+export type QueryColumn =
+  | string
+  | {
+      readonly label: string;
+      readonly title?: string;
+      readonly ariaLabel?: string;
+    };
+
+function resolveQueryColumn(column: QueryColumn): {
+  readonly label: string;
+  readonly title?: string;
+  readonly ariaLabel?: string;
+} {
+  return typeof column === 'string' ? { label: column } : column;
+}
+
 /** Tabular read-only query results for M9 inspection screens. */
 export function QueryRows({
   rows,
@@ -13,7 +29,7 @@ export function QueryRows({
   ariaLabel = 'Abfrageergebnisse',
 }: {
   readonly rows: readonly { readonly id: string; readonly cells: readonly (string | ReactNode)[] }[];
-  readonly columns: readonly string[];
+  readonly columns: readonly QueryColumn[];
   readonly columnCount?: number;
   readonly onRowClick?: (rowId: string) => void;
   readonly selectedRowId?: string | null;
@@ -33,11 +49,19 @@ export function QueryRows({
   return (
     <div className={tableClassName} role="table" aria-label={ariaLabel}>
       <div className="pg-query-row pg-query-header" role="row" style={gridStyle}>
-        {columns.map((column) => (
-          <span key={column} role="columnheader">
-            {column}
-          </span>
-        ))}
+        {columns.map((column, index) => {
+          const resolved = resolveQueryColumn(column);
+          return (
+            <span
+              key={`${index}-${resolved.label}`}
+              role="columnheader"
+              title={resolved.title}
+              aria-label={resolved.ariaLabel}
+            >
+              {resolved.label}
+            </span>
+          );
+        })}
       </div>
       {rows.map((row) => {
         const isSelected = selectedRowId === row.id;

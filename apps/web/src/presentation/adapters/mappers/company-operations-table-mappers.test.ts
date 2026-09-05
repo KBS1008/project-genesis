@@ -1,3 +1,5 @@
+import { createElement, Fragment } from 'react';
+import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import type { EconomySectionViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
 import {
@@ -7,6 +9,7 @@ import {
   mapOperationsFinanceLedgerRows,
   mapOperationsProductionJobs,
   mapOperationsSiteInventoryRows,
+  mapOperationsWarehouseBlocks,
 } from '@/presentation/adapters/mappers/company-operations-table-mappers';
 
 const SAMPLE_ECONOMY: EconomySectionViewData = {
@@ -143,5 +146,73 @@ describe('company-operations-table-mappers', () => {
 
     expect(rows[0]?.searchText).toContain('Unbekannt');
     expect(rows[0]?.cells[1]).toBe('0');
+  });
+
+  it('mapOperationsWarehouseBlocks decorates detail rows with ResourceIcon and preserves summary rows', () => {
+    const blocks = mapOperationsWarehouseBlocks([
+      {
+        id: 'warehouse-1',
+        buildingLabel: 'Lagerhaus',
+        capacityLabel: '10/500',
+        usedLabel: '10',
+        items: [
+          {
+            resourceId: 'wood',
+            resourceLabel: 'Holz',
+            quantity: 10,
+            reserved: 2,
+            available: 8,
+          },
+          {
+            resourceId: 'steel',
+            resourceLabel: 'Stahl',
+            quantity: 5,
+            reserved: 0,
+            available: 5,
+          },
+        ],
+      },
+    ]);
+
+    expect(blocks).toHaveLength(1);
+    expect(blocks[0]?.summaryRow.cells).toEqual(['Lagerhaus', '2', '15']);
+
+    const woodDetail = blocks[0]?.detailRows[0];
+    expect(woodDetail?.cells[1]).toBe('2');
+    expect(woodDetail?.cells[2]).toBe('8');
+    expect(typeof woodDetail?.cells[0]).toBe('object');
+
+    render(createElement(Fragment, null, woodDetail?.cells[0]));
+    expect(screen.getByText('Holz')).toBeTruthy();
+    expect(screen.getByRole('presentation', { hidden: true })).toBeTruthy();
+  });
+
+  it('mapOperationsWarehouseBlocks keeps unknown warehouse resources as text-only detail cells', () => {
+    const blocks = mapOperationsWarehouseBlocks([
+      {
+        id: 'warehouse-1',
+        buildingLabel: 'Lagerhaus',
+        capacityLabel: '1/500',
+        usedLabel: '1',
+        items: [
+          {
+            resourceId: 'unknown_resource',
+            resourceLabel: 'Unbekannt',
+            quantity: 1,
+            reserved: 0,
+            available: 1,
+          },
+        ],
+      },
+    ]);
+
+    const detail = blocks[0]?.detailRows[0];
+    expect(detail?.searchText).toContain('Unbekannt');
+    expect(detail?.cells[1]).toBe('0');
+    expect(detail?.cells[2]).toBe('1');
+
+    render(createElement(Fragment, null, detail?.cells[0]));
+    expect(screen.getByText('Unbekannt')).toBeTruthy();
+    expect(screen.queryByRole('presentation', { hidden: true })).toBeNull();
   });
 });

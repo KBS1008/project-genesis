@@ -347,7 +347,14 @@ export function mapOperationsWarehouseBlocks(
           warehouse.items.map((item, index) =>
             Object.freeze({
               id: `${warehouse.id}:${item.resourceLabel}:${index}`,
-              cells: Object.freeze([item.resourceLabel, String(item.reserved), String(item.available)]),
+              cells: Object.freeze([
+                <span className="pg-resource-cell" key={`resource-${item.resourceId}`}>
+                  <ResourceIcon resourceId={item.resourceId} />
+                  <span className="pg-resource-cell-label">{item.resourceLabel}</span>
+                </span>,
+                String(item.reserved),
+                String(item.available),
+              ]) as readonly (string | ReactNode)[],
               searchText: joinSearchParts([item.resourceLabel, item.reserved, item.available]),
             }),
           ),

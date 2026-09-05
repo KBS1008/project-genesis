@@ -2,7 +2,7 @@
 
 import { useMemo, useState, type ReactNode } from 'react';
 import { EmptyState } from '@/presentation/primitives/EmptyState';
-import { QueryRows } from '@/presentation/screens/shared/QueryRows';
+import { QueryRows, type QueryColumn } from '@/presentation/screens/shared/QueryRows';
 
 export type PGOperationsTableRow = {
   readonly id: string;
@@ -24,7 +24,7 @@ export function PGOperationsTable({
   filteredEmptyTitle = 'Keine Treffer für die Suche.',
   ariaLabel = 'Operations-Tabelle',
 }: {
-  readonly columns: readonly string[];
+  readonly columns: readonly QueryColumn[];
   readonly rows: readonly PGOperationsTableRow[];
   readonly columnCount?: number;
   readonly searchable?: boolean;

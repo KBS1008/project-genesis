@@ -26,19 +26,19 @@ Family ID: **ICON-001** (resource variants).
 
 **Visual status:** Final approved PNG artwork certified. Runtime 48×48 PNG/WebP derivatives generated.
 
-**Runtime integration:** Site inventory table (`PGInventoryWidget`) — first consumer (2026-09-05). Additional consumers deferred.
+**Runtime integration:** Site inventory + warehouse detail rows (`PGInventoryWidget`) — consumers 1–2 (2026-09-05). Warehouse detail pending external visual gate. Market deferred.
 
 | Resource ID | Filename | Path | Status |
 |-------------|----------|------|--------|
-| wood | ICON-001_Wood.png | docs/design/icons/ | Approved — runtime integrated (site inventory) |
-| planks | ICON-001_Planks.png | docs/design/icons/ | Approved — runtime integrated (site inventory) |
-| stone | ICON-001_Stone.png | docs/design/icons/ | Approved — runtime integrated (site inventory) |
-| iron_ore | ICON-001_Iron_Ore.png | docs/design/icons/ | Approved — runtime integrated (site inventory) |
-| steel | ICON-001_Steel.png | docs/design/icons/ | Approved — runtime integrated (site inventory) |
-| machine_parts | ICON-001_Machine_Parts.png | docs/design/icons/ | Approved — runtime integrated (site inventory) |
-| advanced_electronics | ICON-001_Advanced_Electronics.png | docs/design/icons/ | Approved — runtime integrated (site inventory) |
-| industrial_machinery | ICON-001_Industrial_Machinery.png | docs/design/icons/ | Approved — runtime integrated (site inventory) |
-| consumer_goods | ICON-001_Consumer_Goods.png | docs/design/icons/ | Approved — runtime integrated (site inventory) |
+| wood | ICON-001_Wood.png | docs/design/icons/ | Approved — runtime integrated (site inventory, warehouse detail) |
+| planks | ICON-001_Planks.png | docs/design/icons/ | Approved — runtime integrated (site inventory, warehouse detail) |
+| stone | ICON-001_Stone.png | docs/design/icons/ | Approved — runtime integrated (site inventory, warehouse detail) |
+| iron_ore | ICON-001_Iron_Ore.png | docs/design/icons/ | Approved — runtime integrated (site inventory, warehouse detail) |
+| steel | ICON-001_Steel.png | docs/design/icons/ | Approved — runtime integrated (site inventory, warehouse detail) |
+| machine_parts | ICON-001_Machine_Parts.png | docs/design/icons/ | Approved — runtime integrated (site inventory, warehouse detail) |
+| advanced_electronics | ICON-001_Advanced_Electronics.png | docs/design/icons/ | Approved — runtime integrated (site inventory, warehouse detail) |
+| industrial_machinery | ICON-001_Industrial_Machinery.png | docs/design/icons/ | Approved — runtime integrated (site inventory, warehouse detail) |
+| consumer_goods | ICON-001_Consumer_Goods.png | docs/design/icons/ | Approved — runtime integrated (site inventory, warehouse detail) |
 
 Runtime registry IDs: `ICON-001-<resource_id>` → `/assets/icons/ICON-001-<resource_id>.{png,webp}`
 

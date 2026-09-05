@@ -3,6 +3,13 @@
 import { PGWidgetSurface } from '@/presentation/components/foundation/PGWidgetSurface';
 import type { PGWidgetSurfaceProps } from '@/presentation/components/foundation/pg-widget-state';
 import { PGOperationsTable, type PGOperationsTableRow } from '@/presentation/components/dashboard/PGOperationsTable';
+import type { QueryColumn } from '@/presentation/screens/shared/QueryRows';
+
+const INVENTORY_RESOURCE_TABLE_COLUMNS: readonly QueryColumn[] = [
+  'Ressource',
+  { label: 'Res.', title: 'Reserviert', ariaLabel: 'Reserviert' },
+  { label: 'Verf.', title: 'Verfügbar', ariaLabel: 'Verfügbar' },
+];
 
 export type PGInventoryWarehouseBlock = {
   readonly id: string;
@@ -56,7 +63,7 @@ export function PGInventoryWidget({
           emptyTitle={siteEmptyTitle}
         >
           <PGOperationsTable
-            columns={['Ressource', 'Reserviert', 'Verfügbar']}
+            columns={INVENTORY_RESOURCE_TABLE_COLUMNS}
             columnCount={3}
             rows={siteRows}
             searchable
@@ -99,7 +106,7 @@ export function PGInventoryWidget({
                 <div key={block.id} className="pg-warehouse-block">
                   <h4 className="pg-warehouse-block-title">{block.buildingLabel}</h4>
                   <PGOperationsTable
-                    columns={['Ressource', 'Reserviert', 'Verfügbar']}
+                    columns={INVENTORY_RESOURCE_TABLE_COLUMNS}
                     columnCount={3}
                     rows={block.detailRows}
                     searchable

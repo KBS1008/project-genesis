@@ -280,3 +280,11 @@ Entries are appended automatically — do not edit manually except for recovery.
 - Component: `ResourceIcon` → `PGVisualAssetImage` via registry
 - Consumers integrated: `PGInventoryWidget` site inventory rows
 - Consumers deferred: warehouse detail, market, production, transport, others
+
+## 2026-09-05 — ICON-001 Warehouse Detail runtime integration
+
+- Family: ICON-001 Resource Icons
+- Operation: Second runtime integration — warehouse detail resource rows only (`mapOperationsWarehouseBlocks` detail rows)
+- Registry / derivatives / ResourceIcon: unchanged reuse
+- Consumers integrated: `PGInventoryWidget` warehouse detail rows (pending external visual gate)
+- Consumers deferred: market widget, market screen, production, transport, others

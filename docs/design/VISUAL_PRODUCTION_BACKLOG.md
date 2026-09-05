@@ -396,7 +396,7 @@ docs/
 
 # Sprint 12 — Icons
 
-☑ ICON-001_Resources — **runtime integrated (site inventory)** — 9 PNG source variants + 48×48 runtime derivatives; first consumer: `PGInventoryWidget` site table; warehouse/market/production deferred
+☑ ICON-001_Resources — **runtime integrated (site inventory + warehouse detail)** — 9 PNG source variants + 48×48 runtime derivatives; consumers: `PGInventoryWidget` site table + warehouse detail rows (warehouse pending external visual gate); market/production deferred
 
 Resource variants: Wood, Planks, Stone, Iron_Ore, Steel, Machine_Parts, Advanced_Electronics, Industrial_Machinery, Consumer_Goods
 

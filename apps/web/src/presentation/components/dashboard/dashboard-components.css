@@ -381,6 +381,23 @@
   object-fit: contain;
 }
 
+/* Site inventory + warehouse detail: resource identity takes remaining space;
+   reserved/available stay compact numeric columns. */
+.pg-inventory-widget .pg-operations-table .pg-query-row,
+.pg-warehouse-block .pg-operations-table .pg-query-row {
+  grid-template-columns: minmax(0, 1fr) minmax(var(--space-xl), max-content) minmax(var(--space-xl), max-content);
+}
+
+.pg-inventory-widget .pg-operations-table .pg-query-row > :nth-child(n + 2),
+.pg-warehouse-block .pg-operations-table .pg-query-row > :nth-child(n + 2) {
+  min-width: max-content;
+}
+
+.pg-inventory-widget .pg-resource-cell,
+.pg-warehouse-block .pg-resource-cell {
+  width: 100%;
+}
+
 @media (min-width: 64rem) {
   .pg-operations-panels-grid,
   .pg-inventory-widget-grid {
