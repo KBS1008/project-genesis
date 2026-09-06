@@ -288,3 +288,14 @@ Entries are appended automatically — do not edit manually except for recovery.
 - Registry / derivatives / ResourceIcon: unchanged reuse
 - Consumers integrated: `PGInventoryWidget` warehouse detail rows — **COMPLETE / PASS**
 - Consumers deferred: market widget, market screen, production, transport, others
+
+## 2026-09-06 — ICON-001 Phase 1 closeout
+
+- Family: ICON-001 Resource Icons
+- Operation: Phase 1 documentation closeout — no runtime changes
+- Status: **ICON-001 Phase 1 = CLOSED / PASS**
+- Phase 1 delivered: nine-resource certified artwork; runtime PNG/WebP pipeline; registry + mapping + sync; reusable `ResourceIcon`; Site Inventory closed/pass; Warehouse Detail closed/pass; external visual gates passed
+- Coverage: no MUST-HAVE Phase-1 consumer gap (`POST_V1_ICON_001_PHASE_1_CLOSEOUT_COVERAGE_REVIEW.md`)
+- Boundary: Phase 1 covers primary inventory/storage contexts only — **not** global resource-UI icon rollout
+- Market Widget: remains **DEFERRED — VALUE/COST NOT YET JUSTIFIED** (technically conditional-ready; not a Phase-1 requirement)
+- MarketScreen and other surfaces: **OPTIONAL FUTURE EXPANSION**

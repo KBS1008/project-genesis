@@ -24,9 +24,28 @@ Guide: `docs/development/VISUAL_ASSET_INTEGRATION_GUIDE.md`
 
 Family ID: **ICON-001** (resource variants).
 
+**Phase 1 status:** **CLOSED / PASS** (2026-09-06). Coverage review: `POST_V1_ICON_001_PHASE_1_CLOSEOUT_COVERAGE_REVIEW.md`.
+
 **Visual status:** Final approved PNG artwork certified. Runtime 48×48 PNG/WebP derivatives generated.
 
-**Runtime integration:** Site inventory + warehouse detail rows (`PGInventoryWidget`) — consumers 1–2 (2026-09-05). Warehouse detail **COMPLETE / PASS**. Market deferred.
+**Phase 1 scope (complete):** nine certified source artworks; runtime PNG/WebP family; registry + mapping + sync; reusable `ResourceIcon`; Site Inventory; Warehouse Detail — all with external visual gates passed.
+
+**Runtime integration (Phase 1):** Site inventory + warehouse detail rows (`PGInventoryWidget`) — consumers 1–2 (2026-09-05).
+
+**Optional future expansion (not Phase 1):** additional resource-icon consumers require consumer-specific value and layout review. Phase 1 closure does **not** mean icons appear on all resource-related UI surfaces.
+
+| Consumer / layer | Status |
+|------------------|--------|
+| Source artwork (9 PNG) | CLOSED / PASS |
+| Runtime asset family (9 PNG + 9 WebP) | CLOSED / PASS |
+| ResourceIcon infrastructure | CLOSED / PASS |
+| Site Inventory | CLOSED / PASS |
+| Warehouse Detail | CLOSED / PASS |
+| Market Widget | DEFERRED — VALUE/COST NOT YET JUSTIFIED |
+| MarketScreen | DEFERRED — OPTIONAL EXPANSION |
+| Production, Transport, Contracts, others | OPTIONAL FUTURE EXPANSION — do not block Phase 1 |
+
+Future consumer policy (summary): canonical `resourceId`, `ResourceIcon` reuse unchanged where possible, no asset-pipeline changes unless separately justified, consumer-local layout review, targeted tests, asset no-delta gate, runtime screenshot, external visual gate, one consumer per slice where practical. See Phase 1 documentation closeout report.
 
 | Resource ID | Filename | Path | Status |
 |-------------|----------|------|--------|

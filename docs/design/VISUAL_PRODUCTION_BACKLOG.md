@@ -396,7 +396,11 @@ docs/
 
 # Sprint 12 — Icons
 
-☑ ICON-001_Resources — **runtime integrated (site inventory + warehouse detail)** — 9 PNG source variants + 48×48 runtime derivatives; consumers: `PGInventoryWidget` site table + warehouse detail rows — **COMPLETE / PASS**; market/production deferred
+☑ ICON-001_Resources — **Phase 1 CLOSED / PASS** (2026-09-06)
+
+**Completed Phase-1 scope:** 9 certified PNG source variants; 48×48 runtime PNG/WebP derivatives; registry + mapping + sync; `ResourceIcon`; Site Inventory (`PGInventoryWidget` site table); Warehouse Detail (`PGInventoryWidget` warehouse detail rows). External visual gates passed for both consumers.
+
+**Optional future consumers (not active backlog commitment):** Market Widget (DEFERRED — value/cost not yet justified); MarketScreen; Production; Transport / Supply Chain; Contracts; Notifications; Charts; World Map; Tutorials; other building panels. Each requires separate value/layout review before integration.
 
 Resource variants: Wood, Planks, Stone, Iron_Ore, Steel, Machine_Parts, Advanced_Electronics, Industrial_Machinery, Consumer_Goods
 
