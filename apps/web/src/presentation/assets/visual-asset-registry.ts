@@ -52,6 +52,74 @@ function icon001RegistryEntries(): Readonly<Record<string, VisualAssetEntry>> {
   );
 }
 
+const ICON_002_RUNTIME_ASSETS = Object.freeze([
+  { category: 'production', label: 'Production Building Category Icon', source: 'ICON-002_Production.svg' },
+  { category: 'energy', label: 'Energy Building Category Icon', source: 'ICON-002_Energy.svg' },
+  { category: 'storage', label: 'Storage Building Category Icon', source: 'ICON-002_Storage.svg' },
+  {
+    category: 'infrastructure',
+    label: 'Infrastructure Building Category Icon',
+    source: 'ICON-002_Infrastructure.svg',
+  },
+  {
+    category: 'administration',
+    label: 'Administration Building Category Icon',
+    source: 'ICON-002_Administration.svg',
+  },
+  { category: 'research', label: 'Research Building Category Icon', source: 'ICON-002_Research.svg' },
+] as const);
+
+function runtimeSvg(
+  id: string,
+  config: {
+    readonly label: string;
+    readonly component: string;
+    readonly preload: boolean;
+    readonly priority: VisualAssetPriority;
+    readonly designSource: string;
+    readonly notes?: string | null;
+    readonly baseDir?: string;
+  },
+): VisualAssetEntry {
+  const baseDir = config.baseDir ?? ICONS_BASE;
+
+  return entry({
+    id,
+    label: config.label,
+    type: 'runtime',
+    component: config.component,
+    format: 'svg',
+    path: `${baseDir}/${id}.svg`,
+    theme: 'default',
+    themeVariants: null,
+    priority: config.priority,
+    preload: config.preload,
+    designSource: config.designSource,
+    notes: config.notes ?? null,
+  });
+}
+
+function icon002RegistryEntries(): Readonly<Record<string, VisualAssetEntry>> {
+  return Object.fromEntries(
+    ICON_002_RUNTIME_ASSETS.map(({ category, label, source }) => {
+      const id = `ICON-002-${category}`;
+
+      return [
+        id,
+        runtimeSvg(id, {
+          label,
+          component: 'BuildingCategoryIcon',
+          preload: false,
+          priority: 'normal',
+          designSource: `docs/design/icons/${source}`,
+          notes: 'ICON-002 certified building category artwork — runtime-ready; consumer integration deferred.',
+          baseDir: ICONS_BASE,
+        }),
+      ];
+    }),
+  );
+}
+
 function entry(
   partial: Omit<VisualAssetEntry, 'fallbackId' | 'themeVariants' | 'webp'> & {
     readonly fallbackId?: string | null;
@@ -304,6 +372,7 @@ export const VISUAL_ASSET_REGISTRY: Readonly<Record<string, VisualAssetEntry>> =
   }),
 
   ...icon001RegistryEntries(),
+  ...icon002RegistryEntries(),
 });
 
 export const RUNTIME_VISUAL_ASSET_IDS = Object.freeze(

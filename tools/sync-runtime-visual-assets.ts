@@ -48,6 +48,15 @@ const ICON_001_RUNTIME_ASSETS = Object.freeze([
   { id: 'ICON-001-consumer_goods', source: 'ICON-001_Consumer_Goods.png' },
 ] as const);
 
+const ICON_002_RUNTIME_ASSETS = Object.freeze([
+  { id: 'ICON-002-production', source: 'ICON-002_Production.svg' },
+  { id: 'ICON-002-energy', source: 'ICON-002_Energy.svg' },
+  { id: 'ICON-002-storage', source: 'ICON-002_Storage.svg' },
+  { id: 'ICON-002-infrastructure', source: 'ICON-002_Infrastructure.svg' },
+  { id: 'ICON-002-administration', source: 'ICON-002_Administration.svg' },
+  { id: 'ICON-002-research', source: 'ICON-002_Research.svg' },
+] as const);
+
 function formatBytes(bytes: number): string {
   if (bytes < 1024) {
     return `${bytes} B`;
@@ -135,6 +144,13 @@ async function syncRuntimeVisualAssets(): Promise<void> {
   for (const asset of ICON_001_RUNTIME_ASSETS) {
     const sourcePath = path.join(iconDesignRoot, asset.source);
     await syncIconPngWithWebp(asset.id, sourcePath, iconTargetDir);
+  }
+
+  for (const asset of ICON_002_RUNTIME_ASSETS) {
+    const sourcePath = path.join(iconDesignRoot, asset.source);
+    const targetPath = path.join(iconTargetDir, `${asset.id}.svg`);
+    await copyFile(sourcePath, targetPath);
+    console.log(`Synced ${asset.id} → ${path.relative(projectRoot, targetPath)}`);
   }
 }
 

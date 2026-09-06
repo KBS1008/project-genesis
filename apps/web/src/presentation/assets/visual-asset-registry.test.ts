@@ -48,7 +48,30 @@ describe('visual-asset-registry', () => {
 
   it('marks critical boot assets for preload', () => {
     expect(PRELOAD_VISUAL_ASSET_IDS).toEqual(expect.arrayContaining(['MM-001', 'MM-006', 'MM-007']));
-    expect(RUNTIME_VISUAL_ASSET_IDS.length).toBeGreaterThanOrEqual(16);
+    expect(RUNTIME_VISUAL_ASSET_IDS.length).toBeGreaterThanOrEqual(22);
+  });
+
+  it('registers ICON-002 building category icons as runtime SVG assets', () => {
+    for (const category of [
+      'production',
+      'energy',
+      'storage',
+      'infrastructure',
+      'administration',
+      'research',
+    ]) {
+      const assetId = `ICON-002-${category}`;
+      const entry = getVisualAssetEntry(assetId);
+
+      expect(entry).toMatchObject({
+        type: 'runtime',
+        format: 'svg',
+        preload: false,
+        component: 'BuildingCategoryIcon',
+        path: `/assets/icons/${assetId}.svg`,
+        webp: null,
+      });
+    }
   });
 
   it('registers ICON-001 resource icons as runtime assets with icon paths', () => {

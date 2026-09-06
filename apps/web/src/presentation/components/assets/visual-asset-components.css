@@ -71,3 +71,15 @@
     background-position: center top;
   }
 }
+
+.pg-building-category-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  line-height: 0;
+}
+
+.pg-building-category-icon svg {
+  width: var(--icon-lg);
+  height: var(--icon-lg);
+  display: block;
+}
