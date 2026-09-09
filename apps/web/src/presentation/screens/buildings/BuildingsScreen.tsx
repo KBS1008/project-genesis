@@ -5,6 +5,7 @@ import { mapBuildingListRow } from '@/presentation/adapters/mappers/company-dash
 import { placeBuilding } from '@/presentation/adapters/api/gameplay-client';
 import { fetchBuildingList } from '@/presentation/adapters/api/query-client';
 import type { BuildingListRowViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
+import { BuildingCategoryIcon } from '@/presentation/components/assets/BuildingCategoryIcon';
 import { useScreenQuery, TICK_QUERY_DEBOUNCE_MS } from '@/presentation/hooks/useScreenQuery';
 import { Button } from '@/presentation/primitives/Button';
 import { Card } from '@/presentation/primitives/Card';
@@ -167,7 +168,10 @@ export function BuildingsScreen() {
                   <div key={entry.buildingTypeId} className="pg-operation-hint-row">
                     <div className="pg-operation-hint-copy">
                       <strong>{entry.name}</strong>
-                      <span>{entry.category}</span>
+                      <div className="pg-operation-hint-category">
+                        <BuildingCategoryIcon category={entry.category} />
+                        <span>{entry.category}</span>
+                      </div>
                       <span>{entry.canPlace ? 'Baubar' : (entry.reason ?? 'Nicht baubar')}</span>
                     </div>
                     <Button
