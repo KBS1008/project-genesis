@@ -404,7 +404,15 @@ docs/
 
 Resource variants: Wood, Planks, Stone, Iron_Ore, Steel, Machine_Parts, Advanced_Electronics, Industrial_Machinery, Consumer_Goods
 
-☐ ICON-002_Buildings.svg
+☑ ICON-002_Buildings.svg — **Phase 1 CLOSED / PASS** (2026-09-10)
+
+**Historical label note:** The backlog row `ICON-002_Buildings.svg` predates the Phase-1 art brief. Phase 1 implemented the approved **six-category `BuildingCategory` identity family** (SVG outline glyphs), not per-building-type artwork.
+
+**Completed Phase-1 scope:** six certified SVG source masters; certification + runtime infrastructure (`BuildingCategoryIcon`, registry, mapping, sync); BuildingsScreen Baukatalog first consumer; desktop + narrow runtime visual gates passed.
+
+**Optional/deferred (not active backlog commitment):** additional category-icon consumers (owned-building list, detail panel, Operations, Production); per-building-type artwork; state-variant art; world-map-specific markers; category-label localization. Each requires separate value/layout review before integration.
+
+Category variants: Production, Energy, Storage, Infrastructure, Administration, Research
 
 ☐ ICON-003_Transport.svg
 

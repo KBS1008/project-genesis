@@ -299,3 +299,15 @@ Entries are appended automatically — do not edit manually except for recovery.
 - Boundary: Phase 1 covers primary inventory/storage contexts only — **not** global resource-UI icon rollout
 - Market Widget: remains **DEFERRED — VALUE/COST NOT YET JUSTIFIED** (technically conditional-ready; not a Phase-1 requirement)
 - MarketScreen and other surfaces: **OPTIONAL FUTURE EXPANSION**
+
+## 2026-09-10 — ICON-002 Phase 1 closeout
+
+- Family: ICON-002 Building Category Icons
+- Operation: Phase 1 documentation closeout — no runtime changes
+- Status: **ICON-002 Phase 1 = CLOSED / PASS**
+- Phase 1 delivered: six `BuildingCategory` SVG masters; certification + runtime infrastructure; `BuildingCategoryIcon`; BuildingsScreen Baukatalog consumer; targeted tests; desktop + narrow runtime visual evidence
+- Coverage: no mandatory additional consumer (`POST_V1_ICON_002_PHASE_1_COVERAGE_CLOSEOUT_REVIEW.md`)
+- Boundary: Phase 1 covers six category identity glyphs + primary catalog consumer only — **not** per-building-type artwork, state variants, world-map markers, or icons-everywhere rollout
+- Additional consumers: **OPTIONAL / DEFERRED**
+- Per-building-type artwork / detailed building illustrations: **OUT OF PHASE 1** — future optional visual production
+- Implementation commits: Phase 1C `8f8315f590944edfac4eaf8fb131c1a3a5fa5ce2`; Phase 1D `f0ef49ae596880860a9dbdcc78096ec9056b5bbc`

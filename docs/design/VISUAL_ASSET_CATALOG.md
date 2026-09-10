@@ -61,6 +61,46 @@ Future consumer policy (summary): canonical `resourceId`, `ResourceIcon` reuse u
 
 Runtime registry IDs: `ICON-001-<resource_id>` → `/assets/icons/ICON-001-<resource_id>.{png,webp}`
 
+### ICON-002 Building Category Icons (Post-V1 — SVG 2026-09-09)
+
+Family ID: **ICON-002** (BuildingCategory variants).
+
+**Phase 1 status:** **CLOSED / PASS** (2026-09-10). Coverage review: `POST_V1_ICON_002_PHASE_1_COVERAGE_CLOSEOUT_REVIEW.md`.
+
+**Visual status:** Six certified SVG outline glyphs (24×24, stroke 1.75, `currentColor`). Runtime inline SVG + public SVG copies via registry/sync.
+
+**Phase 1 scope (complete):** six `BuildingCategory` identity glyphs; certification + runtime infrastructure; `BuildingCategoryIcon`; BuildingsScreen Baukatalog first consumer — desktop + narrow runtime visual gates passed.
+
+**Granularity:** `BuildingCategory` identity — **not** individual `BuildingType` identity, building illustrations, state variants, or world-map marker art.
+
+**Optional future expansion (not Phase 1):** additional category-icon consumers; per-building-type artwork; state-variant art; world-map-specific markers. Each requires separate value/layout review. Phase 1 closure does **not** mean category icons appear on all building-related UI surfaces.
+
+| Consumer / layer | Status |
+|------------------|--------|
+| Source artwork (6 SVG) | CLOSED / PASS |
+| Runtime infrastructure (inline SVG + registry + sync) | CLOSED / PASS |
+| BuildingCategoryIcon | CLOSED / PASS |
+| BuildingsScreen / Baukatalog | CLOSED / PASS |
+| Owned-building list, detail panel, Operations | OPTIONAL / DEFERRED |
+| Production views | OPTIONAL / DEFERRED |
+| Market | NOT A MEANINGFUL ICON-002 TARGET |
+| World map markers | SEPARATE FUTURE VISUAL PROBLEM |
+
+| BuildingCategory | Asset ID | Source file | Status |
+|------------------|----------|-------------|--------|
+| PRODUCTION | ICON-002-production | ICON-002_Production.svg | Approved — runtime integrated (Baukatalog) |
+| ENERGY | ICON-002-energy | ICON-002_Energy.svg | Approved — runtime integrated (Baukatalog) |
+| STORAGE | ICON-002-storage | ICON-002_Storage.svg | Approved — runtime integrated (Baukatalog) |
+| INFRASTRUCTURE | ICON-002-infrastructure | ICON-002_Infrastructure.svg | Approved — runtime integrated (Baukatalog) |
+| ADMINISTRATION | ICON-002-administration | ICON-002_Administration.svg | Approved — runtime integrated (Baukatalog) |
+| RESEARCH | ICON-002-research | ICON-002_Research.svg | Approved — runtime integrated (Baukatalog) |
+
+Runtime registry IDs: `ICON-002-<category>` → `/assets/icons/ICON-002-<category>.svg` (inline SVG preferred for `currentColor` theming).
+
+Implementation commits: Phase 1C `8f8315f590944edfac4eaf8fb131c1a3a5fa5ce2`; Phase 1D `f0ef49ae596880860a9dbdcc78096ec9056b5bbc` (local at closeout time).
+
+Per-building-type artwork, state variants, and world-map marker redesign remain **future optional visual production work** — see §6 Buildings below. They are **not** part of ICON-002 Phase 1.
+
 
 
 Purpose
@@ -496,6 +536,8 @@ Heat Maps
 
 
 6 Buildings
+
+**ICON-002 Phase 1 note (2026-09-10):** ICON-002 Phase 1 = **CLOSED / PASS** for six `BuildingCategory` identity SVG glyphs (see ICON-002 section above). The per-building artwork inventory below remains **aspirational long-term direction** for detailed building illustrations, per-type icons, and state variants — separate from, and not satisfied by, the six category glyphs.
 
 Every building receives:
 
