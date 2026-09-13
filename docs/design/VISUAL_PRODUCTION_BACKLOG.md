@@ -144,7 +144,7 @@ docs/
 
 ## Main Menu
 
-🚀 MM-001_Main_Menu.png — runtime background `/assets/main-menu/MM-001.png`
+☑ MM-001_Main_Menu.png — runtime background `/assets/main-menu/MM-001.png` (menu-free scenic master; MainMenuHome — **CLOSED / PASS** 2026-09-13)
 
 ---
 
@@ -174,7 +174,7 @@ docs/
 
 ## Splash Screen
 
-🚀 MM-006_Splash.png — runtime splash background
+☑ MM-006_Splash.png — runtime splash background (menu-free scenic master; `SplashScreen` consumer — **CLOSED / PASS** 2026-09-13)
 
 ---
 

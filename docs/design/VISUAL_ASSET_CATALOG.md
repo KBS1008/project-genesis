@@ -117,7 +117,7 @@ Family ID: **BR-001** (modular-industrial product mark).
 | MainMenuHome brand mark | CLOSED / PASS |
 | Browser favicon (32×32 wired) | CLOSED / PASS |
 | Favicon 16×16 PNG | CERTIFIED DERIVATIVE — unwired |
-| SplashScreen brand overlay | DEFERRED — MM-006 remains scenic splash |
+| SplashScreen brand overlay | DEFERRED — MM-006 remains scenic-only splash (menu-free master installed 2026-09-13) |
 | Workspace / game HUD / other menus | OUT OF PHASE 1 |
 
 Runtime registry: `BR-001` → `/assets/branding/BR-001.svg` (`format: svg`, `preload: false`, `component: MainMenuHome`).
@@ -324,15 +324,15 @@ High
 
 Status
 
-Approved
+Approved — **menu-free replacement CLOSED / PASS** (2026-09-13)
 
 Implementation
 
-Complete — React screens MM-001–MM-007 (`MAIN_MENU_IMPLEMENTATION_GUIDE.md`)
+Complete — `MainMenuScreen` background via `PGVisualAssetBackground`; authoritative source `docs/design/Bilder/einzelne_bilder/hochgeladen/MM-001_Main_Menu_Final.png` (1536×1024 PNG, SHA-256 `fc91ce7adfa0208daa50209ef079883641dacaf296264dc1f56fc271772f2cf5`); runtime `/assets/main-menu/MM-001.{png,webp}`. Supersedes baked English UI mock (Git history). Scenic background only — MainMenuHome + BR-001 own UI/branding.
 
 Description
 
-Industrial skyline background.
+Industrial valley / skyline scenic background (UI-free).
 
 
 
@@ -1178,11 +1178,11 @@ UI-MM-006
 
 Status
 
-Approved
+Approved — **menu-free replacement CLOSED / PASS** (2026-09-13)
 
 Implementation
 
-Complete — `SplashScreen.tsx` (M11 Phase 2)
+Complete — `SplashScreen.tsx` (M11 Phase 2); authoritative source `docs/design/Bilder/einzelne_bilder/hochgeladen/MM-006_Splash.png` (1536×1024 PNG, SHA-256 `568bb64cca148aa32959755619b37486999427c61bb908fc6a29eb81059a789c`); runtime `/assets/main-menu/MM-006.{png,webp}`. Supersedes baked-in menu mock artwork (Git history). Scenic background only — no embedded application UI.
 
 _Auto-added by Visual Asset Manager._
 

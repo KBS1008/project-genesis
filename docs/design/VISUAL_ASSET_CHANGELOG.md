@@ -300,6 +300,32 @@ Entries are appended automatically — do not edit manually except for recovery.
 - Market Widget: remains **DEFERRED — VALUE/COST NOT YET JUSTIFIED** (technically conditional-ready; not a Phase-1 requirement)
 - MarketScreen and other surfaces: **OPTIONAL FUTURE EXPANSION**
 
+## 2026-09-13 — MM-001 menu-free main menu background replacement
+
+- Asset: `MM-001` (`MM-001_Main_Menu_Final.png`)
+- Operation: Replaced authoritative scenic master — removed baked-in English UI mock (sidebar, top bar, news, social, wordmark); application-owned German menu + BR-001 unchanged
+- Authoritative source: `docs/design/Bilder/einzelne_bilder/hochgeladen/MM-001_Main_Menu_Final.png`
+- Candidate: `docs/design/Mockups/main-menu/MM-001_Main_Menu_Background_NoUI.png` (already **1536×1024** — no geometry preprocessing)
+- Source SHA-256: `fc91ce7adfa0208daa50209ef079883641dacaf296264dc1f56fc271772f2cf5`
+- Runtime: `/assets/main-menu/MM-001.png` (byte-identical to source); `/assets/main-menu/MM-001.webp` SHA-256 `04cf6b19e27457f76f8a2d4a51c17d4218ef0051d8453772b67223951bdcec3c`
+- Consumer: `MainMenuScreen` / `MainMenuHome` — **CLOSED / PASS**
+- Superseded master (full UI mock): preserved in Git history only (SHA-256 `3aa69cd973aa7ff5099887a39e5aa5ff38093906e8c8819c2f05ea32d33753e8`)
+- Architecture: MM-001 = scenic background; MainMenuHome = interactive UI; BR-001 = product branding (unchanged)
+- Report: `POST_V1_MM_001_MENU_FREE_BACKGROUND_REPLACEMENT_CLOSE_CANDIDATE_REPORT.md`
+
+## 2026-09-13 — MM-006 menu-free splash background replacement
+
+- Asset: `MM-006` (`MM-006_Splash.png`)
+- Operation: Replaced authoritative scenic master — removed baked-in promotional menu/UI; application-owned menu unchanged
+- Authoritative source: `docs/design/Bilder/einzelne_bilder/hochgeladen/MM-006_Splash.png`
+- Preprocessing: deterministic centre crop/resize from menu-free candidate `docs/design/Mockups/main-menu/MM-006_Splash_Background_NoUI.png.png` → **1536×1024** PNG
+- Source SHA-256: `568bb64cca148aa32959755619b37486999427c61bb908fc6a29eb81059a789c`
+- Runtime: `/assets/main-menu/MM-006.png` (byte-identical to source); `/assets/main-menu/MM-006.webp` SHA-256 `8b43dce51e99da852d2ec7c8945816d010228f792ca6ded1c469110a96a51f90`
+- Consumer: `SplashScreen` only — **CLOSED / PASS**
+- Superseded master (baked menu artwork): preserved in Git history only (SHA-256 `fd7d35b02acf700951e19f8dbc2b21fe309329578f591b41bd746217285fba96`)
+- Architecture: MM-006 = scenic background; application = interactive menu; BR-001 = product branding (unchanged)
+- Report: `POST_V1_MM_006_MENU_FREE_BACKGROUND_REPLACEMENT_CLOSE_CANDIDATE_REPORT.md`
+
 ## 2026-09-13 — BR-001 Phase 1 closeout
 
 - Family: BR-001 Product Brand Symbol
