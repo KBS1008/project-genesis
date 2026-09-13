@@ -434,7 +434,7 @@ Category variants: Production, Energy, Storage, Infrastructure, Administration, 
 
 # Sprint 13 — Branding
 
-☐ BR-001_Logo.png
+☑ **BR-001** — Product brand symbol (Phase 1 CLOSED / PASS 2026-09-13) — sealed SVG `BR-001_Logo.svg`; MainMenuHome + favicon 32×32 metadata
 
 ☐ BR-002_Splash.png
 

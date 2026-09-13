@@ -2,6 +2,7 @@
 
 import packageInfo from '../../../../package.json';
 import type { SessionStatusDto } from '@/presentation/adapters/api/query-client';
+import { PGVisualAssetImage } from '@/presentation/components/assets';
 import { Button } from '@/presentation/primitives/Button';
 import { StatusBanner } from '@/presentation/primitives/StatusBanner';
 import type { MenuPanelView } from './menu-flow';
@@ -27,8 +28,18 @@ export function MainMenuHome({
   return (
     <div className="pg-main-menu-home pg-menu-animate-in">
       <div className="pg-main-menu-brand">
-        <h1>Project Genesis</h1>
-        <p>Deterministische Wirtschafts- und Industriesimulation</p>
+        <div className="pg-main-menu-brand-row">
+          <PGVisualAssetImage
+            assetId="BR-001"
+            alt=""
+            className="pg-main-menu-brand-mark"
+            loading="eager"
+          />
+          <div className="pg-main-menu-brand-text">
+            <h1>Project Genesis</h1>
+            <p>Deterministische Wirtschafts- und Industriesimulation</p>
+          </div>
+        </div>
       </div>
 
       {errorMessage !== null ? <StatusBanner tone="warning" message={errorMessage} /> : null}

@@ -6,6 +6,9 @@ import './globals.css';
 export const metadata: Metadata = {
   title: 'Project Genesis',
   description: 'Deterministic economy and industry simulation',
+  icons: {
+    icon: [{ url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' }],
+  },
 };
 
 /** Root layout for the Next.js browser shell. */

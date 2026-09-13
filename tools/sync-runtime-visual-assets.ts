@@ -14,7 +14,11 @@ import sharp from 'sharp';
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const designRoot = path.join(projectRoot, 'docs/design/Bilder/einzelne_bilder/hochgeladen');
 const iconDesignRoot = path.join(projectRoot, 'docs/design/icons');
+const brandDesignRoot = path.join(projectRoot, 'docs/design/branding');
 const publicRoot = path.join(projectRoot, 'apps/web/public/assets');
+const publicWebRoot = path.join(projectRoot, 'apps/web/public');
+
+const BR_001_DESIGN_SOURCE = 'BR-001_Logo.svg';
 
 const WEBP_QUALITY = 82;
 const ICON_RUNTIME_PX = 48;
@@ -151,6 +155,29 @@ async function syncRuntimeVisualAssets(): Promise<void> {
     const targetPath = path.join(iconTargetDir, `${asset.id}.svg`);
     await copyFile(sourcePath, targetPath);
     console.log(`Synced ${asset.id} → ${path.relative(projectRoot, targetPath)}`);
+  }
+
+  const brandingTargetDir = path.join(publicRoot, 'branding');
+  await mkdir(brandingTargetDir, { recursive: true });
+
+  const br001SourcePath = path.join(brandDesignRoot, BR_001_DESIGN_SOURCE);
+  const br001RuntimePath = path.join(brandingTargetDir, 'BR-001.svg');
+  await copyFile(br001SourcePath, br001RuntimePath);
+  console.log(`Synced BR-001 → ${path.relative(projectRoot, br001RuntimePath)}`);
+
+  for (const size of [16, 32] as const) {
+    const faviconPath = path.join(publicWebRoot, `favicon-${size}x${size}.png`);
+    await sharp(br001SourcePath)
+      .resize(size, size, {
+        fit: 'contain',
+        background: { r: 0, g: 0, b: 0, alpha: 0 },
+      })
+      .png()
+      .toFile(faviconPath);
+    const faviconStats = await stat(faviconPath);
+    console.log(
+      `Synced BR-001 favicon → ${path.relative(projectRoot, faviconPath)} (${size}×${size}, ${formatBytes(faviconStats.size)})`,
+    );
   }
 }
 

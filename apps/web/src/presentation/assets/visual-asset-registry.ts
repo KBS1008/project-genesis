@@ -7,6 +7,7 @@ import type {
 } from '@/presentation/assets/visual-asset-types';
 
 const MAIN_MENU_BASE = '/assets/main-menu';
+const BRANDING_BASE = '/assets/branding';
 const CHARTS_BASE = '/assets/charts';
 const ICONS_BASE = '/assets/icons';
 
@@ -251,19 +252,15 @@ export const VISUAL_ASSET_REGISTRY: Readonly<Record<string, VisualAssetEntry>> =
     designSource: 'docs/design/Bilder/einzelne_bilder/hochgeladen/MM-007_Loading.png',
     notes: 'Loading phase background while session status is fetched.',
   }),
-  'BR-001': entry({
-    id: 'BR-001',
+  'BR-001': runtimeSvg('BR-001', {
     label: 'Project Genesis Brand Mark',
-    type: 'runtime',
-    component: 'SplashScreen',
-    format: 'png',
-    path: `${MAIN_MENU_BASE}/MM-006.png`,
-    webp: `${MAIN_MENU_BASE}/MM-006.webp`,
-    theme: 'default',
+    component: 'MainMenuHome',
+    preload: false,
     priority: 'high',
-    preload: true,
-    designSource: 'docs/design/Bilder/einzelne_bilder/hochgeladen/MM-006_Splash.png',
-    notes: 'Brand mark sourced from splash art until dedicated logo asset exists.',
+    designSource: 'docs/design/branding/BR-001_Logo.svg',
+    notes:
+      'Certified product brand symbol (#2563EB SVG master) — MainMenuHome integration deferred to Phase 1D.',
+    baseDir: BRANDING_BASE,
   }),
 
   'DB-001': referenceMockup('DB-001', {

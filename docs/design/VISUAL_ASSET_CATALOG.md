@@ -99,6 +99,29 @@ Runtime registry IDs: `ICON-002-<category>` → `/assets/icons/ICON-002-<categor
 
 Implementation commits: Phase 1C `8f8315f590944edfac4eaf8fb131c1a3a5fa5ce2`; Phase 1D `f0ef49ae596880860a9dbdcc78096ec9056b5bbc` (local at closeout time).
 
+
+### BR-001 Product Brand Symbol (Post-V1 — SVG 2026-09-13)
+
+Family ID: **BR-001** (modular-industrial product mark).
+
+**Phase 1 status:** **CLOSED / PASS** (2026-09-13). Close candidate: `POST_V1_BR_001_PHASE_1_CLOSE_CANDIDATE_REPORT.md`.
+
+**Visual status:** Sealed SVG master `#2563EB`; three distinct L-modules; no text; transparent background.
+
+**Phase 1 scope (complete):** authoritative source `docs/design/branding/BR-001_Logo.svg`; byte-identical runtime copy `/assets/branding/BR-001.svg`; registry migration (MM-006 alias removed); certified favicon derivative candidates (16/32 PNG); **MainMenuHome** consumer via `PGVisualAssetImage`; **browser favicon** via `metadata.icons` → `/favicon-32x32.png` only.
+
+| Consumer / layer | Status |
+|------------------|--------|
+| Source SVG (sealed) | CLOSED / PASS |
+| Runtime SVG copy | CLOSED / PASS |
+| MainMenuHome brand mark | CLOSED / PASS |
+| Browser favicon (32×32 wired) | CLOSED / PASS |
+| Favicon 16×16 PNG | CERTIFIED DERIVATIVE — unwired |
+| SplashScreen brand overlay | DEFERRED — MM-006 remains scenic splash |
+| Workspace / game HUD / other menus | OUT OF PHASE 1 |
+
+Runtime registry: `BR-001` → `/assets/branding/BR-001.svg` (`format: svg`, `preload: false`, `component: MainMenuHome`).
+
 Per-building-type artwork, state variants, and world-map marker redesign remain **future optional visual production work** — see §6 Buildings below. They are **not** part of ICON-002 Phase 1.
 
 

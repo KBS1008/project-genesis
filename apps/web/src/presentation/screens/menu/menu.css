@@ -21,12 +21,30 @@
   box-shadow: var(--shadow);
 }
 
-.pg-main-menu-brand h1 {
+.pg-main-menu-brand-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  min-width: 0;
+}
+
+.pg-main-menu-brand-mark {
+  width: 2.5rem;
+  height: 2.5rem;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
+.pg-main-menu-brand-text {
+  min-width: 0;
+}
+
+.pg-main-menu-brand-text h1 {
   margin: 0 0 var(--space-xs);
   font-size: var(--text-h1);
 }
 
-.pg-main-menu-brand p {
+.pg-main-menu-brand-text p {
   margin: 0;
   color: var(--muted);
 }

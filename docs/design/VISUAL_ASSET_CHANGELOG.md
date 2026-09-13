@@ -300,6 +300,18 @@ Entries are appended automatically — do not edit manually except for recovery.
 - Market Widget: remains **DEFERRED — VALUE/COST NOT YET JUSTIFIED** (technically conditional-ready; not a Phase-1 requirement)
 - MarketScreen and other surfaces: **OPTIONAL FUTURE EXPANSION**
 
+## 2026-09-13 — BR-001 Phase 1 closeout
+
+- Family: BR-001 Product Brand Symbol
+- Operation: Phase 1 documentation closeout — consumers integrated in Phase 1D; lifecycle updated in consolidated finish pass
+- Status: **BR-001 Phase 1 = CLOSED / PASS**
+- Phase 1 delivered: sealed SVG master; runtime SVG certification; registry migration (MM-006 alias removed); MainMenuHome decorative brand via `PGVisualAssetImage`; browser favicon via `metadata.icons` → certified 32×32 PNG; targeted tests; desktop and narrow runtime evidence
+- Coverage: no MUST-HAVE Phase-1 consumer gap (`POST_V1_BR_001_PHASE_1_CLOSE_CANDIDATE_REPORT.md`)
+- Boundary: Phase 1 covers MainMenuHome product branding + browser favicon only — **not** splash overlay, workspace header, or logo proliferation
+- SplashScreen: **DEFERRED** — MM-006 scenic splash unchanged
+- Workspace header / other screens: **OPTIONAL / DEFERRED**
+- Favicon 16×16 PNG: certified derivative on disk — **unwired** (minimum wired set = 32×32 only)
+
 ## 2026-09-10 — ICON-002 Phase 1 closeout
 
 - Family: ICON-002 Building Category Icons

@@ -67,7 +67,7 @@ describe('shell and menu snapshots', () => {
     expect(container).toMatchSnapshot();
   });
 
-  it('matches MainMenuHome snapshot', () => {
+  it('matches MainMenuHome brand row with BR-001 and preserved title', () => {
     const { container } = renderPresentation(
       <MainMenuHome
         sessionStatus={{
@@ -84,6 +84,12 @@ describe('shell and menu snapshots', () => {
       />,
     );
 
-    expect(container).toMatchSnapshot();
+    expect(container.querySelector('h1')?.textContent).toBe('Project Genesis');
+    const brandMark = container.querySelector('img.pg-main-menu-brand-mark');
+    expect(brandMark?.getAttribute('alt')).toBe('');
+    expect(brandMark?.getAttribute('src')).toBe('/assets/branding/BR-001.svg');
+    expect(container.querySelector('.pg-main-menu-brand-text p')?.textContent).toContain(
+      'Deterministische Wirtschafts-',
+    );
   });
 });
