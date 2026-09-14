@@ -1194,11 +1194,11 @@ UI-MM-007
 
 Status
 
-Approved
+Approved — **menu-free replacement CLOSED / PASS** (2026-09-14)
 
 Implementation
 
-Complete — `MenuLoadingScreen.tsx` (M11 Phase 2)
+Complete — `MenuLoadingScreen.tsx` (M11 Phase 2); authoritative source `docs/design/Bilder/einzelne_bilder/hochgeladen/MM-007_Loading.png` (1536×1024 PNG, SHA-256 `c2da4be22005da95969324b46b15e7343bee75957187015bdc34c1f4c54c209e`); runtime `/assets/main-menu/MM-007.{png,webp}`. Supersedes baked loading HUD mock (Git history). Scenic background only — `LoadingState` owns loading copy.
 
 _Auto-added by Visual Asset Manager._
 

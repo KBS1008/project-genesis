@@ -300,6 +300,19 @@ Entries are appended automatically — do not edit manually except for recovery.
 - Market Widget: remains **DEFERRED — VALUE/COST NOT YET JUSTIFIED** (technically conditional-ready; not a Phase-1 requirement)
 - MarketScreen and other surfaces: **OPTIONAL FUTURE EXPANSION**
 
+## 2026-09-13 — MM-007 menu-free loading background replacement
+
+- Asset: `MM-007` (`MM-007_Loading.png`)
+- Operation: Replaced authoritative scenic master — removed baked-in loading HUD, tips, branding, and fake progress; `MenuLoadingScreen` `LoadingState` unchanged
+- Authoritative source: `docs/design/Bilder/einzelne_bilder/hochgeladen/MM-007_Loading.png`
+- Candidate: `docs/design/Mockups/main-menu/MM-007_Loading_Background_NoUI.png` (already **1536×1024** — no geometry preprocessing)
+- Source SHA-256: `c2da4be22005da95969324b46b15e7343bee75957187015bdc34c1f4c54c209e`
+- Runtime: `/assets/main-menu/MM-007.png` (byte-identical to source); `/assets/main-menu/MM-007.webp` SHA-256 `b79dc60eaeb84e82c689782ff4ed0499d64576cfb5430c80b6ecd01184af9398`
+- Consumer: `MenuLoadingScreen` only — **CLOSED / PASS**
+- Superseded master (loading UI mock): preserved in Git history only (SHA-256 `bc0455a8976abbbca1700283ecd47d1f1e8aeb013e3fac30c7a646bd3a1fb6bd`)
+- Architecture: MM-007 = scenic background; application = loading semantics; BR-001 separate
+- Report: `POST_V1_MM_007_MENU_FREE_LOADING_BACKGROUND_REPLACEMENT_CLOSE_CANDIDATE_REPORT.md`
+
 ## 2026-09-13 — MM-001 menu-free main menu background replacement
 
 - Asset: `MM-001` (`MM-001_Main_Menu_Final.png`)

@@ -180,7 +180,7 @@ docs/
 
 ## Loading Screen
 
-🚀 MM-007_Loading.png — runtime loading background
+☑ MM-007_Loading.png — runtime loading background (menu-free scenic master; `MenuLoadingScreen` — **CLOSED / PASS** 2026-09-14)
 
 ---
 
