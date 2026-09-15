@@ -121,6 +121,18 @@
   grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
 }
 
+.pg-production-state-icon-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.pg-production-state-icon {
+  width: 1.125rem;
+  height: 1.125rem;
+  flex-shrink: 0;
+}
+
 .pg-operation-metric {
   margin: 0;
   font-size: 1.75rem;

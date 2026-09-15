@@ -9,7 +9,7 @@ export function Card({
   children,
   className = '',
 }: {
-  readonly title?: string;
+  readonly title?: ReactNode;
   readonly children: ReactNode;
   readonly className?: string;
 }) {

@@ -184,6 +184,24 @@ describe('ProductionScreen', () => {
     expect(screen.getByText('Laufend')).toBeInTheDocument();
   });
 
+  it('adds decorative DashboardIcon cues on stalled and finished summary cards only', () => {
+    workspaceState.setNavigation({ screen: 'production', entitySelection: { kind: 'none' } });
+    render(<ProductionScreen />);
+
+    const overview = screen.getByLabelText('Produktionsübersicht');
+    const summaryIcons = overview.querySelectorAll('.pg-production-state-icon[aria-hidden="true"]');
+    expect(summaryIcons).toHaveLength(3);
+
+    const laufendHeading = screen.getByRole('heading', { name: 'Laufend' });
+    expect(laufendHeading.querySelector('.pg-production-state-icon')).toBeNull();
+
+    const wartendHeading = screen.getByRole('heading', { name: 'Wartend' });
+    expect(wartendHeading.querySelector('.pg-production-state-icon')).toBeNull();
+
+    const jobsTable = screen.getByRole('table', { name: 'Aktive Produktionsjobs' });
+    expect(jobsTable.querySelector('.pg-production-state-icon')).toBeNull();
+  });
+
   it('renders PR-002 factory groups and PR-003 recipe catalog', () => {
     workspaceState.setNavigation({ screen: 'production', entitySelection: { kind: 'none' } });
     render(<ProductionScreen />);

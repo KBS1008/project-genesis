@@ -27,6 +27,8 @@ import { QueryRows } from '@/presentation/screens/shared/QueryRows';
 import { ScreenQueryFrame } from '@/presentation/screens/shared/ScreenQueryFrame';
 import { useGameWorkspace } from '@/presentation/state/GameWorkspaceProvider';
 import { ProductionProgressCell } from '@/presentation/screens/production/ProductionProgressCell';
+import { ProductionOperationalStateIconLabel } from '@/presentation/screens/production/ProductionOperationalStateIconLabel';
+import { resolveProductionOperationalStateDashboardIcon } from '@/presentation/screens/production/production-operational-state-dashboard-icon';
 import '../world/world-company.css';
 import '../shared/operation-screen.css';
 import '../../components/dashboard/dashboard-components.css';
@@ -178,11 +180,27 @@ export function ProductionScreen() {
             <p className="pg-operation-metric">{overviewSummary.runningCount}</p>
             <p className="pg-operation-hint-copy">Mit Energie und Personal</p>
           </Card>
-          <Card title="Energie fehlt">
+          <Card
+            title={
+              <ProductionOperationalStateIconLabel
+                icon={resolveProductionOperationalStateDashboardIcon('STALLED_ENERGY')}
+              >
+                Energie fehlt
+              </ProductionOperationalStateIconLabel>
+            }
+          >
             <p className="pg-operation-metric">{overviewSummary.stalledEnergyCount}</p>
             <p className="pg-operation-hint-copy">Gestoppt wegen Energie</p>
           </Card>
-          <Card title="Keine Mitarbeiter">
+          <Card
+            title={
+              <ProductionOperationalStateIconLabel
+                icon={resolveProductionOperationalStateDashboardIcon('STALLED_WORKFORCE')}
+              >
+                Keine Mitarbeiter
+              </ProductionOperationalStateIconLabel>
+            }
+          >
             <p className="pg-operation-metric">{overviewSummary.stalledWorkforceCount}</p>
             <p className="pg-operation-hint-copy">Gestoppt wegen Personal</p>
           </Card>
@@ -190,7 +208,15 @@ export function ProductionScreen() {
             <p className="pg-operation-metric">{overviewSummary.waitingCount}</p>
             <p className="pg-operation-hint-copy">Material oder Transport</p>
           </Card>
-          <Card title="Abgeschlossen">
+          <Card
+            title={
+              <ProductionOperationalStateIconLabel
+                icon={resolveProductionOperationalStateDashboardIcon('FINISHED')}
+              >
+                Abgeschlossen
+              </ProductionOperationalStateIconLabel>
+            }
+          >
             <p className="pg-operation-metric">{overviewSummary.finishedCount}</p>
             <p className="pg-operation-hint-copy">In dieser Session sichtbar</p>
           </Card>
