@@ -39,6 +39,8 @@ describe('buildGlobalSearchIndex', () => {
           description: 'Industriegebiet',
           worldId: 'world-1',
           biomeId: 'biome-1',
+          biomeName: 'Industrial Plains',
+          biomeCategory: 'PLAINS',
           mapX: 0,
           mapY: 0,
           neighborRegionIds: Object.freeze([]),

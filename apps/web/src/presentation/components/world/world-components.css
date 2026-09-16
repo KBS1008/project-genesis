@@ -52,10 +52,17 @@
   min-height: 22rem;
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  background: var(--bg-elevated);
+  background:
+    radial-gradient(
+      ellipse 120% 90% at 50% 45%,
+      color-mix(in srgb, var(--accent) 8%, var(--bg-elevated)) 0%,
+      var(--bg-elevated) 55%,
+      color-mix(in srgb, var(--bg) 88%, var(--bg-elevated)) 100%
+    );
   overflow: hidden;
   touch-action: none;
   cursor: grab;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--border) 65%, transparent);
 }
 
 .pg-world-viewport.is-dragging {
@@ -69,24 +76,85 @@
 }
 
 .pg-world-layer-grid line {
-  stroke: var(--border);
+  stroke: color-mix(in srgb, var(--muted) 35%, var(--border));
   stroke-width: 1;
+  stroke-dasharray: 3 4;
 }
 
 .pg-world-region {
-  fill: color-mix(in srgb, var(--accent) 12%, var(--bg));
+  stroke-width: 1.75;
+  transition:
+    stroke var(--duration-fast) var(--ease-standard),
+    filter var(--duration-fast) var(--ease-standard);
+}
+
+.pg-world-region-surface-forest {
+  stroke: color-mix(in srgb, var(--success) 55%, var(--border));
+}
+
+.pg-world-region-surface-plains {
+  stroke: color-mix(in srgb, var(--warning, #c9a227) 45%, var(--border));
+}
+
+.pg-world-region-surface-coastal {
+  stroke: color-mix(in srgb, var(--accent) 50%, var(--border));
+}
+
+.pg-world-region-surface-unknown {
   stroke: var(--border);
-  stroke-width: 1.5;
-  transition: fill var(--duration-fast) var(--ease-standard);
 }
 
 .pg-world-region:hover {
-  fill: color-mix(in srgb, var(--accent) 22%, var(--bg));
+  filter: brightness(1.08);
 }
 
 .pg-world-region.is-selected {
-  fill: color-mix(in srgb, var(--accent) 28%, var(--bg));
   stroke: var(--accent);
+  stroke-width: 2.5;
+  filter: brightness(1.12);
+}
+
+.pg-world-biome-pattern-base-forest {
+  fill: color-mix(in srgb, var(--success) 22%, var(--bg-elevated));
+}
+
+.pg-world-biome-pattern-line-forest {
+  stroke: color-mix(in srgb, var(--success) 35%, transparent);
+  stroke-width: 0.75;
+}
+
+.pg-world-biome-pattern-base-plains {
+  fill: color-mix(in srgb, var(--warning, #c9a227) 16%, var(--bg-elevated));
+}
+
+.pg-world-biome-pattern-dot-plains {
+  fill: color-mix(in srgb, var(--warning, #c9a227) 40%, transparent);
+}
+
+.pg-world-biome-pattern-base-coastal {
+  fill: color-mix(in srgb, var(--accent) 18%, var(--bg-elevated));
+}
+
+.pg-world-biome-pattern-wave-coastal {
+  stroke: color-mix(in srgb, var(--accent) 40%, transparent);
+  stroke-width: 0.75;
+  fill: none;
+}
+
+.pg-world-biome-pattern-base-unknown {
+  fill: color-mix(in srgb, var(--muted) 12%, var(--bg-elevated));
+}
+
+.pg-world-route {
+  stroke: color-mix(in srgb, var(--muted) 55%, var(--border));
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.85;
+}
+
+.pg-world-route-active {
+  stroke: var(--accent);
+  opacity: 1;
 }
 
 .pg-world-connection {
@@ -171,13 +239,36 @@
 }
 
 .pg-world-minimap-region {
-  fill: color-mix(in srgb, var(--accent) 35%, var(--bg));
-  stroke: var(--border);
+  stroke: color-mix(in srgb, var(--border) 80%, transparent);
   stroke-width: 0.5;
 }
 
+.pg-world-minimap-region-surface-forest {
+  fill: color-mix(in srgb, var(--success) 45%, var(--bg));
+}
+
+.pg-world-minimap-region-surface-plains {
+  fill: color-mix(in srgb, var(--warning, #c9a227) 40%, var(--bg));
+}
+
+.pg-world-minimap-region-surface-coastal {
+  fill: color-mix(in srgb, var(--accent) 38%, var(--bg));
+}
+
+.pg-world-minimap-region-surface-unknown {
+  fill: color-mix(in srgb, var(--muted) 25%, var(--bg));
+}
+
 .pg-world-minimap-region.is-selected {
-  fill: var(--accent);
+  stroke: var(--accent);
+  stroke-width: 1.25;
+}
+
+.pg-world-minimap-route {
+  stroke: color-mix(in srgb, var(--muted) 50%, var(--border));
+  stroke-width: 1;
+  stroke-linecap: round;
+  opacity: 0.9;
 }
 
 .pg-world-minimap-viewport {
@@ -277,6 +368,29 @@
 
 .pg-world-legend-swatch-presence {
   background: var(--accent);
+}
+
+.pg-world-legend-group-label {
+  margin: var(--space-xs) 0 0.2rem;
+  font-size: var(--text-caption);
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.pg-world-legend-swatch-biome-forest {
+  background: color-mix(in srgb, var(--success) 45%, var(--bg));
+}
+
+.pg-world-legend-swatch-biome-plains {
+  background: color-mix(in srgb, var(--warning, #c9a227) 40%, var(--bg));
+}
+
+.pg-world-legend-swatch-biome-coastal {
+  background: color-mix(in srgb, var(--accent) 38%, var(--bg));
+}
+
+.pg-world-legend-swatch-biome-unknown {
+  background: color-mix(in srgb, var(--muted) 25%, var(--bg));
 }
 
 @media (max-width: 56.25rem) {

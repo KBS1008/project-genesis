@@ -6,45 +6,34 @@
 
 import { Result } from '../../common/result/Result.js';
 import type { ValidationError } from '../../common/errors/ValidationError.js';
-import type { Region } from '../../domain/region/Region.js';
 import type { ApplicationContext } from '../bootstrap/ApplicationContext.js';
+import { mapRegionReadModel } from '../read-models/mapRegionReadModel.js';
 import type { RegionReadModel } from '../read-models/RegionReadModel.js';
 import type { ListRegionsQuery } from './ListRegionsQuery.js';
 
 /** Dependencies required by {@link ListRegionsQueryHandler}. */
-export type ListRegionsQueryHandlerDependencies = Pick<ApplicationContext, 'regionRepository'>;
+export type ListRegionsQueryHandlerDependencies = Pick<
+  ApplicationContext,
+  'regionRepository' | 'gameContent'
+>;
 
 /**
  * Returns read models for all bootstrapped regions.
  */
 export class ListRegionsQueryHandler {
   readonly #regionRepository: ListRegionsQueryHandlerDependencies['regionRepository'];
+  readonly #biomes: ListRegionsQueryHandlerDependencies['gameContent']['biomes'];
 
   constructor(dependencies: ListRegionsQueryHandlerDependencies) {
     this.#regionRepository = dependencies.regionRepository;
+    this.#biomes = dependencies.gameContent.biomes;
   }
 
   execute(_query: ListRegionsQuery = {}): Result<readonly RegionReadModel[], ValidationError> {
     const regions = this.#regionRepository.findAll();
 
-    return Result.ok(Object.freeze(regions.map(mapRegion)));
+    return Result.ok(
+      Object.freeze(regions.map((region) => mapRegionReadModel(region, this.#biomes))),
+    );
   }
-}
-
-function mapRegion(region: Region): RegionReadModel {
-  const mapPosition = region.getMapPosition();
-
-  return Object.freeze({
-    id: region.getId().value,
-    name: region.getName(),
-    description: region.getDescription(),
-    worldId: region.getWorldId().value,
-    biomeId: region.getBiomeId(),
-    mapX: mapPosition.x,
-    mapY: mapPosition.y,
-    neighborRegionIds: Object.freeze(
-      region.getNeighborRegionIds().map((neighborId) => neighborId.value),
-    ),
-    cityIds: Object.freeze(region.getCityIds().map((cityId) => cityId.value)),
-  });
 }

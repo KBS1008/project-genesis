@@ -9,6 +9,8 @@ const REGIONS: readonly RegionDto[] = Object.freeze([
     description: 'Starter region',
     worldId: 'world_001',
     biomeId: 'temperate',
+    biomeName: 'Temperate Forest',
+    biomeCategory: 'FOREST',
     mapX: 0,
     mapY: 0,
     neighborRegionIds: Object.freeze(['region_002']),
@@ -20,6 +22,8 @@ const REGIONS: readonly RegionDto[] = Object.freeze([
     description: 'Coastal trade hub',
     worldId: 'world_001',
     biomeId: 'coastal',
+    biomeName: 'Coastal Lowlands',
+    biomeCategory: 'COASTAL',
     mapX: 1,
     mapY: 0,
     neighborRegionIds: Object.freeze(['region_001']),
@@ -45,6 +49,8 @@ describe('world-view-mappers', () => {
     expect(viewData.mapName).toBe('Genesis Map');
     expect(viewData.regions).toHaveLength(2);
     expect(viewData.regions[0]?.name).toBe('Heartland');
+    expect(viewData.regions[0]?.biomeLabel).toBe('Temperate Forest');
+    expect(viewData.regions[0]?.biomeLabel.startsWith('biome_')).toBe(false);
     expect(viewData.connections[0]?.distanceLabel).toBe('12');
     expect(viewData.columns).toBe(2);
   });
@@ -55,6 +61,7 @@ describe('world-view-mappers', () => {
       title: 'Heartland',
       description: 'Starter region',
       biomeId: 'temperate',
+      biomeLabel: 'Temperate Forest',
       resources: [{ label: 'wood', amountLabel: '100 (1,00×)' }],
       cities: [{ id: 'city_001', name: 'Capital', category: 'METROPOLIS' }],
     });

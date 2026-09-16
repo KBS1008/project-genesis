@@ -14,6 +14,7 @@ import { PGWorldLayerManager } from '@/presentation/components/world/PGWorldLaye
 import { PGWorldLegend } from '@/presentation/components/world/PGWorldLegend';
 import { PGWorldToolbar } from '@/presentation/components/world/PGWorldToolbar';
 import { PGWorldViewport } from '@/presentation/components/world/PGWorldViewport';
+import { buildWorldBiomeLegendEntries } from '@/presentation/formatting/world-biome-presentation';
 import { useWorldCamera } from '@/presentation/hooks/useWorldCamera';
 import { useWorldLayers } from '@/presentation/hooks/useWorldLayers';
 import { QueryRows } from '@/presentation/screens/shared/QueryRows';
@@ -54,6 +55,11 @@ export function PGWorldWorkspace({
     onPointerUp,
   } = useWorldCamera(map.regions);
 
+  const biomeLegendEntries = useMemo(
+    () => buildWorldBiomeLegendEntries(map.regions),
+    [map.regions],
+  );
+
   const layerState = useMemo(
     () =>
       Object.freeze({
@@ -93,7 +99,7 @@ export function PGWorldWorkspace({
               {world.regionCountLabel} Regionen · {world.cityCountLabel} Städte · {map.mapName}
             </p>
           </div>
-          <PGWorldLegend layers={layers} />
+          <PGWorldLegend layers={layers} biomeEntries={biomeLegendEntries} />
         </header>
 
         <PGWorldToolbar
@@ -144,7 +150,7 @@ export function PGWorldWorkspace({
               id: region.id,
               cells: [
                 region.name,
-                region.biomeId,
+                region.biomeLabel,
                 region.mapPositionLabel,
                 String(region.cityCount),
               ],

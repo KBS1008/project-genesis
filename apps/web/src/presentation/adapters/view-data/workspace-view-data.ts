@@ -31,6 +31,7 @@ export type WorldRegionViewData = {
   readonly name: string;
   readonly description: string;
   readonly biomeId: string;
+  readonly biomeLabel: string;
   readonly mapPositionLabel: string;
   readonly neighborCount: number;
   readonly cityCount: number;
@@ -48,6 +49,7 @@ export type RegionDetailViewData = {
   readonly title: string;
   readonly description: string;
   readonly biomeId: string;
+  readonly biomeLabel: string;
   readonly resources: readonly { readonly label: string; readonly amountLabel: string }[];
   readonly cities: readonly { readonly id: string; readonly name: string; readonly category: string }[];
 };

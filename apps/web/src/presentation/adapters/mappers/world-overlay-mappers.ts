@@ -292,9 +292,9 @@ export function mapWorldRegionInspectorViewData(
 
   return Object.freeze({
     title: detail.title,
-    subtitle: detail.biomeId,
+    subtitle: detail.biomeLabel,
     entries: Object.freeze([
-      Object.freeze({ label: 'Biom', value: detail.biomeId }),
+      Object.freeze({ label: 'Biom', value: detail.biomeLabel }),
       Object.freeze({ label: 'Städte', value: String(detail.cities.length) }),
       Object.freeze({ label: 'Gebäude', value: String(operations.buildings.length) }),
       Object.freeze({ label: 'Transporte', value: String(operations.transports.length) }),

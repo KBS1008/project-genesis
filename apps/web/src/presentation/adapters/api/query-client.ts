@@ -50,6 +50,8 @@ export type RegionDto = {
   readonly description: string;
   readonly worldId: string;
   readonly biomeId: string;
+  readonly biomeName: string;
+  readonly biomeCategory: string;
   readonly mapX: number;
   readonly mapY: number;
   readonly neighborRegionIds: readonly string[];

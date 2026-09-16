@@ -10,7 +10,10 @@ import {
 /** Layer visibility state for the world map framework. */
 export function useWorldLayers() {
   const [enabledLayers, setEnabledLayers] = useState<ReadonlySet<WorldLayerId>>(
-    () => new Set(DEFAULT_WORLD_LAYERS.map((layer) => layer.id)),
+    () =>
+      new Set(
+        DEFAULT_WORLD_LAYERS.filter((layer) => layer.enabled).map((layer) => layer.id),
+      ),
   );
 
   const layers = useMemo(

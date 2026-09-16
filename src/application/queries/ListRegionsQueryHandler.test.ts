@@ -18,7 +18,10 @@ describe('ListRegionsQueryHandler', () => {
     }
 
     const { regionRepository } = bootstrapWorldFromContent(contentResult.value);
-    const handler = new ListRegionsQueryHandler({ regionRepository });
+    const handler = new ListRegionsQueryHandler({
+      regionRepository,
+      gameContent: contentResult.value,
+    });
     const result = handler.execute();
 
     expect(result.ok).toBe(true);
@@ -31,6 +34,8 @@ describe('ListRegionsQueryHandler', () => {
         'region_south',
       ]);
       expect(result.value[0]?.cityIds).toContain('city_port_harbor');
+      expect(result.value[0]?.biomeName).toBe('Temperate Forest');
+      expect(result.value[0]?.biomeCategory).toBe('FOREST');
     }
   });
 });

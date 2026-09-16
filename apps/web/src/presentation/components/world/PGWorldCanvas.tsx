@@ -1,15 +1,43 @@
 'use client';
 
+import {
+  worldBiomePatternId,
+  worldBiomeSurfaceClass,
+} from '@/presentation/formatting/world-biome-presentation';
 import type {
   WorldMapViewData,
   WorldOverlayViewData,
 } from '@/presentation/adapters/view-data/world-view-data';
+import { buildWorldRoutePath } from '@/presentation/components/world/world-route-geometry';
 
 function regionCenter(region: WorldMapViewData['regions'][number], cellSize: number) {
   return {
     x: region.mapX * cellSize + cellSize / 2,
     y: region.mapY * cellSize + cellSize / 2,
   };
+}
+
+function WorldBiomePatternDefs() {
+  return (
+    <defs aria-hidden="true">
+      <pattern id="pg-world-biome-pattern-forest" width="12" height="12" patternUnits="userSpaceOnUse">
+        <rect width="12" height="12" className="pg-world-biome-pattern-base-forest" />
+        <path d="M0 10 L12 2" className="pg-world-biome-pattern-line-forest" />
+      </pattern>
+      <pattern id="pg-world-biome-pattern-plains" width="10" height="10" patternUnits="userSpaceOnUse">
+        <rect width="10" height="10" className="pg-world-biome-pattern-base-plains" />
+        <circle cx="3" cy="3" r="1" className="pg-world-biome-pattern-dot-plains" />
+        <circle cx="8" cy="7" r="1" className="pg-world-biome-pattern-dot-plains" />
+      </pattern>
+      <pattern id="pg-world-biome-pattern-coastal" width="14" height="14" patternUnits="userSpaceOnUse">
+        <rect width="14" height="14" className="pg-world-biome-pattern-base-coastal" />
+        <path d="M0 8 Q7 4 14 10" className="pg-world-biome-pattern-wave-coastal" />
+      </pattern>
+      <pattern id="pg-world-biome-pattern-unknown" width="8" height="8" patternUnits="userSpaceOnUse">
+        <rect width="8" height="8" className="pg-world-biome-pattern-base-unknown" />
+      </pattern>
+    </defs>
+  );
 }
 
 /** SVG world map with framework and operations overlay layers (Phase 4A/4B). */
@@ -43,6 +71,8 @@ export function PGWorldCanvas({
       role="img"
       aria-label="Interaktive Weltkarte"
     >
+      <WorldBiomePatternDefs />
+
       {layers.grid ? (
         <g className="pg-world-layer-grid" aria-hidden="true">
           {Array.from({ length: columns + 1 }, (_, index) => (
@@ -107,15 +137,21 @@ export function PGWorldCanvas({
             );
             const isTransportLayer = layers.transport;
             const strokeWidth = isTransportLayer && flow !== undefined ? 2 + flow.intensity * 4 : 2;
+            const connectionKey = `${connection.fromRegionId}-${connection.toRegionId}`;
+            const routePath = buildWorldRoutePath(
+              fromCenter.x,
+              fromCenter.y,
+              toCenter.x,
+              toCenter.y,
+              connectionKey,
+            );
 
             return (
-              <line
-                key={`${connection.fromRegionId}-${connection.toRegionId}`}
-                className={`pg-world-connection${isTransportLayer && flow !== undefined ? ' pg-world-connection-active' : ''}`}
-                x1={fromCenter.x}
-                y1={fromCenter.y}
-                x2={toCenter.x}
-                y2={toCenter.y}
+              <path
+                key={connectionKey}
+                className={`pg-world-route${isTransportLayer && flow !== undefined ? ' pg-world-route-active' : ''}`}
+                d={routePath}
+                fill="none"
                 strokeWidth={strokeWidth}
                 aria-hidden="true"
               />
@@ -126,18 +162,22 @@ export function PGWorldCanvas({
       {layers.regions
         ? regions.map((region) => {
             const isSelected = selectedRegionId === region.id;
+            const surfaceClass = worldBiomeSurfaceClass(region.biomeCategory);
+            const patternId = worldBiomePatternId(region.biomeCategory);
+
             return (
               <rect
                 key={region.id}
-                className={`pg-world-region${isSelected ? ' is-selected' : ''}`}
+                className={`pg-world-region ${surfaceClass}${isSelected ? ' is-selected' : ''}`}
                 x={region.mapX * cellSize + 4}
                 y={region.mapY * cellSize + 4}
                 width={cellSize - 8}
                 height={cellSize - 8}
-                rx={8}
+                rx={10}
+                fill={`url(#${patternId})`}
                 role="button"
                 tabIndex={0}
-                aria-label={`Region ${region.name}`}
+                aria-label={`Region ${region.name}, ${region.biomeLabel}`}
                 aria-pressed={isSelected}
                 onClick={() => {
                   onSelectRegion(region.id);
@@ -225,7 +265,7 @@ export function PGWorldCanvas({
                 y={region.mapY * cellSize + 2}
                 width={cellSize - 4}
                 height={cellSize - 4}
-                rx={10}
+                rx={12}
                 aria-hidden="true"
               />
             );
@@ -249,7 +289,7 @@ export function PGWorldCanvas({
                 y={region.mapY * cellSize + cellSize / 2 + 10}
                 textAnchor="middle"
               >
-                {region.biomeId}
+                {region.biomeLabel}
               </text>
             </g>
           ))

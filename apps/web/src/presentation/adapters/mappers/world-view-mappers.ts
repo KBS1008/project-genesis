@@ -46,6 +46,8 @@ export function mapWorldMapViewData(
         id: region.id,
         name: region.name,
         biomeId: region.biomeId,
+        biomeLabel: region.biomeName,
+        biomeCategory: region.biomeCategory,
         mapX: placement.x,
         mapY: placement.y,
         cityCount: region.cityIds.length,
@@ -63,6 +65,8 @@ export function mapWorldMapViewData(
         id: region.id,
         name: region.name,
         biomeId: region.biomeId,
+        biomeLabel: region.biomeName,
+        biomeCategory: region.biomeCategory,
         mapX: region.mapX,
         mapY: region.mapY,
         cityCount: region.cityIds.length,
@@ -95,9 +99,9 @@ export function mapWorldMapViewData(
 export function mapWorldInspectorViewData(detail: RegionDetailViewData): WorldInspectorViewData {
   return Object.freeze({
     title: detail.title,
-    subtitle: detail.biomeId,
+    subtitle: detail.biomeLabel,
     entries: Object.freeze([
-      Object.freeze({ label: 'Biom', value: detail.biomeId }),
+      Object.freeze({ label: 'Biom', value: detail.biomeLabel }),
       Object.freeze({
         label: 'Städte',
         value: String(detail.cities.length),

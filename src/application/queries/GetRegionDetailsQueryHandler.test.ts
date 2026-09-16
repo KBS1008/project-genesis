@@ -18,13 +18,18 @@ describe('GetRegionDetailsQueryHandler', () => {
     }
 
     const { regionRepository, cityRepository } = bootstrapWorldFromContent(contentResult.value);
-    const handler = new GetRegionDetailsQueryHandler({ regionRepository, cityRepository });
+    const handler = new GetRegionDetailsQueryHandler({
+      regionRepository,
+      cityRepository,
+      gameContent: contentResult.value,
+    });
     const result = handler.execute({ regionId: 'region_default' });
 
     expect(result.ok).toBe(true);
 
     if (result.ok) {
       expect(result.value.region.id).toBe('region_default');
+      expect(result.value.region.biomeName).toBe('Temperate Forest');
       expect(result.value.regionalResources.length).toBeGreaterThan(0);
       expect(result.value.cities.map((city) => city.id)).toContain('city_port_harbor');
     }
@@ -40,7 +45,11 @@ describe('GetRegionDetailsQueryHandler', () => {
     }
 
     const { regionRepository, cityRepository } = bootstrapWorldFromContent(contentResult.value);
-    const handler = new GetRegionDetailsQueryHandler({ regionRepository, cityRepository });
+    const handler = new GetRegionDetailsQueryHandler({
+      regionRepository,
+      cityRepository,
+      gameContent: contentResult.value,
+    });
     const result = handler.execute({ regionId: 'region_missing' });
 
     expect(result.ok).toBe(false);

@@ -56,6 +56,8 @@ describe('workspace-view-mappers', () => {
           description: 'Starter region',
           worldId: 'world_001',
           biomeId: 'temperate',
+          biomeName: 'Temperate Forest',
+          biomeCategory: 'FOREST',
           mapX: 1,
           mapY: 2,
           neighborRegionIds: [],

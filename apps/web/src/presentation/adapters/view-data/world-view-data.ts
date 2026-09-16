@@ -4,6 +4,8 @@ export type WorldMapRegionCellViewData = {
   readonly id: string;
   readonly name: string;
   readonly biomeId: string;
+  readonly biomeLabel: string;
+  readonly biomeCategory: string;
   readonly mapX: number;
   readonly mapY: number;
   readonly cityCount: number;
@@ -106,9 +108,9 @@ export const WORLD_MAP_CELL_SIZE = 96;
 export const DEFAULT_WORLD_LAYERS: readonly WorldLayerViewData[] = Object.freeze([
   Object.freeze({
     id: 'grid',
-    label: 'Raster',
-    description: 'Hilfsraster für Orientierung auf der Karte.',
-    enabled: true,
+    label: 'Orientierungsraster',
+    description: 'Optionales Hilfsraster für präzise Orientierung.',
+    enabled: false,
     group: 'framework',
   }),
   Object.freeze({

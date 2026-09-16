@@ -7,6 +7,7 @@ import type {
   SimulationStatusDto,
   WorldOverviewDto,
 } from '@/presentation/adapters/api/query-client';
+import { formatPlayerGameSpeedMultiplier } from '@/presentation/formatting/player-cycle-presentation';
 import {
   formatEventCategory,
   formatEventSeverity,
@@ -59,7 +60,7 @@ export function mapSimulationStatusViewData(dto: SimulationStatusDto): Simulatio
     isPaused: dto.isPaused,
     speedMultiplier: dto.tickDuration,
     hasActiveSession: dto.hasActiveSession,
-    speedLabel: dto.isPaused ? 'Pausiert' : `×${dto.tickDuration}`,
+    speedLabel: dto.isPaused ? 'Pausiert' : formatPlayerGameSpeedMultiplier(dto.tickDuration),
   });
 }
 
@@ -84,6 +85,7 @@ function mapRegionViewData(region: RegionDto): WorldRegionViewData {
     name: region.name,
     description: region.description,
     biomeId: region.biomeId,
+    biomeLabel: region.biomeName,
     mapPositionLabel: `${region.mapX}, ${region.mapY}`,
     neighborCount: region.neighborRegionIds.length,
     cityCount: region.cityIds.length,
@@ -114,6 +116,7 @@ export function mapRegionDetailViewData(dto: RegionDetailsDto): RegionDetailView
     title: dto.region.name,
     description: dto.region.description,
     biomeId: dto.region.biomeId,
+    biomeLabel: dto.region.biomeName,
     resources: Object.freeze(
       dto.regionalResources.map((resource) =>
         Object.freeze({
