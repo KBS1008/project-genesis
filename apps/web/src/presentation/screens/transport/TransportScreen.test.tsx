@@ -77,6 +77,27 @@ describe('TransportScreen', () => {
     expect(screen.getByRole('row', { name: /Lager → Werk/ })).toBeInTheDocument();
   });
 
+  it('adds decorative DashboardIcon cues on active and completed summary cards only', () => {
+    navigationState.entitySelection = { kind: 'none' };
+    const { container } = render(<TransportScreen />);
+
+    const summaryGrid = container.querySelector('.pg-operation-summary-grid');
+    expect(summaryGrid).not.toBeNull();
+    expect(summaryGrid!.querySelectorAll('.pg-production-state-icon[aria-hidden="true"]')).toHaveLength(2);
+
+    const activeHeading = screen.getByRole('heading', { name: 'Aktiv unterwegs' });
+    expect(activeHeading.querySelector('.pg-production-state-icon')).not.toBeNull();
+
+    const queueHeading = screen.getByRole('heading', { name: 'Warteschlange' });
+    expect(queueHeading.querySelector('.pg-production-state-icon')).toBeNull();
+
+    const completedHeading = screen.getByRole('heading', { name: 'Abgeschlossen' });
+    expect(completedHeading.querySelector('.pg-production-state-icon')).not.toBeNull();
+
+    const ordersTable = screen.getByRole('table');
+    expect(ordersTable.querySelector('.pg-production-state-icon')).toBeNull();
+  });
+
   it('selects a transport order for route inspection', async () => {
     navigationState.entitySelection = { kind: 'none' };
     const user = userEvent.setup();

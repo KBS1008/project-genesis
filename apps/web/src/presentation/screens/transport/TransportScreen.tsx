@@ -10,6 +10,7 @@ import { EmptyState } from '@/presentation/primitives/EmptyState';
 import { StatusBanner } from '@/presentation/primitives/StatusBanner';
 import { QueryRows } from '@/presentation/screens/shared/QueryRows';
 import { ScreenQueryFrame } from '@/presentation/screens/shared/ScreenQueryFrame';
+import { ProductionOperationalStateIconLabel } from '@/presentation/screens/production/ProductionOperationalStateIconLabel';
 import { useGameWorkspace } from '@/presentation/state/GameWorkspaceProvider';
 import '../world/world-company.css';
 import '../shared/operation-screen.css';
@@ -52,7 +53,13 @@ export function TransportScreen() {
         ) : null}
 
         <div className="pg-operation-summary-grid">
-          <Card title="Aktiv unterwegs">
+          <Card
+            title={
+              <ProductionOperationalStateIconLabel icon="transport">
+                Aktiv unterwegs
+              </ProductionOperationalStateIconLabel>
+            }
+          >
             <p className="pg-operation-metric">{companyViewData.kpis?.activeTransportCount ?? 0}</p>
             <p className="pg-operation-hint-copy">{companyViewData.kpis?.activeTransportTrend ?? '—'}</p>
           </Card>
@@ -60,7 +67,13 @@ export function TransportScreen() {
             <p className="pg-operation-metric">{routeSummary.waiting}</p>
             <p className="pg-operation-hint-copy">Auf freie Netzkapazität</p>
           </Card>
-          <Card title="Abgeschlossen">
+          <Card
+            title={
+              <ProductionOperationalStateIconLabel icon="success">
+                Abgeschlossen
+              </ProductionOperationalStateIconLabel>
+            }
+          >
             <p className="pg-operation-metric">{routeSummary.completed}</p>
             <p className="pg-operation-hint-copy">In dieser Session sichtbar</p>
           </Card>
