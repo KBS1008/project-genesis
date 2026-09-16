@@ -4,6 +4,7 @@ import { render, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { DashboardConnectionState } from '@/presentation/runtime/workspace-runtime-state';
 import type { DashboardRefreshPayload } from '@/presentation/adapters/api/dashboard-socket';
+import type { WorkspaceRefreshInput } from '@/presentation/adapters/queries/refresh-workspace-scopes';
 import { NotificationProvider } from '@/presentation/notifications/NotificationProvider';
 import {
   GameWorkspaceProvider,
@@ -15,15 +16,16 @@ let connectionHandler: ((state: DashboardConnectionState) => void) | undefined;
 let refreshHandler: ((payload: DashboardRefreshPayload) => void) | undefined;
 const disconnectSpy = vi.fn();
 
-const refreshWorkspaceScopes = vi.fn(async () =>
-  Object.freeze({
+const refreshWorkspaceScopes = vi.fn(async (input: WorkspaceRefreshInput) => {
+  void input;
+  return Object.freeze({
     companyViewData: Object.freeze({
       ...EMPTY_COMPANY_DASHBOARD_VIEW_DATA,
       hasGame: true,
       companyName: 'Reconnect Corp',
     }),
-  }),
-);
+  });
+});
 
 const loadWorkspaceQueries = vi.fn(async () =>
   Object.freeze({
@@ -90,11 +92,11 @@ vi.mock('@/presentation/adapters/api/dashboard-socket', () => ({
 }));
 
 vi.mock('@/presentation/adapters/queries/load-workspace-queries', () => ({
-  loadWorkspaceQueries: (...args: unknown[]) => loadWorkspaceQueries(...args),
+  loadWorkspaceQueries: () => loadWorkspaceQueries(),
 }));
 
 vi.mock('@/presentation/adapters/queries/refresh-workspace-scopes', () => ({
-  refreshWorkspaceScopes: (...args: unknown[]) => refreshWorkspaceScopes(...args),
+  refreshWorkspaceScopes: (input: WorkspaceRefreshInput) => refreshWorkspaceScopes(input),
 }));
 
 vi.mock('@/presentation/adapters/api/query-client', async (importOriginal) => {

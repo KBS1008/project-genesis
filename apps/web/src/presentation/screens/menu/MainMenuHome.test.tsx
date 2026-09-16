@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { describe, expect, it, vi, afterEach } from 'vitest';
 import * as visualAssetRegistry from '@/presentation/assets/visual-asset-registry';
 import { getVisualAssetEntry } from '@/presentation/assets';

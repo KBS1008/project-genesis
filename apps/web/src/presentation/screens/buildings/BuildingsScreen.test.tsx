@@ -4,7 +4,10 @@ import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { BuildingsScreen } from '@/presentation/screens/buildings/BuildingsScreen';
-import { useGameWorkspace } from '@/presentation/state/GameWorkspaceProvider';
+import {
+  useGameWorkspace,
+  type GameWorkspaceContextValue,
+} from '@/presentation/state/GameWorkspaceProvider';
 
 const runCommand = vi.fn();
 const selectEntity = vi.fn();
@@ -36,6 +39,11 @@ const defaultWorkspace = {
           reason: null,
         },
       ],
+      production: [],
+      research: [],
+      market: [],
+      hireEmployee: [],
+      assignEmployee: [],
     },
     detail: {
       buildings: new Map([
@@ -55,7 +63,7 @@ const defaultWorkspace = {
   runCommand,
   navigation: defaultNavigation,
   selectEntity,
-};
+} as unknown as GameWorkspaceContextValue;
 
 vi.mock('@/presentation/hooks/useScreenQuery', () => ({
   TICK_QUERY_DEBOUNCE_MS: 250,
@@ -129,11 +137,16 @@ describe('BuildingsScreen', () => {
               reason: 'Nicht baubar',
             },
           ],
+          production: [],
+          research: [],
+          market: [],
+          hireEmployee: [],
+          assignEmployee: [],
         },
         detail: { buildings: new Map() },
       },
       regions: [],
-    });
+    } as unknown as GameWorkspaceContextValue);
 
     render(<BuildingsScreen />);
 

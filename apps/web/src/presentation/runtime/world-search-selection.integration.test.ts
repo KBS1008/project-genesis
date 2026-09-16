@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import type { RegionDto } from '@/presentation/adapters/api/query-client';
 import { mapWorldRegionInspectorViewData, mapWorldRegionOperationsViewData } from '@/presentation/adapters/mappers/world-overlay-mappers';
 import { mapRegionDetailViewData } from '@/presentation/adapters/mappers/workspace-view-mappers';
 import { EMPTY_COMPANY_DASHBOARD_VIEW_DATA } from '@/presentation/adapters/view-data/company-dashboard-view-data';
@@ -12,13 +13,20 @@ import {
   buildRegionNavigationTarget,
   type EntityNavigationTarget,
 } from '@/presentation/navigation/entity-navigation';
+import type { EntitySelection } from '@/presentation/state/navigation-state';
 import { fitRegionCamera } from '@/presentation/hooks/world-camera-math';
 
-const REGIONS = Object.freeze([
+const REGIONS: readonly RegionDto[] = Object.freeze([
   Object.freeze({
     id: 'region_north',
     name: 'Nordheim',
     description: 'Northern trade corridor',
+    worldId: 'world_001',
+    biomeId: 'forest',
+    mapX: 4,
+    mapY: 2,
+    neighborRegionIds: Object.freeze([]),
+    cityIds: Object.freeze([]),
   }),
 ]);
 
@@ -37,13 +45,13 @@ function resolveGlobalSearchSelection(item: GlobalSearchItem): EntityNavigationT
   if (item.kind === 'screen' || item.entityKind === undefined || item.entityId === undefined) {
     return Object.freeze({
       screen: item.screen,
-      entitySelection: { kind: 'none' },
+      entitySelection: { kind: 'none' } satisfies EntitySelection,
     });
   }
 
   return Object.freeze({
     screen: item.screen,
-    entitySelection: { kind: item.entityKind, id: item.entityId },
+    entitySelection: { kind: item.entityKind, id: item.entityId } satisfies EntitySelection,
   });
 }
 

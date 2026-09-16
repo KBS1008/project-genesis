@@ -3,17 +3,22 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
+import type { EntitySelection, NavigationState } from '@/presentation/state/navigation-state';
 import { TransportScreen } from '@/presentation/screens/transport/TransportScreen';
 
 const { navigationState, selectEntity } = vi.hoisted(() => {
   const selectEntity = vi.fn();
+  const navigationState: {
+    screen: NavigationState['screen'];
+    entitySelection: EntitySelection;
+  } = {
+    screen: 'transport',
+    entitySelection: { kind: 'none' },
+  };
 
   return {
     selectEntity,
-    navigationState: {
-      screen: 'transport' as const,
-      entitySelection: { kind: 'none' as const },
-    },
+    navigationState,
   };
 });
 
@@ -61,7 +66,7 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
         ]),
       },
     },
-    navigation: navigationState,
+    navigation: navigationState as NavigationState,
     isBusy: false,
     selectEntity,
   }),

@@ -26,7 +26,6 @@ const SAMPLE_KPIS: KpiStripViewData = {
   corporateTaxRateLabel: '15 %',
   taxTrendLabel: '2 Verträge',
   taxPaymentBlocked: false,
-  pendingTaxLabel: null,
   runningProductionCount: 1,
   productionHint: '1 Job',
   activeResearchCount: 0,
