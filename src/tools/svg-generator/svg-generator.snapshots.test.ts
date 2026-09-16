@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { listSvgTemplates } from './templates/registry.js';
-import { getSvgTemplate } from './templates/registry.js';
+import { getSvgTemplate, listSvgTemplates } from './templates/registry.js';
 
 describe('svg generator snapshots', () => {
   for (const definition of listSvgTemplates()) {

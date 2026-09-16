@@ -136,8 +136,7 @@ async function syncRuntimeVisualAssets(): Promise<void> {
       continue;
     }
 
-    const targetName = 'targetName' in asset ? asset.targetName : `${asset.id}.svg`;
-    const targetPath = path.join(targetDir, targetName);
+    const targetPath = path.join(targetDir, asset.targetName);
     await copyFile(sourcePath, targetPath);
     console.log(`Synced ${asset.id} → ${path.relative(projectRoot, targetPath)}`);
   }

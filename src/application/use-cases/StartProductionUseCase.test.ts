@@ -84,7 +84,6 @@ async function createContext() {
   });
 
   let researchCompletionService: ResearchCompletionService;
-  let supplyContractUnlockService: SupplyContractUnlockService;
 
   simulationEngine = new SimulationEngine({
     clock,
@@ -115,7 +114,7 @@ async function createContext() {
     }),
   });
 
-  supplyContractUnlockService = new SupplyContractUnlockService({
+  const supplyContractUnlockService = new SupplyContractUnlockService({
     clock,
     supplyContractRepository,
     companyResearchRepository,

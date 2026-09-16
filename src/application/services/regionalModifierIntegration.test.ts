@@ -10,14 +10,13 @@ import { StartResearchUseCase } from '../use-cases/StartResearchUseCase.js';
 import { createCompanyId } from '../../domain/company/Company.js';
 import { createMilestoneId } from '../../domain/milestone/MilestoneId.js';
 import { ResearchJobStatus } from '../../domain/research/ResearchJobStatus.js';
+import type { ApplicationContext } from '../bootstrap/ApplicationContext.js';
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
 const gameContentRoot = path.join(projectRoot, 'game-content');
 
 function grantMilestone(
-  context: Awaited<ReturnType<typeof bootstrapApplication>> extends { ok: true; value: infer T }
-    ? T
-    : never,
+  context: ApplicationContext,
   companyId: string,
   milestoneId: string,
 ) {

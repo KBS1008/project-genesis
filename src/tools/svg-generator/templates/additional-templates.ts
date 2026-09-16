@@ -39,7 +39,7 @@ function renderSimpleSheet(input: {
           y,
           width: input.width - 80,
           height: 100,
-          rx: tokens.borderRadius[2],
+          rx: tokens.borderRadius[2] ?? 12,
           fill: tokens.panelBackground,
           stroke: tokens.panelBorder,
         }),
@@ -93,8 +93,8 @@ function makeTemplate(config: {
       renderSimpleSheet({
         ...input,
         rootSlug: config.rootSlug,
-        sections: Array.isArray(input.content.sections)
-          ? (input.content.sections as string[])
+        sections: Array.isArray(input.content['sections'])
+          ? (input.content['sections'] as string[])
           : [...config.sections],
       }),
   };

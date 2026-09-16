@@ -16,8 +16,10 @@ import { Position } from '../../domain/building/Position.js';
 import { createCompanyId } from '../../domain/company/Company.js';
 import { FinanceTransactionType } from '../../domain/finance/FinanceTransactionType.js';
 import { ConstructionCostPolicy } from '../../domain/policies/building/ConstructionCostPolicy.js';
-import { resolveRegionalConstructionCost } from '../../domain/region/RegionalModifierResolver.js';
-import { DEFAULT_REGIONAL_MODIFIER_LOOKUP } from '../../domain/region/RegionalModifierResolver.js';
+import {
+  DEFAULT_REGIONAL_MODIFIER_LOOKUP,
+  resolveRegionalConstructionCost,
+} from '../../domain/region/RegionalModifierResolver.js';
 import { BuildingPrerequisitesSpecification } from '../../domain/specifications/building/BuildingPrerequisitesSpecification.js';
 import type { ApplicationContext } from '../bootstrap/ApplicationContext.js';
 import type { PlaceBuildingCommand } from '../commands/PlaceBuildingCommand.js';

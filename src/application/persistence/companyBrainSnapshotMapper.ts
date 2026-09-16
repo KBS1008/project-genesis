@@ -4,7 +4,7 @@
  * Maps company brain aggregates to and from V3 savegame snapshots.
  */
 
-import { ValidationError } from '../../common/errors/ValidationError.js';
+import type { ValidationError } from '../../common/errors/ValidationError.js';
 import { Result } from '../../common/result/Result.js';
 import { createCompanyId } from '../../domain/company/Company.js';
 import { ActiveStrategy } from '../../domain/brain/ActiveStrategy.js';

@@ -8,12 +8,26 @@ export function escapeXml(value: string): string {
     .replace(/'/g, '&apos;');
 }
 
+function isAllowedSanitizedTextChar(code: number): boolean {
+  if (code === 0x0009 || code === 0x000a) {
+    return true;
+  }
+  if (code >= 0x0020 && code !== 0x007f) {
+    return true;
+  }
+  return code > 0x007f;
+}
+
 /** Sanitize user-facing text while preserving explicit line breaks. */
 export function sanitizeText(value: string): string {
-  return value
-    .replace(/\r\n/g, '\n')
-    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, '')
-    .trim();
+  const normalized = value.replace(/\r\n/g, '\n');
+  let sanitized = '';
+  for (const char of normalized) {
+    if (isAllowedSanitizedTextChar(char.charCodeAt(0))) {
+      sanitized += char;
+    }
+  }
+  return sanitized.trim();
 }
 
 /** Format numbers deterministically for SVG attributes. */

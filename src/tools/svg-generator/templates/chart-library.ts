@@ -36,7 +36,7 @@ function panel(
       y,
       width,
       height,
-      rx: DEFAULT_SVG_TOKENS.borderRadius[2],
+      rx: DEFAULT_SVG_TOKENS.borderRadius[2] ?? 12,
       fill: DEFAULT_SVG_TOKENS.panelBackground,
       stroke: DEFAULT_SVG_TOKENS.panelBorder,
     }),
@@ -63,8 +63,8 @@ function renderChartLibrary(input: {
   const rootId = createStableId('ch-010-charts');
   const title = sanitizeText(input.title);
   const subtitle = sanitizeText(input.subtitle ?? 'Project Genesis chart reference library');
-  const placeholders = Array.isArray(input.content.placeholders)
-    ? (input.content.placeholders as string[])
+  const placeholders = Array.isArray(input.content['placeholders'])
+    ? (input.content['placeholders'] as string[])
     : ['revenueHistory', 'productionHistory', 'marketShare', 'playerName', 'companyName'];
 
   const lineSeries = [42, 55, 48, 72, 64, 88, 76];
@@ -125,15 +125,16 @@ function renderChartLibrary(input: {
       }),
     ]),
     panel('bar-chart', 1080, 110, 480, 250, 'Bar Chart', [
-      ...buildBars(barSeries, 120, 320, 40, 40, 120).map((bar, index) =>
-        rect({
+      ...buildBars(barSeries, 120, 320, 40, 40, 120).map((bar, index) => {
+        const fill = COLORS[index % COLORS.length] ?? DEFAULT_SVG_TOKENS.accentPrimary;
+        return rect({
           x: 1120 + bar.x - 40,
           y: bar.y,
           width: bar.width,
           height: bar.height,
-          fill: COLORS[index % COLORS.length],
-        }),
-      ),
+          fill,
+        });
+      }),
     ]),
     panel('stacked-bar', 40, 390, 480, 250, 'Stacked Bar Chart', [
       ...stackedA.map((value, index) =>
@@ -157,24 +158,29 @@ function renderChartLibrary(input: {
     ]),
     panel('pie-chart', 560, 390, 480, 250, 'Pie Chart', [
       circle({ cx: 800, cy: 520, r: 90, fill: tokens.grid }),
-      ...buildPieSlices(pieValues, 800, 520, 90).map((d, index) =>
-        path({ d, fill: COLORS[index % COLORS.length] }),
-      ),
+      ...buildPieSlices(pieValues, 800, 520, 90).map((d, index) => {
+        const fill = COLORS[index % COLORS.length] ?? DEFAULT_SVG_TOKENS.accentPrimary;
+        return path({ d, fill });
+      }),
     ]),
     panel('donut-chart', 1080, 390, 480, 250, 'Donut Chart', [
-      ...buildPieSlices(pieValues, 1320, 520, 90, 45).map((d, index) =>
-        path({ d, fill: COLORS[index % COLORS.length] }),
-      ),
+      ...buildPieSlices(pieValues, 1320, 520, 90, 45).map((d, index) => {
+        const fill = COLORS[index % COLORS.length] ?? DEFAULT_SVG_TOKENS.accentPrimary;
+        return path({ d, fill });
+      }),
     ]),
     panel('scatter-plot', 40, 670, 480, 180, 'Scatter Plot', [
-      ...scatter.map(([x, y], index) =>
-        circle({
+      ...scatter.map(([rawX, rawY], index) => {
+        const x = rawX ?? 0;
+        const y = rawY ?? 0;
+        const fill = COLORS[index % COLORS.length] ?? DEFAULT_SVG_TOKENS.accentPrimary;
+        return circle({
           cx: 100 + x * 60,
           cy: 780 - y * 6,
           r: 6,
-          fill: COLORS[index % COLORS.length],
-        }),
-      ),
+          fill,
+        });
+      }),
     ]),
     panel('gauge', 560, 670, 480, 180, 'Gauge', [
       path({

@@ -1,6 +1,5 @@
 import { createStableId, escapeXml } from './escape.js';
-import type { SvgNode } from './xml-builder.js';
-import { text as textNode } from './xml-builder.js';
+import { text as textNode, type SvgNode } from './xml-builder.js';
 
 /** Build accessibility metadata nodes for generated SVG. */
 export function buildAccessibilityNodes(input: {
@@ -52,11 +51,11 @@ export function multilineText(
   const [first, ...rest] = lines;
   const children: SvgNode[] = [];
   if (first !== undefined) {
-    children.push(textNode(first, { x: attributes.x ?? 0, y: startY }));
+    children.push(textNode(first, { x: attributes['x'] ?? 0, y: startY }));
   }
   for (let index = 0; index < rest.length; index += 1) {
     const line = rest[index] ?? '';
-    children.push(textNode(line, { x: attributes.x ?? 0, y: startY + (index + 1) * lineHeight }));
+    children.push(textNode(line, { x: attributes['x'] ?? 0, y: startY + (index + 1) * lineHeight }));
   }
   return textNode('', attributes, children);
 }

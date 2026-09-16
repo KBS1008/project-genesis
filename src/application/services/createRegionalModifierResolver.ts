@@ -5,8 +5,10 @@
  */
 
 import type { RegionRegistry } from '../../content/region/RegionRegistry.js';
-import type { RegionalModifierLookup } from '../../domain/region/RegionalModifierResolver.js';
-import { DEFAULT_REGIONAL_MODIFIER_LOOKUP } from '../../domain/region/RegionalModifierResolver.js';
+import {
+  DEFAULT_REGIONAL_MODIFIER_LOOKUP,
+  type RegionalModifierLookup,
+} from '../../domain/region/RegionalModifierResolver.js';
 
 /** Resolves regional modifier profile for one region. */
 export type RegionalModifierResolver = (regionId: string) => RegionalModifierLookup;

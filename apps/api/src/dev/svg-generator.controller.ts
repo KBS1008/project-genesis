@@ -39,12 +39,16 @@ function parseGenerationRequest(body: Partial<SvgGenerationRequest>): SvgGenerat
     throw new BadRequestException('Invalid status value.');
   }
 
+  const trimmedSubtitle = body.subtitle?.trim();
+
   return {
     assetId: body.assetId,
     backlogFilename: body.backlogFilename,
     templateId: body.templateId,
     title: body.title.trim(),
-    subtitle: body.subtitle?.trim(),
+    ...(trimmedSubtitle !== undefined && trimmedSubtitle.length > 0
+      ? { subtitle: trimmedSubtitle }
+      : {}),
     width: Number(body.width),
     height: Number(body.height),
     content: body.content ?? {},

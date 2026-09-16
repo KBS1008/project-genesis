@@ -38,10 +38,10 @@ export type ImportAssetResult = {
 };
 
 type BackupSet = {
-  readonly backlog?: string;
-  readonly catalog?: string;
-  readonly changelog?: string;
-  readonly imagePath?: string;
+  backlog?: string;
+  catalog?: string;
+  changelog?: string;
+  imagePath?: string;
 };
 
 /** Filesystem-backed visual asset import service. */
@@ -213,7 +213,7 @@ export class VisualAssetManagerService {
     const validation = validateImageBuffer(input.buffer, {
       maxBytes: MAX_UPLOAD_BYTES,
       kind,
-      acceptWarnings: input.acceptWarnings,
+      ...(input.acceptWarnings !== undefined ? { acceptWarnings: input.acceptWarnings } : {}),
       expectedExtension: extname(input.backlogFilename),
     });
 

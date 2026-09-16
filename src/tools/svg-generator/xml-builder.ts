@@ -40,7 +40,10 @@ export function rect(
   attributes: Record<string, string | number>,
   children?: readonly SvgNode[],
 ): SvgNode {
-  return { tag: 'rect', attributes: normalizeAttrs(attributes), children };
+  if (children !== undefined) {
+    return { tag: 'rect', attributes: normalizeAttrs(attributes), children };
+  }
+  return { tag: 'rect', attributes: normalizeAttrs(attributes) };
 }
 
 export function text(

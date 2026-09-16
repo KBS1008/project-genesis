@@ -3,7 +3,7 @@
  */
 
 import type { PersistenceError } from '../../common/errors/PersistenceError.js';
-import { Result } from '../../common/result/Result.js';
+import type { Result } from '../../common/result/Result.js';
 import type { ApplicationContext } from '../bootstrap/ApplicationContext.js';
 import type { SaveMetadataReadModel } from '../read-models/SaveMetadataReadModel.js';
 import type { ListSavegamesQuery } from './ListSavegamesQuery.js';

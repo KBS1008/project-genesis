@@ -64,7 +64,6 @@ async function createContext() {
   };
 
   let researchCompletionService: ResearchCompletionService;
-  let supplyContractUnlockService: SupplyContractUnlockService;
 
   const productionInventoryService = new ProductionInventoryService({
     inventoryRepository,
@@ -108,7 +107,7 @@ async function createContext() {
     }),
   });
 
-  supplyContractUnlockService = new SupplyContractUnlockService({
+  const supplyContractUnlockService = new SupplyContractUnlockService({
     clock,
     supplyContractRepository,
     companyResearchRepository,

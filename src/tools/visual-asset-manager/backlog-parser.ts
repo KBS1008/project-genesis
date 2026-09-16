@@ -2,7 +2,7 @@ import { ICON_TO_STATUS, STATUS_ICON } from './constants.js';
 import type { BacklogEntry, VisualAssetActivityEntry, VisualAssetStatus } from './types.js';
 
 const BACKLOG_LINE_RE =
-  /^([☐◐👀☑🚀])\s+([A-Z]{2,5}-\d{3}_[^\s]+\.(?:png|jpe?g|webp|svg))$/i;
+  /^([☐◐👀☑🚀])\s+([A-Z]{2,5}-\d{3}_[^\s]+\.(?:png|jpe?g|webp|svg))$/iu;
 
 const ASSET_ID_RE = /^([A-Z]{2,5}-\d{3})_/i;
 
@@ -185,13 +185,13 @@ export function parseChangelog(content: string, limit = 20): VisualAssetActivity
     }
 
     entries.push({
-      date: fields.date,
-      assetId: fields['asset id'],
-      operation: fields.operation ?? 'import',
-      assetFilename: fields.asset ?? '',
-      status: fields.status ?? '',
-      destination: fields.destination ?? '',
-      revision: Number.parseInt(fields.revision ?? '0', 10) || 0,
+      date: fields['date'] ?? '',
+      assetId: fields['asset id'] ?? '',
+      operation: fields['operation'] ?? 'import',
+      assetFilename: fields['asset'] ?? '',
+      status: fields['status'] ?? '',
+      destination: fields['destination'] ?? '',
+      revision: Number.parseInt(fields['revision'] ?? '0', 10) || 0,
       sha256: fields['sha-256'] ?? '',
     });
   }

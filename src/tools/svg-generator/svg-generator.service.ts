@@ -90,7 +90,7 @@ export class SvgGeneratorService {
       buffer: Buffer.from(generation.svg, 'utf8'),
       backlogFilename: request.backlogFilename,
       status: request.status,
-      acceptWarnings: request.acceptWarnings,
+      ...(request.acceptWarnings !== undefined ? { acceptWarnings: request.acceptWarnings } : {}),
     });
 
     return { generation, importResult };
@@ -110,7 +110,7 @@ export class SvgGeneratorService {
     const template = getSvgTemplate(request.templateId);
     const rawSvg = template.render({
       title: request.title,
-      subtitle: request.subtitle,
+      ...(request.subtitle !== undefined ? { subtitle: request.subtitle } : {}),
       width: request.width,
       height: request.height,
       content: request.content,

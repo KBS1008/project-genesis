@@ -3,8 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { bootstrapApplication } from '../bootstrap/bootstrapApplication.js';
 import { EnergyBalanceService } from '../services/EnergyBalanceService.js';
-import { GameSessionDashboardBuilder } from './GameSessionDashboardBuilder.js';
-import type { DashboardHintInput } from './GameSessionDashboardBuilder.js';
+import { GameSessionDashboardBuilder, type DashboardHintInput } from './GameSessionDashboardBuilder.js';
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const gameContentRoot = path.resolve(testDirectory, '../../../game-content');
