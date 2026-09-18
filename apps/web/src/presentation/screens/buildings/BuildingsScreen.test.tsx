@@ -111,6 +111,10 @@ describe('BuildingsScreen', () => {
     const catalog = within(baukatalog as HTMLElement);
     expect(catalog.getByText('Sägewerk')).toBeInTheDocument();
     expect(catalog.getByText('PRODUCTION')).toBeInTheDocument();
+    expect(catalog.getByRole('presentation', { hidden: true })).toHaveAttribute(
+      'src',
+      expect.stringContaining('ICON-003-sawmill'),
+    );
 
     const categoryRow = catalog.getByText('PRODUCTION').closest('.pg-operation-hint-category');
     expect(categoryRow).not.toBeNull();

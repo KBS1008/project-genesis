@@ -62,12 +62,24 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-sm);
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   padding: var(--space-sm);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   background: var(--bg);
+}
+
+.pg-building-catalog-art {
+  flex-shrink: 0;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.pg-building-type-icon-fallback {
+  width: 2rem;
+  height: 2rem;
 }
 
 .pg-operation-hint-copy {

@@ -6,6 +6,7 @@ import { placeBuilding } from '@/presentation/adapters/api/gameplay-client';
 import { fetchBuildingList } from '@/presentation/adapters/api/query-client';
 import type { BuildingListRowViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
 import { BuildingCategoryIcon } from '@/presentation/components/assets/BuildingCategoryIcon';
+import { BuildingTypeIcon } from '@/presentation/components/assets/BuildingTypeIcon';
 import { useScreenQuery, TICK_QUERY_DEBOUNCE_MS } from '@/presentation/hooks/useScreenQuery';
 import { Button } from '@/presentation/primitives/Button';
 import { Card } from '@/presentation/primitives/Card';
@@ -166,6 +167,14 @@ export function BuildingsScreen() {
               <div className="pg-operation-hint-list">
                 {catalog.map((entry) => (
                   <div key={entry.buildingTypeId} className="pg-operation-hint-row">
+                    <BuildingTypeIcon
+                      buildingTypeId={entry.buildingTypeId}
+                      category={entry.category}
+                      variant="primary"
+                      size={72}
+                      loading="eager"
+                      className="pg-building-catalog-art"
+                    />
                     <div className="pg-operation-hint-copy">
                       <strong>{entry.name}</strong>
                       <div className="pg-operation-hint-category">

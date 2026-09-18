@@ -10,6 +10,7 @@ const MAIN_MENU_BASE = '/assets/main-menu';
 const BRANDING_BASE = '/assets/branding';
 const CHARTS_BASE = '/assets/charts';
 const ICONS_BASE = '/assets/icons';
+const BUILDINGS_BASE = '/assets/buildings';
 
 const ICON_001_RUNTIME_ASSETS = Object.freeze([
   { resourceId: 'wood', label: 'Wood Resource Icon' },
@@ -98,6 +99,59 @@ function runtimeSvg(
     designSource: config.designSource,
     notes: config.notes ?? null,
   });
+}
+
+const ICON_003_BATCH_1_BUILDINGS = Object.freeze([
+  { buildingTypeId: 'sawmill', category: 'production', label: 'Sawmill Building Type Art' },
+  { buildingTypeId: 'smelter', category: 'production', label: 'Smelter Building Type Art' },
+  { buildingTypeId: 'warehouse', category: 'storage', label: 'Warehouse Building Type Art' },
+  { buildingTypeId: 'coal_power_plant', category: 'energy', label: 'Coal Power Plant Building Type Art' },
+  { buildingTypeId: 'machine_shop', category: 'production', label: 'Machine Shop Building Type Art' },
+  { buildingTypeId: 'logistics_hub', category: 'infrastructure', label: 'Logistics Hub Building Type Art' },
+  { buildingTypeId: 'research_campus', category: 'research', label: 'Research Campus Building Type Art' },
+  {
+    buildingTypeId: 'corporate_headquarters',
+    category: 'administration',
+    label: 'Corporate Headquarters Building Type Art',
+  },
+] as const);
+
+function icon003RegistryEntries(): Readonly<Record<string, VisualAssetEntry>> {
+  const entries: Record<string, VisualAssetEntry> = {};
+
+  for (const building of ICON_003_BATCH_1_BUILDINGS) {
+    const primaryId = `ICON-003-${building.buildingTypeId}`;
+    const compactId = `${primaryId}-compact`;
+    const categoryFallbackId = `ICON-002-${building.category}`;
+
+    entries[primaryId] = entry({
+      id: primaryId,
+      label: building.label,
+      type: 'runtime',
+      component: 'BuildingTypeIcon',
+      format: 'png',
+      path: `${BUILDINGS_BASE}/${primaryId}.png`,
+      webp: `${BUILDINGS_BASE}/${primaryId}.webp`,
+      theme: 'default',
+      priority: 'normal',
+      preload: false,
+      fallbackId: categoryFallbackId,
+      designSource: `docs/design/buildings/production/batch-1/primary/${primaryId}.png`,
+      notes: 'ICON-003 B2 primary building art — Batch 1 production active.',
+    });
+
+    entries[compactId] = runtimeSvg(compactId, {
+      label: `${building.label} (Compact Glyph)`,
+      component: 'BuildingTypeIcon',
+      preload: false,
+      priority: 'normal',
+      designSource: `docs/design/buildings/production/batch-1/compact/${compactId}.svg`,
+      notes: 'ICON-003 derived compact glyph — Batch 1.',
+      baseDir: BUILDINGS_BASE,
+    });
+  }
+
+  return Object.freeze(entries);
 }
 
 function icon002RegistryEntries(): Readonly<Record<string, VisualAssetEntry>> {
@@ -370,6 +424,7 @@ export const VISUAL_ASSET_REGISTRY: Readonly<Record<string, VisualAssetEntry>> =
 
   ...icon001RegistryEntries(),
   ...icon002RegistryEntries(),
+  ...icon003RegistryEntries(),
 });
 
 export const RUNTIME_VISUAL_ASSET_IDS = Object.freeze(

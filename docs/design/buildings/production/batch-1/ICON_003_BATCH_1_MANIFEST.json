@@ -1,0 +1,64 @@
+{
+  "batchVersion": "2026-09-18-batch-1",
+  "promptTemplateVersion": "b2-production-v1",
+  "humanApproval": "PRODUCTION_CANDIDATE",
+  "naming": {
+    "primary": "ICON-003-{buildingTypeId}",
+    "compact": "ICON-003-{buildingTypeId}-compact",
+    "categoryFallback": "ICON-002-{category}"
+  },
+  "buildings": [
+    {
+      "buildingTypeId": "sawmill",
+      "primaryId": "ICON-003-sawmill",
+      "compactId": "ICON-003-sawmill-compact",
+      "method": "pilot-promoted-alpha-processed",
+      "sourceMaster": "docs/design/buildings/production/batch-1/primary/ICON-003-sawmill.png",
+      "runtimePrimary": "apps/web/public/assets/buildings/ICON-003-sawmill.webp",
+      "runtimeCompact": "apps/web/public/assets/buildings/ICON-003-sawmill-compact.svg"
+    },
+    {
+      "buildingTypeId": "smelter",
+      "primaryId": "ICON-003-smelter",
+      "compactId": "ICON-003-smelter-compact",
+      "method": "generated-raster-alpha-processed",
+      "sourceMaster": "docs/design/buildings/production/batch-1/primary/ICON-003-smelter.png"
+    },
+    {
+      "buildingTypeId": "warehouse",
+      "primaryId": "ICON-003-warehouse",
+      "compactId": "ICON-003-warehouse-compact",
+      "method": "generated-raster-alpha-processed"
+    },
+    {
+      "buildingTypeId": "coal_power_plant",
+      "primaryId": "ICON-003-coal_power_plant",
+      "compactId": "ICON-003-coal_power_plant-compact",
+      "method": "pilot-promoted-alpha-processed"
+    },
+    {
+      "buildingTypeId": "machine_shop",
+      "primaryId": "ICON-003-machine_shop",
+      "compactId": "ICON-003-machine_shop-compact",
+      "method": "generated-raster-alpha-processed"
+    },
+    {
+      "buildingTypeId": "logistics_hub",
+      "primaryId": "ICON-003-logistics_hub",
+      "compactId": "ICON-003-logistics_hub-compact",
+      "method": "generated-raster-alpha-processed"
+    },
+    {
+      "buildingTypeId": "research_campus",
+      "primaryId": "ICON-003-research_campus",
+      "compactId": "ICON-003-research_campus-compact",
+      "method": "regenerated-raster-alpha-processed"
+    },
+    {
+      "buildingTypeId": "corporate_headquarters",
+      "primaryId": "ICON-003-corporate_headquarters",
+      "compactId": "ICON-003-corporate_headquarters-compact",
+      "method": "generated-raster-alpha-processed"
+    }
+  ]
+}

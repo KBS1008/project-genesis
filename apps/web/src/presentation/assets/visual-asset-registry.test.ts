@@ -51,6 +51,24 @@ describe('visual-asset-registry', () => {
     expect(RUNTIME_VISUAL_ASSET_IDS.length).toBeGreaterThanOrEqual(22);
   });
 
+  it('registers ICON-003 batch-1 building type art with category fallback', () => {
+    const entry = getVisualAssetEntry('ICON-003-sawmill');
+    expect(entry).toMatchObject({
+      type: 'runtime',
+      format: 'png',
+      component: 'BuildingTypeIcon',
+      path: '/assets/buildings/ICON-003-sawmill.png',
+      webp: '/assets/buildings/ICON-003-sawmill.webp',
+      fallbackId: 'ICON-002-production',
+    });
+
+    expect(getVisualAssetEntry('ICON-003-sawmill-compact')).toMatchObject({
+      type: 'runtime',
+      format: 'svg',
+      path: '/assets/buildings/ICON-003-sawmill-compact.svg',
+    });
+  });
+
   it('registers ICON-002 building category icons as runtime SVG assets', () => {
     for (const category of [
       'production',

@@ -1,0 +1,90 @@
+[
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\buildings\\production\\batch-1\\primary\\ICON-003-sawmill.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 587146,
+    "opaquePixelCount": 461430,
+    "transparentPercent": 55.994606018066406,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\buildings\\production\\batch-1\\primary\\ICON-003-smelter.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 660518,
+    "opaquePixelCount": 388058,
+    "transparentPercent": 62.991905212402344,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\buildings\\production\\batch-1\\primary\\ICON-003-warehouse.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 694746,
+    "opaquePixelCount": 353830,
+    "transparentPercent": 66.25614166259766,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\buildings\\production\\batch-1\\primary\\ICON-003-coal_power_plant.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 714349,
+    "opaquePixelCount": 334227,
+    "transparentPercent": 68.12562942504883,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\buildings\\production\\batch-1\\primary\\ICON-003-machine_shop.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 598765,
+    "opaquePixelCount": 449811,
+    "transparentPercent": 57.10268020629883,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\buildings\\production\\batch-1\\primary\\ICON-003-logistics_hub.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 632140,
+    "opaquePixelCount": 416436,
+    "transparentPercent": 60.28556823730469,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\buildings\\production\\batch-1\\primary\\ICON-003-research_campus.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 644927,
+    "opaquePixelCount": 403649,
+    "transparentPercent": 61.50503158569336,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\buildings\\production\\batch-1\\primary\\ICON-003-corporate_headquarters.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 535716,
+    "opaquePixelCount": 512860,
+    "transparentPercent": 51.08985900878906,
+    "checkerboardSuspect": false,
+    "pass": true
+  }
+]
