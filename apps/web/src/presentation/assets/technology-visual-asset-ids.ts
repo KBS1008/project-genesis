@@ -52,8 +52,25 @@ export const ICON_004_BATCH_1_DETAILED_TECHNOLOGY_IDS = Object.freeze([
   'factory_automation',
 ] as const);
 
-export type Icon004Batch1DetailedTechnologyId = (typeof ICON_004_BATCH_1_DETAILED_TECHNOLOGY_IDS)[number];
+export const ICON_004_BATCH_2_DETAILED_TECHNOLOGY_IDS = Object.freeze([
+  'basic_woodworking',
+  'industrial_assembly',
+  'smart_grid',
+  'warehouse_systems',
+  'process_automation',
+  'organic_chemistry',
+] as const);
 
+export const ICON_004_DETAILED_TECHNOLOGY_IDS = Object.freeze([
+  ...ICON_004_BATCH_1_DETAILED_TECHNOLOGY_IDS,
+  ...ICON_004_BATCH_2_DETAILED_TECHNOLOGY_IDS,
+] as const);
+
+export type Icon004Batch1DetailedTechnologyId = (typeof ICON_004_BATCH_1_DETAILED_TECHNOLOGY_IDS)[number];
+export type Icon004Batch2DetailedTechnologyId = (typeof ICON_004_BATCH_2_DETAILED_TECHNOLOGY_IDS)[number];
+export type Icon004DetailedTechnologyId = (typeof ICON_004_DETAILED_TECHNOLOGY_IDS)[number];
+
+const DETAILED_SET = new Set<string>(ICON_004_DETAILED_TECHNOLOGY_IDS);
 const BATCH_1_SET = new Set<string>(ICON_004_BATCH_1_DETAILED_TECHNOLOGY_IDS);
 const CATEGORY_SET = new Set<string>(ICON_004_USED_TECHNOLOGY_CATEGORIES);
 
@@ -69,8 +86,14 @@ export function isIcon004Batch1DetailedTechnology(
   return BATCH_1_SET.has(technologyId);
 }
 
+export function isIcon004DetailedTechnology(
+  technologyId: string,
+): technologyId is Icon004DetailedTechnologyId {
+  return DETAILED_SET.has(technologyId);
+}
+
 export function technologyToIcon004PrimaryAssetId(technologyId: string): string | null {
-  if (!isIcon004Batch1DetailedTechnology(technologyId)) {
+  if (!isIcon004DetailedTechnology(technologyId)) {
     return null;
   }
 

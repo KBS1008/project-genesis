@@ -1,0 +1,62 @@
+{
+  "batchVersion": "2026-09-19-icon-004-production-batch-2-v1",
+  "contractPath": "docs/design/research/TECHNOLOGY_RESEARCH_ICON_004_VISUAL_CONTRACT.md",
+  "contractStatus": "APPROVED / PRODUCTION AUTHORITY",
+  "productionRegistryActivated": true,
+  "batch": "batch-2",
+  "detailedTechnologyIds": [
+    "basic_woodworking",
+    "industrial_assembly",
+    "smart_grid",
+    "warehouse_systems",
+    "process_automation",
+    "organic_chemistry"
+  ],
+  "cumulativeDetailedCount": 14,
+  "detailedPrimaries": [
+    {
+      "technologyId": "basic_woodworking",
+      "source": "BATCH 2",
+      "primaryMaster": "docs/design/research/production/batch-2/primary/ICON-004-basic_woodworking-primary.png",
+      "assetId": "ICON-004-basic_woodworking-primary",
+      "alphaResult": "PASS"
+    },
+    {
+      "technologyId": "industrial_assembly",
+      "source": "BATCH 2",
+      "primaryMaster": "docs/design/research/production/batch-2/primary/ICON-004-industrial_assembly-primary.png",
+      "assetId": "ICON-004-industrial_assembly-primary",
+      "alphaResult": "PASS"
+    },
+    {
+      "technologyId": "smart_grid",
+      "source": "BATCH 2",
+      "primaryMaster": "docs/design/research/production/batch-2/primary/ICON-004-smart_grid-primary.png",
+      "assetId": "ICON-004-smart_grid-primary",
+      "alphaResult": "PASS"
+    },
+    {
+      "technologyId": "warehouse_systems",
+      "source": "BATCH 2",
+      "primaryMaster": "docs/design/research/production/batch-2/primary/ICON-004-warehouse_systems-primary.png",
+      "assetId": "ICON-004-warehouse_systems-primary",
+      "alphaResult": "PASS"
+    },
+    {
+      "technologyId": "process_automation",
+      "source": "BATCH 2",
+      "primaryMaster": "docs/design/research/production/batch-2/primary/ICON-004-process_automation-primary.png",
+      "assetId": "ICON-004-process_automation-primary",
+      "alphaResult": "PASS"
+    },
+    {
+      "technologyId": "organic_chemistry",
+      "source": "BATCH 2",
+      "primaryMaster": "docs/design/research/production/batch-2/primary/ICON-004-organic_chemistry-primary.png",
+      "assetId": "ICON-004-organic_chemistry-primary",
+      "alphaResult": "PASS"
+    }
+  ],
+  "alphaReportPath": "docs/design/research/production/batch-2/ICON_004_PRODUCTION_BATCH_2_ALPHA_REPORT.json",
+  "runtimePublicRoot": "apps/web/public/assets/research"
+}

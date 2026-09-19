@@ -1,0 +1,68 @@
+[
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\research\\production\\batch-2\\primary\\ICON-004-basic_woodworking-primary.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 498778,
+    "opaquePixelCount": 549798,
+    "transparentPercent": 47.567176818847656,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\research\\production\\batch-2\\primary\\ICON-004-industrial_assembly-primary.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 604197,
+    "opaquePixelCount": 444379,
+    "transparentPercent": 57.6207160949707,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\research\\production\\batch-2\\primary\\ICON-004-smart_grid-primary.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 509308,
+    "opaquePixelCount": 539268,
+    "transparentPercent": 48.57139587402344,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\research\\production\\batch-2\\primary\\ICON-004-warehouse_systems-primary.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 498802,
+    "opaquePixelCount": 549774,
+    "transparentPercent": 47.56946563720703,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\research\\production\\batch-2\\primary\\ICON-004-process_automation-primary.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 627768,
+    "opaquePixelCount": 420808,
+    "transparentPercent": 59.868621826171875,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\research\\production\\batch-2\\primary\\ICON-004-organic_chemistry-primary.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 514068,
+    "opaquePixelCount": 534508,
+    "transparentPercent": 49.02534484863281,
+    "checkerboardSuspect": false,
+    "pass": true
+  }
+]

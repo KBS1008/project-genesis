@@ -6,7 +6,8 @@ import type {
   VisualAssetThemePaths,
 } from '@/presentation/assets/visual-asset-types';
 import {
-  ICON_004_BATCH_1_DETAILED_TECHNOLOGY_IDS,
+  ICON_004_BATCH_2_DETAILED_TECHNOLOGY_IDS,
+  ICON_004_DETAILED_TECHNOLOGY_IDS,
   ICON_004_USED_TECHNOLOGY_CATEGORIES,
   resolveTechnologyCategory,
 } from '@/presentation/assets/technology-visual-asset-ids';
@@ -287,16 +288,25 @@ function icon003RegistryEntries(): Readonly<Record<string, VisualAssetEntry>> {
   return Object.freeze(entries);
 }
 
+const ICON_004_BATCH_2_SET = new Set<string>(ICON_004_BATCH_2_DETAILED_TECHNOLOGY_IDS);
+
+function icon004PrimaryDesignSource(technologyId: string, id: string): string {
+  const batchRoot = ICON_004_BATCH_2_SET.has(technologyId)
+    ? 'docs/design/research/production/batch-2'
+    : 'docs/design/research/production/batch-1';
+
+  return `${batchRoot}/primary/${id}.png`;
+}
+
 function icon004RegistryEntries(): Readonly<Record<string, VisualAssetEntry>> {
   const entries: Record<string, VisualAssetEntry> = {};
-  const designRoot = 'docs/design/research/production/batch-1';
+  const categoryDesignRoot = 'docs/design/research/production/batch-1';
 
-  const batch1Detailed = ICON_004_BATCH_1_DETAILED_TECHNOLOGY_IDS;
-
-  for (const technologyId of batch1Detailed) {
+  for (const technologyId of ICON_004_DETAILED_TECHNOLOGY_IDS) {
     const id = `ICON-004-${technologyId}-primary`;
     const category = resolveTechnologyCategory(technologyId) ?? 'PRODUCTION';
     const categoryFallbackId = `ICON-004-category-${category}`;
+    const batchNote = ICON_004_BATCH_2_SET.has(technologyId) ? 'Batch 2' : 'Batch 1';
 
     entries[id] = entry({
       id,
@@ -310,8 +320,8 @@ function icon004RegistryEntries(): Readonly<Record<string, VisualAssetEntry>> {
       priority: 'normal',
       preload: false,
       fallbackId: categoryFallbackId,
-      designSource: `${designRoot}/primary/${id}.png`,
-      notes: 'ICON-004 Tier-1 detailed technology primary — Batch 1 production.',
+      designSource: icon004PrimaryDesignSource(technologyId, id),
+      notes: `ICON-004 Tier-1 detailed technology primary — ${batchNote} production.`,
     });
   }
 
@@ -330,7 +340,7 @@ function icon004RegistryEntries(): Readonly<Record<string, VisualAssetEntry>> {
       priority: 'normal',
       preload: false,
       fallbackId: 'ICON-002-research',
-      designSource: `${designRoot}/category/${id}.svg`,
+      designSource: `${categoryDesignRoot}/category/${id}.svg`,
       notes: 'ICON-004 Tier-2 category compact glyph — Batch 1 production.',
     });
   }

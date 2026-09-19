@@ -4,6 +4,8 @@ import { describe, expect, it } from 'vitest';
 import { getVisualAssetEntry } from '@/presentation/assets/visual-asset-registry';
 import {
   ICON_004_BATCH_1_DETAILED_TECHNOLOGY_IDS,
+  ICON_004_BATCH_2_DETAILED_TECHNOLOGY_IDS,
+  ICON_004_DETAILED_TECHNOLOGY_IDS,
   ICON_004_TECHNOLOGY_CATEGORY_BY_ID,
   ICON_004_USED_TECHNOLOGY_CATEGORIES,
   resolveIcon004TechnologyVisualAssetIds,
@@ -14,19 +16,29 @@ import {
 const projectRoot = path.resolve(import.meta.dirname, '../../../../..');
 const publicResearch = path.join(projectRoot, 'apps/web/public/assets/research');
 
+const CATEGORY_ONLY_IDS = Object.keys(ICON_004_TECHNOLOGY_CATEGORY_BY_ID).filter(
+  (id) => !ICON_004_DETAILED_TECHNOLOGY_IDS.includes(id as (typeof ICON_004_DETAILED_TECHNOLOGY_IDS)[number]),
+);
+
 describe('technology-visual-asset-ids', () => {
   it('maps 22 enabled technologies to categories', () => {
     expect(Object.keys(ICON_004_TECHNOLOGY_CATEGORY_BY_ID).length).toBe(22);
   });
 
-  it('resolves batch-1 detailed primaries only for eight technologies', () => {
-    for (const technologyId of ICON_004_BATCH_1_DETAILED_TECHNOLOGY_IDS) {
+  it('resolves detailed primaries for fourteen technologies', () => {
+    expect(ICON_004_DETAILED_TECHNOLOGY_IDS.length).toBe(14);
+    expect(ICON_004_BATCH_1_DETAILED_TECHNOLOGY_IDS.length).toBe(8);
+    expect(ICON_004_BATCH_2_DETAILED_TECHNOLOGY_IDS.length).toBe(6);
+
+    for (const technologyId of ICON_004_DETAILED_TECHNOLOGY_IDS) {
       expect(technologyToIcon004PrimaryAssetId(technologyId)).toBe(
         `ICON-004-${technologyId}-primary`,
       );
     }
 
-    expect(technologyToIcon004PrimaryAssetId('basic_woodworking')).toBeNull();
+    for (const technologyId of CATEGORY_ONLY_IDS) {
+      expect(technologyToIcon004PrimaryAssetId(technologyId)).toBeNull();
+    }
   });
 
   it('resolves category compacts for used categories only', () => {
@@ -48,9 +60,9 @@ describe('technology-visual-asset-ids', () => {
   });
 });
 
-describe('ICON-004 production batch-1 registry and files', () => {
-  it('registers eight detailed primaries and ten category glyphs', () => {
-    for (const technologyId of ICON_004_BATCH_1_DETAILED_TECHNOLOGY_IDS) {
+describe('ICON-004 production registry and files', () => {
+  it('registers fourteen detailed primaries and ten category glyphs', () => {
+    for (const technologyId of ICON_004_DETAILED_TECHNOLOGY_IDS) {
       const assetId = `ICON-004-${technologyId}-primary`;
       expect(getVisualAssetEntry(assetId)).toMatchObject({
         type: 'runtime',
@@ -69,8 +81,8 @@ describe('ICON-004 production batch-1 registry and files', () => {
     }
   });
 
-  it('has runtime files for all batch-1 assets on disk', () => {
-    for (const technologyId of ICON_004_BATCH_1_DETAILED_TECHNOLOGY_IDS) {
+  it('has runtime files for all detailed primaries on disk', () => {
+    for (const technologyId of ICON_004_DETAILED_TECHNOLOGY_IDS) {
       const base = `ICON-004-${technologyId}-primary`;
       expect(existsSync(path.join(publicResearch, `${base}.png`))).toBe(true);
       expect(existsSync(path.join(publicResearch, `${base}.webp`))).toBe(true);
@@ -84,8 +96,11 @@ describe('ICON-004 production batch-1 registry and files', () => {
   });
 
   it('category-only technologies resolve to compact without primary', () => {
-    const resolved = resolveIcon004TechnologyVisualAssetIds('basic_woodworking');
-    expect(resolved.primaryAssetId).toBeNull();
-    expect(resolved.categoryAssetId).toBe('ICON-004-category-PRODUCTION');
+    for (const technologyId of CATEGORY_ONLY_IDS) {
+      const resolved = resolveIcon004TechnologyVisualAssetIds(technologyId);
+      expect(resolved.primaryAssetId).toBeNull();
+      const category = ICON_004_TECHNOLOGY_CATEGORY_BY_ID[technologyId];
+      expect(resolved.categoryAssetId).toBe(`ICON-004-category-${category}`);
+    }
   });
 });

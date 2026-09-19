@@ -12,10 +12,17 @@ describe('TechnologyVisual', () => {
     expect(image).toHaveAttribute('src', expect.stringContaining('ICON-004-precision_machining-primary'));
   });
 
-  it('renders category compact for category-only technology', () => {
-    render(<TechnologyVisual technologyId="basic_woodworking" size={48} loading="eager" />);
+  it('renders detailed primary for batch-2 technology', () => {
+    render(<TechnologyVisual technologyId="basic_woodworking" size={80} loading="eager" />);
 
     const image = screen.getByRole('presentation', { hidden: true });
-    expect(image).toHaveAttribute('src', expect.stringContaining('ICON-004-category-PRODUCTION'));
+    expect(image).toHaveAttribute('src', expect.stringContaining('ICON-004-basic_woodworking-primary'));
+  });
+
+  it('renders category compact for category-only technology', () => {
+    render(<TechnologyVisual technologyId="corporate_management" size={48} loading="eager" />);
+
+    const image = screen.getByRole('presentation', { hidden: true });
+    expect(image).toHaveAttribute('src', expect.stringContaining('ICON-004-category-MANAGEMENT'));
   });
 });
