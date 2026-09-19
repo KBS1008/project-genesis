@@ -69,6 +69,24 @@ describe('visual-asset-registry', () => {
     });
   });
 
+  it('registers ICON-003 batch-2 building type art with category fallback', () => {
+    expect(getVisualAssetEntry('ICON-003-assembly_plant')).toMatchObject({
+      type: 'runtime',
+      format: 'png',
+      component: 'BuildingTypeIcon',
+      path: '/assets/buildings/ICON-003-assembly_plant.png',
+      webp: '/assets/buildings/ICON-003-assembly_plant.webp',
+      fallbackId: 'ICON-002-production',
+      designSource: 'docs/design/buildings/production/batch-2/primary/ICON-003-assembly_plant.png',
+    });
+
+    expect(getVisualAssetEntry('ICON-003-university-compact')).toMatchObject({
+      type: 'runtime',
+      format: 'svg',
+      path: '/assets/buildings/ICON-003-university-compact.svg',
+    });
+  });
+
   it('registers ICON-002 building category icons as runtime SVG assets', () => {
     for (const category of [
       'production',

@@ -14,14 +14,47 @@ export const ICON_003_BATCH_1_BUILDING_TYPE_IDS = Object.freeze([
 
 export type Icon003Batch1BuildingTypeId = (typeof ICON_003_BATCH_1_BUILDING_TYPE_IDS)[number];
 
+/** Building types covered by ICON-003 production batch 2 (B2 primary + compact). */
+export const ICON_003_BATCH_2_BUILDING_TYPE_IDS = Object.freeze([
+  'assembly_plant',
+  'headquarters',
+  'electronics_factory',
+  'consumer_goods_plant',
+  'solar_power_plant',
+  'distribution_center',
+  'university',
+  'power_substation',
+] as const);
+
+export type Icon003Batch2BuildingTypeId = (typeof ICON_003_BATCH_2_BUILDING_TYPE_IDS)[number];
+
+export const ICON_003_PRODUCTION_BUILDING_TYPE_IDS = Object.freeze([
+  ...ICON_003_BATCH_1_BUILDING_TYPE_IDS,
+  ...ICON_003_BATCH_2_BUILDING_TYPE_IDS,
+] as const);
+
+export type Icon003ProductionBuildingTypeId = (typeof ICON_003_PRODUCTION_BUILDING_TYPE_IDS)[number];
+
 const BATCH_1_SET = new Set<string>(ICON_003_BATCH_1_BUILDING_TYPE_IDS);
+const BATCH_2_SET = new Set<string>(ICON_003_BATCH_2_BUILDING_TYPE_IDS);
+const PRODUCTION_SET = new Set<string>(ICON_003_PRODUCTION_BUILDING_TYPE_IDS);
 
 export function isIcon003Batch1BuildingType(buildingTypeId: string): buildingTypeId is Icon003Batch1BuildingTypeId {
   return BATCH_1_SET.has(buildingTypeId);
 }
 
+export function isIcon003Batch2BuildingType(buildingTypeId: string): buildingTypeId is Icon003Batch2BuildingTypeId {
+  return BATCH_2_SET.has(buildingTypeId);
+}
+
+export function isIcon003ProductionBuildingType(
+  buildingTypeId: string,
+): buildingTypeId is Icon003ProductionBuildingTypeId {
+  return PRODUCTION_SET.has(buildingTypeId);
+}
+
 export function buildingTypeToIcon003PrimaryAssetId(buildingTypeId: string): string | null {
-  if (!isIcon003Batch1BuildingType(buildingTypeId)) {
+  if (!isIcon003ProductionBuildingType(buildingTypeId)) {
     return null;
   }
 
@@ -29,7 +62,7 @@ export function buildingTypeToIcon003PrimaryAssetId(buildingTypeId: string): str
 }
 
 export function buildingTypeToIcon003CompactAssetId(buildingTypeId: string): string | null {
-  if (!isIcon003Batch1BuildingType(buildingTypeId)) {
+  if (!isIcon003ProductionBuildingType(buildingTypeId)) {
     return null;
   }
 

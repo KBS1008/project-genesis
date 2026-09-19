@@ -74,28 +74,28 @@
 
 | Entity ID | Category | Current visual | Target mode | State overlays | Priority | Status |
 |-----------|----------|----------------|-------------|----------------|----------|--------|
-| access_road | INFRASTRUCTURE | category icon only | UNIQUE silhouette + category | OVERLAY | P0 | GAP |
-| assembly_plant | PRODUCTION | category icon | UNIQUE + MODULAR | OVERLAY | P0 | GAP |
+| access_road | INFRASTRUCTURE | category icon only | UNIQUE silhouette + category | OVERLAY | P0 | GAP (deferred — linear infra) |
+| assembly_plant | PRODUCTION | ICON-003 primary + compact | UNIQUE + MODULAR | OVERLAY | P0 | **ACTIVE (Batch 2)** |
 | coal_power_plant | ENERGY | ICON-003 primary + compact | UNIQUE | OVERLAY | P0 | **ACTIVE (Batch 1)** |
-| consumer_goods_plant | PRODUCTION | category icon | UNIQUE | OVERLAY | P0 | GAP |
+| consumer_goods_plant | PRODUCTION | ICON-003 primary + compact | UNIQUE | OVERLAY | P0 | **ACTIVE (Batch 2)** |
 | corporate_headquarters | ADMINISTRATION | ICON-003 primary + compact | UNIQUE | OVERLAY | P0 | **ACTIVE (Batch 1)** |
-| distribution_center | STORAGE | category icon | UNIQUE | OVERLAY | P0 | GAP |
-| electronics_factory | PRODUCTION | category icon | UNIQUE | OVERLAY | P0 | GAP |
-| headquarters | ADMINISTRATION | category icon | UNIQUE | OVERLAY | P0 | GAP |
+| distribution_center | STORAGE | ICON-003 primary + compact | UNIQUE | OVERLAY | P0 | **ACTIVE (Batch 2)** |
+| electronics_factory | PRODUCTION | ICON-003 primary + compact | UNIQUE | OVERLAY | P0 | **ACTIVE (Batch 2)** |
+| headquarters | ADMINISTRATION | ICON-003 primary + compact | UNIQUE | OVERLAY | P0 | **ACTIVE (Batch 2)** |
 | logistics_hub | INFRASTRUCTURE | ICON-003 primary + compact | UNIQUE | OVERLAY | P0 | **ACTIVE (Batch 1)** |
 | machine_shop | PRODUCTION | ICON-003 primary + compact | UNIQUE | OVERLAY | P0 | **ACTIVE (Batch 1)** |
 | maintenance_facility | INFRASTRUCTURE | category icon | UNIQUE | OVERLAY | P0 | GAP |
-| port | INFRASTRUCTURE | category icon | UNIQUE | OVERLAY | P0 | GAP |
-| power_substation | ENERGY | category icon | UNIQUE | OVERLAY | P0 | GAP |
-| rail_terminal | INFRASTRUCTURE | category icon | UNIQUE | OVERLAY | P0 | GAP |
+| port | INFRASTRUCTURE | category icon | UNIQUE | OVERLAY | P0 | GAP (deferred — terminal/yard) |
+| power_substation | ENERGY | ICON-003 primary + compact | UNIQUE | OVERLAY | P0 | **ACTIVE (Batch 2)** |
+| rail_terminal | INFRASTRUCTURE | category icon | UNIQUE | OVERLAY | P0 | GAP (deferred — terminal/yard) |
 | recycling_facility | INFRASTRUCTURE | category icon | UNIQUE | OVERLAY | P0 | GAP |
 | regional_headquarters | ADMINISTRATION | category icon | UNIQUE | OVERLAY | P0 | GAP |
 | research_campus | RESEARCH | ICON-003 primary + compact | UNIQUE | OVERLAY | P0 | **ACTIVE (Batch 1)** |
 | sawmill | PRODUCTION | ICON-003 primary + compact | UNIQUE | OVERLAY | P0 | **ACTIVE (Batch 1)** |
 | smelter | PRODUCTION | ICON-003 primary + compact | UNIQUE | OVERLAY | P0 | **ACTIVE (Batch 1)** |
-| solar_power_plant | ENERGY | category icon | UNIQUE | OVERLAY | P0 | GAP |
+| solar_power_plant | ENERGY | ICON-003 primary + compact | UNIQUE | OVERLAY | P0 | **ACTIVE (Batch 2)** |
 | training_center | ADMINISTRATION | category icon | UNIQUE | OVERLAY | P0 | GAP |
-| university | RESEARCH | category icon | UNIQUE | OVERLAY | P0 | GAP |
+| university | RESEARCH | ICON-003 primary + compact | UNIQUE | OVERLAY | P0 | **ACTIVE (Batch 2)** |
 | warehouse | STORAGE | ICON-003 primary + compact | UNIQUE | OVERLAY | P0 | **ACTIVE (Batch 1)** |
 
 **World map:** building markers = circles (layout positions), not type art — **GAP** for map presence.

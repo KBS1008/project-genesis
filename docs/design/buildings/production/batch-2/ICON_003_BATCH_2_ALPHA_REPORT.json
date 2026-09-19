@@ -1,0 +1,90 @@
+[
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\buildings\\production\\batch-2\\primary\\ICON-003-assembly_plant.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 637961,
+    "opaquePixelCount": 410615,
+    "transparentPercent": 60.840702056884766,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\buildings\\production\\batch-2\\primary\\ICON-003-headquarters.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 607255,
+    "opaquePixelCount": 441321,
+    "transparentPercent": 57.912349700927734,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\buildings\\production\\batch-2\\primary\\ICON-003-electronics_factory.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 600843,
+    "opaquePixelCount": 447733,
+    "transparentPercent": 57.30085372924805,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\buildings\\production\\batch-2\\primary\\ICON-003-consumer_goods_plant.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 565915,
+    "opaquePixelCount": 482661,
+    "transparentPercent": 53.9698600769043,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\buildings\\production\\batch-2\\primary\\ICON-003-solar_power_plant.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 763391,
+    "opaquePixelCount": 285185,
+    "transparentPercent": 72.80263900756836,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\buildings\\production\\batch-2\\primary\\ICON-003-distribution_center.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 712983,
+    "opaquePixelCount": 335593,
+    "transparentPercent": 67.99535751342773,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\buildings\\production\\batch-2\\primary\\ICON-003-university.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 637736,
+    "opaquePixelCount": 410840,
+    "transparentPercent": 60.819244384765625,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\buildings\\production\\batch-2\\primary\\ICON-003-power_substation.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 675934,
+    "opaquePixelCount": 372642,
+    "transparentPercent": 64.46208953857422,
+    "checkerboardSuspect": false,
+    "pass": true
+  }
+]

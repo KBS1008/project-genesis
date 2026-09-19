@@ -16,11 +16,17 @@ export type BuildingArtAlphaReport = {
 
 function isBackgroundPixel(r: number, g: number, b: number): boolean {
   const luminance = (r + g + b) / 3;
+  const isNeutral = Math.abs(r - g) <= 18 && Math.abs(g - b) <= 18;
+
+  // Generated primaries often ship on edge-connected near-black studio backdrops.
+  if (isNeutral && luminance <= 22) {
+    return true;
+  }
+
   if (luminance >= 235) {
     return true;
   }
 
-  const isNeutral = Math.abs(r - g) <= 18 && Math.abs(g - b) <= 18;
   if (isNeutral && luminance >= 175) {
     return true;
   }

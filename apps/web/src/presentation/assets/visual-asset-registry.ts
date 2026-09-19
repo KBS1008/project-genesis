@@ -101,28 +101,113 @@ function runtimeSvg(
   });
 }
 
-const ICON_003_BATCH_1_BUILDINGS = Object.freeze([
-  { buildingTypeId: 'sawmill', category: 'production', label: 'Sawmill Building Type Art' },
-  { buildingTypeId: 'smelter', category: 'production', label: 'Smelter Building Type Art' },
-  { buildingTypeId: 'warehouse', category: 'storage', label: 'Warehouse Building Type Art' },
-  { buildingTypeId: 'coal_power_plant', category: 'energy', label: 'Coal Power Plant Building Type Art' },
-  { buildingTypeId: 'machine_shop', category: 'production', label: 'Machine Shop Building Type Art' },
-  { buildingTypeId: 'logistics_hub', category: 'infrastructure', label: 'Logistics Hub Building Type Art' },
-  { buildingTypeId: 'research_campus', category: 'research', label: 'Research Campus Building Type Art' },
+const ICON_003_PRODUCTION_BUILDINGS = Object.freeze([
+  {
+    buildingTypeId: 'sawmill',
+    category: 'production',
+    label: 'Sawmill Building Type Art',
+    batch: 'batch-1',
+  },
+  {
+    buildingTypeId: 'smelter',
+    category: 'production',
+    label: 'Smelter Building Type Art',
+    batch: 'batch-1',
+  },
+  {
+    buildingTypeId: 'warehouse',
+    category: 'storage',
+    label: 'Warehouse Building Type Art',
+    batch: 'batch-1',
+  },
+  {
+    buildingTypeId: 'coal_power_plant',
+    category: 'energy',
+    label: 'Coal Power Plant Building Type Art',
+    batch: 'batch-1',
+  },
+  {
+    buildingTypeId: 'machine_shop',
+    category: 'production',
+    label: 'Machine Shop Building Type Art',
+    batch: 'batch-1',
+  },
+  {
+    buildingTypeId: 'logistics_hub',
+    category: 'infrastructure',
+    label: 'Logistics Hub Building Type Art',
+    batch: 'batch-1',
+  },
+  {
+    buildingTypeId: 'research_campus',
+    category: 'research',
+    label: 'Research Campus Building Type Art',
+    batch: 'batch-1',
+  },
   {
     buildingTypeId: 'corporate_headquarters',
     category: 'administration',
     label: 'Corporate Headquarters Building Type Art',
+    batch: 'batch-1',
+  },
+  {
+    buildingTypeId: 'assembly_plant',
+    category: 'production',
+    label: 'Assembly Plant Building Type Art',
+    batch: 'batch-2',
+  },
+  {
+    buildingTypeId: 'headquarters',
+    category: 'administration',
+    label: 'Headquarters Building Type Art',
+    batch: 'batch-2',
+  },
+  {
+    buildingTypeId: 'electronics_factory',
+    category: 'production',
+    label: 'Electronics Factory Building Type Art',
+    batch: 'batch-2',
+  },
+  {
+    buildingTypeId: 'consumer_goods_plant',
+    category: 'production',
+    label: 'Consumer Goods Plant Building Type Art',
+    batch: 'batch-2',
+  },
+  {
+    buildingTypeId: 'solar_power_plant',
+    category: 'energy',
+    label: 'Solar Power Plant Building Type Art',
+    batch: 'batch-2',
+  },
+  {
+    buildingTypeId: 'distribution_center',
+    category: 'storage',
+    label: 'Distribution Center Building Type Art',
+    batch: 'batch-2',
+  },
+  {
+    buildingTypeId: 'university',
+    category: 'research',
+    label: 'University Building Type Art',
+    batch: 'batch-2',
+  },
+  {
+    buildingTypeId: 'power_substation',
+    category: 'energy',
+    label: 'Power Substation Building Type Art',
+    batch: 'batch-2',
   },
 ] as const);
 
 function icon003RegistryEntries(): Readonly<Record<string, VisualAssetEntry>> {
   const entries: Record<string, VisualAssetEntry> = {};
 
-  for (const building of ICON_003_BATCH_1_BUILDINGS) {
+  for (const building of ICON_003_PRODUCTION_BUILDINGS) {
     const primaryId = `ICON-003-${building.buildingTypeId}`;
     const compactId = `${primaryId}-compact`;
     const categoryFallbackId = `ICON-002-${building.category}`;
+    const designRoot = `docs/design/buildings/production/${building.batch}`;
 
     entries[primaryId] = entry({
       id: primaryId,
@@ -136,8 +221,8 @@ function icon003RegistryEntries(): Readonly<Record<string, VisualAssetEntry>> {
       priority: 'normal',
       preload: false,
       fallbackId: categoryFallbackId,
-      designSource: `docs/design/buildings/production/batch-1/primary/${primaryId}.png`,
-      notes: 'ICON-003 B2 primary building art — Batch 1 production active.',
+      designSource: `${designRoot}/primary/${primaryId}.png`,
+      notes: `ICON-003 B2 primary building art — ${building.batch} production active.`,
     });
 
     entries[compactId] = runtimeSvg(compactId, {
@@ -145,8 +230,8 @@ function icon003RegistryEntries(): Readonly<Record<string, VisualAssetEntry>> {
       component: 'BuildingTypeIcon',
       preload: false,
       priority: 'normal',
-      designSource: `docs/design/buildings/production/batch-1/compact/${compactId}.svg`,
-      notes: 'ICON-003 derived compact glyph — Batch 1.',
+      designSource: `${designRoot}/compact/${compactId}.svg`,
+      notes: `ICON-003 derived compact glyph — ${building.batch}.`,
       baseDir: BUILDINGS_BASE,
     });
   }

@@ -1,0 +1,100 @@
+{
+  "batchVersion": "2026-09-18-batch-2",
+  "promptTemplateVersion": "b2-production-v1",
+  "humanApproval": "PRODUCTION_CANDIDATE",
+  "naming": {
+    "primary": "ICON-003-{buildingTypeId}",
+    "compact": "ICON-003-{buildingTypeId}-compact",
+    "categoryFallback": "ICON-002-{category}"
+  },
+  "buildings": [
+    {
+      "buildingTypeId": "assembly_plant",
+      "primaryId": "ICON-003-assembly_plant",
+      "compactId": "ICON-003-assembly_plant-compact",
+      "method": "generated-raster-alpha-processed",
+      "sourceMaster": "docs/design/buildings/production/batch-2/primary/ICON-003-assembly_plant.png",
+      "runtimePrimary": "apps/web/public/assets/buildings/ICON-003-assembly_plant.webp",
+      "runtimeCompact": "apps/web/public/assets/buildings/ICON-003-assembly_plant-compact.svg",
+      "alphaPass": true,
+      "productionStatus": "ACTIVE"
+    },
+    {
+      "buildingTypeId": "headquarters",
+      "primaryId": "ICON-003-headquarters",
+      "compactId": "ICON-003-headquarters-compact",
+      "method": "generated-raster-alpha-processed",
+      "sourceMaster": "docs/design/buildings/production/batch-2/primary/ICON-003-headquarters.png",
+      "runtimePrimary": "apps/web/public/assets/buildings/ICON-003-headquarters.webp",
+      "runtimeCompact": "apps/web/public/assets/buildings/ICON-003-headquarters-compact.svg",
+      "alphaPass": true,
+      "productionStatus": "ACTIVE"
+    },
+    {
+      "buildingTypeId": "electronics_factory",
+      "primaryId": "ICON-003-electronics_factory",
+      "compactId": "ICON-003-electronics_factory-compact",
+      "method": "generated-raster-alpha-processed",
+      "sourceMaster": "docs/design/buildings/production/batch-2/primary/ICON-003-electronics_factory.png",
+      "runtimePrimary": "apps/web/public/assets/buildings/ICON-003-electronics_factory.webp",
+      "runtimeCompact": "apps/web/public/assets/buildings/ICON-003-electronics_factory-compact.svg",
+      "alphaPass": true,
+      "productionStatus": "ACTIVE"
+    },
+    {
+      "buildingTypeId": "consumer_goods_plant",
+      "primaryId": "ICON-003-consumer_goods_plant",
+      "compactId": "ICON-003-consumer_goods_plant-compact",
+      "method": "generated-raster-alpha-processed",
+      "sourceMaster": "docs/design/buildings/production/batch-2/primary/ICON-003-consumer_goods_plant.png",
+      "runtimePrimary": "apps/web/public/assets/buildings/ICON-003-consumer_goods_plant.webp",
+      "runtimeCompact": "apps/web/public/assets/buildings/ICON-003-consumer_goods_plant-compact.svg",
+      "alphaPass": true,
+      "productionStatus": "ACTIVE"
+    },
+    {
+      "buildingTypeId": "solar_power_plant",
+      "primaryId": "ICON-003-solar_power_plant",
+      "compactId": "ICON-003-solar_power_plant-compact",
+      "method": "generated-raster-alpha-processed",
+      "sourceMaster": "docs/design/buildings/production/batch-2/primary/ICON-003-solar_power_plant.png",
+      "runtimePrimary": "apps/web/public/assets/buildings/ICON-003-solar_power_plant.webp",
+      "runtimeCompact": "apps/web/public/assets/buildings/ICON-003-solar_power_plant-compact.svg",
+      "alphaPass": true,
+      "productionStatus": "ACTIVE"
+    },
+    {
+      "buildingTypeId": "distribution_center",
+      "primaryId": "ICON-003-distribution_center",
+      "compactId": "ICON-003-distribution_center-compact",
+      "method": "generated-raster-alpha-processed",
+      "sourceMaster": "docs/design/buildings/production/batch-2/primary/ICON-003-distribution_center.png",
+      "runtimePrimary": "apps/web/public/assets/buildings/ICON-003-distribution_center.webp",
+      "runtimeCompact": "apps/web/public/assets/buildings/ICON-003-distribution_center-compact.svg",
+      "alphaPass": true,
+      "productionStatus": "ACTIVE"
+    },
+    {
+      "buildingTypeId": "university",
+      "primaryId": "ICON-003-university",
+      "compactId": "ICON-003-university-compact",
+      "method": "generated-raster-alpha-processed",
+      "sourceMaster": "docs/design/buildings/production/batch-2/primary/ICON-003-university.png",
+      "runtimePrimary": "apps/web/public/assets/buildings/ICON-003-university.webp",
+      "runtimeCompact": "apps/web/public/assets/buildings/ICON-003-university-compact.svg",
+      "alphaPass": true,
+      "productionStatus": "ACTIVE"
+    },
+    {
+      "buildingTypeId": "power_substation",
+      "primaryId": "ICON-003-power_substation",
+      "compactId": "ICON-003-power_substation-compact",
+      "method": "generated-raster-alpha-processed",
+      "sourceMaster": "docs/design/buildings/production/batch-2/primary/ICON-003-power_substation.png",
+      "runtimePrimary": "apps/web/public/assets/buildings/ICON-003-power_substation.webp",
+      "runtimeCompact": "apps/web/public/assets/buildings/ICON-003-power_substation-compact.svg",
+      "alphaPass": true,
+      "productionStatus": "ACTIVE"
+    }
+  ]
+}

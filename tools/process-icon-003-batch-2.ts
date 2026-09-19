@@ -1,5 +1,5 @@
 #!/usr/bin/env tsx
-import { copyFile, mkdir, stat } from 'node:fs/promises';
+import { access, copyFile, mkdir, stat } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
@@ -10,7 +10,7 @@ import {
 } from './building-art-alpha.js';
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const batchRoot = path.join(projectRoot, 'docs/design/buildings/production/batch-1');
+const batchRoot = path.join(projectRoot, 'docs/design/buildings/production/batch-2');
 const primaryDesignDir = path.join(batchRoot, 'primary');
 const compactDesignDir = path.join(batchRoot, 'compact');
 const publicBuildingsDir = path.join(projectRoot, 'apps/web/public/assets/buildings');
@@ -18,43 +18,37 @@ const assetsCursorDir = path.join(projectRoot, 'assets');
 
 const WEBP_QUALITY = 82;
 
-const BATCH_BUILDINGS = Object.freeze([
-  {
-    id: 'sawmill',
-    source: path.join(projectRoot, 'docs/design/buildings/pilot-b2/primary/BUILDING-PILOT-B2-SAWMILL.png'),
-  },
-  {
-    id: 'smelter',
-    source: path.join(assetsCursorDir, 'ICON-003-smelter-source.png'),
-  },
-  {
-    id: 'warehouse',
-    source: path.join(assetsCursorDir, 'ICON-003-warehouse-source.png'),
-  },
-  {
-    id: 'coal_power_plant',
-    source: path.join(
-      projectRoot,
-      'docs/design/buildings/pilot-b2/primary/BUILDING-PILOT-B2-COAL_POWER_PLANT.png',
-    ),
-  },
-  {
-    id: 'machine_shop',
-    source: path.join(assetsCursorDir, 'ICON-003-machine_shop-source.png'),
-  },
-  {
-    id: 'logistics_hub',
-    source: path.join(assetsCursorDir, 'ICON-003-logistics_hub-source.png'),
-  },
-  {
-    id: 'research_campus',
-    source: path.join(assetsCursorDir, 'ICON-003-research_campus-regen-source.png'),
-  },
-  {
-    id: 'corporate_headquarters',
-    source: path.join(assetsCursorDir, 'ICON-003-corporate_headquarters-source.png'),
-  },
+const BATCH_2_IDS = Object.freeze([
+  'assembly_plant',
+  'headquarters',
+  'electronics_factory',
+  'consumer_goods_plant',
+  'solar_power_plant',
+  'distribution_center',
+  'university',
+  'power_substation',
 ] as const);
+
+const SOURCE_FALLBACK_DIRS = Object.freeze([
+  assetsCursorDir,
+  path.join('C:/Users/Besitzer/.cursor/projects/d-Cursor-Project-Genesis/assets'),
+] as const);
+
+async function resolveBatch2Source(buildingId: string): Promise<string> {
+  const fileName = `ICON-003-${buildingId}-source.png`;
+
+  for (const dir of SOURCE_FALLBACK_DIRS) {
+    const candidate = path.join(dir, fileName);
+    try {
+      await access(candidate);
+      return candidate;
+    } catch {
+      // try next
+    }
+  }
+
+  throw new Error(`Missing source PNG for ${buildingId}`);
+}
 
 async function syncPrimaryToRuntime(assetId: string, sourcePath: string): Promise<void> {
   const pngPath = path.join(publicBuildingsDir, `${assetId}.png`);
@@ -81,11 +75,12 @@ async function main(): Promise<void> {
 
   const alphaReports = [];
 
-  for (const building of BATCH_BUILDINGS) {
-    const primaryId = `ICON-003-${building.id}`;
+  for (const buildingId of BATCH_2_IDS) {
+    const source = await resolveBatch2Source(buildingId);
+    const primaryId = `ICON-003-${buildingId}`;
     const primaryMaster = path.join(primaryDesignDir, `${primaryId}.png`);
 
-    await removeBuildingArtBackground(building.source, primaryMaster);
+    await removeBuildingArtBackground(source, primaryMaster);
     const report = await validateBuildingArtAlpha(primaryMaster);
     alphaReports.push(report);
 
@@ -100,7 +95,7 @@ async function main(): Promise<void> {
     await syncCompactToRuntime(compactId, compactMaster);
   }
 
-  const reportPath = path.join(batchRoot, 'ICON_003_BATCH_1_ALPHA_REPORT.json');
+  const reportPath = path.join(batchRoot, 'ICON_003_BATCH_2_ALPHA_REPORT.json');
   await writeAlphaReportJson(alphaReports, reportPath);
 
   const failed = alphaReports.filter((report) => !report.pass);
