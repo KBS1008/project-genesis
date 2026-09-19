@@ -6,10 +6,12 @@ import {
   ICON_003_BATCH_1_BUILDING_TYPE_IDS,
   ICON_003_BATCH_2_BUILDING_TYPE_IDS,
   ICON_003_BATCH_3_BUILDING_TYPE_IDS,
+  ICON_003_INFRASTRUCTURE_BUILDING_TYPE_IDS,
   ICON_003_PRODUCTION_BUILDING_TYPE_IDS,
   isIcon003Batch1BuildingType,
   isIcon003Batch2BuildingType,
   isIcon003Batch3BuildingType,
+  isIcon003InfrastructureBuildingType,
   isIcon003ProductionBuildingType,
 } from '@/presentation/assets/building-type-visual-asset-ids';
 
@@ -18,10 +20,11 @@ describe('building-type-visual-asset-ids', () => {
     expect(ICON_003_BATCH_1_BUILDING_TYPE_IDS).toHaveLength(8);
   });
 
-  it('lists batch-2 and batch-3 building types', () => {
+  it('lists batch-2, batch-3, and infrastructure building types', () => {
     expect(ICON_003_BATCH_2_BUILDING_TYPE_IDS).toHaveLength(8);
     expect(ICON_003_BATCH_3_BUILDING_TYPE_IDS).toHaveLength(4);
-    expect(ICON_003_PRODUCTION_BUILDING_TYPE_IDS).toHaveLength(20);
+    expect(ICON_003_INFRASTRUCTURE_BUILDING_TYPE_IDS).toHaveLength(3);
+    expect(ICON_003_PRODUCTION_BUILDING_TYPE_IDS).toHaveLength(23);
   });
 
   it('maps batch-1 buildings to ICON-003 primary and compact IDs', () => {
@@ -43,10 +46,25 @@ describe('building-type-visual-asset-ids', () => {
     expect(isIcon003Batch3BuildingType('recycling_facility')).toBe(true);
   });
 
-  it('returns null for special infrastructure building types', () => {
-    expect(buildingTypeToIcon003PrimaryAssetId('port')).toBeNull();
-    expect(buildingTypeToIcon003CompactAssetId('access_road')).toBeNull();
-    expect(isIcon003ProductionBuildingType('rail_terminal')).toBe(false);
+  it('maps infrastructure buildings to ICON-003 primary and compact IDs', () => {
+    expect(buildingTypeToIcon003PrimaryAssetId('access_road')).toBe('ICON-003-access_road');
+    expect(buildingTypeToIcon003CompactAssetId('port')).toBe('ICON-003-port-compact');
+    expect(buildingTypeToIcon003PrimaryAssetId('rail_terminal')).toBe('ICON-003-rail_terminal');
+    expect(isIcon003InfrastructureBuildingType('access_road')).toBe(true);
+    expect(isIcon003ProductionBuildingType('port')).toBe(true);
+  });
+
+  it('resolves all 23 production building types to primary and compact ICON-003 IDs', () => {
+    for (const buildingTypeId of ICON_003_PRODUCTION_BUILDING_TYPE_IDS) {
+      expect(buildingTypeToIcon003PrimaryAssetId(buildingTypeId)).toBe(`ICON-003-${buildingTypeId}`);
+      expect(buildingTypeToIcon003CompactAssetId(buildingTypeId)).toBe(`ICON-003-${buildingTypeId}-compact`);
+    }
+  });
+
+  it('returns null for unknown building types', () => {
+    expect(buildingTypeToIcon003PrimaryAssetId('unknown_building')).toBeNull();
+    expect(buildingTypeToIcon003CompactAssetId('unknown_building')).toBeNull();
+    expect(isIcon003ProductionBuildingType('unknown_building')).toBe(false);
   });
 
   it('falls back to ICON-002 category assets', () => {

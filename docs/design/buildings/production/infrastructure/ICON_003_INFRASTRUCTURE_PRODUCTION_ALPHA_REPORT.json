@@ -1,0 +1,35 @@
+[
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\buildings\\production\\infrastructure\\primary\\ICON-003-access_road.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 670049,
+    "opaquePixelCount": 378527,
+    "transparentPercent": 63.90085220336914,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\buildings\\production\\infrastructure\\primary\\ICON-003-port.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 725167,
+    "opaquePixelCount": 323409,
+    "transparentPercent": 69.15731430053711,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\buildings\\production\\infrastructure\\primary\\ICON-003-rail_terminal.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 198891,
+    "opaquePixelCount": 849685,
+    "transparentPercent": 18.967723846435547,
+    "checkerboardSuspect": false,
+    "pass": true
+  }
+]

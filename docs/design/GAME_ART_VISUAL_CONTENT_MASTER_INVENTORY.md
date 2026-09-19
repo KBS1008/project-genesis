@@ -74,7 +74,7 @@
 
 | Entity ID | Category | Current visual | Target mode | State overlays | Priority | Status |
 |-----------|----------|----------------|-------------|----------------|----------|--------|
-| access_road | INFRASTRUCTURE | category icon only | UNIQUE silhouette + category | OVERLAY | P0 | GAP (deferred — linear infra) |
+| access_road | INFRASTRUCTURE | ICON-003 primary + compact (LINEAR) | UNIQUE silhouette | OVERLAY | P0 | **ACTIVE (Infrastructure 23/23)** |
 | assembly_plant | PRODUCTION | ICON-003 primary + compact | UNIQUE + MODULAR | OVERLAY | P0 | **ACTIVE (Batch 2)** |
 | coal_power_plant | ENERGY | ICON-003 primary + compact | UNIQUE | OVERLAY | P0 | **ACTIVE (Batch 1)** |
 | consumer_goods_plant | PRODUCTION | ICON-003 primary + compact | UNIQUE | OVERLAY | P0 | **ACTIVE (Batch 2)** |
@@ -85,9 +85,9 @@
 | logistics_hub | INFRASTRUCTURE | ICON-003 primary + compact | UNIQUE | OVERLAY | P0 | **ACTIVE (Batch 1)** |
 | machine_shop | PRODUCTION | ICON-003 primary + compact | UNIQUE | OVERLAY | P0 | **ACTIVE (Batch 1)** |
 | maintenance_facility | INFRASTRUCTURE | ICON-003 primary + compact | UNIQUE | OVERLAY | P0 | **ACTIVE (Batch 3)** |
-| port | INFRASTRUCTURE | category icon | UNIQUE | OVERLAY | P0 | GAP (deferred — terminal/yard) |
+| port | INFRASTRUCTURE | ICON-003 primary + compact (TERMINAL/YARD) | UNIQUE | OVERLAY | P0 | **ACTIVE (Infrastructure 23/23)** |
 | power_substation | ENERGY | ICON-003 primary + compact | UNIQUE | OVERLAY | P0 | **ACTIVE (Batch 2)** |
-| rail_terminal | INFRASTRUCTURE | category icon | UNIQUE | OVERLAY | P0 | GAP (deferred — terminal/yard) |
+| rail_terminal | INFRASTRUCTURE | ICON-003 primary + compact (TERMINAL/YARD) | UNIQUE | OVERLAY | P0 | **ACTIVE (Infrastructure 23/23)** |
 | recycling_facility | INFRASTRUCTURE | ICON-003 primary + compact | UNIQUE | OVERLAY | P0 | **ACTIVE (Batch 3)** |
 | regional_headquarters | ADMINISTRATION | ICON-003 primary + compact | UNIQUE | OVERLAY | P0 | **ACTIVE (Batch 3)** |
 | research_campus | RESEARCH | ICON-003 primary + compact | UNIQUE | OVERLAY | P0 | **ACTIVE (Batch 1)** |
@@ -97,6 +97,8 @@
 | training_center | ADMINISTRATION | ICON-003 primary + compact | UNIQUE | OVERLAY | P0 | **ACTIVE (Batch 3)** |
 | university | RESEARCH | ICON-003 primary + compact | UNIQUE | OVERLAY | P0 | **ACTIVE (Batch 2)** |
 | warehouse | STORAGE | ICON-003 primary + compact | UNIQUE | OVERLAY | P0 | **ACTIVE (Batch 1)** |
+
+**ICON-003 per-type coverage (current authoritative 23 building types):** **23 / 23** — 20 VOLUMETRIC (Batches 1–3) + 1 LINEAR (`access_road`) + 2 TERMINAL/YARD (`port`, `rail_terminal`). ICON-002 remains defensive category fallback in `BuildingTypeIcon`.
 
 **World map:** building markers = circles (layout positions), not type art — **GAP** for map presence.
 

@@ -222,6 +222,24 @@ const ICON_003_PRODUCTION_BUILDINGS = Object.freeze([
     label: 'Training Center Building Type Art',
     batch: 'batch-3',
   },
+  {
+    buildingTypeId: 'access_road',
+    category: 'infrastructure',
+    label: 'Access Road Building Type Art',
+    batch: 'infrastructure',
+  },
+  {
+    buildingTypeId: 'port',
+    category: 'infrastructure',
+    label: 'Port Building Type Art',
+    batch: 'infrastructure',
+  },
+  {
+    buildingTypeId: 'rail_terminal',
+    category: 'infrastructure',
+    label: 'Rail Terminal Building Type Art',
+    batch: 'infrastructure',
+  },
 ] as const);
 
 function icon003RegistryEntries(): Readonly<Record<string, VisualAssetEntry>> {

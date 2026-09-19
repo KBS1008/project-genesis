@@ -48,7 +48,7 @@ describe('visual-asset-registry', () => {
 
   it('marks critical boot assets for preload', () => {
     expect(PRELOAD_VISUAL_ASSET_IDS).toEqual(expect.arrayContaining(['MM-001', 'MM-006', 'MM-007']));
-    expect(RUNTIME_VISUAL_ASSET_IDS.length).toBeGreaterThanOrEqual(22);
+    expect(RUNTIME_VISUAL_ASSET_IDS.length).toBeGreaterThanOrEqual(28);
   });
 
   it('registers ICON-003 batch-1 building type art with category fallback', () => {
@@ -96,6 +96,24 @@ describe('visual-asset-registry', () => {
       webp: '/assets/buildings/ICON-003-maintenance_facility.webp',
       fallbackId: 'ICON-002-infrastructure',
       designSource: 'docs/design/buildings/production/batch-3/primary/ICON-003-maintenance_facility.png',
+    });
+  });
+
+  it('registers ICON-003 infrastructure building type art with category fallback', () => {
+    expect(getVisualAssetEntry('ICON-003-access_road')).toMatchObject({
+      type: 'runtime',
+      format: 'png',
+      component: 'BuildingTypeIcon',
+      path: '/assets/buildings/ICON-003-access_road.png',
+      webp: '/assets/buildings/ICON-003-access_road.webp',
+      fallbackId: 'ICON-002-infrastructure',
+      designSource: 'docs/design/buildings/production/infrastructure/primary/ICON-003-access_road.png',
+    });
+
+    expect(getVisualAssetEntry('ICON-003-port-compact')).toMatchObject({
+      type: 'runtime',
+      format: 'svg',
+      path: '/assets/buildings/ICON-003-port-compact.svg',
     });
   });
 

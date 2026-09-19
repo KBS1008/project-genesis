@@ -1,0 +1,51 @@
+{
+  "productionVersion": "2026-09-19-infrastructure-23-of-23",
+  "contractAuthority": "BUILDING_INFRASTRUCTURE_VISUAL_CONTRACT.md — APPROVED / PRODUCTION AUTHORITY",
+  "humanApproval": "APPROVED / PASS / SEALED",
+  "naming": {
+    "primary": "ICON-003-{buildingTypeId}",
+    "compact": "ICON-003-{buildingTypeId}-compact",
+    "categoryFallback": "ICON-002-{category}"
+  },
+  "buildings": [
+    {
+      "buildingTypeId": "access_road",
+      "grammar": "LINEAR",
+      "primaryId": "ICON-003-access_road",
+      "compactId": "ICON-003-access_road-compact",
+      "promotedFromPilotPrimary": "docs/design/buildings/infrastructure-pilot/primary/ICON-003-access_road-infra-pilot.png",
+      "promotedFromPilotCompact": "docs/design/buildings/infrastructure-pilot/compact/ICON-003-access_road-infra-pilot-compact.svg",
+      "sourceMaster": "docs/design/buildings/production/infrastructure/primary/ICON-003-access_road.png",
+      "runtimePrimary": "apps/web/public/assets/buildings/ICON-003-access_road.webp",
+      "runtimeCompact": "apps/web/public/assets/buildings/ICON-003-access_road-compact.svg",
+      "alphaPass": true,
+      "productionStatus": "ACTIVE"
+    },
+    {
+      "buildingTypeId": "port",
+      "grammar": "TERMINAL_YARD",
+      "primaryId": "ICON-003-port",
+      "compactId": "ICON-003-port-compact",
+      "promotedFromPilotPrimary": "docs/design/buildings/infrastructure-pilot/primary/ICON-003-port-infra-pilot.png",
+      "promotedFromPilotCompact": "docs/design/buildings/infrastructure-pilot/compact/ICON-003-port-infra-pilot-compact.svg",
+      "sourceMaster": "docs/design/buildings/production/infrastructure/primary/ICON-003-port.png",
+      "runtimePrimary": "apps/web/public/assets/buildings/ICON-003-port.webp",
+      "runtimeCompact": "apps/web/public/assets/buildings/ICON-003-port-compact.svg",
+      "alphaPass": true,
+      "productionStatus": "ACTIVE"
+    },
+    {
+      "buildingTypeId": "rail_terminal",
+      "grammar": "TERMINAL_YARD",
+      "primaryId": "ICON-003-rail_terminal",
+      "compactId": "ICON-003-rail_terminal-compact",
+      "promotedFromPilotPrimary": "docs/design/buildings/infrastructure-pilot/primary/ICON-003-rail_terminal-infra-pilot.png",
+      "promotedFromPilotCompact": "docs/design/buildings/infrastructure-pilot/compact/ICON-003-rail_terminal-infra-pilot-compact.svg",
+      "sourceMaster": "docs/design/buildings/production/infrastructure/primary/ICON-003-rail_terminal.png",
+      "runtimePrimary": "apps/web/public/assets/buildings/ICON-003-rail_terminal.webp",
+      "runtimeCompact": "apps/web/public/assets/buildings/ICON-003-rail_terminal-compact.svg",
+      "alphaPass": true,
+      "productionStatus": "ACTIVE"
+    }
+  ]
+}

@@ -38,10 +38,20 @@ export const ICON_003_BATCH_3_BUILDING_TYPE_IDS = Object.freeze([
 
 export type Icon003Batch3BuildingTypeId = (typeof ICON_003_BATCH_3_BUILDING_TYPE_IDS)[number];
 
+/** Building types covered by ICON-003 infrastructure production (LINEAR + TERMINAL/YARD). */
+export const ICON_003_INFRASTRUCTURE_BUILDING_TYPE_IDS = Object.freeze([
+  'access_road',
+  'port',
+  'rail_terminal',
+] as const);
+
+export type Icon003InfrastructureBuildingTypeId = (typeof ICON_003_INFRASTRUCTURE_BUILDING_TYPE_IDS)[number];
+
 export const ICON_003_PRODUCTION_BUILDING_TYPE_IDS = Object.freeze([
   ...ICON_003_BATCH_1_BUILDING_TYPE_IDS,
   ...ICON_003_BATCH_2_BUILDING_TYPE_IDS,
   ...ICON_003_BATCH_3_BUILDING_TYPE_IDS,
+  ...ICON_003_INFRASTRUCTURE_BUILDING_TYPE_IDS,
 ] as const);
 
 export type Icon003ProductionBuildingTypeId = (typeof ICON_003_PRODUCTION_BUILDING_TYPE_IDS)[number];
@@ -49,6 +59,7 @@ export type Icon003ProductionBuildingTypeId = (typeof ICON_003_PRODUCTION_BUILDI
 const BATCH_1_SET = new Set<string>(ICON_003_BATCH_1_BUILDING_TYPE_IDS);
 const BATCH_2_SET = new Set<string>(ICON_003_BATCH_2_BUILDING_TYPE_IDS);
 const BATCH_3_SET = new Set<string>(ICON_003_BATCH_3_BUILDING_TYPE_IDS);
+const INFRASTRUCTURE_SET = new Set<string>(ICON_003_INFRASTRUCTURE_BUILDING_TYPE_IDS);
 const PRODUCTION_SET = new Set<string>(ICON_003_PRODUCTION_BUILDING_TYPE_IDS);
 
 export function isIcon003Batch1BuildingType(buildingTypeId: string): buildingTypeId is Icon003Batch1BuildingTypeId {
@@ -61,6 +72,12 @@ export function isIcon003Batch2BuildingType(buildingTypeId: string): buildingTyp
 
 export function isIcon003Batch3BuildingType(buildingTypeId: string): buildingTypeId is Icon003Batch3BuildingTypeId {
   return BATCH_3_SET.has(buildingTypeId);
+}
+
+export function isIcon003InfrastructureBuildingType(
+  buildingTypeId: string,
+): buildingTypeId is Icon003InfrastructureBuildingTypeId {
+  return INFRASTRUCTURE_SET.has(buildingTypeId);
 }
 
 export function isIcon003ProductionBuildingType(

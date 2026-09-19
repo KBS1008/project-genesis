@@ -1,0 +1,78 @@
+{
+  "pilotVersion": "2026-09-19-infrastructure-visual-contract-v1",
+  "contractStatus": "PILOT_NOT_ACTIVE",
+  "humanApproval": "PENDING",
+  "grammar": {
+    "access_road": "LINEAR",
+    "port": "TERMINAL_YARD",
+    "rail_terminal": "TERMINAL_YARD"
+  },
+  "pilots": [
+    {
+      "buildingTypeId": "access_road",
+      "grammar": "LINEAR",
+      "primaryId": "ICON-003-access_road-infra-pilot",
+      "compactId": "ICON-003-access_road-infra-pilot-compact",
+      "sourcePath": "assets/ICON-003-access_road-infra-pilot-source.png",
+      "primaryMaster": "docs/design/buildings/infrastructure-pilot/primary/ICON-003-access_road-infra-pilot.png",
+      "compactMaster": "docs/design/buildings/infrastructure-pilot/compact/ICON-003-access_road-infra-pilot-compact.svg",
+      "dimensions": { "width": 1024, "height": 1024 },
+      "alphaPass": true,
+      "compact32PxReadable": true,
+      "catalogScale72PxReadable": true,
+      "familyCompatibility": "PASS",
+      "semanticRiskNotes": "Depicts representative paved access segment only; no intersections, traffic, or network topology.",
+      "productionStatus": "PILOT_NOT_ACTIVE",
+      "proposedProductionIds": {
+        "primary": "ICON-003-access_road",
+        "compact": "ICON-003-access_road-compact"
+      }
+    },
+    {
+      "buildingTypeId": "port",
+      "grammar": "TERMINAL_YARD",
+      "primaryId": "ICON-003-port-infra-pilot",
+      "compactId": "ICON-003-port-infra-pilot-compact",
+      "sourcePath": "assets/ICON-003-port-infra-pilot-source.png",
+      "primaryMaster": "docs/design/buildings/infrastructure-pilot/primary/ICON-003-port-infra-pilot.png",
+      "compactMaster": "docs/design/buildings/infrastructure-pilot/compact/ICON-003-port-infra-pilot-compact.svg",
+      "dimensions": { "width": 1024, "height": 1024 },
+      "alphaPass": true,
+      "compact32PxReadable": true,
+      "catalogScale72PxReadable": true,
+      "familyCompatibility": "PASS",
+      "semanticRiskNotes": "Facility-scale quay/yard; no ships, ocean panorama, or multi-berth logistics simulation.",
+      "productionStatus": "PILOT_NOT_ACTIVE",
+      "proposedProductionIds": {
+        "primary": "ICON-003-port",
+        "compact": "ICON-003-port-compact"
+      }
+    },
+    {
+      "buildingTypeId": "rail_terminal",
+      "grammar": "TERMINAL_YARD",
+      "primaryId": "ICON-003-rail_terminal-infra-pilot",
+      "compactId": "ICON-003-rail_terminal-infra-pilot-compact",
+      "sourcePath": "assets/ICON-003-rail_terminal-infra-pilot-source.png",
+      "primaryMaster": "docs/design/buildings/infrastructure-pilot/primary/ICON-003-rail_terminal-infra-pilot.png",
+      "compactMaster": "docs/design/buildings/infrastructure-pilot/compact/ICON-003-rail_terminal-infra-pilot-compact.svg",
+      "dimensions": { "width": 1024, "height": 1024 },
+      "alphaPass": true,
+      "compact32PxReadable": true,
+      "catalogScale72PxReadable": true,
+      "familyCompatibility": "PASS",
+      "semanticRiskNotes": "Short track interface + loading hall; no active trains, signals, or switching-yard simulation.",
+      "productionStatus": "PILOT_NOT_ACTIVE",
+      "proposedProductionIds": {
+        "primary": "ICON-003-rail_terminal",
+        "compact": "ICON-003-rail_terminal-compact"
+      }
+    }
+  ],
+  "evidence": {
+    "primaryBoard": "docs/architecture/reviews/evidence/INFRASTRUCTURE_VISUAL_CONTRACT_PRIMARY_BOARD.png",
+    "compactBoard": "docs/architecture/reviews/evidence/INFRASTRUCTURE_VISUAL_CONTRACT_COMPACT_BOARD.png",
+    "catalogScale": "docs/architecture/reviews/evidence/INFRASTRUCTURE_VISUAL_CONTRACT_CATALOG_SCALE.png",
+    "alphaReport": "docs/design/buildings/infrastructure-pilot/INFRASTRUCTURE_VISUAL_CONTRACT_ALPHA_REPORT.json"
+  }
+}

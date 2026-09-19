@@ -14,9 +14,18 @@ describe('BuildingTypeIcon', () => {
     expect(image).toHaveAttribute('src', expect.stringContaining('ICON-003-sawmill'));
   });
 
-  it('falls back to category icon for uncovered building types', () => {
+  it('renders primary ICON-003 art for infrastructure building types', () => {
+    render(
+      <BuildingTypeIcon buildingTypeId="port" category="INFRASTRUCTURE" variant="primary" size={72} />,
+    );
+
+    const image = screen.getByRole('presentation', { hidden: true });
+    expect(image).toHaveAttribute('src', expect.stringContaining('ICON-003-port'));
+  });
+
+  it('falls back to category icon for unknown building types', () => {
     const { container } = render(
-      <BuildingTypeIcon buildingTypeId="port" category="INFRASTRUCTURE" variant="primary" />,
+      <BuildingTypeIcon buildingTypeId="unknown_building_xyz" category="INFRASTRUCTURE" variant="primary" />,
     );
 
     expect(container.querySelector('svg')).not.toBeNull();
