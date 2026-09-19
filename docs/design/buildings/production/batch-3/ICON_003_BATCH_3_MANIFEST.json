@@ -1,0 +1,56 @@
+{
+  "batchVersion": "2026-09-19-batch-3",
+  "promptTemplateVersion": "b2-production-v1",
+  "humanApproval": "PRODUCTION_CANDIDATE",
+  "naming": {
+    "primary": "ICON-003-{buildingTypeId}",
+    "compact": "ICON-003-{buildingTypeId}-compact",
+    "categoryFallback": "ICON-002-{category}"
+  },
+  "buildings": [
+    {
+      "buildingTypeId": "maintenance_facility",
+      "primaryId": "ICON-003-maintenance_facility",
+      "compactId": "ICON-003-maintenance_facility-compact",
+      "method": "generated-raster-alpha-processed",
+      "sourceMaster": "docs/design/buildings/production/batch-3/primary/ICON-003-maintenance_facility.png",
+      "runtimePrimary": "apps/web/public/assets/buildings/ICON-003-maintenance_facility.webp",
+      "runtimeCompact": "apps/web/public/assets/buildings/ICON-003-maintenance_facility-compact.svg",
+      "alphaPass": true,
+      "productionStatus": "ACTIVE"
+    },
+    {
+      "buildingTypeId": "recycling_facility",
+      "primaryId": "ICON-003-recycling_facility",
+      "compactId": "ICON-003-recycling_facility-compact",
+      "method": "generated-raster-alpha-processed",
+      "sourceMaster": "docs/design/buildings/production/batch-3/primary/ICON-003-recycling_facility.png",
+      "runtimePrimary": "apps/web/public/assets/buildings/ICON-003-recycling_facility.webp",
+      "runtimeCompact": "apps/web/public/assets/buildings/ICON-003-recycling_facility-compact.svg",
+      "alphaPass": true,
+      "productionStatus": "ACTIVE"
+    },
+    {
+      "buildingTypeId": "regional_headquarters",
+      "primaryId": "ICON-003-regional_headquarters",
+      "compactId": "ICON-003-regional_headquarters-compact",
+      "method": "generated-raster-alpha-processed",
+      "sourceMaster": "docs/design/buildings/production/batch-3/primary/ICON-003-regional_headquarters.png",
+      "runtimePrimary": "apps/web/public/assets/buildings/ICON-003-regional_headquarters.webp",
+      "runtimeCompact": "apps/web/public/assets/buildings/ICON-003-regional_headquarters-compact.svg",
+      "alphaPass": true,
+      "productionStatus": "ACTIVE"
+    },
+    {
+      "buildingTypeId": "training_center",
+      "primaryId": "ICON-003-training_center",
+      "compactId": "ICON-003-training_center-compact",
+      "method": "generated-raster-alpha-processed",
+      "sourceMaster": "docs/design/buildings/production/batch-3/primary/ICON-003-training_center.png",
+      "runtimePrimary": "apps/web/public/assets/buildings/ICON-003-training_center.webp",
+      "runtimeCompact": "apps/web/public/assets/buildings/ICON-003-training_center-compact.svg",
+      "alphaPass": true,
+      "productionStatus": "ACTIVE"
+    }
+  ]
+}

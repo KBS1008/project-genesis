@@ -198,6 +198,30 @@ const ICON_003_PRODUCTION_BUILDINGS = Object.freeze([
     label: 'Power Substation Building Type Art',
     batch: 'batch-2',
   },
+  {
+    buildingTypeId: 'maintenance_facility',
+    category: 'infrastructure',
+    label: 'Maintenance Facility Building Type Art',
+    batch: 'batch-3',
+  },
+  {
+    buildingTypeId: 'recycling_facility',
+    category: 'infrastructure',
+    label: 'Recycling Facility Building Type Art',
+    batch: 'batch-3',
+  },
+  {
+    buildingTypeId: 'regional_headquarters',
+    category: 'administration',
+    label: 'Regional Headquarters Building Type Art',
+    batch: 'batch-3',
+  },
+  {
+    buildingTypeId: 'training_center',
+    category: 'administration',
+    label: 'Training Center Building Type Art',
+    batch: 'batch-3',
+  },
 ] as const);
 
 function icon003RegistryEntries(): Readonly<Record<string, VisualAssetEntry>> {

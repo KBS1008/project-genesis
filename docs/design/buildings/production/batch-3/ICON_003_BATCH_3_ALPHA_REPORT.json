@@ -1,0 +1,46 @@
+[
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\buildings\\production\\batch-3\\primary\\ICON-003-maintenance_facility.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 599471,
+    "opaquePixelCount": 449105,
+    "transparentPercent": 57.17000961303711,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\buildings\\production\\batch-3\\primary\\ICON-003-recycling_facility.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 365528,
+    "opaquePixelCount": 683048,
+    "transparentPercent": 34.859466552734375,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\buildings\\production\\batch-3\\primary\\ICON-003-regional_headquarters.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 658364,
+    "opaquePixelCount": 390212,
+    "transparentPercent": 62.78648376464844,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\buildings\\production\\batch-3\\primary\\ICON-003-training_center.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 653102,
+    "opaquePixelCount": 395474,
+    "transparentPercent": 62.28466033935547,
+    "checkerboardSuspect": false,
+    "pass": true
+  }
+]

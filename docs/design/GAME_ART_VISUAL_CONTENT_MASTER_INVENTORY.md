@@ -84,17 +84,17 @@
 | headquarters | ADMINISTRATION | ICON-003 primary + compact | UNIQUE | OVERLAY | P0 | **ACTIVE (Batch 2)** |
 | logistics_hub | INFRASTRUCTURE | ICON-003 primary + compact | UNIQUE | OVERLAY | P0 | **ACTIVE (Batch 1)** |
 | machine_shop | PRODUCTION | ICON-003 primary + compact | UNIQUE | OVERLAY | P0 | **ACTIVE (Batch 1)** |
-| maintenance_facility | INFRASTRUCTURE | category icon | UNIQUE | OVERLAY | P0 | GAP |
+| maintenance_facility | INFRASTRUCTURE | ICON-003 primary + compact | UNIQUE | OVERLAY | P0 | **ACTIVE (Batch 3)** |
 | port | INFRASTRUCTURE | category icon | UNIQUE | OVERLAY | P0 | GAP (deferred — terminal/yard) |
 | power_substation | ENERGY | ICON-003 primary + compact | UNIQUE | OVERLAY | P0 | **ACTIVE (Batch 2)** |
 | rail_terminal | INFRASTRUCTURE | category icon | UNIQUE | OVERLAY | P0 | GAP (deferred — terminal/yard) |
-| recycling_facility | INFRASTRUCTURE | category icon | UNIQUE | OVERLAY | P0 | GAP |
-| regional_headquarters | ADMINISTRATION | category icon | UNIQUE | OVERLAY | P0 | GAP |
+| recycling_facility | INFRASTRUCTURE | ICON-003 primary + compact | UNIQUE | OVERLAY | P0 | **ACTIVE (Batch 3)** |
+| regional_headquarters | ADMINISTRATION | ICON-003 primary + compact | UNIQUE | OVERLAY | P0 | **ACTIVE (Batch 3)** |
 | research_campus | RESEARCH | ICON-003 primary + compact | UNIQUE | OVERLAY | P0 | **ACTIVE (Batch 1)** |
 | sawmill | PRODUCTION | ICON-003 primary + compact | UNIQUE | OVERLAY | P0 | **ACTIVE (Batch 1)** |
 | smelter | PRODUCTION | ICON-003 primary + compact | UNIQUE | OVERLAY | P0 | **ACTIVE (Batch 1)** |
 | solar_power_plant | ENERGY | ICON-003 primary + compact | UNIQUE | OVERLAY | P0 | **ACTIVE (Batch 2)** |
-| training_center | ADMINISTRATION | category icon | UNIQUE | OVERLAY | P0 | GAP |
+| training_center | ADMINISTRATION | ICON-003 primary + compact | UNIQUE | OVERLAY | P0 | **ACTIVE (Batch 3)** |
 | university | RESEARCH | ICON-003 primary + compact | UNIQUE | OVERLAY | P0 | **ACTIVE (Batch 2)** |
 | warehouse | STORAGE | ICON-003 primary + compact | UNIQUE | OVERLAY | P0 | **ACTIVE (Batch 1)** |
 

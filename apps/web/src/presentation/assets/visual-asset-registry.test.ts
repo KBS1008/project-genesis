@@ -87,6 +87,18 @@ describe('visual-asset-registry', () => {
     });
   });
 
+  it('registers ICON-003 batch-3 building type art with category fallback', () => {
+    expect(getVisualAssetEntry('ICON-003-maintenance_facility')).toMatchObject({
+      type: 'runtime',
+      format: 'png',
+      component: 'BuildingTypeIcon',
+      path: '/assets/buildings/ICON-003-maintenance_facility.png',
+      webp: '/assets/buildings/ICON-003-maintenance_facility.webp',
+      fallbackId: 'ICON-002-infrastructure',
+      designSource: 'docs/design/buildings/production/batch-3/primary/ICON-003-maintenance_facility.png',
+    });
+  });
+
   it('registers ICON-002 building category icons as runtime SVG assets', () => {
     for (const category of [
       'production',
