@@ -1,8 +1,8 @@
 # Game Art & Visual Content — Master Inventory
 
 **Purpose:** Machine-readable planning inventory for post-V1 visual content.  
-**Authority:** `POST_V1_GAME_ART_VISUAL_CONTENT_MASTER_PLAN_REVIEW.md`  
-**Baseline HEAD:** `012f131`  
+**Authority:** `POST_V1_GAME_ART_VISUAL_CONTENT_MASTER_PLAN_REVIEW.md` · `POST_V1_SCENARIO_B_VISUAL_COVERAGE_PROGRESS_REVIEW.md`  
+**Baseline HEAD:** `ee16a05` (23/23 building visual identity sealed)  
 **Content root:** `game-content/` (YAML counts below)
 
 **Legend — STATUS:** `ACTIVE` runtime certified | `PROCEDURAL` code-driven | `GENERIC` functional not game-identified | `GAP` no distinct identity | `FUTURE` mechanics absent | `SEALED` closed workstream
@@ -24,6 +24,31 @@
 | Regions | 4 | `game-content/regions/*.yaml` |
 | Cities | 7 | `game-content/cities/*.yaml` |
 | Biomes | 3 | `game-content/biomes/*.yaml` |
+
+---
+
+## Scenario B progress ledger (2026-09-19)
+
+**Planning envelope (unchanged):** ~380–520 **authored** deliverables + ~**12 procedural** visual systems. Not a quota.
+
+| Class | Confirmed minimum | Notes |
+|-------|------------------:|-------|
+| Authored primary concepts | **42** | 9 ICON-001 + 23 ICON-003 primaries + 6 ICON-002 + 3 MM scenics (001/006/007) + 1 BR-001 |
+| Authored secondary (compact glyphs) | **23** | ICON-003 compacts (manual SVG family) |
+| Generic reusable UI icons | **~11** | `DashboardIcon` inline glyphs (not registry PNG family) |
+| Decorative / scenic (runtime) | **3** | MM-001/006/007; MM-002–005 reference mockups separate |
+| Procedural systems (production) | **~5** | World biomes + routes + minimap; dashboard/recharts + CH-010 chart language |
+| Derived runtime | excluded | WebP/PNG copies of masters — not independent concepts |
+| Fallback | **6** | ICON-002 category SVGs (defensive + legacy path) |
+| Dev / pilot / evidence | excluded | `infrastructure-pilot/`, evidence PNGs, dev compare pages |
+
+**Estimated authored range:** **65–75** if counting compacts + primary concepts separately toward envelope; **~42–45** if only distinct primary art directions. **~8–12%** of 380–520 primary-direction envelope (denominator comparison is indicative only).
+
+**Procedural progress:** **~5 / ~12** planning systems active; envelope still **appropriate** — mix should shift toward gameplay domains (research, progression overlays) not more building volume.
+
+**Next recommended visual workstream (review authority):** **Technology / Research Visual Identity (ICON-004 family)** — see `POST_V1_SCENARIO_B_VISUAL_COVERAGE_PROGRESS_REVIEW.md` §Z.
+
+**Deferred (not rejected):** milestone badges, workforce silhouettes, world building-marker reuse integration, transport vehicle art, shell nav icon family.
 
 ---
 
@@ -144,7 +169,7 @@ No content-defined building **tiers/upgrades** in YAML; `level` fixed at 1 in do
 
 | Scope | Count | Current | Target | Priority | Status |
 |-------|------:|---------|--------|----------|--------|
-| All technologies | 22 | text + table rows | ICON per tech or SHARED family (5–6 families) | P1 | GAP |
+| All technologies | 22 | text rows + buttons (`ResearchScreen`) | per-tech and/or **11** `TechnologyCategory` family glyphs (ICON-004) | P1 | **GAP — next Scenario B candidate** |
 
 *Per-technology rows omitted here; inventory model = 22 entities × ICON (family or unique).*
 
@@ -154,7 +179,7 @@ No content-defined building **tiers/upgrades** in YAML; `level` fixed at 1 in do
 
 | Concept | Count | Current | Target | Status |
 |---------|------:|---------|--------|--------|
-| Recipes | 7 | text X+Y→Z, resource icons partial | resource icons + facility type art + progress PROCEDURAL | GAP (facility) |
+| Recipes | 7 | text X+Y→Z, resource ICON-001 where wired | resource icons + BuildingTypeIcon reuse + progress PROCEDURAL | **PARTIAL** (resources); ICON-003 reuse not wired on screen |
 | Operational state | — | DashboardIcon integration (sealed slice) | OVERLAY + icon | PARTIAL |
 
 ---
@@ -164,7 +189,7 @@ No content-defined building **tiers/upgrades** in YAML; `level` fixed at 1 in do
 | Concept | Current | Target | Status |
 |---------|---------|--------|--------|
 | KPI / charts | DashboardIcon + charts | PROCEDURAL + plant UNIQUE icons | UI-LED |
-| Power buildings | category icon | tie to building type art | GAP |
+| Power buildings | ICON-003 per type (sealed) | tie to building type art | **ACTIVE (ICON-003)** |
 
 ---
 
@@ -249,10 +274,10 @@ No content-defined building **tiers/upgrades** in YAML; `level` fixed at 1 in do
 
 | Consumer | Depends on |
 |----------|------------|
-| BuildingsScreen catalog | Building type art registry |
-| World building markers | type art or category fallback |
-| ProductionScreen | resource icons (done), facility type art |
-| ResearchScreen | technology icons |
+| BuildingsScreen catalog | ICON-003 registry (**23/23 ACTIVE**) |
+| World building markers | type art reuse **deferred** (markers still procedural dots) |
+| ProductionScreen | ICON-001; ICON-003 reuse opportunity |
+| ResearchScreen | technology icons (**GAP**) |
 | Player guidance (separate WS) | milestone icons optional overlap |
 
 ---
