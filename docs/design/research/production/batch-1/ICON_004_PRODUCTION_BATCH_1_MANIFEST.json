@@ -1,0 +1,139 @@
+{
+  "batchVersion": "2026-09-19-icon-004-production-batch-1-v1",
+  "contractPath": "docs/design/research/TECHNOLOGY_RESEARCH_ICON_004_VISUAL_CONTRACT.md",
+  "contractStatus": "APPROVED / PRODUCTION AUTHORITY",
+  "productionRegistryActivated": true,
+  "batch": "batch-1",
+  "detailedTechnologyIds": [
+    "precision_machining",
+    "renewable_energy",
+    "semiconductor_process",
+    "advanced_metallurgy",
+    "coal_efficiency",
+    "intermodal_logistics",
+    "circuit_design",
+    "factory_automation"
+  ],
+  "detailedPrimaries": [
+    {
+      "technologyId": "precision_machining",
+      "source": "PROMOTED PILOT",
+      "primaryMaster": "docs/design/research/production/batch-1/primary/ICON-004-precision_machining-primary.png",
+      "assetId": "ICON-004-precision_machining-primary",
+      "alphaResult": "PASS"
+    },
+    {
+      "technologyId": "renewable_energy",
+      "source": "PROMOTED PILOT",
+      "primaryMaster": "docs/design/research/production/batch-1/primary/ICON-004-renewable_energy-primary.png",
+      "assetId": "ICON-004-renewable_energy-primary",
+      "alphaResult": "PASS"
+    },
+    {
+      "technologyId": "semiconductor_process",
+      "source": "PROMOTED PILOT",
+      "primaryMaster": "docs/design/research/production/batch-1/primary/ICON-004-semiconductor_process-primary.png",
+      "assetId": "ICON-004-semiconductor_process-primary",
+      "alphaResult": "PASS"
+    },
+    {
+      "technologyId": "advanced_metallurgy",
+      "source": "NEW BATCH 1",
+      "primaryMaster": "docs/design/research/production/batch-1/primary/ICON-004-advanced_metallurgy-primary.png",
+      "assetId": "ICON-004-advanced_metallurgy-primary",
+      "alphaResult": "PASS"
+    },
+    {
+      "technologyId": "coal_efficiency",
+      "source": "NEW BATCH 1",
+      "primaryMaster": "docs/design/research/production/batch-1/primary/ICON-004-coal_efficiency-primary.png",
+      "assetId": "ICON-004-coal_efficiency-primary",
+      "alphaResult": "PASS"
+    },
+    {
+      "technologyId": "intermodal_logistics",
+      "source": "NEW BATCH 1",
+      "primaryMaster": "docs/design/research/production/batch-1/primary/ICON-004-intermodal_logistics-primary.png",
+      "assetId": "ICON-004-intermodal_logistics-primary",
+      "alphaResult": "PASS"
+    },
+    {
+      "technologyId": "circuit_design",
+      "source": "NEW BATCH 1",
+      "primaryMaster": "docs/design/research/production/batch-1/primary/ICON-004-circuit_design-primary.png",
+      "assetId": "ICON-004-circuit_design-primary",
+      "alphaResult": "PASS"
+    },
+    {
+      "technologyId": "factory_automation",
+      "source": "NEW BATCH 1",
+      "primaryMaster": "docs/design/research/production/batch-1/primary/ICON-004-factory_automation-primary.png",
+      "assetId": "ICON-004-factory_automation-primary",
+      "alphaResult": "PASS"
+    }
+  ],
+  "categoryCompacts": [
+    {
+      "category": "PRODUCTION",
+      "assetId": "ICON-004-category-PRODUCTION",
+      "designPath": "docs/design/research/production/batch-1/category/ICON-004-category-PRODUCTION.svg",
+      "fileSizeBytes": 665
+    },
+    {
+      "category": "ENERGY",
+      "assetId": "ICON-004-category-ENERGY",
+      "designPath": "docs/design/research/production/batch-1/category/ICON-004-category-ENERGY.svg",
+      "fileSizeBytes": 603
+    },
+    {
+      "category": "LOGISTICS",
+      "assetId": "ICON-004-category-LOGISTICS",
+      "designPath": "docs/design/research/production/batch-1/category/ICON-004-category-LOGISTICS.svg",
+      "fileSizeBytes": 672
+    },
+    {
+      "category": "ELECTRONICS",
+      "assetId": "ICON-004-category-ELECTRONICS",
+      "designPath": "docs/design/research/production/batch-1/category/ICON-004-category-ELECTRONICS.svg",
+      "fileSizeBytes": 582
+    },
+    {
+      "category": "MANAGEMENT",
+      "assetId": "ICON-004-category-MANAGEMENT",
+      "designPath": "docs/design/research/production/batch-1/category/ICON-004-category-MANAGEMENT.svg",
+      "fileSizeBytes": 729
+    },
+    {
+      "category": "AUTOMATION",
+      "assetId": "ICON-004-category-AUTOMATION",
+      "designPath": "docs/design/research/production/batch-1/category/ICON-004-category-AUTOMATION.svg",
+      "fileSizeBytes": 738
+    },
+    {
+      "category": "FINANCE",
+      "assetId": "ICON-004-category-FINANCE",
+      "designPath": "docs/design/research/production/batch-1/category/ICON-004-category-FINANCE.svg",
+      "fileSizeBytes": 520
+    },
+    {
+      "category": "AGRICULTURE",
+      "assetId": "ICON-004-category-AGRICULTURE",
+      "designPath": "docs/design/research/production/batch-1/category/ICON-004-category-AGRICULTURE.svg",
+      "fileSizeBytes": 417
+    },
+    {
+      "category": "CHEMISTRY",
+      "assetId": "ICON-004-category-CHEMISTRY",
+      "designPath": "docs/design/research/production/batch-1/category/ICON-004-category-CHEMISTRY.svg",
+      "fileSizeBytes": 568
+    },
+    {
+      "category": "AI",
+      "assetId": "ICON-004-category-AI",
+      "designPath": "docs/design/research/production/batch-1/category/ICON-004-category-AI.svg",
+      "fileSizeBytes": 560
+    }
+  ],
+  "alphaReportPath": "docs/design/research/production/batch-1/ICON_004_PRODUCTION_BATCH_1_ALPHA_REPORT.json",
+  "runtimePublicRoot": "apps/web/public/assets/research"
+}

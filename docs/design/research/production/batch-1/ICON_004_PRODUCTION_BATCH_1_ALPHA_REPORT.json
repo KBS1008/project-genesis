@@ -1,0 +1,90 @@
+[
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\research\\production\\batch-1\\primary\\ICON-004-precision_machining-primary.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 436674,
+    "opaquePixelCount": 611902,
+    "transparentPercent": 41.64447784423828,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\research\\production\\batch-1\\primary\\ICON-004-renewable_energy-primary.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 733391,
+    "opaquePixelCount": 315185,
+    "transparentPercent": 69.94161605834961,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\research\\production\\batch-1\\primary\\ICON-004-semiconductor_process-primary.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 596421,
+    "opaquePixelCount": 452155,
+    "transparentPercent": 56.8791389465332,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\research\\production\\batch-1\\primary\\ICON-004-advanced_metallurgy-primary.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 330511,
+    "opaquePixelCount": 718065,
+    "transparentPercent": 31.51998519897461,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\research\\production\\batch-1\\primary\\ICON-004-coal_efficiency-primary.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 584274,
+    "opaquePixelCount": 464302,
+    "transparentPercent": 55.72071075439453,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\research\\production\\batch-1\\primary\\ICON-004-intermodal_logistics-primary.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 558334,
+    "opaquePixelCount": 490242,
+    "transparentPercent": 53.24687957763672,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\research\\production\\batch-1\\primary\\ICON-004-circuit_design-primary.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 427614,
+    "opaquePixelCount": 620962,
+    "transparentPercent": 40.78044891357422,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\research\\production\\batch-1\\primary\\ICON-004-factory_automation-primary.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 666081,
+    "opaquePixelCount": 382495,
+    "transparentPercent": 63.52243423461914,
+    "checkerboardSuspect": false,
+    "pass": true
+  }
+]

@@ -7,6 +7,7 @@ import { fetchResearchJobs } from '@/presentation/adapters/api/query-client';
 import type { ResearchHintViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
 import type { JobRowViewData } from '@/presentation/adapters/view-data/workspace-view-data';
 import { useScreenQuery, TICK_QUERY_DEBOUNCE_MS } from '@/presentation/hooks/useScreenQuery';
+import { TechnologyVisual } from '@/presentation/components/assets/TechnologyVisual';
 import { Button } from '@/presentation/primitives/Button';
 import { Card } from '@/presentation/primitives/Card';
 import { EmptyState } from '@/presentation/primitives/EmptyState';
@@ -109,6 +110,13 @@ export function ResearchScreen() {
             <div className="pg-operation-hint-list">
               {researchHints.map((hint) => (
                 <div key={hint.technologyId} className="pg-operation-hint-row">
+                  <TechnologyVisual
+                    technologyId={hint.technologyId}
+                    variant="catalog"
+                    size={80}
+                    loading="eager"
+                    className="pg-technology-catalog-art"
+                  />
                   <div className="pg-operation-hint-copy">
                     <strong>{hint.name}</strong>
                     <span>

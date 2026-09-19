@@ -1,0 +1,35 @@
+[
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\research\\pilot-icon-004\\detailed-primary\\ICON-004-tech-precision_machining-primary-pilot.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 436674,
+    "opaquePixelCount": 611902,
+    "transparentPercent": 41.64447784423828,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\research\\pilot-icon-004\\detailed-primary\\ICON-004-tech-renewable_energy-primary-pilot.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 733391,
+    "opaquePixelCount": 315185,
+    "transparentPercent": 69.94161605834961,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\research\\pilot-icon-004\\detailed-primary\\ICON-004-tech-semiconductor_process-primary-pilot.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 596421,
+    "opaquePixelCount": 452155,
+    "transparentPercent": 56.8791389465332,
+    "checkerboardSuspect": false,
+    "pass": true
+  }
+]

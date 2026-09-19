@@ -5,12 +5,18 @@ import type {
   VisualAssetThemeVariant,
   VisualAssetThemePaths,
 } from '@/presentation/assets/visual-asset-types';
+import {
+  ICON_004_BATCH_1_DETAILED_TECHNOLOGY_IDS,
+  ICON_004_USED_TECHNOLOGY_CATEGORIES,
+  resolveTechnologyCategory,
+} from '@/presentation/assets/technology-visual-asset-ids';
 
 const MAIN_MENU_BASE = '/assets/main-menu';
 const BRANDING_BASE = '/assets/branding';
 const CHARTS_BASE = '/assets/charts';
 const ICONS_BASE = '/assets/icons';
 const BUILDINGS_BASE = '/assets/buildings';
+const RESEARCH_BASE = '/assets/research';
 
 const ICON_001_RUNTIME_ASSETS = Object.freeze([
   { resourceId: 'wood', label: 'Wood Resource Icon' },
@@ -275,6 +281,57 @@ function icon003RegistryEntries(): Readonly<Record<string, VisualAssetEntry>> {
       designSource: `${designRoot}/compact/${compactId}.svg`,
       notes: `ICON-003 derived compact glyph — ${building.batch}.`,
       baseDir: BUILDINGS_BASE,
+    });
+  }
+
+  return Object.freeze(entries);
+}
+
+function icon004RegistryEntries(): Readonly<Record<string, VisualAssetEntry>> {
+  const entries: Record<string, VisualAssetEntry> = {};
+  const designRoot = 'docs/design/research/production/batch-1';
+
+  const batch1Detailed = ICON_004_BATCH_1_DETAILED_TECHNOLOGY_IDS;
+
+  for (const technologyId of batch1Detailed) {
+    const id = `ICON-004-${technologyId}-primary`;
+    const category = resolveTechnologyCategory(technologyId) ?? 'PRODUCTION';
+    const categoryFallbackId = `ICON-004-category-${category}`;
+
+    entries[id] = entry({
+      id,
+      label: `Technology Primary — ${technologyId}`,
+      type: 'runtime',
+      component: 'TechnologyVisual',
+      format: 'png',
+      path: `${RESEARCH_BASE}/${id}.png`,
+      webp: `${RESEARCH_BASE}/${id}.webp`,
+      theme: 'default',
+      priority: 'normal',
+      preload: false,
+      fallbackId: categoryFallbackId,
+      designSource: `${designRoot}/primary/${id}.png`,
+      notes: 'ICON-004 Tier-1 detailed technology primary — Batch 1 production.',
+    });
+  }
+
+  const categories = ICON_004_USED_TECHNOLOGY_CATEGORIES;
+
+  for (const category of categories) {
+    const id = `ICON-004-category-${category}`;
+    entries[id] = entry({
+      id,
+      label: `Technology Category — ${category}`,
+      type: 'runtime',
+      component: 'TechnologyVisual',
+      format: 'svg',
+      path: `${RESEARCH_BASE}/${id}.svg`,
+      theme: 'default',
+      priority: 'normal',
+      preload: false,
+      fallbackId: 'ICON-002-research',
+      designSource: `${designRoot}/category/${id}.svg`,
+      notes: 'ICON-004 Tier-2 category compact glyph — Batch 1 production.',
     });
   }
 
@@ -550,6 +607,7 @@ export const VISUAL_ASSET_REGISTRY: Readonly<Record<string, VisualAssetEntry>> =
   }),
 
   ...icon001RegistryEntries(),
+  ...icon004RegistryEntries(),
   ...icon002RegistryEntries(),
   ...icon003RegistryEntries(),
 });

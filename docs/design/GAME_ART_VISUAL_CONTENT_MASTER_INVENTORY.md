@@ -46,7 +46,7 @@
 
 **Procedural progress:** **~5 / ~12** planning systems active; envelope still **appropriate** — mix should shift toward gameplay domains (research, progression overlays) not more building volume.
 
-**Next recommended visual workstream (review authority):** **Technology / Research Visual Identity (ICON-004 family)** — see `POST_V1_SCENARIO_B_VISUAL_COVERAGE_PROGRESS_REVIEW.md` §Z.
+**Next recommended visual workstream (review authority):** **ICON-004 Batch 2 / abstract-technology semantics** — extend selective Tier-1 or category-only decisions for remaining 14 technologies (`TECHNOLOGY_RESEARCH_ICON_004_VISUAL_CONTRACT.md`, Batch 1 close candidate).
 
 **Deferred (not rejected):** milestone badges, workforce silhouettes, world building-marker reuse integration, transport vehicle art, shell nav icon family.
 
@@ -169,7 +169,7 @@ No content-defined building **tiers/upgrades** in YAML; `level` fixed at 1 in do
 
 | Scope | Count | Current | Target | Priority | Status |
 |-------|------:|---------|--------|----------|--------|
-| All technologies | 22 | text rows + buttons (`ResearchScreen`) | per-tech and/or **11** `TechnologyCategory` family glyphs (ICON-004) | P1 | **GAP — next Scenario B candidate** |
+| All technologies | 22 | **ResearchScreen** — 8 Tier-1 detailed + 10 Tier-2 category (`TechnologyVisual`) | evidence-driven Tier-1 + category fallback | P1 | **PARTIAL — ICON-004 PRODUCTION BATCH 1** (8/22 detailed, 10/10 category compact) |
 
 *Per-technology rows omitted here; inventory model = 22 entities × ICON (family or unique).*
 

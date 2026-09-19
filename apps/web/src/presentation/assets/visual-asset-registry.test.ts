@@ -117,6 +117,22 @@ describe('visual-asset-registry', () => {
     });
   });
 
+  it('registers ICON-004 batch-1 research technology art', () => {
+    expect(getVisualAssetEntry('ICON-004-precision_machining-primary')).toMatchObject({
+      type: 'runtime',
+      component: 'TechnologyVisual',
+      path: '/assets/research/ICON-004-precision_machining-primary.png',
+      fallbackId: 'ICON-004-category-PRODUCTION',
+    });
+
+    expect(getVisualAssetEntry('ICON-004-category-ELECTRONICS')).toMatchObject({
+      type: 'runtime',
+      format: 'svg',
+      path: '/assets/research/ICON-004-category-ELECTRONICS.svg',
+      fallbackId: 'ICON-002-research',
+    });
+  });
+
   it('registers ICON-002 building category icons as runtime SVG assets', () => {
     for (const category of [
       'production',

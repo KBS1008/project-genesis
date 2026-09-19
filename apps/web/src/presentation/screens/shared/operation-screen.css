@@ -77,6 +77,18 @@
   background: rgba(0, 0, 0, 0.12);
 }
 
+.pg-technology-catalog-art {
+  flex-shrink: 0;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  /* Tier-1 primaries use transparent vignettes; need a dark pad on the light Research screen. */
+  background: #161b22;
+}
+
+.pg-technology-visual-compact {
+  padding: 0.25rem;
+}
+
 .pg-building-type-icon-fallback {
   width: 2rem;
   height: 2rem;

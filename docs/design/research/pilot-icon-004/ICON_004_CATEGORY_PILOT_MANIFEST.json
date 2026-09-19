@@ -1,0 +1,89 @@
+{
+  "pilotVersion": "2026-09-19-icon-004-category-6-pilot-v1",
+  "contractPath": "docs/design/research/TECHNOLOGY_RESEARCH_ICON_004_VISUAL_CONTRACT.md",
+  "contractStatus": "PILOT / PENDING HUMAN APPROVAL",
+  "productionRegistryActivated": false,
+  "researchScreenModified": false,
+  "vectorFirst": true,
+  "primaryTargetPx": [32, 48],
+  "pilots": [
+    {
+      "categoryId": "PRODUCTION",
+      "technologiesInCategory": ["basic_woodworking", "advanced_metallurgy", "precision_machining", "industrial_assembly"],
+      "exampleTechnologies": ["Basic Woodworking", "Fortgeschrittene Metallurgie"],
+      "assetPath": "docs/design/research/pilot-icon-004/category/ICON-004-category-PRODUCTION-pilot.svg",
+      "fileSizeBytes": 665,
+      "readable32px": "READABLE",
+      "readable48px": "READABLE",
+      "readable64px": "READABLE",
+      "semanticRiskNotes": "Reads as manufacturing/process knowledge, not a building silhouette.",
+      "status": "PILOT"
+    },
+    {
+      "categoryId": "ENERGY",
+      "technologiesInCategory": ["coal_efficiency", "renewable_energy", "smart_grid"],
+      "exampleTechnologies": ["Kohlekraft-Effizienz", "Erneuerbare Energie"],
+      "assetPath": "docs/design/research/pilot-icon-004/category/ICON-004-category-ENERGY-pilot.svg",
+      "fileSizeBytes": 603,
+      "readable32px": "READABLE",
+      "readable48px": "READABLE",
+      "readable64px": "READABLE",
+      "semanticRiskNotes": "Power infrastructure knowledge, not a power-plant building icon.",
+      "status": "PILOT"
+    },
+    {
+      "categoryId": "LOGISTICS",
+      "technologiesInCategory": ["distribution_networks", "intermodal_logistics", "warehouse_systems"],
+      "exampleTechnologies": ["Intermodale Logistik", "Lagersysteme"],
+      "assetPath": "docs/design/research/pilot-icon-004/category/ICON-004-category-LOGISTICS-pilot.svg",
+      "fileSizeBytes": 672,
+      "readable32px": "READABLE",
+      "readable48px": "READABLE",
+      "readable64px": "READABLE",
+      "semanticRiskNotes": "Network/flow semantics; distinct from port/rail building art.",
+      "status": "PILOT"
+    },
+    {
+      "categoryId": "ELECTRONICS",
+      "technologiesInCategory": ["circuit_design", "semiconductor_process"],
+      "exampleTechnologies": ["Schaltungsdesign", "Halbleiterprozesse"],
+      "assetPath": "docs/design/research/pilot-icon-004/category/ICON-004-category-ELECTRONICS-pilot.svg",
+      "fileSizeBytes": 582,
+      "readable32px": "READABLE",
+      "readable48px": "READABLE",
+      "readable64px": "READABLE",
+      "semanticRiskNotes": "Distinct from ENERGY via chip silhouette vs pylon.",
+      "status": "PILOT"
+    },
+    {
+      "categoryId": "MANAGEMENT",
+      "technologiesInCategory": ["corporate_management", "executive_leadership"],
+      "exampleTechnologies": ["Unternehmensfuehrung", "Executive Leadership"],
+      "assetPath": "docs/design/research/pilot-icon-004/category/ICON-004-category-MANAGEMENT-pilot.svg",
+      "fileSizeBytes": 729,
+      "readable32px": "READABLE",
+      "readable48px": "READABLE",
+      "readable64px": "READABLE",
+      "semanticRiskNotes": "Organizational capability, not administration building mass.",
+      "status": "PILOT"
+    },
+    {
+      "categoryId": "AUTOMATION",
+      "technologiesInCategory": ["factory_automation", "process_automation"],
+      "exampleTechnologies": ["Fabrikautomatisierung", "Prozessautomatisierung"],
+      "assetPath": "docs/design/research/pilot-icon-004/category/ICON-004-category-AUTOMATION-pilot.svg",
+      "fileSizeBytes": 738,
+      "readable32px": "READABLE",
+      "readable48px": "READABLE",
+      "readable64px": "READABLE",
+      "semanticRiskNotes": "Differentiated from PRODUCTION via loop/frame, not lone gear.",
+      "status": "PILOT"
+    }
+  ],
+  "evidence": {
+    "scaleBoard": "docs/architecture/reviews/evidence/ICON_004_CATEGORY_PILOT_SCALE_BOARD.png",
+    "familyBoard": "docs/architecture/reviews/evidence/ICON_004_CATEGORY_PILOT_FAMILY_BOARD.png",
+    "researchContext": "docs/architecture/reviews/evidence/ICON_004_CATEGORY_PILOT_RESEARCH_CONTEXT.png",
+    "repetitionTest": "docs/architecture/reviews/evidence/ICON_004_CATEGORY_PILOT_REPETITION_TEST.png"
+  }
+}
