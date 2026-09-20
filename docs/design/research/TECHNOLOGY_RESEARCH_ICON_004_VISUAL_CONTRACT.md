@@ -3,7 +3,8 @@
 **Status:** APPROVED / PRODUCTION AUTHORITY  
 **Scope:** ICON-004 two-tier technology visual identity (Tier-1 detailed primary + Tier-2 category compact)  
 **Batch 1 activated:** 2026-09-19 — 8 detailed primaries, 10/10 used category compacts  
-**Batch 2 activated:** 2026-09-19 — +6 detailed primaries (14/22 cumulative)
+**Batch 2 activated:** 2026-09-19 — +6 detailed primaries (14/22 cumulative)  
+**Batch 3 activated:** 2026-09-19 — +4 detailed primaries (18/22 cumulative; 4 abstract deferred)
 
 ---
 

@@ -1,0 +1,46 @@
+[
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\research\\production\\batch-3\\primary\\ICON-004-distribution_networks-primary.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 701286,
+    "opaquePixelCount": 347290,
+    "transparentPercent": 66.87984466552734,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\research\\production\\batch-3\\primary\\ICON-004-polymer_science-primary.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 512748,
+    "opaquePixelCount": 535828,
+    "transparentPercent": 48.89945983886719,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\research\\production\\batch-3\\primary\\ICON-004-sustainable_agriculture-primary.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 685158,
+    "opaquePixelCount": 363418,
+    "transparentPercent": 65.34175872802734,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\research\\production\\batch-3\\primary\\ICON-004-crop_optimization-primary.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 837992,
+    "opaquePixelCount": 210584,
+    "transparentPercent": 79.91714477539062,
+    "checkerboardSuspect": false,
+    "pass": true
+  }
+]

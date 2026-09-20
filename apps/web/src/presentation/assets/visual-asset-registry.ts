@@ -7,6 +7,7 @@ import type {
 } from '@/presentation/assets/visual-asset-types';
 import {
   ICON_004_BATCH_2_DETAILED_TECHNOLOGY_IDS,
+  ICON_004_BATCH_3_DETAILED_TECHNOLOGY_IDS,
   ICON_004_DETAILED_TECHNOLOGY_IDS,
   ICON_004_USED_TECHNOLOGY_CATEGORIES,
   resolveTechnologyCategory,
@@ -289,13 +290,27 @@ function icon003RegistryEntries(): Readonly<Record<string, VisualAssetEntry>> {
 }
 
 const ICON_004_BATCH_2_SET = new Set<string>(ICON_004_BATCH_2_DETAILED_TECHNOLOGY_IDS);
+const ICON_004_BATCH_3_SET = new Set<string>(ICON_004_BATCH_3_DETAILED_TECHNOLOGY_IDS);
 
 function icon004PrimaryDesignSource(technologyId: string, id: string): string {
-  const batchRoot = ICON_004_BATCH_2_SET.has(technologyId)
-    ? 'docs/design/research/production/batch-2'
-    : 'docs/design/research/production/batch-1';
+  let batchRoot = 'docs/design/research/production/batch-1';
+  if (ICON_004_BATCH_3_SET.has(technologyId)) {
+    batchRoot = 'docs/design/research/production/batch-3';
+  } else if (ICON_004_BATCH_2_SET.has(technologyId)) {
+    batchRoot = 'docs/design/research/production/batch-2';
+  }
 
   return `${batchRoot}/primary/${id}.png`;
+}
+
+function icon004PrimaryBatchNote(technologyId: string): string {
+  if (ICON_004_BATCH_3_SET.has(technologyId)) {
+    return 'Batch 3';
+  }
+  if (ICON_004_BATCH_2_SET.has(technologyId)) {
+    return 'Batch 2';
+  }
+  return 'Batch 1';
 }
 
 function icon004RegistryEntries(): Readonly<Record<string, VisualAssetEntry>> {
@@ -306,7 +321,7 @@ function icon004RegistryEntries(): Readonly<Record<string, VisualAssetEntry>> {
     const id = `ICON-004-${technologyId}-primary`;
     const category = resolveTechnologyCategory(technologyId) ?? 'PRODUCTION';
     const categoryFallbackId = `ICON-004-category-${category}`;
-    const batchNote = ICON_004_BATCH_2_SET.has(technologyId) ? 'Batch 2' : 'Batch 1';
+    const batchNote = icon004PrimaryBatchNote(technologyId);
 
     entries[id] = entry({
       id,

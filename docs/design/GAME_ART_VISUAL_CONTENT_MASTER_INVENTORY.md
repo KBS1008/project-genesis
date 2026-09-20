@@ -33,7 +33,7 @@
 
 | Class | Confirmed minimum | Notes |
 |-------|------------------:|-------|
-| Authored primary concepts | **56** | 9 ICON-001 + 23 ICON-003 primaries + 6 ICON-002 + 3 MM scenics (001/006/007) + 1 BR-001 + **14 ICON-004** Tier-1 detailed (8 Batch 1 + 6 Batch 2) |
+| Authored primary concepts | **60** | 9 ICON-001 + 23 ICON-003 primaries + 6 ICON-002 + 3 MM scenics (001/006/007) + 1 BR-001 + **18 ICON-004** Tier-1 detailed (8+6+4 batches) |
 | Authored secondary (compact glyphs) | **23** | ICON-003 compacts (manual SVG family) |
 | Generic reusable UI icons | **~11** | `DashboardIcon` inline glyphs (not registry PNG family) |
 | Decorative / scenic (runtime) | **3** | MM-001/006/007; MM-002–005 reference mockups separate |
@@ -42,13 +42,13 @@
 | Fallback | **6** | ICON-002 category SVGs (defensive + legacy path) |
 | Dev / pilot / evidence | excluded | `infrastructure-pilot/`, evidence PNGs, dev compare pages |
 
-**Estimated authored range:** **79–89** if counting compacts + primary concepts separately toward envelope; **~56–59** if only distinct primary art directions. **~11–15%** of 380–520 primary-direction envelope (denominator comparison is indicative only).
+**Estimated authored range:** **83–93** if counting compacts + primary concepts separately toward envelope; **~60–63** if only distinct primary art directions.
 
-**Batch 2 Scenario-B delta:** **+6** unique Tier-1 technology primary concepts (no derivative inflation).
+**Batch 3 Scenario-B delta:** **+4** unique Tier-1 technology primary concepts (no derivative inflation).
 
 **Procedural progress:** **~5 / ~12** planning systems active; envelope still **appropriate** — mix should shift toward gameplay domains (research, progression overlays) not more building volume.
 
-**Next recommended visual workstream (review authority):** **ICON-004 deferred eight** — abstract art-direction pilot (4) + later detailed batches (4); not Batch 3 production without review.
+**Next recommended visual workstream (review authority):** **ICON-004 abstract art-direction pilot** (4 deferred MANAGEMENT/FINANCE/AI technologies).
 
 **Deferred (not rejected):** milestone badges, workforce silhouettes, world building-marker reuse integration, transport vehicle art, shell nav icon family.
 
@@ -171,7 +171,7 @@ No content-defined building **tiers/upgrades** in YAML; `level` fixed at 1 in do
 
 | Scope | Count | Current | Target | Priority | Status |
 |-------|------:|---------|--------|----------|--------|
-| All technologies | 22 | **ResearchScreen** — 14 Tier-1 detailed + 10 Tier-2 category (`TechnologyVisual`) | evidence-driven Tier-1 + category fallback | P1 | **PARTIAL — ICON-004 PRODUCTION BATCH 2** (14/22 detailed, 10/10 category compact) |
+| All technologies | 22 | **ResearchScreen** — 18 Tier-1 detailed + 10 Tier-2 category (`TechnologyVisual`) | evidence-driven Tier-1 + category fallback | P1 | **PARTIAL — ICON-004 PRODUCTION BATCH 3** (18/22 detailed, 10/10 category compact; 4 abstract pilot deferred) |
 
 *Per-technology rows omitted here; inventory model = 22 entities × ICON (family or unique).*
 
@@ -279,7 +279,7 @@ No content-defined building **tiers/upgrades** in YAML; `level` fixed at 1 in do
 | BuildingsScreen catalog | ICON-003 registry (**23/23 ACTIVE**) |
 | World building markers | type art reuse **deferred** (markers still procedural dots) |
 | ProductionScreen | ICON-001; ICON-003 reuse opportunity |
-| ResearchScreen | ICON-004 partial (**14/22** Tier-1 detailed + category compact; 8 deferred) |
+| ResearchScreen | ICON-004 partial (**18/22** Tier-1 detailed + category compact; 4 abstract pilot deferred) |
 | Player guidance (separate WS) | milestone icons optional overlap |
 
 ---

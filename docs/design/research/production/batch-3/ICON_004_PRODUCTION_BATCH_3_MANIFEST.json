@@ -1,0 +1,46 @@
+{
+  "batchVersion": "2026-09-19-icon-004-production-batch-3-v1",
+  "contractPath": "docs/design/research/TECHNOLOGY_RESEARCH_ICON_004_VISUAL_CONTRACT.md",
+  "contractStatus": "APPROVED / PRODUCTION AUTHORITY",
+  "productionRegistryActivated": true,
+  "batch": "batch-3",
+  "detailedTechnologyIds": [
+    "distribution_networks",
+    "polymer_science",
+    "sustainable_agriculture",
+    "crop_optimization"
+  ],
+  "cumulativeDetailedCount": 18,
+  "detailedPrimaries": [
+    {
+      "technologyId": "distribution_networks",
+      "source": "BATCH 3",
+      "primaryMaster": "docs/design/research/production/batch-3/primary/ICON-004-distribution_networks-primary.png",
+      "assetId": "ICON-004-distribution_networks-primary",
+      "alphaResult": "PASS"
+    },
+    {
+      "technologyId": "polymer_science",
+      "source": "BATCH 3",
+      "primaryMaster": "docs/design/research/production/batch-3/primary/ICON-004-polymer_science-primary.png",
+      "assetId": "ICON-004-polymer_science-primary",
+      "alphaResult": "PASS"
+    },
+    {
+      "technologyId": "sustainable_agriculture",
+      "source": "BATCH 3",
+      "primaryMaster": "docs/design/research/production/batch-3/primary/ICON-004-sustainable_agriculture-primary.png",
+      "assetId": "ICON-004-sustainable_agriculture-primary",
+      "alphaResult": "PASS"
+    },
+    {
+      "technologyId": "crop_optimization",
+      "source": "BATCH 3",
+      "primaryMaster": "docs/design/research/production/batch-3/primary/ICON-004-crop_optimization-primary.png",
+      "assetId": "ICON-004-crop_optimization-primary",
+      "alphaResult": "PASS"
+    }
+  ],
+  "alphaReportPath": "docs/design/research/production/batch-3/ICON_004_PRODUCTION_BATCH_3_ALPHA_REPORT.json",
+  "runtimePublicRoot": "apps/web/public/assets/research"
+}

@@ -3,8 +3,10 @@ import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { getVisualAssetEntry } from '@/presentation/assets/visual-asset-registry';
 import {
+  ICON_004_ABSTRACT_DEFERRED_TECHNOLOGY_IDS,
   ICON_004_BATCH_1_DETAILED_TECHNOLOGY_IDS,
   ICON_004_BATCH_2_DETAILED_TECHNOLOGY_IDS,
+  ICON_004_BATCH_3_DETAILED_TECHNOLOGY_IDS,
   ICON_004_DETAILED_TECHNOLOGY_IDS,
   ICON_004_TECHNOLOGY_CATEGORY_BY_ID,
   ICON_004_USED_TECHNOLOGY_CATEGORIES,
@@ -16,19 +18,17 @@ import {
 const projectRoot = path.resolve(import.meta.dirname, '../../../../..');
 const publicResearch = path.join(projectRoot, 'apps/web/public/assets/research');
 
-const CATEGORY_ONLY_IDS = Object.keys(ICON_004_TECHNOLOGY_CATEGORY_BY_ID).filter(
-  (id) => !ICON_004_DETAILED_TECHNOLOGY_IDS.includes(id as (typeof ICON_004_DETAILED_TECHNOLOGY_IDS)[number]),
-);
-
 describe('technology-visual-asset-ids', () => {
   it('maps 22 enabled technologies to categories', () => {
     expect(Object.keys(ICON_004_TECHNOLOGY_CATEGORY_BY_ID).length).toBe(22);
   });
 
-  it('resolves detailed primaries for fourteen technologies', () => {
-    expect(ICON_004_DETAILED_TECHNOLOGY_IDS.length).toBe(14);
+  it('resolves detailed primaries for eighteen technologies', () => {
+    expect(ICON_004_DETAILED_TECHNOLOGY_IDS.length).toBe(18);
     expect(ICON_004_BATCH_1_DETAILED_TECHNOLOGY_IDS.length).toBe(8);
     expect(ICON_004_BATCH_2_DETAILED_TECHNOLOGY_IDS.length).toBe(6);
+    expect(ICON_004_BATCH_3_DETAILED_TECHNOLOGY_IDS.length).toBe(4);
+    expect(ICON_004_ABSTRACT_DEFERRED_TECHNOLOGY_IDS.length).toBe(4);
 
     for (const technologyId of ICON_004_DETAILED_TECHNOLOGY_IDS) {
       expect(technologyToIcon004PrimaryAssetId(technologyId)).toBe(
@@ -36,7 +36,7 @@ describe('technology-visual-asset-ids', () => {
       );
     }
 
-    for (const technologyId of CATEGORY_ONLY_IDS) {
+    for (const technologyId of ICON_004_ABSTRACT_DEFERRED_TECHNOLOGY_IDS) {
       expect(technologyToIcon004PrimaryAssetId(technologyId)).toBeNull();
     }
   });
@@ -61,7 +61,7 @@ describe('technology-visual-asset-ids', () => {
 });
 
 describe('ICON-004 production registry and files', () => {
-  it('registers fourteen detailed primaries and ten category glyphs', () => {
+  it('registers eighteen detailed primaries and ten category glyphs', () => {
     for (const technologyId of ICON_004_DETAILED_TECHNOLOGY_IDS) {
       const assetId = `ICON-004-${technologyId}-primary`;
       expect(getVisualAssetEntry(assetId)).toMatchObject({
@@ -95,8 +95,8 @@ describe('ICON-004 production registry and files', () => {
     }
   });
 
-  it('category-only technologies resolve to compact without primary', () => {
-    for (const technologyId of CATEGORY_ONLY_IDS) {
+  it('abstract deferred technologies resolve to compact without primary', () => {
+    for (const technologyId of ICON_004_ABSTRACT_DEFERRED_TECHNOLOGY_IDS) {
       const resolved = resolveIcon004TechnologyVisualAssetIds(technologyId);
       expect(resolved.primaryAssetId).toBeNull();
       const category = ICON_004_TECHNOLOGY_CATEGORY_BY_ID[technologyId];
