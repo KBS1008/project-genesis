@@ -1,0 +1,55 @@
+{
+  "batchVersion": "2026-09-20-icon-004-production-batch-4-abstract-v1",
+  "contractPath": "docs/design/research/TECHNOLOGY_RESEARCH_ICON_004_VISUAL_CONTRACT.md",
+  "contractStatus": "CLOSE CANDIDATE — EXECUTIVE HUMAN VISUAL GATE PENDING",
+  "productionRegistryActivated": true,
+  "batch": "batch-4-abstract",
+  "detailedTechnologyIds": [
+    "corporate_management",
+    "financial_planning",
+    "predictive_analytics",
+    "executive_leadership"
+  ],
+  "cumulativeDetailedCount": 22,
+  "promotedPilotIds": [
+    "corporate_management",
+    "financial_planning",
+    "predictive_analytics"
+  ],
+  "newArtTechnologyIds": [
+    "executive_leadership"
+  ],
+  "detailedPrimaries": [
+    {
+      "technologyId": "corporate_management",
+      "source": "PROMOTED HUMAN-APPROVED ABSTRACT PILOT",
+      "primaryMaster": "docs/design/research/production/batch-4-abstract/primary/ICON-004-corporate_management-primary.png",
+      "assetId": "ICON-004-corporate_management-primary",
+      "alphaResult": "PASS"
+    },
+    {
+      "technologyId": "financial_planning",
+      "source": "PROMOTED HUMAN-APPROVED ABSTRACT PILOT",
+      "primaryMaster": "docs/design/research/production/batch-4-abstract/primary/ICON-004-financial_planning-primary.png",
+      "assetId": "ICON-004-financial_planning-primary",
+      "alphaResult": "PASS"
+    },
+    {
+      "technologyId": "predictive_analytics",
+      "source": "PROMOTED HUMAN-APPROVED ABSTRACT PILOT",
+      "primaryMaster": "docs/design/research/production/batch-4-abstract/primary/ICON-004-predictive_analytics-primary.png",
+      "assetId": "ICON-004-predictive_analytics-primary",
+      "alphaResult": "PASS"
+    },
+    {
+      "technologyId": "executive_leadership",
+      "source": "NEW ART — EXECUTIVE LEADERSHIP HOLDOUT",
+      "primaryMaster": "docs/design/research/production/batch-4-abstract/primary/ICON-004-executive_leadership-primary.png",
+      "assetId": "ICON-004-executive_leadership-primary",
+      "alphaResult": "PASS"
+    }
+  ],
+  "alphaReportPath": "docs/design/research/production/batch-4-abstract/ICON_004_PRODUCTION_BATCH_4_ABSTRACT_ALPHA_REPORT.json",
+  "runtimePublicRoot": "apps/web/public/assets/research",
+  "executiveLeadershipHumanApproval": "PENDING"
+}

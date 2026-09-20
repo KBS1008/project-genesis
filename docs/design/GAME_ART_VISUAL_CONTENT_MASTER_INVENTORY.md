@@ -33,7 +33,7 @@
 
 | Class | Confirmed minimum | Notes |
 |-------|------------------:|-------|
-| Authored primary concepts | **60** | 9 ICON-001 + 23 ICON-003 primaries + 6 ICON-002 + 3 MM scenics (001/006/007) + 1 BR-001 + **18 ICON-004** Tier-1 detailed (8+6+4 batches) |
+| Authored primary concepts | **64** | 9 ICON-001 + 23 ICON-003 primaries + 6 ICON-002 + 3 MM scenics (001/006/007) + 1 BR-001 + **22 ICON-004** Tier-1 detailed (8+6+4+4 batches; executive human gate pending) |
 | Authored secondary (compact glyphs) | **23** | ICON-003 compacts (manual SVG family) |
 | Generic reusable UI icons | **~11** | `DashboardIcon` inline glyphs (not registry PNG family) |
 | Decorative / scenic (runtime) | **3** | MM-001/006/007; MM-002–005 reference mockups separate |
@@ -44,11 +44,9 @@
 
 **Estimated authored range:** **83–93** if counting compacts + primary concepts separately toward envelope; **~60–63** if only distinct primary art directions.
 
-**Batch 3 Scenario-B delta:** **+4** unique Tier-1 technology primary concepts (no derivative inflation).
+**Batch 4 Scenario-B delta:** **+4** unique Tier-1 technology primary concepts (3 promoted abstract pilots + 1 new executive_leadership).
 
-**Procedural progress:** **~5 / ~12** planning systems active; envelope still **appropriate** — mix should shift toward gameplay domains (research, progression overlays) not more building volume.
-
-**Next recommended visual workstream (review authority):** **ICON-004 abstract art-direction pilot** (4 deferred MANAGEMENT/FINANCE/AI technologies).
+**Next recommended visual workstream (review authority):** **ICON-004 executive_leadership human visual gate** → then ICON-004 track final seal; otherwise Player Guidance / progression overlays per master plan.
 
 **Deferred (not rejected):** milestone badges, workforce silhouettes, world building-marker reuse integration, transport vehicle art, shell nav icon family.
 
@@ -171,7 +169,7 @@ No content-defined building **tiers/upgrades** in YAML; `level` fixed at 1 in do
 
 | Scope | Count | Current | Target | Priority | Status |
 |-------|------:|---------|--------|----------|--------|
-| All technologies | 22 | **ResearchScreen** — 18 Tier-1 detailed + 10 Tier-2 category (`TechnologyVisual`) | evidence-driven Tier-1 + category fallback | P1 | **PARTIAL — ICON-004 PRODUCTION BATCH 3** (18/22 detailed, 10/10 category compact; 4 abstract pilot deferred) |
+| All technologies | 22 | **ResearchScreen** — **22/22** Tier-1 detailed + 10 Tier-2 category (`TechnologyVisual`) | evidence-driven Tier-1 + category fallback | P1 | **CLOSE CANDIDATE — ICON-004 BATCH 4 ABSTRACT** (22/22 detailed integrated; **executive_leadership human visual gate pending**) |
 
 *Per-technology rows omitted here; inventory model = 22 entities × ICON (family or unique).*
 
@@ -279,7 +277,7 @@ No content-defined building **tiers/upgrades** in YAML; `level` fixed at 1 in do
 | BuildingsScreen catalog | ICON-003 registry (**23/23 ACTIVE**) |
 | World building markers | type art reuse **deferred** (markers still procedural dots) |
 | ProductionScreen | ICON-001; ICON-003 reuse opportunity |
-| ResearchScreen | ICON-004 partial (**18/22** Tier-1 detailed + category compact; 4 abstract pilot deferred) |
+| ResearchScreen | ICON-004 **22/22** Tier-1 detailed + category compact (**executive_leadership seal pending**) |
 | Player guidance (separate WS) | milestone icons optional overlap |
 
 ---

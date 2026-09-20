@@ -1,0 +1,40 @@
+{
+  "pilotVersion": "2026-09-20-icon-004-abstract-technology-art-direction-pilot-v1",
+  "purpose": "Human-gated abstract Tier-1 subgrammar pilot — NOT production activation",
+  "holdoutTechnologyId": "executive_leadership",
+  "holdoutReason": "Management/leadership pair stress-test; extend grammar after human gate without conflating pilot with 4/4 production",
+  "sharedSubgrammar": "Instrumented industrial decision/planning/analysis apparatus (physical controls, racks, modules — no people/UI clichés)",
+  "pilotTechnologyIds": [
+    "corporate_management",
+    "financial_planning",
+    "predictive_analytics"
+  ],
+  "productionDetailedCoverageUnchanged": "18/22",
+  "pilotPrimaries": [
+    {
+      "technologyId": "corporate_management",
+      "abstractGrammar": "Organizational Control System",
+      "pilotMaster": "docs/design/research/pilot-icon-004/abstract-primary/ICON-004-tech-corporate_management-primary-abstract-pilot.png",
+      "alphaResult": "PASS",
+      "productionStatus": "PILOT / DEV ONLY — NOT PRODUCTION",
+      "humanApproval": "PENDING"
+    },
+    {
+      "technologyId": "financial_planning",
+      "abstractGrammar": "Operational Planning Apparatus",
+      "pilotMaster": "docs/design/research/pilot-icon-004/abstract-primary/ICON-004-tech-financial_planning-primary-abstract-pilot.png",
+      "alphaResult": "PASS",
+      "productionStatus": "PILOT / DEV ONLY — NOT PRODUCTION",
+      "humanApproval": "PENDING"
+    },
+    {
+      "technologyId": "predictive_analytics",
+      "abstractGrammar": "Information Analysis Apparatus",
+      "pilotMaster": "docs/design/research/pilot-icon-004/abstract-primary/ICON-004-tech-predictive_analytics-primary-abstract-pilot.png",
+      "alphaResult": "PASS",
+      "productionStatus": "PILOT / DEV ONLY — NOT PRODUCTION",
+      "humanApproval": "PENDING"
+    }
+  ],
+  "alphaReportPath": "docs/design/research/pilot-icon-004/ICON_004_ABSTRACT_TECHNOLOGY_PILOT_ALPHA_REPORT.json"
+}

@@ -1,0 +1,35 @@
+[
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\research\\pilot-icon-004\\abstract-primary\\ICON-004-tech-corporate_management-primary-abstract-pilot.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 561705,
+    "opaquePixelCount": 486871,
+    "transparentPercent": 53.568363189697266,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\research\\pilot-icon-004\\abstract-primary\\ICON-004-tech-financial_planning-primary-abstract-pilot.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 487856,
+    "opaquePixelCount": 560720,
+    "transparentPercent": 46.52557373046875,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\research\\pilot-icon-004\\abstract-primary\\ICON-004-tech-predictive_analytics-primary-abstract-pilot.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 571374,
+    "opaquePixelCount": 477202,
+    "transparentPercent": 54.49047088623047,
+    "checkerboardSuspect": false,
+    "pass": true
+  }
+]

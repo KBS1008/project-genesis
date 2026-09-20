@@ -8,6 +8,7 @@ import type {
 import {
   ICON_004_BATCH_2_DETAILED_TECHNOLOGY_IDS,
   ICON_004_BATCH_3_DETAILED_TECHNOLOGY_IDS,
+  ICON_004_BATCH_4_ABSTRACT_DETAILED_TECHNOLOGY_IDS,
   ICON_004_DETAILED_TECHNOLOGY_IDS,
   ICON_004_USED_TECHNOLOGY_CATEGORIES,
   resolveTechnologyCategory,
@@ -291,10 +292,13 @@ function icon003RegistryEntries(): Readonly<Record<string, VisualAssetEntry>> {
 
 const ICON_004_BATCH_2_SET = new Set<string>(ICON_004_BATCH_2_DETAILED_TECHNOLOGY_IDS);
 const ICON_004_BATCH_3_SET = new Set<string>(ICON_004_BATCH_3_DETAILED_TECHNOLOGY_IDS);
+const ICON_004_BATCH_4_SET = new Set<string>(ICON_004_BATCH_4_ABSTRACT_DETAILED_TECHNOLOGY_IDS);
 
 function icon004PrimaryDesignSource(technologyId: string, id: string): string {
   let batchRoot = 'docs/design/research/production/batch-1';
-  if (ICON_004_BATCH_3_SET.has(technologyId)) {
+  if (ICON_004_BATCH_4_SET.has(technologyId)) {
+    batchRoot = 'docs/design/research/production/batch-4-abstract';
+  } else if (ICON_004_BATCH_3_SET.has(technologyId)) {
     batchRoot = 'docs/design/research/production/batch-3';
   } else if (ICON_004_BATCH_2_SET.has(technologyId)) {
     batchRoot = 'docs/design/research/production/batch-2';
@@ -304,6 +308,9 @@ function icon004PrimaryDesignSource(technologyId: string, id: string): string {
 }
 
 function icon004PrimaryBatchNote(technologyId: string): string {
+  if (ICON_004_BATCH_4_SET.has(technologyId)) {
+    return 'Batch 4 abstract completion';
+  }
   if (ICON_004_BATCH_3_SET.has(technologyId)) {
     return 'Batch 3';
   }

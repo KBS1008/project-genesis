@@ -234,3 +234,31 @@ Production (proposal): `ICON-004-{technologyId}-primary.png` under design + runt
 ## 32. Production Batch 1 (2026-09-19)
 
 Human visual gate **APPROVED / SEALED**. Contract promoted to **APPROVED / PRODUCTION AUTHORITY**. Batch 1 delivers **8** Tier-1 detailed primaries (3 promoted pilots + 5 new) and **10/10** used category compacts. Remaining technologies use Tier-2 category fallback until a later bounded batch. Evidence: `ICON_004_PRODUCTION_BATCH_1_*` boards and close-candidate report.
+
+---
+
+## 33. Abstract Tier-1 subgrammar — APPROVED / SEALED (2026-09-20)
+
+**Status:** **APPROVED / PRODUCTION AUTHORITY** (subgrammar + three pilot directions)
+
+**Authoritative subgrammar:** **INSTRUMENTED INDUSTRIAL CAPABILITY APPARATUS** — physical decision / planning / analysis hardware (control racks, indicator modules, routing/planning instruments). Same material/lighting family as sealed concrete primaries.
+
+**Human-approved pilot primaries (promoted Batch 4):** `corporate_management`, `financial_planning`, `predictive_analytics` — production masters under `docs/design/research/production/batch-4-abstract/primary/`.
+
+**Forbidden primary identity:** people, offices, money symbols, generic charts/dashboards, AI brains/robots, readable software UI.
+
+**Holdout completed:** `executive_leadership` — new Tier-1 primary authored in Batch 4 abstract completion; **human visual approval PENDING** before ICON-004 track final seal.
+
+**Pilot-only paths:** Historical pilot masters under `pilot-icon-004/abstract-primary/` remain audit artifacts; runtime uses production batch-4 paths.
+
+---
+
+## 34. Production Batch 4 abstract completion — CLOSE CANDIDATE (2026-09-20)
+
+**Status:** **CLOSE CANDIDATE** · **22/22 detailed mappings active in registry** · **EXECUTIVE LEADERSHIP HUMAN VISUAL GATE PENDING**
+
+Delivers **4** Tier-1 detailed primaries (3 promoted + 1 new `executive_leadership`). Cumulative **22/22** enabled technologies with detailed primary art. Category compacts unchanged **10/10**.
+
+**Do not mark ICON-004 Technology / Research Visual Identity track FINAL SEALED** until independent human approval of `executive_leadership` detailed primary.
+
+Evidence: `ICON_004_PRODUCTION_BATCH_4_ABSTRACT_*`, `POST_V1_ICON_004_ABSTRACT_PRODUCTION_COMPLETION_18_TO_22_CLOSE_CANDIDATE.md`, executive/management evidence boards under `docs/architecture/reviews/evidence/`.

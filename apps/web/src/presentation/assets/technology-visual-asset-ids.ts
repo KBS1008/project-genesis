@@ -68,24 +68,27 @@ export const ICON_004_BATCH_3_DETAILED_TECHNOLOGY_IDS = Object.freeze([
   'crop_optimization',
 ] as const);
 
+/** Abstract completion batch — 3 promoted pilots + executive_leadership (human gate pending). */
+export const ICON_004_BATCH_4_ABSTRACT_DETAILED_TECHNOLOGY_IDS = Object.freeze([
+  'corporate_management',
+  'financial_planning',
+  'predictive_analytics',
+  'executive_leadership',
+] as const);
+
 export const ICON_004_DETAILED_TECHNOLOGY_IDS = Object.freeze([
   ...ICON_004_BATCH_1_DETAILED_TECHNOLOGY_IDS,
   ...ICON_004_BATCH_2_DETAILED_TECHNOLOGY_IDS,
   ...ICON_004_BATCH_3_DETAILED_TECHNOLOGY_IDS,
+  ...ICON_004_BATCH_4_ABSTRACT_DETAILED_TECHNOLOGY_IDS,
 ] as const);
 
 export type Icon004Batch1DetailedTechnologyId = (typeof ICON_004_BATCH_1_DETAILED_TECHNOLOGY_IDS)[number];
 export type Icon004Batch2DetailedTechnologyId = (typeof ICON_004_BATCH_2_DETAILED_TECHNOLOGY_IDS)[number];
 export type Icon004Batch3DetailedTechnologyId = (typeof ICON_004_BATCH_3_DETAILED_TECHNOLOGY_IDS)[number];
+export type Icon004Batch4AbstractDetailedTechnologyId =
+  (typeof ICON_004_BATCH_4_ABSTRACT_DETAILED_TECHNOLOGY_IDS)[number];
 export type Icon004DetailedTechnologyId = (typeof ICON_004_DETAILED_TECHNOLOGY_IDS)[number];
-
-/** Remaining technologies without Tier-1 art (abstract pilot deferred). */
-export const ICON_004_ABSTRACT_DEFERRED_TECHNOLOGY_IDS = Object.freeze([
-  'corporate_management',
-  'executive_leadership',
-  'financial_planning',
-  'predictive_analytics',
-] as const);
 
 const DETAILED_SET = new Set<string>(ICON_004_DETAILED_TECHNOLOGY_IDS);
 const BATCH_1_SET = new Set<string>(ICON_004_BATCH_1_DETAILED_TECHNOLOGY_IDS);

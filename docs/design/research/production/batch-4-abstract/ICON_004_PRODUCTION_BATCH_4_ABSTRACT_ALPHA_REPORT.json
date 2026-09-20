@@ -1,0 +1,46 @@
+[
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\research\\production\\batch-4-abstract\\primary\\ICON-004-corporate_management-primary.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 561705,
+    "opaquePixelCount": 486871,
+    "transparentPercent": 53.568363189697266,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\research\\production\\batch-4-abstract\\primary\\ICON-004-financial_planning-primary.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 487856,
+    "opaquePixelCount": 560720,
+    "transparentPercent": 46.52557373046875,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\research\\production\\batch-4-abstract\\primary\\ICON-004-predictive_analytics-primary.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 571374,
+    "opaquePixelCount": 477202,
+    "transparentPercent": 54.49047088623047,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\research\\production\\batch-4-abstract\\primary\\ICON-004-executive_leadership-primary.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 753029,
+    "opaquePixelCount": 295547,
+    "transparentPercent": 71.8144416809082,
+    "checkerboardSuspect": false,
+    "pass": true
+  }
+]
