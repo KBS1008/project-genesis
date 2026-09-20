@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo } from 'react';
 import {
   worldBiomePatternId,
   worldBiomeSurfaceClass,
@@ -9,6 +10,7 @@ import type {
   WorldOverlayViewData,
 } from '@/presentation/adapters/view-data/world-view-data';
 import { buildWorldRoutePath } from '@/presentation/components/world/world-route-geometry';
+import { PGWorldBuildingMarker } from '@/presentation/components/world/PGWorldBuildingMarker';
 
 function regionCenter(region: WorldMapViewData['regions'][number], cellSize: number) {
   return {
@@ -48,10 +50,12 @@ export function PGWorldCanvas({
   layers,
   onSelectRegion,
   onSelectBuilding,
+  selectedBuildingId = null,
 }: {
   readonly map: WorldMapViewData;
   readonly overlays: WorldOverlayViewData;
   readonly selectedRegionId: string | null;
+  readonly selectedBuildingId?: string | null;
   readonly layers: Readonly<Record<string, boolean>>;
   readonly onSelectRegion: (regionId: string) => void;
   readonly onSelectBuilding?: (buildingId: string) => void;
@@ -62,6 +66,25 @@ export function PGWorldCanvas({
 
   const regionById = new Map(regions.map((region) => [region.id, region]));
   const metricsByRegion = new Map(overlays.regionMetrics.map((metric) => [metric.regionId, metric]));
+  const buildingMarkers = useMemo(() => {
+    const markers = [...overlays.buildingMarkers];
+
+    if (selectedBuildingId !== null) {
+      markers.sort((left, right) => {
+        if (left.id === selectedBuildingId) {
+          return 1;
+        }
+
+        if (right.id === selectedBuildingId) {
+          return -1;
+        }
+
+        return 0;
+      });
+    }
+
+    return markers;
+  }, [overlays.buildingMarkers, selectedBuildingId]);
 
   return (
     <svg
@@ -194,31 +217,12 @@ export function PGWorldCanvas({
         : null}
 
       {layers.buildings
-        ? overlays.buildingMarkers.map((marker) => (
-            <circle
+        ? buildingMarkers.map((marker) => (
+            <PGWorldBuildingMarker
               key={marker.id}
-              className="pg-world-building-marker"
-              cx={marker.x}
-              cy={marker.y}
-              r={5}
-              role="button"
-              tabIndex={0}
-              aria-label={`Gebäude ${marker.label}`}
-              onClick={(event) => {
-                event.stopPropagation();
-                if (onSelectBuilding !== undefined) {
-                  onSelectBuilding(marker.id);
-                }
-              }}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter' || event.key === ' ') {
-                  event.preventDefault();
-                  event.stopPropagation();
-                  if (onSelectBuilding !== undefined) {
-                    onSelectBuilding(marker.id);
-                  }
-                }
-              }}
+              marker={marker}
+              isSelected={selectedBuildingId === marker.id}
+              onSelect={onSelectBuilding}
             />
           ))
         : null}
@@ -234,14 +238,14 @@ export function PGWorldCanvas({
               <g key={`presence-${region.id}`} aria-hidden="true">
                 <circle
                   className="pg-world-presence-badge"
-                  cx={region.mapX * cellSize + cellSize - 12}
-                  cy={region.mapY * cellSize + 12}
-                  r={10}
+                  cx={region.mapX * cellSize + 14}
+                  cy={region.mapY * cellSize + 14}
+                  r={8}
                 />
                 <text
                   className="pg-world-presence-label"
-                  x={region.mapX * cellSize + cellSize - 12}
-                  y={region.mapY * cellSize + 12 + 3}
+                  x={region.mapX * cellSize + 14}
+                  y={region.mapY * cellSize + 14 + 3}
                   textAnchor="middle"
                 >
                   {metric.buildingCount}
@@ -278,7 +282,7 @@ export function PGWorldCanvas({
               <text
                 className="pg-world-label"
                 x={region.mapX * cellSize + cellSize / 2}
-                y={region.mapY * cellSize + cellSize / 2 - 4}
+                y={region.mapY * cellSize + cellSize / 2 - 20}
                 textAnchor="middle"
               >
                 {region.name}
@@ -286,7 +290,7 @@ export function PGWorldCanvas({
               <text
                 className="pg-world-label-sub"
                 x={region.mapX * cellSize + cellSize / 2}
-                y={region.mapY * cellSize + cellSize / 2 + 10}
+                y={region.mapY * cellSize + cellSize / 2 - 8}
                 textAnchor="middle"
               >
                 {region.biomeLabel}

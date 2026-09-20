@@ -48,9 +48,11 @@ export type WorldLayerViewData = {
 
 export type WorldBuildingMarkerViewData = {
   readonly id: string;
+  readonly buildingTypeId: string;
   readonly regionId: string;
   readonly label: string;
   readonly statusLabel: string;
+  readonly clusterSize: number;
   readonly x: number;
   readonly y: number;
 };

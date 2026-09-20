@@ -292,14 +292,59 @@
 }
 
 .pg-world-building-marker {
+  cursor: pointer;
+  outline: none;
+}
+
+.pg-world-building-marker-hit {
+  pointer-events: all;
+}
+
+.pg-world-building-marker-shadow {
+  fill: color-mix(in srgb, var(--text) 28%, transparent);
+  pointer-events: none;
+}
+
+.pg-world-building-marker-ground {
+  fill: color-mix(in srgb, var(--text) 10%, transparent);
+  stroke: color-mix(in srgb, var(--text) 24%, transparent);
+  stroke-width: 1;
+  pointer-events: none;
+}
+
+.pg-world-building-marker-glyph {
+  pointer-events: none;
+  filter: drop-shadow(0 1px 1px color-mix(in srgb, var(--text) 40%, transparent));
+}
+
+.pg-world-building-marker-fallback {
   fill: var(--accent);
   stroke: var(--bg-elevated);
   stroke-width: 1.5;
-  cursor: pointer;
+  pointer-events: none;
+}
+
+.pg-world-building-marker-selection-ring {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2.5;
+  pointer-events: none;
+}
+
+.pg-world-building-marker.is-selected .pg-world-building-marker-glyph {
+  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--accent) 55%, transparent))
+    drop-shadow(0 2px 2px color-mix(in srgb, var(--text) 35%, transparent));
+}
+
+.pg-world-building-marker:focus-visible .pg-world-building-marker-ground,
+.pg-world-building-marker:focus-visible .pg-world-building-marker-fallback {
+  stroke: var(--accent);
+  stroke-width: 2;
 }
 
 .pg-world-presence-badge {
-  fill: var(--accent);
+  fill: color-mix(in srgb, var(--accent) 82%, var(--text));
+  opacity: 0.88;
 }
 
 .pg-world-presence-label {
@@ -396,5 +441,14 @@
 @media (max-width: 56.25rem) {
   .pg-world-layout {
     grid-template-columns: 1fr;
+  }
+
+  .pg-world-viewport {
+    min-height: 14rem;
+  }
+
+  .pg-world-header .pg-world-legend {
+    width: 100%;
+    max-width: none;
   }
 }

@@ -1,8 +1,8 @@
 # Game Art & Visual Content — Master Inventory
 
 **Purpose:** Machine-readable planning inventory for post-V1 visual content.  
-**Authority:** `POST_V1_GAME_ART_VISUAL_CONTENT_MASTER_PLAN_REVIEW.md` · `POST_V1_SCENARIO_B_VISUAL_COVERAGE_PROGRESS_REVIEW.md`  
-**Baseline HEAD:** `b5f3348` (ICON-004 22/22 sealed; Scenario-B post-ICON-004 review)  
+**Authority:** `POST_V1_GAME_ART_VISUAL_CONTENT_MASTER_PLAN_REVIEW.md` · `POST_V1_SCENARIO_B_VISUAL_COVERAGE_PROGRESS_REVIEW.md` · `POST_V1_SCENARIO_B_VISUAL_COVERAGE_PROGRESS_REVIEW_02.md`  
+**Baseline HEAD:** `5f24b61` (ICON-005 7/7 sealed; Scenario-B progress review 02)  
 **Content root:** `game-content/` (YAML counts below)
 
 **Legend — STATUS:** `ACTIVE` runtime certified | `PROCEDURAL` code-driven | `GENERIC` functional not game-identified | `GAP` no distinct identity | `FUTURE` mechanics absent | `SEALED` closed workstream
@@ -27,14 +27,14 @@
 
 ---
 
-## Scenario B progress ledger (2026-09-19)
+## Scenario B progress ledger (2026-09-20)
 
 **Planning envelope (unchanged):** ~380–520 **authored** deliverables + ~**12 procedural** visual systems. Not a quota.
 
 | Class | Confirmed minimum | Notes |
 |-------|------------------:|-------|
-| Authored primary concepts | **71** | prior **64** + **7 ICON-005** process primaries (3 promoted pilots + 4 new) |
-| Authored secondary (compact glyphs) | **23** | ICON-003 compacts (manual SVG family) |
+| Authored primary concepts | **71** | ICON-001 **9** + ICON-002 **6** + ICON-003 **23** + ICON-004 **22** + ICON-005 **7** + BR-001 **1** + MM scenics **3** |
+| Authored secondary (compact glyphs) | **33** | ICON-003 compacts **23** + ICON-004 category SVGs **10** |
 | Generic reusable UI icons | **~11** | `DashboardIcon` inline glyphs (not registry PNG family) |
 | Decorative / scenic (runtime) | **3** | MM-001/006/007; MM-002–005 reference mockups separate |
 | Procedural systems (production) | **~5** | World biomes + routes + minimap; dashboard/recharts + CH-010 chart language |
@@ -42,13 +42,15 @@
 | Fallback | **6** | ICON-002 category SVGs (defensive + legacy path) |
 | Dev / pilot / evidence | excluded | `infrastructure-pilot/`, evidence PNGs, dev compare pages |
 
-**Estimated authored range:** **83–93** if counting compacts + primary concepts separately toward envelope; **~60–63** if only distinct primary art directions.
+**Estimated authored range:** **~104–114** if counting primary + secondary concepts separately toward envelope; **~71** distinct primary art directions only.
 
-**Batch 4 Scenario-B delta:** **+4** unique Tier-1 technology primary concepts (3 promoted abstract pilots + 1 new executive_leadership).
+**Sealed families (do not reopen):** ICON-001 · ICON-002 · ICON-003 **23/23** · ICON-004 **22/22** @ `b5f3348` · ICON-005 **7/7** @ `5f24b61` · World Slice 1 · MM/BR sealed tracks.
 
-**Next recommended visual workstream (review authority):** **World building-marker ICON-003 integration** or next Scenario-B domain per `POST_V1_SCENARIO_B_POST_ICON_004_NEXT_VISUAL_WORKSTREAM_REVIEW.md` deferred list. ICON-005 **7/7 production-active** (close candidate).
+**WBM-001 (World building markers):** ICON-003 compact integration — **final grounding repair** (translucent halo, no white plate) — **human-seal candidate**; **0** new authored art.
 
-**Deferred (not rejected):** world building-marker integration, workforce role identity, transport art, milestone illustrations, shell nav icons.
+**Next recommended visual workstream after WBM seal:** **WFV-001** workforce role identity (deferred list below).
+
+**Deferred (not rejected):** workforce role identity (**WFV-001**), transport mode/vehicle identity, milestone medallions (**MSV-001**), market trend visualization polish, building state overlay badges, shell nav icon family, tutorial step vignettes (UX-heavy).
 
 ---
 
@@ -125,7 +127,7 @@
 
 **ICON-003 per-type coverage (current authoritative 23 building types):** **23 / 23** — 20 VOLUMETRIC (Batches 1–3) + 1 LINEAR (`access_road`) + 2 TERMINAL/YARD (`port`, `rail_terminal`). ICON-002 remains defensive category fallback in `BuildingTypeIcon`.
 
-**World map:** building markers = circles (layout positions), not type art — **GAP** for map presence.
+**World map:** **WBM-001** — ICON-003 compact markers via `PGWorldBuildingMarker` (generic `buildingTypeId` resolver) — **ACTIVE** pending human seal.
 
 ---
 
@@ -179,7 +181,7 @@ No content-defined building **tiers/upgrades** in YAML; `level` fixed at 1 in do
 
 | Concept | Count | Current | Target | Status |
 |---------|------:|---------|--------|--------|
-| Recipes | 7 | **ICON-005** process primaries on ProductionScreen catalog + jobs context | Tier-1 process primary per recipe | **PRODUCTION — ICON-005 7/7** (close candidate) |
+| Recipes | 7 | **ICON-005** process primaries on ProductionScreen catalog + jobs context | Tier-1 process primary per recipe | **SEALED — ICON-005 7/7** @ `5f24b61` |
 | Operational state | — | DashboardIcon integration (sealed slice) | OVERLAY + icon | PARTIAL |
 
 ---
@@ -275,8 +277,8 @@ No content-defined building **tiers/upgrades** in YAML; `level` fixed at 1 in do
 | Consumer | Depends on |
 |----------|------------|
 | BuildingsScreen catalog | ICON-003 registry (**23/23 ACTIVE**) |
-| World building markers | type art reuse **deferred** (markers still procedural dots) |
-| ProductionScreen | **ICON-005 7/7** process primaries in recipe catalog (`ProductionProcessVisual`) + ICON-001 where wired |
+| World map | **WBM-001** compact glyphs (`PGWorldBuildingMarker`) | **ACTIVE** |
+| ProductionScreen | **ICON-005 SEALED** — `ProductionProcessVisual` in Rezeptkatalog |
 | ResearchScreen | ICON-004 **SEALED 22/22** Tier-1 detailed + category compact |
 | Player guidance (separate WS) | milestone icons optional overlap |
 

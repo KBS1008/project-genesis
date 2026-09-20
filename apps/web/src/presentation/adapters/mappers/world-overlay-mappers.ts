@@ -15,23 +15,10 @@ import {
   type WorldRegionOperationsViewData,
   type WorldTransportFlowViewData,
 } from '@/presentation/adapters/view-data/world-view-data';
+import { distributeMarkerPosition } from '@/presentation/adapters/mappers/world-building-marker-layout';
 
 function connectionKey(fromRegionId: string, toRegionId: string): string {
   return `${fromRegionId}->${toRegionId}`;
-}
-
-function distributeMarkerPosition(
-  region: WorldMapRegionCellViewData,
-  index: number,
-  cellSize: number,
-): { readonly x: number; readonly y: number } {
-  const column = index % 3;
-  const row = Math.floor(index / 3);
-
-  return Object.freeze({
-    x: region.mapX * cellSize + 14 + column * 22,
-    y: region.mapY * cellSize + 14 + row * 18,
-  });
 }
 
 function sumRegionalResources(details: readonly RegionDetailsDto[]): Map<string, number> {
@@ -127,9 +114,11 @@ export function mapWorldOverlayViewData(
       buildingMarkers.push(
         Object.freeze({
           id: building.id,
+          buildingTypeId: building.buildingTypeId,
           regionId: region.id,
           label: building.name,
           statusLabel: building.status,
+          clusterSize: regionBuildings.length,
           x: position.x,
           y: position.y,
         }),

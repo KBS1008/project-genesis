@@ -1,4 +1,4 @@
-/* global document, console, fetch, process, setTimeout */
+/* global document, console, fetch, process */
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 

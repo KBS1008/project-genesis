@@ -15,6 +15,7 @@ export function PGWorldViewport({
   viewportRef,
   onSelectRegion,
   onSelectBuilding,
+  selectedBuildingId = null,
   onWheel,
   onPointerDown,
   onPointerMove,
@@ -28,6 +29,7 @@ export function PGWorldViewport({
   readonly viewportRef: RefObject<HTMLDivElement | null>;
   readonly onSelectRegion: (regionId: string) => void;
   readonly onSelectBuilding?: (buildingId: string) => void;
+  readonly selectedBuildingId?: string | null;
   readonly onWheel: (event: WheelEvent) => void;
   readonly onPointerDown: (event: PointerEvent) => void;
   readonly onPointerMove: (event: PointerEvent) => void;
@@ -58,6 +60,7 @@ export function PGWorldViewport({
           layers={layers}
           onSelectRegion={onSelectRegion}
           onSelectBuilding={onSelectBuilding}
+          selectedBuildingId={selectedBuildingId}
         />
       </div>
     </div>

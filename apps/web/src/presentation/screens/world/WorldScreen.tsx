@@ -38,6 +38,8 @@ export function WorldScreen() {
   } = useGameWorkspace();
   const selectedRegionId =
     navigation.entitySelection.kind === 'region' ? navigation.entitySelection.id : null;
+  const selectedBuildingId =
+    navigation.entitySelection.kind === 'building' ? navigation.entitySelection.id : null;
   const labels = companyViewData.labels;
   const mapQuery = useScreenQuery(
     'world-map',
@@ -145,6 +147,7 @@ export function WorldScreen() {
           map={mapQuery.data}
           overlays={overlayQuery.data ?? EMPTY_WORLD_OVERLAY}
           selectedRegionId={selectedRegionId}
+          selectedBuildingId={selectedBuildingId}
           inspector={inspectorQuery.data}
           inspectorSectionActions={inspectorSectionActions}
           onSelectRegion={(regionId) => {

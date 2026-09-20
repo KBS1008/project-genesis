@@ -87,6 +87,10 @@ describe('world-overlay-mappers', () => {
     );
 
     expect(overlay.buildingMarkers).toHaveLength(1);
+    expect(overlay.buildingMarkers[0]?.buildingTypeId).toBe('sawmill');
+    expect(overlay.buildingMarkers[0]?.clusterSize).toBe(1);
+    expect(overlay.buildingMarkers[0]?.x).toBeCloseTo(21.6, 1);
+    expect(overlay.buildingMarkers[0]?.y).toBeCloseTo(55.04, 1);
     expect(overlay.regionMetrics[0]?.buildingCount).toBe(1);
     expect(overlay.transportFlows.length).toBeGreaterThanOrEqual(0);
   });

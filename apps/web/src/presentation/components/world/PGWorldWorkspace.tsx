@@ -29,12 +29,14 @@ export function PGWorldWorkspace({
   onSelectRegion,
   onSelectBuilding,
   onClearSelection,
+  selectedBuildingId = null,
   inspectorSectionActions,
 }: {
   readonly world: WorldOverviewViewData;
   readonly map: WorldMapViewData;
   readonly overlays: WorldOverlayViewData;
   readonly selectedRegionId: string | null;
+  readonly selectedBuildingId?: string | null;
   readonly inspector: WorldInspectorViewData | null;
   readonly onSelectRegion: (regionId: string) => void;
   readonly onSelectBuilding?: (buildingId: string) => void;
@@ -124,6 +126,7 @@ export function PGWorldWorkspace({
               viewportRef={viewportRef}
               onSelectRegion={onSelectRegion}
               onSelectBuilding={onSelectBuilding}
+              selectedBuildingId={selectedBuildingId}
               onWheel={onWheel}
               onPointerDown={onPointerDown}
               onPointerMove={onPointerMove}
