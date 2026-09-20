@@ -108,7 +108,7 @@ export function mapOperationsEmployeeRows(
             key={`workforce-${employee.id}`}
             employeeTypeId={employee.employeeTypeId}
             size={80}
-            loading="lazy"
+            loading="eager"
           />,
           employee.displayName,
           employee.employeeTypeLabel,

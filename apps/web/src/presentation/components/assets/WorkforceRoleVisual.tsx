@@ -12,7 +12,10 @@ type WorkforceRoleVisualProps = {
   readonly loading?: 'lazy' | 'eager';
 };
 
-/** WFV-001 Batch-1 hybrid primary with category ICON-002 fallback for remaining roles. */
+/**
+ * WFV-001 production primary when mapped; ICON-002 category fallback only when unmapped.
+ * Enabled production roles must never silently downgrade to category fallback on img error.
+ */
 export function WorkforceRoleVisual({
   employeeTypeId,
   size = 80,
@@ -21,22 +24,25 @@ export function WorkforceRoleVisual({
   loading = 'lazy',
 }: WorkforceRoleVisualProps) {
   const presentationAlt = alt.length > 0 ? alt : '';
-  const [failedPrimary, setFailedPrimary] = useState(false);
+  const [primaryLoadFailed, setPrimaryLoadFailed] = useState(false);
 
   const { primaryAssetId, fallbackAssetId } = resolveWorkforceRoleVisualAssetIds(employeeTypeId);
 
   const primaryUrl =
-    failedPrimary || primaryAssetId === null
+    primaryAssetId === null
       ? null
       : resolveVisualAssetUrl(primaryAssetId, { preferWebp: false });
 
-  const fallbackUrl = resolveVisualAssetUrl(fallbackAssetId);
+  const fallbackUrl =
+    primaryAssetId === null ? resolveVisualAssetUrl(fallbackAssetId) : null;
 
   const src = primaryUrl ?? fallbackUrl;
 
   if (src === null) {
     return null;
   }
+
+  const usesProductionPrimary = primaryUrl !== null;
 
   return (
     <img
@@ -49,10 +55,12 @@ export function WorkforceRoleVisual({
       decoding="async"
       role={presentationAlt.length === 0 ? 'presentation' : undefined}
       aria-hidden={presentationAlt.length === 0 ? true : undefined}
-      data-workforce-primary={primaryUrl !== null ? 'true' : 'false'}
+      data-workforce-primary={usesProductionPrimary ? 'true' : 'false'}
+      data-wfv-asset-id={primaryAssetId ?? undefined}
+      data-wfv-primary-load-failed={usesProductionPrimary && primaryLoadFailed ? 'true' : 'false'}
       onError={() => {
-        if (primaryUrl !== null) {
-          setFailedPrimary(true);
+        if (usesProductionPrimary) {
+          setPrimaryLoadFailed(true);
         }
       }}
     />

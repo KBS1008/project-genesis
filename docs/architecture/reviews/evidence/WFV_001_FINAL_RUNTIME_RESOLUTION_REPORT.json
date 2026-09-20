@@ -1,0 +1,123 @@
+{
+  "capturedAt": "2026-09-20T13:13:48.623Z",
+  "webOrigin": "http://localhost:3005",
+  "savePath": "D:/Cursor/Project Genesis/saves/e2e-m11-phase6-production-closeout.json",
+  "rootCauseRepair": "WorkforceRoleVisual previously swapped to ICON-002 on primary img onError; completion capture could also race lazy loads against stale production builds.",
+  "rows": [
+    {
+      "displayName": "Closeout Worker 1",
+      "roleLabel": "Produktionsmitarbeiter",
+      "employeeTypeId": "employee_production_worker",
+      "resolvedFamily": "WFV-001",
+      "assetPath": "/assets/workforce/WFV-001-employee_production_worker-primary.png",
+      "fallback": false,
+      "loaded": true,
+      "primaryLoadFailed": false
+    },
+    {
+      "displayName": "Closeout Worker 2",
+      "roleLabel": "Produktionsmitarbeiter",
+      "employeeTypeId": "employee_production_worker",
+      "resolvedFamily": "WFV-001",
+      "assetPath": "/assets/workforce/WFV-001-employee_production_worker-primary.png",
+      "fallback": false,
+      "loaded": true,
+      "primaryLoadFailed": false
+    },
+    {
+      "displayName": "WFV Researcher",
+      "roleLabel": "Forscher",
+      "employeeTypeId": "employee_researcher_basic",
+      "resolvedFamily": "WFV-001",
+      "assetPath": "/assets/workforce/WFV-001-employee_researcher_basic-primary.png",
+      "fallback": false,
+      "loaded": true,
+      "primaryLoadFailed": false
+    },
+    {
+      "displayName": "WFV Admin",
+      "roleLabel": "Verwaltungsmitarbeiter",
+      "employeeTypeId": "employee_administrator_basic",
+      "resolvedFamily": "WFV-001",
+      "assetPath": "/assets/workforce/WFV-001-employee_administrator_basic-primary.png",
+      "fallback": false,
+      "loaded": true,
+      "primaryLoadFailed": false
+    },
+    {
+      "displayName": "WFV Engineer",
+      "roleLabel": "Junior-Ingenieur",
+      "employeeTypeId": "employee_engineer_basic",
+      "resolvedFamily": "WFV-001",
+      "assetPath": "/assets/workforce/WFV-001-employee_engineer_basic-primary.png",
+      "fallback": false,
+      "loaded": true,
+      "primaryLoadFailed": false
+    }
+  ],
+  "mandatoryRoles": [
+    "employee_production_worker",
+    "employee_researcher_basic",
+    "employee_administrator_basic",
+    "employee_engineer_basic"
+  ],
+  "mandatoryRoleResults": [
+    {
+      "displayName": "Closeout Worker 1",
+      "roleLabel": "Produktionsmitarbeiter",
+      "employeeTypeId": "employee_production_worker",
+      "resolvedFamily": "WFV-001",
+      "assetPath": "/assets/workforce/WFV-001-employee_production_worker-primary.png",
+      "fallback": false,
+      "loaded": true,
+      "primaryLoadFailed": false
+    },
+    {
+      "displayName": "Closeout Worker 2",
+      "roleLabel": "Produktionsmitarbeiter",
+      "employeeTypeId": "employee_production_worker",
+      "resolvedFamily": "WFV-001",
+      "assetPath": "/assets/workforce/WFV-001-employee_production_worker-primary.png",
+      "fallback": false,
+      "loaded": true,
+      "primaryLoadFailed": false
+    },
+    {
+      "displayName": "WFV Researcher",
+      "roleLabel": "Forscher",
+      "employeeTypeId": "employee_researcher_basic",
+      "resolvedFamily": "WFV-001",
+      "assetPath": "/assets/workforce/WFV-001-employee_researcher_basic-primary.png",
+      "fallback": false,
+      "loaded": true,
+      "primaryLoadFailed": false
+    },
+    {
+      "displayName": "WFV Admin",
+      "roleLabel": "Verwaltungsmitarbeiter",
+      "employeeTypeId": "employee_administrator_basic",
+      "resolvedFamily": "WFV-001",
+      "assetPath": "/assets/workforce/WFV-001-employee_administrator_basic-primary.png",
+      "fallback": false,
+      "loaded": true,
+      "primaryLoadFailed": false
+    },
+    {
+      "displayName": "WFV Engineer",
+      "roleLabel": "Junior-Ingenieur",
+      "employeeTypeId": "employee_engineer_basic",
+      "resolvedFamily": "WFV-001",
+      "assetPath": "/assets/workforce/WFV-001-employee_engineer_basic-primary.png",
+      "fallback": false,
+      "loaded": true,
+      "primaryLoadFailed": false
+    }
+  ],
+  "summary": {
+    "totalRows": 5,
+    "wfvPrimaryRows": 5,
+    "iconFallbackRows": 0,
+    "loadedPrimaryRows": 5,
+    "enabledTypeFallbackViolations": []
+  }
+}

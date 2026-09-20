@@ -14,7 +14,10 @@ import {
   resolveTechnologyCategory,
 } from '@/presentation/assets/technology-visual-asset-ids';
 import { ICON_005_ENABLED_RECIPE_IDS } from '@/presentation/assets/process-visual-asset-ids';
-import { WFV_001_BATCH_1_EMPLOYEE_TYPE_IDS, resolveWfvCategoryFallbackAssetId } from '@/presentation/assets/workforce-visual-asset-ids';
+import {
+  WFV_001_PRODUCTION_EMPLOYEE_TYPE_IDS,
+  resolveWfvCategoryFallbackAssetId,
+} from '@/presentation/assets/workforce-visual-asset-ids';
 
 const MAIN_MENU_BASE = '/assets/main-menu';
 const BRANDING_BASE = '/assets/branding';
@@ -405,7 +408,7 @@ function wfv001RegistryEntries(): Readonly<Record<string, VisualAssetEntry>> {
   const entries: Record<string, VisualAssetEntry> = {};
   const designRoot = 'docs/design/workforce/icon-wfv-001';
 
-  for (const employeeTypeId of WFV_001_BATCH_1_EMPLOYEE_TYPE_IDS) {
+  for (const employeeTypeId of WFV_001_PRODUCTION_EMPLOYEE_TYPE_IDS) {
     const id = `WFV-001-${employeeTypeId}-primary`;
     const fallbackId = resolveWfvCategoryFallbackAssetId(employeeTypeId);
 
@@ -421,7 +424,7 @@ function wfv001RegistryEntries(): Readonly<Record<string, VisualAssetEntry>> {
       preload: false,
       fallbackId,
       designSource: `${designRoot}/primary/${id}.png`,
-      notes: 'WFV-001 Batch-1 hybrid primary — 8/19 production.',
+      notes: 'WFV-001 hybrid primary — production 19/19.',
     });
   }
 

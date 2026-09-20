@@ -1,6 +1,6 @@
 # Workforce Role Visual Identity — WFV-001 Art Contract
 
-**Status:** `WFV-001 PRODUCTION BATCH 1 ACTIVE — 8/19`  
+**Status:** `WFV-001 PRODUCTION COMPLETION — HUMAN REVIEW PENDING (19/19)`  
 **Workstream:** WFV-001 — Workforce Role Identity (Scenario B)  
 **Authority:** `POST_V1_WFV_001_WORKFORCE_ROLE_VISUAL_IDENTITY_ART_DIRECTION_COVERAGE_PILOT.md` · `POST_V1_WFV_001_WORKFORCE_ROLE_VISUAL_IDENTITY_PRODUCTION_BATCH_1.md`
 
@@ -11,7 +11,9 @@
 | Version | Date | Status |
 |---------|------|--------|
 | Pilot v1 | 2026-09-20 | Art-direction pilot — **HUMAN APPROVED / SEALED** (Direction C) |
-| Production Batch 1 | 2026-09-20 | **8/19** hybrid primaries active in registry + `PGEmployeesWidget` thumbnail column |
+| Production Batch 1 | 2026-09-20 | **8/19** hybrid primaries + runtime column |
+| Production Completion 8→19 | 2026-09-20 | **19/19** — **HUMAN REVIEW PENDING** (10 new Direction C + 1 Direction A in completion slice; 1 Direction A = `employee_administrator_basic`) |
+| Runtime resolution repair | 2026-09-20 | Completion runtime-visual gate **failed**; `WorkforceRoleVisual` onError fallback corrected — **HUMAN REVIEW PENDING** (see repair close candidate) |
 
 ## Human approval (sealed)
 
@@ -30,7 +32,7 @@ Production masters: **real RGBA transparency** — no blueprint/grid presentatio
 
 - **19** enabled Employee Types (`game-content/employees/*.yaml`, all `enabled: true`).
 - Runtime presentation: **WFV Batch-1** hybrid primaries in `PGEmployeesWidget` (80px desktop / 56px narrow) + ICON-002 category fallback for remaining types.
-- Production coverage: **8 / 19** (`WFV_001_BATCH_1_MANIFEST.json`).
+- Production coverage: **19 / 19** (`WFV_001_PRODUCTION_MANIFEST.json`).
 
 ---
 
@@ -133,12 +135,14 @@ Full per-role matrix: review report §15.
 
 ---
 
-## Production activation (Batch 1)
+## Production activation (Batch 1 + Completion)
 
-**Active:** 8 hybrid primaries in `docs/design/workforce/icon-wfv-001/primary/` and `apps/web/public/assets/workforce/`.
+**Active:** 19 hybrid primaries in `docs/design/workforce/icon-wfv-001/primary/` and `apps/web/public/assets/workforce/`.
 
-Batch-1 IDs: `employee_production_worker`, `employee_senior_engineer`, `employee_executive_director`, `employee_maintenance_technician`, `employee_senior_researcher`, `employee_logistics_coordinator`, `employee_financial_analyst`, `employee_operations_supervisor`.
+**Grammar:** Direction C default; Direction A only for `employee_administrator_basic`.
 
-**Resolver:** `workforce-visual-asset-ids.ts` + `WorkforceRoleVisual` · **UI:** `PGEmployeesWidget` art column · **Fallback:** ICON-002 category · **Coverage 8/19 (PARTIAL).**
+**Resolver:** all 19 enabled types → WFV primary; unknown type → ICON-002 category fallback (retained).
+
+**Coverage:** **19/19** complete candidate — human seal pending.
 
 Pilot assets under `pilot-wfv-001/` remain DEV reference only.

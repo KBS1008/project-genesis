@@ -33,7 +33,7 @@
 
 | Class | Confirmed minimum | Notes |
 |-------|------------------:|-------|
-| Authored primary concepts | **79** | prior **71** sealed families + **8 WFV-001** Workforce Batch-1 hybrids (partial **8/19**) |
+| Authored primary concepts | **90** | prior sealed **71** + **19 WFV-001** Workforce hybrids (**COMPLETE CANDIDATE 19/19**) |
 | Authored secondary (compact glyphs) | **33** | ICON-003 compacts **23** + ICON-004 category SVGs **10** |
 | Generic reusable UI icons | **~11** | `DashboardIcon` inline glyphs (not registry PNG family) |
 | Decorative / scenic (runtime) | **3** | MM-001/006/007; MM-002–005 reference mockups separate |
@@ -44,9 +44,9 @@
 
 **Estimated authored range:** **~112–122** if counting primary + secondary concepts separately toward envelope; **~79** distinct primary art directions including partial Workforce track.
 
-**WFV-001 (Workforce role identity):** **PRODUCTION BATCH 1 ACTIVE — 8/19** hybrid primaries (`WorkforceRoleVisual` + `PGEmployeesWidget` art column). Pilot DEV assets excluded from production totals.
+**WFV-001 (Workforce role identity):** **PRODUCTION COMPLETION CANDIDATE — 19/19** (`WorkforceRoleVisual`; Direction C default + 1× Direction A). Human seal pending.
 
-**Next after WFV Batch 1 close:** Batch 2 planning or transport (**TRV**) per deferred list.
+**Next after WFV completion seal:** transport (**TRV**) or milestone art per deferred list.
 
 **Deferred (not rejected):** transport mode/vehicle identity, milestone medallions (**MSV-001**), market trend visualization polish, building state overlay badges, shell nav icon family, tutorial step vignettes (UX-heavy).
 
@@ -225,7 +225,7 @@ No content-defined building **tiers/upgrades** in YAML; `level` fixed at 1 in do
 
 | Scope | Count | Current | Target | Priority | Status |
 |-------|------:|---------|--------|----------|--------|
-| Employee types | 19 | WFV Batch-1 primaries + ICON-002 category fallback | detailed hybrid primary + fallback | P2 | **PARTIAL — 8/19 ACTIVE** |
+| Employee types | 19 | WFV hybrid primaries (19/19) | detailed hybrid primary + unknown-ID fallback | P2 | **COMPLETE CANDIDATE — 19/19** |
 
 ---
 

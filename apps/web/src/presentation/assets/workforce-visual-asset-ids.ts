@@ -23,7 +23,7 @@ export const WFV_ENABLED_EMPLOYEE_TYPE_IDS = Object.freeze([
 
 export type WfvEnabledEmployeeTypeId = (typeof WFV_ENABLED_EMPLOYEE_TYPE_IDS)[number];
 
-/** WFV-001 Production Batch 1 — hybrid primary grammar (8/19). */
+/** WFV-001 Production Batch 1 — first sealed slice (historical). */
 export const WFV_001_BATCH_1_EMPLOYEE_TYPE_IDS = Object.freeze([
   'employee_production_worker',
   'employee_senior_engineer',
@@ -37,8 +37,29 @@ export const WFV_001_BATCH_1_EMPLOYEE_TYPE_IDS = Object.freeze([
 
 export type WfvBatch1EmployeeTypeId = (typeof WFV_001_BATCH_1_EMPLOYEE_TYPE_IDS)[number];
 
+/** WFV-001 production primaries — full enabled coverage (19/19 when complete). */
+export const WFV_001_PRODUCTION_EMPLOYEE_TYPE_IDS = WFV_ENABLED_EMPLOYEE_TYPE_IDS;
+
+export type WfvProductionEmployeeTypeId = WfvEnabledEmployeeTypeId;
+
+/** Completion slice 8→19 — roles added after Batch 1. */
+export const WFV_001_COMPLETION_EMPLOYEE_TYPE_IDS = Object.freeze([
+  'employee_senior_production_worker',
+  'employee_engineer_basic',
+  'employee_researcher_basic',
+  'employee_lab_director',
+  'employee_logistics_operator',
+  'employee_distribution_clerk',
+  'employee_port_operator',
+  'employee_rail_dispatcher',
+  'employee_administrator_basic',
+  'employee_hr_manager',
+  'employee_regional_manager',
+] as const);
+
 const ENABLED_SET = new Set<string>(WFV_ENABLED_EMPLOYEE_TYPE_IDS);
 const BATCH_1_SET = new Set<string>(WFV_001_BATCH_1_EMPLOYEE_TYPE_IDS);
+const PRODUCTION_SET = new Set<string>(WFV_001_PRODUCTION_EMPLOYEE_TYPE_IDS);
 
 /** Category fallback when no Batch-1 primary exists (ICON-002 defensive glyphs). */
 export const WFV_EMPLOYEE_CATEGORY_FALLBACK_ASSET_ID = Object.freeze({
@@ -80,8 +101,14 @@ export function isWfvBatch1EmployeeType(employeeTypeId: string): employeeTypeId 
   return BATCH_1_SET.has(employeeTypeId);
 }
 
+export function isWfvProductionEmployeeType(
+  employeeTypeId: string,
+): employeeTypeId is WfvProductionEmployeeTypeId {
+  return PRODUCTION_SET.has(employeeTypeId);
+}
+
 export function employeeTypeToWfvPrimaryAssetId(employeeTypeId: string): string | null {
-  if (!isWfvBatch1EmployeeType(employeeTypeId)) {
+  if (!isWfvProductionEmployeeType(employeeTypeId)) {
     return null;
   }
 

@@ -1,0 +1,41 @@
+{
+  "manifestVersion": "2026-09-20-wfv-001-production-completion-8-to-19-v1",
+  "contractPath": "docs/design/workforce/WORKFORCE_ROLE_VISUAL_IDENTITY_WFV_001_ART_CONTRACT.md",
+  "contractStatus": "WFV-001 PRODUCTION COMPLETION — HUMAN REVIEW PENDING",
+  "primaryGrammarDefault": "Direction C — Hybrid (1 person + 1 cue)",
+  "productionCoverage": "19/19",
+  "directionCCount": 18,
+  "directionACount": 1,
+  "batch1Ids": [
+    "employee_production_worker",
+    "employee_senior_engineer",
+    "employee_executive_director",
+    "employee_maintenance_technician",
+    "employee_senior_researcher",
+    "employee_logistics_coordinator",
+    "employee_financial_analyst",
+    "employee_operations_supervisor"
+  ],
+  "completionIds": [
+    "employee_senior_production_worker",
+    "employee_engineer_basic",
+    "employee_researcher_basic",
+    "employee_lab_director",
+    "employee_logistics_operator",
+    "employee_distribution_clerk",
+    "employee_port_operator",
+    "employee_rail_dispatcher",
+    "employee_administrator_basic",
+    "employee_hr_manager",
+    "employee_regional_manager"
+  ],
+  "grammarByEmployeeTypeId": {
+    "employee_administrator_basic": "Direction A portrait fallback"
+  },
+  "alphaReports": {
+    "batch1": "docs/design/workforce/icon-wfv-001/WFV_001_BATCH_1_ALPHA_REPORT.json",
+    "completion": "docs/design/workforce/icon-wfv-001/WFV_001_COMPLETION_ALPHA_REPORT.json"
+  },
+  "runtimePathPattern": "apps/web/public/assets/workforce/WFV-001-{employeeTypeId}-primary.png",
+  "designPathPattern": "docs/design/workforce/icon-wfv-001/primary/WFV-001-{employeeTypeId}-primary.png"
+}
