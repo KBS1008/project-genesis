@@ -208,6 +208,42 @@
   overflow: visible;
 }
 
+.pg-employees-widget .pg-query-table-wide .pg-query-row {
+  grid-template-columns: 5.25rem repeat(5, minmax(0, 1fr));
+  min-width: max(100%, 40rem);
+}
+
+.pg-employees-widget .pg-query-row > [role='cell']:first-child,
+.pg-employees-widget .pg-query-row > [role='columnheader']:first-child {
+  text-align: center;
+  overflow: visible;
+  white-space: normal;
+}
+
+.pg-employees-widget .pg-query-row > [role='cell']:nth-child(2),
+.pg-employees-widget .pg-query-row > [role='columnheader']:nth-child(2) {
+  text-align: left;
+}
+
+.pg-workforce-role-visual {
+  display: block;
+  width: 80px;
+  height: 80px;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+@media (max-width: 640px) {
+  .pg-employees-widget .pg-workforce-role-visual {
+    width: 56px;
+    height: 56px;
+  }
+
+  .pg-employees-widget .pg-query-table-wide .pg-query-row {
+    grid-template-columns: 4rem repeat(5, minmax(0, 1fr));
+  }
+}
+
 .pg-query-row > [role='cell']:nth-child(n + 2),
 .pg-query-row > [role='columnheader']:nth-child(n + 2) {
   text-align: right;

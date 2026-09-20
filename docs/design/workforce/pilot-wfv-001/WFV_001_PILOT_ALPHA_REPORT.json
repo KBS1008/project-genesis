@@ -1,0 +1,101 @@
+[
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\workforce\\pilot-wfv-001\\WFV-001-employee_production_worker-direction-a-person.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 606884,
+    "opaquePixelCount": 441692,
+    "transparentPercent": 57.87696838378906,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\workforce\\pilot-wfv-001\\WFV-001-employee_production_worker-direction-b-workstation.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 565785,
+    "opaquePixelCount": 482791,
+    "transparentPercent": 53.957462310791016,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\workforce\\pilot-wfv-001\\WFV-001-employee_production_worker-direction-c-hybrid.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 616828,
+    "opaquePixelCount": 431748,
+    "transparentPercent": 58.82530212402344,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\workforce\\pilot-wfv-001\\WFV-001-employee_senior_engineer-direction-a-person.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 544592,
+    "opaquePixelCount": 503984,
+    "transparentPercent": 51.93634033203125,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\workforce\\pilot-wfv-001\\WFV-001-employee_senior_engineer-direction-b-workstation.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 771304,
+    "opaquePixelCount": 277272,
+    "transparentPercent": 73.55728149414062,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\workforce\\pilot-wfv-001\\WFV-001-employee_senior_engineer-direction-c-hybrid.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 688566,
+    "opaquePixelCount": 360010,
+    "transparentPercent": 65.6667709350586,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\workforce\\pilot-wfv-001\\WFV-001-employee_executive_director-direction-a-person.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 649049,
+    "opaquePixelCount": 399527,
+    "transparentPercent": 61.898136138916016,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\workforce\\pilot-wfv-001\\WFV-001-employee_executive_director-direction-b-workstation.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 638150,
+    "opaquePixelCount": 410426,
+    "transparentPercent": 60.858726501464844,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\workforce\\pilot-wfv-001\\WFV-001-employee_executive_director-direction-c-hybrid.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 925049,
+    "opaquePixelCount": 123527,
+    "transparentPercent": 88.21954727172852,
+    "checkerboardSuspect": false,
+    "pass": true
+  }
+]

@@ -37,7 +37,15 @@ export function PGEmployeesWidget({
         emptyHint={emptyHint}
       >
         <PGOperationsTable
-          columns={['Name', 'Typ', 'Gehalt', 'Produktivität', 'Zuweisung']}
+          columns={[
+            { label: '', ariaLabel: 'Rollenbild' },
+            'Name',
+            'Typ',
+            'Gehalt',
+            'Produktivität',
+            'Zuweisung',
+          ]}
+          columnCount={6}
           rows={rows}
           searchable
           searchPlaceholder="Mitarbeiter suchen…"

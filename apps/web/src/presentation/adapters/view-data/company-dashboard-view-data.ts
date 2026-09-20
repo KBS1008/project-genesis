@@ -88,6 +88,7 @@ export type BuildingListRowViewData = {
 export type EmployeeRowViewData = {
   readonly id: string;
   readonly displayName: string;
+  readonly employeeTypeId: string;
   readonly employeeTypeLabel: string;
   readonly salaryLabel: string;
   readonly productivityLabel: string;

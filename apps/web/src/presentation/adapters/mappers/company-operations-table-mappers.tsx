@@ -13,6 +13,7 @@ import type {
 import { BuildingConstructionStatus } from '@/presentation/screens/company/BuildingConstructionStatus';
 import { PGMarketTrendBadge } from '@/presentation/components/dashboard/PGMarketTrendBadge';
 import { ResourceIcon } from '@/presentation/components/assets/ResourceIcon';
+import { WorkforceRoleVisual } from '@/presentation/components/assets/WorkforceRoleVisual';
 
 function joinSearchParts(parts: readonly (string | number)[]): string {
   return parts.map((part) => String(part)).join(' ');
@@ -103,6 +104,12 @@ export function mapOperationsEmployeeRows(
       Object.freeze({
         id: employee.id,
         cells: Object.freeze([
+          <WorkforceRoleVisual
+            key={`workforce-${employee.id}`}
+            employeeTypeId={employee.employeeTypeId}
+            size={80}
+            loading="lazy"
+          />,
           employee.displayName,
           employee.employeeTypeLabel,
           employee.salaryLabel,

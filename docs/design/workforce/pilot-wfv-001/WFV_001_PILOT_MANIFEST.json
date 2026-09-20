@@ -1,0 +1,52 @@
+{
+  "pilotVersion": "2026-09-20-wfv-001-workforce-role-art-direction-pilot-v1",
+  "purpose": "Human-gated workforce role visual identity comparison — NOT production activation",
+  "contractPath": "docs/design/workforce/WORKFORCE_ROLE_VISUAL_IDENTITY_WFV_001_ART_CONTRACT.md",
+  "contractStatus": "PILOT / HUMAN APPROVAL REQUIRED",
+  "productionWorkforceCoverageUnchanged": "0/19 production-active",
+  "pilotEmployeeTypeIds": [
+    "employee_production_worker",
+    "employee_senior_engineer",
+    "employee_executive_director"
+  ],
+  "concepts": [
+    {
+      "employeeTypeId": "employee_production_worker",
+      "displayName": "Produktionsmitarbeiter",
+      "directionA": "docs/design/workforce/pilot-wfv-001/WFV-001-employee_production_worker-direction-a-person.png",
+      "directionB": "docs/design/workforce/pilot-wfv-001/WFV-001-employee_production_worker-direction-b-workstation.png",
+      "directionC": "docs/design/workforce/pilot-wfv-001/WFV-001-employee_production_worker-direction-c-hybrid.png",
+      "sourceMasters": "assets/WFV-001-employee_production_worker-direction-*.png",
+      "dimensions": "1024×1024 RGBA",
+      "alphaStatus": "PASS",
+      "status": "DEV/PILOT — NOT PRODUCTION",
+      "humanApproval": "PENDING"
+    },
+    {
+      "employeeTypeId": "employee_senior_engineer",
+      "displayName": "Senior-Ingenieur",
+      "directionA": "docs/design/workforce/pilot-wfv-001/WFV-001-employee_senior_engineer-direction-a-person.png",
+      "directionB": "docs/design/workforce/pilot-wfv-001/WFV-001-employee_senior_engineer-direction-b-workstation.png",
+      "directionC": "docs/design/workforce/pilot-wfv-001/WFV-001-employee_senior_engineer-direction-c-hybrid.png",
+      "sourceMasters": "assets/WFV-001-employee_senior_engineer-direction-*.png",
+      "dimensions": "1024×1024 RGBA",
+      "alphaStatus": "PASS",
+      "status": "DEV/PILOT — NOT PRODUCTION",
+      "humanApproval": "PENDING"
+    },
+    {
+      "employeeTypeId": "employee_executive_director",
+      "displayName": "Executive Director",
+      "directionA": "docs/design/workforce/pilot-wfv-001/WFV-001-employee_executive_director-direction-a-person.png",
+      "directionB": "docs/design/workforce/pilot-wfv-001/WFV-001-employee_executive_director-direction-b-workstation.png",
+      "directionC": "docs/design/workforce/pilot-wfv-001/WFV-001-employee_executive_director-direction-c-hybrid.png",
+      "sourceMasters": "assets/WFV-001-employee_executive_director-direction-*.png",
+      "dimensions": "1024×1024 RGBA",
+      "alphaStatus": "PASS",
+      "status": "DEV/PILOT — NOT PRODUCTION",
+      "humanApproval": "PENDING"
+    }
+  ],
+  "alphaReportPath": "docs/design/workforce/pilot-wfv-001/WFV_001_PILOT_ALPHA_REPORT.json",
+  "evidenceBoardScript": "tools/compose-wfv-001-art-direction-evidence.mjs"
+}

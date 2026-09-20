@@ -1,0 +1,36 @@
+{
+  "batchVersion": "2026-09-20-wfv-001-production-batch-1-v1",
+  "contractPath": "docs/design/workforce/WORKFORCE_ROLE_VISUAL_IDENTITY_WFV_001_ART_CONTRACT.md",
+  "contractStatus": "PRODUCTION BATCH 1 ACTIVE — 8/19",
+  "primaryGrammar": "Direction C — Hybrid Human + Occupational Context (1 person + 1 cue)",
+  "employeeTypeIds": [
+    "employee_production_worker",
+    "employee_senior_engineer",
+    "employee_executive_director",
+    "employee_maintenance_technician",
+    "employee_senior_researcher",
+    "employee_logistics_coordinator",
+    "employee_financial_analyst",
+    "employee_operations_supervisor"
+  ],
+  "primaries": [
+    "employee_production_worker",
+    "employee_senior_engineer",
+    "employee_executive_director",
+    "employee_maintenance_technician",
+    "employee_senior_researcher",
+    "employee_logistics_coordinator",
+    "employee_financial_analyst",
+    "employee_operations_supervisor"
+  ].map((employeeTypeId) => ({
+    employeeTypeId,
+    assetId: `WFV-001-${employeeTypeId}-primary`,
+    designPath: `docs/design/workforce/icon-wfv-001/primary/WFV-001-${employeeTypeId}-primary.png`,
+    runtimePath: `apps/web/public/assets/workforce/WFV-001-${employeeTypeId}-primary.png`,
+    dimensions: "1024×1024 RGBA",
+    alphaStatus: "PASS",
+    status: "PRODUCTION BATCH 1"
+  })),
+  "alphaReportPath": "docs/design/workforce/icon-wfv-001/WFV_001_BATCH_1_ALPHA_REPORT.json",
+  "productionCoverage": "8/19"
+}

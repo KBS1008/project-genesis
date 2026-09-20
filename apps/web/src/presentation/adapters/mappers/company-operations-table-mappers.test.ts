@@ -47,6 +47,7 @@ describe('company-operations-table-mappers', () => {
       {
         id: 'emp-1',
         displayName: 'Anna',
+        employeeTypeId: 'employee_production_worker',
         employeeTypeLabel: 'Produktion',
         salaryLabel: '100 GC',
         productivityLabel: '1,0',
@@ -55,7 +56,7 @@ describe('company-operations-table-mappers', () => {
     ]);
 
     expect(rows[0]?.searchText).toContain('Anna');
-    expect(rows[0]?.cells).toHaveLength(5);
+    expect(rows[0]?.cells).toHaveLength(6);
   });
 
   it('mapOperationsProductionJobs maps widget rows', () => {

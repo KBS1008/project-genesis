@@ -48,6 +48,10 @@ import {
   trendFromHistory,
   trendLabel,
 } from '@/presentation/formatting/presentation-formatters';
+import {
+  formatPerCycleRate,
+  formatPlayerDuration,
+} from '@/presentation/formatting/player-cycle-presentation';
 
 function kv(label: string, value: string, valueClass?: string): DetailKeyValueViewData {
   return valueClass === undefined
@@ -704,8 +708,8 @@ function mapRecipeCatalog(
       Object.freeze({
         id: entry.id,
         name: entry.name,
-        durationLabel: `${entry.durationTicks} Ticks`,
-        energyLabel: `${formatNumber(entry.energyPerTick)} / Tick`,
+        durationLabel: formatPlayerDuration(entry.durationTicks),
+        energyLabel: formatPerCycleRate(formatNumber(entry.energyPerTick)),
         inputLabels: Object.freeze(
           entry.inputs.map(
             (input) => `${labels.resource(input.resourceId)} × ${input.amount}`,
@@ -741,6 +745,7 @@ export function buildCompanyDashboardViewData(
       Object.freeze({
         id: employee.id,
         displayName: employee.displayName,
+        employeeTypeId: employee.employeeTypeId,
         employeeTypeLabel: labels.employee(employee.employeeTypeId),
         salaryLabel: formatNumber(employee.salary),
         productivityLabel: employee.productivity.toFixed(2),

@@ -1,0 +1,74 @@
+[
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\workforce\\icon-wfv-001\\primary\\WFV-001-employee_production_worker-primary.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPercent": 60.547828674316406,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\workforce\\icon-wfv-001\\primary\\WFV-001-employee_senior_engineer-primary.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPercent": 67.25492477416992,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\workforce\\icon-wfv-001\\primary\\WFV-001-employee_executive_director-primary.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPercent": 75.53253173828125,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\workforce\\icon-wfv-001\\primary\\WFV-001-employee_maintenance_technician-primary.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPercent": 77.27489471435547,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\workforce\\icon-wfv-001\\primary\\WFV-001-employee_senior_researcher-primary.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPercent": 78.77330780029297,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\workforce\\icon-wfv-001\\primary\\WFV-001-employee_logistics_coordinator-primary.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPercent": 74.9288558959961,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\workforce\\icon-wfv-001\\primary\\WFV-001-employee_financial_analyst-primary.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPercent": 97.89342880249023,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\workforce\\icon-wfv-001\\primary\\WFV-001-employee_operations_supervisor-primary.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPercent": 69.77062225341797,
+    "checkerboardSuspect": false,
+    "pass": true
+  }
+]

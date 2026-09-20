@@ -14,6 +14,7 @@ import {
   resolveTechnologyCategory,
 } from '@/presentation/assets/technology-visual-asset-ids';
 import { ICON_005_ENABLED_RECIPE_IDS } from '@/presentation/assets/process-visual-asset-ids';
+import { WFV_001_BATCH_1_EMPLOYEE_TYPE_IDS, resolveWfvCategoryFallbackAssetId } from '@/presentation/assets/workforce-visual-asset-ids';
 
 const MAIN_MENU_BASE = '/assets/main-menu';
 const BRANDING_BASE = '/assets/branding';
@@ -22,6 +23,7 @@ const ICONS_BASE = '/assets/icons';
 const BUILDINGS_BASE = '/assets/buildings';
 const RESEARCH_BASE = '/assets/research';
 const PROCESS_BASE = '/assets/process';
+const WORKFORCE_BASE = '/assets/workforce';
 
 const ICON_001_RUNTIME_ASSETS = Object.freeze([
   { resourceId: 'wood', label: 'Wood Resource Icon' },
@@ -399,6 +401,33 @@ function icon005RegistryEntries(): Readonly<Record<string, VisualAssetEntry>> {
   return Object.freeze(entries);
 }
 
+function wfv001RegistryEntries(): Readonly<Record<string, VisualAssetEntry>> {
+  const entries: Record<string, VisualAssetEntry> = {};
+  const designRoot = 'docs/design/workforce/icon-wfv-001';
+
+  for (const employeeTypeId of WFV_001_BATCH_1_EMPLOYEE_TYPE_IDS) {
+    const id = `WFV-001-${employeeTypeId}-primary`;
+    const fallbackId = resolveWfvCategoryFallbackAssetId(employeeTypeId);
+
+    entries[id] = entry({
+      id,
+      label: `Workforce Primary — ${employeeTypeId}`,
+      type: 'runtime',
+      component: 'WorkforceRoleVisual',
+      format: 'png',
+      path: `${WORKFORCE_BASE}/${id}.png`,
+      theme: 'default',
+      priority: 'normal',
+      preload: false,
+      fallbackId,
+      designSource: `${designRoot}/primary/${id}.png`,
+      notes: 'WFV-001 Batch-1 hybrid primary — 8/19 production.',
+    });
+  }
+
+  return Object.freeze(entries);
+}
+
 function icon002RegistryEntries(): Readonly<Record<string, VisualAssetEntry>> {
   return Object.fromEntries(
     ICON_002_RUNTIME_ASSETS.map(({ category, label, source }) => {
@@ -670,6 +699,7 @@ export const VISUAL_ASSET_REGISTRY: Readonly<Record<string, VisualAssetEntry>> =
   ...icon001RegistryEntries(),
   ...icon004RegistryEntries(),
   ...icon005RegistryEntries(),
+  ...wfv001RegistryEntries(),
   ...icon002RegistryEntries(),
   ...icon003RegistryEntries(),
 });

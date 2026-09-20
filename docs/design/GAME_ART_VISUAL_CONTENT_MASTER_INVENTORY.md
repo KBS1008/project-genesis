@@ -33,7 +33,7 @@
 
 | Class | Confirmed minimum | Notes |
 |-------|------------------:|-------|
-| Authored primary concepts | **71** | ICON-001 **9** + ICON-002 **6** + ICON-003 **23** + ICON-004 **22** + ICON-005 **7** + BR-001 **1** + MM scenics **3** |
+| Authored primary concepts | **79** | prior **71** sealed families + **8 WFV-001** Workforce Batch-1 hybrids (partial **8/19**) |
 | Authored secondary (compact glyphs) | **33** | ICON-003 compacts **23** + ICON-004 category SVGs **10** |
 | Generic reusable UI icons | **~11** | `DashboardIcon` inline glyphs (not registry PNG family) |
 | Decorative / scenic (runtime) | **3** | MM-001/006/007; MM-002–005 reference mockups separate |
@@ -42,15 +42,13 @@
 | Fallback | **6** | ICON-002 category SVGs (defensive + legacy path) |
 | Dev / pilot / evidence | excluded | `infrastructure-pilot/`, evidence PNGs, dev compare pages |
 
-**Estimated authored range:** **~104–114** if counting primary + secondary concepts separately toward envelope; **~71** distinct primary art directions only.
+**Estimated authored range:** **~112–122** if counting primary + secondary concepts separately toward envelope; **~79** distinct primary art directions including partial Workforce track.
 
-**Sealed families (do not reopen):** ICON-001 · ICON-002 · ICON-003 **23/23** · ICON-004 **22/22** @ `b5f3348` · ICON-005 **7/7** @ `5f24b61` · World Slice 1 · MM/BR sealed tracks.
+**WFV-001 (Workforce role identity):** **PRODUCTION BATCH 1 ACTIVE — 8/19** hybrid primaries (`WorkforceRoleVisual` + `PGEmployeesWidget` art column). Pilot DEV assets excluded from production totals.
 
-**WBM-001 (World building markers):** ICON-003 compact integration — **final grounding repair** (translucent halo, no white plate) — **human-seal candidate**; **0** new authored art.
+**Next after WFV Batch 1 close:** Batch 2 planning or transport (**TRV**) per deferred list.
 
-**Next recommended visual workstream after WBM seal:** **WFV-001** workforce role identity (deferred list below).
-
-**Deferred (not rejected):** workforce role identity (**WFV-001**), transport mode/vehicle identity, milestone medallions (**MSV-001**), market trend visualization polish, building state overlay badges, shell nav icon family, tutorial step vignettes (UX-heavy).
+**Deferred (not rejected):** transport mode/vehicle identity, milestone medallions (**MSV-001**), market trend visualization polish, building state overlay badges, shell nav icon family, tutorial step vignettes (UX-heavy).
 
 ---
 
@@ -227,7 +225,7 @@ No content-defined building **tiers/upgrades** in YAML; `level` fixed at 1 in do
 
 | Scope | Count | Current | Target | Priority | Status |
 |-------|------:|---------|--------|----------|--------|
-| Employee types | 19 | text | role ICON or silhouette SHARED | P2 | GAP |
+| Employee types | 19 | WFV Batch-1 primaries + ICON-002 category fallback | detailed hybrid primary + fallback | P2 | **PARTIAL — 8/19 ACTIVE** |
 
 ---
 
