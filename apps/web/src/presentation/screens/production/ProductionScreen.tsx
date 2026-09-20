@@ -28,6 +28,7 @@ import { ScreenQueryFrame } from '@/presentation/screens/shared/ScreenQueryFrame
 import { useGameWorkspace } from '@/presentation/state/GameWorkspaceProvider';
 import { ProductionProgressCell } from '@/presentation/screens/production/ProductionProgressCell';
 import { ProductionOperationalStateIconLabel } from '@/presentation/screens/production/ProductionOperationalStateIconLabel';
+import { ProductionProcessVisual } from '@/presentation/components/assets/ProductionProcessVisual';
 import { resolveProductionOperationalStateDashboardIcon } from '@/presentation/screens/production/production-operational-state-dashboard-icon';
 import '../world/world-company.css';
 import '../shared/operation-screen.css';
@@ -359,8 +360,11 @@ export function ProductionScreen() {
                     setSelectedRecipeId(recipe.id);
                   }}
                 >
-                  <strong>{recipe.name}</strong>
-                  <span>{recipe.durationLabel} · {recipe.energyLabel}</span>
+                  <ProductionProcessVisual recipeId={recipe.id} size={72} loading="lazy" />
+                  <span className="pg-production-recipe-button-text">
+                    <strong>{recipe.name}</strong>
+                    <span>{recipe.durationLabel} · {recipe.energyLabel}</span>
+                  </span>
                 </button>
               ))}
             </div>

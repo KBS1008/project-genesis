@@ -1,0 +1,80 @@
+{
+  "batchVersion": "2026-09-20-icon-005-production-7-of-7-v1",
+  "contractPath": "docs/design/production/PRODUCTION_PROCESS_ICON_005_VISUAL_CONTRACT.md",
+  "contractStatus": "APPROVED / PRODUCTION AUTHORITY — 7/7 CLOSE CANDIDATE",
+  "productionRegistryActivated": true,
+  "enabledRecipeIds": [
+    "recipe_planks",
+    "recipe_steel",
+    "recipe_advanced_electronics",
+    "recipe_advanced_planks",
+    "recipe_machine_parts",
+    "recipe_industrial_machinery",
+    "recipe_consumer_goods"
+  ],
+  "promotedPilotIds": [
+    "recipe_planks",
+    "recipe_steel",
+    "recipe_advanced_electronics"
+  ],
+  "newArtRecipeIds": [
+    "recipe_advanced_planks",
+    "recipe_machine_parts",
+    "recipe_industrial_machinery",
+    "recipe_consumer_goods"
+  ],
+  "cumulativeProcessPrimaryCount": 7,
+  "primaries": [
+    {
+      "recipeId": "recipe_planks",
+      "provenance": "PROMOTED HUMAN-APPROVED PILOT",
+      "primaryMaster": "docs/design/production/icon-005/primary/ICON-005-recipe_planks-primary.png",
+      "assetId": "ICON-005-recipe_planks-primary",
+      "alphaResult": "PASS"
+    },
+    {
+      "recipeId": "recipe_steel",
+      "provenance": "PROMOTED HUMAN-APPROVED PILOT",
+      "primaryMaster": "docs/design/production/icon-005/primary/ICON-005-recipe_steel-primary.png",
+      "assetId": "ICON-005-recipe_steel-primary",
+      "alphaResult": "PASS"
+    },
+    {
+      "recipeId": "recipe_advanced_electronics",
+      "provenance": "PROMOTED HUMAN-APPROVED PILOT",
+      "primaryMaster": "docs/design/production/icon-005/primary/ICON-005-recipe_advanced_electronics-primary.png",
+      "assetId": "ICON-005-recipe_advanced_electronics-primary",
+      "alphaResult": "PASS"
+    },
+    {
+      "recipeId": "recipe_advanced_planks",
+      "provenance": "NEW PRODUCTION ART",
+      "primaryMaster": "docs/design/production/icon-005/primary/ICON-005-recipe_advanced_planks-primary.png",
+      "assetId": "ICON-005-recipe_advanced_planks-primary",
+      "alphaResult": "PASS"
+    },
+    {
+      "recipeId": "recipe_machine_parts",
+      "provenance": "NEW PRODUCTION ART",
+      "primaryMaster": "docs/design/production/icon-005/primary/ICON-005-recipe_machine_parts-primary.png",
+      "assetId": "ICON-005-recipe_machine_parts-primary",
+      "alphaResult": "PASS"
+    },
+    {
+      "recipeId": "recipe_industrial_machinery",
+      "provenance": "NEW PRODUCTION ART",
+      "primaryMaster": "docs/design/production/icon-005/primary/ICON-005-recipe_industrial_machinery-primary.png",
+      "assetId": "ICON-005-recipe_industrial_machinery-primary",
+      "alphaResult": "PASS"
+    },
+    {
+      "recipeId": "recipe_consumer_goods",
+      "provenance": "NEW PRODUCTION ART",
+      "primaryMaster": "docs/design/production/icon-005/primary/ICON-005-recipe_consumer_goods-primary.png",
+      "assetId": "ICON-005-recipe_consumer_goods-primary",
+      "alphaResult": "PASS"
+    }
+  ],
+  "alphaReportPath": "docs/design/production/icon-005/ICON_005_PRODUCTION_7_OF_7_ALPHA_REPORT.json",
+  "runtimePublicRoot": "apps/web/public/assets/process"
+}

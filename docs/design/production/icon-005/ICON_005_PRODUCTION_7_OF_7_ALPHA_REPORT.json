@@ -1,0 +1,79 @@
+[
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\production\\icon-005\\primary\\ICON-005-recipe_planks-primary.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 600380,
+    "opaquePixelCount": 448196,
+    "transparentPercent": 57.25669860839844,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\production\\icon-005\\primary\\ICON-005-recipe_steel-primary.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 501646,
+    "opaquePixelCount": 546930,
+    "transparentPercent": 47.84069061279297,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\production\\icon-005\\primary\\ICON-005-recipe_advanced_electronics-primary.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 509431,
+    "opaquePixelCount": 539145,
+    "transparentPercent": 48.583126068115234,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\production\\icon-005\\primary\\ICON-005-recipe_advanced_planks-primary.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 570386,
+    "opaquePixelCount": 478190,
+    "transparentPercent": 54.39624786376953,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\production\\icon-005\\primary\\ICON-005-recipe_machine_parts-primary.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 504437,
+    "opaquePixelCount": 544139,
+    "transparentPercent": 48.10686111450195,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\production\\icon-005\\primary\\ICON-005-recipe_industrial_machinery-primary.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 483784,
+    "opaquePixelCount": 564792,
+    "transparentPercent": 46.137237548828125,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\production\\icon-005\\primary\\ICON-005-recipe_consumer_goods-primary.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 499774,
+    "opaquePixelCount": 548802,
+    "transparentPercent": 47.66216278076172,
+    "checkerboardSuspect": false,
+    "pass": true
+  }
+]

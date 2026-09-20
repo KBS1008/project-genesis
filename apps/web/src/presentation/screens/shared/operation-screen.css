@@ -259,8 +259,9 @@
 
 .pg-production-recipe-button {
   display: flex;
-  flex-direction: column;
-  gap: 0.125rem;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-sm);
   width: 100%;
   padding: var(--space-sm);
   border: 1px solid var(--border);
@@ -269,6 +270,18 @@
   color: inherit;
   text-align: left;
   cursor: pointer;
+}
+
+.pg-production-recipe-button-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.pg-production-process-visual {
+  flex-shrink: 0;
+  object-fit: contain;
 }
 
 .pg-production-recipe-button:hover {

@@ -2,7 +2,7 @@
 
 **Purpose:** Machine-readable planning inventory for post-V1 visual content.  
 **Authority:** `POST_V1_GAME_ART_VISUAL_CONTENT_MASTER_PLAN_REVIEW.md` · `POST_V1_SCENARIO_B_VISUAL_COVERAGE_PROGRESS_REVIEW.md`  
-**Baseline HEAD:** `ee16a05` (23/23 building visual identity sealed)  
+**Baseline HEAD:** `b5f3348` (ICON-004 22/22 sealed; Scenario-B post-ICON-004 review)  
 **Content root:** `game-content/` (YAML counts below)
 
 **Legend — STATUS:** `ACTIVE` runtime certified | `PROCEDURAL` code-driven | `GENERIC` functional not game-identified | `GAP` no distinct identity | `FUTURE` mechanics absent | `SEALED` closed workstream
@@ -33,7 +33,7 @@
 
 | Class | Confirmed minimum | Notes |
 |-------|------------------:|-------|
-| Authored primary concepts | **64** | 9 ICON-001 + 23 ICON-003 primaries + 6 ICON-002 + 3 MM scenics (001/006/007) + 1 BR-001 + **22 ICON-004** Tier-1 detailed (8+6+4+4 batches; executive human gate pending) |
+| Authored primary concepts | **71** | prior **64** + **7 ICON-005** process primaries (3 promoted pilots + 4 new) |
 | Authored secondary (compact glyphs) | **23** | ICON-003 compacts (manual SVG family) |
 | Generic reusable UI icons | **~11** | `DashboardIcon` inline glyphs (not registry PNG family) |
 | Decorative / scenic (runtime) | **3** | MM-001/006/007; MM-002–005 reference mockups separate |
@@ -46,9 +46,9 @@
 
 **Batch 4 Scenario-B delta:** **+4** unique Tier-1 technology primary concepts (3 promoted abstract pilots + 1 new executive_leadership).
 
-**Next recommended visual workstream (review authority):** **ICON-004 executive_leadership human visual gate** → then ICON-004 track final seal; otherwise Player Guidance / progression overlays per master plan.
+**Next recommended visual workstream (review authority):** **World building-marker ICON-003 integration** or next Scenario-B domain per `POST_V1_SCENARIO_B_POST_ICON_004_NEXT_VISUAL_WORKSTREAM_REVIEW.md` deferred list. ICON-005 **7/7 production-active** (close candidate).
 
-**Deferred (not rejected):** milestone badges, workforce silhouettes, world building-marker reuse integration, transport vehicle art, shell nav icon family.
+**Deferred (not rejected):** world building-marker integration, workforce role identity, transport art, milestone illustrations, shell nav icons.
 
 ---
 
@@ -169,7 +169,7 @@ No content-defined building **tiers/upgrades** in YAML; `level` fixed at 1 in do
 
 | Scope | Count | Current | Target | Priority | Status |
 |-------|------:|---------|--------|----------|--------|
-| All technologies | 22 | **ResearchScreen** — **22/22** Tier-1 detailed + 10 Tier-2 category (`TechnologyVisual`) | evidence-driven Tier-1 + category fallback | P1 | **CLOSE CANDIDATE — ICON-004 BATCH 4 ABSTRACT** (22/22 detailed integrated; **executive_leadership human visual gate pending**) |
+| All technologies | 22 | **ResearchScreen** — **22/22** Tier-1 detailed + 10 Tier-2 category (`TechnologyVisual`) | evidence-driven Tier-1 + category fallback | P1 | **SEALED — ICON-004 22/22** (Batch 4 abstract completion @ `b5f3348`) |
 
 *Per-technology rows omitted here; inventory model = 22 entities × ICON (family or unique).*
 
@@ -179,7 +179,7 @@ No content-defined building **tiers/upgrades** in YAML; `level` fixed at 1 in do
 
 | Concept | Count | Current | Target | Status |
 |---------|------:|---------|--------|--------|
-| Recipes | 7 | text X+Y→Z, resource ICON-001 where wired | resource icons + BuildingTypeIcon reuse + progress PROCEDURAL | **PARTIAL** (resources); ICON-003 reuse not wired on screen |
+| Recipes | 7 | **ICON-005** process primaries on ProductionScreen catalog + jobs context | Tier-1 process primary per recipe | **PRODUCTION — ICON-005 7/7** (close candidate) |
 | Operational state | — | DashboardIcon integration (sealed slice) | OVERLAY + icon | PARTIAL |
 
 ---
@@ -276,8 +276,8 @@ No content-defined building **tiers/upgrades** in YAML; `level` fixed at 1 in do
 |----------|------------|
 | BuildingsScreen catalog | ICON-003 registry (**23/23 ACTIVE**) |
 | World building markers | type art reuse **deferred** (markers still procedural dots) |
-| ProductionScreen | ICON-001; ICON-003 reuse opportunity |
-| ResearchScreen | ICON-004 **22/22** Tier-1 detailed + category compact (**executive_leadership seal pending**) |
+| ProductionScreen | **ICON-005 7/7** process primaries in recipe catalog (`ProductionProcessVisual`) + ICON-001 where wired |
+| ResearchScreen | ICON-004 **SEALED 22/22** Tier-1 detailed + category compact |
 | Player guidance (separate WS) | milestone icons optional overlap |
 
 ---

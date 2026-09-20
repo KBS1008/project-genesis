@@ -1,0 +1,35 @@
+[
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\production\\pilot-icon-005\\process-primary\\ICON-005-recipe_planks-primary-pilot.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 600380,
+    "opaquePixelCount": 448196,
+    "transparentPercent": 57.25669860839844,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\production\\pilot-icon-005\\process-primary\\ICON-005-recipe_steel-primary-pilot.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 501646,
+    "opaquePixelCount": 546930,
+    "transparentPercent": 47.84069061279297,
+    "checkerboardSuspect": false,
+    "pass": true
+  },
+  {
+    "assetPath": "D:\\Cursor\\Project Genesis\\docs\\design\\production\\pilot-icon-005\\process-primary\\ICON-005-recipe_advanced_electronics-primary-pilot.png",
+    "width": 1024,
+    "height": 1024,
+    "channels": 4,
+    "transparentPixelCount": 509431,
+    "opaquePixelCount": 539145,
+    "transparentPercent": 48.583126068115234,
+    "checkerboardSuspect": false,
+    "pass": true
+  }
+]

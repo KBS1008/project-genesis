@@ -13,6 +13,7 @@ import {
   ICON_004_USED_TECHNOLOGY_CATEGORIES,
   resolveTechnologyCategory,
 } from '@/presentation/assets/technology-visual-asset-ids';
+import { ICON_005_ENABLED_RECIPE_IDS } from '@/presentation/assets/process-visual-asset-ids';
 
 const MAIN_MENU_BASE = '/assets/main-menu';
 const BRANDING_BASE = '/assets/branding';
@@ -20,6 +21,7 @@ const CHARTS_BASE = '/assets/charts';
 const ICONS_BASE = '/assets/icons';
 const BUILDINGS_BASE = '/assets/buildings';
 const RESEARCH_BASE = '/assets/research';
+const PROCESS_BASE = '/assets/process';
 
 const ICON_001_RUNTIME_ASSETS = Object.freeze([
   { resourceId: 'wood', label: 'Wood Resource Icon' },
@@ -370,6 +372,33 @@ function icon004RegistryEntries(): Readonly<Record<string, VisualAssetEntry>> {
   return Object.freeze(entries);
 }
 
+function icon005RegistryEntries(): Readonly<Record<string, VisualAssetEntry>> {
+  const entries: Record<string, VisualAssetEntry> = {};
+  const designRoot = 'docs/design/production/icon-005';
+
+  for (const recipeId of ICON_005_ENABLED_RECIPE_IDS) {
+    const id = `ICON-005-${recipeId}-primary`;
+
+    entries[id] = entry({
+      id,
+      label: `Process Primary — ${recipeId}`,
+      type: 'runtime',
+      component: 'ProductionProcessVisual',
+      format: 'png',
+      path: `${PROCESS_BASE}/${id}.png`,
+      webp: `${PROCESS_BASE}/${id}.webp`,
+      theme: 'default',
+      priority: 'normal',
+      preload: false,
+      fallbackId: 'ICON-002-production',
+      designSource: `${designRoot}/primary/${id}.png`,
+      notes: 'ICON-005 Tier-1 detailed process primary — production 7/7.',
+    });
+  }
+
+  return Object.freeze(entries);
+}
+
 function icon002RegistryEntries(): Readonly<Record<string, VisualAssetEntry>> {
   return Object.fromEntries(
     ICON_002_RUNTIME_ASSETS.map(({ category, label, source }) => {
@@ -640,6 +669,7 @@ export const VISUAL_ASSET_REGISTRY: Readonly<Record<string, VisualAssetEntry>> =
 
   ...icon001RegistryEntries(),
   ...icon004RegistryEntries(),
+  ...icon005RegistryEntries(),
   ...icon002RegistryEntries(),
   ...icon003RegistryEntries(),
 });

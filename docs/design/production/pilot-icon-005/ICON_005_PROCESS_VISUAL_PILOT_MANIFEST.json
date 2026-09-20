@@ -1,0 +1,49 @@
+{
+  "pilotVersion": "2026-09-20-icon-005-production-process-art-direction-pilot-v1",
+  "purpose": "Human-gated process Tier-1 subgrammar pilot — NOT production activation",
+  "contractPath": "docs/design/production/PRODUCTION_PROCESS_ICON_005_VISUAL_CONTRACT.md",
+  "contractStatus": "PILOT / HUMAN APPROVAL REQUIRED",
+  "sharedGrammar": "Detailed industrial process vignette — active transformation apparatus, not building catalog",
+  "pilotRecipeIds": [
+    "recipe_planks",
+    "recipe_steel",
+    "recipe_advanced_electronics"
+  ],
+  "holdoutRecipeIds": [
+    "recipe_machine_parts",
+    "recipe_industrial_machinery",
+    "recipe_consumer_goods",
+    "recipe_advanced_planks"
+  ],
+  "productionProcessCoverageUnchanged": "0/7 production-active",
+  "pilotPrimaries": [
+    {
+      "recipeId": "recipe_planks",
+      "processClass": "early / simple material transformation",
+      "pilotMaster": "docs/design/production/pilot-icon-005/process-primary/ICON-005-recipe_planks-primary-pilot.png",
+      "sourcePath": "assets/ICON-005-recipe_planks-primary-pilot-source.png",
+      "alphaResult": "PASS",
+      "status": "PILOT / DEV ONLY — NOT PRODUCTION",
+      "humanApproval": "PENDING"
+    },
+    {
+      "recipeId": "recipe_steel",
+      "processClass": "heavy industrial / thermal transformation",
+      "pilotMaster": "docs/design/production/pilot-icon-005/process-primary/ICON-005-recipe_steel-primary-pilot.png",
+      "sourcePath": "assets/ICON-005-recipe_steel-primary-pilot-source.png",
+      "alphaResult": "PASS",
+      "status": "PILOT / DEV ONLY — NOT PRODUCTION",
+      "humanApproval": "PENDING"
+    },
+    {
+      "recipeId": "recipe_advanced_electronics",
+      "processClass": "late / precision assembly",
+      "pilotMaster": "docs/design/production/pilot-icon-005/process-primary/ICON-005-recipe_advanced_electronics-primary-pilot.png",
+      "sourcePath": "assets/ICON-005-recipe_advanced_electronics-primary-pilot-source.png",
+      "alphaResult": "PASS",
+      "status": "PILOT / DEV ONLY — NOT PRODUCTION",
+      "humanApproval": "PENDING"
+    }
+  ],
+  "alphaReportPath": "docs/design/production/pilot-icon-005/ICON_005_PROCESS_VISUAL_PILOT_ALPHA_REPORT.json"
+}
