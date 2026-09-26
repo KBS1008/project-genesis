@@ -73,6 +73,7 @@ function createDashboardFixture(): CompanyDashboardViewData {
     recipeCatalog: [],
     buildings: [],
     employees: [],
+    milestones: [],
     economy: null,
     productionJobs: [],
     completedResearchLabels: ['Solar'],

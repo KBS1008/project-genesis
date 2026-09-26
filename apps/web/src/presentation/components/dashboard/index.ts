@@ -11,6 +11,7 @@ export { PGOperationsTable, type PGOperationsTableRow } from './PGOperationsTabl
 export { PGMarketTrendBadge, type PGMarketTrend } from './PGMarketTrendBadge';
 export { PGBuildingsWidget } from './PGBuildingsWidget';
 export { PGEmployeesWidget } from './PGEmployeesWidget';
+export { PGMilestonesWidget } from './PGMilestonesWidget';
 export { PGEconomyWidget } from './PGEconomyWidget';
 export { PGMarketWidget } from './PGMarketWidget';
 export { PGInventoryWidget, type PGInventoryWarehouseBlock } from './PGInventoryWidget';

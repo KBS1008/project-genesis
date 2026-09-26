@@ -95,6 +95,12 @@ export type EmployeeRowViewData = {
   readonly assignmentLabel: string;
 };
 
+export type MilestoneRowViewData = {
+  readonly id: string;
+  readonly displayName: string;
+  readonly completed: boolean;
+};
+
 export type ContractRowViewData = {
   readonly id: string;
   readonly resourceLabel: string;
@@ -331,6 +337,7 @@ export type CompanyDashboardViewData = {
   readonly tutorial: TutorialViewData | null;
   readonly buildings: readonly BuildingRowViewData[];
   readonly employees: readonly EmployeeRowViewData[];
+  readonly milestones: readonly MilestoneRowViewData[];
   readonly economy: EconomySectionViewData | null;
   readonly productionJobs: readonly ProductionJobRowViewData[];
   readonly completedResearchLabels: readonly string[];
@@ -384,6 +391,7 @@ export const EMPTY_COMPANY_DASHBOARD_VIEW_DATA: CompanyDashboardViewData = Objec
   tutorial: null,
   buildings: Object.freeze([]),
   employees: Object.freeze([]),
+  milestones: Object.freeze([]),
   economy: null,
   productionJobs: Object.freeze([]),
   completedResearchLabels: Object.freeze([]),

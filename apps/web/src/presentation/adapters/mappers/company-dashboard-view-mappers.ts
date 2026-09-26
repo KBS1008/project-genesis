@@ -21,6 +21,7 @@ import {
   type InventoryItemRowViewData,
   type KpiStripViewData,
   type MarketPriceChartViewData,
+  type MilestoneRowViewData,
   type OverviewStripViewData,
   type ProductionJobRowViewData,
   type RecipeCatalogEntryViewData,
@@ -699,6 +700,20 @@ function mapCompanyDetail(
   });
 }
 
+function mapMilestoneRows(dashboard: GameSessionDashboard): readonly MilestoneRowViewData[] {
+  const completedSet = new Set(dashboard.completedMilestones);
+
+  return Object.freeze(
+    dashboard.milestones.map((entry) =>
+      Object.freeze({
+        id: entry.id,
+        displayName: entry.name,
+        completed: entry.completed || completedSet.has(entry.id),
+      }),
+    ),
+  );
+}
+
 function mapRecipeCatalog(
   dashboard: GameSessionDashboard,
   labels: ContentLabelsViewData,
@@ -860,6 +875,7 @@ export function buildCompanyDashboardViewData(
     tutorial: mapTutorial(dashboard),
     buildings: Object.freeze(dashboard.buildings.map((building) => mapBuildingRow(building, labels))),
     employees,
+    milestones: mapMilestoneRows(dashboard),
     economy: mapEconomySection(dashboard, labels),
     productionJobs,
     completedResearchLabels: Object.freeze(

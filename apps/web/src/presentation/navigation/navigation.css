@@ -244,6 +244,37 @@
   }
 }
 
+.pg-milestone-visual {
+  display: block;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.pg-milestone-visual.is-locked {
+  filter: saturate(0.35) brightness(0.72);
+}
+
+.pg-milestones-widget .pg-query-row > [role='cell']:nth-child(3),
+.pg-milestones-widget .pg-query-row > [role='columnheader']:nth-child(3) {
+  text-align: left;
+}
+
+@media (max-width: 640px) {
+  .pg-milestones-widget .pg-milestone-visual[data-milestone-visual='primary'] {
+    width: 72px;
+    height: 72px;
+  }
+
+  .pg-milestones-widget .pg-milestone-visual[data-milestone-visual='medallion'] {
+    width: 48px;
+    height: 48px;
+  }
+
+  .pg-milestones-widget .pg-query-table-wide .pg-query-row {
+    grid-template-columns: 5.5rem 3.5rem minmax(0, 1fr) minmax(0, 6rem);
+  }
+}
+
 .pg-query-row > [role='cell']:nth-child(n + 2),
 .pg-query-row > [role='columnheader']:nth-child(n + 2) {
   text-align: right;

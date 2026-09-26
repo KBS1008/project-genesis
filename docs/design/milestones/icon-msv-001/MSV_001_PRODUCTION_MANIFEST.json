@@ -1,0 +1,252 @@
+{
+  "manifestVersion": "2026-09-26-msv-001-production-8-of-8",
+  "contractStatus": "APPROVED / PRODUCTION AUTHORITY",
+  "coverage": "8/8",
+  "milestones": [
+    {
+      "milestoneId": "first_production",
+      "primary": "apps/web/public/assets/milestones/MSV-001-first_production-primary.png",
+      "medallion": "apps/web/public/assets/milestones/MSV-001-first_production-medallion.png",
+      "designPrimary": "docs/design/milestones/icon-msv-001/primary/MSV-001-first_production-primary.png",
+      "provenance": "pilot-promoted"
+    },
+    {
+      "milestoneId": "first_steel",
+      "primary": "apps/web/public/assets/milestones/MSV-001-first_steel-primary.png",
+      "medallion": "apps/web/public/assets/milestones/MSV-001-first_steel-medallion.png",
+      "designPrimary": "docs/design/milestones/icon-msv-001/primary/MSV-001-first_steel-primary.png",
+      "provenance": "pilot-promoted"
+    },
+    {
+      "milestoneId": "first_profit",
+      "primary": "apps/web/public/assets/milestones/MSV-001-first_profit-primary.png",
+      "medallion": "apps/web/public/assets/milestones/MSV-001-first_profit-medallion.png",
+      "designPrimary": "docs/design/milestones/icon-msv-001/primary/MSV-001-first_profit-primary.png",
+      "provenance": "pilot-promoted"
+    },
+    {
+      "milestoneId": "first_consumer_goods",
+      "primary": "apps/web/public/assets/milestones/MSV-001-first_consumer_goods-primary.png",
+      "medallion": "apps/web/public/assets/milestones/MSV-001-first_consumer_goods-medallion.png",
+      "designPrimary": "docs/design/milestones/icon-msv-001/primary/MSV-001-first_consumer_goods-primary.png",
+      "provenance": "pilot-promoted"
+    },
+    {
+      "milestoneId": "first_machine_parts",
+      "primary": "apps/web/public/assets/milestones/MSV-001-first_machine_parts-primary.png",
+      "medallion": "apps/web/public/assets/milestones/MSV-001-first_machine_parts-medallion.png",
+      "designPrimary": "docs/design/milestones/icon-msv-001/primary/MSV-001-first_machine_parts-primary.png",
+      "provenance": "production-authored"
+    },
+    {
+      "milestoneId": "first_industrial_machinery",
+      "primary": "apps/web/public/assets/milestones/MSV-001-first_industrial_machinery-primary.png",
+      "medallion": "apps/web/public/assets/milestones/MSV-001-first_industrial_machinery-medallion.png",
+      "designPrimary": "docs/design/milestones/icon-msv-001/primary/MSV-001-first_industrial_machinery-primary.png",
+      "provenance": "production-authored"
+    },
+    {
+      "milestoneId": "first_advanced_electronics",
+      "primary": "apps/web/public/assets/milestones/MSV-001-first_advanced_electronics-primary.png",
+      "medallion": "apps/web/public/assets/milestones/MSV-001-first_advanced_electronics-medallion.png",
+      "designPrimary": "docs/design/milestones/icon-msv-001/primary/MSV-001-first_advanced_electronics-primary.png",
+      "provenance": "production-authored"
+    },
+    {
+      "milestoneId": "profit_100",
+      "primary": "apps/web/public/assets/milestones/MSV-001-profit_100-primary.png",
+      "medallion": "apps/web/public/assets/milestones/MSV-001-profit_100-medallion.png",
+      "designPrimary": "docs/design/milestones/icon-msv-001/primary/MSV-001-profit_100-primary.png",
+      "provenance": "production-authored"
+    }
+  ],
+  "fallbackMedallion": "apps/web/public/assets/milestones/MSV-001-milestone_unknown-medallion.png",
+  "technicalQa": [
+    {
+      "id": "first_production",
+      "tier": "primary",
+      "path": "apps/web/public/assets/milestones/MSV-001-first_production-primary.png",
+      "width": 1024,
+      "height": 1024,
+      "pass": true
+    },
+    {
+      "id": "first_production",
+      "tier": "medallion",
+      "width": 512,
+      "height": 512,
+      "pass": true
+    },
+    {
+      "id": "first_steel",
+      "tier": "primary",
+      "path": "apps/web/public/assets/milestones/MSV-001-first_steel-primary.png",
+      "width": 1024,
+      "height": 1024,
+      "pass": true
+    },
+    {
+      "id": "first_steel",
+      "tier": "medallion",
+      "width": 512,
+      "height": 512,
+      "pass": true
+    },
+    {
+      "id": "first_profit",
+      "tier": "primary",
+      "path": "apps/web/public/assets/milestones/MSV-001-first_profit-primary.png",
+      "width": 1024,
+      "height": 1024,
+      "pass": true
+    },
+    {
+      "id": "first_profit",
+      "tier": "medallion",
+      "width": 512,
+      "height": 512,
+      "pass": true
+    },
+    {
+      "id": "first_consumer_goods",
+      "tier": "primary",
+      "path": "apps/web/public/assets/milestones/MSV-001-first_consumer_goods-primary.png",
+      "width": 1024,
+      "height": 1024,
+      "pass": true
+    },
+    {
+      "id": "first_consumer_goods",
+      "tier": "medallion",
+      "width": 512,
+      "height": 512,
+      "pass": true
+    },
+    {
+      "id": "first_machine_parts",
+      "tier": "primary",
+      "path": "apps/web/public/assets/milestones/MSV-001-first_machine_parts-primary.png",
+      "width": 1024,
+      "height": 1024,
+      "pass": true
+    },
+    {
+      "id": "first_machine_parts",
+      "tier": "medallion",
+      "width": 512,
+      "height": 512,
+      "pass": true
+    },
+    {
+      "id": "first_industrial_machinery",
+      "tier": "primary",
+      "path": "apps/web/public/assets/milestones/MSV-001-first_industrial_machinery-primary.png",
+      "width": 1024,
+      "height": 1024,
+      "pass": true
+    },
+    {
+      "id": "first_industrial_machinery",
+      "tier": "medallion",
+      "width": 512,
+      "height": 512,
+      "pass": true
+    },
+    {
+      "id": "first_advanced_electronics",
+      "tier": "primary",
+      "path": "apps/web/public/assets/milestones/MSV-001-first_advanced_electronics-primary.png",
+      "width": 1024,
+      "height": 1024,
+      "pass": true
+    },
+    {
+      "id": "first_advanced_electronics",
+      "tier": "medallion",
+      "width": 512,
+      "height": 512,
+      "pass": true
+    },
+    {
+      "id": "profit_100",
+      "tier": "primary",
+      "path": "apps/web/public/assets/milestones/MSV-001-profit_100-primary.png",
+      "width": 1024,
+      "height": 1024,
+      "pass": true
+    },
+    {
+      "id": "profit_100",
+      "tier": "medallion",
+      "width": 512,
+      "height": 512,
+      "pass": true
+    }
+  ],
+  "manualNoTextReview": [
+    {
+      "milestoneId": "first_production",
+      "readableText": false,
+      "numbersOrCurrency": false,
+      "pseudoTextConcern": false,
+      "method": "manual visual inspection",
+      "result": "PASS"
+    },
+    {
+      "milestoneId": "first_steel",
+      "readableText": false,
+      "numbersOrCurrency": false,
+      "pseudoTextConcern": false,
+      "method": "manual visual inspection",
+      "result": "PASS"
+    },
+    {
+      "milestoneId": "first_profit",
+      "readableText": false,
+      "numbersOrCurrency": false,
+      "pseudoTextConcern": false,
+      "method": "manual visual inspection",
+      "result": "PASS"
+    },
+    {
+      "milestoneId": "first_consumer_goods",
+      "readableText": false,
+      "numbersOrCurrency": false,
+      "pseudoTextConcern": false,
+      "method": "manual visual inspection",
+      "result": "PASS"
+    },
+    {
+      "milestoneId": "first_machine_parts",
+      "readableText": false,
+      "numbersOrCurrency": false,
+      "pseudoTextConcern": false,
+      "method": "manual visual inspection",
+      "result": "PASS"
+    },
+    {
+      "milestoneId": "first_industrial_machinery",
+      "readableText": false,
+      "numbersOrCurrency": false,
+      "pseudoTextConcern": false,
+      "method": "manual visual inspection",
+      "result": "PASS"
+    },
+    {
+      "milestoneId": "first_advanced_electronics",
+      "readableText": false,
+      "numbersOrCurrency": false,
+      "pseudoTextConcern": false,
+      "method": "manual visual inspection",
+      "result": "PASS"
+    },
+    {
+      "milestoneId": "profit_100",
+      "readableText": false,
+      "numbersOrCurrency": false,
+      "pseudoTextConcern": false,
+      "method": "manual visual inspection",
+      "result": "PASS"
+    }
+  ]
+}

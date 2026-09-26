@@ -102,4 +102,42 @@ describe('company-dashboard-view-mappers', () => {
     );
     expect(transportDetail?.entries.some(([, value]) => value === 'Fallback')).toBe(false);
   });
+
+  it('maps recipe catalog durations and energy rates to player cycles', () => {
+    const dashboard: GameSessionDashboard = {
+      ...createDashboardFixture(),
+      recipeCatalog: [
+        {
+          id: 'recipe_planks',
+          name: 'Bretter',
+          durationTicks: 60,
+          energyPerTick: 0.2,
+          inputs: [],
+          outputs: [],
+          buildingTypeIds: ['sawmill'],
+        },
+      ],
+    };
+
+    const viewData = buildCompanyDashboardViewData(dashboard, []);
+    expect(viewData.recipeCatalog[0]?.durationLabel).toBe('60 Zyklen');
+    expect(viewData.recipeCatalog[0]?.energyLabel).toBe('0,2 / Zyklus');
+  });
+
+  it('maps milestone catalog entries to player-facing row view-data', () => {
+    const dashboard: GameSessionDashboard = {
+      ...createDashboardFixture(),
+      milestones: [
+        { id: 'first_production', name: 'Erste Produktion', completed: true },
+        { id: 'first_steel', name: 'Erster Stahl', completed: false },
+      ],
+      completedMilestones: ['first_production'],
+    };
+
+    const viewData = buildCompanyDashboardViewData(dashboard, []);
+    expect(viewData.milestones).toEqual([
+      { id: 'first_production', displayName: 'Erste Produktion', completed: true },
+      { id: 'first_steel', displayName: 'Erster Stahl', completed: false },
+    ]);
+  });
 });

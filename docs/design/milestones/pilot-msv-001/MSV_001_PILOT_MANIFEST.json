@@ -1,0 +1,77 @@
+{
+  "pilotVersion": "2026-09-20-msv-001-milestone-art-direction-pilot-v1-first-profit-repair",
+  "firstProfitRepair": {
+    "rejectedArtifact": "docs/design/milestones/pilot-msv-001/MSV-001-first_profit-primary-pilot-OLD-REJECTED.png",
+    "defect": "baked readable text FIRST PROFITABLE SALE",
+    "repairedPrimary": "docs/design/milestones/pilot-msv-001/MSV-001-first_profit-primary-pilot.png",
+    "repairedMedallion": "docs/design/milestones/pilot-msv-001/MSV-001-first_profit-medallion-pilot.png",
+    "repairEvidence": "docs/architecture/reviews/evidence/MSV_001_FIRST_PROFIT_FINAL_REPAIR_BOARD.png"
+  },
+  "purpose": "Human-gated milestone / achievement visual identity — NOT production activation",
+  "contractPath": "docs/design/milestones/MILESTONE_VISUAL_IDENTITY_MSV_001_ART_CONTRACT.md",
+  "contractStatus": "ART DIRECTION APPROVED / PILOT FINAL HUMAN CLOSEOUT PENDING",
+  "productionMilestoneCoverageUnchanged": "0/8 production-active",
+  "pilotMilestoneIds": [
+    "first_production",
+    "first_steel",
+    "first_profit",
+    "first_consumer_goods"
+  ],
+  "concepts": [
+    {
+      "milestoneId": "first_production",
+      "displayName": "First Production",
+      "primary": "docs/design/milestones/pilot-msv-001/MSV-001-first_production-primary-pilot.png",
+      "medallion": "docs/design/milestones/pilot-msv-001/MSV-001-first_production-medallion-pilot.png",
+      "sourceMasters": "assets/MSV-001-first_production-primary-pilot.png",
+      "dimensionsPrimary": "1024×1024 RGBA",
+      "dimensionsMedallion": "512×512 RGBA (derived Tier-2)",
+      "status": "DEV/PILOT — NOT PRODUCTION",
+      "humanApproval": "PENDING"
+    },
+    {
+      "milestoneId": "first_steel",
+      "displayName": "Erster Stahl / First Steel",
+      "primary": "docs/design/milestones/pilot-msv-001/MSV-001-first_steel-primary-pilot.png",
+      "medallion": "docs/design/milestones/pilot-msv-001/MSV-001-first_steel-medallion-pilot.png",
+      "sourceMasters": "assets/MSV-001-first_steel-primary-pilot.png",
+      "dimensionsPrimary": "1024×1024 RGBA",
+      "dimensionsMedallion": "512×512 RGBA (derived Tier-2)",
+      "status": "DEV/PILOT — NOT PRODUCTION",
+      "humanApproval": "PENDING"
+    },
+    {
+      "milestoneId": "first_profit",
+      "displayName": "First Profit",
+      "primary": "docs/design/milestones/pilot-msv-001/MSV-001-first_profit-primary-pilot.png",
+      "medallion": "docs/design/milestones/pilot-msv-001/MSV-001-first_profit-medallion-pilot.png",
+      "sourceMasters": "assets/MSV-001-first_profit-primary-pilot.png",
+      "dimensionsPrimary": "1024×1024 RGBA",
+      "dimensionsMedallion": "512×512 RGBA (derived Tier-2)",
+      "status": "DEV/PILOT — NOT PRODUCTION",
+      "humanApproval": "PENDING"
+    },
+    {
+      "milestoneId": "first_consumer_goods",
+      "displayName": "Erste Konsumgüter",
+      "primary": "docs/design/milestones/pilot-msv-001/MSV-001-first_consumer_goods-primary-pilot.png",
+      "medallion": "docs/design/milestones/pilot-msv-001/MSV-001-first_consumer_goods-medallion-pilot.png",
+      "sourceMasters": "assets/MSV-001-first_consumer_goods-primary-pilot.png",
+      "dimensionsPrimary": "1024×1024 RGBA",
+      "dimensionsMedallion": "512×512 RGBA (derived Tier-2)",
+      "status": "DEV/PILOT — NOT PRODUCTION",
+      "humanApproval": "PENDING"
+    }
+  ],
+  "alphaReportPath": "docs/design/milestones/pilot-msv-001/MSV_001_PILOT_ALPHA_REPORT.json",
+  "evidenceBoardScript": "tools/compose-msv-001-art-direction-evidence.mjs",
+  "evidenceBoards": [
+    "docs/architecture/reviews/evidence/MSV_001_ART_DIRECTION_4_PILOT_FAMILY_BOARD.png",
+    "docs/architecture/reviews/evidence/MSV_001_ACHIEVEMENT_MEDALLION_BOARD.png",
+    "docs/architecture/reviews/evidence/MSV_001_SCALE_BOARD.png",
+    "docs/architecture/reviews/evidence/MSV_001_STATE_TREATMENT_BOARD.png",
+    "docs/architecture/reviews/evidence/MSV_001_CROSS_FAMILY_DIFFERENTIATION_BOARD.png",
+    "docs/architecture/reviews/evidence/MSV_001_STATIC_PROGRESSION_CONTEXT_MOCK.png",
+    "docs/architecture/reviews/evidence/MSV_001_FIRST_PROFIT_FINAL_REPAIR_BOARD.png"
+  ]
+}

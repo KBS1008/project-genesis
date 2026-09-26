@@ -8,6 +8,7 @@ import {
   mapOperationsEmployeeRows,
   mapOperationsFinanceLedgerRows,
   mapOperationsMarketRows,
+  mapOperationsMilestoneRows,
   mapOperationsProductionJobs,
   mapOperationsResearchJobs,
   mapOperationsSiteInventoryRows,
@@ -21,6 +22,7 @@ import {
   PGFinanceWidget,
   PGInventoryWidget,
   PGMarketWidget,
+  PGMilestonesWidget,
   PGProductionWidget,
   PGResearchWidget,
   PGSupplyChainWidget,
@@ -69,6 +71,10 @@ export function CompanyOperationsPanels({
   const employeeRows = useMemo(
     () => mapOperationsEmployeeRows(companyViewData.employees),
     [companyViewData.employees],
+  );
+  const milestoneRows = useMemo(
+    () => mapOperationsMilestoneRows(companyViewData.milestones),
+    [companyViewData.milestones],
   );
   const economyPanel = useMemo(
     () => buildOperationsEconomyPanel(companyViewData.economy),
@@ -134,6 +140,13 @@ export function CompanyOperationsPanels({
         onEmployeeClick={(employeeId) => {
           onSelectDetail('employee', employeeId);
         }}
+      />
+
+      <PGMilestonesWidget
+        rows={milestoneRows}
+        state={hasGame ? 'idle' : 'empty'}
+        emptyTitle="Keine Meilensteine geladen."
+        emptyHint="Meilensteine erscheinen nach Spielstart."
       />
 
       <PGEconomyWidget

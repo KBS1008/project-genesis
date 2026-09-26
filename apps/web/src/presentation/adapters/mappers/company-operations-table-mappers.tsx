@@ -14,6 +14,7 @@ import { BuildingConstructionStatus } from '@/presentation/screens/company/Build
 import { PGMarketTrendBadge } from '@/presentation/components/dashboard/PGMarketTrendBadge';
 import { ResourceIcon } from '@/presentation/components/assets/ResourceIcon';
 import { WorkforceRoleVisual } from '@/presentation/components/assets/WorkforceRoleVisual';
+import { MilestoneVisual } from '@/presentation/components/assets/MilestoneVisual';
 
 function joinSearchParts(parts: readonly (string | number)[]): string {
   return parts.map((part) => String(part)).join(' ');
@@ -125,6 +126,42 @@ export function mapOperationsEmployeeRows(
         ]),
       }),
     ),
+  );
+}
+
+/** Maps milestone rows to PG operations table rows with MSV tier-1/tier-2 visuals. */
+export function mapOperationsMilestoneRows(
+  milestones: CompanyDashboardViewData['milestones'],
+): readonly PGOperationsTableRow[] {
+  return Object.freeze(
+    milestones.map((milestone) => {
+      const statusLabel = milestone.completed ? 'Erreicht' : 'Ausstehend';
+
+      return Object.freeze({
+        id: milestone.id,
+        cells: Object.freeze([
+          <MilestoneVisual
+            key={`msv-primary-${milestone.id}`}
+            milestoneId={milestone.id}
+            variant="primary"
+            completed={milestone.completed}
+            size={112}
+            loading="eager"
+          />,
+          <MilestoneVisual
+            key={`msv-medallion-${milestone.id}`}
+            milestoneId={milestone.id}
+            variant="medallion"
+            completed={milestone.completed}
+            size={64}
+            loading="eager"
+          />,
+          milestone.displayName,
+          statusLabel,
+        ]),
+        searchText: joinSearchParts([milestone.displayName, statusLabel]),
+      });
+    }),
   );
 }
 

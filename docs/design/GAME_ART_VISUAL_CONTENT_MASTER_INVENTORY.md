@@ -1,8 +1,8 @@
 # Game Art & Visual Content — Master Inventory
 
 **Purpose:** Machine-readable planning inventory for post-V1 visual content.  
-**Authority:** `POST_V1_GAME_ART_VISUAL_CONTENT_MASTER_PLAN_REVIEW.md` · `POST_V1_SCENARIO_B_VISUAL_COVERAGE_PROGRESS_REVIEW.md` · `POST_V1_SCENARIO_B_VISUAL_COVERAGE_PROGRESS_REVIEW_02.md`  
-**Baseline HEAD:** `5f24b61` (ICON-005 7/7 sealed; Scenario-B progress review 02)  
+**Authority:** `POST_V1_GAME_ART_VISUAL_CONTENT_MASTER_PLAN_REVIEW.md` · `POST_V1_SCENARIO_B_VISUAL_COVERAGE_PROGRESS_REVIEW.md` · `POST_V1_SCENARIO_B_VISUAL_COVERAGE_PROGRESS_REVIEW_02.md` · `POST_V1_SCENARIO_B_VISUAL_COVERAGE_REASSESSMENT_AFTER_WFV_001.md`  
+**Baseline HEAD:** `65dcbfc` (WFV-001 19/19 + runtime repair sealed; Scenario-B reassessment after WFV-001)  
 **Content root:** `game-content/` (YAML counts below)
 
 **Legend — STATUS:** `ACTIVE` runtime certified | `PROCEDURAL` code-driven | `GENERIC` functional not game-identified | `GAP` no distinct identity | `FUTURE` mechanics absent | `SEALED` closed workstream
@@ -33,8 +33,8 @@
 
 | Class | Confirmed minimum | Notes |
 |-------|------------------:|-------|
-| Authored primary concepts | **90** | prior sealed **71** + **19 WFV-001** Workforce hybrids (**COMPLETE CANDIDATE 19/19**) |
-| Authored secondary (compact glyphs) | **33** | ICON-003 compacts **23** + ICON-004 category SVGs **10** |
+| Authored primary concepts | **84** | 23 ICON-003 + 22 ICON-004 + 7 ICON-005 + 19 WFV-001 + 9 ICON-001 + 3 MM scenic + 1 BR-001 (distinct concepts; derivatives excluded) |
+| Authored secondary (compact glyphs) | **39** | ICON-003 compacts **23** + ICON-004 category SVGs **10** + ICON-002 category **6** |
 | Generic reusable UI icons | **~11** | `DashboardIcon` inline glyphs (not registry PNG family) |
 | Decorative / scenic (runtime) | **3** | MM-001/006/007; MM-002–005 reference mockups separate |
 | Procedural systems (production) | **~5** | World biomes + routes + minimap; dashboard/recharts + CH-010 chart language |
@@ -42,13 +42,17 @@
 | Fallback | **6** | ICON-002 category SVGs (defensive + legacy path) |
 | Dev / pilot / evidence | excluded | `infrastructure-pilot/`, evidence PNGs, dev compare pages |
 
-**Estimated authored range:** **~112–122** if counting primary + secondary concepts separately toward envelope; **~79** distinct primary art directions including partial Workforce track.
+**Estimated authored range:** **~84** distinct primary concepts + **~39** compact identities toward the Scenario-B envelope (not a quota).
 
-**WFV-001 (Workforce role identity):** **PRODUCTION COMPLETION CANDIDATE — 19/19** (`WorkforceRoleVisual`; Direction C default + 1× Direction A). Human seal pending.
+**WFV-001 (Workforce role identity):** **CLOSED / PASS / SEALED — 19/19** (`WorkforceRoleVisual`; runtime resolution repair @ `65dcbfc`).
 
-**Next after WFV completion seal:** transport (**TRV**) or milestone art per deferred list.
+**WBM-001 (World building markers):** **CLOSED / PASS / SEALED** — ICON-003 compact integration @ `7426c47` (no new authored PNGs).
 
-**Deferred (not rejected):** transport mode/vehicle identity, milestone medallions (**MSV-001**), market trend visualization polish, building state overlay badges, shell nav icon family, tutorial step vignettes (UX-heavy).
+**Next material visual workstream (Scenario-B reassessment @ `65dcbfc`):** **MSV-001** — Milestone / Achievement Visual Identity (**ACTIVE / COMPLETE — 8/8 production**; Scenario B overall **IN PROGRESS**).
+
+**MSV-001 production:** 8 Tier-1 + 8 Tier-2 under `apps/web/public/assets/milestones/` and `docs/design/milestones/icon-msv-001/` — manifest `MSV_001_PRODUCTION_MANIFEST.json`; runtime `MilestoneVisual` + `PGMilestonesWidget`; four pilots promoted (repaired `first_profit` only).
+
+**Deferred (not rejected):** transport mode/route glyphs (**TRV**), market table ICON-001 wiring (presentation), building state overlay badges, shell nav icon family, tutorial step vignettes (UX-heavy).
 
 ---
 
@@ -125,7 +129,7 @@
 
 **ICON-003 per-type coverage (current authoritative 23 building types):** **23 / 23** — 20 VOLUMETRIC (Batches 1–3) + 1 LINEAR (`access_road`) + 2 TERMINAL/YARD (`port`, `rail_terminal`). ICON-002 remains defensive category fallback in `BuildingTypeIcon`.
 
-**World map:** **WBM-001** — ICON-003 compact markers via `PGWorldBuildingMarker` (generic `buildingTypeId` resolver) — **ACTIVE** pending human seal.
+**World map:** **WBM-001** — ICON-003 compact markers via `PGWorldBuildingMarker` — **SEALED** @ `7426c47`.
 
 ---
 
@@ -225,7 +229,7 @@ No content-defined building **tiers/upgrades** in YAML; `level` fixed at 1 in do
 
 | Scope | Count | Current | Target | Priority | Status |
 |-------|------:|---------|--------|----------|--------|
-| Employee types | 19 | WFV hybrid primaries (19/19) | detailed hybrid primary + unknown-ID fallback | P2 | **COMPLETE CANDIDATE — 19/19** |
+| Employee types | 19 | WFV hybrid primaries (19/19) | detailed hybrid primary + unknown-ID fallback | P2 | **SEALED — WFV-001 19/19** |
 
 ---
 
@@ -233,7 +237,7 @@ No content-defined building **tiers/upgrades** in YAML; `level` fixed at 1 in do
 
 | Scope | Count | Current | Target | Priority | Status |
 |-------|------:|---------|--------|----------|--------|
-| Milestones | 8 | text in hints | achievement ICON | P2 | GAP |
+| Milestones | 8 | **8/8 production** — MSV-001 | achievement primary + medallion | P2 | **MSV-001 ACTIVE / COMPLETE (8/8)** |
 
 ---
 

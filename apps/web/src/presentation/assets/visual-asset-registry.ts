@@ -15,9 +15,15 @@ import {
 } from '@/presentation/assets/technology-visual-asset-ids';
 import { ICON_005_ENABLED_RECIPE_IDS } from '@/presentation/assets/process-visual-asset-ids';
 import {
+  MSV_001_PRODUCTION_MILESTONE_IDS,
+  MSV_001_UNKNOWN_MILESTONE_MEDALLION_ASSET_ID,
+} from '@/presentation/assets/milestone-visual-asset-ids';
+import {
   WFV_001_PRODUCTION_EMPLOYEE_TYPE_IDS,
   resolveWfvCategoryFallbackAssetId,
 } from '@/presentation/assets/workforce-visual-asset-ids';
+
+const MILESTONES_BASE = '/assets/milestones';
 
 const MAIN_MENU_BASE = '/assets/main-menu';
 const BRANDING_BASE = '/assets/branding';
@@ -431,6 +437,62 @@ function wfv001RegistryEntries(): Readonly<Record<string, VisualAssetEntry>> {
   return Object.freeze(entries);
 }
 
+function msv001RegistryEntries(): Readonly<Record<string, VisualAssetEntry>> {
+  const entries: Record<string, VisualAssetEntry> = {};
+  const designRoot = 'docs/design/milestones/icon-msv-001';
+
+  for (const milestoneId of MSV_001_PRODUCTION_MILESTONE_IDS) {
+    const primaryId = `MSV-001-${milestoneId}-primary`;
+    const medallionId = `MSV-001-${milestoneId}-medallion`;
+
+    entries[primaryId] = entry({
+      id: primaryId,
+      label: `Milestone Primary — ${milestoneId}`,
+      type: 'runtime',
+      component: 'MilestoneVisual',
+      format: 'png',
+      path: `${MILESTONES_BASE}/${primaryId}.png`,
+      theme: 'default',
+      priority: 'normal',
+      preload: false,
+      fallbackId: MSV_001_UNKNOWN_MILESTONE_MEDALLION_ASSET_ID,
+      designSource: `${designRoot}/primary/${primaryId}.png`,
+      notes: 'MSV-001 Tier-1 achievement primary — production 8/8.',
+    });
+
+    entries[medallionId] = entry({
+      id: medallionId,
+      label: `Milestone Medallion — ${milestoneId}`,
+      type: 'runtime',
+      component: 'MilestoneVisual',
+      format: 'png',
+      path: `${MILESTONES_BASE}/${medallionId}.png`,
+      theme: 'default',
+      priority: 'normal',
+      preload: false,
+      fallbackId: MSV_001_UNKNOWN_MILESTONE_MEDALLION_ASSET_ID,
+      designSource: `${designRoot}/medallion/${medallionId}.png`,
+      notes: 'MSV-001 Tier-2 derived medallion — production 8/8.',
+    });
+  }
+
+  entries[MSV_001_UNKNOWN_MILESTONE_MEDALLION_ASSET_ID] = entry({
+    id: MSV_001_UNKNOWN_MILESTONE_MEDALLION_ASSET_ID,
+    label: 'Milestone Unknown Medallion Fallback',
+    type: 'runtime',
+    component: 'MilestoneVisual',
+    format: 'png',
+    path: `${MILESTONES_BASE}/${MSV_001_UNKNOWN_MILESTONE_MEDALLION_ASSET_ID}.png`,
+    theme: 'default',
+    priority: 'normal',
+    preload: false,
+    designSource: `${designRoot}/${MSV_001_UNKNOWN_MILESTONE_MEDALLION_ASSET_ID}.png`,
+    notes: 'MSV-001 compact fallback for unmapped milestone IDs.',
+  });
+
+  return Object.freeze(entries);
+}
+
 function icon002RegistryEntries(): Readonly<Record<string, VisualAssetEntry>> {
   return Object.fromEntries(
     ICON_002_RUNTIME_ASSETS.map(({ category, label, source }) => {
@@ -703,6 +765,7 @@ export const VISUAL_ASSET_REGISTRY: Readonly<Record<string, VisualAssetEntry>> =
   ...icon004RegistryEntries(),
   ...icon005RegistryEntries(),
   ...wfv001RegistryEntries(),
+  ...msv001RegistryEntries(),
   ...icon002RegistryEntries(),
   ...icon003RegistryEntries(),
 });

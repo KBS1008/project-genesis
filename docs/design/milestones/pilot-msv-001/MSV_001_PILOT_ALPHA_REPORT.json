@@ -1,0 +1,125 @@
+{
+  "pilotVersion": "2026-09-20-msv-001-milestone-art-direction-pilot-v1-first-profit-repair",
+  "generatedAt": "2026-09-20T15:40:06.072Z",
+  "results": [
+    {
+      "tier": "primary",
+      "milestoneId": "first_production",
+      "assetPath": "docs/design/milestones/pilot-msv-001/MSV-001-first_production-primary-pilot.png",
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "transparentPercent": 0,
+      "checkerboardSuspect": false,
+      "pass": true
+    },
+    {
+      "tier": "medallion",
+      "milestoneId": "first_production",
+      "assetPath": "docs/design/milestones/pilot-msv-001/MSV-001-first_production-medallion-pilot.png",
+      "width": 512,
+      "height": 512,
+      "pass": true
+    },
+    {
+      "tier": "primary",
+      "milestoneId": "first_steel",
+      "assetPath": "docs/design/milestones/pilot-msv-001/MSV-001-first_steel-primary-pilot.png",
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "transparentPercent": 0,
+      "checkerboardSuspect": false,
+      "pass": true
+    },
+    {
+      "tier": "medallion",
+      "milestoneId": "first_steel",
+      "assetPath": "docs/design/milestones/pilot-msv-001/MSV-001-first_steel-medallion-pilot.png",
+      "width": 512,
+      "height": 512,
+      "pass": true
+    },
+    {
+      "tier": "primary",
+      "milestoneId": "first_profit",
+      "assetPath": "docs/design/milestones/pilot-msv-001/MSV-001-first_profit-primary-pilot.png",
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "transparentPercent": 0,
+      "checkerboardSuspect": false,
+      "pass": true
+    },
+    {
+      "tier": "medallion",
+      "milestoneId": "first_profit",
+      "assetPath": "docs/design/milestones/pilot-msv-001/MSV-001-first_profit-medallion-pilot.png",
+      "width": 512,
+      "height": 512,
+      "pass": true
+    },
+    {
+      "tier": "primary",
+      "milestoneId": "first_consumer_goods",
+      "assetPath": "docs/design/milestones/pilot-msv-001/MSV-001-first_consumer_goods-primary-pilot.png",
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "transparentPercent": 0,
+      "checkerboardSuspect": false,
+      "pass": true
+    },
+    {
+      "tier": "medallion",
+      "milestoneId": "first_consumer_goods",
+      "assetPath": "docs/design/milestones/pilot-msv-001/MSV-001-first_consumer_goods-medallion-pilot.png",
+      "width": 512,
+      "height": 512,
+      "pass": true
+    }
+  ],
+  "manualNoTextReview": [
+    {
+      "milestoneId": "first_production",
+      "readableBakedText": false,
+      "pseudoTextConcern": false,
+      "method": "manual visual inspection of pilot PNG",
+      "result": "PASS"
+    },
+    {
+      "milestoneId": "first_steel",
+      "readableBakedText": false,
+      "pseudoTextConcern": false,
+      "method": "manual visual inspection of pilot PNG",
+      "result": "PASS"
+    },
+    {
+      "milestoneId": "first_profit",
+      "readableBakedText": false,
+      "pseudoTextConcern": false,
+      "note": "Repaired 2026-09-20 — removed baked FIRST PROFITABLE SALE banner; blank metal nameplate",
+      "method": "manual visual inspection of repaired pilot PNG",
+      "result": "PASS"
+    },
+    {
+      "milestoneId": "first_consumer_goods",
+      "readableBakedText": false,
+      "pseudoTextConcern": false,
+      "method": "manual visual inspection of pilot PNG",
+      "result": "PASS"
+    }
+  ],
+  "noTextGateNote": "Automated tooling cannot prove absence of generated text; manualNoTextReview is authoritative for the no-text contract.",
+  "unchangedApprovedPrimarySha256": {
+    "first_production": "2a405159d47e63e9576ff6a15fa10d91b872299729e0e9cc3268d33da08c5044",
+    "first_steel": "41242c7b8512d378315f55839590fb291288d7cb132fbab8ea2e075631a7089b",
+    "first_consumer_goods": "46b904b9d1bdf2b6d80479aeb036f93f26e883050a9a08c1db4ddc11bfcbde7b"
+  },
+  "summary": {
+    "primaryPass": 4,
+    "primaryTotal": 4,
+    "medallionPass": 4,
+    "medallionTotal": 4
+  }
+}
