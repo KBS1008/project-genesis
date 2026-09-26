@@ -23,6 +23,7 @@ import { ResearchJobStatus } from '../../domain/research/ResearchJobStatus.js';
 import { TransportOrderStatus } from '../../domain/transport/TransportOrderStatus.js';
 import { formatPlayerFacingCurrencyAmount } from './player-facing-currency-format.js';
 import { formatMissingMilestoneReason } from './player-facing-milestone-label.js';
+import { formatMissingTechnologyReason } from './player-facing-technology-label.js';
 import type { BuildingReadModel } from '../read-models/BuildingReadModel.js';
 import type { FinanceReadModel } from '../read-models/FinanceReadModel.js';
 import type { FinanceTransactionReadModel } from '../read-models/FinanceTransactionReadModel.js';
@@ -495,7 +496,10 @@ export class GameSessionDashboardBuilder {
             );
           } else if (missingResearch !== undefined) {
             canPlace = false;
-            reason = `Forschung „${missingResearch}“ fehlt.`;
+            reason = formatMissingTechnologyReason(
+              missingResearch,
+              this.#context.gameContent.technologies,
+            );
           } else if (input.finance.availableCash < buildingType.constructionCost) {
             canPlace = false;
             reason = `Benötigt ${formatPlayerFacingCurrencyAmount(buildingType.constructionCost)}.`;
@@ -557,7 +561,10 @@ export class GameSessionDashboardBuilder {
           );
         } else if (missingResearch !== undefined) {
           canStart = false;
-          reason = `Forschung „${missingResearch}“ fehlt.`;
+          reason = formatMissingTechnologyReason(
+            missingResearch,
+            this.#context.gameContent.technologies,
+          );
         } else if (inventory !== undefined) {
           const globalSufficient = recipe.inputs.every((recipeInput) => {
             const available =
@@ -673,7 +680,10 @@ export class GameSessionDashboardBuilder {
             reason = 'Forschung läuft bereits.';
           } else if (missingResearch !== undefined) {
             canStart = false;
-            reason = `Forschung „${missingResearch}“ fehlt.`;
+            reason = formatMissingTechnologyReason(
+              missingResearch,
+              this.#context.gameContent.technologies,
+            );
           } else if (missingMilestone !== undefined) {
             canStart = false;
             reason = formatMissingMilestoneReason(

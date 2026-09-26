@@ -76,7 +76,7 @@ describe('GameSessionDashboardBuilder research hints', () => {
 
     expect(precisionMachining).toBeDefined();
     expect(precisionMachining?.canStart).toBe(false);
-    expect(precisionMachining?.reason).toBe('Forschung „advanced_metallurgy“ fehlt.');
+    expect(precisionMachining?.reason).toBe('Forschung „Fortgeschrittene Metallurgie“ fehlt.');
   });
 
   it('allows technologies when prerequisite research and milestones are satisfied', async () => {
@@ -183,5 +183,51 @@ describe('GameSessionDashboardBuilder milestone requirement labels', () => {
     expect(semiconductor?.canStart).toBe(false);
     expect(semiconductor?.reason).toBe('Meilenstein „Erste Advanced Elektronik“ fehlt.');
     expect(semiconductor?.reason).not.toContain('first_advanced_electronics');
+  });
+});
+
+describe('GameSessionDashboardBuilder technology requirement labels', () => {
+  it('uses authoritative technology names in building placement blockers', async () => {
+    const bootstrapResult = await bootstrapApplication({
+      gameContentRoot,
+      strictContent: true,
+    });
+
+    expect(bootstrapResult.ok).toBe(true);
+
+    if (!bootstrapResult.ok) {
+      return;
+    }
+
+    const context = bootstrapResult.value;
+    const builder = new GameSessionDashboardBuilder(
+      context,
+      new EnergyBalanceService({
+        buildingRepository: context.buildingRepository,
+        productionJobRepository: context.productionJobRepository,
+        gameContent: context.gameContent,
+      }),
+    );
+
+    const hints = builder.readHints(
+      createHintInput({
+        completedMilestones: new Set([
+          'first_profit',
+          'first_production',
+          'first_steel',
+          'first_machine_parts',
+          'first_industrial_machinery',
+          'first_advanced_electronics',
+          'first_consumer_goods',
+          'profit_100',
+        ]),
+        completedResearch: new Set(['basic_woodworking']),
+      }),
+    );
+
+    const railTerminal = hints.placeBuilding.find((entry) => entry.buildingTypeId === 'rail_terminal');
+    expect(railTerminal?.canPlace).toBe(false);
+    expect(railTerminal?.reason).toBe('Forschung „Intermodale Logistik“ fehlt.');
+    expect(railTerminal?.reason).not.toContain('intermodal_logistics');
   });
 });
