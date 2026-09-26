@@ -22,6 +22,7 @@ import { ProductionJobStatus } from '../../domain/production/ProductionJobStatus
 import { ResearchJobStatus } from '../../domain/research/ResearchJobStatus.js';
 import { TransportOrderStatus } from '../../domain/transport/TransportOrderStatus.js';
 import { formatPlayerFacingCurrencyAmount } from './player-facing-currency-format.js';
+import { formatMissingMilestoneReason } from './player-facing-milestone-label.js';
 import type { BuildingReadModel } from '../read-models/BuildingReadModel.js';
 import type { FinanceReadModel } from '../read-models/FinanceReadModel.js';
 import type { FinanceTransactionReadModel } from '../read-models/FinanceTransactionReadModel.js';
@@ -488,7 +489,10 @@ export class GameSessionDashboardBuilder {
 
           if (missingMilestone !== undefined) {
             canPlace = false;
-            reason = `Meilenstein „${missingMilestone}“ fehlt.`;
+            reason = formatMissingMilestoneReason(
+              missingMilestone,
+              this.#context.gameContent.milestones,
+            );
           } else if (missingResearch !== undefined) {
             canPlace = false;
             reason = `Forschung „${missingResearch}“ fehlt.`;
@@ -547,7 +551,10 @@ export class GameSessionDashboardBuilder {
 
         if (missingMilestone !== undefined) {
           canStart = false;
-          reason = `Meilenstein „${missingMilestone}“ fehlt.`;
+          reason = formatMissingMilestoneReason(
+            missingMilestone,
+            this.#context.gameContent.milestones,
+          );
         } else if (missingResearch !== undefined) {
           canStart = false;
           reason = `Forschung „${missingResearch}“ fehlt.`;
@@ -669,7 +676,10 @@ export class GameSessionDashboardBuilder {
             reason = `Forschung „${missingResearch}“ fehlt.`;
           } else if (missingMilestone !== undefined) {
             canStart = false;
-            reason = `Meilenstein „${missingMilestone}“ fehlt.`;
+            reason = formatMissingMilestoneReason(
+              missingMilestone,
+              this.#context.gameContent.milestones,
+            );
           } else if (input.finance.availableCash < technology.researchCost) {
             canStart = false;
             reason = `Benötigt ${formatPlayerFacingCurrencyAmount(technology.researchCost)}.`;

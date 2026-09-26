@@ -112,3 +112,76 @@ describe('GameSessionDashboardBuilder research hints', () => {
     expect(precisionMachining?.reason).toBeNull();
   });
 });
+
+describe('GameSessionDashboardBuilder milestone requirement labels', () => {
+  it('uses authoritative milestone names in building placement blockers', async () => {
+    const bootstrapResult = await bootstrapApplication({
+      gameContentRoot,
+      strictContent: true,
+    });
+
+    expect(bootstrapResult.ok).toBe(true);
+
+    if (!bootstrapResult.ok) {
+      return;
+    }
+
+    const context = bootstrapResult.value;
+    const builder = new GameSessionDashboardBuilder(
+      context,
+      new EnergyBalanceService({
+        buildingRepository: context.buildingRepository,
+        productionJobRepository: context.productionJobRepository,
+        gameContent: context.gameContent,
+      }),
+    );
+
+    const hints = builder.readHints(
+      createHintInput({
+        completedMilestones: new Set(),
+      }),
+    );
+
+    const railTerminal = hints.placeBuilding.find((entry) => entry.buildingTypeId === 'rail_terminal');
+    expect(railTerminal?.canPlace).toBe(false);
+    expect(railTerminal?.reason).toBe('Meilenstein „Erste Industriemaschine“ fehlt.');
+    expect(railTerminal?.reason).not.toContain('first_industrial_machinery');
+  });
+
+  it('uses authoritative milestone names in research blockers', async () => {
+    const bootstrapResult = await bootstrapApplication({
+      gameContentRoot,
+      strictContent: true,
+    });
+
+    expect(bootstrapResult.ok).toBe(true);
+
+    if (!bootstrapResult.ok) {
+      return;
+    }
+
+    const context = bootstrapResult.value;
+    const builder = new GameSessionDashboardBuilder(
+      context,
+      new EnergyBalanceService({
+        buildingRepository: context.buildingRepository,
+        productionJobRepository: context.productionJobRepository,
+        gameContent: context.gameContent,
+      }),
+    );
+
+    const hints = builder.readHints(
+      createHintInput({
+        completedMilestones: new Set(['first_steel', 'first_machine_parts']),
+        completedResearch: new Set(['circuit_design']),
+      }),
+    );
+
+    const semiconductor = hints.research.find(
+      (entry) => entry.technologyId === 'semiconductor_process',
+    );
+    expect(semiconductor?.canStart).toBe(false);
+    expect(semiconductor?.reason).toBe('Meilenstein „Erste Advanced Elektronik“ fehlt.');
+    expect(semiconductor?.reason).not.toContain('first_advanced_electronics');
+  });
+});

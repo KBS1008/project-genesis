@@ -36,7 +36,7 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
             technologyId: 'basic_woodworking',
             name: 'Basic Woodworking',
             canStart: false,
-            reason: 'Meilenstein „profit_100“ fehlt.',
+            reason: 'Meilenstein „Steady Sales“ fehlt.',
           },
         ],
       },
@@ -57,7 +57,7 @@ describe('ResearchScreen', () => {
 
     expect(screen.getByText('Forschungskatalog')).toBeInTheDocument();
     expect(screen.getByText('Basic Woodworking')).toBeInTheDocument();
-    expect(screen.getByText('Meilenstein „profit_100“ fehlt.')).toBeInTheDocument();
+    expect(screen.getByText('Meilenstein „Steady Sales“ fehlt.')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Forschung starten' })).toBeDisabled();
   });
 });
