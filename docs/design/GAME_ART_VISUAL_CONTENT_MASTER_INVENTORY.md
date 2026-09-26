@@ -1,8 +1,8 @@
 # Game Art & Visual Content — Master Inventory
 
 **Purpose:** Machine-readable planning inventory for post-V1 visual content.  
-**Authority:** `POST_V1_GAME_ART_VISUAL_CONTENT_MASTER_PLAN_REVIEW.md` · `POST_V1_SCENARIO_B_VISUAL_COVERAGE_PROGRESS_REVIEW.md` · `POST_V1_SCENARIO_B_VISUAL_COVERAGE_PROGRESS_REVIEW_02.md` · `POST_V1_SCENARIO_B_VISUAL_COVERAGE_REASSESSMENT_AFTER_WFV_001.md`  
-**Baseline HEAD:** `65dcbfc` (WFV-001 19/19 + runtime repair sealed; Scenario-B reassessment after WFV-001)  
+**Authority:** `POST_V1_GAME_ART_VISUAL_CONTENT_MASTER_PLAN_REVIEW.md` · `POST_V1_SCENARIO_B_VISUAL_COVERAGE_PROGRESS_REVIEW.md` · `POST_V1_SCENARIO_B_VISUAL_COVERAGE_PROGRESS_REVIEW_02.md` · `POST_V1_SCENARIO_B_VISUAL_COVERAGE_REASSESSMENT_AFTER_WFV_001.md` · `POST_V1_SCENARIO_B_VISUAL_COVERAGE_REASSESSMENT_AFTER_MSV_001.md`  
+**Baseline HEAD:** `461090b` (MSV-001 8/8 production + runtime quality-gate closeout pushed)  
 **Content root:** `game-content/` (YAML counts below)
 
 **Legend — STATUS:** `ACTIVE` runtime certified | `PROCEDURAL` code-driven | `GENERIC` functional not game-identified | `GAP` no distinct identity | `FUTURE` mechanics absent | `SEALED` closed workstream
@@ -27,14 +27,14 @@
 
 ---
 
-## Scenario B progress ledger (2026-09-20)
+## Scenario B progress ledger (2026-09-26)
 
 **Planning envelope (unchanged):** ~380–520 **authored** deliverables + ~**12 procedural** visual systems. Not a quota.
 
 | Class | Confirmed minimum | Notes |
 |-------|------------------:|-------|
-| Authored primary concepts | **84** | 23 ICON-003 + 22 ICON-004 + 7 ICON-005 + 19 WFV-001 + 9 ICON-001 + 3 MM scenic + 1 BR-001 (distinct concepts; derivatives excluded) |
-| Authored secondary (compact glyphs) | **39** | ICON-003 compacts **23** + ICON-004 category SVGs **10** + ICON-002 category **6** |
+| Authored primary concepts | **92** | 23 ICON-003 + 22 ICON-004 + 7 ICON-005 + 19 WFV-001 + **8 MSV-001** + 9 ICON-001 + 3 MM scenic + 1 BR-001 (distinct concepts; derivatives excluded) |
+| Authored secondary (compact glyphs) | **47** | ICON-003 compacts **23** + ICON-004 category SVGs **10** + ICON-002 category **6** + **MSV-001 medallions 8** (derived) |
 | Generic reusable UI icons | **~11** | `DashboardIcon` inline glyphs (not registry PNG family) |
 | Decorative / scenic (runtime) | **3** | MM-001/006/007; MM-002–005 reference mockups separate |
 | Procedural systems (production) | **~5** | World biomes + routes + minimap; dashboard/recharts + CH-010 chart language |
@@ -42,17 +42,25 @@
 | Fallback | **6** | ICON-002 category SVGs (defensive + legacy path) |
 | Dev / pilot / evidence | excluded | `infrastructure-pilot/`, evidence PNGs, dev compare pages |
 
-**Estimated authored range:** **~84** distinct primary concepts + **~39** compact identities toward the Scenario-B envelope (not a quota).
+**Estimated authored range:** **~92** distinct primary concepts + **~47** compact identities toward the Scenario-B envelope (not a quota).
+
+**MSV-001 (Milestone / achievement identity):** **CLOSED / PASS / SEALED — 8/8** (`MilestoneVisual`, `PGMilestonesWidget`; production + runtime evidence @ `461090b`).
 
 **WFV-001 (Workforce role identity):** **CLOSED / PASS / SEALED — 19/19** (`WorkforceRoleVisual`; runtime resolution repair @ `65dcbfc`).
 
 **WBM-001 (World building markers):** **CLOSED / PASS / SEALED** — ICON-003 compact integration @ `7426c47` (no new authored PNGs).
 
-**Next material visual workstream (Scenario-B reassessment @ `65dcbfc`):** **MSV-001** — Milestone / Achievement Visual Identity (**ACTIVE / COMPLETE — 8/8 production**; Scenario B overall **IN PROGRESS**).
+**MVI-001 (Market commodity row integration):** **Slice 1 COMPLETE** — market price rows on `PGMarketWidget` / `MarketScreen` wire sealed **ICON-001** via shared `buildMarketPriceRow` (`461090b` baseline; close @ local HEAD). **Slice 2+ (transport / supply chain)** remains pending.
 
-**MSV-001 production:** 8 Tier-1 + 8 Tier-2 under `apps/web/public/assets/milestones/` and `docs/design/milestones/icon-msv-001/` — manifest `MSV_001_PRODUCTION_MANIFEST.json`; runtime `MilestoneVisual` + `PGMilestonesWidget`; four pilots promoted (repaired `first_profit` only).
+**Next material visual workstream:** **MVI-001 Slice 2** — transport / supply-chain commodity rows (integration only; no new art family).
 
-**Deferred (not rejected):** transport mode/route glyphs (**TRV**), market table ICON-001 wiring (presentation), building state overlay badges, shell nav icon family, tutorial step vignettes (UX-heavy).
+**Integration backlog (high value):** transport cargo rows still omit `ResourceIcon` while inventory/warehouse/market price rows wire ICON-001 — see **MVI-001 Slice 2**.
+
+**MSV-001 production:** 8 Tier-1 + 8 Tier-2 under `apps/web/public/assets/milestones/` and `docs/design/milestones/icon-msv-001/` — manifest `MSV_001_PRODUCTION_MANIFEST.json`.
+
+**Deferred (not rejected):** TRV transport mode/route glyphs (content gap not justified), shell nav icon family (generic UI), tutorial step vignettes (UX-heavy), building state overlay badges, events illustration family.
+
+**Scenario B overall:** **IN PROGRESS** (integration slices continue; authored concept count unchanged).
 
 ---
 
@@ -202,7 +210,7 @@ No content-defined building **tiers/upgrades** in YAML; `level` fixed at 1 in do
 | Concept | Current | Target | Status |
 |---------|---------|--------|--------|
 | Routes (world) | PROCEDURAL curved paths | optional infra styling | SEALED / PROCEDURAL |
-| Transport orders | tables | vehicle ICON + cargo resource icons | GAP |
+| Transport orders | tables | cargo **ICON-001** (integration) | **INTEGRATION GAP** |
 | Logistics YAML routes | content | no vehicle art | FUTURE optional |
 
 ---
@@ -221,7 +229,7 @@ No content-defined building **tiers/upgrades** in YAML; `level` fixed at 1 in do
 | Concept | Current | Target | Status |
 |---------|---------|--------|--------|
 | Prices / supply-demand | charts (CH-010), tables | PROCEDURAL | BALANCED |
-| Resource rows | ICON-001 where wired | ICON | PARTIAL |
+| Resource rows | ICON-001 in inventory, warehouse, **market price rows (MVI-001 Slice 1)** | ICON | **PARTIAL — transport rows pending (MVI-001 Slice 2)** |
 
 ---
 
@@ -237,7 +245,7 @@ No content-defined building **tiers/upgrades** in YAML; `level` fixed at 1 in do
 
 | Scope | Count | Current | Target | Priority | Status |
 |-------|------:|---------|--------|----------|--------|
-| Milestones | 8 | **8/8 production** — MSV-001 | achievement primary + medallion | P2 | **MSV-001 ACTIVE / COMPLETE (8/8)** |
+| Milestones | 8 | **8/8 production** — MSV-001 | achievement primary + medallion | P2 | **SEALED — MSV-001 8/8 @ `461090b`** |
 
 ---
 
@@ -279,10 +287,13 @@ No content-defined building **tiers/upgrades** in YAML; `level` fixed at 1 in do
 | Consumer | Depends on |
 |----------|------------|
 | BuildingsScreen catalog | ICON-003 registry (**23/23 ACTIVE**) |
-| World map | **WBM-001** compact glyphs (`PGWorldBuildingMarker`) | **ACTIVE** |
+| World map | **WBM-001** compact glyphs (`PGWorldBuildingMarker`) — **ACTIVE** |
 | ProductionScreen | **ICON-005 SEALED** — `ProductionProcessVisual` in Rezeptkatalog |
 | ResearchScreen | ICON-004 **SEALED 22/22** Tier-1 detailed + category compact |
-| Player guidance (separate WS) | milestone icons optional overlap |
+| Milestones / operations | **MSV-001 SEALED** — `MilestoneVisual` / `PGMilestonesWidget` |
+| Market commodity price rows | **ICON-001 ACTIVE** — `buildMarketPriceRow` / `PGMarketWidget` / `MarketScreen` (MVI-001 Slice 1) |
+| Transport / supply-chain commodity rows | **ICON-001** — **MVI-001 Slice 2** (integration) |
+| Player guidance (separate WS) | optional reuse of MSV/ICON families — not blocking |
 
 ---
 

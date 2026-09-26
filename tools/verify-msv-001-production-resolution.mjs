@@ -4,7 +4,6 @@ import path from 'node:path';
 import sharp from 'sharp';
 
 const ROOT = path.resolve('D:/Cursor/Project Genesis');
-const PUBLIC = path.join(ROOT, 'apps/web/public/assets/milestones');
 const MANIFEST = path.join(ROOT, 'docs/design/milestones/icon-msv-001/MSV_001_PRODUCTION_MANIFEST.json');
 
 const AUTHORITATIVE_IDS = [

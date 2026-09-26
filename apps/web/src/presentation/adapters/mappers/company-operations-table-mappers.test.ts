@@ -7,10 +7,12 @@ import {
   mapMarketPriceRows,
   mapOperationsEmployeeRows,
   mapOperationsFinanceLedgerRows,
+  mapOperationsMarketRows,
   mapOperationsProductionJobs,
   mapOperationsSiteInventoryRows,
   mapOperationsWarehouseBlocks,
 } from '@/presentation/adapters/mappers/company-operations-table-mappers';
+import { ICON_001_RESOURCE_IDS, resolveResourceIconAssetId } from '@/presentation/assets/resource-icon-asset-ids';
 
 const SAMPLE_ECONOMY: EconomySectionViewData = {
   corporateTaxRateLabel: '15 %',
@@ -109,9 +111,67 @@ describe('company-operations-table-mappers', () => {
     );
 
     expect(rows[0]?.id).toBe('wood');
-    expect(rows[0]?.cells[0]).toBe('Holz');
+    expect(typeof rows[0]?.cells[0]).toBe('object');
     expect(rows[0]?.cells[1]).toBe('12 GC');
     expect(rows[0]?.cells[7]).toBe('25');
+
+    render(createElement(Fragment, null, rows[0]?.cells[0]));
+    expect(screen.getByText('Holz')).toBeTruthy();
+    expect(screen.getByRole('presentation', { hidden: true })).toBeTruthy();
+  });
+
+  it('mapOperationsMarketRows decorates price rows with ResourceIcon and preserves economic cells', () => {
+    const rows = mapOperationsMarketRows([
+      {
+        resourceId: 'steel',
+        resourceLabel: 'Stahl',
+        basePrice: 100,
+        lastPrice: 110,
+        totalSupply: 50,
+        baselineDemand: 40,
+        pressureIndex: 1.05,
+        trend: 'UP',
+      },
+    ]);
+
+    expect(rows[0]?.id).toBe('steel');
+    expect(rows[0]?.cells[1]).toBe('110 GC');
+    expect(typeof rows[0]?.cells[0]).toBe('object');
+
+    render(createElement(Fragment, null, rows[0]?.cells[0]));
+    expect(screen.getByText('Stahl')).toBeTruthy();
+    expect(screen.getByRole('presentation', { hidden: true })).toBeTruthy();
+  });
+
+  it('mapMarketPriceRows keeps unknown resources as label-only cells without crashing', () => {
+    const rows = mapMarketPriceRows(
+      [
+        {
+          resourceId: 'unknown_resource',
+          basePrice: 1,
+          lastPrice: 1,
+          tradeVolume: 0,
+          updatedAt: 0,
+          totalSupply: 0,
+          baselineDemand: 0,
+          pressureIndex: 1,
+          changeFromBase: 0,
+          changePercent: 0,
+          trend: 'STABLE',
+        },
+      ],
+      () => 'Unbekannt',
+    );
+
+    render(createElement(Fragment, null, rows[0]?.cells[0]));
+    expect(screen.getByText('Unbekannt')).toBeTruthy();
+    expect(screen.queryByRole('presentation', { hidden: true })).toBeNull();
+  });
+
+  it('ICON-001 enabled resources resolve for market row presentation', () => {
+    for (const resourceId of ICON_001_RESOURCE_IDS) {
+      expect(resolveResourceIconAssetId(resourceId)).toMatch(/^ICON-001-/);
+    }
   });
 
   it('mapOperationsSiteInventoryRows preserves resourceId and decorates the label cell', () => {

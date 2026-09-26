@@ -36,7 +36,10 @@ function buildMarketPriceRow(price: MarketPriceRowSource): PGOperationsTableRow 
   return Object.freeze({
     id: price.resourceId,
     cells: Object.freeze([
-      price.resourceLabel,
+      <span className="pg-resource-cell" key={`market-resource-${price.resourceId}`}>
+        <ResourceIcon resourceId={price.resourceId} />
+        <span className="pg-resource-cell-label">{price.resourceLabel}</span>
+      </span>,
       `${price.lastPrice.toLocaleString('de-DE')} GC`,
       `${price.changePercent > 0 ? '+' : ''}${price.changePercent.toLocaleString('de-DE')} %`,
       String(price.totalSupply),

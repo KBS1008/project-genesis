@@ -420,6 +420,18 @@
   overflow-x: auto;
 }
 
+.pg-market-widget .pg-resource-cell,
+.pg-market-screen .pg-resource-cell {
+  width: 100%;
+  min-width: 0;
+}
+
+.pg-market-widget .pg-resource-icon,
+.pg-market-screen .pg-resource-icon {
+  width: 56px;
+  height: 56px;
+}
+
 .pg-operations-table-search {
   display: grid;
   gap: var(--space-xs);
