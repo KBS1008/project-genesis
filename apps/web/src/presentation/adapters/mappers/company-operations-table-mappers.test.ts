@@ -10,8 +10,10 @@ import {
   mapOperationsMarketRows,
   mapOperationsProductionJobs,
   mapOperationsSiteInventoryRows,
+  mapOperationsTransportOrders,
   mapOperationsWarehouseBlocks,
 } from '@/presentation/adapters/mappers/company-operations-table-mappers';
+import { PGSupplyChainWidget } from '@/presentation/components/dashboard/PGSupplyChainWidget';
 import { ICON_001_RESOURCE_IDS, resolveResourceIconAssetId } from '@/presentation/assets/resource-icon-asset-ids';
 
 const SAMPLE_ECONOMY: EconomySectionViewData = {
@@ -172,6 +174,63 @@ describe('company-operations-table-mappers', () => {
     for (const resourceId of ICON_001_RESOURCE_IDS) {
       expect(resolveResourceIconAssetId(resourceId)).toMatch(/^ICON-001-/);
     }
+  });
+
+  it('mapOperationsTransportOrders preserves resourceId and transport fields for supply-chain rows', () => {
+    const rows = mapOperationsTransportOrders([
+      {
+        id: 'transport-1',
+        resourceId: 'wood',
+        routeLabel: 'Lager → Fabrik',
+        resourceLabel: 'Holz',
+        amountLabel: '10',
+        recipeLabel: 'Bretter',
+        statusLabel: 'Unterwegs',
+        durationLabel: '4',
+        progressLabel: '50 %',
+      },
+    ]);
+
+    expect(rows[0]?.resourceId).toBe('wood');
+    expect(rows[0]?.routeLabel).toBe('Lager → Fabrik');
+    expect(rows[0]?.amountLabel).toBe('10');
+    expect(rows[0]?.statusLabel).toBe('Unterwegs');
+    expect(rows[0]?.progressLabel).toBe('50 %');
+
+    render(
+      createElement(PGSupplyChainWidget, {
+        activeCount: 1,
+        orders: rows,
+        detailed: true,
+      }),
+    );
+    expect(screen.getByText('Holz')).toBeTruthy();
+    expect(screen.getByRole('presentation', { hidden: true })).toBeTruthy();
+    expect(screen.getByText('Lager → Fabrik')).toBeTruthy();
+    expect(screen.getByText('10')).toBeTruthy();
+  });
+
+  it('PGSupplyChainWidget keeps unknown transport resources as label-only cargo cells', () => {
+    render(
+      createElement(PGSupplyChainWidget, {
+        activeCount: 1,
+        orders: [
+          {
+            id: 'transport-unknown',
+            resourceId: 'unknown_resource',
+            routeLabel: 'A → B',
+            resourceLabel: 'Unbekannt',
+            amountLabel: '1',
+            statusLabel: 'Wartend',
+            progressLabel: '0 %',
+          },
+        ],
+      }),
+    );
+
+    expect(screen.getByText('Unbekannt')).toBeTruthy();
+    expect(screen.queryByRole('presentation', { hidden: true })).toBeNull();
+    expect(screen.getByText('A → B')).toBeTruthy();
   });
 
   it('mapOperationsSiteInventoryRows preserves resourceId and decorates the label cell', () => {

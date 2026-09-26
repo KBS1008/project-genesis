@@ -50,11 +50,11 @@
 
 **WBM-001 (World building markers):** **CLOSED / PASS / SEALED** — ICON-003 compact integration @ `7426c47` (no new authored PNGs).
 
-**MVI-001 (Market commodity row integration):** **Slice 1 COMPLETE** — market price rows on `PGMarketWidget` / `MarketScreen` wire sealed **ICON-001** via shared `buildMarketPriceRow` (`461090b` baseline; close @ local HEAD). **Slice 2+ (transport / supply chain)** remains pending.
+**MVI-001 (Market & commodity row integration):** **CLOSED / PASS / SEALED** — Slice 1 market price rows (`buildMarketPriceRow` / `PGMarketWidget` / `MarketScreen` @ `da1969c`); Slice 2 transport cargo rows (`PGSupplyChainWidget` / Company Operations + Executive dashboard @ local close). **ICON-001 reused; 0 new art.**
 
-**Next material visual workstream:** **MVI-001 Slice 2** — transport / supply-chain commodity rows (integration only; no new art family).
+**Next material visual workstream:** Scenario-B **reassessment** after MVI-001 (integration backlog for commodity rows cleared; deferred TRV / overlays / tutorials unchanged).
 
-**Integration backlog (high value):** transport cargo rows still omit `ResourceIcon` while inventory/warehouse/market price rows wire ICON-001 — see **MVI-001 Slice 2**.
+**Integration backlog (commodity rows):** cleared for scoped MVI-001 consumers (inventory, warehouse, market price, supply-chain transport orders). `TransportScreen` order list remains route/status-first by design — cargo identity in supply-chain widget surfaces.
 
 **MSV-001 production:** 8 Tier-1 + 8 Tier-2 under `apps/web/public/assets/milestones/` and `docs/design/milestones/icon-msv-001/` — manifest `MSV_001_PRODUCTION_MANIFEST.json`.
 
@@ -210,7 +210,7 @@ No content-defined building **tiers/upgrades** in YAML; `level` fixed at 1 in do
 | Concept | Current | Target | Status |
 |---------|---------|--------|--------|
 | Routes (world) | PROCEDURAL curved paths | optional infra styling | SEALED / PROCEDURAL |
-| Transport orders | tables | cargo **ICON-001** (integration) | **INTEGRATION GAP** |
+| Transport orders | supply-chain tables | cargo **ICON-001** | **ACTIVE — MVI-001 Slice 2** |
 | Logistics YAML routes | content | no vehicle art | FUTURE optional |
 
 ---
@@ -229,7 +229,7 @@ No content-defined building **tiers/upgrades** in YAML; `level` fixed at 1 in do
 | Concept | Current | Target | Status |
 |---------|---------|--------|--------|
 | Prices / supply-demand | charts (CH-010), tables | PROCEDURAL | BALANCED |
-| Resource rows | ICON-001 in inventory, warehouse, **market price rows (MVI-001 Slice 1)** | ICON | **PARTIAL — transport rows pending (MVI-001 Slice 2)** |
+| Resource rows | ICON-001 in inventory, warehouse, market price, **supply-chain transport** | ICON | **ACTIVE — commodity rows (MVI-001 sealed)** |
 
 ---
 
@@ -292,7 +292,7 @@ No content-defined building **tiers/upgrades** in YAML; `level` fixed at 1 in do
 | ResearchScreen | ICON-004 **SEALED 22/22** Tier-1 detailed + category compact |
 | Milestones / operations | **MSV-001 SEALED** — `MilestoneVisual` / `PGMilestonesWidget` |
 | Market commodity price rows | **ICON-001 ACTIVE** — `buildMarketPriceRow` / `PGMarketWidget` / `MarketScreen` (MVI-001 Slice 1) |
-| Transport / supply-chain commodity rows | **ICON-001** — **MVI-001 Slice 2** (integration) |
+| Transport / supply-chain commodity rows | **ICON-001 ACTIVE** — `PGSupplyChainWidget` (Company Operations + Executive dashboard) |
 | Player guidance (separate WS) | optional reuse of MSV/ICON families — not blocking |
 
 ---

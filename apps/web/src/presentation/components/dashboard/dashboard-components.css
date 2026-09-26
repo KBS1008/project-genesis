@@ -432,6 +432,16 @@
   height: 56px;
 }
 
+.pg-supply-chain-widget .pg-resource-cell {
+  width: 100%;
+  min-width: 0;
+}
+
+.pg-supply-chain-widget .pg-resource-icon {
+  width: 48px;
+  height: 48px;
+}
+
 .pg-operations-table-search {
   display: grid;
   gap: var(--space-xs);

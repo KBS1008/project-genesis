@@ -136,6 +136,7 @@ export type ResearchJobRowViewData = {
 
 export type TransportOrderRowViewData = {
   readonly id: string;
+  readonly resourceId: string;
   readonly routeLabel: string;
   readonly resourceLabel: string;
   readonly amountLabel: string;

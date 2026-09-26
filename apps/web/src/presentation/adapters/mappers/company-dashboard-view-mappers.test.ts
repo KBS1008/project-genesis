@@ -103,6 +103,13 @@ describe('company-dashboard-view-mappers', () => {
     expect(transportDetail?.entries.some(([, value]) => value === 'Fallback')).toBe(false);
   });
 
+  it('preserves resourceId on transport order row view-data', () => {
+    const viewData = buildCompanyDashboardViewData(createDashboardFixture(), []);
+
+    expect(viewData.transportOrders[0]?.resourceId).toBe('wood');
+    expect(viewData.transportOrders[0]?.resourceLabel).toBeTruthy();
+  });
+
   it('maps recipe catalog durations and energy rates to player cycles', () => {
     const dashboard: GameSessionDashboard = {
       ...createDashboardFixture(),

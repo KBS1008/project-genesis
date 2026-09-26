@@ -307,6 +307,7 @@ export function mapOperationsTransportOrders(
     orders.map((order) =>
       Object.freeze({
         id: order.id,
+        resourceId: order.resourceId,
         routeLabel: order.routeLabel,
         resourceLabel: order.resourceLabel,
         amountLabel: order.amountLabel,

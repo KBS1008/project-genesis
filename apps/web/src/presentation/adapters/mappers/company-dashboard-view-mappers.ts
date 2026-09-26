@@ -797,6 +797,7 @@ export function buildCompanyDashboardViewData(
     (dashboard.transportOrders ?? []).map((order) =>
       Object.freeze({
         id: order.id,
+        resourceId: order.resourceId,
         routeLabel: `${order.sourceBuildingName} → ${order.destinationBuildingName}`,
         resourceLabel: labels.resource(order.resourceId),
         amountLabel: String(order.amount),

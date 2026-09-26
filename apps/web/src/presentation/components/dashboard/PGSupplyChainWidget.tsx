@@ -1,11 +1,23 @@
 'use client';
 
+import type { ReactNode } from 'react';
+import { ResourceIcon } from '@/presentation/components/assets/ResourceIcon';
 import { PGWidgetSurface } from '@/presentation/components/foundation/PGWidgetSurface';
 import type { PGWidgetSurfaceProps } from '@/presentation/components/foundation/pg-widget-state';
 import { QueryRows } from '@/presentation/screens/shared/QueryRows';
 
+function transportResourceCell(resourceId: string, resourceLabel: string): ReactNode {
+  return (
+    <span className="pg-resource-cell">
+      <ResourceIcon resourceId={resourceId} />
+      <span className="pg-resource-cell-label">{resourceLabel}</span>
+    </span>
+  );
+}
+
 export type PGSupplyChainRow = {
   readonly id: string;
+  readonly resourceId: string;
   readonly routeLabel: string;
   readonly resourceLabel: string;
   readonly amountLabel: string;
@@ -61,7 +73,7 @@ export function PGSupplyChainWidget({
             id: order.id,
             cells: detailed
               ? [
-                  order.resourceLabel,
+                  transportResourceCell(order.resourceId, order.resourceLabel),
                   order.amountLabel,
                   order.routeLabel,
                   order.recipeLabel ?? '—',
@@ -71,7 +83,7 @@ export function PGSupplyChainWidget({
                 ]
               : [
                   order.routeLabel,
-                  order.resourceLabel,
+                  transportResourceCell(order.resourceId, order.resourceLabel),
                   order.amountLabel,
                   order.statusLabel,
                   order.progressLabel,
