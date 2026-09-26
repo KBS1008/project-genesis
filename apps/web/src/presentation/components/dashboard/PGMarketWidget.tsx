@@ -7,7 +7,7 @@ import { PGOperationsTable, type PGOperationsTableRow } from '@/presentation/com
 /** Market prices table for the operations dashboard. */
 export function PGMarketWidget({
   title = 'Markt',
-  subtitle = 'Preise, Angebot, Nachfrage und Trend je Ressource. Handelsgebühr: 2 % (min. 1 GC) pro Transaktion.',
+  subtitle = 'Preise, Angebot, Nachfrage und Trend je Ressource. Handelsgebühr: 2 % (min. 1 $) pro Transaktion.',
   rows,
   state = 'idle',
   errorMessage,

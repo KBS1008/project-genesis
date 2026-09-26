@@ -27,7 +27,7 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
         employee: (id: string) => id,
       },
       kpis: {
-        availableCashLabel: '1.000 GC',
+        availableCashLabel: '1.000 $',
         availableCashTrend: 'stabil',
         energyReserveLabel: '100',
         energyTrend: 'ok',

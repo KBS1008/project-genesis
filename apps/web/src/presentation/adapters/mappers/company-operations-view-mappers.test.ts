@@ -6,7 +6,7 @@ import {
 } from '@/presentation/adapters/mappers/company-operations-view-mappers';
 
 const SAMPLE_KPIS: KpiStripViewData = {
-  availableCashLabel: '10.000 GC',
+  availableCashLabel: '10.000 $',
   availableCashTrend: '+2 %',
   energyReserveLabel: '120',
   energyTrend: 'Stabil',
@@ -20,7 +20,7 @@ const SAMPLE_KPIS: KpiStripViewData = {
   assignedEmployeeCount: 3,
   employeeCount: 5,
   employeeCapacityHint: '3 / 5',
-  payrollLabel: '1.200 GC',
+  payrollLabel: '1.200 $',
   priceIndexLabel: '1,02',
   priceIndexHint: 'leicht über neutral',
   corporateTaxRateLabel: '15 %',

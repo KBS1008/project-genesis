@@ -18,7 +18,7 @@ expect.extend(matchers);
 describe('dashboard accessibility', () => {
   it('PGKpiCard has no axe violations', async () => {
     const { container } = renderPresentation(
-      <PGKpiCard label="Cash" value="1.000 GC" trend="+2 %" placeholder="{{cash}}" />,
+      <PGKpiCard label="Cash" value="1.000 $" trend="+2 %" placeholder="{{cash}}" />,
     );
 
     expect(await axe(container)).toHaveNoViolations();

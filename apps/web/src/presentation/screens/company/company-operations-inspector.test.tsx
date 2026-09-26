@@ -13,7 +13,7 @@ const BASE_DETAIL: CompanyDetailViewData = {
   hasEnergy: false,
   currency: 'GC',
   companyEntries: Object.freeze([['Firma', 'Test Corp'] as const]),
-  financeEntries: Object.freeze([['Kontostand', '1.000 GC'] as const]),
+  financeEntries: Object.freeze([['Kontostand', '1.000 $'] as const]),
   logisticsEntries: Object.freeze([]),
   energyEntries: Object.freeze([]),
   buildings: new Map([

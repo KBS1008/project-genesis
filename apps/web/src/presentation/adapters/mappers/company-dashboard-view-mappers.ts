@@ -39,12 +39,13 @@ import {
   formatNumber,
   formatProductionStatus,
   formatProgress,
-  formatSignedCurrency,
+  formatSignedCurrencyWithSymbol,
   formatSimulationTime,
   formatTick,
   formatTransactionAmount,
   formatTransactionType,
   formatTransportStatus,
+  toPlayerFacingCurrencySymbol,
   transactionDirectionClass,
   trendFromHistory,
   trendLabel,
@@ -142,7 +143,7 @@ function mapKpiStrip(
   const activeResearch = dashboard.researchJobs.filter((job) => job.status === 'IN_PROGRESS').length;
 
   return Object.freeze({
-    availableCashLabel: `${formatNumber(kpis.availableCash)} GC`,
+    availableCashLabel: formatCurrency(kpis.availableCash),
     availableCashTrend: trendFromHistory(chartPoints, 'availableCash', 'Liquidität'),
     energyReserveLabel: formatEnergy(kpis.energyReserve),
     energyTrend: kpis.energyHasDeficit
@@ -164,14 +165,14 @@ function mapKpiStrip(
       kpis.employeeCount > 0
         ? `${kpis.assignedEmployeeCount}/${kpis.employeeCount} zugewiesen`
         : trendLabel('stable', 'Personal'),
-    payrollLabel: `${formatNumber(kpis.payrollPerInterval)} GC Payroll / 10 Ticks`,
+    payrollLabel: `${formatCurrency(kpis.payrollPerInterval)} Payroll / 10 Ticks`,
     priceIndexLabel: kpis.priceIndex.toFixed(2),
     priceIndexHint: trendLabel('stable', 'Neutral bei 1,00'),
     corporateTaxRateLabel: `${(kpis.corporateTaxRate * 100).toFixed(0)} %`,
     taxTrendLabel: kpis.taxPaymentBlocked
       ? trendLabel(
           'down',
-          `${formatNumber(kpis.pendingTaxAmount)} GC offen · Kasse zu niedrig`,
+          `${formatCurrency(kpis.pendingTaxAmount)} offen · Kasse zu niedrig`,
         )
       : `${kpis.activeContractCount} aktiv · alle ${kpis.taxIntervalTicks} Ticks`,
     taxPaymentBlocked: kpis.taxPaymentBlocked,
@@ -295,7 +296,7 @@ function mapSidebarHints(dashboard: GameSessionDashboard): SidebarHintsViewData 
         Object.freeze({
           employeeTypeId: hint.employeeTypeId,
           name: hint.name,
-          costLabel: `${formatNumber(hint.cost)} GC`,
+          costLabel: formatCurrency(hint.cost),
           defaultDisplayName: hint.defaultDisplayName,
           canHire: hint.canHire,
           reason: hint.reason,
@@ -352,7 +353,7 @@ function mapEconomySection(
         id: contract.id,
         resourceLabel: labels.resource(contract.resourceId),
         amount: contract.amount,
-        paymentLabel: `${formatNumber(contract.paymentAmount)} GC`,
+        paymentLabel: formatCurrency(contract.paymentAmount),
         intervalLabel: `${contract.intervalTicks} Ticks`,
         statusLabel: formatContractStatus(contract.active),
       }),
@@ -365,7 +366,7 @@ function mapEconomySection(
     priceIndexLabel: dashboard.economy.priceIndex.toFixed(2),
     taxPaymentBlocked: dashboard.economy.taxPaymentBlocked,
     pendingTaxLabel: dashboard.economy.taxPaymentBlocked
-      ? `${formatNumber(dashboard.economy.pendingTaxAmount)} GC`
+      ? formatCurrency(dashboard.economy.pendingTaxAmount)
       : null,
     contracts,
   });
@@ -533,7 +534,7 @@ function mapCompanyDetail(
         entries: Object.freeze([
           kv('ID', employee.id),
           kv('Typ', labels.employee(employee.employeeTypeId)),
-          kv('Gehalt', `${formatNumber(employee.salary)} GC`),
+          kv('Gehalt', formatCurrency(employee.salary)),
           kv('Produktivität', employee.productivity.toFixed(2)),
           kv('Status', employee.status),
           kv('Eingestellt', String(employee.hiredAt)),
@@ -555,7 +556,11 @@ function mapCompanyDetail(
           kv('Richtung', transaction.direction),
           kv(
             'Betrag',
-            `${formatTransactionAmount(transaction.direction, transaction.amount)} ${currency}`,
+            formatSignedCurrencyWithSymbol(
+              transaction.direction,
+              transaction.amount,
+              currency,
+            ),
             transactionDirectionClass(transaction.direction),
           ),
           kv('Saldo vorher', formatCurrency(transaction.balanceBefore, currency)),
@@ -602,8 +607,12 @@ function mapCompanyDetail(
       Object.freeze({
         id: transaction.id,
         typeLabel: formatTransactionType(transaction.transactionType),
-        amountLabel: `${formatTransactionAmount(transaction.direction, transaction.amount)} ${currency}`,
-        balanceLabel: formatNumber(transaction.balanceAfter),
+        amountLabel: formatSignedCurrencyWithSymbol(
+          transaction.direction,
+          transaction.amount,
+          currency,
+        ),
+        balanceLabel: formatCurrency(transaction.balanceAfter, currency),
         timestampLabel: String(transaction.timestamp),
         directionClass: transactionDirectionClass(transaction.direction),
       }),
@@ -639,7 +648,7 @@ function mapCompanyDetail(
         ? Object.freeze([])
         : Object.freeze([
             kv('Konto-ID', dashboard.finance.id),
-            kv('Währung', dashboard.finance.currency),
+            kv('Währung', toPlayerFacingCurrencySymbol(dashboard.finance.currency)),
             kv('Cash', formatCurrency(dashboard.finance.cashBalance, dashboard.finance.currency)),
             kv('Reserviert', formatCurrency(dashboard.finance.reservedCash, dashboard.finance.currency)),
             kv('Verfügbar', formatCurrency(dashboard.finance.availableCash, dashboard.finance.currency)),
@@ -754,6 +763,7 @@ export function buildCompanyDashboardViewData(
 
   const labels = buildContentLabels(dashboard);
   const hasGame = dashboard.company !== null;
+  const currency = dashboard.finance?.currency ?? 'GC';
 
   const employees: readonly EmployeeRowViewData[] = Object.freeze(
     dashboard.employees.map((employee) =>
@@ -762,7 +772,7 @@ export function buildCompanyDashboardViewData(
         displayName: employee.displayName,
         employeeTypeId: employee.employeeTypeId,
         employeeTypeLabel: labels.employee(employee.employeeTypeId),
-        salaryLabel: formatNumber(employee.salary),
+        salaryLabel: formatCurrency(employee.salary),
         productivityLabel: employee.productivity.toFixed(2),
         assignmentLabel: employee.assignedBuildingName ?? '—',
       }),
@@ -814,8 +824,12 @@ export function buildCompanyDashboardViewData(
       Object.freeze({
         id: transaction.id,
         typeLabel: formatTransactionType(transaction.transactionType),
-        amountLabel: formatTransactionAmount(transaction.direction, transaction.amount),
-        balanceLabel: formatNumber(transaction.balanceAfter),
+        amountLabel: formatSignedCurrencyWithSymbol(
+          transaction.direction,
+          transaction.amount,
+          currency,
+        ),
+        balanceLabel: formatCurrency(transaction.balanceAfter, currency),
         timestampLabel: String(transaction.timestamp),
         directionClass: transactionDirectionClass(transaction.direction),
       }),

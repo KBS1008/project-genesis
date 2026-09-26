@@ -10,6 +10,7 @@ import {
   YAxis,
 } from 'recharts';
 import type { TickMetricsViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
+import { formatCurrency } from '@/presentation/formatting/presentation-formatters';
 import { PGChartTooltip, PGChartTooltipValue } from '@/presentation/components/dashboard/charts/PGChartTooltip';
 import { PGChartWidget } from '@/presentation/components/dashboard/charts/PGChartWidget';
 import {
@@ -32,7 +33,7 @@ const METRIC_CHARTS: readonly MetricChartConfig[] = Object.freeze([
     key: 'availableCash',
     label: 'Verfügbares Cash',
     color: 'var(--color-primary)',
-    formatValue: (value) => `${value.toLocaleString('de-DE')} GC`,
+    formatValue: (value) => formatCurrency(value),
   },
   {
     key: 'energyReserve',

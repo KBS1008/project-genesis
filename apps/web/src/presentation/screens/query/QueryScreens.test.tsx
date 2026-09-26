@@ -10,8 +10,8 @@ const { useScreenQueryMock } = vi.hoisted(() => ({
       {
         id: 'tx-1',
         typeLabel: 'Einnahme',
-        amountLabel: '+100 GC',
-        balanceLabel: '1.100 GC',
+        amountLabel: '+100 $',
+        balanceLabel: '1.100 $',
       },
     ],
     isLoading: false,

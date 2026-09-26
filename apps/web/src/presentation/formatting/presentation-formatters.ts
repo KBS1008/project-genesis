@@ -2,12 +2,37 @@
 
 import type { TickMetricsSnapshot } from '@/presentation/adapters/api/client';
 
+/** Player-facing monetary marker (internal domain currency code remains `GC`). */
+export const PLAYER_FACING_CURRENCY_SYMBOL = '$';
+
+/** Maps persisted/internal currency codes to the player-facing marker. */
+export function toPlayerFacingCurrencySymbol(internalCurrencyCode: string): string {
+  if (internalCurrencyCode === 'GC') {
+    return PLAYER_FACING_CURRENCY_SYMBOL;
+  }
+
+  return internalCurrencyCode;
+}
+
 export function formatNumber(value: number, locale = 'de-DE'): string {
   return value.toLocaleString(locale);
 }
 
-export function formatCurrency(value: number, currency = 'GC', locale = 'de-DE'): string {
-  return `${value.toLocaleString(locale)} ${currency}`;
+export function formatCurrency(
+  value: number,
+  internalCurrencyCode = 'GC',
+  locale = 'de-DE',
+): string {
+  return `${value.toLocaleString(locale)} ${toPlayerFacingCurrencySymbol(internalCurrencyCode)}`;
+}
+
+export function formatSignedCurrencyWithSymbol(
+  direction: string,
+  amount: number,
+  internalCurrencyCode = 'GC',
+  locale = 'de-DE',
+): string {
+  return `${formatSignedCurrency(direction, amount, locale)} ${toPlayerFacingCurrencySymbol(internalCurrencyCode)}`;
 }
 
 export function formatSignedCurrency(

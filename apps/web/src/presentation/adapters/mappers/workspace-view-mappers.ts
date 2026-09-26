@@ -11,6 +11,7 @@ import { formatPlayerGameSpeedMultiplier } from '@/presentation/formatting/playe
 import {
   formatEventCategory,
   formatEventSeverity,
+  formatCurrency,
   formatNumber,
   formatProductionStatus,
   formatTick,
@@ -146,7 +147,7 @@ export function mapMarketRowsViewData(
       Object.freeze({
         resourceId: price.resourceId,
         resourceLabel: labelResource(price.resourceId),
-        lastPriceLabel: `${price.lastPrice.toLocaleString('de-DE')} GC`,
+        lastPriceLabel: formatCurrency(price.lastPrice),
         trendLabel:
           price.trend === 'UP' ? 'Steigend' : price.trend === 'DOWN' ? 'Fallend' : 'Stabil',
         pressureLabel: price.pressureIndex.toFixed(2),

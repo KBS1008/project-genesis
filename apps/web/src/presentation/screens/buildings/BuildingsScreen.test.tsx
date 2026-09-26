@@ -28,7 +28,7 @@ const defaultWorkspace = {
       technology: (id: string) => id,
       employee: (id: string) => id,
     },
-    kpis: { availableCashLabel: '95.000 GC' },
+    kpis: { availableCashLabel: '95.000 $' },
     hints: {
       placeBuilding: [
         {

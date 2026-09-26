@@ -13,7 +13,7 @@ import { buildOperationsOverviewCards } from '@/presentation/adapters/mappers/co
 import { renderPresentation } from '@/presentation/testing/presentation-test-harness';
 
 const SAMPLE_KPIS: KpiStripViewData = {
-  availableCashLabel: '10.000 GC',
+  availableCashLabel: '10.000 $',
   availableCashTrend: '+2 %',
   energyReserveLabel: '120',
   energyTrend: 'Stabil',
@@ -27,7 +27,7 @@ const SAMPLE_KPIS: KpiStripViewData = {
   assignedEmployeeCount: 1,
   employeeCount: 2,
   employeeCapacityHint: '1 / 2',
-  payrollLabel: '500 GC',
+  payrollLabel: '500 $',
   priceIndexLabel: '1,00',
   priceIndexHint: 'neutral',
   corporateTaxRateLabel: '15 %',

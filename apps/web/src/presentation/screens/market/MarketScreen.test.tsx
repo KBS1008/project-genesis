@@ -50,7 +50,7 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
         resource: (id: string) => (id === 'wood' ? 'Holz' : id),
       },
       kpis: {
-        availableCashLabel: '100.000 GC',
+        availableCashLabel: '100.000 $',
         priceIndexLabel: '1,02',
       },
       inventoryItems: [
@@ -92,8 +92,8 @@ describe('MarketScreen', () => {
     expect(screen.getByRole('heading', { name: 'Regionaler Markt' })).toBeInTheDocument();
     expect(screen.getByLabelText('Regionale Marktauswahl')).toHaveValue('region_001');
     expect(screen.getByRole('cell', { name: 'Holz' })).toBeInTheDocument();
-    expect(screen.getByRole('cell', { name: '12 GC' })).toBeInTheDocument();
-    expect(screen.getByText('100.000 GC')).toBeInTheDocument();
+    expect(screen.getByRole('cell', { name: '12 $' })).toBeInTheDocument();
+    expect(screen.getByText('100.000 $')).toBeInTheDocument();
     expect(screen.getByLabelText('Handelsressource auswählen')).toHaveValue('wood');
     expect(screen.getByRole('button', { name: 'Kaufen' })).toBeEnabled();
     expect(screen.getByRole('button', { name: 'Verkaufen' })).toBeEnabled();

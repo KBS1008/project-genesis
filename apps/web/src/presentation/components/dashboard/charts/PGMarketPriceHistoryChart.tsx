@@ -15,6 +15,7 @@ import type { TickMetricsViewData } from '@/presentation/adapters/view-data/comp
 import { PGChartTooltip, PGChartTooltipValue } from '@/presentation/components/dashboard/charts/PGChartTooltip';
 import { PGChartWidget } from '@/presentation/components/dashboard/charts/PGChartWidget';
 import { pgChartResourceColor } from '@/presentation/components/dashboard/charts/pg-chart-resource-colors';
+import { formatCurrency } from '@/presentation/formatting/presentation-formatters';
 import {
   PG_CHART_AXIS_LINE,
   PG_CHART_AXIS_TICK,
@@ -72,7 +73,7 @@ export function PGMarketPriceHistoryChart({
                 .slice(0, 3)
                 .map((resourceId) => {
                   const price = latest.marketPrices.find((entry) => entry.resourceId === resourceId);
-                  return `${labelResource(resourceId)} ${(price?.lastPrice ?? 0).toLocaleString('de-DE')} GC`;
+                  return `${labelResource(resourceId)} ${formatCurrency(price?.lastPrice ?? 0)}`;
                 })
                 .join(' · ')
             : undefined
@@ -107,7 +108,7 @@ export function PGMarketPriceHistoryChart({
                       <PGChartTooltipValue
                         key={entry.name}
                         name={labelResource(String(entry.name ?? ''))}
-                        value={`${(entry.value ?? 0).toLocaleString('de-DE')} GC`}
+                        value={formatCurrency(Number(entry.value ?? 0))}
                         color={entry.color}
                       />
                     ))}

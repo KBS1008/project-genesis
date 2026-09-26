@@ -26,7 +26,7 @@ const HINTS: SidebarHintsViewData = Object.freeze({
     Object.freeze({
       employeeTypeId: 'worker',
       name: 'Arbeiter',
-      costLabel: '500 GC',
+      costLabel: '500 $',
       defaultDisplayName: 'Arbeiter 1',
       canHire: true,
       reason: null,
@@ -58,7 +58,7 @@ describe('PGOperationsSidebar', () => {
 
     render(<PGOperationsSidebar hasGame hints={HINTS} runAction={runAction} />);
 
-    await user.click(screen.getByRole('button', { name: 'Arbeiter (500 GC)' }));
+    await user.click(screen.getByRole('button', { name: 'Arbeiter (500 $)' }));
 
     expect(runAction).toHaveBeenCalledTimes(1);
     expect(hireEmployee).toHaveBeenCalledWith({

@@ -21,6 +21,7 @@ import { EmployeePrerequisitesSpecification } from '../../domain/specifications/
 import { ProductionJobStatus } from '../../domain/production/ProductionJobStatus.js';
 import { ResearchJobStatus } from '../../domain/research/ResearchJobStatus.js';
 import { TransportOrderStatus } from '../../domain/transport/TransportOrderStatus.js';
+import { formatPlayerFacingCurrencyAmount } from './player-facing-currency-format.js';
 import type { BuildingReadModel } from '../read-models/BuildingReadModel.js';
 import type { FinanceReadModel } from '../read-models/FinanceReadModel.js';
 import type { FinanceTransactionReadModel } from '../read-models/FinanceTransactionReadModel.js';
@@ -493,7 +494,7 @@ export class GameSessionDashboardBuilder {
             reason = `Forschung „${missingResearch}“ fehlt.`;
           } else if (input.finance.availableCash < buildingType.constructionCost) {
             canPlace = false;
-            reason = `Benötigt ${buildingType.constructionCost.toLocaleString('de-DE')} GC.`;
+            reason = `Benötigt ${formatPlayerFacingCurrencyAmount(buildingType.constructionCost)}.`;
           }
 
           return Object.freeze({
@@ -671,7 +672,7 @@ export class GameSessionDashboardBuilder {
             reason = `Meilenstein „${missingMilestone}“ fehlt.`;
           } else if (input.finance.availableCash < technology.researchCost) {
             canStart = false;
-            reason = `Benötigt ${technology.researchCost.toLocaleString('de-DE')} GC.`;
+            reason = `Benötigt ${formatPlayerFacingCurrencyAmount(technology.researchCost)}.`;
           }
 
           return Object.freeze({
@@ -722,7 +723,7 @@ export class GameSessionDashboardBuilder {
                 : null
               : !hasWarehouseSpace
                 ? `Lagerhaus voll (${primaryWarehouse?.usedCapacity ?? 0}/${primaryWarehouse?.storageCapacity ?? 0}).`
-                : `Benötigt ${buyCost.toLocaleString('de-DE')} GC inkl. Marktgebühr.`,
+                : `Benötigt ${formatPlayerFacingCurrencyAmount(buyCost)} inkl. Marktgebühr.`,
             sellReason: canSell
               ? null
               : `Benötigt ${DEFAULT_TRADE_AMOUNT}× ${resource.name} am Standort (nicht im Lager).`,
@@ -780,7 +781,7 @@ export class GameSessionDashboardBuilder {
             reason = prerequisitesResult.error.message;
           } else if (input.finance.availableCash < employeeType.cost) {
             canHire = false;
-            reason = `Benötigt ${employeeType.cost.toLocaleString('de-DE')} GC.`;
+            reason = `Benötigt ${formatPlayerFacingCurrencyAmount(employeeType.cost)}.`;
           }
 
           return Object.freeze({
@@ -914,7 +915,7 @@ export class GameSessionDashboardBuilder {
         id: 'npc_supply_contract',
         title: 'NPC-Liefervertrag nutzen',
         description:
-          'Ein Abnehmer kauft alle 20 Ticks 5 Holz vom Standort-Inventar für 125 GC — halten Sie genug Holz bereit.',
+          'Ein Abnehmer kauft alle 20 Ticks 5 Holz vom Standort-Inventar für 125 $ — halten Sie genug Holz bereit.',
         completed: hasContractPayment,
       }),
       Object.freeze({

@@ -12,7 +12,7 @@ describe('company-overview-view-mappers', () => {
         headerSubtitle: 'Tick 3',
         overview: Object.freeze({
           cards: Object.freeze([
-            Object.freeze({ label: 'Cash', value: '1.000 GC', hint: 'Verfügbar' }),
+            Object.freeze({ label: 'Cash', value: '1.000 $', hint: 'Verfügbar' }),
           ]),
         }),
         inventoryItems: Object.freeze([]),
@@ -23,7 +23,7 @@ describe('company-overview-view-mappers', () => {
         detail: {
           ...EMPTY_COMPANY_DASHBOARD_VIEW_DATA.detail,
           hasFinance: true,
-          financeEntries: Object.freeze([Object.freeze(['Cash', '1.000 GC'] as const)]),
+          financeEntries: Object.freeze([Object.freeze(['Cash', '1.000 $'] as const)]),
         },
       },
       Object.freeze([
@@ -33,6 +33,8 @@ describe('company-overview-view-mappers', () => {
           description: '',
           worldId: 'world_001',
           biomeId: 'temperate',
+          biomeName: 'Gemäßigt',
+          biomeCategory: 'TEMPERATE',
           mapX: 0,
           mapY: 0,
           neighborRegionIds: Object.freeze([]),

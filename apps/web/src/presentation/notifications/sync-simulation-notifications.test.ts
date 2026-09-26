@@ -28,7 +28,7 @@ function createRuntimeFixture(): CompanyDashboardViewData {
       },
     ]),
     kpis: {
-      availableCashLabel: '1.000 GC',
+      availableCashLabel: '1.000 $',
       availableCashTrend: 'stabil',
       energyReserveLabel: '10',
       energyTrend: 'Defizit',
@@ -42,7 +42,7 @@ function createRuntimeFixture(): CompanyDashboardViewData {
       assignedEmployeeCount: 1,
       employeeCount: 2,
       employeeCapacityHint: '1/2',
-      payrollLabel: '100 GC',
+      payrollLabel: '100 $',
       priceIndexLabel: '1.00',
       priceIndexHint: 'stabil',
       corporateTaxRateLabel: '20 %',

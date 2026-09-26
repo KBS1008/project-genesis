@@ -14,10 +14,10 @@ import { renderPresentation } from '@/presentation/testing/presentation-test-har
 
 describe('dashboard components', () => {
   it('PGKpiCard renders label and value with accessibility label', () => {
-    renderPresentation(<PGKpiCard label="Cash" value="1.000 GC" trend="+2 %" placeholder="{{cash}}" />);
+    renderPresentation(<PGKpiCard label="Cash" value="1.000 $" trend="+2 %" placeholder="{{cash}}" />);
 
     expect(screen.getByLabelText('Cash')).toBeInTheDocument();
-    expect(screen.getByText('1.000 GC')).toBeInTheDocument();
+    expect(screen.getByText('1.000 $')).toBeInTheDocument();
   });
 
   it('PGStatusPanel renders status rows', () => {

@@ -21,13 +21,13 @@ const SAMPLE_ECONOMY: EconomySectionViewData = {
   taxIntervalTicks: 30,
   priceIndexLabel: '1,02',
   taxPaymentBlocked: true,
-  pendingTaxLabel: '500 GC',
+  pendingTaxLabel: '500 $',
   contracts: Object.freeze([
     {
       id: 'contract-1',
       resourceLabel: 'Eisen',
       amount: 10,
-      paymentLabel: '100 GC',
+      paymentLabel: '100 $',
       intervalLabel: '30 Ticks',
       statusLabel: 'Aktiv',
     },
@@ -42,7 +42,7 @@ describe('company-operations-table-mappers', () => {
     expect(panel.subtitle).toContain('1,02');
     expect(panel.subtitle).not.toContain('Unternehmenssteuer 5 %');
     expect(panel.warning).toBe(true);
-    expect(panel.taxWarning).toContain('500 GC');
+    expect(panel.taxWarning).toContain('500 $');
     expect(panel.contractRows).toHaveLength(1);
   });
 
@@ -53,7 +53,7 @@ describe('company-operations-table-mappers', () => {
         displayName: 'Anna',
         employeeTypeId: 'employee_production_worker',
         employeeTypeLabel: 'Produktion',
-        salaryLabel: '100 GC',
+        salaryLabel: '100 $',
         productivityLabel: '1,0',
         assignmentLabel: 'Fabrik A',
       },
@@ -82,14 +82,14 @@ describe('company-operations-table-mappers', () => {
       {
         id: 'tx-1',
         typeLabel: 'Kauf',
-        amountLabel: '-50 GC',
-        balanceLabel: '950 GC',
+        amountLabel: '-50 $',
+        balanceLabel: '950 $',
         timestampLabel: 'Tick 12',
         directionClass: 'negative',
       },
     ]);
 
-    expect(rows[0]?.cells).toEqual(['Kauf', '-50 GC', '950 GC', 'Tick 12']);
+    expect(rows[0]?.cells).toEqual(['Kauf', '-50 $', '950 $', 'Tick 12']);
   });
 
   it('mapMarketPriceRows maps regional prices with trade volume', () => {
@@ -114,7 +114,7 @@ describe('company-operations-table-mappers', () => {
 
     expect(rows[0]?.id).toBe('wood');
     expect(typeof rows[0]?.cells[0]).toBe('object');
-    expect(rows[0]?.cells[1]).toBe('12 GC');
+    expect(rows[0]?.cells[1]).toBe('12 $');
     expect(rows[0]?.cells[7]).toBe('25');
 
     render(createElement(Fragment, null, rows[0]?.cells[0]));
@@ -137,7 +137,7 @@ describe('company-operations-table-mappers', () => {
     ]);
 
     expect(rows[0]?.id).toBe('steel');
-    expect(rows[0]?.cells[1]).toBe('110 GC');
+    expect(rows[0]?.cells[1]).toBe('110 $');
     expect(typeof rows[0]?.cells[0]).toBe('object');
 
     render(createElement(Fragment, null, rows[0]?.cells[0]));

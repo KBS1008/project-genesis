@@ -1,3 +1,4 @@
+import { formatCurrency } from '@/presentation/formatting/presentation-formatters';
 import type { ReactNode } from 'react';
 import type { MarketPriceReadModel } from '@/presentation/adapters/api/client';
 import type { PGOperationsTableRow } from '@/presentation/components/dashboard/PGOperationsTable';
@@ -40,7 +41,7 @@ function buildMarketPriceRow(price: MarketPriceRowSource): PGOperationsTableRow 
         <ResourceIcon resourceId={price.resourceId} />
         <span className="pg-resource-cell-label">{price.resourceLabel}</span>
       </span>,
-      `${price.lastPrice.toLocaleString('de-DE')} GC`,
+      formatCurrency(price.lastPrice),
       `${price.changePercent > 0 ? '+' : ''}${price.changePercent.toLocaleString('de-DE')} %`,
       String(price.totalSupply),
       String(price.baselineDemand),
