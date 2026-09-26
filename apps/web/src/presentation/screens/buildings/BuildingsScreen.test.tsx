@@ -11,6 +11,7 @@ import {
 
 const runCommand = vi.fn();
 const selectEntity = vi.fn();
+const navigatePlaceBuildingPrerequisite = vi.fn();
 
 const defaultNavigation = { screen: 'buildings' as const, entitySelection: { kind: 'none' as const } };
 
@@ -37,6 +38,7 @@ const defaultWorkspace = {
           category: 'PRODUCTION',
           canPlace: true,
           reason: null,
+          prerequisiteNavigation: null,
         },
       ],
       production: [],
@@ -63,6 +65,7 @@ const defaultWorkspace = {
   runCommand,
   navigation: defaultNavigation,
   selectEntity,
+  navigatePlaceBuildingPrerequisite,
 } as unknown as GameWorkspaceContextValue;
 
 vi.mock('@/presentation/hooks/useScreenQuery', () => ({
@@ -139,6 +142,7 @@ describe('BuildingsScreen', () => {
               category: 'UNKNOWN',
               canPlace: false,
               reason: 'Nicht baubar',
+              prerequisiteNavigation: null,
             },
           ],
           production: [],
@@ -161,6 +165,43 @@ describe('BuildingsScreen', () => {
     expect(catalog.getByText('Unbekanntes Gebäude')).toBeInTheDocument();
     expect(catalog.getByText('UNKNOWN')).toBeInTheDocument();
     expect(baukatalog?.querySelector('.pg-operation-hint-category svg')).toBeNull();
+  });
+
+  it('renders prerequisite navigation for locked research blockers', async () => {
+    vi.mocked(useGameWorkspace).mockReturnValue({
+      ...defaultWorkspace,
+      companyViewData: {
+        ...defaultWorkspace.companyViewData,
+        hints: {
+          ...defaultWorkspace.companyViewData.hints,
+          placeBuilding: [
+            {
+              buildingTypeId: 'rail_terminal',
+              name: 'Bahnterminal',
+              category: 'INFRASTRUCTURE',
+              canPlace: false,
+              reason: 'Forschung „Intermodale Logistik“ fehlt.',
+              prerequisiteNavigation: {
+                kind: 'missing_research',
+                technologyId: 'intermodal_logistics',
+              },
+            },
+          ],
+        },
+      },
+      navigatePlaceBuildingPrerequisite,
+    } as unknown as GameWorkspaceContextValue);
+
+    const user = userEvent.setup();
+    navigatePlaceBuildingPrerequisite.mockClear();
+    render(<BuildingsScreen />);
+
+    await user.click(screen.getByRole('button', { name: 'Zur Forschung' }));
+
+    expect(navigatePlaceBuildingPrerequisite).toHaveBeenCalledWith({
+      kind: 'missing_research',
+      technologyId: 'intermodal_logistics',
+    });
   });
 
   it('submits placement through runCommand', async () => {

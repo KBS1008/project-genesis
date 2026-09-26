@@ -48,6 +48,8 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
     runCommand: vi.fn(),
     navigation: defaultNavigation,
     selectEntity,
+    researchCatalogFocusTechnologyId: null,
+    clearResearchCatalogFocus: vi.fn(),
   }),
 }));
 

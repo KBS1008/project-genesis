@@ -52,7 +52,11 @@ import { NotificationSyncSession } from '@/presentation/runtime/notification-syn
 import { buildEntityCatalogRegionIds } from '@/presentation/adapters/mappers/workspace-view-mappers';
 import type { CompanyDashboardViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
 import { EMPTY_COMPANY_DASHBOARD_VIEW_DATA } from '@/presentation/adapters/view-data/company-dashboard-view-data';
+import type { PlaceBuildingPrerequisiteNavigationViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
 import type { WorkspaceViewData } from '@/presentation/adapters/view-data/workspace-view-data';
+import {
+  resolvePlaceBuildingPrerequisiteNavigation,
+} from '@/presentation/navigation/place-building-prerequisite-navigation';
 import {
   buildEntityCatalogFromDashboard,
   buildNavigationQueryString,
@@ -89,6 +93,13 @@ export type GameWorkspaceContextValue = {
   ) => Promise<void>;
   readonly markSessionSaved: (savePath?: string) => void;
   readonly navigateToTarget: (target: EntityNavigationTarget) => void;
+  readonly navigatePlaceBuildingPrerequisite: (
+    navigation: PlaceBuildingPrerequisiteNavigationViewData,
+  ) => void;
+  readonly researchCatalogFocusTechnologyId: string | null;
+  readonly clearResearchCatalogFocus: () => void;
+  readonly pendingCompanyOperationsView: boolean;
+  readonly clearPendingCompanyOperationsView: () => void;
   readonly simulationNotificationItems: readonly PGNotificationItem[];
   readonly criticalAnnouncement: string | null;
   readonly executeNotificationAction: (
@@ -149,6 +160,10 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
   const [isDataStale, setIsDataStale] = useState(false);
   const [recoverableError, setRecoverableError] = useState<string | null>(null);
   const [isSessionDirty, setIsSessionDirty] = useState(false);
+  const [researchCatalogFocusTechnologyId, setResearchCatalogFocusTechnologyId] = useState<
+    string | null
+  >(null);
+  const [pendingCompanyOperationsView, setPendingCompanyOperationsView] = useState(false);
   const [simulationNotificationItems, setSimulationNotificationItems] = useState<
     readonly PGNotificationItem[]
   >(Object.freeze([]));
@@ -646,6 +661,24 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
     [replaceNavigation],
   );
 
+  const clearResearchCatalogFocus = useCallback(() => {
+    setResearchCatalogFocusTechnologyId(null);
+  }, []);
+
+  const clearPendingCompanyOperationsView = useCallback(() => {
+    setPendingCompanyOperationsView(false);
+  }, []);
+
+  const navigatePlaceBuildingPrerequisite = useCallback(
+    (navigation: PlaceBuildingPrerequisiteNavigationViewData) => {
+      const resolved = resolvePlaceBuildingPrerequisiteNavigation(navigation);
+      setResearchCatalogFocusTechnologyId(resolved.researchCatalogTechnologyId);
+      setPendingCompanyOperationsView(navigation.kind === 'missing_milestone');
+      navigateToTarget(resolved.target);
+    },
+    [navigateToTarget],
+  );
+
   const navigateToScreen = useCallback(
     (screen: PrimaryScreenId) => {
       replaceNavigation(
@@ -739,6 +772,11 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
       runCommand,
       markSessionSaved,
       navigateToTarget,
+      navigatePlaceBuildingPrerequisite,
+      researchCatalogFocusTechnologyId,
+      clearResearchCatalogFocus,
+      pendingCompanyOperationsView,
+      clearPendingCompanyOperationsView,
       simulationNotificationItems,
       criticalAnnouncement,
       executeNotificationAction,
@@ -765,6 +803,11 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
       runCommand,
       markSessionSaved,
       navigateToTarget,
+      navigatePlaceBuildingPrerequisite,
+      researchCatalogFocusTechnologyId,
+      clearResearchCatalogFocus,
+      pendingCompanyOperationsView,
+      clearPendingCompanyOperationsView,
       simulationNotificationItems,
       criticalAnnouncement,
       executeNotificationAction,

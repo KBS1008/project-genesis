@@ -253,6 +253,7 @@ function mapSidebarHints(dashboard: GameSessionDashboard): SidebarHintsViewData 
           category: hint.category,
           canPlace: hint.canPlace,
           reason: hint.reason,
+          prerequisiteNavigation: hint.prerequisiteNavigation ?? null,
         }),
       ),
     ),

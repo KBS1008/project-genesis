@@ -16,12 +16,15 @@ import { QueryRows } from '@/presentation/screens/shared/QueryRows';
 import { ScreenQueryFrame } from '@/presentation/screens/shared/ScreenQueryFrame';
 import { useGameWorkspace } from '@/presentation/state/GameWorkspaceProvider';
 import { useTransientFormState } from '@/presentation/state/useTransientFormState';
+import {
+  getPlaceBuildingPrerequisiteNavigationLabel,
+} from '@/presentation/navigation/place-building-prerequisite-navigation';
 import '../world/world-company.css';
 import '../shared/operation-screen.css';
 
 /** Buildings screen with owned list, detail, construction catalog, and placement workflow. */
 export function BuildingsScreen() {
-  const { viewData, companyViewData, regions, navigation, isBusy, runCommand, selectEntity } = useGameWorkspace();
+  const { viewData, companyViewData, regions, navigation, isBusy, runCommand, selectEntity, navigatePlaceBuildingPrerequisite } = useGameWorkspace();
   const selectedBuildingId =
     navigation.entitySelection.kind === 'building' ? navigation.entitySelection.id : null;
   const regionNames = useMemo(
@@ -182,6 +185,22 @@ export function BuildingsScreen() {
                         <span>{entry.category}</span>
                       </div>
                       <span>{entry.canPlace ? 'Baubar' : (entry.reason ?? 'Nicht baubar')}</span>
+                      {entry.canPlace === false && entry.prerequisiteNavigation !== null ? (
+                        <Button
+                          variant="secondary"
+                          disabled={isBusy}
+                          aria-label={getPlaceBuildingPrerequisiteNavigationLabel(
+                            entry.prerequisiteNavigation,
+                          )}
+                          onClick={() => {
+                            if (entry.prerequisiteNavigation !== null) {
+                              navigatePlaceBuildingPrerequisite(entry.prerequisiteNavigation);
+                            }
+                          }}
+                        >
+                          {getPlaceBuildingPrerequisiteNavigationLabel(entry.prerequisiteNavigation)}
+                        </Button>
+                      ) : null}
                     </div>
                     <Button
                       variant="secondary"

@@ -171,12 +171,17 @@ export type WarehouseStorageRowViewData = {
   readonly items: readonly InventoryItemRowViewData[];
 };
 
+export type PlaceBuildingPrerequisiteNavigationViewData =
+  | Readonly<{ readonly kind: 'missing_research'; readonly technologyId: string }>
+  | Readonly<{ readonly kind: 'missing_milestone' }>;
+
 export type PlaceBuildingHintViewData = {
   readonly buildingTypeId: string;
   readonly name: string;
   readonly category: string;
   readonly canPlace: boolean;
   readonly reason: string | null;
+  readonly prerequisiteNavigation: PlaceBuildingPrerequisiteNavigationViewData | null;
 };
 
 export type ProductionHintViewData = {

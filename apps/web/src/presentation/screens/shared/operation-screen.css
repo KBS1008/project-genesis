@@ -70,6 +70,11 @@
   background: var(--bg);
 }
 
+.pg-operation-hint-row.is-catalog-focus {
+  outline: 2px solid var(--accent, #3b82f6);
+  outline-offset: 2px;
+}
+
 .pg-building-catalog-art {
   flex-shrink: 0;
   object-fit: contain;

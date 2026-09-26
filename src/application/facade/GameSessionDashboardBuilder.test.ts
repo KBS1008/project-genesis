@@ -231,3 +231,142 @@ describe('GameSessionDashboardBuilder technology requirement labels', () => {
     expect(railTerminal?.reason).not.toContain('intermodal_logistics');
   });
 });
+
+describe('GameSessionDashboardBuilder place-building prerequisite navigation', () => {
+  it('emits research navigation intent matching the active research blocker', async () => {
+    const bootstrapResult = await bootstrapApplication({
+      gameContentRoot,
+      strictContent: true,
+    });
+
+    expect(bootstrapResult.ok).toBe(true);
+
+    if (!bootstrapResult.ok) {
+      return;
+    }
+
+    const context = bootstrapResult.value;
+    const builder = new GameSessionDashboardBuilder(
+      context,
+      new EnergyBalanceService({
+        buildingRepository: context.buildingRepository,
+        productionJobRepository: context.productionJobRepository,
+        gameContent: context.gameContent,
+      }),
+    );
+
+    const hints = builder.readHints(
+      createHintInput({
+        completedMilestones: new Set([
+          'first_profit',
+          'first_production',
+          'first_steel',
+          'first_machine_parts',
+          'first_industrial_machinery',
+          'first_advanced_electronics',
+          'first_consumer_goods',
+          'profit_100',
+        ]),
+        completedResearch: new Set(['basic_woodworking']),
+      }),
+    );
+
+    const railTerminal = hints.placeBuilding.find((entry) => entry.buildingTypeId === 'rail_terminal');
+    expect(railTerminal?.reason).toBe('Forschung „Intermodale Logistik“ fehlt.');
+    expect(railTerminal?.prerequisiteNavigation).toEqual({
+      kind: 'missing_research',
+      technologyId: 'intermodal_logistics',
+    });
+  });
+
+  it('emits milestone navigation intent matching the active milestone blocker', async () => {
+    const bootstrapResult = await bootstrapApplication({
+      gameContentRoot,
+      strictContent: true,
+    });
+
+    expect(bootstrapResult.ok).toBe(true);
+
+    if (!bootstrapResult.ok) {
+      return;
+    }
+
+    const context = bootstrapResult.value;
+    const builder = new GameSessionDashboardBuilder(
+      context,
+      new EnergyBalanceService({
+        buildingRepository: context.buildingRepository,
+        productionJobRepository: context.productionJobRepository,
+        gameContent: context.gameContent,
+      }),
+    );
+
+    const hints = builder.readHints(
+      createHintInput({
+        completedMilestones: new Set(),
+      }),
+    );
+
+    const railTerminal = hints.placeBuilding.find((entry) => entry.buildingTypeId === 'rail_terminal');
+    expect(railTerminal?.reason).toBe('Meilenstein „Erste Industriemaschine“ fehlt.');
+    expect(railTerminal?.prerequisiteNavigation).toEqual({ kind: 'missing_milestone' });
+  });
+
+  it('does not emit navigation for money-only blockers', async () => {
+    const bootstrapResult = await bootstrapApplication({
+      gameContentRoot,
+      strictContent: true,
+    });
+
+    expect(bootstrapResult.ok).toBe(true);
+
+    if (!bootstrapResult.ok) {
+      return;
+    }
+
+    const context = bootstrapResult.value;
+    const builder = new GameSessionDashboardBuilder(
+      context,
+      new EnergyBalanceService({
+        buildingRepository: context.buildingRepository,
+        productionJobRepository: context.productionJobRepository,
+        gameContent: context.gameContent,
+      }),
+    );
+
+    const hints = builder.readHints(
+      createHintInput({
+        completedMilestones: new Set([
+          'first_profit',
+          'first_production',
+          'first_steel',
+          'first_machine_parts',
+          'first_industrial_machinery',
+          'first_advanced_electronics',
+          'first_consumer_goods',
+          'profit_100',
+        ]),
+        completedResearch: new Set(
+          context.gameContent.technologies
+            .getAll()
+            .filter((technology) => technology.enabled)
+            .map((technology) => technology.id),
+        ),
+        finance: {
+          id: 'finance_001',
+          companyId: 'company_001',
+          currency: 'GC',
+          cashBalance: 0,
+          reservedCash: 0,
+          availableCash: 0,
+        },
+      }),
+    );
+
+    const blockedByCost = hints.placeBuilding.find(
+      (entry) => entry.canPlace === false && entry.reason?.startsWith('Benötigt'),
+    );
+    expect(blockedByCost).toBeDefined();
+    expect(blockedByCost?.prerequisiteNavigation).toBeNull();
+  });
+});

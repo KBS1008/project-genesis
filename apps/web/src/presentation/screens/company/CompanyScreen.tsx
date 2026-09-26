@@ -19,8 +19,19 @@ function isCompanyEntitySelection(kind: string): boolean {
 
 /** Company route combining Phase 6 overview and the operational dashboard. */
 export function CompanyScreen() {
-  const { navigation } = useGameWorkspace();
+  const {
+    navigation,
+    pendingCompanyOperationsView,
+    clearPendingCompanyOperationsView,
+  } = useGameWorkspace();
   const [view, setView] = useState<'overview' | 'operations'>('overview');
+
+  useEffect(() => {
+    if (pendingCompanyOperationsView) {
+      setView('operations');
+      clearPendingCompanyOperationsView();
+    }
+  }, [clearPendingCompanyOperationsView, pendingCompanyOperationsView]);
 
   useEffect(() => {
     if (isCompanyEntitySelection(navigation.entitySelection.kind)) {

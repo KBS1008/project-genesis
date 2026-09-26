@@ -128,6 +128,11 @@ export type EnergyReadModel = {
   readonly usesBaselineGrid: boolean;
 };
 
+/** Structured navigation for a locked building prerequisite (Buildings Baukatalog only). */
+export type PlaceBuildingPrerequisiteNavigation =
+  | Readonly<{ readonly kind: 'missing_research'; readonly technologyId: string }>
+  | Readonly<{ readonly kind: 'missing_milestone' }>;
+
 /** Hint for placing a building type. */
 export type PlaceBuildingHint = {
   readonly buildingTypeId: string;
@@ -135,6 +140,7 @@ export type PlaceBuildingHint = {
   readonly category: string;
   readonly canPlace: boolean;
   readonly reason: string | null;
+  readonly prerequisiteNavigation: PlaceBuildingPrerequisiteNavigation | null;
 };
 
 /** Read-only recipe catalog entry for production UI (content snapshot). */

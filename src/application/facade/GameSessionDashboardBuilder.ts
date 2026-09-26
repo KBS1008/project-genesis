@@ -487,6 +487,7 @@ export class GameSessionDashboardBuilder {
 
           let canPlace = true;
           let reason: string | null = null;
+          let prerequisiteNavigation: PlaceBuildingHint['prerequisiteNavigation'] = null;
 
           if (missingMilestone !== undefined) {
             canPlace = false;
@@ -494,12 +495,17 @@ export class GameSessionDashboardBuilder {
               missingMilestone,
               this.#context.gameContent.milestones,
             );
+            prerequisiteNavigation = Object.freeze({ kind: 'missing_milestone' });
           } else if (missingResearch !== undefined) {
             canPlace = false;
             reason = formatMissingTechnologyReason(
               missingResearch,
               this.#context.gameContent.technologies,
             );
+            prerequisiteNavigation = Object.freeze({
+              kind: 'missing_research',
+              technologyId: missingResearch,
+            });
           } else if (input.finance.availableCash < buildingType.constructionCost) {
             canPlace = false;
             reason = `Benötigt ${formatPlayerFacingCurrencyAmount(buildingType.constructionCost)}.`;
@@ -511,6 +517,7 @@ export class GameSessionDashboardBuilder {
             category: buildingType.category,
             canPlace,
             reason,
+            prerequisiteNavigation,
           });
         }),
     );

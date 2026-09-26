@@ -229,12 +229,17 @@ export type EnergyReadModel = {
   readonly usesBaselineGrid: boolean;
 };
 
+export type PlaceBuildingPrerequisiteNavigation =
+  | Readonly<{ readonly kind: 'missing_research'; readonly technologyId: string }>
+  | Readonly<{ readonly kind: 'missing_milestone' }>;
+
 export type PlaceBuildingHint = {
   readonly buildingTypeId: string;
   readonly name: string;
   readonly category: string;
   readonly canPlace: boolean;
   readonly reason: string | null;
+  readonly prerequisiteNavigation: PlaceBuildingPrerequisiteNavigation | null;
 };
 
 export type ProductionHint = {

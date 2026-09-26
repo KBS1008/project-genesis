@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { buildNameResolver, mapResearchJobRowsViewData } from '@/presentation/adapters/mappers/workspace-view-mappers';
 import { startResearch } from '@/presentation/adapters/api/gameplay-client';
 import { fetchResearchJobs } from '@/presentation/adapters/api/query-client';
@@ -19,7 +19,16 @@ import '../shared/operation-screen.css';
 
 /** Research screen with catalog, prerequisites, active jobs, and completion display. */
 export function ResearchScreen() {
-  const { viewData, companyViewData, navigation, isBusy, runCommand, selectEntity } = useGameWorkspace();
+  const {
+    viewData,
+    companyViewData,
+    navigation,
+    isBusy,
+    runCommand,
+    selectEntity,
+    researchCatalogFocusTechnologyId,
+    clearResearchCatalogFocus,
+  } = useGameWorkspace();
   const selectedJobId =
     navigation.entitySelection.kind === 'research' ? navigation.entitySelection.id : null;
   const labels = useMemo(
@@ -33,6 +42,30 @@ export function ResearchScreen() {
     { debounceMs: TICK_QUERY_DEBOUNCE_MS },
   );
   const researchHints = companyViewData.hints.research;
+  const catalogFocusRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (researchCatalogFocusTechnologyId === null) {
+      return;
+    }
+
+    const hasCatalogEntry = researchHints.some(
+      (hint) => hint.technologyId === researchCatalogFocusTechnologyId,
+    );
+
+    if (!hasCatalogEntry) {
+      clearResearchCatalogFocus();
+      return;
+    }
+
+    catalogFocusRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    clearResearchCatalogFocus();
+  }, [
+    clearResearchCatalogFocus,
+    researchCatalogFocusTechnologyId,
+    researchHints,
+  ]);
+
   const selectedJobDetail =
     selectedJobId === null
       ? null
@@ -108,8 +141,18 @@ export function ResearchScreen() {
             <EmptyState title="Keine Technologien" hint="Es sind keine Forschungsprojekte verfügbar." />
           ) : (
             <div className="pg-operation-hint-list">
-              {researchHints.map((hint) => (
-                <div key={hint.technologyId} className="pg-operation-hint-row">
+              {researchHints.map((hint) => {
+                const isCatalogFocus =
+                  researchCatalogFocusTechnologyId !== null &&
+                  hint.technologyId === researchCatalogFocusTechnologyId;
+
+                return (
+                <div
+                  key={hint.technologyId}
+                  ref={isCatalogFocus ? catalogFocusRef : undefined}
+                  data-technology-id={hint.technologyId}
+                  className={`pg-operation-hint-row${isCatalogFocus ? ' is-catalog-focus' : ''}`}
+                >
                   <TechnologyVisual
                     technologyId={hint.technologyId}
                     variant="catalog"
@@ -134,7 +177,8 @@ export function ResearchScreen() {
                     Forschung starten
                   </Button>
                 </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </Card>
