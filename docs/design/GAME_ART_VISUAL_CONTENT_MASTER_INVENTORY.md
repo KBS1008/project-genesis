@@ -1,8 +1,8 @@
 # Game Art & Visual Content — Master Inventory
 
 **Purpose:** Machine-readable planning inventory for post-V1 visual content.  
-**Authority:** `POST_V1_GAME_ART_VISUAL_CONTENT_MASTER_PLAN_REVIEW.md` · `POST_V1_SCENARIO_B_VISUAL_COVERAGE_PROGRESS_REVIEW.md` · `POST_V1_SCENARIO_B_VISUAL_COVERAGE_PROGRESS_REVIEW_02.md` · `POST_V1_SCENARIO_B_VISUAL_COVERAGE_REASSESSMENT_AFTER_WFV_001.md` · `POST_V1_SCENARIO_B_VISUAL_COVERAGE_REASSESSMENT_AFTER_MSV_001.md`  
-**Baseline HEAD:** `461090b` (MSV-001 8/8 production + runtime quality-gate closeout pushed)  
+**Authority:** `POST_V1_GAME_ART_VISUAL_CONTENT_MASTER_PLAN_REVIEW.md` · `POST_V1_SCENARIO_B_VISUAL_COVERAGE_PROGRESS_REVIEW.md` · `POST_V1_SCENARIO_B_VISUAL_COVERAGE_PROGRESS_REVIEW_02.md` · `POST_V1_SCENARIO_B_VISUAL_COVERAGE_REASSESSMENT_AFTER_WFV_001.md` · `POST_V1_SCENARIO_B_VISUAL_COVERAGE_REASSESSMENT_AFTER_MSV_001.md` · `POST_V1_SCENARIO_B_VISUAL_COVERAGE_REASSESSMENT_AFTER_MVI_001.md`  
+**Baseline HEAD:** `e9afec9` (MVI-001 Slice 1 @ `da1969c` + Slice 2 @ `e9afec9`; Scenario-B reassessment after MVI-001)  
 **Content root:** `game-content/` (YAML counts below)
 
 **Legend — STATUS:** `ACTIVE` runtime certified | `PROCEDURAL` code-driven | `GENERIC` functional not game-identified | `GAP` no distinct identity | `FUTURE` mechanics absent | `SEALED` closed workstream
@@ -50,17 +50,17 @@
 
 **WBM-001 (World building markers):** **CLOSED / PASS / SEALED** — ICON-003 compact integration @ `7426c47` (no new authored PNGs).
 
-**MVI-001 (Market & commodity row integration):** **CLOSED / PASS / SEALED** — Slice 1 market price rows (`buildMarketPriceRow` / `PGMarketWidget` / `MarketScreen` @ `da1969c`); Slice 2 transport cargo rows (`PGSupplyChainWidget` / Company Operations + Executive dashboard @ local close). **ICON-001 reused; 0 new art.**
+**MVI-001 (Market & commodity row integration):** **CLOSED / PASS / SEALED** — Slice 1 market price rows @ `da1969c`; Slice 2 transport cargo rows @ `e9afec9`. **ICON-001 reused; 0 new art.**
 
-**Next material visual workstream:** Scenario-B **reassessment** after MVI-001 (integration backlog for commodity rows cleared; deferred TRV / overlays / tutorials unchanged).
+**Next material Scenario-B visual workstream:** **NONE — visual production paused** (reassessment @ `e9afec9`; see `POST_V1_SCENARIO_B_VISUAL_COVERAGE_REASSESSMENT_AFTER_MVI_001.md`).
 
-**Integration backlog (commodity rows):** cleared for scoped MVI-001 consumers (inventory, warehouse, market price, supply-chain transport orders). `TransportScreen` order list remains route/status-first by design — cargo identity in supply-chain widget surfaces.
+**Integration backlog (commodity rows):** **cleared** for scoped MVI-001 consumers. Optional polish (e.g. text-only summary lists, TransportScreen route table) is not material visual production.
 
 **MSV-001 production:** 8 Tier-1 + 8 Tier-2 under `apps/web/public/assets/milestones/` and `docs/design/milestones/icon-msv-001/` — manifest `MSV_001_PRODUCTION_MANIFEST.json`.
 
-**Deferred (not rejected):** TRV transport mode/route glyphs (content gap not justified), shell nav icon family (generic UI), tutorial step vignettes (UX-heavy), building state overlay badges, events illustration family.
+**Deferred (not rejected):** TRV transport mode/route glyphs (content gap not justified), shell nav icon family (optional polish), tutorial step vignettes (UX-heavy), building state overlay badges, events illustration family.
 
-**Scenario B overall:** **IN PROGRESS** (integration slices continue; authored concept count unchanged).
+**Scenario B overall:** **VISUAL PRODUCTION PAUSED** — planning envelope unchanged; product UX (player guidance) may proceed outside Scenario-B art production.
 
 ---
 
