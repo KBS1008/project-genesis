@@ -24,6 +24,7 @@ import { TransportOrderStatus } from '../../domain/transport/TransportOrderStatu
 import { formatPlayerFacingCurrencyAmount } from './player-facing-currency-format.js';
 import { formatMissingMilestoneReason } from './player-facing-milestone-label.js';
 import { formatMissingTechnologyReason } from './player-facing-technology-label.js';
+import { formatMissingResourceInputReason } from './player-facing-resource-label.js';
 import type { BuildingReadModel } from '../read-models/BuildingReadModel.js';
 import type { FinanceReadModel } from '../read-models/FinanceReadModel.js';
 import type { FinanceTransactionReadModel } from '../read-models/FinanceTransactionReadModel.js';
@@ -624,9 +625,12 @@ export class GameSessionDashboardBuilder {
             });
 
             if (missingInput !== undefined) {
-              reason = hasWarehouse
-                ? `Benötigt ${missingInput.amount}× ${missingInput.resource} — am Markt kaufen (landet im Lager).`
-                : `Benötigt ${missingInput.amount}× ${missingInput.resource}.`;
+              reason = formatMissingResourceInputReason(
+                missingInput.resource,
+                missingInput.amount,
+                this.#context.gameContent.resourceTypes,
+                { marketWarehouseHint: hasWarehouse },
+              );
             }
           }
         }

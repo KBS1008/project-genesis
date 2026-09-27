@@ -2,7 +2,9 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { bootstrapApplication } from '../bootstrap/bootstrapApplication.js';
+import { CreateCompanyUseCase } from '../use-cases/CreateCompanyUseCase.js';
 import { EnergyBalanceService } from '../services/EnergyBalanceService.js';
+import { BuildingStatus } from '../../domain/building/BuildingStatus.js';
 import { GameSessionDashboardBuilder, type DashboardHintInput } from './GameSessionDashboardBuilder.js';
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
@@ -39,6 +41,80 @@ function createHintInput(
     ...overrides,
   };
 }
+
+describe('GameSessionDashboardBuilder production hints', () => {
+  it('uses authoritative resource names in missing-input blocker copy', async () => {
+    const bootstrapResult = await bootstrapApplication({
+      gameContentRoot,
+      strictContent: true,
+    });
+
+    expect(bootstrapResult.ok).toBe(true);
+
+    if (!bootstrapResult.ok) {
+      return;
+    }
+
+    const context = bootstrapResult.value;
+    new CreateCompanyUseCase(context).execute({
+      companyId: 'company_001',
+      name: 'Resource Label Test Corp',
+      ownerId: 'player_001',
+    });
+
+    const builder = new GameSessionDashboardBuilder(
+      context,
+      new EnergyBalanceService({
+        buildingRepository: context.buildingRepository,
+        productionJobRepository: context.productionJobRepository,
+        gameContent: context.gameContent,
+      }),
+    );
+
+    const hints = builder.readHints(
+      createHintInput({
+        buildings: [
+          {
+            id: 'building_machine_shop_001',
+            buildingTypeId: 'machine_shop',
+            companyId: 'company_001',
+            regionId: 'region_default',
+            name: 'Maschinenwerk',
+            x: 0,
+            y: 0,
+            level: 1,
+            createdAt: 0,
+            status: BuildingStatus.ACTIVE,
+            constructionProgress: 100,
+            constructionDuration: 100,
+          },
+        ],
+        inventory: {
+          id: 'inventory_001',
+          companyId: 'company_001',
+          status: 'ACTIVE',
+          items: [
+            {
+              resourceId: 'wood',
+              quantity: 40,
+              reserved: 0,
+              available: 40,
+            },
+          ],
+        },
+        warehouseStorage: [],
+      }),
+    );
+
+    const machinePartsHint = hints.production.find(
+      (hint) => hint.recipeId === 'recipe_machine_parts',
+    );
+    expect(machinePartsHint).toBeDefined();
+    expect(machinePartsHint?.canStart).toBe(false);
+    expect(machinePartsHint?.reason).toBe('Benötigt 3× Stahl.');
+    expect(machinePartsHint?.reason).not.toContain('steel');
+  });
+});
 
 describe('GameSessionDashboardBuilder research hints', () => {
   it('blocks technologies when prerequisite research is missing', async () => {
