@@ -39,6 +39,7 @@ import {
   formatNumber,
   formatProductionStatus,
   formatProgress,
+  formatResearchStatus,
   formatSignedCurrencyWithSymbol,
   formatSimulationTime,
   formatTransactionAmount,
@@ -520,7 +521,7 @@ function mapCompanyDetail(
         entries: Object.freeze([
           kv('Job-ID', job.id),
           kv('Technologie', labels.technology(job.technologyId)),
-          kv('Status', job.status),
+          kv('Status', formatResearchStatus(job.status)),
           kv('Fortschritt', formatProgress(job.progress)),
         ]),
       }),
@@ -799,7 +800,7 @@ export function buildCompanyDashboardViewData(
       Object.freeze({
         id: job.id,
         technologyLabel: labels.technology(job.technologyId),
-        statusLabel: job.status,
+        statusLabel: formatResearchStatus(job.status),
         progressLabel: formatProgress(job.progress),
       }),
     ),

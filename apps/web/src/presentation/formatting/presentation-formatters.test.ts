@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   formatCurrency,
   formatSignedCurrencyWithSymbol,
+  formatResearchStatus,
   formatTransportStatus,
   PLAYER_FACING_CURRENCY_SYMBOL,
   toPlayerFacingCurrencySymbol,
@@ -45,5 +46,19 @@ describe('formatTransportStatus', () => {
   it('passes through unknown status strings without throwing', () => {
     expect(formatTransportStatus('ACTIVE')).toBe('ACTIVE');
     expect(formatTransportStatus('')).toBe('');
+  });
+});
+
+describe('formatResearchStatus', () => {
+  it('maps all authoritative ResearchJobStatus values to German labels', () => {
+    expect(formatResearchStatus('WAITING')).toBe('Wartend');
+    expect(formatResearchStatus('RUNNING')).toBe('Laufend');
+    expect(formatResearchStatus('FINISHED')).toBe('Abgeschlossen');
+    expect(formatResearchStatus('CANCELLED')).toBe('Abgebrochen');
+  });
+
+  it('passes through unknown status strings without throwing', () => {
+    expect(formatResearchStatus('IN_PROGRESS')).toBe('IN_PROGRESS');
+    expect(formatResearchStatus('')).toBe('');
   });
 });

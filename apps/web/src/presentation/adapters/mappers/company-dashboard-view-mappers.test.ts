@@ -158,4 +158,59 @@ describe('company-dashboard-view-mappers', () => {
       { id: 'first_steel', displayName: 'Erster Stahl', completed: false },
     ]);
   });
+
+  it('formats Research job row status labels without altering active-research metrics', () => {
+    const dashboard: GameSessionDashboard = {
+      ...createDashboardFixture(),
+      contentNames: {
+        ...createDashboardFixture().contentNames,
+        technologies: [{ id: 'basic_woodworking', name: 'Grundlegende Holzbearbeitung' }],
+      },
+      researchJobs: [
+        {
+          id: 'research_run',
+          technologyId: 'basic_woodworking',
+          status: 'RUNNING',
+          progress: 55,
+        },
+        {
+          id: 'research_wait',
+          technologyId: 'basic_woodworking',
+          status: 'WAITING',
+          progress: 0,
+        },
+      ],
+    };
+
+    const viewData = buildCompanyDashboardViewData(dashboard, []);
+
+    expect(viewData.researchJobs.map((row) => row.statusLabel)).toEqual(['Laufend', 'Wartend']);
+    const researchOverviewCard = viewData.overview?.cards.find((card) => card.label === 'Forschung');
+    expect(researchOverviewCard?.value).toBe('0');
+  });
+
+  it('formats Research inspector Status while leaving Job-ID unchanged', () => {
+    const dashboard: GameSessionDashboard = {
+      ...createDashboardFixture(),
+      contentNames: {
+        ...createDashboardFixture().contentNames,
+        technologies: [{ id: 'basic_woodworking', name: 'Grundlegende Holzbearbeitung' }],
+      },
+      researchJobs: [
+        {
+          id: 'research_finished',
+          technologyId: 'basic_woodworking',
+          status: 'FINISHED',
+          progress: 100,
+        },
+      ],
+    };
+
+    const viewData = buildCompanyDashboardViewData(dashboard, []);
+    const detail = viewData.detail.researchJobs.get('research_finished');
+
+    expect(detail).not.toBeNull();
+    expect(detail?.entries.find(([label]) => label === 'Status')?.[1]).toBe('Abgeschlossen');
+    expect(detail?.entries.find(([label]) => label === 'Job-ID')?.[1]).toBe('research_finished');
+  });
 });

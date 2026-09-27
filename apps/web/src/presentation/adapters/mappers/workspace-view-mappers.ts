@@ -15,6 +15,7 @@ import {
   formatCurrency,
   formatNumber,
   formatProductionStatus,
+  formatResearchStatus,
   formatTransactionAmount,
   formatTransactionType,
   formatTransportStatus,
@@ -290,7 +291,7 @@ export function mapResearchJobRowsViewData(
       Object.freeze({
         id: job.id,
         title: labelTechnology(job.technologyId),
-        statusLabel: job.status,
+        statusLabel: formatResearchStatus(job.status),
         progressLabel: `${Math.round(job.progress)}%`,
       }),
     ),

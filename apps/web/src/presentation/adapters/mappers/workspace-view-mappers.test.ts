@@ -1,11 +1,15 @@
 import { describe, expect, it } from 'vitest';
+import type {
+  ResearchJobSessionReadModel,
+  TransportOrderSessionReadModel,
+} from '@/presentation/adapters/api/client';
 import {
   buildWorkspaceViewData,
   mapMarketRowsViewData,
+  mapResearchJobRowsViewData,
   mapSimulationStatusViewData,
   mapTransportJobRowsViewData,
 } from '@/presentation/adapters/mappers/workspace-view-mappers';
-import type { TransportOrderSessionReadModel } from '@/presentation/adapters/api/client';
 
 describe('workspace-view-mappers', () => {
   it('maps simulation status using authoritative server values', () => {
@@ -182,5 +186,48 @@ describe('workspace-view-mappers', () => {
     expect(waiting).toBe(1);
     expect(active).toBe(1);
     expect(completed).toBe(1);
+  });
+
+  it('mapResearchJobRowsViewData formats statusLabel for all authoritative ResearchJobStatus values', () => {
+    const labelTechnology = (technologyId: string) =>
+      technologyId === 'basic_woodworking' ? 'Grundlegende Holzbearbeitung' : technologyId;
+
+    const jobs: readonly ResearchJobSessionReadModel[] = [
+      {
+        id: 'research_wait',
+        technologyId: 'basic_woodworking',
+        status: 'WAITING',
+        progress: 0,
+      },
+      {
+        id: 'research_run',
+        technologyId: 'basic_woodworking',
+        status: 'RUNNING',
+        progress: 40,
+      },
+      {
+        id: 'research_done',
+        technologyId: 'basic_woodworking',
+        status: 'FINISHED',
+        progress: 100,
+      },
+      {
+        id: 'research_cancel',
+        technologyId: 'basic_woodworking',
+        status: 'CANCELLED',
+        progress: 0,
+      },
+    ];
+
+    const rows = mapResearchJobRowsViewData(jobs, labelTechnology);
+
+    expect(rows.map((row) => row.statusLabel)).toEqual([
+      'Wartend',
+      'Laufend',
+      'Abgeschlossen',
+      'Abgebrochen',
+    ]);
+    expect(rows.every((row) => row.title === 'Grundlegende Holzbearbeitung')).toBe(true);
+    expect(rows[1]?.progressLabel).toBe('40%');
   });
 });

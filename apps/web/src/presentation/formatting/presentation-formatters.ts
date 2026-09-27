@@ -111,6 +111,27 @@ export function formatTransportStatus(status: string): string {
   return status;
 }
 
+/** Player-facing labels for {@link ResearchJobStatus} domain values. */
+export function formatResearchStatus(status: string): string {
+  if (status === 'WAITING') {
+    return 'Wartend';
+  }
+
+  if (status === 'RUNNING') {
+    return 'Laufend';
+  }
+
+  if (status === 'FINISHED') {
+    return 'Abgeschlossen';
+  }
+
+  if (status === 'CANCELLED') {
+    return 'Abgebrochen';
+  }
+
+  return status;
+}
+
 export function formatProductionStatus(
   status: string,
   awaitingTransport: boolean,
