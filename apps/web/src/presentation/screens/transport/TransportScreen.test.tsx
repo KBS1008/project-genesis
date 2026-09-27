@@ -29,8 +29,23 @@ vi.mock('@/presentation/hooks/useScreenQuery', () => ({
       {
         id: 'transport_001',
         title: 'Lager → Werk',
-        statusLabel: 'IN_PROGRESS',
+        status: 'IN_PROGRESS',
+        statusLabel: 'Unterwegs',
         progressLabel: '40%',
+      },
+      {
+        id: 'transport_002',
+        title: 'Mine → Lager',
+        status: 'WAITING',
+        statusLabel: 'Warteschlange',
+        progressLabel: '0%',
+      },
+      {
+        id: 'transport_003',
+        title: 'Hafen → Werk',
+        status: 'COMPLETED',
+        statusLabel: 'Abgeschlossen',
+        progressLabel: '100%',
       },
     ],
     isLoading: false,
@@ -80,6 +95,20 @@ describe('TransportScreen', () => {
     expect(screen.getByText('Transportaufträge')).toBeInTheDocument();
     expect(screen.getByText('Transport läuft planmäßig.')).toBeInTheDocument();
     expect(screen.getByRole('row', { name: /Lager → Werk/ })).toBeInTheDocument();
+    expect(screen.getByRole('row', { name: /Unterwegs/ })).toBeInTheDocument();
+    expect(screen.queryByText('IN_PROGRESS')).not.toBeInTheDocument();
+  });
+
+  it('classifies summary counts from internal status, not localized statusLabel', () => {
+    navigationState.entitySelection = { kind: 'none' };
+    render(<TransportScreen />);
+
+    const queueHeading = screen.getByRole('heading', { name: 'Warteschlange' });
+    expect(queueHeading.closest('.pg-operation-summary-grid')?.textContent).toContain('1');
+
+    const completedHeading = screen.getByRole('heading', { name: 'Abgeschlossen' });
+    const completedCard = completedHeading.closest('section');
+    expect(completedCard?.querySelector('.pg-operation-metric')?.textContent).toBe('1');
   });
 
   it('adds decorative DashboardIcon cues on active and completed summary cards only', () => {

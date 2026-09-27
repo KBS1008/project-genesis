@@ -16,6 +16,7 @@ import {
   formatProductionStatus,
   formatTransactionAmount,
   formatTransactionType,
+  formatTransportStatus,
 } from '@/presentation/formatting/presentation-formatters';
 import {
   buildNameMap,
@@ -30,6 +31,7 @@ import type {
   EventLogRowViewData,
   FinanceRowViewData,
   JobRowViewData,
+  TransportJobRowViewData,
   MarketRowViewData,
   ProductionFactoryGroupViewData,
   ProductionJobRowViewData,
@@ -291,13 +293,14 @@ export function mapResearchJobRowsViewData(
 
 export function mapTransportJobRowsViewData(
   orders: readonly TransportOrderSessionReadModel[],
-): readonly JobRowViewData[] {
+): readonly TransportJobRowViewData[] {
   return Object.freeze(
     orders.map((order) =>
       Object.freeze({
         id: order.id,
         title: `${order.sourceBuildingName} → ${order.destinationBuildingName}`,
-        statusLabel: order.status,
+        status: order.status,
+        statusLabel: formatTransportStatus(order.status),
         progressLabel: `${Math.round(order.progress)}%`,
       }),
     ),

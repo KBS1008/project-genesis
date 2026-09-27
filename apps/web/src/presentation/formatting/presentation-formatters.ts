@@ -104,6 +104,10 @@ export function formatTransportStatus(status: string): string {
     return 'Abgeschlossen';
   }
 
+  if (status === 'CANCELLED') {
+    return 'Abgebrochen';
+  }
+
   return status;
 }
 

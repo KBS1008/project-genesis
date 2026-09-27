@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 import { mapTransportJobRowsViewData } from '@/presentation/adapters/mappers/workspace-view-mappers';
 import { fetchTransportOrders } from '@/presentation/adapters/api/query-client';
-import type { JobRowViewData } from '@/presentation/adapters/view-data/workspace-view-data';
+import type { TransportJobRowViewData } from '@/presentation/adapters/view-data/workspace-view-data';
 import { useScreenQuery, TICK_QUERY_DEBOUNCE_MS } from '@/presentation/hooks/useScreenQuery';
 import { Card } from '@/presentation/primitives/Card';
 import { EmptyState } from '@/presentation/primitives/EmptyState';
@@ -34,9 +34,9 @@ export function TransportScreen() {
     const rows = ordersQuery.data ?? [];
 
     return Object.freeze({
-      active: rows.filter((row) => row.statusLabel === 'IN_PROGRESS').length,
-      waiting: rows.filter((row) => row.statusLabel === 'WAITING').length,
-      completed: rows.filter((row) => row.statusLabel === 'COMPLETED').length,
+      active: rows.filter((row) => row.status === 'IN_PROGRESS').length,
+      waiting: rows.filter((row) => row.status === 'WAITING').length,
+      completed: rows.filter((row) => row.status === 'COMPLETED').length,
     });
   }, [ordersQuery.data]);
 
@@ -82,7 +82,7 @@ export function TransportScreen() {
         <Card title="Transportaufträge">
           <QueryRows
             columns={['Route', 'Status', 'Fortschritt']}
-            rows={(ordersQuery.data ?? []).map((row: JobRowViewData) => ({
+            rows={(ordersQuery.data ?? []).map((row: TransportJobRowViewData) => ({
               id: row.id,
               cells: [row.title, row.statusLabel, row.progressLabel],
             }))}

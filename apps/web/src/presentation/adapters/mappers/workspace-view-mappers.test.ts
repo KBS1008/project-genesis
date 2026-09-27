@@ -3,7 +3,9 @@ import {
   buildWorkspaceViewData,
   mapMarketRowsViewData,
   mapSimulationStatusViewData,
+  mapTransportJobRowsViewData,
 } from '@/presentation/adapters/mappers/workspace-view-mappers';
+import type { TransportOrderSessionReadModel } from '@/presentation/adapters/api/client';
 
 describe('workspace-view-mappers', () => {
   it('maps simulation status using authoritative server values', () => {
@@ -93,5 +95,92 @@ describe('workspace-view-mappers', () => {
 
     expect(rows[0]?.resourceLabel).toBe('Eisenerz');
     expect(rows[0]?.trendLabel).toBe('Steigend');
+  });
+
+  it('mapTransportJobRowsViewData preserves internal status and localized statusLabel', () => {
+    const orders: readonly TransportOrderSessionReadModel[] = Object.freeze([
+      Object.freeze({
+        id: 'transport_wait',
+        resourceId: 'wood',
+        amount: 10,
+        status: 'WAITING',
+        progress: 0,
+        sourceBuildingId: 'building_a',
+        sourceBuildingName: 'Lager',
+        destinationBuildingId: 'building_b',
+        destinationBuildingName: 'Werk',
+        productionJobId: '',
+        recipeId: null,
+        recipeName: null,
+        durationTicks: 5,
+        routeId: 'route_1',
+      }),
+      Object.freeze({
+        id: 'transport_active',
+        resourceId: 'wood',
+        amount: 10,
+        status: 'IN_PROGRESS',
+        progress: 40,
+        sourceBuildingId: 'building_a',
+        sourceBuildingName: 'Lager',
+        destinationBuildingId: 'building_b',
+        destinationBuildingName: 'Werk',
+        productionJobId: 'job_1',
+        recipeId: 'recipe_planks',
+        recipeName: 'Bretter',
+        durationTicks: 5,
+        routeId: 'route_1',
+      }),
+      Object.freeze({
+        id: 'transport_done',
+        resourceId: 'wood',
+        amount: 10,
+        status: 'COMPLETED',
+        progress: 100,
+        sourceBuildingId: 'building_a',
+        sourceBuildingName: 'Lager',
+        destinationBuildingId: 'building_b',
+        destinationBuildingName: 'Werk',
+        productionJobId: '',
+        recipeId: null,
+        recipeName: null,
+        durationTicks: 5,
+        routeId: 'route_1',
+      }),
+      Object.freeze({
+        id: 'transport_cancel',
+        resourceId: 'wood',
+        amount: 10,
+        status: 'CANCELLED',
+        progress: 0,
+        sourceBuildingId: 'building_a',
+        sourceBuildingName: 'Lager',
+        destinationBuildingId: 'building_b',
+        destinationBuildingName: 'Werk',
+        productionJobId: '',
+        recipeId: null,
+        recipeName: null,
+        durationTicks: 5,
+        routeId: 'route_1',
+      }),
+    ]);
+
+    const rows = mapTransportJobRowsViewData(orders);
+
+    expect(rows).toHaveLength(4);
+    expect(rows[0]?.status).toBe('WAITING');
+    expect(rows[0]?.statusLabel).toBe('Warteschlange');
+    expect(rows[0]?.title).toBe('Lager → Werk');
+    expect(rows[1]?.status).toBe('IN_PROGRESS');
+    expect(rows[1]?.statusLabel).toBe('Unterwegs');
+    expect(rows[2]?.statusLabel).toBe('Abgeschlossen');
+    expect(rows[3]?.statusLabel).toBe('Abgebrochen');
+
+    const waiting = rows.filter((row) => row.status === 'WAITING').length;
+    const active = rows.filter((row) => row.status === 'IN_PROGRESS').length;
+    const completed = rows.filter((row) => row.status === 'COMPLETED').length;
+    expect(waiting).toBe(1);
+    expect(active).toBe(1);
+    expect(completed).toBe(1);
   });
 });

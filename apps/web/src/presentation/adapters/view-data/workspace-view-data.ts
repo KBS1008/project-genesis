@@ -69,6 +69,15 @@ export type JobRowViewData = {
   readonly progressLabel: string;
 };
 
+/** Transport job table row — internal status for logic, localized statusLabel for display. */
+export type TransportJobRowViewData = {
+  readonly id: string;
+  readonly title: string;
+  readonly status: string;
+  readonly statusLabel: string;
+  readonly progressLabel: string;
+};
+
 export type ProductionJobRowViewData = {
   readonly id: string;
   readonly title: string;

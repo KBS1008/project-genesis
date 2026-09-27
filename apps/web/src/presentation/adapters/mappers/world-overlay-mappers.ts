@@ -16,6 +16,7 @@ import {
   type WorldTransportFlowViewData,
 } from '@/presentation/adapters/view-data/world-view-data';
 import { distributeMarkerPosition } from '@/presentation/adapters/mappers/world-building-marker-layout';
+import { formatTransportStatus } from '@/presentation/formatting/presentation-formatters';
 
 function connectionKey(fromRegionId: string, toRegionId: string): string {
   return `${fromRegionId}->${toRegionId}`;
@@ -180,7 +181,7 @@ export function mapWorldRegionOperationsViewData(
           Object.freeze({
             id: order.id,
             label: `${order.sourceBuildingName} → ${order.destinationBuildingName}`,
-            statusLabel: order.status,
+            statusLabel: formatTransportStatus(order.status),
           }),
         ),
     ),

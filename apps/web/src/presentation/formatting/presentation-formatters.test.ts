@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   formatCurrency,
   formatSignedCurrencyWithSymbol,
+  formatTransportStatus,
   PLAYER_FACING_CURRENCY_SYMBOL,
   toPlayerFacingCurrencySymbol,
 } from '@/presentation/formatting/presentation-formatters';
@@ -30,5 +31,19 @@ describe('presentation-formatters currency', () => {
   it('passes through unknown internal currency codes', () => {
     expect(toPlayerFacingCurrencySymbol('EUR')).toBe('EUR');
     expect(formatCurrency(10, 'EUR')).toBe('10 EUR');
+  });
+});
+
+describe('formatTransportStatus', () => {
+  it('maps all authoritative TransportOrderStatus values to German labels', () => {
+    expect(formatTransportStatus('WAITING')).toBe('Warteschlange');
+    expect(formatTransportStatus('IN_PROGRESS')).toBe('Unterwegs');
+    expect(formatTransportStatus('COMPLETED')).toBe('Abgeschlossen');
+    expect(formatTransportStatus('CANCELLED')).toBe('Abgebrochen');
+  });
+
+  it('passes through unknown status strings without throwing', () => {
+    expect(formatTransportStatus('ACTIVE')).toBe('ACTIVE');
+    expect(formatTransportStatus('')).toBe('');
   });
 });

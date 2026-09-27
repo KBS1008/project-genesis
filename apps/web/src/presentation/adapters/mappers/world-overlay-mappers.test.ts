@@ -111,7 +111,24 @@ describe('world-overlay-mappers', () => {
           constructionDuration: 10,
         },
       ],
-      [],
+      [
+        {
+          id: 'transport_001',
+          resourceId: 'wood',
+          amount: 5,
+          status: 'IN_PROGRESS',
+          progress: 40,
+          sourceBuildingId: 'building_001',
+          sourceBuildingName: 'Sägewerk',
+          destinationBuildingId: 'building_002',
+          destinationBuildingName: 'Lager',
+          productionJobId: 'job_001',
+          recipeId: 'plank',
+          recipeName: 'Bretter',
+          durationTicks: 4,
+          routeId: null,
+        },
+      ],
       [
         {
           id: 'job_001',
@@ -127,6 +144,9 @@ describe('world-overlay-mappers', () => {
       (id) => (id === 'sawmill' ? 'Sägewerk' : id),
       (id) => (id === 'plank' ? 'Bretter' : id),
     );
+
+    expect(operations.transports[0]?.statusLabel).toBe('Unterwegs');
+    expect(operations.transports[0]?.statusLabel).not.toBe('IN_PROGRESS');
 
     const inspector = mapWorldRegionInspectorViewData(
       {
