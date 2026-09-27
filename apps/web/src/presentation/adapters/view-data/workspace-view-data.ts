@@ -86,6 +86,7 @@ export type ProductionJobRowViewData = {
   readonly progressLabel: string;
   readonly progressPercent: number;
   readonly operationalState: string;
+  readonly workforceGuidance: string | null;
 };
 
 export type ProductionOverviewSummaryViewData = {
@@ -95,6 +96,7 @@ export type ProductionOverviewSummaryViewData = {
   readonly stalledEnergyCount: number;
   readonly stalledWorkforceCount: number;
   readonly finishedCount: number;
+  readonly workforceStallGuidance: string | null;
 };
 
 export type ProductionFactoryJobViewData = {

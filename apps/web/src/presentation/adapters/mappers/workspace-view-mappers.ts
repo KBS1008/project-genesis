@@ -8,6 +8,7 @@ import type {
   WorldOverviewDto,
 } from '@/presentation/adapters/api/query-client';
 import { formatPlayerCyclePosition, formatPlayerGameSpeedMultiplier } from '@/presentation/formatting/player-cycle-presentation';
+import { resolveProductionWorkforceStallGuidance } from '@/presentation/formatting/production-workforce-guidance';
 import {
   formatEventCategory,
   formatEventSeverity,
@@ -178,6 +179,7 @@ export function mapProductionJobRowsViewData(
         progressLabel: `${Math.round(job.progress)}%`,
         progressPercent: Math.max(0, Math.min(100, job.progress)),
         operationalState: job.operationalState,
+        workforceGuidance: resolveProductionWorkforceStallGuidance(job.operationalState),
       }),
     ),
   );
@@ -225,6 +227,10 @@ export function mapProductionOverviewSummary(
     stalledEnergyCount,
     stalledWorkforceCount,
     finishedCount,
+    workforceStallGuidance:
+      stalledWorkforceCount > 0
+        ? resolveProductionWorkforceStallGuidance('STALLED_WORKFORCE')
+        : null,
   });
 }
 

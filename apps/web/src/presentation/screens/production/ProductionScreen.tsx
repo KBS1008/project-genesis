@@ -172,6 +172,10 @@ export function ProductionScreen() {
           </div>
         ) : null}
 
+        {overviewSummary.workforceStallGuidance !== null ? (
+          <StatusBanner tone="warning" message={overviewSummary.workforceStallGuidance} />
+        ) : null}
+
         <div className="pg-operation-summary-grid" aria-label="Produktionsübersicht">
           <Card title="Aktive Jobs">
             <p className="pg-operation-metric">{overviewSummary.activeCount}</p>

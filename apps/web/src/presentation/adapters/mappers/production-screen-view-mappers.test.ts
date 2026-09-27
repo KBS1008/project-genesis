@@ -47,6 +47,7 @@ describe('production screen view mappers', () => {
     expect(summary.stalledEnergyCount).toBe(1);
     expect(summary.stalledWorkforceCount).toBe(1);
     expect(summary.finishedCount).toBe(1);
+    expect(summary.workforceStallGuidance).toContain('Operatives Dashboard');
   });
 
   it('maps production job rows with authoritative status labels', () => {
@@ -58,6 +59,8 @@ describe('production screen view mappers', () => {
     expect(rows[0]?.statusLabel).toBe('Energie fehlt');
     expect(rows[0]?.progressPercent).toBe(42);
     expect(rows[1]?.statusLabel).toBe('Keine Mitarbeiter');
+    expect(rows[1]?.workforceGuidance).toContain('Personal');
+    expect(rows[0]?.workforceGuidance).toBeNull();
   });
 
   it('groups jobs by factory building', () => {

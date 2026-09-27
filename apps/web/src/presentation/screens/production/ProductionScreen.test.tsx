@@ -60,6 +60,16 @@ const productionJobsFixture: readonly ProductionJobSessionReadModel[] = Object.f
     awaitingTransport: false,
     activeTransportCount: 0,
   }),
+  Object.freeze({
+    id: 'production_004',
+    buildingId: 'building_005',
+    recipeId: 'recipe_planks',
+    status: 'RUNNING',
+    operationalState: 'STALLED_WORKFORCE',
+    progress: 0,
+    awaitingTransport: false,
+    activeTransportCount: 0,
+  }),
 ]);
 
 vi.mock('@/presentation/hooks/useScreenQuery', () => ({
@@ -222,6 +232,18 @@ describe('ProductionScreen', () => {
     expect(screen.getAllByText('42%').length).toBeGreaterThan(0);
   });
 
+  it('shows actionable workforce guidance for STALLED_WORKFORCE without navigation controls', () => {
+    workspaceState.setNavigation({ screen: 'production', entitySelection: { kind: 'none' } });
+    workspaceState.navigateToTarget.mockClear();
+    render(<ProductionScreen />);
+
+    expect(screen.getByText(/Unternehmen → Operatives Dashboard → Personal/)).toBeInTheDocument();
+    expect(screen.getByText(/dem betroffenen Gebäude zuweisen/)).toBeInTheDocument();
+    expect(screen.queryByText(/Produktionsmitarbeiter/i)).toBeNull();
+    expect(screen.queryByText(/\b2 Mitarbeiter\b/i)).toBeNull();
+    expect(workspaceState.navigateToTarget).not.toHaveBeenCalled();
+  });
+
   it('selects a production job for entity navigation', async () => {
     workspaceState.setNavigation({ screen: 'production', entitySelection: { kind: 'none' } });
     const user = userEvent.setup();
@@ -259,7 +281,7 @@ describe('ProductionScreen', () => {
 
     expect(screen.getByLabelText('Produktionskontext: Sägewerk Nord')).toBeInTheDocument();
     const jobsTable = screen.getByRole('table', { name: 'Aktive Produktionsjobs' });
-    expect(within(jobsTable).getAllByRole('row')).toHaveLength(3);
+    expect(within(jobsTable).getAllByRole('row')).toHaveLength(4);
     expect(screen.queryByText('Sägewerk Süd')).not.toBeInTheDocument();
     expect(screen.getAllByRole('button', { name: 'Starten' })).toHaveLength(1);
     expect(screen.queryByText('Material fehlt')).not.toBeInTheDocument();
