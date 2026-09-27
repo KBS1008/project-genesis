@@ -11,6 +11,7 @@ import {
   YAxis,
 } from 'recharts';
 import type { TickMetricsViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
+import { formatPlayerCycleChartTooltipLabel } from '@/presentation/formatting/player-cycle-presentation';
 import { PGChartTooltip, PGChartTooltipValue } from '@/presentation/components/dashboard/charts/PGChartTooltip';
 import { PGChartWidget } from '@/presentation/components/dashboard/charts/PGChartWidget';
 import {
@@ -45,7 +46,7 @@ export function PGEnergyHistoryChart({
         ariaLabel="Energie Erzeugung und Verbrauch"
         wide
         pointCount={points.length}
-        emptyHint="Führen Sie Simulation-Ticks aus, um Energie-Trends zu sehen."
+        emptyHint="Führen Sie Zyklen aus, um Energie-Trends zu sehen."
         currentValue={
           latest !== undefined
             ? `Erzeugung ${latest.energyGeneration.toFixed(1)} MW · Verbrauch ${latest.energyConsumption.toFixed(1)} MW · Reserve ${latest.energyReserve.toFixed(1)} MW`
@@ -76,7 +77,7 @@ export function PGEnergyHistoryChart({
                 }
 
                 return (
-                  <PGChartTooltip label={`Tick ${label ?? ''}`}>
+                  <PGChartTooltip label={formatPlayerCycleChartTooltipLabel(label)}>
                     {payload.map((entry) => (
                       <PGChartTooltipValue
                         key={entry.name}

@@ -103,7 +103,7 @@ export function LoadGamePanel({ onCancel }: { readonly onCancel: () => void }) {
                 <span className="pg-save-list-meta">
                   <strong>{save.companyName}</strong>
                   <span>
-                    {save.fileName} · Tick {save.tickLabel} · {save.modifiedAtLabel}
+                    {save.fileName} · {save.tickLabel} · {save.modifiedAtLabel}
                   </span>
                   <span>{save.schemaVersionLabel}</span>
                 </span>

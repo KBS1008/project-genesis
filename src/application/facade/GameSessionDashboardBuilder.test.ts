@@ -446,3 +446,49 @@ describe('GameSessionDashboardBuilder place-building prerequisite navigation', (
     expect(blockedByCost?.prerequisiteNavigation).toBeNull();
   });
 });
+
+describe('GameSessionDashboardBuilder player-facing cycle hint copy', () => {
+  it('uses Zyklus terminology in tutorial economy step descriptions', async () => {
+    const bootstrapResult = await bootstrapApplication({
+      gameContentRoot,
+      strictContent: true,
+    });
+
+    expect(bootstrapResult.ok).toBe(true);
+
+    if (!bootstrapResult.ok) {
+      return;
+    }
+
+    const context = bootstrapResult.value;
+    const builder = new GameSessionDashboardBuilder(
+      context,
+      new EnergyBalanceService({
+        buildingRepository: context.buildingRepository,
+        productionJobRepository: context.productionJobRepository,
+        gameContent: context.gameContent,
+      }),
+    );
+
+    const tutorial = builder.readTutorialProgress({
+      hasCompany: true,
+      buildings: [],
+      inventory: {
+        id: 'inventory_001',
+        companyId: 'company_001',
+        status: 'ACTIVE',
+        items: [],
+      },
+      financeTransactions: [],
+      productionJobs: [],
+      completedMilestones: new Set(),
+    });
+
+    const contractStep = tutorial?.steps.find((step) => step.id === 'npc_supply_contract');
+    const taxStep = tutorial?.steps.find((step) => step.id === 'corporate_tax');
+
+    expect(contractStep?.description).toContain('alle 20 Zyklen');
+    expect(taxStep?.description).toContain('Alle 30 Zyklen');
+    expect(JSON.stringify(tutorial?.steps)).not.toMatch(/\bTicks?\b/);
+  });
+});

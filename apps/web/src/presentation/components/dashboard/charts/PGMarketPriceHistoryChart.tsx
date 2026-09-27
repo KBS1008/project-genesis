@@ -12,6 +12,7 @@ import {
   YAxis,
 } from 'recharts';
 import type { TickMetricsViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
+import { formatPlayerCycleChartTooltipLabel } from '@/presentation/formatting/player-cycle-presentation';
 import { PGChartTooltip, PGChartTooltipValue } from '@/presentation/components/dashboard/charts/PGChartTooltip';
 import { PGChartWidget } from '@/presentation/components/dashboard/charts/PGChartWidget';
 import { pgChartResourceColor } from '@/presentation/components/dashboard/charts/pg-chart-resource-colors';
@@ -66,7 +67,7 @@ export function PGMarketPriceHistoryChart({
         ariaLabel="Marktpreise"
         wide
         pointCount={points.length}
-        emptyHint="Führen Sie Ticks aus — Preise passen sich alle 10 Ticks an Angebot und Nachfrage an."
+        emptyHint="Führen Sie Zyklen aus — Preise passen sich alle 10 Zyklen an Angebot und Nachfrage an."
         currentValue={
           latest !== undefined
             ? resourceIds
@@ -103,7 +104,7 @@ export function PGMarketPriceHistoryChart({
                 }
 
                 return (
-                  <PGChartTooltip label={`Tick ${label ?? ''}`}>
+                  <PGChartTooltip label={formatPlayerCycleChartTooltipLabel(label)}>
                     {payload.map((entry) => (
                       <PGChartTooltipValue
                         key={entry.name}

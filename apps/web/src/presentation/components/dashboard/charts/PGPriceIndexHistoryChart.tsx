@@ -11,6 +11,7 @@ import {
   YAxis,
 } from 'recharts';
 import type { TickMetricsViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
+import { formatPlayerCycleChartTooltipLabel } from '@/presentation/formatting/player-cycle-presentation';
 import { PGChartTooltip, PGChartTooltipValue } from '@/presentation/components/dashboard/charts/PGChartTooltip';
 import { PGChartWidget } from '@/presentation/components/dashboard/charts/PGChartWidget';
 import {
@@ -45,7 +46,7 @@ export function PGPriceIndexHistoryChart({
         ariaLabel="Preisindex"
         wide
         pointCount={points.length}
-        emptyHint="Führen Sie Ticks aus, um die Inflationssignale zu verfolgen."
+        emptyHint="Führen Sie Zyklen aus, um die Inflationssignale zu verfolgen."
         currentValue={`${latest.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} (neutral 1,00)`}
       >
         <ResponsiveContainer width="100%" height={200}>
@@ -77,7 +78,7 @@ export function PGPriceIndexHistoryChart({
                 const value = payload[0]?.value ?? 1;
 
                 return (
-                  <PGChartTooltip label={`Tick ${label ?? ''}`}>
+                  <PGChartTooltip label={formatPlayerCycleChartTooltipLabel(label)}>
                     <PGChartTooltipValue
                       name="Preisindex"
                       value={value.toLocaleString('de-DE', {

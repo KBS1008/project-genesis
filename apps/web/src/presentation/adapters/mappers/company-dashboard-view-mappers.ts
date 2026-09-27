@@ -41,7 +41,6 @@ import {
   formatProgress,
   formatSignedCurrencyWithSymbol,
   formatSimulationTime,
-  formatTick,
   formatTransactionAmount,
   formatTransactionType,
   formatTransportStatus,
@@ -52,6 +51,8 @@ import {
 } from '@/presentation/formatting/presentation-formatters';
 import {
   formatPerCycleRate,
+  formatPlayerCycleIntervalEvery,
+  formatPlayerCyclePosition,
   formatPlayerDuration,
 } from '@/presentation/formatting/player-cycle-presentation';
 
@@ -165,7 +166,7 @@ function mapKpiStrip(
       kpis.employeeCount > 0
         ? `${kpis.assignedEmployeeCount}/${kpis.employeeCount} zugewiesen`
         : trendLabel('stable', 'Personal'),
-    payrollLabel: `${formatCurrency(kpis.payrollPerInterval)} Payroll / 10 Ticks`,
+    payrollLabel: `${formatCurrency(kpis.payrollPerInterval)} Payroll / ${formatPlayerDuration(10)}`,
     priceIndexLabel: kpis.priceIndex.toFixed(2),
     priceIndexHint: trendLabel('stable', 'Neutral bei 1,00'),
     corporateTaxRateLabel: `${(kpis.corporateTaxRate * 100).toFixed(0)} %`,
@@ -174,7 +175,7 @@ function mapKpiStrip(
           'down',
           `${formatCurrency(kpis.pendingTaxAmount)} offen · Kasse zu niedrig`,
         )
-      : `${kpis.activeContractCount} aktiv · alle ${kpis.taxIntervalTicks} Ticks`,
+      : `${kpis.activeContractCount} aktiv · ${formatPlayerCycleIntervalEvery(kpis.taxIntervalTicks)}`,
     taxPaymentBlocked: kpis.taxPaymentBlocked,
     runningProductionCount: runningProduction,
     productionHint: waitingProduction > 0 ? `${waitingProduction} wartend` : 'Keine Warteschlange',
@@ -185,8 +186,8 @@ function mapKpiStrip(
     activeContractCount: kpis.activeContractCount,
     economyHint:
       kpis.activeContractCount > 0
-        ? `${kpis.activeContractCount} aktiv · alle ${kpis.taxIntervalTicks} Ticks`
-        : `Steuer alle ${kpis.taxIntervalTicks} Ticks`,
+        ? `${kpis.activeContractCount} aktiv · ${formatPlayerCycleIntervalEvery(kpis.taxIntervalTicks)}`
+        : `Steuer ${formatPlayerCycleIntervalEvery(kpis.taxIntervalTicks)}`,
     taxIntervalTicks: kpis.taxIntervalTicks,
   });
 }
@@ -355,7 +356,7 @@ function mapEconomySection(
         resourceLabel: labels.resource(contract.resourceId),
         amount: contract.amount,
         paymentLabel: formatCurrency(contract.paymentAmount),
-        intervalLabel: `${contract.intervalTicks} Ticks`,
+        intervalLabel: formatPlayerDuration(contract.intervalTicks),
         statusLabel: formatContractStatus(contract.active),
       }),
     ),
@@ -427,7 +428,7 @@ function mapCompanyDetail(
           ...(building.status === 'UNDER_CONSTRUCTION'
             ? [
                 kv('Baufortschritt', formatProgress(building.constructionProgress)),
-                kv('Baudauer', `${building.constructionDuration} Ticks`),
+                kv('Baudauer', formatPlayerDuration(building.constructionDuration)),
               ]
             : []),
           kv('Produktionsjobs', String(relatedJobs.length)),
@@ -501,7 +502,7 @@ function mapCompanyDetail(
           kv('Ziel', order.destinationBuildingName),
           kv('Status', formatTransportStatus(order.status)),
           kv('Route-ID', order.routeId ?? '—'),
-          kv('Dauer', `${order.durationTicks} Ticks`),
+          kv('Dauer', formatPlayerDuration(order.durationTicks)),
           kv('Fortschritt', formatProgress(order.progress)),
           kv('Produktionsjob', order.productionJobId),
           kv('Rezept', order.recipeName ?? '—'),
@@ -567,7 +568,7 @@ function mapCompanyDetail(
           kv('Saldo vorher', formatCurrency(transaction.balanceBefore, currency)),
           kv('Saldo nachher', formatCurrency(transaction.balanceAfter, currency)),
           kv('Reserviert Δ', String(transaction.reservedCashDelta)),
-          kv('Simulationszeit', String(transaction.timestamp)),
+          kv('Simulationszeit', formatPlayerCyclePosition(transaction.timestamp)),
         ]),
       }),
     );
@@ -614,7 +615,7 @@ function mapCompanyDetail(
           currency,
         ),
         balanceLabel: formatCurrency(transaction.balanceAfter, currency),
-        timestampLabel: String(transaction.timestamp),
+        timestampLabel: formatPlayerCyclePosition(transaction.timestamp),
         directionClass: transactionDirectionClass(transaction.direction),
       }),
     ),
@@ -814,7 +815,7 @@ export function buildCompanyDashboardViewData(
         amountLabel: String(order.amount),
         recipeLabel: order.recipeName ?? '—',
         statusLabel: formatTransportStatus(order.status),
-        durationLabel: String(order.durationTicks),
+        durationLabel: formatPlayerDuration(order.durationTicks),
         progressLabel: formatProgress(order.progress),
       }),
     ),
@@ -831,7 +832,7 @@ export function buildCompanyDashboardViewData(
           currency,
         ),
         balanceLabel: formatCurrency(transaction.balanceAfter, currency),
-        timestampLabel: String(transaction.timestamp),
+        timestampLabel: formatPlayerCyclePosition(transaction.timestamp),
         directionClass: transactionDirectionClass(transaction.direction),
       }),
     ),
@@ -877,9 +878,9 @@ export function buildCompanyDashboardViewData(
   return Object.freeze({
     hasGame,
     companyName: dashboard.company.name,
-    tickLabel: formatTick(dashboard.tickNumber),
+    tickLabel: formatPlayerCyclePosition(dashboard.tickNumber),
     simulationTimeLabel: formatSimulationTime(dashboard.simulationTime),
-    headerSubtitle: `Unternehmens-Dashboard · Tick ${formatTick(dashboard.tickNumber)} · Zeit ${formatSimulationTime(dashboard.simulationTime)}`,
+    headerSubtitle: `Unternehmens-Dashboard · ${formatPlayerCyclePosition(dashboard.tickNumber)} · Zeit ${formatSimulationTime(dashboard.simulationTime)}`,
     energyHasDeficit: dashboard.energy?.hasDeficit ?? false,
     logisticsStatusMessage: dashboard.logistics?.statusMessage ?? null,
     buildingCount: dashboard.buildings.length,

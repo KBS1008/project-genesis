@@ -131,6 +131,17 @@ describe('company-dashboard-view-mappers', () => {
     expect(viewData.recipeCatalog[0]?.energyLabel).toBe('0,2 / Zyklus');
   });
 
+  it('exposes player-facing cycle terminology on dashboard header and transport rows', () => {
+    const viewData = buildCompanyDashboardViewData(createDashboardFixture(), []);
+
+    expect(viewData.tickLabel).toBe('Zyklus 5');
+    expect(viewData.headerSubtitle).toContain('Zyklus 5');
+    expect(viewData.headerSubtitle).not.toMatch(/\bTick\b/i);
+    expect(viewData.transportOrders[0]?.durationLabel).toBe('4 Zyklen');
+    expect(viewData.kpis?.payrollLabel).toContain('10 Zyklen');
+    expect(viewData.kpis?.economyHint).toContain('alle 10 Zyklen');
+  });
+
   it('maps milestone catalog entries to player-facing row view-data', () => {
     const dashboard: GameSessionDashboard = {
       ...createDashboardFixture(),

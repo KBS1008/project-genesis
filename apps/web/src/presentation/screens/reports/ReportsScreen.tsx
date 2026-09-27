@@ -10,6 +10,7 @@ import { EmptyState } from '@/presentation/primitives/EmptyState';
 import { QueryRows } from '@/presentation/screens/shared/QueryRows';
 import { ScreenQueryFrame } from '@/presentation/screens/shared/ScreenQueryFrame';
 import { useGameWorkspace } from '@/presentation/state/GameWorkspaceProvider';
+import { formatPlayerCyclePosition } from '@/presentation/formatting/player-cycle-presentation';
 import '../world/world-company.css';
 import '../shared/operation-screen.css';
 
@@ -63,8 +64,8 @@ export function ReportsScreen() {
             <strong>{viewData.session.companyName ?? '—'}</strong>
           </li>
           <li>
-            <span>Tick</span>
-            <strong>{viewData.simulation.tickNumber ?? '—'}</strong>
+            <span>Zyklus</span>
+            <strong>{formatPlayerCyclePosition(viewData.simulation.tickNumber)}</strong>
           </li>
           <li>
             <span>Simulationszeit</span>
@@ -82,7 +83,7 @@ export function ReportsScreen() {
           <EmptyState title="Keine Spielstände gefunden." />
         ) : (
           <QueryRows
-            columns={['Datei', 'Unternehmen', 'Tick', 'Schema']}
+            columns={['Datei', 'Unternehmen', 'Zyklus', 'Schema']}
             rows={viewData.saves.map((save) => ({
               id: save.filePath,
               cells: [save.fileName, save.companyName, save.tickLabel, save.schemaVersionLabel],
@@ -117,7 +118,7 @@ export function ReportsScreen() {
           </div>
 
           <QueryRows
-            columns={['Tick', 'Kategorie', 'Schwere', 'Ereignis']}
+            columns={['Zyklus', 'Kategorie', 'Schwere', 'Ereignis']}
             rows={(eventQuery.data ?? []).map((row: EventLogRowViewData) => ({
               id: row.id,
               cells: [row.tickLabel, row.categoryLabel, row.severityLabel, row.message],
@@ -138,7 +139,7 @@ export function ReportsScreen() {
                 <strong>{selectedEvent.id}</strong>
               </li>
               <li>
-                <span>Tick</span>
+                <span>Zyklus</span>
                 <strong>{selectedEvent.tickLabel}</strong>
               </li>
               <li>

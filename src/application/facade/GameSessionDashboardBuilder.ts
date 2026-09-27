@@ -25,6 +25,11 @@ import { formatPlayerFacingCurrencyAmount } from './player-facing-currency-forma
 import { formatMissingMilestoneReason } from './player-facing-milestone-label.js';
 import { formatMissingTechnologyReason } from './player-facing-technology-label.js';
 import { formatMissingResourceInputReason } from './player-facing-resource-label.js';
+import {
+  formatApproximatePlayerFacingCycleDuration,
+  formatPlayerFacingCycleCount,
+  formatPlayerFacingCycleIntervalEvery,
+} from './player-facing-cycle-label.js';
 import type { BuildingReadModel } from '../read-models/BuildingReadModel.js';
 import type { FinanceReadModel } from '../read-models/FinanceReadModel.js';
 import type { FinanceTransactionReadModel } from '../read-models/FinanceTransactionReadModel.js';
@@ -599,7 +604,7 @@ export class GameSessionDashboardBuilder {
                   destinationBuildingIdResult.value,
                 )
               : 5;
-            reason = `Material im Lagerhaus — Transport startet automatisch (~${durationTicks} Ticks).`;
+            reason = `Material im Lagerhaus — Transport startet automatisch (${formatApproximatePlayerFacingCycleDuration(durationTicks)}).`;
           } else if (
             this.#context.transportLogisticsService.canFulfillFromWarehouse(
               companyIdResult.value,
@@ -946,14 +951,14 @@ export class GameSessionDashboardBuilder {
         id: 'npc_supply_contract',
         title: 'NPC-Liefervertrag nutzen',
         description:
-          'Ein Abnehmer kauft alle 20 Ticks 5 Holz vom Standort-Inventar für 125 $ — halten Sie genug Holz bereit.',
+          `Ein Abnehmer kauft ${formatPlayerFacingCycleIntervalEvery(20)} 5 Holz vom Standort-Inventar für 125 $ — halten Sie genug Holz bereit.`,
         completed: hasContractPayment,
       }),
       Object.freeze({
         id: 'corporate_tax',
         title: 'Unternehmenssteuer verstehen',
         description:
-          'Alle 30 Ticks fällt 5 % Steuer auf den Gewinn seit der letzten Abrechnung an — prüfen Sie das Finanz-Ledger.',
+          `Alle ${formatPlayerFacingCycleCount(30)} fällt 5 % Steuer auf den Gewinn seit der letzten Abrechnung an — prüfen Sie das Finanz-Ledger.`,
         completed: hasTaxPayment,
       }),
     ];

@@ -7,14 +7,13 @@ import type {
   SimulationStatusDto,
   WorldOverviewDto,
 } from '@/presentation/adapters/api/query-client';
-import { formatPlayerGameSpeedMultiplier } from '@/presentation/formatting/player-cycle-presentation';
+import { formatPlayerCyclePosition, formatPlayerGameSpeedMultiplier } from '@/presentation/formatting/player-cycle-presentation';
 import {
   formatEventCategory,
   formatEventSeverity,
   formatCurrency,
   formatNumber,
   formatProductionStatus,
-  formatTick,
   formatTransactionAmount,
   formatTransactionType,
 } from '@/presentation/formatting/presentation-formatters';
@@ -71,7 +70,7 @@ export function mapSaveSlotViewData(dto: SaveMetadataDto): SaveSlotViewData {
     filePath: dto.filePath,
     schemaVersionLabel:
       dto.schemaVersion === null ? 'Unbekannt' : `Schema V${dto.schemaVersion}`,
-    tickLabel: dto.tickNumber === null ? '—' : String(dto.tickNumber),
+    tickLabel: dto.tickNumber === null ? '—' : formatPlayerCyclePosition(dto.tickNumber),
     companyName: dto.companyName ?? 'Unbenannt',
     modifiedAtLabel:
       dto.modifiedAt === null
@@ -327,7 +326,7 @@ export function mapEventLogRowsViewData(
     entries.map((entry) =>
       Object.freeze({
         id: entry.id,
-        tickLabel: formatTick(entry.tickNumber),
+        tickLabel: formatPlayerCyclePosition(entry.tickNumber),
         category: entry.category,
         categoryLabel: formatEventCategory(entry.category),
         message: entry.message,

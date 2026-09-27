@@ -42,7 +42,7 @@ describe('company-detail-inspector-mappers', () => {
             typeLabel: 'Kauf',
             amountLabel: '-50 $',
             balanceLabel: '950 $',
-            timestampLabel: 'Tick 1',
+        timestampLabel: 'Zyklus 1',
             directionClass: 'kv-value-error',
           },
         ]),

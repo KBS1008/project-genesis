@@ -10,6 +10,7 @@ import {
   YAxis,
 } from 'recharts';
 import type { TickMetricsViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
+import { formatPlayerCycleChartTooltipLabel } from '@/presentation/formatting/player-cycle-presentation';
 import { formatCurrency } from '@/presentation/formatting/presentation-formatters';
 import { PGChartTooltip, PGChartTooltipValue } from '@/presentation/components/dashboard/charts/PGChartTooltip';
 import { PGChartWidget } from '@/presentation/components/dashboard/charts/PGChartWidget';
@@ -94,7 +95,7 @@ function MetricLineChart({
               }
 
               return (
-                <PGChartTooltip label={`Tick ${label ?? ''}`}>
+                <PGChartTooltip label={formatPlayerCycleChartTooltipLabel(label)}>
                   <PGChartTooltipValue
                     name={config.label}
                     value={config.formatValue(Number(payload[0]?.value ?? 0))}

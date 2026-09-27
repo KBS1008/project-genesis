@@ -11,6 +11,7 @@ import {
   YAxis,
 } from 'recharts';
 import type { TickMetricsViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
+import { formatPlayerCycleChartTooltipLabel } from '@/presentation/formatting/player-cycle-presentation';
 import { PGChartTooltip, PGChartTooltipValue } from '@/presentation/components/dashboard/charts/PGChartTooltip';
 import { PGChartWidget } from '@/presentation/components/dashboard/charts/PGChartWidget';
 import {
@@ -44,7 +45,7 @@ export function PGInventoryHistoryChart({
         ariaLabel="Lagerbestände"
         wide
         pointCount={points.length}
-        emptyHint="Führen Sie Simulation-Ticks aus, um Lager-Trends zu sehen."
+        emptyHint="Führen Sie Zyklen aus, um Lager-Trends zu sehen."
         currentValue={
           latest !== undefined
             ? `Standort ${latest.onSiteTotalUnits.toLocaleString('de-DE')} · Lagerhaus ${latest.warehouseTotalUnits.toLocaleString('de-DE')}`
@@ -69,7 +70,7 @@ export function PGInventoryHistoryChart({
                 }
 
                 return (
-                  <PGChartTooltip label={`Tick ${label ?? ''}`}>
+                  <PGChartTooltip label={formatPlayerCycleChartTooltipLabel(label)}>
                     {payload.map((entry) => (
                       <PGChartTooltipValue
                         key={entry.name}

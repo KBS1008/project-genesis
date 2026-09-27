@@ -15,7 +15,7 @@ import { labelPrimaryScreen } from '@/presentation/navigation/label-primary-scre
 import { Button } from '@/presentation/primitives/Button';
 import { LoadingState } from '@/presentation/primitives/LoadingState';
 import { useDialog } from '@/presentation/dialog/DialogProvider';
-import { formatSimulationTime, formatTick } from '@/presentation/formatting/presentation-formatters';
+import { formatPlayerCyclePosition } from '@/presentation/formatting/player-cycle-presentation';
 import { NotificationIndicator } from '@/presentation/shell/NotificationIndicator';
 import { SaveGameDialog } from '@/presentation/screens/menu/SaveGameDialog';
 import { SimulationControlsBar } from '@/presentation/shell/SimulationControlsBar';
@@ -99,7 +99,7 @@ function WorkspaceHeader() {
           <h1>{session.companyName ?? 'Project Genesis'}</h1>
           <p className="pg-workspace-subtitle">
             {session.hasGame
-              ? `Tick ${formatTick(simulation.tickNumber)} · Simulationszeit ${formatSimulationTime(simulation.simulationTime)}`
+              ? formatPlayerCyclePosition(simulation.tickNumber)
               : 'Keine aktive Session — kehren Sie zum Hauptmenü zurück.'}
           </p>
         </div>
@@ -188,10 +188,9 @@ function WorkspaceStatusBar() {
       }
       center={
         <span
-          aria-label={`Tick ${formatTick(simulation.tickNumber)} · Simulationszeit ${formatSimulationTime(simulation.simulationTime)} · Geschwindigkeit ${simulation.speedLabel}`}
+          aria-label={`${formatPlayerCyclePosition(simulation.tickNumber)} · Spielgeschwindigkeit ${simulation.speedLabel}`}
         >
-          Tick {formatTick(simulation.tickNumber)} · {formatSimulationTime(simulation.simulationTime)} ·{' '}
-          {simulation.speedLabel}
+          {formatPlayerCyclePosition(simulation.tickNumber)} · {simulation.speedLabel}
         </span>
       }
       right={

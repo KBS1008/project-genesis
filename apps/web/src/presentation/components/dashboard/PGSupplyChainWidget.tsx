@@ -65,7 +65,7 @@ export function PGSupplyChainWidget({
         <QueryRows
           columns={
             detailed
-              ? ['Ressource', 'Menge', 'Route', 'Produktion', 'Status', 'Dauer (Ticks)', 'Fortschritt']
+              ? ['Ressource', 'Menge', 'Route', 'Produktion', 'Status', 'Dauer (Zyklen)', 'Fortschritt']
               : ['Route', 'Ressource', 'Menge', 'Status', 'Fortschritt']
           }
           columnCount={detailed ? 7 : 5}

@@ -142,8 +142,8 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
         {
           id: 'recipe_planks',
           name: 'Bretter herstellen',
-          durationLabel: '60 Ticks',
-          energyLabel: '0,20 / Tick',
+          durationLabel: '60 Zyklen',
+          energyLabel: '0,20 / Zyklus',
           inputLabels: ['wood × 10'],
           outputLabels: ['planks × 20'],
           buildingTypeLabels: ['Sägewerk'],
@@ -210,6 +210,8 @@ describe('ProductionScreen', () => {
     expect(screen.getAllByText('Sägewerk Nord').length).toBeGreaterThan(0);
     expect(screen.getByText('Rezeptkatalog')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Bretter herstellen/ })).toBeInTheDocument();
+    expect(screen.getByText(/60 Zyklen · 0,20 \/ Zyklus/)).toBeInTheDocument();
+    expect(screen.queryByText(/Tick/i)).toBeNull();
   });
 
   it('shows stalled energy status and progress for active jobs', () => {

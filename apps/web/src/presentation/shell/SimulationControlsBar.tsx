@@ -28,7 +28,7 @@ export function SimulationControlsBar() {
 
     void runCommand(
       () => setSimulationSpeed(speed),
-      `Simulationsgeschwindigkeit ×${speed}.`,
+      `Spielgeschwindigkeit ${speed === 1 ? '1×' : `×${speed}`}.`,
       { commandId: 'simulation.speed' },
     );
   };
@@ -46,7 +46,7 @@ export function SimulationControlsBar() {
           id: 'simulation-step-while-running',
           title: 'Simulationsschritt ausführen?',
           message:
-            'Die Simulation läuft derzeit. Möchten Sie trotzdem genau einen Tick voranschreiten?',
+            'Die Simulation läuft derzeit. Möchten Sie trotzdem genau einen Zyklus voranschreiten?',
           confirmLabel: 'Schritt ausführen',
         },
         executeStep,
@@ -92,14 +92,14 @@ export function SimulationControlsBar() {
         <Button
           variant="secondary"
           disabled={disabled}
-          aria-label="Einen Simulationsschritt ausführen"
+          aria-label="Einen Zyklus voranschreiten"
           onClick={handleStep}
         >
-          +1 Tick
+          +1 Zyklus
         </Button>
       </div>
 
-      <div className="pg-simulation-controls-group" role="group" aria-label="Simulationsgeschwindigkeit">
+      <div className="pg-simulation-controls-group" role="group" aria-label="Spielgeschwindigkeit">
         {SIMULATION_SPEED_OPTIONS.map((speed) => {
           const isActive = activeSpeed === speed;
 
@@ -110,7 +110,7 @@ export function SimulationControlsBar() {
               className={`pg-simulation-speed-button${isActive ? ' is-active' : ''}`.trim()}
               disabled={disabled}
               aria-pressed={isActive}
-              aria-label={`Simulationsgeschwindigkeit ×${speed}`}
+              aria-label={`Spielgeschwindigkeit ${speed === 1 ? '1×' : `×${speed}`}`}
               onClick={() => {
                 handleSpeedChange(speed);
               }}

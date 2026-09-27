@@ -45,7 +45,7 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
       world: { regions: [{ id: 'region_001', name: 'Heartland' }] },
     },
     companyViewData: {
-      tickLabel: 'Tick 4',
+      tickLabel: 'Zyklus 4',
       labels: {
         resource: (id: string) => (id === 'wood' ? 'Holz' : id),
       },

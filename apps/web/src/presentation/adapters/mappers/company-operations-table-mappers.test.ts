@@ -28,7 +28,7 @@ const SAMPLE_ECONOMY: EconomySectionViewData = {
       resourceLabel: 'Eisen',
       amount: 10,
       paymentLabel: '100 $',
-      intervalLabel: '30 Ticks',
+      intervalLabel: '30 Zyklen',
       statusLabel: 'Aktiv',
     },
   ]),
@@ -38,6 +38,8 @@ describe('company-operations-table-mappers', () => {
   it('buildOperationsEconomyPanel uses runtime tax labels without hardcoded fallback', () => {
     const panel = buildOperationsEconomyPanel(SAMPLE_ECONOMY);
 
+    expect(panel.subtitle).toContain('alle 30 Zyklen');
+    expect(panel.subtitle).not.toMatch(/\bTicks?\b/i);
     expect(panel.subtitle).toContain('15 %');
     expect(panel.subtitle).toContain('1,02');
     expect(panel.subtitle).not.toContain('Unternehmenssteuer 5 %');
@@ -84,12 +86,12 @@ describe('company-operations-table-mappers', () => {
         typeLabel: 'Kauf',
         amountLabel: '-50 $',
         balanceLabel: '950 $',
-        timestampLabel: 'Tick 12',
+        timestampLabel: 'Zyklus 12',
         directionClass: 'negative',
       },
     ]);
 
-    expect(rows[0]?.cells).toEqual(['Kauf', '-50 $', '950 $', 'Tick 12']);
+    expect(rows[0]?.cells).toEqual(['Kauf', '-50 $', '950 $', 'Zyklus 12']);
   });
 
   it('mapMarketPriceRows maps regional prices with trade volume', () => {

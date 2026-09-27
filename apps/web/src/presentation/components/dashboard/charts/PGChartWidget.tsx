@@ -12,7 +12,7 @@ export function PGChartWidget({
   minPoints = 2,
   pointCount,
   emptyTitle = 'Noch zu wenig Verlauf.',
-  emptyHint = 'Führen Sie Simulation-Ticks aus, um Trends zu sehen.',
+  emptyHint = 'Führen Sie Zyklen aus, um Trends zu sehen.',
   children,
 }: {
   readonly title: string;

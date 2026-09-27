@@ -1,4 +1,5 @@
 import { formatCurrency } from '@/presentation/formatting/presentation-formatters';
+import { formatPlayerCycleIntervalEvery } from '@/presentation/formatting/player-cycle-presentation';
 import type { ReactNode } from 'react';
 import type { MarketPriceReadModel } from '@/presentation/adapters/api/client';
 import type { PGOperationsTableRow } from '@/presentation/components/dashboard/PGOperationsTable';
@@ -183,7 +184,7 @@ export function buildOperationsEconomyPanel(
     });
   }
 
-  const subtitle = `Unternehmenssteuer ${economy.corporateTaxRateLabel} alle ${economy.taxIntervalTicks} Ticks · Preisindex ${economy.priceIndexLabel} (neutral 1,00). Lieferverträge entnehmen Ressourcen nur aus dem Standort-Inventar, nicht aus Lagerhaus-Beständen.`;
+  const subtitle = `Unternehmenssteuer ${economy.corporateTaxRateLabel} ${formatPlayerCycleIntervalEvery(economy.taxIntervalTicks)} · Preisindex ${economy.priceIndexLabel} (neutral 1,00). Lieferverträge entnehmen Ressourcen nur aus dem Standort-Inventar, nicht aus Lagerhaus-Beständen.`;
 
   const taxWarning =
     economy.taxPaymentBlocked && economy.pendingTaxLabel !== null

@@ -188,7 +188,7 @@ export function buildExecutiveDashboardViewData(
     tickLabel: companyViewData.tickLabel,
     simulationTimeLabel: companyViewData.simulationTimeLabel,
     playerSummary: resolvePlayerSummary(playerIdentity),
-    companySummary: `${companyViewData.buildingCount} Gebäude · Tick ${companyViewData.tickLabel}`,
+    companySummary: `${companyViewData.buildingCount} Gebäude · ${companyViewData.tickLabel}`,
     kpiCards: buildKpiCards(companyViewData),
     statusItems: Object.freeze([
       {

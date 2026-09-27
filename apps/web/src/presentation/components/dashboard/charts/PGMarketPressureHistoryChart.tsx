@@ -13,6 +13,7 @@ import {
   YAxis,
 } from 'recharts';
 import type { TickMetricsViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
+import { formatPlayerCycleChartTooltipLabel } from '@/presentation/formatting/player-cycle-presentation';
 import { PGChartTooltip, PGChartTooltipValue } from '@/presentation/components/dashboard/charts/PGChartTooltip';
 import { PGChartWidget } from '@/presentation/components/dashboard/charts/PGChartWidget';
 import { pgChartResourceColor } from '@/presentation/components/dashboard/charts/pg-chart-resource-colors';
@@ -73,7 +74,7 @@ export function PGMarketPressureHistoryChart({
         ariaLabel="Marktdruck"
         wide
         pointCount={points.length}
-        emptyHint="Führen Sie Ticks aus, um den Druckindex (Nachfrage/Angebot) zu verfolgen."
+        emptyHint="Führen Sie Zyklen aus, um den Druckindex (Nachfrage/Angebot) zu verfolgen."
         currentValue={latestPressure !== undefined && latestPressure.length > 0 ? latestPressure : undefined}
       >
         <ResponsiveContainer width="100%" height={200}>
@@ -101,7 +102,7 @@ export function PGMarketPressureHistoryChart({
                 }
 
                 return (
-                  <PGChartTooltip label={`Tick ${label ?? ''}`}>
+                  <PGChartTooltip label={formatPlayerCycleChartTooltipLabel(label)}>
                     {payload.map((entry) => (
                       <PGChartTooltipValue
                         key={entry.name}

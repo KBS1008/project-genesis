@@ -40,6 +40,13 @@ describe('PG chart components', () => {
     expect(container).toBeEmptyDOMElement();
   });
 
+  it('PGPriceIndexHistoryChart empty hint uses Zyklus terminology', () => {
+    renderPresentation(<PGPriceIndexHistoryChart points={SAMPLE_POINTS} />);
+
+    expect(screen.getByText(/Führen Sie Zyklen aus/)).toBeInTheDocument();
+    expect(screen.queryByText(/Ticks/i)).not.toBeInTheDocument();
+  });
+
   it('PGPriceIndexHistoryChart shows empty state with single point', () => {
     renderPresentation(<PGPriceIndexHistoryChart points={SAMPLE_POINTS} />);
 

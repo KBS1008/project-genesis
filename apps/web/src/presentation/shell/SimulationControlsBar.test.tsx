@@ -52,13 +52,16 @@ describe('SimulationControlsBar', () => {
 
     expect(screen.getByRole('region', { name: 'Simulationssteuerung' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Simulation pausieren' })).toBeEnabled();
-    expect(screen.getByRole('button', { name: 'Einen Simulationsschritt ausführen' })).toBeEnabled();
-    expect(screen.getByRole('button', { name: 'Simulationsgeschwindigkeit ×2' })).toHaveAttribute(
+    expect(screen.getByRole('button', { name: 'Einen Zyklus voranschreiten' })).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Spielgeschwindigkeit ×2' })).toHaveAttribute(
       'aria-pressed',
       'false',
     );
 
-    await user.click(screen.getByRole('button', { name: 'Simulationsgeschwindigkeit ×2' }));
+    expect(screen.getByText('+1 Zyklus')).toBeInTheDocument();
+    expect(screen.queryByText(/Tick/i)).toBeNull();
+
+    await user.click(screen.getByRole('button', { name: 'Spielgeschwindigkeit ×2' }));
     expect(runCommand).toHaveBeenCalledTimes(1);
   });
 
@@ -69,7 +72,7 @@ describe('SimulationControlsBar', () => {
 
     render(<SimulationControlsBar />);
 
-    await user.click(screen.getByRole('button', { name: 'Einen Simulationsschritt ausführen' }));
+    await user.click(screen.getByRole('button', { name: 'Einen Zyklus voranschreiten' }));
 
     expect(openConfirmDialog).toHaveBeenCalledTimes(1);
     expect(runCommand).toHaveBeenCalledTimes(1);

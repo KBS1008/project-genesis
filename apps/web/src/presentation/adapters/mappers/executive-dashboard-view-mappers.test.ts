@@ -6,7 +6,7 @@ function createDashboardFixture(): CompanyDashboardViewData {
   return {
     hasGame: true,
     companyName: 'Acme Industries',
-    tickLabel: '42',
+    tickLabel: 'Zyklus 42',
     simulationTimeLabel: 'Tag 3',
     headerSubtitle: 'Session aktiv',
     energyHasDeficit: true,
@@ -134,6 +134,7 @@ describe('buildExecutiveDashboardViewData', () => {
     );
 
     expect(dashboard.companyName).toBe('Acme Industries');
+    expect(dashboard.companySummary).toBe('2 Gebäude · Zyklus 42');
     expect(dashboard.playerSummary).toBe('player_001');
     expect(dashboard.kpiCards.length).toBeGreaterThan(0);
     expect(dashboard.kpiCards[0]?.placeholder).toBe('{{availableCash}}');

@@ -181,7 +181,7 @@ export function MarketScreen() {
                 <strong>{companyViewData.kpis?.priceIndexLabel ?? '—'}</strong>
               </li>
               <li>
-                <span>Tick</span>
+                <span>Zyklus</span>
                 <strong>{companyViewData.tickLabel}</strong>
               </li>
             </ul>

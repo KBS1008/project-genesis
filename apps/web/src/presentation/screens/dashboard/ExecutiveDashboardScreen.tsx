@@ -178,7 +178,7 @@ export function ExecutiveDashboardScreen({
                     </Button>
                   </div>
                   <span className="pg-workspace-subtitle">
-                    Tick {dashboard.tickLabel} · {dashboard.simulationTimeLabel}
+                    {dashboard.tickLabel} · {dashboard.simulationTimeLabel}
                   </span>
                 </div>
               </div>
