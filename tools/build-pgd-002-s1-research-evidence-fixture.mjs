@@ -2,6 +2,7 @@
  * Builds a deterministic save fixture for PGD-002-S1 research prerequisite runtime evidence.
  * Source: e2e closeout save with player milestone/research state patched (same schema).
  */
+/* global console */
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
