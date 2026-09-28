@@ -159,7 +159,7 @@ describe('company-dashboard-view-mappers', () => {
     ]);
   });
 
-  it('formats Research job row status labels without altering active-research metrics', () => {
+  it('formats Research job row status labels and counts RUNNING jobs in active-research KPIs', () => {
     const dashboard: GameSessionDashboard = {
       ...createDashboardFixture(),
       contentNames: {
@@ -185,8 +185,46 @@ describe('company-dashboard-view-mappers', () => {
     const viewData = buildCompanyDashboardViewData(dashboard, []);
 
     expect(viewData.researchJobs.map((row) => row.statusLabel)).toEqual(['Laufend', 'Wartend']);
+    expect(viewData.kpis?.activeResearchCount).toBe(1);
     const researchOverviewCard = viewData.overview?.cards.find((card) => card.label === 'Forschung');
-    expect(researchOverviewCard?.value).toBe('0');
+    expect(researchOverviewCard?.value).toBe('1');
+  });
+
+  it('counts zero active Research KPI jobs for WAITING, FINISHED, and CANCELLED only', () => {
+    for (const status of ['WAITING', 'FINISHED', 'CANCELLED'] as const) {
+      const dashboard: GameSessionDashboard = {
+        ...createDashboardFixture(),
+        researchJobs: [
+          {
+            id: `research_${status.toLowerCase()}`,
+            technologyId: 'basic_woodworking',
+            status,
+            progress: status === 'FINISHED' ? 100 : 0,
+          },
+        ],
+      };
+
+      const viewData = buildCompanyDashboardViewData(dashboard, []);
+      expect(viewData.kpis?.activeResearchCount).toBe(0);
+      expect(viewData.overview?.cards.find((card) => card.label === 'Forschung')?.value).toBe('0');
+    }
+  });
+
+  it('counts only RUNNING Research jobs in active-research KPIs for mixed statuses', () => {
+    const dashboard: GameSessionDashboard = {
+      ...createDashboardFixture(),
+      researchJobs: [
+        { id: 'r1', technologyId: 'basic_woodworking', status: 'RUNNING', progress: 10 },
+        { id: 'r2', technologyId: 'coal_efficiency', status: 'RUNNING', progress: 20 },
+        { id: 'r3', technologyId: 'factory_automation', status: 'WAITING', progress: 0 },
+        { id: 'r4', technologyId: 'basic_woodworking', status: 'FINISHED', progress: 100 },
+        { id: 'r5', technologyId: 'coal_efficiency', status: 'CANCELLED', progress: 0 },
+      ],
+    };
+
+    const viewData = buildCompanyDashboardViewData(dashboard, []);
+    expect(viewData.kpis?.activeResearchCount).toBe(2);
+    expect(viewData.overview?.cards.find((card) => card.label === 'Forschung')?.value).toBe('2');
   });
 
   it('formats Research inspector Status while leaving Job-ID unchanged', () => {

@@ -142,7 +142,7 @@ function mapKpiStrip(
 
   const runningProduction = dashboard.productionJobs.filter((job) => job.status === 'RUNNING').length;
   const waitingProduction = dashboard.productionJobs.filter((job) => job.status === 'WAITING').length;
-  const activeResearch = dashboard.researchJobs.filter((job) => job.status === 'IN_PROGRESS').length;
+  const activeResearch = dashboard.researchJobs.filter((job) => job.status === 'RUNNING').length;
 
   return Object.freeze({
     availableCashLabel: formatCurrency(kpis.availableCash),
@@ -196,7 +196,7 @@ function mapKpiStrip(
 function mapOverviewStrip(dashboard: GameSessionDashboard): OverviewStripViewData {
   const runningProduction = dashboard.productionJobs.filter((job) => job.status === 'RUNNING').length;
   const waitingProduction = dashboard.productionJobs.filter((job) => job.status === 'WAITING').length;
-  const activeResearch = dashboard.researchJobs.filter((job) => job.status === 'IN_PROGRESS').length;
+  const activeResearch = dashboard.researchJobs.filter((job) => job.status === 'RUNNING').length;
   const activeTransport = dashboard.logistics?.activeTransportCount ?? 0;
   const queuedTransport = dashboard.logistics?.queuedTransportCount ?? 0;
   const assignedEmployees =
