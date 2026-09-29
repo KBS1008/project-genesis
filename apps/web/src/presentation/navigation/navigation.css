@@ -233,6 +233,23 @@
   object-fit: contain;
 }
 
+.pg-employees-widget.is-workforce-assignment-focus {
+  outline: 2px solid var(--pg-color-accent, #3b82f6);
+  outline-offset: 4px;
+  border-radius: var(--pg-radius-md, 8px);
+}
+
+.pg-workforce-assignment-focus-hint {
+  margin: 0 0 var(--pg-space-3, 12px);
+  font-size: var(--pg-font-size-sm, 0.875rem);
+  color: var(--pg-color-text-secondary, #64748b);
+}
+
+.pg-workforce-assignment-focus-action {
+  outline: 2px solid var(--pg-color-accent, #3b82f6);
+  outline-offset: 2px;
+}
+
 @media (max-width: 640px) {
   .pg-employees-widget .pg-workforce-role-visual {
     width: 56px;

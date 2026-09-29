@@ -11,6 +11,7 @@ export function PGOperationsSidebar({
   hasGame,
   hints,
   runAction,
+  workforceAssignmentFocusBuildingId = null,
 }: {
   readonly hasGame: boolean;
   readonly hints: SidebarHintsViewData;
@@ -20,6 +21,7 @@ export function PGOperationsSidebar({
     commandId: CommandId,
     options?: { readonly clearsDirty?: boolean },
   ) => Promise<void>;
+  readonly workforceAssignmentFocusBuildingId?: string | null;
 }) {
   return (
     <>
@@ -65,6 +67,11 @@ export function PGOperationsSidebar({
                 <Button
                   key={`${hint.employeeId}-${hint.buildingId}`}
                   variant="secondary"
+                  className={
+                    workforceAssignmentFocusBuildingId === hint.buildingId
+                      ? 'pg-workforce-assignment-focus-action'
+                      : undefined
+                  }
                   disabled={!hasGame}
                   title={hint.reason ?? undefined}
                   onClick={() => {

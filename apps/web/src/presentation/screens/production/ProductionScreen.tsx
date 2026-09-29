@@ -19,6 +19,7 @@ import type { ProductionHintViewData } from '@/presentation/adapters/view-data/c
 import type { RecipeCatalogEntryViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
 import { useScreenQuery, TICK_QUERY_DEBOUNCE_MS } from '@/presentation/hooks/useScreenQuery';
 import { buildWarehouseNavigationTarget } from '@/presentation/navigation/entity-navigation';
+import { PRODUCTION_WORKFORCE_PERSONNEL_NAVIGATION_LABEL } from '@/presentation/navigation/production-workforce-personnel-navigation';
 import { Button } from '@/presentation/primitives/Button';
 import { Card } from '@/presentation/primitives/Card';
 import { EmptyState } from '@/presentation/primitives/EmptyState';
@@ -45,6 +46,7 @@ export function ProductionScreen() {
     selectEntity,
     clearEntitySelection,
     navigateToTarget,
+    navigateProductionWorkforcePersonnel,
   } = useGameWorkspace();
   const [selectedRecipeId, setSelectedRecipeId] = useState<string | null>(null);
   const selectedJobId =
@@ -121,6 +123,23 @@ export function ProductionScreen() {
     selectedJobId === null
       ? null
       : (companyViewData.detail.productionJobs.get(selectedJobId) ?? null);
+  const workforcePersonnelNavigationTargets = useMemo(() => {
+    const byBuildingId = new Map<string, string>();
+
+    for (const row of productionJobs) {
+      if (row.workforcePersonnelNavigationBuildingId === null) {
+        continue;
+      }
+
+      byBuildingId.set(row.workforcePersonnelNavigationBuildingId, row.buildingLabel);
+    }
+
+    return Object.freeze(
+      [...byBuildingId.entries()].map(([buildingId, buildingLabel]) =>
+        Object.freeze({ buildingId, buildingLabel }),
+      ),
+    );
+  }, [productionJobs]);
   const selectedRecipeDetail =
     selectedRecipeId === null
       ? null
@@ -174,6 +193,23 @@ export function ProductionScreen() {
 
         {overviewSummary.workforceStallGuidance !== null ? (
           <StatusBanner tone="warning" message={overviewSummary.workforceStallGuidance} />
+        ) : null}
+
+        {workforcePersonnelNavigationTargets.length > 0 ? (
+          <div className="pg-production-workforce-nav-actions">
+            {workforcePersonnelNavigationTargets.map((target) => (
+              <Button
+                key={target.buildingId}
+                variant="secondary"
+                aria-label={`${PRODUCTION_WORKFORCE_PERSONNEL_NAVIGATION_LABEL} für ${target.buildingLabel}`}
+                onClick={() => {
+                  navigateProductionWorkforcePersonnel(target.buildingId);
+                }}
+              >
+                {PRODUCTION_WORKFORCE_PERSONNEL_NAVIGATION_LABEL} · {target.buildingLabel}
+              </Button>
+            ))}
+          </div>
         ) : null}
 
         <div className="pg-operation-summary-grid" aria-label="Produktionsübersicht">

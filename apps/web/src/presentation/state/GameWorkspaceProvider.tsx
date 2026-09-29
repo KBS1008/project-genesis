@@ -54,9 +54,11 @@ import type { CompanyDashboardViewData } from '@/presentation/adapters/view-data
 import { EMPTY_COMPANY_DASHBOARD_VIEW_DATA } from '@/presentation/adapters/view-data/company-dashboard-view-data';
 import type { PlaceBuildingPrerequisiteNavigationViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
 import type { WorkspaceViewData } from '@/presentation/adapters/view-data/workspace-view-data';
+import type { CompanyOperationsPendingNavigation } from '@/presentation/navigation/company-operations-pending-navigation';
 import {
   resolvePlaceBuildingPrerequisiteNavigation,
 } from '@/presentation/navigation/place-building-prerequisite-navigation';
+import { resolveProductionWorkforcePersonnelNavigation } from '@/presentation/navigation/production-workforce-personnel-navigation';
 import {
   buildEntityCatalogFromDashboard,
   buildNavigationQueryString,
@@ -96,10 +98,11 @@ export type GameWorkspaceContextValue = {
   readonly navigatePlaceBuildingPrerequisite: (
     navigation: PlaceBuildingPrerequisiteNavigationViewData,
   ) => void;
+  readonly navigateProductionWorkforcePersonnel: (buildingId: string) => void;
   readonly researchCatalogFocusTechnologyId: string | null;
   readonly clearResearchCatalogFocus: () => void;
-  readonly pendingCompanyOperationsView: boolean;
-  readonly clearPendingCompanyOperationsView: () => void;
+  readonly pendingCompanyOperationsNavigation: CompanyOperationsPendingNavigation | null;
+  readonly clearPendingCompanyOperationsNavigation: () => void;
   readonly simulationNotificationItems: readonly PGNotificationItem[];
   readonly criticalAnnouncement: string | null;
   readonly executeNotificationAction: (
@@ -163,7 +166,8 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
   const [researchCatalogFocusTechnologyId, setResearchCatalogFocusTechnologyId] = useState<
     string | null
   >(null);
-  const [pendingCompanyOperationsView, setPendingCompanyOperationsView] = useState(false);
+  const [pendingCompanyOperationsNavigation, setPendingCompanyOperationsNavigation] =
+    useState<CompanyOperationsPendingNavigation | null>(null);
   const [simulationNotificationItems, setSimulationNotificationItems] = useState<
     readonly PGNotificationItem[]
   >(Object.freeze([]));
@@ -665,15 +669,26 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
     setResearchCatalogFocusTechnologyId(null);
   }, []);
 
-  const clearPendingCompanyOperationsView = useCallback(() => {
-    setPendingCompanyOperationsView(false);
+  const clearPendingCompanyOperationsNavigation = useCallback(() => {
+    setPendingCompanyOperationsNavigation(null);
   }, []);
 
   const navigatePlaceBuildingPrerequisite = useCallback(
     (navigation: PlaceBuildingPrerequisiteNavigationViewData) => {
       const resolved = resolvePlaceBuildingPrerequisiteNavigation(navigation);
       setResearchCatalogFocusTechnologyId(resolved.researchCatalogTechnologyId);
-      setPendingCompanyOperationsView(navigation.kind === 'missing_milestone');
+      setPendingCompanyOperationsNavigation(
+        navigation.kind === 'missing_milestone' ? { kind: 'milestone_overview' } : null,
+      );
+      navigateToTarget(resolved.target);
+    },
+    [navigateToTarget],
+  );
+
+  const navigateProductionWorkforcePersonnel = useCallback(
+    (buildingId: string) => {
+      const resolved = resolveProductionWorkforcePersonnelNavigation(buildingId);
+      setPendingCompanyOperationsNavigation(resolved.pendingNavigation);
       navigateToTarget(resolved.target);
     },
     [navigateToTarget],
@@ -773,10 +788,11 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
       markSessionSaved,
       navigateToTarget,
       navigatePlaceBuildingPrerequisite,
+      navigateProductionWorkforcePersonnel,
       researchCatalogFocusTechnologyId,
       clearResearchCatalogFocus,
-      pendingCompanyOperationsView,
-      clearPendingCompanyOperationsView,
+      pendingCompanyOperationsNavigation,
+      clearPendingCompanyOperationsNavigation,
       simulationNotificationItems,
       criticalAnnouncement,
       executeNotificationAction,
@@ -804,10 +820,11 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
       markSessionSaved,
       navigateToTarget,
       navigatePlaceBuildingPrerequisite,
+      navigateProductionWorkforcePersonnel,
       researchCatalogFocusTechnologyId,
       clearResearchCatalogFocus,
-      pendingCompanyOperationsView,
-      clearPendingCompanyOperationsView,
+      pendingCompanyOperationsNavigation,
+      clearPendingCompanyOperationsNavigation,
       simulationNotificationItems,
       criticalAnnouncement,
       executeNotificationAction,

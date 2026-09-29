@@ -81,12 +81,14 @@ export type TransportJobRowViewData = {
 export type ProductionJobRowViewData = {
   readonly id: string;
   readonly title: string;
+  readonly buildingId: string;
   readonly buildingLabel: string;
   readonly statusLabel: string;
   readonly progressLabel: string;
   readonly progressPercent: number;
   readonly operationalState: string;
   readonly workforceGuidance: string | null;
+  readonly workforcePersonnelNavigationBuildingId: string | null;
 };
 
 export type ProductionOverviewSummaryViewData = {

@@ -4,6 +4,12 @@
   gap: var(--space-md);
 }
 
+.pg-production-workforce-nav-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
 .pg-operation-toolbar {
   display: flex;
   flex-wrap: wrap;

@@ -171,6 +171,7 @@ export function mapProductionJobRowsViewData(
       Object.freeze({
         id: job.id,
         title: labels.recipe(job.recipeId),
+        buildingId: job.buildingId,
         buildingLabel: labels.building(job.buildingId),
         statusLabel: formatProductionStatus(
           job.status,
@@ -181,6 +182,8 @@ export function mapProductionJobRowsViewData(
         progressPercent: Math.max(0, Math.min(100, job.progress)),
         operationalState: job.operationalState,
         workforceGuidance: resolveProductionWorkforceStallGuidance(job.operationalState),
+        workforcePersonnelNavigationBuildingId:
+          job.operationalState === 'STALLED_WORKFORCE' ? job.buildingId : null,
       }),
     ),
   );

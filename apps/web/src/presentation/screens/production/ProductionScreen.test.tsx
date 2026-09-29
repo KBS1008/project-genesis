@@ -12,6 +12,7 @@ const workspaceState = vi.hoisted(() => {
   const selectEntity = vi.fn();
   const clearEntitySelection = vi.fn();
   const navigateToTarget = vi.fn();
+  const navigateProductionWorkforcePersonnel = vi.fn();
   let navigation: NavigationState = {
     screen: 'production',
     entitySelection: { kind: 'none' },
@@ -22,6 +23,7 @@ const workspaceState = vi.hoisted(() => {
     selectEntity,
     clearEntitySelection,
     navigateToTarget,
+    navigateProductionWorkforcePersonnel,
     getNavigation: () => navigation,
     setNavigation: (value: NavigationState) => {
       navigation = value;
@@ -181,6 +183,7 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
     selectEntity: workspaceState.selectEntity,
     clearEntitySelection: workspaceState.clearEntitySelection,
     navigateToTarget: workspaceState.navigateToTarget,
+    navigateProductionWorkforcePersonnel: workspaceState.navigateProductionWorkforcePersonnel,
   }),
 }));
 
@@ -232,16 +235,25 @@ describe('ProductionScreen', () => {
     expect(screen.getAllByText('42%').length).toBeGreaterThan(0);
   });
 
-  it('shows actionable workforce guidance for STALLED_WORKFORCE without navigation controls', () => {
+  it('shows workforce guidance and Personal verwalten only for STALLED_WORKFORCE rows', async () => {
     workspaceState.setNavigation({ screen: 'production', entitySelection: { kind: 'none' } });
-    workspaceState.navigateToTarget.mockClear();
+    workspaceState.navigateProductionWorkforcePersonnel.mockClear();
+    workspaceState.runCommand.mockClear();
+    const user = userEvent.setup();
     render(<ProductionScreen />);
 
     expect(screen.getByText(/Unternehmen → Operatives Dashboard → Personal/)).toBeInTheDocument();
     expect(screen.getByText(/dem betroffenen Gebäude zuweisen/)).toBeInTheDocument();
     expect(screen.queryByText(/Produktionsmitarbeiter/i)).toBeNull();
     expect(screen.queryByText(/\b2 Mitarbeiter\b/i)).toBeNull();
-    expect(workspaceState.navigateToTarget).not.toHaveBeenCalled();
+
+    const workforceButtons = screen.getAllByRole('button', { name: /Personal verwalten/ });
+    expect(workforceButtons).toHaveLength(1);
+
+    await user.click(workforceButtons[0]!);
+
+    expect(workspaceState.navigateProductionWorkforcePersonnel).toHaveBeenCalledWith('building_005');
+    expect(workspaceState.runCommand).not.toHaveBeenCalled();
   });
 
   it('selects a production job for entity navigation', async () => {

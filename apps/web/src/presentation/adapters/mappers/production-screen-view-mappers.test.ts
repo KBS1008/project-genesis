@@ -60,7 +60,8 @@ describe('production screen view mappers', () => {
     expect(rows[0]?.progressPercent).toBe(42);
     expect(rows[1]?.statusLabel).toBe('Keine Mitarbeiter');
     expect(rows[1]?.workforceGuidance).toContain('Personal');
-    expect(rows[0]?.workforceGuidance).toBeNull();
+    expect(rows[1]?.workforcePersonnelNavigationBuildingId).toBe('building_005');
+    expect(rows[0]?.workforcePersonnelNavigationBuildingId).toBeNull();
   });
 
   it('groups jobs by factory building', () => {

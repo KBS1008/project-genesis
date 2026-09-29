@@ -21,17 +21,22 @@ function isCompanyEntitySelection(kind: string): boolean {
 export function CompanyScreen() {
   const {
     navigation,
-    pendingCompanyOperationsView,
-    clearPendingCompanyOperationsView,
+    pendingCompanyOperationsNavigation,
+    clearPendingCompanyOperationsNavigation,
   } = useGameWorkspace();
   const [view, setView] = useState<'overview' | 'operations'>('overview');
 
   useEffect(() => {
-    if (pendingCompanyOperationsView) {
-      setView('operations');
-      clearPendingCompanyOperationsView();
+    if (pendingCompanyOperationsNavigation === null) {
+      return;
     }
-  }, [clearPendingCompanyOperationsView, pendingCompanyOperationsView]);
+
+    setView('operations');
+
+    if (pendingCompanyOperationsNavigation.kind === 'milestone_overview') {
+      clearPendingCompanyOperationsNavigation();
+    }
+  }, [clearPendingCompanyOperationsNavigation, pendingCompanyOperationsNavigation]);
 
   useEffect(() => {
     if (isCompanyEntitySelection(navigation.entitySelection.kind)) {

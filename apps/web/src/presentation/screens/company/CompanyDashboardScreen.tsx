@@ -25,6 +25,7 @@ import {
   buildProductionBuildingNavigationTarget,
   buildProductionNavigationTarget,
 } from '@/presentation/navigation/entity-navigation';
+import { isWorkforceAssignmentPendingNavigation } from '@/presentation/navigation/company-operations-pending-navigation';
 import type { CommandId } from '@/presentation/commands';
 
 /** Company dashboard screen consuming workspace view-data. */
@@ -35,11 +36,60 @@ export function CompanyDashboardScreen({
   readonly hideHeader?: boolean;
   readonly onBackToOverview?: () => void;
 }) {
-  const { companyViewData, isLoading, isBusy, isLiveConnected, runCommand, navigation, selectEntity, clearEntitySelection, navigateToTarget } =
-    useGameWorkspace();
+  const {
+    companyViewData,
+    isLoading,
+    isBusy,
+    isLiveConnected,
+    runCommand,
+    navigation,
+    selectEntity,
+    clearEntitySelection,
+    navigateToTarget,
+    pendingCompanyOperationsNavigation,
+    clearPendingCompanyOperationsNavigation,
+  } = useGameWorkspace();
   const { theme, toggleTheme } = useTheme();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [detailSelection, setDetailSelection] = useState<DetailSelection>({ kind: 'overview' });
+  const [workforceAssignmentFocusBuildingId, setWorkforceAssignmentFocusBuildingId] = useState<
+    string | null
+  >(null);
+
+  useEffect(() => {
+    if (!isWorkforceAssignmentPendingNavigation(pendingCompanyOperationsNavigation)) {
+      return;
+    }
+
+    const { buildingId } = pendingCompanyOperationsNavigation;
+    const buildingExists = companyViewData.buildings.some((building) => building.id === buildingId);
+
+    if (buildingExists) {
+      setDetailSelection({ kind: 'building', id: buildingId });
+      selectEntity({ kind: 'building', id: buildingId });
+      setWorkforceAssignmentFocusBuildingId(buildingId);
+    } else {
+      setWorkforceAssignmentFocusBuildingId(null);
+    }
+
+    clearPendingCompanyOperationsNavigation();
+
+    requestAnimationFrame(() => {
+      document.getElementById('pg-employees-widget-title')?.scrollIntoView({ block: 'start' });
+    });
+  }, [
+    clearPendingCompanyOperationsNavigation,
+    companyViewData.buildings,
+    pendingCompanyOperationsNavigation,
+    selectEntity,
+  ]);
+
+  useEffect(
+    () => () => {
+      setWorkforceAssignmentFocusBuildingId(null);
+    },
+    [],
+  );
 
   useEffect(() => {
     setDetailSelection((current) =>
@@ -207,7 +257,13 @@ export function CompanyDashboardScreen({
       {hideHeader ? (
         <div className="pg-operations-toolbar">
           {onBackToOverview ? (
-            <Button variant="secondary" onClick={onBackToOverview}>
+            <Button
+              variant="secondary"
+              onClick={() => {
+                setWorkforceAssignmentFocusBuildingId(null);
+                onBackToOverview();
+              }}
+            >
               Zur Übersicht
             </Button>
           ) : null}
@@ -234,7 +290,12 @@ export function CompanyDashboardScreen({
           className={`pg-operations-sidebar${sidebarOpen ? ' is-open' : ''}`}
           aria-label="Dashboard-Aktionen"
         >
-          <PGOperationsSidebar hasGame={hasGame} hints={companyViewData.hints} runAction={runAction} />
+          <PGOperationsSidebar
+            hasGame={hasGame}
+            hints={companyViewData.hints}
+            runAction={runAction}
+            workforceAssignmentFocusBuildingId={workforceAssignmentFocusBuildingId}
+          />
         </aside>
 
         <div className="pg-operations-content">
@@ -268,6 +329,7 @@ export function CompanyDashboardScreen({
               hasGame={hasGame}
               isLoading={isLoading}
               selection={detailSelection}
+              workforceAssignmentFocusBuildingId={workforceAssignmentFocusBuildingId}
               onSelectDetail={selectDetail}
             />
 

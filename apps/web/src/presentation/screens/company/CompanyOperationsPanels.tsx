@@ -56,12 +56,14 @@ export function CompanyOperationsPanels({
   hasGame,
   isLoading,
   selection,
+  workforceAssignmentFocusBuildingId = null,
   onSelectDetail,
 }: {
   readonly companyViewData: CompanyDashboardViewData;
   readonly hasGame: boolean;
   readonly isLoading: boolean;
   readonly selection: OperationsDetailSelection;
+  readonly workforceAssignmentFocusBuildingId?: string | null;
   readonly onSelectDetail: (kind: OperationsDetailKind, id: string) => void;
 }) {
   const buildingRows = useMemo(
@@ -109,6 +111,12 @@ export function CompanyOperationsPanels({
     [companyViewData.warehouseStorage],
   );
 
+  const workforceFocusBuildingLabel =
+    workforceAssignmentFocusBuildingId === null
+      ? null
+      : (companyViewData.buildings.find((building) => building.id === workforceAssignmentFocusBuildingId)
+          ?.name ?? null);
+
   if (isLoading) {
     return (
       <div className="pg-operations-panels pg-operations-panels-loading">
@@ -137,6 +145,8 @@ export function CompanyOperationsPanels({
         emptyTitle="Noch keine Mitarbeiter."
         emptyHint="Stellen Sie Personal über die Seitenleiste ein."
         selectedEmployeeId={resolveSelectedId(selection, 'employee')}
+        workforceAssignmentFocusBuildingId={workforceAssignmentFocusBuildingId}
+        workforceAssignmentFocusBuildingLabel={workforceFocusBuildingLabel}
         onEmployeeClick={(employeeId) => {
           onSelectDetail('employee', employeeId);
         }}
