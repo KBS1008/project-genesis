@@ -1,0 +1,16 @@
+{
+  "capturedAtUtc": "2026-10-05T16:59:18.817Z",
+  "webOrigin": "http://127.0.0.1:3000",
+  "savePath": "D:\\Cursor\\Project Genesis\\saves\\e2e-m11-phase6-production-closeout.json",
+  "expectedRuntimeWebpSha256": "99c9d8312dc6c4f034a7ebe62b4942dfe9407d531e8be89d39dccada5f0460cd",
+  "verifiedRuntimeWebpSha256": "99c9d8312dc6c4f034a7ebe62b4942dfe9407d531e8be89d39dccada5f0460cd",
+  "resolution": {
+    "railSrc": "http://127.0.0.1:3000/assets/buildings/ICON-003-rail_terminal.webp",
+    "recSrc": "http://127.0.0.1:3000/assets/buildings/ICON-003-recycling_facility.webp",
+    "sameSrc": false
+  },
+  "evidence": {
+    "desktop": "D:\\Cursor\\Project Genesis\\docs\\architecture\\reviews\\evidence\\BVI-001_RAIL_TERMINAL_RUNTIME_CATALOG_DESKTOP_1440x900.png",
+    "narrow": "D:\\Cursor\\Project Genesis\\docs\\architecture\\reviews\\evidence\\BVI-001_RAIL_TERMINAL_RUNTIME_CATALOG_NARROW_480x900.png"
+  }
+}

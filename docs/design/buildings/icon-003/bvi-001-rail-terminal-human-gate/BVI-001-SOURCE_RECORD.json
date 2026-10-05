@@ -1,0 +1,55 @@
+{
+  "task": "BVI-001-rail-terminal-human-gate",
+  "candidateMaster": "docs/design/buildings/icon-003/bvi-001-rail-terminal-human-gate/BVI-001-ICON-003-rail_terminal-candidate-primary.png",
+  "candidateSha256": "26f0136b748c4aa3ea80262fa4f649edb3e3a55788f6842f721826faa69f758c",
+  "generation": {
+    "method": "cursor-GenerateImage",
+    "references": [
+      "docs/design/buildings/production/infrastructure/primary/ICON-003-port.png",
+      "docs/design/buildings/production/infrastructure/primary/ICON-003-access_road.png"
+    ],
+    "promptIntent": "Rail freight terminal / intermodal yard; no recycling language; ICON-003 family match"
+  },
+  "evidenceComposition": {
+    "labelLayerOrder": "svg-labels-before-raster",
+    "subjectNormalization": "in-memory trim(threshold 12) + fit inside panel max dimension",
+    "visibilityPlates": "neutral panel plate under each artwork cell"
+  },
+  "validation": {
+    "width": 1024,
+    "height": 1024,
+    "hasAlpha": true,
+    "channels": 4,
+    "cornerAlpha": false
+  },
+  "productionHashesBefore": {
+    "rail_terminal_master": "bf7b0678bef38e13ea024836fed0ed2d6631b59600dcb3a593805645c6861eef",
+    "rail_terminal_webp": "e5668e60b81dbac4c47500187c322262ac5740fa574d00f1ba6fdf3c2b74602c",
+    "recycling_master": "3a1801bce15da36ca32bf94f89f98b7e1d998cadfd5aea6b6347ebbbccac57a9",
+    "recycling_webp": "eb720d3945be72315cb6653a7c23315ca7c047e24e0fca8b4805183bb58e98b1"
+  },
+  "productionHashesAfter": {
+    "rail_terminal_master": "26f0136b748c4aa3ea80262fa4f649edb3e3a55788f6842f721826faa69f758c",
+    "rail_terminal_webp": "99c9d8312dc6c4f034a7ebe62b4942dfe9407d531e8be89d39dccada5f0460cd",
+    "recycling_master": "3a1801bce15da36ca32bf94f89f98b7e1d998cadfd5aea6b6347ebbbccac57a9",
+    "recycling_webp": "eb720d3945be72315cb6653a7c23315ca7c047e24e0fca8b4805183bb58e98b1"
+  },
+  "evidence": {
+    "scaleBoard": "docs/design/buildings/icon-003/bvi-001-rail-terminal-human-gate/evidence/BVI-001_RAIL_TERMINAL_CANDIDATE_SCALE_READABILITY.png",
+    "semanticBoard": "docs/design/buildings/icon-003/bvi-001-rail-terminal-human-gate/evidence/BVI-001_RAIL_TERMINAL_OLD_NEW_RECYCLING_BOARD.png",
+    "infraBoard": "docs/design/buildings/icon-003/bvi-001-rail-terminal-human-gate/evidence/BVI-001_RAIL_TERMINAL_INFRASTRUCTURE_FAMILY_BOARD.png",
+    "catalogBoard": "docs/design/buildings/icon-003/bvi-001-rail-terminal-human-gate/evidence/BVI-001_RAIL_TERMINAL_CATALOG_CARD_COMPARISON.png"
+  },
+  "humanVisualGate": "PASS",
+  "productionPromotion": {
+    "date": "2026-09-26",
+    "approvedCandidateSha256": "26f0136b748c4aa3ea80262fa4f649edb3e3a55788f6842f721826faa69f758c",
+    "faultyProductionMasterSha256": "bf7b0678bef38e13ea024836fed0ed2d6631b59600dcb3a593805645c6861eef",
+    "productionMasterSha256": "26f0136b748c4aa3ea80262fa4f649edb3e3a55788f6842f721826faa69f758c",
+    "runtimeWebpSha256Before": "e5668e60b81dbac4c47500187c322262ac5740fa574d00f1ba6fdf3c2b74602c",
+    "runtimeWebpSha256After": "99c9d8312dc6c4f034a7ebe62b4942dfe9407d531e8be89d39dccada5f0460cd",
+    "faultyMasterArchive": "docs/design/buildings/icon-003/bvi-001-rail-terminal-human-gate/evidence/BVI-001_FAULTY_PRODUCTION_MASTER_ARCHIVE.png",
+    "closeoutBoard": "docs/design/buildings/icon-003/bvi-001-rail-terminal-human-gate/evidence/BVI-001_RAIL_TERMINAL_PRODUCTION_CLOSEOUT_BOARD.png",
+    "pipeline": "copyFile + sharp.webp quality 82 effort 4 (ICON-003 infrastructure production convention)"
+  }
+}

@@ -39,13 +39,26 @@
       "grammar": "TERMINAL_YARD",
       "primaryId": "ICON-003-rail_terminal",
       "compactId": "ICON-003-rail_terminal-compact",
-      "promotedFromPilotPrimary": "docs/design/buildings/infrastructure-pilot/primary/ICON-003-rail_terminal-infra-pilot.png",
+      "promotedFromPilotPrimary": "docs/design/buildings/icon-003/bvi-001-rail-terminal-human-gate/BVI-001-ICON-003-rail_terminal-candidate-primary.png",
       "promotedFromPilotCompact": "docs/design/buildings/infrastructure-pilot/compact/ICON-003-rail_terminal-infra-pilot-compact.svg",
       "sourceMaster": "docs/design/buildings/production/infrastructure/primary/ICON-003-rail_terminal.png",
       "runtimePrimary": "apps/web/public/assets/buildings/ICON-003-rail_terminal.webp",
       "runtimeCompact": "apps/web/public/assets/buildings/ICON-003-rail_terminal-compact.svg",
       "alphaPass": true,
-      "productionStatus": "ACTIVE"
+      "productionStatus": "ACTIVE",
+      "bvi001Repair": {
+        "defect": "BV-I6 — MASTER / SOURCE ASSET DEFECT",
+        "humanArtGate": "PASS",
+        "approvedCandidate": "docs/design/buildings/icon-003/bvi-001-rail-terminal-human-gate/BVI-001-ICON-003-rail_terminal-candidate-primary.png",
+        "approvedCandidateSha256": "26f0136b748c4aa3ea80262fa4f649edb3e3a55788f6842f721826faa69f758c",
+        "faultyMasterArchive": "docs/design/buildings/icon-003/bvi-001-rail-terminal-human-gate/evidence/BVI-001_FAULTY_PRODUCTION_MASTER_ARCHIVE.png",
+        "previousProductionMasterSha256": "bf7b0678bef38e13ea024836fed0ed2d6631b59600dcb3a593805645c6861eef",
+        "productionMasterSha256": "26f0136b748c4aa3ea80262fa4f649edb3e3a55788f6842f721826faa69f758c",
+        "previousRuntimeWebpSha256": "e5668e60b81dbac4c47500187c322262ac5740fa574d00f1ba6fdf3c2b74602c",
+        "runtimeWebpSha256": "99c9d8312dc6c4f034a7ebe62b4942dfe9407d531e8be89d39dccada5f0460cd",
+        "promotedAt": "2026-09-26",
+        "productionStatus": "ACTIVE — BVI-001 INTEGRITY REPAIR"
+      }
     }
   ]
 }
