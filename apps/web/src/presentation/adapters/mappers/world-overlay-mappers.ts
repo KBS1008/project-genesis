@@ -15,6 +15,11 @@ import {
   type WorldRegionOperationsViewData,
   type WorldTransportFlowViewData,
 } from '@/presentation/adapters/view-data/world-view-data';
+import {
+  COMPANY_PLACEMENT_DEFAULT_REGION_ID,
+  projectDomainPlacementPosition,
+  resolveCompanyPlacementProjectionContext,
+} from '@/presentation/adapters/mappers/company-building-placement-coordinates';
 import { distributeMarkerPosition } from '@/presentation/adapters/mappers/world-building-marker-layout';
 import { formatTransportStatus } from '@/presentation/formatting/presentation-formatters';
 
@@ -105,13 +110,33 @@ export function mapWorldOverlayViewData(
     });
   });
 
+  const placementContext = resolveCompanyPlacementProjectionContext(mapRegions);
   const buildingMarkers: WorldBuildingMarkerViewData[] = [];
 
   for (const region of mapRegions) {
     const regionBuildings = buildingsByRegion.get(region.id) ?? [];
 
     regionBuildings.forEach((building, index) => {
-      const position = distributeMarkerPosition(region, index, WORLD_MAP_CELL_SIZE);
+      let x: number;
+      let y: number;
+
+      if (
+        placementContext !== null &&
+        region.id === COMPANY_PLACEMENT_DEFAULT_REGION_ID &&
+        building.regionId === region.id
+      ) {
+        const anchor = projectDomainPlacementPosition(
+          { x: building.x, y: building.y },
+          placementContext,
+        );
+        x = anchor.x;
+        y = anchor.y;
+      } else {
+        const slot = distributeMarkerPosition(region, index, WORLD_MAP_CELL_SIZE);
+        x = slot.x;
+        y = slot.y;
+      }
+
       buildingMarkers.push(
         Object.freeze({
           id: building.id,
@@ -120,8 +145,8 @@ export function mapWorldOverlayViewData(
           label: building.name,
           statusLabel: building.status,
           clusterSize: regionBuildings.length,
-          x: position.x,
-          y: position.y,
+          x,
+          y,
         }),
       );
     });

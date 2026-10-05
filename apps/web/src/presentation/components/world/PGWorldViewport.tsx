@@ -3,7 +3,11 @@
 import type { PointerEvent, RefObject, WheelEvent } from 'react';
 import type { WorldCameraState } from '@/presentation/hooks/world-camera-math';
 import { PGWorldCanvas } from '@/presentation/components/world/PGWorldCanvas';
-import type { WorldMapViewData, WorldOverlayViewData } from '@/presentation/adapters/view-data/world-view-data';
+import type {
+  WorldBuildingMarkerViewData,
+  WorldMapViewData,
+  WorldOverlayViewData,
+} from '@/presentation/adapters/view-data/world-view-data';
 
 /** Pan/zoom viewport wrapper for the world SVG canvas. */
 export function PGWorldViewport({
@@ -20,6 +24,11 @@ export function PGWorldViewport({
   onPointerDown,
   onPointerMove,
   onPointerUp,
+  canvasWidth,
+  canvasHeight,
+  buildingPlacementMode = false,
+  suppressMapEntitySelection = false,
+  placementPreviewMarker = null,
 }: {
   readonly map: WorldMapViewData;
   readonly overlays: WorldOverlayViewData;
@@ -34,11 +43,16 @@ export function PGWorldViewport({
   readonly onPointerDown: (event: PointerEvent) => void;
   readonly onPointerMove: (event: PointerEvent) => void;
   readonly onPointerUp: (event: PointerEvent) => void;
+  readonly canvasWidth?: number;
+  readonly canvasHeight?: number;
+  readonly buildingPlacementMode?: boolean;
+  readonly suppressMapEntitySelection?: boolean;
+  readonly placementPreviewMarker?: WorldBuildingMarkerViewData | null;
 }) {
   return (
     <div
       ref={viewportRef}
-      className="pg-world-viewport"
+      className={`pg-world-viewport${buildingPlacementMode ? ' is-building-placement' : ''}`}
       onWheel={onWheel}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
@@ -61,6 +75,10 @@ export function PGWorldViewport({
           onSelectRegion={onSelectRegion}
           onSelectBuilding={onSelectBuilding}
           selectedBuildingId={selectedBuildingId}
+          canvasWidth={canvasWidth}
+          canvasHeight={canvasHeight}
+          suppressMapEntitySelection={suppressMapEntitySelection}
+          placementPreviewMarker={placementPreviewMarker}
         />
       </div>
     </div>

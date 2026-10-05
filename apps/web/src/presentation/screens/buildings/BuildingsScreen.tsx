@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo } from 'react';
 import { mapBuildingListRow } from '@/presentation/adapters/mappers/company-dashboard-view-mappers';
-import { placeBuilding } from '@/presentation/adapters/api/gameplay-client';
 import { fetchBuildingList } from '@/presentation/adapters/api/query-client';
 import type { BuildingListRowViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
 import { BuildingCategoryIcon } from '@/presentation/components/assets/BuildingCategoryIcon';
@@ -24,7 +23,16 @@ import '../shared/operation-screen.css';
 
 /** Buildings screen with owned list, detail, construction catalog, and placement workflow. */
 export function BuildingsScreen() {
-  const { viewData, companyViewData, regions, navigation, isBusy, runCommand, selectEntity, navigatePlaceBuildingPrerequisite } = useGameWorkspace();
+  const {
+    viewData,
+    companyViewData,
+    regions,
+    navigation,
+    isBusy,
+    selectEntity,
+    navigatePlaceBuildingPrerequisite,
+    startBuildingMapPlacement,
+  } = useGameWorkspace();
   const selectedBuildingId =
     navigation.entitySelection.kind === 'building' ? navigation.entitySelection.id : null;
   const regionNames = useMemo(
@@ -45,8 +53,6 @@ export function BuildingsScreen() {
   const placementForm = useTransientFormState({
     buildingTypeId: '',
     name: '',
-    x: companyViewData.buildingCount * 2,
-    y: 0,
   });
   const catalog = companyViewData.hints.placeBuilding;
   const selectedCatalogEntry = catalog.find(
@@ -70,17 +76,13 @@ export function BuildingsScreen() {
     }
   }, [catalog, placementForm.patch, placementForm.value.buildingTypeId]);
 
-  useEffect(() => {
-    placementForm.patch({ x: companyViewData.buildingCount * 2 });
-  }, [companyViewData.buildingCount, placementForm.patch]);
-
   const selectedDetail =
     selectedBuildingId === null
       ? null
       : (companyViewData.detail.buildings.get(selectedBuildingId) ?? null);
 
-  const submitPlacement = () => {
-    const { buildingTypeId, name, x, y } = placementForm.value;
+  const beginMapPlacement = () => {
+    const { buildingTypeId, name } = placementForm.value;
 
     if (buildingTypeId.length === 0 || name.trim().length === 0 || isBusy) {
       return;
@@ -90,17 +92,11 @@ export function BuildingsScreen() {
       return;
     }
 
-    void runCommand(
-      () =>
-        placeBuilding({
-          buildingTypeId,
-          name: name.trim(),
-          x,
-          y,
-        }),
-      `${name.trim()} in Bau gegeben.`,
-      { commandId: 'construction.placeBuilding' },
-    );
+    startBuildingMapPlacement({
+      buildingTypeId,
+      name: name.trim(),
+      canPlace: selectedCatalogEntry?.canPlace === true,
+    });
   };
 
   return (
@@ -255,32 +251,6 @@ export function BuildingsScreen() {
                   aria-label="Gebäudename"
                 />
               </div>
-
-              <div className="pg-operation-field">
-                <label htmlFor="building-x-input">X</label>
-                <input
-                  id="building-x-input"
-                  type="number"
-                  value={placementForm.value.x}
-                  onChange={(event) => {
-                    placementForm.patch({ x: Number.parseInt(event.target.value, 10) || 0 });
-                  }}
-                  aria-label="X-Position"
-                />
-              </div>
-
-              <div className="pg-operation-field">
-                <label htmlFor="building-y-input">Y</label>
-                <input
-                  id="building-y-input"
-                  type="number"
-                  value={placementForm.value.y}
-                  onChange={(event) => {
-                    placementForm.patch({ y: Number.parseInt(event.target.value, 10) || 0 });
-                  }}
-                  aria-label="Y-Position"
-                />
-              </div>
             </div>
 
             {selectedCatalogEntry !== undefined && !selectedCatalogEntry.canPlace && selectedCatalogEntry.reason !== null ? (
@@ -295,9 +265,9 @@ export function BuildingsScreen() {
                   placementForm.value.name.trim().length === 0 ||
                   selectedCatalogEntry?.canPlace !== true
                 }
-                onClick={submitPlacement}
+                onClick={beginMapPlacement}
               >
-                Gebäude platzieren
+                Position auf Karte wählen
               </Button>
               <span className="pg-operation-hint-copy">
                 <span>

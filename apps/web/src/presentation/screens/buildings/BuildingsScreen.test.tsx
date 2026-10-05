@@ -12,6 +12,7 @@ import {
 const runCommand = vi.fn();
 const selectEntity = vi.fn();
 const navigatePlaceBuildingPrerequisite = vi.fn();
+const startBuildingMapPlacement = vi.fn();
 
 const defaultNavigation = { screen: 'buildings' as const, entitySelection: { kind: 'none' as const } };
 
@@ -66,6 +67,7 @@ const defaultWorkspace = {
   navigation: defaultNavigation,
   selectEntity,
   navigatePlaceBuildingPrerequisite,
+  startBuildingMapPlacement,
 } as unknown as GameWorkspaceContextValue;
 
 vi.mock('@/presentation/hooks/useScreenQuery', () => ({
@@ -102,7 +104,8 @@ describe('BuildingsScreen', () => {
     expect(screen.getByText('Eigene Gebäude')).toBeInTheDocument();
     expect(screen.getByRole('row', { name: /Firmenzentrale/ })).toBeInTheDocument();
     expect(screen.getByLabelText('Gebäudetyp für Platzierung')).toHaveValue('sawmill');
-    expect(screen.getByRole('button', { name: 'Gebäude platzieren' })).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Position auf Karte wählen' })).toBeEnabled();
+    expect(screen.queryByRole('button', { name: 'Gebäude platzieren' })).not.toBeInTheDocument();
   });
 
   it('renders a decorative category icon beside Baukatalog category text', () => {
@@ -204,14 +207,20 @@ describe('BuildingsScreen', () => {
     });
   });
 
-  it('submits placement through runCommand', async () => {
+  it('starts map placement session without invoking runCommand', async () => {
     const user = userEvent.setup();
     runCommand.mockClear();
+    startBuildingMapPlacement.mockClear();
 
     render(<BuildingsScreen />);
 
-    await user.click(screen.getByRole('button', { name: 'Gebäude platzieren' }));
+    await user.click(screen.getByRole('button', { name: 'Position auf Karte wählen' }));
 
-    expect(runCommand).toHaveBeenCalledTimes(1);
+    expect(startBuildingMapPlacement).toHaveBeenCalledWith({
+      buildingTypeId: 'sawmill',
+      name: 'Sägewerk',
+      canPlace: true,
+    });
+    expect(runCommand).not.toHaveBeenCalled();
   });
 });

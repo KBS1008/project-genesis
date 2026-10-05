@@ -67,6 +67,11 @@ export function createGameWorkspaceMock(
     criticalAnnouncement: null,
     executeNotificationAction: vi.fn(),
     dismissSimulationNotification: vi.fn(),
+    buildingMapPlacementSession: null,
+    startBuildingMapPlacement: vi.fn(),
+    setBuildingMapPlacementCandidate: vi.fn(),
+    confirmBuildingMapPlacement: vi.fn(),
+    cancelBuildingMapPlacement: vi.fn(),
     ...overrides,
   };
 }

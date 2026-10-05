@@ -10,11 +10,17 @@ import {
 type PGWorldBuildingMarkerProps = {
   readonly marker: WorldBuildingMarkerViewData;
   readonly isSelected: boolean;
+  readonly isPreview?: boolean;
   readonly onSelect?: (buildingId: string) => void;
 };
 
 /** World map building marker using sealed ICON-003 compact assets (WBM-001). */
-export function PGWorldBuildingMarker({ marker, isSelected, onSelect }: PGWorldBuildingMarkerProps) {
+export function PGWorldBuildingMarker({
+  marker,
+  isSelected,
+  isPreview = false,
+  onSelect,
+}: PGWorldBuildingMarkerProps) {
   const spec = resolveWorldBuildingMarkerVisualSpec(marker.buildingTypeId, marker.clusterSize);
   const [imageFailed, setImageFailed] = useState(false);
   const compactUrl = imageFailed ? null : resolveWorldBuildingMarkerCompactUrl(marker.buildingTypeId);
@@ -29,15 +35,27 @@ export function PGWorldBuildingMarker({ marker, isSelected, onSelect }: PGWorldB
   const selectionRingRadius = silhouetteRadius + (isSelected ? 6 : 0);
 
   const activate = () => {
+    if (isPreview) {
+      return;
+    }
+
     onSelect?.(marker.id);
   };
 
   const onClick = (event: MouseEvent) => {
+    if (isPreview) {
+      return;
+    }
+
     event.stopPropagation();
     activate();
   };
 
   const onKeyDown = (event: KeyboardEvent) => {
+    if (isPreview) {
+      return;
+    }
+
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       event.stopPropagation();
@@ -47,11 +65,11 @@ export function PGWorldBuildingMarker({ marker, isSelected, onSelect }: PGWorldB
 
   return (
     <g
-      className={`pg-world-building-marker${isSelected ? ' is-selected' : ''}`}
+      className={`pg-world-building-marker${isSelected ? ' is-selected' : ''}${isPreview ? ' is-preview' : ''}`}
       transform={`translate(${marker.x - halfHit} ${marker.y - halfHit})`}
-      role="button"
-      tabIndex={0}
-      aria-label={`Gebäude ${marker.label}`}
+      role={isPreview ? 'img' : 'button'}
+      tabIndex={isPreview ? undefined : 0}
+      aria-label={isPreview ? `Vorschau ${marker.label}` : `Gebäude ${marker.label}`}
       data-building-type-id={marker.buildingTypeId}
       onClick={onClick}
       onKeyDown={onKeyDown}

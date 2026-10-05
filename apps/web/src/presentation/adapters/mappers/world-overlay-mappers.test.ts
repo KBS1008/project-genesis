@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import {
+  projectDomainPlacementPosition,
+  resolveCompanyPlacementProjectionContext,
+} from '@/presentation/adapters/mappers/company-building-placement-coordinates';
+import {
   mapWorldOverlayViewData,
   mapWorldRegionInspectorViewData,
   mapWorldRegionOperationsViewData,
@@ -93,6 +97,64 @@ describe('world-overlay-mappers', () => {
     expect(overlay.buildingMarkers[0]?.y).toBeCloseTo(55.04, 1);
     expect(overlay.regionMetrics[0]?.buildingCount).toBe(1);
     expect(overlay.transportFlows.length).toBeGreaterThanOrEqual(0);
+  });
+
+  it('anchors default-region building markers from domain position via shared projection', () => {
+    const defaultRegion = Object.freeze({
+      id: 'region_default',
+      name: 'Default',
+      biomeId: 'temperate',
+      biomeLabel: 'Temperate Forest',
+      biomeCategory: 'FOREST',
+      mapX: 0,
+      mapY: 0,
+      cityCount: 1,
+    });
+    const domain = Object.freeze({ x: 12, y: 7 });
+    const context = resolveCompanyPlacementProjectionContext([defaultRegion])!;
+    const expectedAnchor = projectDomainPlacementPosition(domain, context);
+
+    const overlay = mapWorldOverlayViewData(
+      [defaultRegion],
+      [
+        {
+          id: 'building_default',
+          buildingTypeId: 'sawmill',
+          regionId: 'region_default',
+          name: 'Sägewerk',
+          x: domain.x,
+          y: domain.y,
+          status: 'ACTIVE',
+          constructionProgress: 100,
+          constructionDuration: 10,
+        },
+      ],
+      [],
+      [
+        {
+          region: {
+            id: 'region_default',
+            name: 'Default',
+            description: 'Starter',
+            worldId: 'world_001',
+            biomeId: 'temperate',
+            biomeName: 'Temperate Forest',
+            biomeCategory: 'FOREST',
+            mapX: 0,
+            mapY: 0,
+            neighborRegionIds: [],
+            cityIds: [],
+          },
+          regionalResources: [],
+          cities: [],
+        },
+      ],
+      (id) => id,
+      (id) => id,
+    );
+
+    expect(overlay.buildingMarkers[0]?.x).toBe(expectedAnchor.x);
+    expect(overlay.buildingMarkers[0]?.y).toBe(expectedAnchor.y);
   });
 
   it('mapWorldRegionInspectorViewData adds operations sections', () => {

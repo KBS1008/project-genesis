@@ -69,6 +69,53 @@
   cursor: grabbing;
 }
 
+.pg-world-viewport.is-building-placement {
+  cursor: crosshair;
+}
+
+.pg-world-placement-mode {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  margin: var(--space-sm) 0;
+  padding: var(--space-sm);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
+}
+
+.pg-world-placement-mode-instruction {
+  margin: var(--space-xs) 0 0;
+  font-size: var(--text-small);
+}
+
+.pg-world-placement-mode-candidate {
+  margin: var(--space-xs) 0 0;
+  font-size: var(--text-small);
+  color: var(--muted);
+}
+
+.pg-world-placement-mode-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  align-items: center;
+}
+
+.pg-world-building-marker.is-preview {
+  cursor: default;
+  pointer-events: none;
+  opacity: 0.82;
+}
+
+.pg-world-building-marker.is-preview .pg-world-building-marker-ground {
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-dasharray: 4 3;
+}
+
 .pg-world-canvas {
   display: block;
   width: 100%;

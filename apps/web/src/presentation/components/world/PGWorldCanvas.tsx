@@ -6,6 +6,7 @@ import {
   worldBiomeSurfaceClass,
 } from '@/presentation/formatting/world-biome-presentation';
 import type {
+  WorldBuildingMarkerViewData,
   WorldMapViewData,
   WorldOverlayViewData,
 } from '@/presentation/adapters/view-data/world-view-data';
@@ -51,6 +52,10 @@ export function PGWorldCanvas({
   onSelectRegion,
   onSelectBuilding,
   selectedBuildingId = null,
+  canvasWidth,
+  canvasHeight,
+  suppressMapEntitySelection = false,
+  placementPreviewMarker = null,
 }: {
   readonly map: WorldMapViewData;
   readonly overlays: WorldOverlayViewData;
@@ -59,10 +64,14 @@ export function PGWorldCanvas({
   readonly layers: Readonly<Record<string, boolean>>;
   readonly onSelectRegion: (regionId: string) => void;
   readonly onSelectBuilding?: (buildingId: string) => void;
+  readonly canvasWidth?: number;
+  readonly canvasHeight?: number;
+  readonly suppressMapEntitySelection?: boolean;
+  readonly placementPreviewMarker?: WorldBuildingMarkerViewData | null;
 }) {
   const { cellSize, columns, rows, regions, connections } = map;
-  const width = columns * cellSize;
-  const height = rows * cellSize;
+  const width = canvasWidth ?? columns * cellSize;
+  const height = canvasHeight ?? rows * cellSize;
 
   const regionById = new Map(regions.map((region) => [region.id, region]));
   const metricsByRegion = new Map(overlays.regionMetrics.map((metric) => [metric.regionId, metric]));
@@ -202,15 +211,23 @@ export function PGWorldCanvas({
                 tabIndex={0}
                 aria-label={`Region ${region.name}, ${region.biomeLabel}`}
                 aria-pressed={isSelected}
-                onClick={() => {
-                  onSelectRegion(region.id);
-                }}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter' || event.key === ' ') {
-                    event.preventDefault();
-                    onSelectRegion(region.id);
-                  }
-                }}
+                onClick={
+                  suppressMapEntitySelection
+                    ? undefined
+                    : () => {
+                        onSelectRegion(region.id);
+                      }
+                }
+                onKeyDown={
+                  suppressMapEntitySelection
+                    ? undefined
+                    : (event) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                          event.preventDefault();
+                          onSelectRegion(region.id);
+                        }
+                      }
+                }
               />
             );
           })
@@ -222,10 +239,14 @@ export function PGWorldCanvas({
               key={marker.id}
               marker={marker}
               isSelected={selectedBuildingId === marker.id}
-              onSelect={onSelectBuilding}
+              onSelect={suppressMapEntitySelection ? undefined : onSelectBuilding}
             />
           ))
         : null}
+
+      {layers.buildings && placementPreviewMarker !== null ? (
+        <PGWorldBuildingMarker marker={placementPreviewMarker} isSelected={false} isPreview />
+      ) : null}
 
       {layers.presence
         ? regions.map((region) => {

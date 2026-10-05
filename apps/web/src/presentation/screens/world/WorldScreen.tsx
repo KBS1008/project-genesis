@@ -35,6 +35,11 @@ export function WorldScreen() {
     navigateToTarget,
     regions,
     companyViewData,
+    isBusy,
+    buildingMapPlacementSession,
+    setBuildingMapPlacementCandidate,
+    confirmBuildingMapPlacement,
+    cancelBuildingMapPlacement,
   } = useGameWorkspace();
   const selectedRegionId =
     navigation.entitySelection.kind === 'region' ? navigation.entitySelection.id : null;
@@ -150,6 +155,14 @@ export function WorldScreen() {
           selectedBuildingId={selectedBuildingId}
           inspector={inspectorQuery.data}
           inspectorSectionActions={inspectorSectionActions}
+          buildingMapPlacementSession={buildingMapPlacementSession}
+          buildingTypeLabel={labels.building}
+          isBusy={isBusy}
+          onPickBuildingMapPlacementCandidate={setBuildingMapPlacementCandidate}
+          onConfirmBuildingMapPlacement={() => {
+            void confirmBuildingMapPlacement();
+          }}
+          onCancelBuildingMapPlacement={cancelBuildingMapPlacement}
           onSelectRegion={(regionId) => {
             selectEntity({ kind: 'region', id: regionId });
           }}

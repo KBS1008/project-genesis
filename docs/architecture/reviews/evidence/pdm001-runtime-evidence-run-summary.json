@@ -1,0 +1,98 @@
+{
+  "capturedAtUtc": "2026-10-04T18:06:07.614Z",
+  "startedAtUtc": "2026-10-04T18:05:48.460Z",
+  "webOrigin": "http://127.0.0.1:3000",
+  "savePath": "D:/Cursor/Project Genesis/tools/evidence-fixtures/pdm-001-map-placement.json",
+  "buildingType": "sawmill",
+  "runs": [
+    {
+      "label": "desktop",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "flow": "confirm",
+      "buildingType": "sawmill",
+      "placementName": "PDM Desktop Sägewerk",
+      "buildingCountBefore": 5,
+      "buildingCountAfter": 6,
+      "pickedDomain": {
+        "x": 19,
+        "y": 13
+      },
+      "placedDomain": {
+        "x": 19,
+        "y": 13
+      },
+      "previewAnchor": {
+        "x": 23,
+        "y": 17
+      },
+      "finalAnchor": {
+        "x": 23,
+        "y": 17
+      },
+      "anchorTolerancePx": 2,
+      "previewFinalAnchorDelta": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "label": "narrow",
+      "viewport": {
+        "width": 480,
+        "height": 900
+      },
+      "flow": "confirm",
+      "buildingType": "sawmill",
+      "placementName": "PDM Narrow Sägewerk",
+      "buildingCountBefore": 5,
+      "buildingCountAfter": 6,
+      "pickedDomain": {
+        "x": 23,
+        "y": 15
+      },
+      "placedDomain": {
+        "x": 23,
+        "y": 15
+      },
+      "previewAnchor": {
+        "x": 27,
+        "y": 19
+      },
+      "finalAnchor": {
+        "x": 27,
+        "y": 19
+      },
+      "anchorTolerancePx": 2,
+      "previewFinalAnchorDelta": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "label": "desktop-cancel",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "flow": "cancel",
+      "buildingType": "sawmill",
+      "placementName": "PDM Cancel Sägewerk",
+      "buildingCountBefore": 5,
+      "buildingCountAfter": 5,
+      "pickedDomain": {
+        "x": 17,
+        "y": 11
+      },
+      "previewAnchor": {
+        "x": 21,
+        "y": 15
+      },
+      "placedDomain": null,
+      "anchorTolerancePx": 2,
+      "previewFinalAnchorDelta": null
+    }
+  ]
+}

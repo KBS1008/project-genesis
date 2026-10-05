@@ -23,6 +23,7 @@ import {
 } from '@/presentation/adapters/queries/refresh-workspace-scopes';
 import type { EntityNavigationTarget } from '@/presentation/navigation/entity-navigation';
 import type { PrimaryScreenId } from '@/presentation/navigation/primary-screens';
+import { placeBuilding } from '@/presentation/adapters/api/gameplay-client';
 import { saveGame } from '@/presentation/adapters/api/session-client';
 import type { WorkspaceQueryScope } from '@/presentation/commands/query-scopes';
 import {
@@ -59,6 +60,11 @@ import {
   resolvePlaceBuildingPrerequisiteNavigation,
 } from '@/presentation/navigation/place-building-prerequisite-navigation';
 import { resolveProductionWorkforcePersonnelNavigation } from '@/presentation/navigation/production-workforce-personnel-navigation';
+import {
+  createBuildingMapPlacementSession,
+  withBuildingMapPlacementCandidate,
+  type BuildingMapPlacementSession,
+} from '@/presentation/navigation/building-map-placement-session';
 import {
   buildEntityCatalogFromDashboard,
   buildNavigationQueryString,
@@ -110,6 +116,17 @@ export type GameWorkspaceContextValue = {
     actionKind: SimulationNotificationActionKind,
   ) => void;
   readonly dismissSimulationNotification: (notificationId: string) => void;
+  readonly buildingMapPlacementSession: BuildingMapPlacementSession | null;
+  readonly startBuildingMapPlacement: (params: {
+    readonly buildingTypeId: string;
+    readonly name: string;
+    readonly canPlace: boolean;
+  }) => void;
+  readonly setBuildingMapPlacementCandidate: (
+    candidate: { readonly x: number; readonly y: number } | null,
+  ) => void;
+  readonly confirmBuildingMapPlacement: () => Promise<void>;
+  readonly cancelBuildingMapPlacement: () => void;
 };
 
 const EMPTY_VIEW_DATA: WorkspaceViewData = Object.freeze({
@@ -168,6 +185,8 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
   >(null);
   const [pendingCompanyOperationsNavigation, setPendingCompanyOperationsNavigation] =
     useState<CompanyOperationsPendingNavigation | null>(null);
+  const [buildingMapPlacementSession, setBuildingMapPlacementSession] =
+    useState<BuildingMapPlacementSession | null>(null);
   const [simulationNotificationItems, setSimulationNotificationItems] = useState<
     readonly PGNotificationItem[]
   >(Object.freeze([]));
@@ -191,6 +210,7 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
   const showNotificationRef = useRef(showNotification);
   const criticalAnnouncementTimerRef = useRef<number | null>(null);
   const notificationSyncSessionRef = useRef(new NotificationSyncSession());
+  const navigationScreenRef = useRef(navigation.screen);
   const hasLoadedSessionRef = useRef(false);
 
   const runtimeState = useMemo(
@@ -694,6 +714,68 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
     [navigateToTarget],
   );
 
+  const startBuildingMapPlacement = useCallback(
+    (params: { readonly buildingTypeId: string; readonly name: string; readonly canPlace: boolean }) => {
+      setBuildingMapPlacementSession(createBuildingMapPlacementSession(params));
+      navigateToTarget({ screen: 'world', entitySelection: { kind: 'none' } });
+    },
+    [navigateToTarget],
+  );
+
+  const cancelBuildingMapPlacement = useCallback(() => {
+    setBuildingMapPlacementSession(null);
+    navigateToTarget({ screen: 'buildings', entitySelection: { kind: 'none' } });
+  }, [navigateToTarget]);
+
+  const setBuildingMapPlacementCandidate = useCallback(
+    (candidate: { readonly x: number; readonly y: number } | null) => {
+      setBuildingMapPlacementSession((current) => {
+        if (current === null) {
+          return null;
+        }
+
+        return withBuildingMapPlacementCandidate(current, candidate);
+      });
+    },
+    [],
+  );
+
+  const confirmBuildingMapPlacement = useCallback(async () => {
+    const session = buildingMapPlacementSession;
+    if (session === null || session.candidate === null || !session.canPlace || isBusyRef.current) {
+      return;
+    }
+
+    const { buildingTypeId, name, candidate } = session;
+
+    await runCommand(
+      async () => {
+        await placeBuilding({
+          buildingTypeId,
+          name,
+          x: candidate.x,
+          y: candidate.y,
+        });
+        setBuildingMapPlacementSession(null);
+      },
+      `${name} in Bau gegeben.`,
+      { commandId: 'construction.placeBuilding' },
+    );
+  }, [buildingMapPlacementSession, runCommand]);
+
+  useEffect(() => {
+    const previousScreen = navigationScreenRef.current;
+    navigationScreenRef.current = navigation.screen;
+
+    if (
+      buildingMapPlacementSession !== null &&
+      previousScreen === 'world' &&
+      navigation.screen !== 'world'
+    ) {
+      setBuildingMapPlacementSession(null);
+    }
+  }, [buildingMapPlacementSession, navigation.screen]);
+
   const navigateToScreen = useCallback(
     (screen: PrimaryScreenId) => {
       replaceNavigation(
@@ -797,6 +879,11 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
       criticalAnnouncement,
       executeNotificationAction,
       dismissSimulationNotification,
+      buildingMapPlacementSession,
+      startBuildingMapPlacement,
+      setBuildingMapPlacementCandidate,
+      confirmBuildingMapPlacement,
+      cancelBuildingMapPlacement,
     }),
     [
       navigation,
@@ -829,6 +916,11 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
       criticalAnnouncement,
       executeNotificationAction,
       dismissSimulationNotification,
+      buildingMapPlacementSession,
+      startBuildingMapPlacement,
+      setBuildingMapPlacementCandidate,
+      confirmBuildingMapPlacement,
+      cancelBuildingMapPlacement,
     ],
   );
 
