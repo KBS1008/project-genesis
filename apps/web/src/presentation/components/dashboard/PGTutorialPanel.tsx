@@ -2,6 +2,9 @@
 
 import type { TutorialViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
 import { DashboardIcon } from '@/presentation/icons/DashboardIcon';
+import { getTutorialStepCtaLabel } from '@/presentation/navigation/tutorial-step-navigation-contract';
+import { Button } from '@/presentation/primitives/Button';
+import { useGameWorkspace } from '@/presentation/state/GameWorkspaceProvider';
 
 /** Guided first-play checklist for the operations dashboard. */
 export function PGTutorialPanel({
@@ -9,6 +12,8 @@ export function PGTutorialPanel({
 }: {
   readonly tutorial: TutorialViewData | null | undefined;
 }) {
+  const { navigateTutorialStep, isBusy } = useGameWorkspace();
+
   if (tutorial === null || tutorial === undefined) {
     return null;
   }
@@ -42,6 +47,7 @@ export function PGTutorialPanel({
       <ol className="pg-tutorial-steps">
         {tutorial.steps.map((step) => {
           const isActive = step.id === tutorial.activeStepId;
+          const ctaLabel = step.completed ? null : getTutorialStepCtaLabel(step.id);
 
           return (
             <li
@@ -56,6 +62,19 @@ export function PGTutorialPanel({
               <div className="pg-tutorial-step-body">
                 <strong>{step.title}</strong>
                 <span>{step.description}</span>
+                {ctaLabel !== null ? (
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    className="pg-tutorial-step-cta"
+                    disabled={isBusy}
+                    onClick={() => {
+                      navigateTutorialStep(step.id);
+                    }}
+                  >
+                    {ctaLabel}
+                  </Button>
+                ) : null}
               </div>
             </li>
           );

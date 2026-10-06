@@ -1,0 +1,181 @@
+{
+  "capturedAt": "2026-10-06T17:02:46.824Z",
+  "webOrigin": "http://127.0.0.1:3000",
+  "overallResult": "PASS",
+  "http400RootCause": "POST /api/session/new returned 400 when an active company already existed (Company id \"company_001\" already exists). session/new is not idempotent; evidence bootstrap must use session/load with a deterministic fixture.",
+  "bootstrapFix": "session/load with tools/evidence-fixtures/pgd-tutorial-001-*.json",
+  "screenshots": [
+    "PGD-TUTORIAL-001_DESKTOP_TUTORIAL_CTA_BUILDINGS.png",
+    "PGD-TUTORIAL-001_DESKTOP_BUILDINGS_CATALOG_FOCUS.png",
+    "PGD-TUTORIAL-001_NARROW_480x900_TUTORIAL_CTA.png",
+    "PGD-TUTORIAL-001_NARROW_480x900_BUILDINGS_DESTINATION.png",
+    "PGD-TUTORIAL-001_DESKTOP_MARKET_WOOD_CONTEXT.png",
+    "PGD-TUTORIAL-001_DESKTOP_COMPANY_MILESTONES.png"
+  ],
+  "assertions": [
+    {
+      "pass": true,
+      "message": "desktop: build_sawmill incomplete before CTA"
+    },
+    {
+      "pass": true,
+      "message": "desktop: build CTA exists in DOM model"
+    },
+    {
+      "pass": true,
+      "message": "desktop: incomplete step CTA visible"
+    },
+    {
+      "pass": true,
+      "message": "desktop: build_sawmill CTA visible"
+    },
+    {
+      "pass": true,
+      "message": "desktop: Buildings/Baukatalog destination"
+    },
+    {
+      "pass": true,
+      "message": "desktop: sawmill catalog row present (structural data-building-type-id)"
+    },
+    {
+      "pass": true,
+      "message": "desktop: World/PDM screen not auto-opened"
+    },
+    {
+      "pass": true,
+      "message": "desktop: building count unchanged"
+    },
+    {
+      "pass": true,
+      "message": "desktop: build_sawmill completion unchanged after navigation"
+    },
+    {
+      "pass": true,
+      "message": "narrow: build_sawmill incomplete before CTA"
+    },
+    {
+      "pass": true,
+      "message": "narrow: build CTA exists in DOM model"
+    },
+    {
+      "pass": true,
+      "message": "narrow: incomplete step CTA visible"
+    },
+    {
+      "pass": true,
+      "message": "narrow: build_sawmill CTA visible"
+    },
+    {
+      "pass": true,
+      "message": "narrow: tutorial panel found"
+    },
+    {
+      "pass": true,
+      "message": "narrow: no horizontal overflow on tutorial panel"
+    },
+    {
+      "pass": true,
+      "message": "narrow: Buildings/Baukatalog destination"
+    },
+    {
+      "pass": true,
+      "message": "narrow: sawmill catalog row present (structural data-building-type-id)"
+    },
+    {
+      "pass": true,
+      "message": "narrow: World/PDM screen not auto-opened"
+    },
+    {
+      "pass": true,
+      "message": "narrow: building count unchanged"
+    },
+    {
+      "pass": true,
+      "message": "narrow: build_sawmill completion unchanged after navigation"
+    },
+    {
+      "pass": true,
+      "message": "desktop: buy_wood incomplete before CTA"
+    },
+    {
+      "pass": true,
+      "message": "desktop: market resource context is wood"
+    },
+    {
+      "pass": true,
+      "message": "desktop: wood inventory unchanged by CTA navigation"
+    },
+    {
+      "pass": true,
+      "message": "desktop: buy_wood completion unchanged"
+    },
+    {
+      "pass": true,
+      "message": "desktop: market resource context is planks"
+    },
+    {
+      "pass": true,
+      "message": "desktop: sell_planks completion unchanged"
+    },
+    {
+      "pass": true,
+      "message": "desktop: earn_profit incomplete before CTA"
+    },
+    {
+      "pass": true,
+      "message": "desktop: earn_profit completion unchanged"
+    }
+  ],
+  "notRun": [
+    {
+      "path": "produce_planks runtime CTA click",
+      "reason": "Mid-progress fixture has produce_planks already complete; cardinality covered by resolve-tutorial-step-navigation.test.ts",
+      "sawmillCount": 1
+    },
+    {
+      "path": "company contracts/finance secondary CTA",
+      "reason": "Mid-progress fixture has both contract and tax steps complete; earn_profit certified"
+    }
+  ],
+  "bootstrapNewGame": {
+    "method": "load",
+    "filePath": "D:\\Cursor\\Project Genesis\\tools\\evidence-fixtures\\pgd-tutorial-001-new-game.json",
+    "status": 200
+  },
+  "desktopBuildSawmill": {
+    "viewport": "1440x900",
+    "buildingCountBefore": 4,
+    "buildingCountAfter": 4,
+    "buildCompletedBefore": false,
+    "buildCompletedAfter": false,
+    "autoPdm": false
+  },
+  "narrowOverflow": {
+    "panelFound": true,
+    "horizontalOverflow": false
+  },
+  "narrowBuildSawmill": {
+    "viewport": "480x900",
+    "buildingCountBefore": 4,
+    "buildingCountAfter": 4,
+    "buildCompletedBefore": false,
+    "buildCompletedAfter": false,
+    "autoPdm": false
+  },
+  "desktopBuyWood": {
+    "selectedResource": "wood",
+    "woodBefore": 0,
+    "woodAfter": 0,
+    "buyCompletedBefore": false,
+    "buyCompletedAfter": false
+  },
+  "desktopSellPlanks": {
+    "selectedResource": "planks",
+    "sellCompletedBefore": false,
+    "sellCompletedAfter": false
+  },
+  "desktopEarnProfit": {
+    "earnCompletedBefore": false,
+    "earnCompletedAfter": false
+  }
+}

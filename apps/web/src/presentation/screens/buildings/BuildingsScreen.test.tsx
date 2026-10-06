@@ -13,6 +13,7 @@ const runCommand = vi.fn();
 const selectEntity = vi.fn();
 const navigatePlaceBuildingPrerequisite = vi.fn();
 const startBuildingMapPlacement = vi.fn();
+const clearBuildingCatalogFocus = vi.fn();
 
 const defaultNavigation = { screen: 'buildings' as const, entitySelection: { kind: 'none' as const } };
 
@@ -68,6 +69,8 @@ const defaultWorkspace = {
   selectEntity,
   navigatePlaceBuildingPrerequisite,
   startBuildingMapPlacement,
+  buildingCatalogFocusBuildingTypeId: null,
+  clearBuildingCatalogFocus,
 } as unknown as GameWorkspaceContextValue;
 
 vi.mock('@/presentation/hooks/useScreenQuery', () => ({

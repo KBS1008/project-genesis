@@ -7,6 +7,8 @@ import { CompanyScreen } from '@/presentation/screens/company/CompanyScreen';
 const workspace = vi.hoisted(() => ({
   pendingCompanyOperationsNavigation: null as
     | { readonly kind: 'milestone_overview' }
+    | { readonly kind: 'economy_contracts_section' }
+    | { readonly kind: 'finance_ledger_section' }
     | { readonly kind: 'workforce_assignment'; readonly buildingId: string }
     | null,
   clearPendingCompanyOperationsNavigation: vi.fn(),
@@ -30,7 +32,7 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
 }));
 
 describe('CompanyScreen pending operations navigation', () => {
-  it('opens operations for milestone intent and clears it immediately', async () => {
+  it('opens operations for milestone intent without clearing before dashboard consumes it', async () => {
     workspace.pendingCompanyOperationsNavigation = { kind: 'milestone_overview' };
     workspace.clearPendingCompanyOperationsNavigation.mockClear();
 
@@ -40,7 +42,7 @@ describe('CompanyScreen pending operations navigation', () => {
       expect(getByTestId('operations-dashboard')).toBeInTheDocument();
     });
     expect(queryByTestId('company-overview')).toBeNull();
-    expect(workspace.clearPendingCompanyOperationsNavigation).toHaveBeenCalled();
+    expect(workspace.clearPendingCompanyOperationsNavigation).not.toHaveBeenCalled();
   });
 
   it('opens operations for workforce intent without clearing before dashboard consumes it', async () => {

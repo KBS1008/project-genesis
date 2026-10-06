@@ -25,7 +25,10 @@ import {
   buildProductionBuildingNavigationTarget,
   buildProductionNavigationTarget,
 } from '@/presentation/navigation/entity-navigation';
-import { isWorkforceAssignmentPendingNavigation } from '@/presentation/navigation/company-operations-pending-navigation';
+import {
+  isWorkforceAssignmentPendingNavigation,
+  resolveCompanyOperationsSectionScrollTargetId,
+} from '@/presentation/navigation/company-operations-pending-navigation';
 import type { CommandId } from '@/presentation/commands';
 
 /** Company dashboard screen consuming workspace view-data. */
@@ -83,6 +86,30 @@ export function CompanyDashboardScreen({
     pendingCompanyOperationsNavigation,
     selectEntity,
   ]);
+
+  useEffect(() => {
+    if (pendingCompanyOperationsNavigation === null) {
+      return;
+    }
+
+    if (isWorkforceAssignmentPendingNavigation(pendingCompanyOperationsNavigation)) {
+      return;
+    }
+
+    const scrollTargetId = resolveCompanyOperationsSectionScrollTargetId(
+      pendingCompanyOperationsNavigation,
+    );
+
+    if (scrollTargetId === null) {
+      return;
+    }
+
+    clearPendingCompanyOperationsNavigation();
+
+    requestAnimationFrame(() => {
+      document.getElementById(scrollTargetId)?.scrollIntoView({ block: 'start' });
+    });
+  }, [clearPendingCompanyOperationsNavigation, pendingCompanyOperationsNavigation]);
 
   useEffect(
     () => () => {

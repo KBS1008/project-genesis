@@ -1,0 +1,3712 @@
+{
+  "schemaVersion": 3,
+  "savedAtUtc": "2026-10-06T17:00:40.383Z",
+  "world": {
+    "activeWorldId": "world_default"
+  },
+  "marketRegionMappings": [],
+  "simulation": {
+    "clockTime": 1,
+    "tickNumber": 1,
+    "paused": false,
+    "tickDuration": 1
+  },
+  "companies": [
+    {
+      "id": "company_001",
+      "name": "PGD-TUTORIAL-001 Fixture Corp",
+      "ownerId": "player_001",
+      "foundedAt": 0,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "company_npc_logistics",
+      "name": "Eastern Logistics NPC",
+      "ownerId": "owner_system",
+      "foundedAt": 0,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "company_npc_pricing",
+      "name": "Price Aggressor NPC",
+      "ownerId": "owner_system",
+      "foundedAt": 0,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "company_npc_research",
+      "name": "Research Institute NPC",
+      "ownerId": "owner_system",
+      "foundedAt": 0,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "company_npc_rival",
+      "name": "Market Rival NPC",
+      "ownerId": "owner_system",
+      "foundedAt": 0,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "company_npc_steel",
+      "name": "Steel Works NPC",
+      "ownerId": "owner_system",
+      "foundedAt": 0,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "company_npc_trader",
+      "name": "Regional Traders NPC",
+      "ownerId": "owner_system",
+      "foundedAt": 0,
+      "status": "ACTIVE"
+    }
+  ],
+  "companyBrains": [
+    {
+      "brainId": "brain_company_npc_logistics",
+      "companyId": "company_npc_logistics",
+      "createdAt": 0,
+      "activeStrategy": {
+        "strategyDefinitionId": "strategy_logistics_specialist",
+        "appliedAtTick": 0
+      },
+      "goals": [
+        {
+          "id": "goal_company_npc_logistics_SECURE_SUPPLY_global_advanced_electronics",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for advanced_electronics",
+          "priority": 58,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "advanced_electronics"
+        },
+        {
+          "id": "goal_company_npc_logistics_SECURE_SUPPLY_global_consumer_goods",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for consumer_goods",
+          "priority": 58,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "consumer_goods"
+        },
+        {
+          "id": "goal_company_npc_logistics_SECURE_SUPPLY_global_industrial_machinery",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for industrial_machinery",
+          "priority": 58,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "industrial_machinery"
+        },
+        {
+          "id": "goal_company_npc_logistics_SECURE_SUPPLY_global_iron_ore",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for iron_ore",
+          "priority": 58,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "iron_ore"
+        },
+        {
+          "id": "goal_company_npc_logistics_SECURE_SUPPLY_global_machine_parts",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for machine_parts",
+          "priority": 58,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "machine_parts"
+        },
+        {
+          "id": "goal_company_npc_logistics_SECURE_SUPPLY_global_planks",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for planks",
+          "priority": 58,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "planks"
+        },
+        {
+          "id": "goal_company_npc_logistics_SECURE_SUPPLY_global_steel",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for steel",
+          "priority": 58,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "steel"
+        },
+        {
+          "id": "goal_company_npc_logistics_SECURE_SUPPLY_global_stone",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for stone",
+          "priority": 58,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "stone"
+        },
+        {
+          "id": "goal_company_npc_logistics_SECURE_SUPPLY_global_wood",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for wood",
+          "priority": 58,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "wood"
+        }
+      ],
+      "knowledge": [
+        {
+          "id": "knowledge_company_npc_logistics_price_region_default_advanced_electronics",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:advanced_electronics:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 520
+          },
+          "regionId": "region_default",
+          "resourceId": "advanced_electronics"
+        },
+        {
+          "id": "knowledge_company_npc_logistics_price_region_default_consumer_goods",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:consumer_goods:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 750
+          },
+          "regionId": "region_default",
+          "resourceId": "consumer_goods"
+        },
+        {
+          "id": "knowledge_company_npc_logistics_price_region_default_industrial_machinery",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:industrial_machinery:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 320
+          },
+          "regionId": "region_default",
+          "resourceId": "industrial_machinery"
+        },
+        {
+          "id": "knowledge_company_npc_logistics_price_region_default_iron_ore",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:iron_ore:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 40
+          },
+          "regionId": "region_default",
+          "resourceId": "iron_ore"
+        },
+        {
+          "id": "knowledge_company_npc_logistics_price_region_default_machine_parts",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:machine_parts:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 150
+          },
+          "regionId": "region_default",
+          "resourceId": "machine_parts"
+        },
+        {
+          "id": "knowledge_company_npc_logistics_price_region_default_planks",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:planks:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 45
+          },
+          "regionId": "region_default",
+          "resourceId": "planks"
+        },
+        {
+          "id": "knowledge_company_npc_logistics_price_region_default_steel",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:steel:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 80
+          },
+          "regionId": "region_default",
+          "resourceId": "steel"
+        },
+        {
+          "id": "knowledge_company_npc_logistics_price_region_default_stone",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:stone:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 18
+          },
+          "regionId": "region_default",
+          "resourceId": "stone"
+        },
+        {
+          "id": "knowledge_company_npc_logistics_price_region_default_wood",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:wood:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 25
+          },
+          "regionId": "region_default",
+          "resourceId": "wood"
+        }
+      ],
+      "memory": [
+        {
+          "id": "memory_company_npc_logistics_price_region_default_advanced_electronics_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 520,
+            "price": 520
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "advanced_electronics"
+        },
+        {
+          "id": "memory_company_npc_logistics_price_region_default_consumer_goods_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 750,
+            "price": 750
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "consumer_goods"
+        },
+        {
+          "id": "memory_company_npc_logistics_price_region_default_industrial_machinery_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 320,
+            "price": 320
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "industrial_machinery"
+        },
+        {
+          "id": "memory_company_npc_logistics_price_region_default_iron_ore_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 40,
+            "price": 40
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "iron_ore"
+        },
+        {
+          "id": "memory_company_npc_logistics_price_region_default_machine_parts_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 150,
+            "price": 150
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "machine_parts"
+        },
+        {
+          "id": "memory_company_npc_logistics_price_region_default_planks_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 45,
+            "price": 45
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "planks"
+        },
+        {
+          "id": "memory_company_npc_logistics_price_region_default_steel_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 80,
+            "price": 80
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "steel"
+        },
+        {
+          "id": "memory_company_npc_logistics_price_region_default_stone_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 18,
+            "price": 18
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "stone"
+        },
+        {
+          "id": "memory_company_npc_logistics_price_region_default_wood_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 25,
+            "price": 25
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "wood"
+        }
+      ],
+      "decisionQueue": [
+        {
+          "id": "decision_company_npc_logistics_PURCHASE_RESOURCE_1_0",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 178,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "advanced_electronics",
+              "quantity": 20,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_logistics_PURCHASE_RESOURCE_1_1",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 178,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "consumer_goods",
+              "quantity": 20,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_logistics_PURCHASE_RESOURCE_1_2",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 178,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "industrial_machinery",
+              "quantity": 20,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_logistics_PURCHASE_RESOURCE_1_3",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 178,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "iron_ore",
+              "quantity": 20,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_logistics_PURCHASE_RESOURCE_1_4",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 178,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "machine_parts",
+              "quantity": 20,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_logistics_PURCHASE_RESOURCE_1_5",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 178,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "planks",
+              "quantity": 20,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_logistics_PURCHASE_RESOURCE_1_6",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 178,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "steel",
+              "quantity": 20,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_logistics_PURCHASE_RESOURCE_1_7",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 178,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "stone",
+              "quantity": 20,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_logistics_PURCHASE_RESOURCE_1_8",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 178,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "wood",
+              "quantity": 20,
+              "regionId": "region_default"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "brainId": "brain_company_npc_pricing",
+      "companyId": "company_npc_pricing",
+      "createdAt": 0,
+      "activeStrategy": {
+        "strategyDefinitionId": "strategy_aggressive_pricing",
+        "appliedAtTick": 0
+      },
+      "goals": [
+        {
+          "id": "goal_company_npc_pricing_SECURE_SUPPLY_global_advanced_electronics",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for advanced_electronics",
+          "priority": 40,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "advanced_electronics"
+        },
+        {
+          "id": "goal_company_npc_pricing_SECURE_SUPPLY_global_consumer_goods",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for consumer_goods",
+          "priority": 40,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "consumer_goods"
+        },
+        {
+          "id": "goal_company_npc_pricing_SECURE_SUPPLY_global_industrial_machinery",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for industrial_machinery",
+          "priority": 40,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "industrial_machinery"
+        },
+        {
+          "id": "goal_company_npc_pricing_SECURE_SUPPLY_global_iron_ore",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for iron_ore",
+          "priority": 40,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "iron_ore"
+        },
+        {
+          "id": "goal_company_npc_pricing_SECURE_SUPPLY_global_machine_parts",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for machine_parts",
+          "priority": 40,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "machine_parts"
+        },
+        {
+          "id": "goal_company_npc_pricing_SECURE_SUPPLY_global_planks",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for planks",
+          "priority": 40,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "planks"
+        },
+        {
+          "id": "goal_company_npc_pricing_SECURE_SUPPLY_global_steel",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for steel",
+          "priority": 40,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "steel"
+        },
+        {
+          "id": "goal_company_npc_pricing_SECURE_SUPPLY_global_stone",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for stone",
+          "priority": 40,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "stone"
+        },
+        {
+          "id": "goal_company_npc_pricing_SECURE_SUPPLY_global_wood",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for wood",
+          "priority": 40,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "wood"
+        }
+      ],
+      "knowledge": [
+        {
+          "id": "knowledge_company_npc_pricing_price_region_default_advanced_electronics",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:advanced_electronics:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 520
+          },
+          "regionId": "region_default",
+          "resourceId": "advanced_electronics"
+        },
+        {
+          "id": "knowledge_company_npc_pricing_price_region_default_consumer_goods",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:consumer_goods:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 750
+          },
+          "regionId": "region_default",
+          "resourceId": "consumer_goods"
+        },
+        {
+          "id": "knowledge_company_npc_pricing_price_region_default_industrial_machinery",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:industrial_machinery:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 320
+          },
+          "regionId": "region_default",
+          "resourceId": "industrial_machinery"
+        },
+        {
+          "id": "knowledge_company_npc_pricing_price_region_default_iron_ore",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:iron_ore:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 40
+          },
+          "regionId": "region_default",
+          "resourceId": "iron_ore"
+        },
+        {
+          "id": "knowledge_company_npc_pricing_price_region_default_machine_parts",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:machine_parts:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 150
+          },
+          "regionId": "region_default",
+          "resourceId": "machine_parts"
+        },
+        {
+          "id": "knowledge_company_npc_pricing_price_region_default_planks",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:planks:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 45
+          },
+          "regionId": "region_default",
+          "resourceId": "planks"
+        },
+        {
+          "id": "knowledge_company_npc_pricing_price_region_default_steel",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:steel:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 80
+          },
+          "regionId": "region_default",
+          "resourceId": "steel"
+        },
+        {
+          "id": "knowledge_company_npc_pricing_price_region_default_stone",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:stone:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 18
+          },
+          "regionId": "region_default",
+          "resourceId": "stone"
+        },
+        {
+          "id": "knowledge_company_npc_pricing_price_region_default_wood",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:wood:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 25
+          },
+          "regionId": "region_default",
+          "resourceId": "wood"
+        }
+      ],
+      "memory": [
+        {
+          "id": "memory_company_npc_pricing_price_region_default_advanced_electronics_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 520,
+            "price": 520
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "advanced_electronics"
+        },
+        {
+          "id": "memory_company_npc_pricing_price_region_default_consumer_goods_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 750,
+            "price": 750
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "consumer_goods"
+        },
+        {
+          "id": "memory_company_npc_pricing_price_region_default_industrial_machinery_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 320,
+            "price": 320
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "industrial_machinery"
+        },
+        {
+          "id": "memory_company_npc_pricing_price_region_default_iron_ore_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 40,
+            "price": 40
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "iron_ore"
+        },
+        {
+          "id": "memory_company_npc_pricing_price_region_default_machine_parts_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 150,
+            "price": 150
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "machine_parts"
+        },
+        {
+          "id": "memory_company_npc_pricing_price_region_default_planks_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 45,
+            "price": 45
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "planks"
+        },
+        {
+          "id": "memory_company_npc_pricing_price_region_default_steel_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 80,
+            "price": 80
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "steel"
+        },
+        {
+          "id": "memory_company_npc_pricing_price_region_default_stone_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 18,
+            "price": 18
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "stone"
+        },
+        {
+          "id": "memory_company_npc_pricing_price_region_default_wood_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 25,
+            "price": 25
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "wood"
+        }
+      ],
+      "decisionQueue": [
+        {
+          "id": "decision_company_npc_pricing_PURCHASE_RESOURCE_1_0",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 195,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "advanced_electronics",
+              "quantity": 16,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_pricing_PURCHASE_RESOURCE_1_1",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 195,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "consumer_goods",
+              "quantity": 16,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_pricing_PURCHASE_RESOURCE_1_2",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 195,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "industrial_machinery",
+              "quantity": 16,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_pricing_PURCHASE_RESOURCE_1_3",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 195,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "iron_ore",
+              "quantity": 16,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_pricing_PURCHASE_RESOURCE_1_4",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 195,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "machine_parts",
+              "quantity": 16,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_pricing_PURCHASE_RESOURCE_1_5",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 195,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "planks",
+              "quantity": 16,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_pricing_PURCHASE_RESOURCE_1_6",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 195,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "steel",
+              "quantity": 16,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_pricing_PURCHASE_RESOURCE_1_7",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 195,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "stone",
+              "quantity": 16,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_pricing_PURCHASE_RESOURCE_1_8",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 195,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "wood",
+              "quantity": 16,
+              "regionId": "region_default"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "brainId": "brain_company_npc_research",
+      "companyId": "company_npc_research",
+      "createdAt": 0,
+      "activeStrategy": {
+        "strategyDefinitionId": "strategy_research_priority",
+        "appliedAtTick": 0
+      },
+      "goals": [
+        {
+          "id": "goal_company_npc_research_SECURE_SUPPLY_global_advanced_electronics",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for advanced_electronics",
+          "priority": 65,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "advanced_electronics"
+        },
+        {
+          "id": "goal_company_npc_research_SECURE_SUPPLY_global_consumer_goods",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for consumer_goods",
+          "priority": 65,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "consumer_goods"
+        },
+        {
+          "id": "goal_company_npc_research_SECURE_SUPPLY_global_industrial_machinery",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for industrial_machinery",
+          "priority": 65,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "industrial_machinery"
+        },
+        {
+          "id": "goal_company_npc_research_SECURE_SUPPLY_global_iron_ore",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for iron_ore",
+          "priority": 65,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "iron_ore"
+        },
+        {
+          "id": "goal_company_npc_research_SECURE_SUPPLY_global_machine_parts",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for machine_parts",
+          "priority": 65,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "machine_parts"
+        },
+        {
+          "id": "goal_company_npc_research_SECURE_SUPPLY_global_planks",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for planks",
+          "priority": 65,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "planks"
+        },
+        {
+          "id": "goal_company_npc_research_SECURE_SUPPLY_global_steel",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for steel",
+          "priority": 65,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "steel"
+        },
+        {
+          "id": "goal_company_npc_research_SECURE_SUPPLY_global_stone",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for stone",
+          "priority": 65,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "stone"
+        },
+        {
+          "id": "goal_company_npc_research_SECURE_SUPPLY_global_wood",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for wood",
+          "priority": 65,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "wood"
+        }
+      ],
+      "knowledge": [
+        {
+          "id": "knowledge_company_npc_research_price_region_default_advanced_electronics",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:advanced_electronics:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 520
+          },
+          "regionId": "region_default",
+          "resourceId": "advanced_electronics"
+        },
+        {
+          "id": "knowledge_company_npc_research_price_region_default_consumer_goods",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:consumer_goods:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 750
+          },
+          "regionId": "region_default",
+          "resourceId": "consumer_goods"
+        },
+        {
+          "id": "knowledge_company_npc_research_price_region_default_industrial_machinery",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:industrial_machinery:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 320
+          },
+          "regionId": "region_default",
+          "resourceId": "industrial_machinery"
+        },
+        {
+          "id": "knowledge_company_npc_research_price_region_default_iron_ore",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:iron_ore:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 40
+          },
+          "regionId": "region_default",
+          "resourceId": "iron_ore"
+        },
+        {
+          "id": "knowledge_company_npc_research_price_region_default_machine_parts",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:machine_parts:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 150
+          },
+          "regionId": "region_default",
+          "resourceId": "machine_parts"
+        },
+        {
+          "id": "knowledge_company_npc_research_price_region_default_planks",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:planks:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 45
+          },
+          "regionId": "region_default",
+          "resourceId": "planks"
+        },
+        {
+          "id": "knowledge_company_npc_research_price_region_default_steel",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:steel:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 80
+          },
+          "regionId": "region_default",
+          "resourceId": "steel"
+        },
+        {
+          "id": "knowledge_company_npc_research_price_region_default_stone",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:stone:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 18
+          },
+          "regionId": "region_default",
+          "resourceId": "stone"
+        },
+        {
+          "id": "knowledge_company_npc_research_price_region_default_wood",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:wood:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 25
+          },
+          "regionId": "region_default",
+          "resourceId": "wood"
+        }
+      ],
+      "memory": [
+        {
+          "id": "memory_company_npc_research_price_region_default_advanced_electronics_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 520,
+            "price": 520
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "advanced_electronics"
+        },
+        {
+          "id": "memory_company_npc_research_price_region_default_consumer_goods_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 750,
+            "price": 750
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "consumer_goods"
+        },
+        {
+          "id": "memory_company_npc_research_price_region_default_industrial_machinery_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 320,
+            "price": 320
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "industrial_machinery"
+        },
+        {
+          "id": "memory_company_npc_research_price_region_default_iron_ore_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 40,
+            "price": 40
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "iron_ore"
+        },
+        {
+          "id": "memory_company_npc_research_price_region_default_machine_parts_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 150,
+            "price": 150
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "machine_parts"
+        },
+        {
+          "id": "memory_company_npc_research_price_region_default_planks_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 45,
+            "price": 45
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "planks"
+        },
+        {
+          "id": "memory_company_npc_research_price_region_default_steel_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 80,
+            "price": 80
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "steel"
+        },
+        {
+          "id": "memory_company_npc_research_price_region_default_stone_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 18,
+            "price": 18
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "stone"
+        },
+        {
+          "id": "memory_company_npc_research_price_region_default_wood_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 25,
+            "price": 25
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "wood"
+        }
+      ],
+      "decisionQueue": [
+        {
+          "id": "decision_company_npc_research_PURCHASE_RESOURCE_1_0",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 125,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "advanced_electronics",
+              "quantity": 21,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_research_PURCHASE_RESOURCE_1_1",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 125,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "consumer_goods",
+              "quantity": 21,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_research_PURCHASE_RESOURCE_1_2",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 125,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "industrial_machinery",
+              "quantity": 21,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_research_PURCHASE_RESOURCE_1_3",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 125,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "iron_ore",
+              "quantity": 21,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_research_PURCHASE_RESOURCE_1_4",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 125,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "machine_parts",
+              "quantity": 21,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_research_PURCHASE_RESOURCE_1_5",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 125,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "planks",
+              "quantity": 21,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_research_PURCHASE_RESOURCE_1_6",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 125,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "steel",
+              "quantity": 21,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_research_PURCHASE_RESOURCE_1_7",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 125,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "stone",
+              "quantity": 21,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_research_PURCHASE_RESOURCE_1_8",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 125,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "wood",
+              "quantity": 21,
+              "regionId": "region_default"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "brainId": "brain_company_npc_rival",
+      "companyId": "company_npc_rival",
+      "createdAt": 0,
+      "activeStrategy": {
+        "strategyDefinitionId": "strategy_market_rival",
+        "appliedAtTick": 0
+      },
+      "goals": [
+        {
+          "id": "goal_company_npc_rival_SECURE_SUPPLY_global_advanced_electronics",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for advanced_electronics",
+          "priority": 55,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "advanced_electronics"
+        },
+        {
+          "id": "goal_company_npc_rival_SECURE_SUPPLY_global_consumer_goods",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for consumer_goods",
+          "priority": 55,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "consumer_goods"
+        },
+        {
+          "id": "goal_company_npc_rival_SECURE_SUPPLY_global_industrial_machinery",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for industrial_machinery",
+          "priority": 55,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "industrial_machinery"
+        },
+        {
+          "id": "goal_company_npc_rival_SECURE_SUPPLY_global_iron_ore",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for iron_ore",
+          "priority": 55,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "iron_ore"
+        },
+        {
+          "id": "goal_company_npc_rival_SECURE_SUPPLY_global_machine_parts",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for machine_parts",
+          "priority": 55,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "machine_parts"
+        },
+        {
+          "id": "goal_company_npc_rival_SECURE_SUPPLY_global_planks",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for planks",
+          "priority": 55,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "planks"
+        },
+        {
+          "id": "goal_company_npc_rival_SECURE_SUPPLY_global_steel",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for steel",
+          "priority": 55,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "steel"
+        },
+        {
+          "id": "goal_company_npc_rival_SECURE_SUPPLY_global_stone",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for stone",
+          "priority": 55,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "stone"
+        },
+        {
+          "id": "goal_company_npc_rival_SECURE_SUPPLY_global_wood",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for wood",
+          "priority": 55,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "wood"
+        }
+      ],
+      "knowledge": [
+        {
+          "id": "knowledge_company_npc_rival_price_region_default_advanced_electronics",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:advanced_electronics:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 520
+          },
+          "regionId": "region_default",
+          "resourceId": "advanced_electronics"
+        },
+        {
+          "id": "knowledge_company_npc_rival_price_region_default_consumer_goods",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:consumer_goods:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 750
+          },
+          "regionId": "region_default",
+          "resourceId": "consumer_goods"
+        },
+        {
+          "id": "knowledge_company_npc_rival_price_region_default_industrial_machinery",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:industrial_machinery:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 320
+          },
+          "regionId": "region_default",
+          "resourceId": "industrial_machinery"
+        },
+        {
+          "id": "knowledge_company_npc_rival_price_region_default_iron_ore",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:iron_ore:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 40
+          },
+          "regionId": "region_default",
+          "resourceId": "iron_ore"
+        },
+        {
+          "id": "knowledge_company_npc_rival_price_region_default_machine_parts",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:machine_parts:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 150
+          },
+          "regionId": "region_default",
+          "resourceId": "machine_parts"
+        },
+        {
+          "id": "knowledge_company_npc_rival_price_region_default_planks",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:planks:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 45
+          },
+          "regionId": "region_default",
+          "resourceId": "planks"
+        },
+        {
+          "id": "knowledge_company_npc_rival_price_region_default_steel",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:steel:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 80
+          },
+          "regionId": "region_default",
+          "resourceId": "steel"
+        },
+        {
+          "id": "knowledge_company_npc_rival_price_region_default_stone",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:stone:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 18
+          },
+          "regionId": "region_default",
+          "resourceId": "stone"
+        },
+        {
+          "id": "knowledge_company_npc_rival_price_region_default_wood",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:wood:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 25
+          },
+          "regionId": "region_default",
+          "resourceId": "wood"
+        }
+      ],
+      "memory": [
+        {
+          "id": "memory_company_npc_rival_price_region_default_advanced_electronics_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 520,
+            "price": 520
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "advanced_electronics"
+        },
+        {
+          "id": "memory_company_npc_rival_price_region_default_consumer_goods_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 750,
+            "price": 750
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "consumer_goods"
+        },
+        {
+          "id": "memory_company_npc_rival_price_region_default_industrial_machinery_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 320,
+            "price": 320
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "industrial_machinery"
+        },
+        {
+          "id": "memory_company_npc_rival_price_region_default_iron_ore_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 40,
+            "price": 40
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "iron_ore"
+        },
+        {
+          "id": "memory_company_npc_rival_price_region_default_machine_parts_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 150,
+            "price": 150
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "machine_parts"
+        },
+        {
+          "id": "memory_company_npc_rival_price_region_default_planks_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 45,
+            "price": 45
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "planks"
+        },
+        {
+          "id": "memory_company_npc_rival_price_region_default_steel_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 80,
+            "price": 80
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "steel"
+        },
+        {
+          "id": "memory_company_npc_rival_price_region_default_stone_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 18,
+            "price": 18
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "stone"
+        },
+        {
+          "id": "memory_company_npc_rival_price_region_default_wood_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 25,
+            "price": 25
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "wood"
+        }
+      ],
+      "decisionQueue": [
+        {
+          "id": "decision_company_npc_rival_PURCHASE_RESOURCE_1_0",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 188,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "advanced_electronics",
+              "quantity": 19,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_rival_PURCHASE_RESOURCE_1_1",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 188,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "consumer_goods",
+              "quantity": 19,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_rival_PURCHASE_RESOURCE_1_2",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 188,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "industrial_machinery",
+              "quantity": 19,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_rival_PURCHASE_RESOURCE_1_3",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 188,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "iron_ore",
+              "quantity": 19,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_rival_PURCHASE_RESOURCE_1_4",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 188,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "machine_parts",
+              "quantity": 19,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_rival_PURCHASE_RESOURCE_1_5",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 188,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "planks",
+              "quantity": 19,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_rival_PURCHASE_RESOURCE_1_6",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 188,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "steel",
+              "quantity": 19,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_rival_PURCHASE_RESOURCE_1_7",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 188,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "stone",
+              "quantity": 19,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_rival_PURCHASE_RESOURCE_1_8",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 188,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "wood",
+              "quantity": 19,
+              "regionId": "region_default"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "brainId": "brain_company_npc_steel",
+      "companyId": "company_npc_steel",
+      "createdAt": 0,
+      "activeStrategy": {
+        "strategyDefinitionId": "strategy_manufacturer",
+        "appliedAtTick": 0
+      },
+      "goals": [
+        {
+          "id": "goal_company_npc_steel_SECURE_SUPPLY_global_advanced_electronics",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for advanced_electronics",
+          "priority": 95,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "advanced_electronics"
+        },
+        {
+          "id": "goal_company_npc_steel_SECURE_SUPPLY_global_consumer_goods",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for consumer_goods",
+          "priority": 95,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "consumer_goods"
+        },
+        {
+          "id": "goal_company_npc_steel_SECURE_SUPPLY_global_industrial_machinery",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for industrial_machinery",
+          "priority": 95,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "industrial_machinery"
+        },
+        {
+          "id": "goal_company_npc_steel_SECURE_SUPPLY_global_iron_ore",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for iron_ore",
+          "priority": 95,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "iron_ore"
+        },
+        {
+          "id": "goal_company_npc_steel_SECURE_SUPPLY_global_machine_parts",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for machine_parts",
+          "priority": 95,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "machine_parts"
+        },
+        {
+          "id": "goal_company_npc_steel_SECURE_SUPPLY_global_planks",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for planks",
+          "priority": 95,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "planks"
+        },
+        {
+          "id": "goal_company_npc_steel_SECURE_SUPPLY_global_steel",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for steel",
+          "priority": 95,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "steel"
+        },
+        {
+          "id": "goal_company_npc_steel_SECURE_SUPPLY_global_stone",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for stone",
+          "priority": 95,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "stone"
+        },
+        {
+          "id": "goal_company_npc_steel_SECURE_SUPPLY_global_wood",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for wood",
+          "priority": 95,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "wood"
+        }
+      ],
+      "knowledge": [
+        {
+          "id": "knowledge_company_npc_steel_price_region_default_advanced_electronics",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:advanced_electronics:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 520
+          },
+          "regionId": "region_default",
+          "resourceId": "advanced_electronics"
+        },
+        {
+          "id": "knowledge_company_npc_steel_price_region_default_consumer_goods",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:consumer_goods:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 750
+          },
+          "regionId": "region_default",
+          "resourceId": "consumer_goods"
+        },
+        {
+          "id": "knowledge_company_npc_steel_price_region_default_industrial_machinery",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:industrial_machinery:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 320
+          },
+          "regionId": "region_default",
+          "resourceId": "industrial_machinery"
+        },
+        {
+          "id": "knowledge_company_npc_steel_price_region_default_iron_ore",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:iron_ore:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 40
+          },
+          "regionId": "region_default",
+          "resourceId": "iron_ore"
+        },
+        {
+          "id": "knowledge_company_npc_steel_price_region_default_machine_parts",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:machine_parts:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 150
+          },
+          "regionId": "region_default",
+          "resourceId": "machine_parts"
+        },
+        {
+          "id": "knowledge_company_npc_steel_price_region_default_planks",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:planks:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 45
+          },
+          "regionId": "region_default",
+          "resourceId": "planks"
+        },
+        {
+          "id": "knowledge_company_npc_steel_price_region_default_steel",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:steel:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 80
+          },
+          "regionId": "region_default",
+          "resourceId": "steel"
+        },
+        {
+          "id": "knowledge_company_npc_steel_price_region_default_stone",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:stone:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 18
+          },
+          "regionId": "region_default",
+          "resourceId": "stone"
+        },
+        {
+          "id": "knowledge_company_npc_steel_price_region_default_wood",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:wood:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 25
+          },
+          "regionId": "region_default",
+          "resourceId": "wood"
+        }
+      ],
+      "memory": [
+        {
+          "id": "memory_company_npc_steel_price_region_default_advanced_electronics_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 520,
+            "price": 520
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "advanced_electronics"
+        },
+        {
+          "id": "memory_company_npc_steel_price_region_default_consumer_goods_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 750,
+            "price": 750
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "consumer_goods"
+        },
+        {
+          "id": "memory_company_npc_steel_price_region_default_industrial_machinery_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 320,
+            "price": 320
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "industrial_machinery"
+        },
+        {
+          "id": "memory_company_npc_steel_price_region_default_iron_ore_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 40,
+            "price": 40
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "iron_ore"
+        },
+        {
+          "id": "memory_company_npc_steel_price_region_default_machine_parts_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 150,
+            "price": 150
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "machine_parts"
+        },
+        {
+          "id": "memory_company_npc_steel_price_region_default_planks_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 45,
+            "price": 45
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "planks"
+        },
+        {
+          "id": "memory_company_npc_steel_price_region_default_steel_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 80,
+            "price": 80
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "steel"
+        },
+        {
+          "id": "memory_company_npc_steel_price_region_default_stone_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 18,
+            "price": 18
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "stone"
+        },
+        {
+          "id": "memory_company_npc_steel_price_region_default_wood_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 25,
+            "price": 25
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "wood"
+        }
+      ],
+      "decisionQueue": [
+        {
+          "id": "decision_company_npc_steel_PURCHASE_RESOURCE_1_0",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 140,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "advanced_electronics",
+              "quantity": 27,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_steel_PURCHASE_RESOURCE_1_1",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 140,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "consumer_goods",
+              "quantity": 27,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_steel_PURCHASE_RESOURCE_1_2",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 140,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "industrial_machinery",
+              "quantity": 27,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_steel_PURCHASE_RESOURCE_1_3",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 140,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "iron_ore",
+              "quantity": 27,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_steel_PURCHASE_RESOURCE_1_4",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 140,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "machine_parts",
+              "quantity": 27,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_steel_PURCHASE_RESOURCE_1_5",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 140,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "planks",
+              "quantity": 27,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_steel_PURCHASE_RESOURCE_1_6",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 140,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "steel",
+              "quantity": 27,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_steel_PURCHASE_RESOURCE_1_7",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 140,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "stone",
+              "quantity": 27,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_steel_PURCHASE_RESOURCE_1_8",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 140,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "wood",
+              "quantity": 27,
+              "regionId": "region_default"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "brainId": "brain_company_npc_trader",
+      "companyId": "company_npc_trader",
+      "createdAt": 0,
+      "activeStrategy": {
+        "strategyDefinitionId": "strategy_trading",
+        "appliedAtTick": 0
+      },
+      "goals": [
+        {
+          "id": "goal_company_npc_trader_SECURE_SUPPLY_global_advanced_electronics",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for advanced_electronics",
+          "priority": 35,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "advanced_electronics"
+        },
+        {
+          "id": "goal_company_npc_trader_SECURE_SUPPLY_global_consumer_goods",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for consumer_goods",
+          "priority": 35,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "consumer_goods"
+        },
+        {
+          "id": "goal_company_npc_trader_SECURE_SUPPLY_global_industrial_machinery",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for industrial_machinery",
+          "priority": 35,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "industrial_machinery"
+        },
+        {
+          "id": "goal_company_npc_trader_SECURE_SUPPLY_global_iron_ore",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for iron_ore",
+          "priority": 35,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "iron_ore"
+        },
+        {
+          "id": "goal_company_npc_trader_SECURE_SUPPLY_global_machine_parts",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for machine_parts",
+          "priority": 35,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "machine_parts"
+        },
+        {
+          "id": "goal_company_npc_trader_SECURE_SUPPLY_global_planks",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for planks",
+          "priority": 35,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "planks"
+        },
+        {
+          "id": "goal_company_npc_trader_SECURE_SUPPLY_global_steel",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for steel",
+          "priority": 35,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "steel"
+        },
+        {
+          "id": "goal_company_npc_trader_SECURE_SUPPLY_global_stone",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for stone",
+          "priority": 35,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "stone"
+        },
+        {
+          "id": "goal_company_npc_trader_SECURE_SUPPLY_global_wood",
+          "kind": "SECURE_SUPPLY",
+          "description": "Secure supply for wood",
+          "priority": 35,
+          "status": "ACTIVE",
+          "createdAtTick": 1,
+          "resourceId": "wood"
+        }
+      ],
+      "knowledge": [
+        {
+          "id": "knowledge_company_npc_trader_price_region_default_advanced_electronics",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:advanced_electronics:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 520
+          },
+          "regionId": "region_default",
+          "resourceId": "advanced_electronics"
+        },
+        {
+          "id": "knowledge_company_npc_trader_price_region_default_consumer_goods",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:consumer_goods:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 750
+          },
+          "regionId": "region_default",
+          "resourceId": "consumer_goods"
+        },
+        {
+          "id": "knowledge_company_npc_trader_price_region_default_industrial_machinery",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:industrial_machinery:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 320
+          },
+          "regionId": "region_default",
+          "resourceId": "industrial_machinery"
+        },
+        {
+          "id": "knowledge_company_npc_trader_price_region_default_iron_ore",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:iron_ore:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 40
+          },
+          "regionId": "region_default",
+          "resourceId": "iron_ore"
+        },
+        {
+          "id": "knowledge_company_npc_trader_price_region_default_machine_parts",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:machine_parts:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 150
+          },
+          "regionId": "region_default",
+          "resourceId": "machine_parts"
+        },
+        {
+          "id": "knowledge_company_npc_trader_price_region_default_planks",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:planks:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 45
+          },
+          "regionId": "region_default",
+          "resourceId": "planks"
+        },
+        {
+          "id": "knowledge_company_npc_trader_price_region_default_steel",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:steel:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 80
+          },
+          "regionId": "region_default",
+          "resourceId": "steel"
+        },
+        {
+          "id": "knowledge_company_npc_trader_price_region_default_stone",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:stone:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 18
+          },
+          "regionId": "region_default",
+          "resourceId": "stone"
+        },
+        {
+          "id": "knowledge_company_npc_trader_price_region_default_wood",
+          "kind": "MARKET_PRICE",
+          "key": "market_price:wood:region_default",
+          "observedAtTick": 1,
+          "value": {
+            "kind": "NUMBER",
+            "value": 25
+          },
+          "regionId": "region_default",
+          "resourceId": "wood"
+        }
+      ],
+      "memory": [
+        {
+          "id": "memory_company_npc_trader_price_region_default_advanced_electronics_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 520,
+            "price": 520
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "advanced_electronics"
+        },
+        {
+          "id": "memory_company_npc_trader_price_region_default_consumer_goods_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 750,
+            "price": 750
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "consumer_goods"
+        },
+        {
+          "id": "memory_company_npc_trader_price_region_default_industrial_machinery_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 320,
+            "price": 320
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "industrial_machinery"
+        },
+        {
+          "id": "memory_company_npc_trader_price_region_default_iron_ore_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 40,
+            "price": 40
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "iron_ore"
+        },
+        {
+          "id": "memory_company_npc_trader_price_region_default_machine_parts_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 150,
+            "price": 150
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "machine_parts"
+        },
+        {
+          "id": "memory_company_npc_trader_price_region_default_planks_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 45,
+            "price": 45
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "planks"
+        },
+        {
+          "id": "memory_company_npc_trader_price_region_default_steel_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 80,
+            "price": 80
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "steel"
+        },
+        {
+          "id": "memory_company_npc_trader_price_region_default_stone_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 18,
+            "price": 18
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "stone"
+        },
+        {
+          "id": "memory_company_npc_trader_price_region_default_wood_1",
+          "kind": "HISTORICAL_PRICE",
+          "observedAtTick": 1,
+          "payload": {
+            "basePrice": 25,
+            "price": 25
+          },
+          "expiresAtTick": 1001,
+          "regionId": "region_default",
+          "resourceId": "wood"
+        }
+      ],
+      "decisionQueue": [
+        {
+          "id": "decision_company_npc_trader_PURCHASE_RESOURCE_1_0",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 190,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "advanced_electronics",
+              "quantity": 15,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_trader_PURCHASE_RESOURCE_1_1",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 190,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "consumer_goods",
+              "quantity": 15,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_trader_PURCHASE_RESOURCE_1_2",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 190,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "industrial_machinery",
+              "quantity": 15,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_trader_PURCHASE_RESOURCE_1_3",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 190,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "iron_ore",
+              "quantity": 15,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_trader_PURCHASE_RESOURCE_1_4",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 190,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "machine_parts",
+              "quantity": 15,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_trader_PURCHASE_RESOURCE_1_5",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 190,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "planks",
+              "quantity": 15,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_trader_PURCHASE_RESOURCE_1_6",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 190,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "steel",
+              "quantity": 15,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_trader_PURCHASE_RESOURCE_1_7",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 190,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "stone",
+              "quantity": 15,
+              "regionId": "region_default"
+            }
+          }
+        },
+        {
+          "id": "decision_company_npc_trader_PURCHASE_RESOURCE_1_8",
+          "type": "PURCHASE_RESOURCE",
+          "status": "PENDING",
+          "layer": "TACTICAL",
+          "priority": 190,
+          "createdAtTick": 1,
+          "payload": {
+            "type": "PURCHASE_RESOURCE",
+            "data": {
+              "resourceId": "wood",
+              "quantity": 15,
+              "regionId": "region_default"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "regionalMarkets": [
+    {
+      "id": "market_region_default",
+      "regionId": "region_default",
+      "createdAt": 0,
+      "prices": [
+        {
+          "resourceId": "advanced_electronics",
+          "basePrice": 520,
+          "lastPrice": 520,
+          "tradeVolume": 0,
+          "updatedAt": 0,
+          "supply": 0,
+          "demand": 0,
+          "liquidity": 1
+        },
+        {
+          "resourceId": "consumer_goods",
+          "basePrice": 750,
+          "lastPrice": 750,
+          "tradeVolume": 0,
+          "updatedAt": 0,
+          "supply": 0,
+          "demand": 0,
+          "liquidity": 1
+        },
+        {
+          "resourceId": "industrial_machinery",
+          "basePrice": 320,
+          "lastPrice": 320,
+          "tradeVolume": 0,
+          "updatedAt": 0,
+          "supply": 0,
+          "demand": 0,
+          "liquidity": 1
+        },
+        {
+          "resourceId": "iron_ore",
+          "basePrice": 40,
+          "lastPrice": 40,
+          "tradeVolume": 0,
+          "updatedAt": 0,
+          "supply": 0,
+          "demand": 0,
+          "liquidity": 1
+        },
+        {
+          "resourceId": "machine_parts",
+          "basePrice": 150,
+          "lastPrice": 150,
+          "tradeVolume": 0,
+          "updatedAt": 0,
+          "supply": 0,
+          "demand": 0,
+          "liquidity": 1
+        },
+        {
+          "resourceId": "planks",
+          "basePrice": 45,
+          "lastPrice": 45,
+          "tradeVolume": 0,
+          "updatedAt": 0,
+          "supply": 0,
+          "demand": 0,
+          "liquidity": 1
+        },
+        {
+          "resourceId": "steel",
+          "basePrice": 80,
+          "lastPrice": 80,
+          "tradeVolume": 0,
+          "updatedAt": 0,
+          "supply": 0,
+          "demand": 0,
+          "liquidity": 1
+        },
+        {
+          "resourceId": "stone",
+          "basePrice": 18,
+          "lastPrice": 18,
+          "tradeVolume": 0,
+          "updatedAt": 0,
+          "supply": 0,
+          "demand": 0,
+          "liquidity": 1
+        },
+        {
+          "resourceId": "wood",
+          "basePrice": 25,
+          "lastPrice": 25,
+          "tradeVolume": 0,
+          "updatedAt": 0,
+          "supply": 0,
+          "demand": 0,
+          "liquidity": 1
+        }
+      ],
+      "priceHistory": []
+    },
+    {
+      "id": "market_region_east",
+      "regionId": "region_east",
+      "createdAt": 0,
+      "prices": [
+        {
+          "resourceId": "advanced_electronics",
+          "basePrice": 520,
+          "lastPrice": 520,
+          "tradeVolume": 0,
+          "updatedAt": 0,
+          "supply": 0,
+          "demand": 0,
+          "liquidity": 1
+        },
+        {
+          "resourceId": "consumer_goods",
+          "basePrice": 750,
+          "lastPrice": 750,
+          "tradeVolume": 0,
+          "updatedAt": 0,
+          "supply": 0,
+          "demand": 0,
+          "liquidity": 1
+        },
+        {
+          "resourceId": "industrial_machinery",
+          "basePrice": 320,
+          "lastPrice": 320,
+          "tradeVolume": 0,
+          "updatedAt": 0,
+          "supply": 0,
+          "demand": 0,
+          "liquidity": 1
+        },
+        {
+          "resourceId": "iron_ore",
+          "basePrice": 40,
+          "lastPrice": 40,
+          "tradeVolume": 0,
+          "updatedAt": 0,
+          "supply": 0,
+          "demand": 0,
+          "liquidity": 1
+        },
+        {
+          "resourceId": "machine_parts",
+          "basePrice": 150,
+          "lastPrice": 150,
+          "tradeVolume": 0,
+          "updatedAt": 0,
+          "supply": 0,
+          "demand": 0,
+          "liquidity": 1
+        },
+        {
+          "resourceId": "planks",
+          "basePrice": 45,
+          "lastPrice": 45,
+          "tradeVolume": 0,
+          "updatedAt": 0,
+          "supply": 0,
+          "demand": 0,
+          "liquidity": 1
+        },
+        {
+          "resourceId": "steel",
+          "basePrice": 80,
+          "lastPrice": 80,
+          "tradeVolume": 0,
+          "updatedAt": 0,
+          "supply": 0,
+          "demand": 0,
+          "liquidity": 1
+        },
+        {
+          "resourceId": "stone",
+          "basePrice": 18,
+          "lastPrice": 18,
+          "tradeVolume": 0,
+          "updatedAt": 0,
+          "supply": 0,
+          "demand": 0,
+          "liquidity": 1
+        },
+        {
+          "resourceId": "wood",
+          "basePrice": 25,
+          "lastPrice": 25,
+          "tradeVolume": 0,
+          "updatedAt": 0,
+          "supply": 0,
+          "demand": 0,
+          "liquidity": 1
+        }
+      ],
+      "priceHistory": []
+    },
+    {
+      "id": "market_region_north",
+      "regionId": "region_north",
+      "createdAt": 0,
+      "prices": [
+        {
+          "resourceId": "advanced_electronics",
+          "basePrice": 520,
+          "lastPrice": 520,
+          "tradeVolume": 0,
+          "updatedAt": 0,
+          "supply": 0,
+          "demand": 0,
+          "liquidity": 1
+        },
+        {
+          "resourceId": "consumer_goods",
+          "basePrice": 750,
+          "lastPrice": 750,
+          "tradeVolume": 0,
+          "updatedAt": 0,
+          "supply": 0,
+          "demand": 0,
+          "liquidity": 1
+        },
+        {
+          "resourceId": "industrial_machinery",
+          "basePrice": 320,
+          "lastPrice": 320,
+          "tradeVolume": 0,
+          "updatedAt": 0,
+          "supply": 0,
+          "demand": 0,
+          "liquidity": 1
+        },
+        {
+          "resourceId": "iron_ore",
+          "basePrice": 40,
+          "lastPrice": 40,
+          "tradeVolume": 0,
+          "updatedAt": 0,
+          "supply": 0,
+          "demand": 0,
+          "liquidity": 1
+        },
+        {
+          "resourceId": "machine_parts",
+          "basePrice": 150,
+          "lastPrice": 150,
+          "tradeVolume": 0,
+          "updatedAt": 0,
+          "supply": 0,
+          "demand": 0,
+          "liquidity": 1
+        },
+        {
+          "resourceId": "planks",
+          "basePrice": 45,
+          "lastPrice": 45,
+          "tradeVolume": 0,
+          "updatedAt": 0,
+          "supply": 0,
+          "demand": 0,
+          "liquidity": 1
+        },
+        {
+          "resourceId": "steel",
+          "basePrice": 80,
+          "lastPrice": 80,
+          "tradeVolume": 0,
+          "updatedAt": 0,
+          "supply": 0,
+          "demand": 0,
+          "liquidity": 1
+        },
+        {
+          "resourceId": "stone",
+          "basePrice": 18,
+          "lastPrice": 18,
+          "tradeVolume": 0,
+          "updatedAt": 0,
+          "supply": 0,
+          "demand": 0,
+          "liquidity": 1
+        },
+        {
+          "resourceId": "wood",
+          "basePrice": 25,
+          "lastPrice": 25,
+          "tradeVolume": 0,
+          "updatedAt": 0,
+          "supply": 0,
+          "demand": 0,
+          "liquidity": 1
+        }
+      ],
+      "priceHistory": []
+    },
+    {
+      "id": "market_region_south",
+      "regionId": "region_south",
+      "createdAt": 0,
+      "prices": [
+        {
+          "resourceId": "advanced_electronics",
+          "basePrice": 520,
+          "lastPrice": 520,
+          "tradeVolume": 0,
+          "updatedAt": 0,
+          "supply": 0,
+          "demand": 0,
+          "liquidity": 1
+        },
+        {
+          "resourceId": "consumer_goods",
+          "basePrice": 750,
+          "lastPrice": 750,
+          "tradeVolume": 0,
+          "updatedAt": 0,
+          "supply": 0,
+          "demand": 0,
+          "liquidity": 1
+        },
+        {
+          "resourceId": "industrial_machinery",
+          "basePrice": 320,
+          "lastPrice": 320,
+          "tradeVolume": 0,
+          "updatedAt": 0,
+          "supply": 0,
+          "demand": 0,
+          "liquidity": 1
+        },
+        {
+          "resourceId": "iron_ore",
+          "basePrice": 40,
+          "lastPrice": 40,
+          "tradeVolume": 0,
+          "updatedAt": 0,
+          "supply": 0,
+          "demand": 0,
+          "liquidity": 1
+        },
+        {
+          "resourceId": "machine_parts",
+          "basePrice": 150,
+          "lastPrice": 150,
+          "tradeVolume": 0,
+          "updatedAt": 0,
+          "supply": 0,
+          "demand": 0,
+          "liquidity": 1
+        },
+        {
+          "resourceId": "planks",
+          "basePrice": 45,
+          "lastPrice": 45,
+          "tradeVolume": 0,
+          "updatedAt": 0,
+          "supply": 0,
+          "demand": 0,
+          "liquidity": 1
+        },
+        {
+          "resourceId": "steel",
+          "basePrice": 80,
+          "lastPrice": 80,
+          "tradeVolume": 0,
+          "updatedAt": 0,
+          "supply": 0,
+          "demand": 0,
+          "liquidity": 1
+        },
+        {
+          "resourceId": "stone",
+          "basePrice": 18,
+          "lastPrice": 18,
+          "tradeVolume": 0,
+          "updatedAt": 0,
+          "supply": 0,
+          "demand": 0,
+          "liquidity": 1
+        },
+        {
+          "resourceId": "wood",
+          "basePrice": 25,
+          "lastPrice": 25,
+          "tradeVolume": 0,
+          "updatedAt": 0,
+          "supply": 0,
+          "demand": 0,
+          "liquidity": 1
+        }
+      ],
+      "priceHistory": []
+    }
+  ],
+  "buildings": [
+    {
+      "id": "building_001",
+      "buildingTypeId": "headquarters",
+      "companyId": "company_001",
+      "regionId": "region_default",
+      "name": "Firmenzentrale",
+      "position": {
+        "x": 12,
+        "y": 12
+      },
+      "level": 1,
+      "createdAt": 0,
+      "status": "ACTIVE",
+      "constructionDuration": 0,
+      "constructionProgress": 100,
+      "constructionEndTime": 0
+    },
+    {
+      "id": "building_002",
+      "buildingTypeId": "warehouse",
+      "companyId": "company_001",
+      "regionId": "region_default",
+      "name": "Lager",
+      "position": {
+        "x": 8,
+        "y": 12
+      },
+      "level": 1,
+      "createdAt": 0,
+      "status": "ACTIVE",
+      "constructionDuration": 0,
+      "constructionProgress": 100,
+      "constructionEndTime": 0
+    },
+    {
+      "id": "building_003",
+      "buildingTypeId": "power_substation",
+      "companyId": "company_001",
+      "regionId": "region_default",
+      "name": "Umspannwerk",
+      "position": {
+        "x": 16,
+        "y": 12
+      },
+      "level": 1,
+      "createdAt": 0,
+      "status": "ACTIVE",
+      "constructionDuration": 0,
+      "constructionProgress": 100,
+      "constructionEndTime": 0
+    },
+    {
+      "id": "building_004",
+      "buildingTypeId": "access_road",
+      "companyId": "company_001",
+      "regionId": "region_default",
+      "name": "Zufahrtsstrasse",
+      "position": {
+        "x": 12,
+        "y": 8
+      },
+      "level": 1,
+      "createdAt": 0,
+      "status": "ACTIVE",
+      "constructionDuration": 0,
+      "constructionProgress": 100,
+      "constructionEndTime": 0
+    }
+  ],
+  "inventories": [
+    {
+      "id": "inventory_company_001",
+      "companyId": "company_001",
+      "createdAt": 0,
+      "status": "ACTIVE",
+      "items": [
+        {
+          "resourceId": "iron_ore",
+          "quantity": 10,
+          "reserved": 0
+        },
+        {
+          "resourceId": "stone",
+          "quantity": 15,
+          "reserved": 0
+        },
+        {
+          "resourceId": "wood",
+          "quantity": 40,
+          "reserved": 0
+        }
+      ]
+    },
+    {
+      "id": "inventory_company_npc_logistics",
+      "companyId": "company_npc_logistics",
+      "createdAt": 0,
+      "status": "ACTIVE",
+      "items": []
+    },
+    {
+      "id": "inventory_company_npc_pricing",
+      "companyId": "company_npc_pricing",
+      "createdAt": 0,
+      "status": "ACTIVE",
+      "items": []
+    },
+    {
+      "id": "inventory_company_npc_research",
+      "companyId": "company_npc_research",
+      "createdAt": 0,
+      "status": "ACTIVE",
+      "items": []
+    },
+    {
+      "id": "inventory_company_npc_rival",
+      "companyId": "company_npc_rival",
+      "createdAt": 0,
+      "status": "ACTIVE",
+      "items": []
+    },
+    {
+      "id": "inventory_company_npc_steel",
+      "companyId": "company_npc_steel",
+      "createdAt": 0,
+      "status": "ACTIVE",
+      "items": []
+    },
+    {
+      "id": "inventory_company_npc_trader",
+      "companyId": "company_npc_trader",
+      "createdAt": 0,
+      "status": "ACTIVE",
+      "items": []
+    }
+  ],
+  "financeAccounts": [
+    {
+      "id": "finance_company_001",
+      "companyId": "company_001",
+      "currency": "GC",
+      "createdAt": 0,
+      "cashBalance": 100000,
+      "reservedCash": 0,
+      "lastTaxCollectedAt": 0,
+      "transactionSequence": 1,
+      "transactions": [
+        {
+          "id": "finance_company_001_tx_1",
+          "financeId": "finance_company_001",
+          "companyId": "company_001",
+          "transactionType": "SYSTEM",
+          "direction": "IN",
+          "amount": 100000,
+          "balanceBefore": 0,
+          "balanceAfter": 100000,
+          "reservedCashDelta": 0,
+          "timestamp": 0
+        }
+      ]
+    },
+    {
+      "id": "finance_company_npc_logistics",
+      "companyId": "company_npc_logistics",
+      "currency": "GC",
+      "createdAt": 0,
+      "cashBalance": 100000,
+      "reservedCash": 0,
+      "lastTaxCollectedAt": 0,
+      "transactionSequence": 1,
+      "transactions": [
+        {
+          "id": "finance_company_npc_logistics_tx_1",
+          "financeId": "finance_company_npc_logistics",
+          "companyId": "company_npc_logistics",
+          "transactionType": "SYSTEM",
+          "direction": "IN",
+          "amount": 100000,
+          "balanceBefore": 0,
+          "balanceAfter": 100000,
+          "reservedCashDelta": 0,
+          "timestamp": 0
+        }
+      ]
+    },
+    {
+      "id": "finance_company_npc_pricing",
+      "companyId": "company_npc_pricing",
+      "currency": "GC",
+      "createdAt": 0,
+      "cashBalance": 100000,
+      "reservedCash": 0,
+      "lastTaxCollectedAt": 0,
+      "transactionSequence": 1,
+      "transactions": [
+        {
+          "id": "finance_company_npc_pricing_tx_1",
+          "financeId": "finance_company_npc_pricing",
+          "companyId": "company_npc_pricing",
+          "transactionType": "SYSTEM",
+          "direction": "IN",
+          "amount": 100000,
+          "balanceBefore": 0,
+          "balanceAfter": 100000,
+          "reservedCashDelta": 0,
+          "timestamp": 0
+        }
+      ]
+    },
+    {
+      "id": "finance_company_npc_research",
+      "companyId": "company_npc_research",
+      "currency": "GC",
+      "createdAt": 0,
+      "cashBalance": 100000,
+      "reservedCash": 0,
+      "lastTaxCollectedAt": 0,
+      "transactionSequence": 1,
+      "transactions": [
+        {
+          "id": "finance_company_npc_research_tx_1",
+          "financeId": "finance_company_npc_research",
+          "companyId": "company_npc_research",
+          "transactionType": "SYSTEM",
+          "direction": "IN",
+          "amount": 100000,
+          "balanceBefore": 0,
+          "balanceAfter": 100000,
+          "reservedCashDelta": 0,
+          "timestamp": 0
+        }
+      ]
+    },
+    {
+      "id": "finance_company_npc_rival",
+      "companyId": "company_npc_rival",
+      "currency": "GC",
+      "createdAt": 0,
+      "cashBalance": 100000,
+      "reservedCash": 0,
+      "lastTaxCollectedAt": 0,
+      "transactionSequence": 1,
+      "transactions": [
+        {
+          "id": "finance_company_npc_rival_tx_1",
+          "financeId": "finance_company_npc_rival",
+          "companyId": "company_npc_rival",
+          "transactionType": "SYSTEM",
+          "direction": "IN",
+          "amount": 100000,
+          "balanceBefore": 0,
+          "balanceAfter": 100000,
+          "reservedCashDelta": 0,
+          "timestamp": 0
+        }
+      ]
+    },
+    {
+      "id": "finance_company_npc_steel",
+      "companyId": "company_npc_steel",
+      "currency": "GC",
+      "createdAt": 0,
+      "cashBalance": 100000,
+      "reservedCash": 0,
+      "lastTaxCollectedAt": 0,
+      "transactionSequence": 1,
+      "transactions": [
+        {
+          "id": "finance_company_npc_steel_tx_1",
+          "financeId": "finance_company_npc_steel",
+          "companyId": "company_npc_steel",
+          "transactionType": "SYSTEM",
+          "direction": "IN",
+          "amount": 100000,
+          "balanceBefore": 0,
+          "balanceAfter": 100000,
+          "reservedCashDelta": 0,
+          "timestamp": 0
+        }
+      ]
+    },
+    {
+      "id": "finance_company_npc_trader",
+      "companyId": "company_npc_trader",
+      "currency": "GC",
+      "createdAt": 0,
+      "cashBalance": 100000,
+      "reservedCash": 0,
+      "lastTaxCollectedAt": 0,
+      "transactionSequence": 1,
+      "transactions": [
+        {
+          "id": "finance_company_npc_trader_tx_1",
+          "financeId": "finance_company_npc_trader",
+          "companyId": "company_npc_trader",
+          "transactionType": "SYSTEM",
+          "direction": "IN",
+          "amount": 100000,
+          "balanceBefore": 0,
+          "balanceAfter": 100000,
+          "reservedCashDelta": 0,
+          "timestamp": 0
+        }
+      ]
+    }
+  ],
+  "productionJobs": [],
+  "researchJobs": [],
+  "companyResearch": [
+    {
+      "id": "research_company_001",
+      "companyId": "company_001",
+      "createdAt": 0,
+      "completedTechnologies": []
+    },
+    {
+      "id": "research_company_npc_logistics",
+      "companyId": "company_npc_logistics",
+      "createdAt": 0,
+      "completedTechnologies": []
+    },
+    {
+      "id": "research_company_npc_pricing",
+      "companyId": "company_npc_pricing",
+      "createdAt": 0,
+      "completedTechnologies": []
+    },
+    {
+      "id": "research_company_npc_research",
+      "companyId": "company_npc_research",
+      "createdAt": 0,
+      "completedTechnologies": []
+    },
+    {
+      "id": "research_company_npc_rival",
+      "companyId": "company_npc_rival",
+      "createdAt": 0,
+      "completedTechnologies": []
+    },
+    {
+      "id": "research_company_npc_steel",
+      "companyId": "company_npc_steel",
+      "createdAt": 0,
+      "completedTechnologies": []
+    },
+    {
+      "id": "research_company_npc_trader",
+      "companyId": "company_npc_trader",
+      "createdAt": 0,
+      "completedTechnologies": []
+    }
+  ],
+  "companyMilestones": [
+    {
+      "id": "milestones_company_001",
+      "companyId": "company_001",
+      "createdAt": 0,
+      "completedMilestones": []
+    },
+    {
+      "id": "milestones_company_npc_logistics",
+      "companyId": "company_npc_logistics",
+      "createdAt": 0,
+      "completedMilestones": []
+    },
+    {
+      "id": "milestones_company_npc_pricing",
+      "companyId": "company_npc_pricing",
+      "createdAt": 0,
+      "completedMilestones": []
+    },
+    {
+      "id": "milestones_company_npc_research",
+      "companyId": "company_npc_research",
+      "createdAt": 0,
+      "completedMilestones": []
+    },
+    {
+      "id": "milestones_company_npc_rival",
+      "companyId": "company_npc_rival",
+      "createdAt": 0,
+      "completedMilestones": []
+    },
+    {
+      "id": "milestones_company_npc_steel",
+      "companyId": "company_npc_steel",
+      "createdAt": 0,
+      "completedMilestones": []
+    },
+    {
+      "id": "milestones_company_npc_trader",
+      "companyId": "company_npc_trader",
+      "createdAt": 0,
+      "completedMilestones": []
+    }
+  ],
+  "buildingStorages": [
+    {
+      "buildingId": "building_002",
+      "companyId": "company_001",
+      "storageCapacity": 500,
+      "items": []
+    }
+  ],
+  "transportOrders": [],
+  "employees": [],
+  "supplyContracts": [
+    {
+      "id": "contract_npc_wood_001",
+      "companyId": "company_001",
+      "kind": "NPC_PURCHASE",
+      "resourceId": "wood",
+      "amount": 5,
+      "paymentAmount": 125,
+      "intervalTicks": 20,
+      "createdAt": 0,
+      "lastFulfilledTick": 0,
+      "active": true
+    }
+  ],
+  "tickMetricsHistory": {
+    "companyId": "company_001",
+    "points": [
+      {
+        "tickNumber": 1,
+        "simulationTime": 1,
+        "availableCash": 100000,
+        "energyReserve": 27.543478260869563,
+        "activeTransportCount": 0,
+        "warehouseTotalUnits": 0,
+        "onSiteTotalUnits": 65,
+        "priceIndex": 1,
+        "energyGeneration": 34.5,
+        "energyConsumption": 6.9565217391304355,
+        "marketPrices": [
+          {
+            "resourceId": "advanced_electronics",
+            "lastPrice": 520,
+            "totalSupply": 0,
+            "baselineDemand": 50,
+            "pressureIndex": 50
+          },
+          {
+            "resourceId": "consumer_goods",
+            "lastPrice": 750,
+            "totalSupply": 0,
+            "baselineDemand": 50,
+            "pressureIndex": 50
+          },
+          {
+            "resourceId": "industrial_machinery",
+            "lastPrice": 320,
+            "totalSupply": 0,
+            "baselineDemand": 50,
+            "pressureIndex": 50
+          },
+          {
+            "resourceId": "iron_ore",
+            "lastPrice": 40,
+            "totalSupply": 0,
+            "baselineDemand": 50,
+            "pressureIndex": 50
+          },
+          {
+            "resourceId": "machine_parts",
+            "lastPrice": 150,
+            "totalSupply": 0,
+            "baselineDemand": 50,
+            "pressureIndex": 50
+          },
+          {
+            "resourceId": "planks",
+            "lastPrice": 45,
+            "totalSupply": 0,
+            "baselineDemand": 50,
+            "pressureIndex": 50
+          },
+          {
+            "resourceId": "steel",
+            "lastPrice": 80,
+            "totalSupply": 0,
+            "baselineDemand": 50,
+            "pressureIndex": 50
+          },
+          {
+            "resourceId": "stone",
+            "lastPrice": 18,
+            "totalSupply": 0,
+            "baselineDemand": 50,
+            "pressureIndex": 50
+          },
+          {
+            "resourceId": "wood",
+            "lastPrice": 25,
+            "totalSupply": 0,
+            "baselineDemand": 50,
+            "pressureIndex": 50
+          }
+        ]
+      }
+    ]
+  }
+}

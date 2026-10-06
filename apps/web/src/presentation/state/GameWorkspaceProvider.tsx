@@ -60,6 +60,7 @@ import {
   resolvePlaceBuildingPrerequisiteNavigation,
 } from '@/presentation/navigation/place-building-prerequisite-navigation';
 import { resolveProductionWorkforcePersonnelNavigation } from '@/presentation/navigation/production-workforce-personnel-navigation';
+import { resolveTutorialStepNavigation } from '@/presentation/navigation/resolve-tutorial-step-navigation';
 import {
   createBuildingMapPlacementSession,
   withBuildingMapPlacementCandidate,
@@ -105,6 +106,9 @@ export type GameWorkspaceContextValue = {
     navigation: PlaceBuildingPrerequisiteNavigationViewData,
   ) => void;
   readonly navigateProductionWorkforcePersonnel: (buildingId: string) => void;
+  readonly navigateTutorialStep: (stepId: string) => void;
+  readonly buildingCatalogFocusBuildingTypeId: string | null;
+  readonly clearBuildingCatalogFocus: () => void;
   readonly researchCatalogFocusTechnologyId: string | null;
   readonly clearResearchCatalogFocus: () => void;
   readonly pendingCompanyOperationsNavigation: CompanyOperationsPendingNavigation | null;
@@ -183,6 +187,9 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
   const [researchCatalogFocusTechnologyId, setResearchCatalogFocusTechnologyId] = useState<
     string | null
   >(null);
+  const [buildingCatalogFocusBuildingTypeId, setBuildingCatalogFocusBuildingTypeId] = useState<
+    string | null
+  >(null);
   const [pendingCompanyOperationsNavigation, setPendingCompanyOperationsNavigation] =
     useState<CompanyOperationsPendingNavigation | null>(null);
   const [buildingMapPlacementSession, setBuildingMapPlacementSession] =
@@ -198,6 +205,7 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
   const dismissedNotificationIdsRef = useRef<Set<string>>(new Set());
   const simulationNotificationsRef = useRef<readonly SimulationNotification[]>(Object.freeze([]));
   const companyViewDataRef = useRef(companyViewData);
+  const sessionDashboardRef = useRef(sessionDashboard);
   const viewDataRef = useRef(viewData);
   const regionsRef = useRef(regions);
   const hadDisconnectRef = useRef(false);
@@ -271,7 +279,8 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
 
   useEffect(() => {
     companyViewDataRef.current = companyViewData;
-  }, [companyViewData]);
+    sessionDashboardRef.current = sessionDashboard;
+  }, [companyViewData, sessionDashboard]);
 
   useEffect(() => {
     viewDataRef.current = viewData;
@@ -689,6 +698,10 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
     setResearchCatalogFocusTechnologyId(null);
   }, []);
 
+  const clearBuildingCatalogFocus = useCallback(() => {
+    setBuildingCatalogFocusBuildingTypeId(null);
+  }, []);
+
   const clearPendingCompanyOperationsNavigation = useCallback(() => {
     setPendingCompanyOperationsNavigation(null);
   }, []);
@@ -710,6 +723,43 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
       const resolved = resolveProductionWorkforcePersonnelNavigation(buildingId);
       setPendingCompanyOperationsNavigation(resolved.pendingNavigation);
       navigateToTarget(resolved.target);
+    },
+    [navigateToTarget],
+  );
+
+  const navigateTutorialStep = useCallback(
+    (stepId: string) => {
+      const dashboard = sessionDashboardRef.current;
+      const buildingRefs = Object.freeze(
+        (dashboard?.buildings ?? []).map((building) =>
+          Object.freeze({
+            id: building.id,
+            buildingTypeId: building.buildingTypeId,
+          }),
+        ),
+      );
+      const resolved = resolveTutorialStepNavigation(stepId, buildingRefs);
+
+      if (resolved === null) {
+        return;
+      }
+
+      switch (resolved.kind) {
+        case 'buildings_catalog':
+          setBuildingCatalogFocusBuildingTypeId(resolved.buildingCatalogFocusBuildingTypeId);
+          navigateToTarget(resolved.target);
+          break;
+        case 'markets_resource':
+        case 'production':
+          navigateToTarget(resolved.target);
+          break;
+        case 'company_operations':
+          setPendingCompanyOperationsNavigation(resolved.pendingNavigation);
+          navigateToTarget(resolved.target);
+          break;
+        default:
+          break;
+      }
     },
     [navigateToTarget],
   );
@@ -871,6 +921,9 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
       navigateToTarget,
       navigatePlaceBuildingPrerequisite,
       navigateProductionWorkforcePersonnel,
+      navigateTutorialStep,
+      buildingCatalogFocusBuildingTypeId,
+      clearBuildingCatalogFocus,
       researchCatalogFocusTechnologyId,
       clearResearchCatalogFocus,
       pendingCompanyOperationsNavigation,
@@ -908,6 +961,9 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
       navigateToTarget,
       navigatePlaceBuildingPrerequisite,
       navigateProductionWorkforcePersonnel,
+      navigateTutorialStep,
+      buildingCatalogFocusBuildingTypeId,
+      clearBuildingCatalogFocus,
       researchCatalogFocusTechnologyId,
       clearResearchCatalogFocus,
       pendingCompanyOperationsNavigation,

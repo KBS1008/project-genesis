@@ -19,11 +19,7 @@ function isCompanyEntitySelection(kind: string): boolean {
 
 /** Company route combining Phase 6 overview and the operational dashboard. */
 export function CompanyScreen() {
-  const {
-    navigation,
-    pendingCompanyOperationsNavigation,
-    clearPendingCompanyOperationsNavigation,
-  } = useGameWorkspace();
+  const { navigation, pendingCompanyOperationsNavigation } = useGameWorkspace();
   const [view, setView] = useState<'overview' | 'operations'>('overview');
 
   useEffect(() => {
@@ -32,11 +28,7 @@ export function CompanyScreen() {
     }
 
     setView('operations');
-
-    if (pendingCompanyOperationsNavigation.kind === 'milestone_overview') {
-      clearPendingCompanyOperationsNavigation();
-    }
-  }, [clearPendingCompanyOperationsNavigation, pendingCompanyOperationsNavigation]);
+  }, [pendingCompanyOperationsNavigation]);
 
   useEffect(() => {
     if (isCompanyEntitySelection(navigation.entitySelection.kind)) {

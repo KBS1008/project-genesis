@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { mapBuildingListRow } from '@/presentation/adapters/mappers/company-dashboard-view-mappers';
 import { fetchBuildingList } from '@/presentation/adapters/api/query-client';
 import type { BuildingListRowViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
@@ -32,7 +32,10 @@ export function BuildingsScreen() {
     selectEntity,
     navigatePlaceBuildingPrerequisite,
     startBuildingMapPlacement,
+    buildingCatalogFocusBuildingTypeId,
+    clearBuildingCatalogFocus,
   } = useGameWorkspace();
+  const catalogFocusRowRef = useRef<HTMLDivElement | null>(null);
   const selectedBuildingId =
     navigation.entitySelection.kind === 'building' ? navigation.entitySelection.id : null;
   const regionNames = useMemo(
@@ -75,6 +78,37 @@ export function BuildingsScreen() {
       });
     }
   }, [catalog, placementForm.patch, placementForm.value.buildingTypeId]);
+
+  useEffect(() => {
+    if (buildingCatalogFocusBuildingTypeId === null) {
+      return;
+    }
+
+    const hasCatalogEntry = catalog.some(
+      (entry) => entry.buildingTypeId === buildingCatalogFocusBuildingTypeId,
+    );
+
+    if (!hasCatalogEntry) {
+      clearBuildingCatalogFocus();
+      return;
+    }
+
+    placementForm.patch({
+      buildingTypeId: buildingCatalogFocusBuildingTypeId,
+      name:
+        catalog.find((entry) => entry.buildingTypeId === buildingCatalogFocusBuildingTypeId)?.name ??
+        placementForm.value.name,
+    });
+
+    catalogFocusRowRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    clearBuildingCatalogFocus();
+  }, [
+    buildingCatalogFocusBuildingTypeId,
+    catalog,
+    clearBuildingCatalogFocus,
+    placementForm.patch,
+    placementForm.value.name,
+  ]);
 
   const selectedDetail =
     selectedBuildingId === null
@@ -165,7 +199,20 @@ export function BuildingsScreen() {
             ) : (
               <div className="pg-operation-hint-list">
                 {catalog.map((entry) => (
-                  <div key={entry.buildingTypeId} className="pg-operation-hint-row">
+                  <div
+                    key={entry.buildingTypeId}
+                    ref={
+                      entry.buildingTypeId === buildingCatalogFocusBuildingTypeId
+                        ? catalogFocusRowRef
+                        : undefined
+                    }
+                    data-building-type-id={entry.buildingTypeId}
+                    className={`pg-operation-hint-row${
+                      entry.buildingTypeId === buildingCatalogFocusBuildingTypeId
+                        ? ' is-catalog-focus'
+                        : ''
+                    }`}
+                  >
                     <BuildingTypeIcon
                       buildingTypeId={entry.buildingTypeId}
                       category={entry.category}
