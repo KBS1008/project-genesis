@@ -101,6 +101,32 @@ export default [
     },
   },
 
+  // Slice 3 evidence verification scripts (Node ESM; capture includes in-browser evaluate bodies)
+  {
+    files: [
+      'tools/verify-world-scenic-slice-3-final-qa-reset.mjs',
+      'tools/verify-world-scenic-slice-3-final-eslint.mjs',
+    ],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      globals: {
+        ...globals.node,
+      },
+    },
+  },
+  {
+    files: ['tools/verify-world-scenic-slice-3-final-evidence-capture.mjs'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      globals: {
+        ...globals.node,
+        ...globals.browser,
+      },
+    },
+  },
+
   // Let Prettier handle formatting
   eslintConfigPrettier,
 ];
