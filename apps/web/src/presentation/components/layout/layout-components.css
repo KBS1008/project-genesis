@@ -9,6 +9,9 @@
   background: var(--bg-elevated);
   color: var(--muted);
   font-size: var(--text-caption);
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
 }
 
 .pg-status-bar-section {
@@ -33,9 +36,16 @@
   gap: var(--space-sm);
   width: var(--inspector-width);
   max-width: 100%;
+  box-sizing: border-box;
   padding: var(--space-md);
   border-left: 1px solid var(--border);
   background: var(--bg-elevated);
+}
+
+@media (max-width: 63.99rem) {
+  .pg-workspace-frame-with-inspector .pg-inspector-panel {
+    width: 100%;
+  }
 }
 
 .pg-inspector-header {

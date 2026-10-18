@@ -10,6 +10,15 @@ import type {
   WorldMapViewData,
   WorldOverlayViewData,
 } from '@/presentation/adapters/view-data/world-view-data';
+import { resolveScenicRegionLabelLayout } from '@/presentation/adapters/mappers/world-scenic-region-label-layout';
+import type { ScenicPresentationContext } from '@/presentation/adapters/mappers/world-scenic-visual-projection';
+import {
+  listScenicRegionPresentationPoints,
+  projectLogicalPointToScenicVisual,
+  projectMarkerToScenicVisual,
+  resolveScenicRegionAnchorWorld,
+  resolveScenicRegionHitRadius,
+} from '@/presentation/adapters/mappers/world-scenic-visual-projection';
 import { buildWorldRoutePath } from '@/presentation/components/world/world-route-geometry';
 import { PGWorldBuildingMarker } from '@/presentation/components/world/PGWorldBuildingMarker';
 
@@ -56,6 +65,7 @@ export function PGWorldCanvas({
   canvasHeight,
   suppressMapEntitySelection = false,
   placementPreviewMarker = null,
+  scenicPresentationContext = null,
 }: {
   readonly map: WorldMapViewData;
   readonly overlays: WorldOverlayViewData;
@@ -68,12 +78,32 @@ export function PGWorldCanvas({
   readonly canvasHeight?: number;
   readonly suppressMapEntitySelection?: boolean;
   readonly placementPreviewMarker?: WorldBuildingMarkerViewData | null;
+  readonly scenicPresentationContext?: ScenicPresentationContext | null;
 }) {
   const { cellSize, columns, rows, regions, connections } = map;
   const width = canvasWidth ?? columns * cellSize;
   const height = canvasHeight ?? rows * cellSize;
+  const scenicActive = scenicPresentationContext !== null;
 
   const regionById = new Map(regions.map((region) => [region.id, region]));
+  const scenicRegions = useMemo(() => {
+    if (scenicPresentationContext === null) {
+      return [];
+    }
+
+    return listScenicRegionPresentationPoints(regions, scenicPresentationContext);
+  }, [regions, scenicPresentationContext]);
+
+  const resolveConnectionCenter = (
+    region: WorldMapViewData['regions'][number],
+  ): { readonly x: number; readonly y: number } => {
+    if (scenicPresentationContext === null) {
+      return regionCenter(region, cellSize);
+    }
+
+    const anchor = resolveScenicRegionAnchorWorld(region.id, scenicPresentationContext);
+    return anchor ?? regionCenter(region, cellSize);
+  };
   const metricsByRegion = new Map(overlays.regionMetrics.map((metric) => [metric.regionId, metric]));
   const buildingMarkers = useMemo(() => {
     const markers = [...overlays.buildingMarkers];
@@ -95,9 +125,18 @@ export function PGWorldCanvas({
     return markers;
   }, [overlays.buildingMarkers, selectedBuildingId]);
 
+  const renderMarkerAt = (marker: WorldBuildingMarkerViewData) => {
+    if (scenicPresentationContext === null) {
+      return marker;
+    }
+
+    const visual = projectMarkerToScenicVisual(marker, regionById, scenicPresentationContext);
+    return Object.freeze({ ...marker, x: visual.x, y: visual.y });
+  };
+
   return (
     <svg
-      className="pg-world-canvas"
+      className={`pg-world-canvas${scenicActive ? ' is-scenic-calibrated' : ''}`}
       width={width}
       height={height}
       role="img"
@@ -128,7 +167,7 @@ export function PGWorldCanvas({
         </g>
       ) : null}
 
-      {layers.resources
+      {layers.resources && !scenicActive
         ? regions.map((region) => {
             const metric = metricsByRegion.get(region.id);
             const intensity = metric?.resourceIntensity ?? 0;
@@ -160,15 +199,22 @@ export function PGWorldCanvas({
               return null;
             }
 
-            const fromCenter = regionCenter(from, cellSize);
-            const toCenter = regionCenter(to, cellSize);
+            const fromCenter = resolveConnectionCenter(from);
+            const toCenter = resolveConnectionCenter(to);
             const flow = overlays.transportFlows.find(
               (entry) =>
                 entry.fromRegionId === connection.fromRegionId &&
                 entry.toRegionId === connection.toRegionId,
             );
             const isTransportLayer = layers.transport;
-            const strokeWidth = isTransportLayer && flow !== undefined ? 2 + flow.intensity * 4 : 2;
+            const strokeWidth =
+              scenicActive
+                ? isTransportLayer && flow !== undefined
+                  ? 1.25 + flow.intensity * 2.5
+                  : 1.25
+                : isTransportLayer && flow !== undefined
+                  ? 2 + flow.intensity * 4
+                  : 2;
             const connectionKey = `${connection.fromRegionId}-${connection.toRegionId}`;
             const routePath = buildWorldRoutePath(
               fromCenter.x,
@@ -191,7 +237,80 @@ export function PGWorldCanvas({
           })
         : null}
 
-      {layers.regions
+      {layers.regions && scenicActive
+        ? scenicRegions.map((entry) => {
+            const region = regionById.get(entry.regionId);
+            if (region === undefined) {
+              return null;
+            }
+
+            const isSelected = selectedRegionId === region.id;
+            const labelLayout =
+              scenicPresentationContext !== null
+                ? resolveScenicRegionLabelLayout(
+                    region.id,
+                    entry.anchor,
+                    scenicPresentationContext.layout,
+                    { title: region.name, subtitle: region.biomeLabel },
+                  )
+                : null;
+
+            return (
+              <g key={`scenic-region-${region.id}`} className="pg-world-scenic-region">
+                <circle
+                  className={`pg-world-scenic-region-hit${isSelected ? ' is-selected' : ''}`}
+                  cx={entry.anchor.x}
+                  cy={entry.anchor.y}
+                  r={entry.hitRadius}
+                  fill="transparent"
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Region ${region.name}, ${region.biomeLabel}`}
+                  aria-pressed={isSelected}
+                  onClick={
+                    suppressMapEntitySelection
+                      ? undefined
+                      : () => {
+                          onSelectRegion(region.id);
+                        }
+                  }
+                  onKeyDown={
+                    suppressMapEntitySelection
+                      ? undefined
+                      : (event) => {
+                          if (event.key === 'Enter' || event.key === ' ') {
+                            event.preventDefault();
+                            onSelectRegion(region.id);
+                          }
+                        }
+                  }
+                />
+                {layers.labels && labelLayout !== null ? (
+                  <g className="pg-world-scenic-region-label-group" aria-hidden="true">
+                    <text
+                      className="pg-world-scenic-region-label"
+                      x={labelLayout.titleX}
+                      y={labelLayout.titleY}
+                      textAnchor={labelLayout.textAnchor}
+                    >
+                      {region.name}
+                    </text>
+                    <text
+                      className="pg-world-scenic-region-label-sub"
+                      x={labelLayout.subtitleX}
+                      y={labelLayout.subtitleY}
+                      textAnchor={labelLayout.textAnchor}
+                    >
+                      {region.biomeLabel}
+                    </text>
+                  </g>
+                ) : null}
+              </g>
+            );
+          })
+        : null}
+
+      {layers.regions && !scenicActive
         ? regions.map((region) => {
             const isSelected = selectedRegionId === region.id;
             const surfaceClass = worldBiomeSurfaceClass(region.biomeCategory);
@@ -237,7 +356,7 @@ export function PGWorldCanvas({
         ? buildingMarkers.map((marker) => (
             <PGWorldBuildingMarker
               key={marker.id}
-              marker={marker}
+              marker={renderMarkerAt(marker)}
               isSelected={selectedBuildingId === marker.id}
               onSelect={suppressMapEntitySelection ? undefined : onSelectBuilding}
             />
@@ -245,7 +364,11 @@ export function PGWorldCanvas({
         : null}
 
       {layers.buildings && placementPreviewMarker !== null ? (
-        <PGWorldBuildingMarker marker={placementPreviewMarker} isSelected={false} isPreview />
+        <PGWorldBuildingMarker
+          marker={renderMarkerAt(placementPreviewMarker)}
+          isSelected={false}
+          isPreview
+        />
       ) : null}
 
       {layers.presence
@@ -255,18 +378,33 @@ export function PGWorldCanvas({
               return null;
             }
 
+            const presencePoint =
+              scenicPresentationContext !== null
+                ? projectLogicalPointToScenicVisual(
+                    Object.freeze({
+                      x: region.mapX * cellSize + 14,
+                      y: region.mapY * cellSize + 14,
+                    }),
+                    region,
+                    scenicPresentationContext,
+                  )
+                : Object.freeze({
+                    x: region.mapX * cellSize + 14,
+                    y: region.mapY * cellSize + 14,
+                  });
+
             return (
               <g key={`presence-${region.id}`} aria-hidden="true">
                 <circle
                   className="pg-world-presence-badge"
-                  cx={region.mapX * cellSize + 14}
-                  cy={region.mapY * cellSize + 14}
+                  cx={presencePoint.x}
+                  cy={presencePoint.y}
                   r={8}
                 />
                 <text
                   className="pg-world-presence-label"
-                  x={region.mapX * cellSize + 14}
-                  y={region.mapY * cellSize + 14 + 3}
+                  x={presencePoint.x}
+                  y={presencePoint.y + 3}
                   textAnchor="middle"
                 >
                   {metric.buildingCount}
@@ -283,6 +421,27 @@ export function PGWorldCanvas({
               return null;
             }
 
+            if (scenicPresentationContext !== null) {
+              const anchor = resolveScenicRegionAnchorWorld(
+                selectedRegionId,
+                scenicPresentationContext,
+              );
+              const radius = resolveScenicRegionHitRadius(scenicPresentationContext) + 6;
+              if (anchor === null) {
+                return null;
+              }
+
+              return (
+                <circle
+                  className="pg-world-scenic-selection-ring"
+                  cx={anchor.x}
+                  cy={anchor.y}
+                  r={radius}
+                  aria-hidden="true"
+                />
+              );
+            }
+
             return (
               <rect
                 className="pg-world-selection-ring"
@@ -297,7 +456,7 @@ export function PGWorldCanvas({
           })()
         : null}
 
-      {layers.labels
+      {layers.labels && !scenicActive
         ? regions.map((region) => (
             <g key={`label-${region.id}`} aria-hidden="true">
               <text

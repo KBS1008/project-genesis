@@ -12,6 +12,18 @@ export function viewportPointerToWorldLogical(
   });
 }
 
+/** Maps world-logical SVG coordinates to viewport-local pixels (forward camera transform). */
+export function worldLogicalToViewportLocal(
+  worldX: number,
+  worldY: number,
+  camera: WorldCameraState,
+): { readonly x: number; readonly y: number } {
+  return Object.freeze({
+    x: worldX * camera.scale + camera.translateX,
+    y: worldY * camera.scale + camera.translateY,
+  });
+}
+
 export const WORLD_PLACEMENT_DRAG_THRESHOLD_PX = 5;
 
 export function isPointerDrag(

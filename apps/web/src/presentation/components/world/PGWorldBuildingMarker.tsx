@@ -71,6 +71,7 @@ export function PGWorldBuildingMarker({
       tabIndex={isPreview ? undefined : 0}
       aria-label={isPreview ? `Vorschau ${marker.label}` : `Gebäude ${marker.label}`}
       data-building-type-id={marker.buildingTypeId}
+      data-building-id={isPreview ? undefined : marker.id}
       onClick={onClick}
       onKeyDown={onKeyDown}
     >

@@ -1,6 +1,19 @@
 'use client';
 
-import { useCallback, useMemo, useRef, type PointerEvent } from 'react';
+import { useCallback, useEffect, useMemo, useRef, type PointerEvent } from 'react';
+import {
+  COMPANY_PLACEMENT_DEFAULT_REGION_ID,
+  projectDomainPlacementPosition,
+  resolveCompanyPlacementProjectionContext,
+  resolveWorldCanvasExtent,
+  unprojectWorldLogicalPoint,
+} from '@/presentation/adapters/mappers/company-building-placement-coordinates';
+import {
+  projectScenicVisualToRegionLogical,
+  resolveScenicPlateWorldBounds,
+  resolveScenicPresentationContext,
+  resolveScenicRegionAnchorWorld,
+} from '@/presentation/adapters/mappers/world-scenic-visual-projection';
 import type { WorldOverviewViewData } from '@/presentation/adapters/view-data/workspace-view-data';
 import type {
   WorldBuildingMarkerViewData,
@@ -8,12 +21,6 @@ import type {
   WorldMapViewData,
   WorldOverlayViewData,
 } from '@/presentation/adapters/view-data/world-view-data';
-import {
-  projectDomainPlacementPosition,
-  resolveCompanyPlacementProjectionContext,
-  resolveWorldCanvasExtent,
-  unprojectWorldLogicalPoint,
-} from '@/presentation/adapters/mappers/company-building-placement-coordinates';
 import { PGWorkspaceFrame } from '@/presentation/components/layout';
 import { PGMiniMap } from '@/presentation/components/world/PGMiniMap';
 import { PGWorldInspector } from '@/presentation/components/world/PGWorldInspector';
@@ -31,6 +38,8 @@ import { useWorldLayers } from '@/presentation/hooks/useWorldLayers';
 import type { BuildingMapPlacementSession } from '@/presentation/navigation/building-map-placement-session';
 import { Button } from '@/presentation/primitives/Button';
 import { QueryRows } from '@/presentation/screens/shared/QueryRows';
+import { resolveWorldScenicPresentationProfile } from '@/presentation/adapters/mappers/world-scenic-presentation-profile';
+import { isWorldScenicBackgroundEnabled } from '@/presentation/config/world-scenic-feature';
 
 /** World map workspace shell (Phase 4A framework + Phase 4B overlays). */
 export function PGWorldWorkspace({
@@ -71,19 +80,6 @@ export function PGWorldWorkspace({
   readonly isBusy?: boolean;
 }) {
   const { layers, toggleLayer, isLayerEnabled } = useWorldLayers();
-  const {
-    camera,
-    viewportRef,
-    fitWorld,
-    fitRegion,
-    zoomIn,
-    zoomOut,
-    onWheel,
-    onPointerDown,
-    onPointerMove,
-    onPointerUp,
-  } = useWorldCamera(map.regions);
-
   const placementMode = buildingMapPlacementSession !== null;
   const placementDragStartRef = useRef<{ readonly x: number; readonly y: number } | null>(null);
 
@@ -91,6 +87,14 @@ export function PGWorldWorkspace({
     () => resolveCompanyPlacementProjectionContext(map.regions),
     [map.regions],
   );
+
+  const scenicPresentationProfile = useMemo(() => {
+    if (!isWorldScenicBackgroundEnabled()) {
+      return null;
+    }
+
+    return resolveWorldScenicPresentationProfile(map.mapId);
+  }, [map.mapId]);
 
   const canvasExtent = useMemo(() => {
     const baseWidth = map.columns * map.cellSize;
@@ -118,6 +122,82 @@ export function PGWorldWorkspace({
     placementProjectionContext,
   ]);
 
+  const scenicPresentationContext = useMemo(() => {
+    if (scenicPresentationProfile === null) {
+      return null;
+    }
+
+    return resolveScenicPresentationContext(
+      scenicPresentationProfile,
+      canvasExtent.width,
+      canvasExtent.height,
+      map.cellSize,
+    );
+  }, [canvasExtent.height, canvasExtent.width, map.cellSize, scenicPresentationProfile]);
+
+  const resolveScenicRegionFocusWorldCenter = useMemo(() => {
+    if (scenicPresentationContext === null) {
+      return undefined;
+    }
+
+    const context = scenicPresentationContext;
+    return (region: (typeof map.regions)[number]) =>
+      resolveScenicRegionAnchorWorld(region.id, context);
+  }, [scenicPresentationContext]);
+
+  const scenicFitWorldBounds = useMemo(() => {
+    if (scenicPresentationContext === null) {
+      return null;
+    }
+
+    return resolveScenicPlateWorldBounds(scenicPresentationContext.layout);
+  }, [scenicPresentationContext]);
+
+  const resolveFitWorldBounds = useMemo(() => {
+    if (scenicFitWorldBounds === null) {
+      return undefined;
+    }
+
+    return () => scenicFitWorldBounds;
+  }, [scenicFitWorldBounds]);
+
+  const placementRegion = useMemo(
+    () =>
+      map.regions.find((entry) => entry.id === COMPANY_PLACEMENT_DEFAULT_REGION_ID) ??
+      map.regions[0],
+    [map.regions],
+  );
+
+  const {
+    camera,
+    viewportRef,
+    fitWorld,
+    fitRegion,
+    zoomIn,
+    zoomOut,
+    onWheel,
+    onPointerDown,
+    onPointerMove,
+    onPointerUp,
+  } = useWorldCamera(map.regions, {
+    resolveRegionFocusWorldCenter: resolveScenicRegionFocusWorldCenter,
+    resolveFitWorldBounds,
+  });
+
+  useEffect(() => {
+    if (scenicFitWorldBounds === null) {
+      return;
+    }
+
+    const frameId = requestAnimationFrame(() => {
+      fitWorld();
+    });
+
+    return () => {
+      cancelAnimationFrame(frameId);
+    };
+  }, [fitWorld, scenicFitWorldBounds]);
+
   const placementPreviewMarker = useMemo((): WorldBuildingMarkerViewData | null => {
     const session = buildingMapPlacementSession;
     if (session === null || session.candidate === null || placementProjectionContext === null) {
@@ -129,14 +209,14 @@ export function PGWorldWorkspace({
     return Object.freeze({
       id: '__building_map_placement_preview__',
       buildingTypeId: session.buildingTypeId,
-      regionId: '',
+      regionId: placementRegion?.id ?? COMPANY_PLACEMENT_DEFAULT_REGION_ID,
       label: session.name,
       statusLabel: 'PREVIEW',
       clusterSize: 1,
       x: anchor.x,
       y: anchor.y,
     });
-  }, [buildingMapPlacementSession, placementProjectionContext]);
+  }, [buildingMapPlacementSession, placementProjectionContext, placementRegion?.id]);
 
   const resolvePlacementPick = useCallback(
     (localX: number, localY: number) => {
@@ -144,12 +224,27 @@ export function PGWorldWorkspace({
         return;
       }
 
-      const worldLogical = viewportPointerToWorldLogical(localX, localY, camera);
+      const worldVisual = viewportPointerToWorldLogical(localX, localY, camera);
+      const logicalForDomain =
+        scenicPresentationContext !== null && placementRegion !== undefined
+          ? projectScenicVisualToRegionLogical(
+              worldVisual,
+              placementRegion,
+              scenicPresentationContext,
+            )
+          : worldVisual;
+
       onPickBuildingMapPlacementCandidate(
-        unprojectWorldLogicalPoint(worldLogical, placementProjectionContext),
+        unprojectWorldLogicalPoint(logicalForDomain, placementProjectionContext),
       );
     },
-    [camera, onPickBuildingMapPlacementCandidate, placementProjectionContext],
+    [
+      camera,
+      onPickBuildingMapPlacementCandidate,
+      placementProjectionContext,
+      placementRegion,
+      scenicPresentationContext,
+    ],
   );
 
   const handleViewportPointerDown = useCallback(
@@ -294,6 +389,13 @@ export function PGWorldWorkspace({
           </section>
         ) : null}
 
+        {scenicPresentationProfile !== null ? (
+          <p className="pg-world-scenic-integration-banner" role="note">
+            QA / Entwicklung: 2D-Scenic (Placement-Konsistenz & Viewport-Fit). Standard-Welt bleibt bei
+            deaktiviertem Schalter unverändert.
+          </p>
+        ) : null}
+
         <PGWorldToolbar
           camera={camera}
           onZoomIn={zoomIn}
@@ -326,6 +428,7 @@ export function PGWorldWorkspace({
               buildingPlacementMode={placementMode}
               suppressMapEntitySelection={placementMode}
               placementPreviewMarker={placementPreviewMarker}
+              scenicPresentationProfile={scenicPresentationProfile}
             />
             <PGMiniMap
               map={map}

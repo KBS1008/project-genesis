@@ -51,12 +51,16 @@ export function fitWorldCamera(
   viewportWidth: number,
   viewportHeight: number,
   padding = 24,
+  options?: { readonly allowUpscale?: boolean },
 ): WorldCameraState {
   const contentWidth = bounds.maxX - bounds.minX;
   const contentHeight = bounds.maxY - bounds.minY;
   const scaleX = (viewportWidth - padding * 2) / contentWidth;
   const scaleY = (viewportHeight - padding * 2) / contentHeight;
-  const scale = clampWorldScale(Math.min(scaleX, scaleY, 1));
+  const fittedScale = Math.min(scaleX, scaleY);
+  const scale = clampWorldScale(
+    options?.allowUpscale === true ? fittedScale : Math.min(fittedScale, 1),
+  );
 
   const translateX = (viewportWidth - contentWidth * scale) / 2 - bounds.minX * scale;
   const translateY = (viewportHeight - contentHeight * scale) / 2 - bounds.minY * scale;
@@ -64,22 +68,33 @@ export function fitWorldCamera(
   return Object.freeze({ scale, translateX, translateY });
 }
 
-export function fitRegionCamera(
-  region: { readonly mapX: number; readonly mapY: number },
+export function fitRegionCameraAtWorldCenter(
+  centerX: number,
+  centerY: number,
   viewportWidth: number,
   viewportHeight: number,
-  cellSize: number = WORLD_MAP_CELL_SIZE,
-  padding = 48,
+  targetScale = 1.2,
 ): WorldCameraState {
-  const centerX = region.mapX * cellSize + cellSize / 2;
-  const centerY = region.mapY * cellSize + cellSize / 2;
-  const scale = clampWorldScale(1.2);
+  const scale = clampWorldScale(targetScale);
 
   return Object.freeze({
     scale,
     translateX: viewportWidth / 2 - centerX * scale,
     translateY: viewportHeight / 2 - centerY * scale,
   });
+}
+
+export function fitRegionCamera(
+  region: { readonly mapX: number; readonly mapY: number },
+  viewportWidth: number,
+  viewportHeight: number,
+  cellSize: number = WORLD_MAP_CELL_SIZE,
+  _padding = 48,
+): WorldCameraState {
+  const centerX = region.mapX * cellSize + cellSize / 2;
+  const centerY = region.mapY * cellSize + cellSize / 2;
+
+  return fitRegionCameraAtWorldCenter(centerX, centerY, viewportWidth, viewportHeight);
 }
 
 export function panWorldCamera(

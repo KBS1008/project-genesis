@@ -39,4 +39,14 @@ describe('PGWorldBuildingMarker', () => {
     expect(container.querySelector('.pg-world-building-marker.is-selected')).not.toBeNull();
     expect(container.querySelector('.pg-world-building-marker-selection-ring')).not.toBeNull();
   });
+
+  it('exposes stable data-building-id for authoritative DOM correlation', () => {
+    const { container } = render(
+      <svg>
+        <PGWorldBuildingMarker marker={MARKER} isSelected={false} onSelect={vi.fn()} />
+      </svg>,
+    );
+
+    expect(container.querySelector('[data-building-id="building_005"]')).not.toBeNull();
+  });
 });

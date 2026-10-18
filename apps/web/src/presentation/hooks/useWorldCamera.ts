@@ -3,14 +3,21 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type PointerEvent, type RefObject, type WheelEvent } from 'react';
 import {
   fitRegionCamera,
+  fitRegionCameraAtWorldCenter,
   fitWorldCamera,
   panWorldCamera,
   resolveWorldBounds,
   WORLD_CAMERA_ZOOM_STEP,
+  type WorldBounds,
   type WorldCameraState,
   zoomWorldScale,
 } from '@/presentation/hooks/world-camera-math';
+import type { WorldLogicalPoint } from '@/presentation/adapters/mappers/company-building-placement-coordinates';
 import type { WorldMapRegionCellViewData } from '@/presentation/adapters/view-data/world-view-data';
+
+export type WorldCameraRegionFocusResolver = (
+  region: WorldMapRegionCellViewData,
+) => WorldLogicalPoint | null;
 
 const DEFAULT_CAMERA: WorldCameraState = Object.freeze({
   scale: 1,
@@ -19,7 +26,13 @@ const DEFAULT_CAMERA: WorldCameraState = Object.freeze({
 });
 
 /** Camera controls for world map zoom, pan, and fit operations. */
-export function useWorldCamera(regions: readonly WorldMapRegionCellViewData[]) {
+export function useWorldCamera(
+  regions: readonly WorldMapRegionCellViewData[],
+  options?: {
+    readonly resolveRegionFocusWorldCenter?: WorldCameraRegionFocusResolver;
+    readonly resolveFitWorldBounds?: () => WorldBounds | null;
+  },
+) {
   const [camera, setCamera] = useState<WorldCameraState>(DEFAULT_CAMERA);
   const viewportRef = useRef<HTMLDivElement | null>(null);
   const dragStateRef = useRef<{ x: number; y: number } | null>(null);
@@ -40,8 +53,14 @@ export function useWorldCamera(regions: readonly WorldMapRegionCellViewData[]) {
 
   const fitWorld = useCallback(() => {
     const { width, height } = readViewportSize();
-    setCamera(fitWorldCamera(bounds, width, height));
-  }, [bounds, readViewportSize]);
+    const scenicBounds = options?.resolveFitWorldBounds?.() ?? null;
+    const activeBounds = scenicBounds ?? bounds;
+    setCamera(
+      fitWorldCamera(activeBounds, width, height, 24, {
+        allowUpscale: scenicBounds !== null,
+      }),
+    );
+  }, [bounds, options?.resolveFitWorldBounds, readViewportSize]);
 
   const fitRegion = useCallback(
     (regionId: string | null) => {
@@ -56,9 +75,17 @@ export function useWorldCamera(regions: readonly WorldMapRegionCellViewData[]) {
       }
 
       const { width, height } = readViewportSize();
+      const scenicCenter = options?.resolveRegionFocusWorldCenter?.(region) ?? null;
+      if (scenicCenter !== null) {
+        setCamera(
+          fitRegionCameraAtWorldCenter(scenicCenter.x, scenicCenter.y, width, height),
+        );
+        return;
+      }
+
       setCamera(fitRegionCamera(region, width, height));
     },
-    [fitWorld, readViewportSize, regions],
+    [fitWorld, options?.resolveRegionFocusWorldCenter, readViewportSize, regions],
   );
 
   const zoomIn = useCallback(() => {
@@ -116,7 +143,7 @@ export function useWorldCamera(regions: readonly WorldMapRegionCellViewData[]) {
     }
 
     fitWorld();
-  }, [fitWorld, regions.length]);
+  }, [fitWorld, options?.resolveFitWorldBounds, regions.length]);
 
   return {
     camera,

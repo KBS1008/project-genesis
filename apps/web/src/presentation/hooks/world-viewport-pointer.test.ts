@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   isPointerDrag,
   viewportPointerToWorldLogical,
+  worldLogicalToViewportLocal,
   WORLD_PLACEMENT_DRAG_THRESHOLD_PX,
 } from '@/presentation/hooks/world-viewport-pointer';
 import {
@@ -25,6 +26,7 @@ describe('world-viewport-pointer', () => {
   it('converts viewport-local coordinates through inverse camera transform', () => {
     const camera = Object.freeze({ scale: 2, translateX: 40, translateY: 20 });
     expect(viewportPointerToWorldLogical(140, 80, camera)).toEqual({ x: 50, y: 30 });
+    expect(worldLogicalToViewportLocal(50, 30, camera)).toEqual({ x: 140, y: 80 });
   });
 
   it('derives the same domain candidate for the same world-logical point under pan and zoom', () => {
