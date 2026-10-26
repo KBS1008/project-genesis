@@ -47,6 +47,19 @@ temp/
 
 savegames/*
 !savegames/.gitkeep
+# Runtime session saves (web default: saves/browser-session.json)
+/saves/*.json
+
+# API working-copy saves (never commit dev/runtime payloads)
+/apps/api/saves/
+
+# Personal save backups from slice safe-execution tooling
+/docs/architecture/reviews/save-backups/
+
+# PDM / browser evidence JSON dumps (often copied under saves/ or repo root)
+**/world-web-pdm-browser-evidence-*.json
+**/world-web-pdm-save-*.json
+
 
 # ============================================================================
 # Mods (local development)
