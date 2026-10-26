@@ -12,6 +12,9 @@ import type { ApplicationContext } from '../bootstrap/ApplicationContext.js';
 import { StartNewGameUseCase } from '../use-cases/StartNewGameUseCase.js';
 import { NEW_GAME_STARTER_BUILDINGS } from '../new-game/NewGameSetupConstants.js';
 import { PlaceBuildingUseCase } from '../use-cases/PlaceBuildingUseCase.js';
+import { EvaluateRegionalBuildingPlacement } from '../services/EvaluateRegionalBuildingPlacement.js';
+import { resolveBuildingRegionId } from '../services/BuildingRegionPlacement.js';
+import type { RegionalBuildingPlacementEvaluation } from '../../domain/policies/building/RegionalBuildingPlacementPolicy.js';
 import { SellResourceUseCase } from '../use-cases/SellResourceUseCase.js';
 import { BuyResourceUseCase } from '../use-cases/BuyResourceUseCase.js';
 import { StartProductionUseCase } from '../use-cases/StartProductionUseCase.js';
@@ -37,6 +40,7 @@ import { ListSavegamesQueryHandler } from '../queries/ListSavegamesQueryHandler.
 import { GetEventLogQueryHandler } from '../queries/GetEventLogQueryHandler.js';
 import path from 'node:path';
 import { createCompanyId } from '../../domain/company/Company.js';
+import type { CompanyId } from '../../domain/company/CompanyId.js';
 import { ProductionJobStatus } from '../../domain/production/ProductionJobStatus.js';
 import type { ProductionJob } from '../../domain/production/ProductionJob.js';
 import { TransportOrderStatus } from '../../domain/transport/TransportOrderStatus.js';
@@ -196,11 +200,6 @@ export class GameSession {
 
   /** Starts a fresh company with starter infrastructure and resources. */
   startNewGame(name = 'Genesis Industries'): Result<void, ValidationError> {
-    this.#buildingSequence = NEW_GAME_STARTER_BUILDINGS.length;
-    this.#productionSequence = 0;
-    this.#researchSequence = 0;
-    this.#employeeSequence = 0;
-
     const startResult = this.#startNewGame.execute({
       companyId: DEFAULT_COMPANY_ID,
       name,
@@ -211,6 +210,10 @@ export class GameSession {
       return Result.fail(startResult.error);
     }
 
+    this.#buildingSequence = NEW_GAME_STARTER_BUILDINGS.length;
+    this.#productionSequence = 0;
+    this.#researchSequence = 0;
+    this.#employeeSequence = 0;
     this.#activeCompanyId = DEFAULT_COMPANY_ID;
     this.#context.tickHistoryService.clear(DEFAULT_COMPANY_ID);
     this.#context.playerEventLogService.clear(DEFAULT_COMPANY_ID);
@@ -655,6 +658,7 @@ export class GameSession {
       return Result.fail(new ValidationError('Start a new game before placing buildings.'));
     }
 
+    this.#syncBuildingSequenceFromRepository();
     this.#buildingSequence += 1;
     const buildingId = `building_${String(this.#buildingSequence).padStart(3, '0')}`;
 
@@ -669,11 +673,43 @@ export class GameSession {
     });
 
     if (!placeResult.ok) {
+      this.#syncBuildingSequenceFromRepository();
       return Result.fail(placeResult.error);
     }
 
     this.#recordPlayerEvent('BUILDING', `Gebäude platziert: ${input.name}.`);
     return Result.ok(placeResult.value.value);
+  }
+
+  /** Evaluates regional terrain-aware placement without mutating state. */
+  validateRegionalBuildingPlacement(input: {
+    readonly buildingTypeId: string;
+    readonly x: number;
+    readonly y: number;
+    readonly regionId: string;
+  }): Result<RegionalBuildingPlacementEvaluation, ValidationError> {
+    if (this.#activeCompanyId === undefined) {
+      return Result.fail(new ValidationError('Start a new game before placing buildings.'));
+    }
+
+    const regionIdResult = resolveBuildingRegionId(this.#context.regionRepository, input.regionId);
+
+    if (!regionIdResult.ok) {
+      return Result.fail(regionIdResult.error);
+    }
+
+    const evaluation = new EvaluateRegionalBuildingPlacement({
+      buildingRepository: this.#context.buildingRepository,
+      gameContent: this.#context.gameContent,
+    }).evaluate({
+      regionId: regionIdResult.value,
+      buildingTypeId: input.buildingTypeId,
+      anchorX: input.x,
+      anchorY: input.y,
+      companyId: this.#activeCompanyId,
+    });
+
+    return Result.ok(evaluation);
   }
 
   /** Starts a production job on an active building. */
@@ -840,6 +876,14 @@ export class GameSession {
       return Result.fail(new ValidationError('Start a new game before saving.'));
     }
 
+    if (this.#context.simulationEngine.hasPendingEvents()) {
+      const flushResult = this.stepSimulation();
+
+      if (!flushResult.ok) {
+        return Result.fail(flushResult.error);
+      }
+    }
+
     const targetPath = filePath ?? this.#savePath;
     const result = await this.#saveGame.execute({ filePath: targetPath });
 
@@ -963,17 +1007,13 @@ export class GameSession {
     }
 
     const companyId = companyIdResult.value;
-    const buildings = this.#context.buildingRepository.findByCompanyId(companyId);
+    this.#syncBuildingSequenceFromRepository(companyId);
     const productionJobs = this.#context.productionJobRepository
       .findAll()
       .filter((job) => job.getCompanyId().value === companyId.value);
     const researchJobs = this.#context.researchJobRepository.findByCompanyId(companyId);
     const employees = this.#context.employeeRepository.findByCompanyId(companyId);
 
-    this.#buildingSequence = this.#maxSequenceFromIds(
-      'building_',
-      buildings.map((building) => building.getId().value),
-    );
     this.#productionSequence = this.#maxSequenceFromIds(
       'production_',
       productionJobs.map((job) => job.getId().value),
@@ -985,6 +1025,31 @@ export class GameSession {
     this.#employeeSequence = this.#maxSequenceFromIds(
       'employee_',
       employees.map((employee) => employee.getId().value),
+    );
+  }
+
+  #syncBuildingSequenceFromRepository(companyId?: CompanyId): void {
+    let resolvedCompanyId = companyId;
+
+    if (resolvedCompanyId === undefined && this.#activeCompanyId !== undefined) {
+      const companyIdResult = createCompanyId(this.#activeCompanyId);
+
+      if (!companyIdResult.ok) {
+        return;
+      }
+
+      resolvedCompanyId = companyIdResult.value;
+    }
+
+    if (resolvedCompanyId === undefined) {
+      return;
+    }
+
+    this.#buildingSequence = this.#maxSequenceFromIds(
+      'building_',
+      this.#context.buildingRepository
+        .findByCompanyId(resolvedCompanyId)
+        .map((building) => building.getId().value),
     );
   }
 

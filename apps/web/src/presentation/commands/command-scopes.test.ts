@@ -11,6 +11,14 @@ describe('command scopes', () => {
     expect(scopes).toContain('screen.production');
   });
 
+  it('maps building placement to world map overlay scopes', () => {
+    const scopes = resolveCommandScopes('construction.placeBuilding');
+
+    expect(scopes).toContain('workspace.dashboard');
+    expect(scopes).toContain('screen.world-overlay');
+    expect(scopes).toContain('screen.world-inspector');
+  });
+
   it('partitions workspace and screen scopes', () => {
     const partitioned = partitionInvalidationScopes(resolveCommandScopes('market.buy'));
 

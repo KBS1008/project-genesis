@@ -59,7 +59,9 @@ export function toPresentationCommandError(error: unknown): PresentationCommandE
     const recoverable =
       message.toLowerCase().includes('network') ||
       message.toLowerCase().includes('fetch') ||
-      message.toLowerCase().includes('timeout');
+      message.toLowerCase().includes('timeout') ||
+      message.includes('nicht erreichbar') ||
+      message.includes('Spielserver');
 
     return new PresentationCommandError(message.length > 0 ? message : 'Ein unerwarteter Fehler ist aufgetreten.', {
       code: 'command_failed',

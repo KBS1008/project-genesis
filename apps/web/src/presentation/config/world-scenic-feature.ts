@@ -14,3 +14,8 @@ export function isWorldScenicBackgroundEnabled(): boolean {
   const value = readScenicBackgroundEnv();
   return value === '1' || value === 'true';
 }
+
+/** Slice 4: integration note visible only in local development when scenic flag is on (not production default). */
+export function isWorldScenicIntegrationBannerVisible(): boolean {
+  return isWorldScenicBackgroundEnabled() && process.env.NODE_ENV === 'development';
+}

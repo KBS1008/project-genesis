@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, type PointerEvent } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type PointerEvent } from 'react';
 import {
   COMPANY_PLACEMENT_DEFAULT_REGION_ID,
   projectDomainPlacementPosition,
@@ -16,7 +16,6 @@ import {
 } from '@/presentation/adapters/mappers/world-scenic-visual-projection';
 import type { WorldOverviewViewData } from '@/presentation/adapters/view-data/workspace-view-data';
 import type {
-  WorldBuildingMarkerViewData,
   WorldInspectorViewData,
   WorldMapViewData,
   WorldOverlayViewData,
@@ -27,6 +26,7 @@ import { PGWorldInspector } from '@/presentation/components/world/PGWorldInspect
 import { PGWorldLayerManager } from '@/presentation/components/world/PGWorldLayerManager';
 import { PGWorldLegend } from '@/presentation/components/world/PGWorldLegend';
 import { PGWorldToolbar } from '@/presentation/components/world/PGWorldToolbar';
+import { PGRegionMapView } from '@/presentation/components/world/PGRegionMapView';
 import { PGWorldViewport } from '@/presentation/components/world/PGWorldViewport';
 import { buildWorldBiomeLegendEntries } from '@/presentation/formatting/world-biome-presentation';
 import {
@@ -34,12 +34,30 @@ import {
   viewportPointerToWorldLogical,
 } from '@/presentation/hooks/world-viewport-pointer';
 import { useWorldCamera } from '@/presentation/hooks/useWorldCamera';
+import {
+  filterBuildingMarkersForRegionFocus,
+  isRegionFocusViewMode,
+  shouldShowIndividualBuildingMarkers,
+  type WorldMapViewMode,
+} from '@/presentation/hooks/world-map-view-mode';
+import {
+  resolveRegionGridWorldBounds,
+  shiftWorldBoundsToLayerLocal,
+} from '@/presentation/hooks/world-region-presentation-bounds';
+import {
+  WORLD_CAMERA_OVERVIEW_SCALE_LIMITS,
+  WORLD_CAMERA_REGION_FOCUS_SCALE_LIMITS,
+  type WorldCameraState,
+} from '@/presentation/hooks/world-camera-math';
 import { useWorldLayers } from '@/presentation/hooks/useWorldLayers';
 import type { BuildingMapPlacementSession } from '@/presentation/navigation/building-map-placement-session';
 import { Button } from '@/presentation/primitives/Button';
 import { QueryRows } from '@/presentation/screens/shared/QueryRows';
 import { resolveWorldScenicPresentationProfile } from '@/presentation/adapters/mappers/world-scenic-presentation-profile';
-import { isWorldScenicBackgroundEnabled } from '@/presentation/config/world-scenic-feature';
+import {
+  isWorldScenicBackgroundEnabled,
+  isWorldScenicIntegrationBannerVisible,
+} from '@/presentation/config/world-scenic-feature';
 
 /** World map workspace shell (Phase 4A framework + Phase 4B overlays). */
 export function PGWorldWorkspace({
@@ -82,6 +100,23 @@ export function PGWorldWorkspace({
   const { layers, toggleLayer, isLayerEnabled } = useWorldLayers();
   const placementMode = buildingMapPlacementSession !== null;
   const placementDragStartRef = useRef<{ readonly x: number; readonly y: number } | null>(null);
+  const [mapViewMode, setMapViewMode] = useState<WorldMapViewMode>('overview');
+  const regionCameraFocusRef = useRef<string | null>(null);
+  const overviewCameraRef = useRef<WorldCameraState | null>(null);
+
+  const regionFocusRegionId = isRegionFocusViewMode(mapViewMode, selectedRegionId)
+    ? selectedRegionId
+    : null;
+
+  const regionMapBuildingMarkers = useMemo(
+    () =>
+      filterBuildingMarkersForRegionFocus(
+        overlays.buildingMarkers,
+        mapViewMode,
+        regionFocusRegionId,
+      ),
+    [mapViewMode, overlays.buildingMarkers, regionFocusRegionId],
+  );
 
   const placementProjectionContext = useMemo(
     () => resolveCompanyPlacementProjectionContext(map.regions),
@@ -168,21 +203,172 @@ export function PGWorldWorkspace({
     [map.regions],
   );
 
+  const resolveRegionFitBounds = useCallback(
+    (regionId: string) => {
+      const region = map.regions.find((entry) => entry.id === regionId);
+      if (region === undefined) {
+        return null;
+      }
+
+      return resolveRegionGridWorldBounds(region, map.cellSize, 24);
+    },
+    [map.cellSize, map.regions],
+  );
+
+  const resolveInteractionBounds = useCallback(() => {
+    if (regionFocusRegionId === null) {
+      return null;
+    }
+
+    const region = map.regions.find((entry) => entry.id === regionFocusRegionId);
+    if (region === undefined) {
+      return null;
+    }
+
+    return shiftWorldBoundsToLayerLocal(resolveRegionGridWorldBounds(region, map.cellSize, 24));
+  }, [map.cellSize, map.regions, regionFocusRegionId]);
+
+  const regionPresentationBounds = useMemo(() => {
+    if (regionFocusRegionId === null) {
+      return null;
+    }
+
+    const region = map.regions.find((entry) => entry.id === regionFocusRegionId);
+    if (region === undefined) {
+      return null;
+    }
+
+    return resolveRegionGridWorldBounds(region, map.cellSize, 24);
+  }, [map.cellSize, map.regions, regionFocusRegionId]);
+
+  const viewportCanvasExtent = useMemo(() => {
+    if (regionFocusRegionId === null) {
+      return canvasExtent;
+    }
+
+    const region = map.regions.find((entry) => entry.id === regionFocusRegionId);
+    if (region === undefined) {
+      return canvasExtent;
+    }
+
+    const bounds = resolveRegionGridWorldBounds(region, map.cellSize, 24);
+    return Object.freeze({
+      width: bounds.maxX - bounds.minX,
+      height: bounds.maxY - bounds.minY,
+    });
+  }, [canvasExtent, map.cellSize, map.regions, regionFocusRegionId]);
+
+  const resolveCameraScaleLimits = useCallback(() => {
+    if (regionFocusRegionId === null) {
+      return WORLD_CAMERA_OVERVIEW_SCALE_LIMITS;
+    }
+
+    return WORLD_CAMERA_REGION_FOCUS_SCALE_LIMITS;
+  }, [regionFocusRegionId]);
+
+  const viewportScenicProfile =
+    regionFocusRegionId === null ? scenicPresentationProfile : null;
+
+  const minimapScenicContext =
+    regionFocusRegionId === null ? scenicPresentationContext : null;
+
   const {
     camera,
     viewportRef,
     fitWorld,
-    fitRegion,
     zoomIn,
     zoomOut,
     onWheel,
     onPointerDown,
     onPointerMove,
     onPointerUp,
+    isDragging,
+    bindViewportElement,
   } = useWorldCamera(map.regions, {
     resolveRegionFocusWorldCenter: resolveScenicRegionFocusWorldCenter,
     resolveFitWorldBounds,
+    resolveInteractionBounds,
+    resolveRegionFitBounds,
+    resolveCameraScaleLimits,
   });
+
+  const handleSelectRegion = useCallback(
+    (regionId: string) => {
+      if (placementMode) {
+        onSelectRegion(regionId);
+        setMapViewMode('region_focus');
+        return;
+      }
+
+      overviewCameraRef.current = camera;
+      onSelectRegion(regionId);
+      setMapViewMode('region_focus');
+    },
+    [camera, onSelectRegion, placementMode],
+  );
+
+  const handleBackToWorldOverview = useCallback(() => {
+    setMapViewMode('overview');
+    regionCameraFocusRef.current = null;
+    onClearSelection?.();
+    if (placementMode) {
+      onPickBuildingMapPlacementCandidate?.(null);
+    }
+    fitWorld();
+    overviewCameraRef.current = null;
+  }, [fitWorld, onClearSelection, onPickBuildingMapPlacementCandidate, placementMode]);
+
+  useEffect(() => {
+    if (placementMode) {
+      return;
+    }
+
+    if (mapViewMode !== 'region_focus' || selectedRegionId === null) {
+      return;
+    }
+
+    if (regionCameraFocusRef.current === selectedRegionId) {
+      return;
+    }
+
+    regionCameraFocusRef.current = selectedRegionId;
+    // REGION_MAP (Slice 1): static landscape — no overview camera fitRegion transform.
+  }, [mapViewMode, placementMode, selectedRegionId]);
+
+  useEffect(() => {
+    if (selectedRegionId === null && mapViewMode === 'region_focus') {
+      setMapViewMode('overview');
+      regionCameraFocusRef.current = null;
+    }
+  }, [mapViewMode, selectedRegionId]);
+
+  useEffect(() => {
+    if (selectedRegionId === null || mapViewMode !== 'overview') {
+      return;
+    }
+
+    if (
+      placementMode &&
+      (buildingMapPlacementSession?.regionId === null ||
+        buildingMapPlacementSession?.regionId !== selectedRegionId)
+    ) {
+      return;
+    }
+
+    setMapViewMode('region_focus');
+  }, [buildingMapPlacementSession?.regionId, mapViewMode, placementMode, selectedRegionId]);
+
+  const selectedRegionName = useMemo(() => {
+    if (selectedRegionId === null) {
+      return null;
+    }
+
+    return map.regions.find((region) => region.id === selectedRegionId)?.name ?? selectedRegionId;
+  }, [map.regions, selectedRegionId]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   useEffect(() => {
     if (scenicFitWorldBounds === null) {
@@ -196,27 +382,8 @@ export function PGWorldWorkspace({
     return () => {
       cancelAnimationFrame(frameId);
     };
-  }, [fitWorld, scenicFitWorldBounds]);
-
-  const placementPreviewMarker = useMemo((): WorldBuildingMarkerViewData | null => {
-    const session = buildingMapPlacementSession;
-    if (session === null || session.candidate === null || placementProjectionContext === null) {
-      return null;
-    }
-
-    const anchor = projectDomainPlacementPosition(session.candidate, placementProjectionContext);
-
-    return Object.freeze({
-      id: '__building_map_placement_preview__',
-      buildingTypeId: session.buildingTypeId,
-      regionId: placementRegion?.id ?? COMPANY_PLACEMENT_DEFAULT_REGION_ID,
-      label: session.name,
-      statusLabel: 'PREVIEW',
-      clusterSize: 1,
-      x: anchor.x,
-      y: anchor.y,
-    });
-  }, [buildingMapPlacementSession, placementProjectionContext, placementRegion?.id]);
+    // Initial scenic fit when plate bounds resolve; omit fitWorld to avoid resetting user zoom/pan.
+  }, [scenicFitWorldBounds]);
 
   const resolvePlacementPick = useCallback(
     (localX: number, localY: number) => {
@@ -302,11 +469,15 @@ export function PGWorldWorkspace({
         labels: isLayerEnabled('labels'),
         selection: isLayerEnabled('selection'),
         resources: isLayerEnabled('resources'),
-        buildings: isLayerEnabled('buildings'),
+        buildings: shouldShowIndividualBuildingMarkers(
+          mapViewMode,
+          selectedRegionId,
+          isLayerEnabled('buildings'),
+        ),
         transport: isLayerEnabled('transport'),
         presence: isLayerEnabled('presence'),
       }),
-    [isLayerEnabled],
+    [isLayerEnabled, mapViewMode, selectedRegionId],
   );
 
   const placementTypeLabel =
@@ -318,6 +489,9 @@ export function PGWorldWorkspace({
     buildingMapPlacementSession !== null &&
     buildingMapPlacementSession.candidate !== null &&
     buildingMapPlacementSession.canPlace &&
+    buildingMapPlacementSession.validation?.valid === true &&
+    regionFocusRegionId !== null &&
+    buildingMapPlacementSession.regionId === regionFocusRegionId &&
     !isBusy;
 
   return (
@@ -329,14 +503,14 @@ export function PGWorldWorkspace({
             sectionActions={inspectorSectionActions}
             onClose={
               onClearSelection !== undefined && selectedRegionId !== null
-                ? onClearSelection
+                ? handleBackToWorldOverview
                 : undefined
             }
           />
         )
       }
     >
-      <div className="pg-world-workspace pg-world-with-assets">
+      <div className="pg-world-workspace pg-world-with-assets pg-world-with-assets--map-focus">
         <div className="pg-world-asset-frame" aria-hidden="true" data-asset-id="WM-SVG-GRID" />
         <header className="pg-world-header">
           <div>
@@ -345,12 +519,12 @@ export function PGWorldWorkspace({
               {world.regionCountLabel} Regionen · {world.cityCountLabel} Städte · {map.mapName}
             </p>
           </div>
-          <PGWorldLegend layers={layers} biomeEntries={biomeLegendEntries} />
+          <PGWorldLegend compact layers={layers} biomeEntries={biomeLegendEntries} />
         </header>
 
         {placementMode && buildingMapPlacementSession !== null ? (
           <section
-            className="pg-world-placement-mode"
+            className={`pg-world-placement-mode${canConfirmPlacement ? ' pg-world-placement-mode--ready' : ''}`}
             aria-label="Gebäudeplatzierung auf der Karte"
           >
             <div className="pg-world-placement-mode-copy">
@@ -359,8 +533,21 @@ export function PGWorldWorkspace({
                 <p className="pg-world-header-copy">{placementTypeLabel}</p>
               ) : null}
               <p className="pg-world-placement-mode-instruction">
-                Tippen oder klicken Sie auf die Karte, um die Position zu wählen.
+                {regionFocusRegionId === null
+                  ? 'Wählen Sie eine Region, um das Gebäude zu platzieren.'
+                  : canConfirmPlacement
+                    ? 'Position gewählt. Klicken Sie auf «Gebäude platzieren», um den Bau zu bestätigen.'
+                    : buildingMapPlacementSession.candidate !== null &&
+                        buildingMapPlacementSession.validation?.valid === false
+                      ? 'Ungültige Position. Wählen Sie eine andere Stelle auf der Landschaft.'
+                      : 'Bewegen Sie den Zeiger über die Landschaft und klicken Sie auf die grüne Vorschau oder eine gültige Stelle.'}
               </p>
+              {buildingMapPlacementSession.validation?.valid === false &&
+              buildingMapPlacementSession.validation.reason !== null ? (
+                <p className="pg-world-placement-mode-invalid-reason" role="alert">
+                  {buildingMapPlacementSession.validation.reason}
+                </p>
+              ) : null}
               <p className="pg-world-placement-mode-candidate" aria-live="polite">
                 {buildingMapPlacementSession.candidate === null
                   ? 'Noch keine Position gewählt.'
@@ -389,65 +576,113 @@ export function PGWorldWorkspace({
           </section>
         ) : null}
 
-        {scenicPresentationProfile !== null ? (
+        {isWorldScenicIntegrationBannerVisible() ? (
           <p className="pg-world-scenic-integration-banner" role="note">
             QA / Entwicklung: 2D-Scenic (Placement-Konsistenz & Viewport-Fit). Standard-Welt bleibt bei
             deaktiviertem Schalter unverändert.
           </p>
         ) : null}
 
-        <PGWorldToolbar
-          camera={camera}
-          onZoomIn={zoomIn}
-          onZoomOut={zoomOut}
-          onFitWorld={fitWorld}
-          onFitRegion={() => {
-            fitRegion(selectedRegionId);
-          }}
-          hasRegionSelection={selectedRegionId !== null}
-        />
+        {regionFocusRegionId !== null && selectedRegionName !== null ? (
+          <div className="pg-world-region-focus-bar" role="status" aria-live="polite">
+            <p className="pg-world-region-focus-bar-title">
+              Region: <strong>{selectedRegionName}</strong>
+            </p>
+            <Button variant="secondary" type="button" onClick={handleBackToWorldOverview}>
+              Zur Weltübersicht
+            </Button>
+          </div>
+        ) : null}
 
-        <div className="pg-world-layout">
+        {regionFocusRegionId === null ? (
+          <PGWorldToolbar
+            camera={camera}
+            onZoomIn={zoomIn}
+            onZoomOut={zoomOut}
+            onFitWorld={fitWorld}
+            onFitRegion={() => {
+              if (selectedRegionId !== null) {
+                setMapViewMode('region_focus');
+                regionCameraFocusRef.current = null;
+                regionCameraFocusRef.current = selectedRegionId;
+              }
+            }}
+            hasRegionSelection={selectedRegionId !== null}
+          />
+        ) : null}
+
+        <div className="pg-world-layout pg-world-layout--map-focus">
           <div className="pg-world-map-column">
-            <PGWorldViewport
-              map={map}
-              overlays={overlays}
-              selectedRegionId={selectedRegionId}
-              layers={layerState}
-              camera={camera}
-              viewportRef={viewportRef}
-              onSelectRegion={onSelectRegion}
-              onSelectBuilding={onSelectBuilding}
-              selectedBuildingId={selectedBuildingId}
-              onWheel={onWheel}
-              onPointerDown={handleViewportPointerDown}
-              onPointerMove={onPointerMove}
-              onPointerUp={handleViewportPointerUp}
-              canvasWidth={canvasExtent.width}
-              canvasHeight={canvasExtent.height}
-              buildingPlacementMode={placementMode}
-              suppressMapEntitySelection={placementMode}
-              placementPreviewMarker={placementPreviewMarker}
-              scenicPresentationProfile={scenicPresentationProfile}
-            />
-            <PGMiniMap
-              map={map}
-              selectedRegionId={selectedRegionId}
-              camera={camera}
-              viewportRef={viewportRef}
-            />
+            <div
+              className={`pg-world-map-stage${regionFocusRegionId !== null ? ' is-region-landscape-map' : ''}`}
+            >
+              {regionFocusRegionId !== null && selectedRegionName !== null ? (
+                <PGRegionMapView
+                  regionId={regionFocusRegionId}
+                  regionName={selectedRegionName}
+                  buildingMarkers={regionMapBuildingMarkers}
+                  selectedBuildingId={selectedBuildingId}
+                  onSelectBuilding={onSelectBuilding}
+                  placementSession={placementMode ? buildingMapPlacementSession : null}
+                  onPickPlacementCandidate={
+                    placementMode ? onPickBuildingMapPlacementCandidate : undefined
+                  }
+                />
+              ) : (
+                <>
+                  <PGWorldViewport
+                    map={map}
+                    overlays={overlays}
+                    selectedRegionId={selectedRegionId}
+                    layers={layerState}
+                    camera={camera}
+                    isDragging={isDragging}
+                    regionPresentationBounds={regionPresentationBounds}
+                    viewportRef={viewportRef}
+                    bindViewportElement={bindViewportElement}
+                    onSelectRegion={handleSelectRegion}
+                    regionFocusRegionId={regionFocusRegionId}
+                    onSelectBuilding={onSelectBuilding}
+                    selectedBuildingId={selectedBuildingId}
+                    onWheel={onWheel}
+                    onPointerDown={handleViewportPointerDown}
+                    onPointerMove={onPointerMove}
+                    onPointerUp={handleViewportPointerUp}
+                    canvasWidth={viewportCanvasExtent.width}
+                    canvasHeight={viewportCanvasExtent.height}
+                    buildingPlacementMode={false}
+                    suppressMapEntitySelection={placementMode && regionFocusRegionId !== null}
+                    placementPreviewMarker={null}
+                    scenicPresentationProfile={viewportScenicProfile}
+                  />
+                  <div className="pg-world-minimap-dock" aria-hidden={false}>
+                    <PGMiniMap
+                      map={map}
+                      selectedRegionId={selectedRegionId}
+                      camera={camera}
+                      viewportRef={viewportRef}
+                      scenicPresentationContext={minimapScenicContext}
+                      regionFocusRegionId={regionFocusRegionId}
+                    />
+                  </div>
+                </>
+              )}
+            </div>
           </div>
 
-          <PGWorldLayerManager layers={layers} onToggleLayer={toggleLayer} />
+          <details className="pg-world-layer-panel-shell pg-world-layer-panel-shell--compact" aria-label="Ebenen">
+            <summary className="pg-widget-title">Ebenen</summary>
+            <PGWorldLayerManager layers={layers} onToggleLayer={toggleLayer} />
+          </details>
         </div>
 
         {placementMode ? null : (
-          <section className="pg-world-region-table" aria-label="Regionenliste">
-            <h3 className="pg-widget-title">Regionen</h3>
+          <details className="pg-world-region-table pg-world-region-table--compact" aria-label="Regionenliste">
+            <summary className="pg-widget-title">Regionen</summary>
             <QueryRows
               columns={['Region', 'Biom', 'Karte', 'Städte']}
               selectedRowId={selectedRegionId}
-              onRowClick={onSelectRegion}
+              onRowClick={handleSelectRegion}
               rows={world.regions.map((region) => ({
                 id: region.id,
                 cells: [
@@ -458,7 +693,7 @@ export function PGWorldWorkspace({
                 ],
               }))}
             />
-          </section>
+          </details>
         )}
       </div>
     </PGWorkspaceFrame>

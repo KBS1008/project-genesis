@@ -4,14 +4,31 @@
  * Normalizes NestJS HTTP exceptions to the browser shell JSON envelope.
  */
 
-import { type ArgumentsHost, Catch, type ExceptionFilter, HttpException } from '@nestjs/common';
+import {
+  type ArgumentsHost,
+  Catch,
+  type ExceptionFilter,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import type { Response } from 'express';
 
-/** Maps HTTP exceptions to `{ ok: false, error }` responses. */
-@Catch(HttpException)
+const UNEXPECTED_SERVER_ERROR = 'An unexpected server error occurred.';
+
+/** Maps HTTP and unexpected exceptions to the browser shell JSON envelope. */
+@Catch()
 export class ApiExceptionFilter implements ExceptionFilter {
-  catch(exception: HttpException, host: ArgumentsHost): void {
+  catch(exception: unknown, host: ArgumentsHost): void {
     const response = host.switchToHttp().getResponse<Response>();
+
+    if (!(exception instanceof HttpException)) {
+      response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        ok: false,
+        error: UNEXPECTED_SERVER_ERROR,
+      });
+      return;
+    }
+
     const statusCode = exception.getStatus();
     const exceptionResponse = exception.getResponse();
     const message =

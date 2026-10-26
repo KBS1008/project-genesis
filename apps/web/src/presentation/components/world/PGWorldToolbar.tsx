@@ -25,7 +25,14 @@ export function PGWorldToolbar({
     <div className="pg-world-toolbar" role="toolbar" aria-label="Kartenwerkzeuge">
       <Button variant="secondary" aria-label="Hineinzoomen" onClick={onZoomIn}>+</Button>
       <Button variant="secondary" aria-label="Herauszoomen" onClick={onZoomOut}>−</Button>
-      <Button variant="secondary" onClick={onFitWorld}>Welt einpassen</Button>
+      <Button
+        variant="secondary"
+        onClick={onFitWorld}
+        aria-label="Gesamte Welt anzeigen"
+        title="Gesamte Welt anzeigen"
+      >
+        Welt einpassen
+      </Button>
       <Button variant="secondary" disabled={!hasRegionSelection} onClick={onFitRegion}>
         Region fokussieren
       </Button>

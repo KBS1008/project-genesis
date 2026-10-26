@@ -22,6 +22,7 @@ import type { NewGameDto } from './dto/new-game.dto.js';
 import type { SaveGameDto } from './dto/save-game.dto.js';
 import type { SetSimulationSpeedDto } from './dto/set-simulation-speed.dto.js';
 import type { PlaceBuildingDto } from './dto/place-building.dto.js';
+import type { ValidateBuildingPlacementDto } from './dto/validate-building-placement.dto.js';
 import type { SellResourceDto } from './dto/sell-resource.dto.js';
 import type { TickSimulationDto } from './dto/tick-simulation.dto.js';
 import type { StartProductionDto } from './dto/start-production.dto.js';
@@ -249,7 +250,11 @@ export class GameController {
   @Post('session/save')
   @HttpCode(200)
   async saveGame(@Body() body: SaveGameDto | undefined) {
-    const saveResult = await this.gameSessionService.getSession().saveGame(body?.filePath);
+    const filePath =
+      body?.filePath !== undefined
+        ? this.gameSessionService.resolveSavegamePath(body.filePath)
+        : undefined;
+    const saveResult = await this.gameSessionService.getSession().saveGame(filePath);
     const result = toApiSuccess(unwrapResult(saveResult));
     this.#notifyDashboardRefresh();
     return result;
@@ -259,7 +264,11 @@ export class GameController {
   @Post('session/load')
   @HttpCode(200)
   async loadGame(@Body() body: LoadGameDto | undefined) {
-    const loadResult = await this.gameSessionService.getSession().loadGame(body?.filePath);
+    const filePath =
+      body?.filePath !== undefined
+        ? this.gameSessionService.resolveSavegamePath(body.filePath)
+        : undefined;
+    const loadResult = await this.gameSessionService.getSession().loadGame(filePath);
     const result = toApiSuccess(unwrapResult(loadResult));
     this.#notifyDashboardRefresh();
     return result;
@@ -324,10 +333,35 @@ export class GameController {
     return result;
   }
 
+  /** Validates regional placement without persisting (PDM preview). */
+  @Post('buildings/validate-placement')
+  @HttpCode(200)
+  validateBuildingPlacement(@Body() body: ValidateBuildingPlacementDto | undefined) {
+    if (
+      body?.buildingTypeId === undefined ||
+      body.regionId === undefined ||
+      body.x === undefined ||
+      body.y === undefined
+    ) {
+      throw new BadRequestException('Missing building placement validation fields.');
+    }
+
+    return toApiSuccess(
+      unwrapResult(
+        this.gameSessionService.getSession().validateRegionalBuildingPlacement({
+          buildingTypeId: body.buildingTypeId,
+          regionId: body.regionId,
+          x: body.x,
+          y: body.y,
+        }),
+      ),
+    );
+  }
+
   /** Places a building for the active company. */
   @Post('buildings/place')
   @HttpCode(200)
-  placeBuilding(@Body() body: PlaceBuildingDto | undefined) {
+  async placeBuilding(@Body() body: PlaceBuildingDto | undefined) {
     if (
       body?.buildingTypeId === undefined ||
       body.name === undefined ||
@@ -337,19 +371,24 @@ export class GameController {
       throw new BadRequestException('Missing building placement fields.');
     }
 
-    const result = toApiSuccess(
-      unwrapResult(
-        this.gameSessionService.getSession().placeBuilding({
-          buildingTypeId: body.buildingTypeId,
-          name: body.name,
-          x: body.x,
-          y: body.y,
-          ...(body.regionId !== undefined ? { regionId: body.regionId } : {}),
-        }),
-      ),
+    const buildingId = unwrapResult(
+      this.gameSessionService.getSession().placeBuilding({
+        buildingTypeId: body.buildingTypeId,
+        name: body.name,
+        x: body.x,
+        y: body.y,
+        ...(body.regionId !== undefined ? { regionId: body.regionId } : {}),
+      }),
     );
+
+    const saveResult = await this.gameSessionService.getSession().saveGame();
+
+    if (!saveResult.ok) {
+      throw new BadRequestException(saveResult.error.message);
+    }
+
     this.#notifyDashboardRefresh();
-    return result;
+    return toApiSuccess(buildingId);
   }
 
   /** Starts a production job on a building. */

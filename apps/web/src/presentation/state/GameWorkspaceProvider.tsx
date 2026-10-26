@@ -23,8 +23,9 @@ import {
 } from '@/presentation/adapters/queries/refresh-workspace-scopes';
 import type { EntityNavigationTarget } from '@/presentation/navigation/entity-navigation';
 import type { PrimaryScreenId } from '@/presentation/navigation/primary-screens';
-import { placeBuilding } from '@/presentation/adapters/api/gameplay-client';
-import { saveGame } from '@/presentation/adapters/api/session-client';
+import { placeBuilding, validateBuildingPlacement } from '@/presentation/adapters/api/gameplay-client';
+import { fetchSessionStatus } from '@/presentation/adapters/api/query-client';
+import { loadGame, saveGame } from '@/presentation/adapters/api/session-client';
 import type { WorkspaceQueryScope } from '@/presentation/commands/query-scopes';
 import {
   executePresentationCommand,
@@ -64,6 +65,8 @@ import { resolveTutorialStepNavigation } from '@/presentation/navigation/resolve
 import {
   createBuildingMapPlacementSession,
   withBuildingMapPlacementCandidate,
+  withBuildingMapPlacementRegion,
+  withBuildingMapPlacementValidation,
   type BuildingMapPlacementSession,
 } from '@/presentation/navigation/building-map-placement-session';
 import {
@@ -129,6 +132,7 @@ export type GameWorkspaceContextValue = {
   readonly setBuildingMapPlacementCandidate: (
     candidate: { readonly x: number; readonly y: number } | null,
   ) => void;
+  readonly setBuildingMapPlacementRegion: (regionId: string) => void;
   readonly confirmBuildingMapPlacement: () => Promise<void>;
   readonly cancelBuildingMapPlacement: () => void;
 };
@@ -156,6 +160,8 @@ const EMPTY_VIEW_DATA: WorkspaceViewData = Object.freeze({
 const GameWorkspaceContext = createContext<GameWorkspaceContextValue | null>(null);
 
 const SOCKET_REFRESH_DEBOUNCE_MS = 250;
+
+const SOCKET_RECOVERY_MIN_INTERVAL_MS = 2500;
 
 const CRITICAL_ANNOUNCEMENT_CLEAR_MS = 5000;
 
@@ -209,6 +215,8 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
   const viewDataRef = useRef(viewData);
   const regionsRef = useRef(regions);
   const hadDisconnectRef = useRef(false);
+  const recoveryInFlightRef = useRef(false);
+  const lastSocketRecoveryAtRef = useRef(0);
   const refreshSessionRef = useRef<(() => Promise<void>) | null>(null);
   const refreshWorkspaceScopeSlicesRef = useRef<
     ((scopes: readonly WorkspaceQueryScope[]) => Promise<void>) | null
@@ -218,7 +226,6 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
   const showNotificationRef = useRef(showNotification);
   const criticalAnnouncementTimerRef = useRef<number | null>(null);
   const notificationSyncSessionRef = useRef(new NotificationSyncSession());
-  const navigationScreenRef = useRef(navigation.screen);
   const hasLoadedSessionRef = useRef(false);
 
   const runtimeState = useMemo(
@@ -349,6 +356,16 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
   );
 
   const refreshSession = useCallback(async (): Promise<void> => {
+    const sessionStatus = await fetchSessionStatus();
+
+    if (!sessionStatus.hasActiveSession && sessionStatus.savePath.length > 0) {
+      try {
+        await loadGame({ filePath: sessionStatus.savePath });
+      } catch {
+        // No persisted session to restore yet.
+      }
+    }
+
     const result = await loadWorkspaceQueries();
     setSessionDashboard(result.dashboard);
     setViewData(result.viewData);
@@ -358,6 +375,11 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
     hasLoadedSessionRef.current = true;
     setIsDataStale(false);
     setRecoverableError(null);
+    invalidateScreenQueryScopes([
+      'screen.world-map',
+      'screen.world-overlay',
+      'screen.world-inspector',
+    ]);
     await syncSimulationNotifications();
   }, [syncSimulationNotifications]);
 
@@ -452,9 +474,11 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
         'screen.executive-buildings',
       ]);
     } catch (error: unknown) {
+      const message = translatePresentationError(error);
+      setRecoverableError(message);
       showNotification({
-        tone: 'error',
-        message: translatePresentationError(error),
+        tone: 'warning',
+        message,
       });
     }
   }, [refreshWorkspaceScopeSlices, showNotification]);
@@ -492,9 +516,14 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
           ]);
         })
         .catch((error: unknown) => {
+          const message = translatePresentationError(error);
+          if (hasLoadedSessionRef.current) {
+            setIsDataStale(true);
+          }
+          setRecoverableError(message);
           showNotificationRef.current({
-            tone: 'error',
-            message: translatePresentationError(error),
+            tone: 'warning',
+            message,
           });
         });
     }, SOCKET_REFRESH_DEBOUNCE_MS);
@@ -569,6 +598,28 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
         if (result.status === 'success') {
           setIsSessionDirty(options?.clearsDirty === true ? false : true);
           showNotification({ tone: 'success', message: successMessage });
+
+          if (result.staleRefreshError !== null) {
+            setIsDataStale(true);
+            setRecoverableError(result.staleRefreshError.message);
+            showNotification({
+              tone: 'warning',
+              message: result.staleRefreshError.message,
+            });
+          }
+
+          return;
+        }
+
+        if (result.status === 'recoverable-error' && result.error !== null) {
+          setRecoverableError(result.error.message);
+          if (hasLoadedSessionRef.current) {
+            setIsDataStale(true);
+          }
+          showNotification({
+            tone: 'warning',
+            message: result.error.message,
+          });
           return;
         }
 
@@ -607,9 +658,10 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
     let active = true;
 
     setIsLoading(true);
-    void refreshSessionRef
-      .current?.()
-      .catch((error: unknown) => {
+    void (async () => {
+      try {
+        await refreshSessionRef.current?.();
+      } catch (error: unknown) {
         if (!active) {
           return;
         }
@@ -618,12 +670,12 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
           tone: 'error',
           message: translatePresentationError(error),
         });
-      })
-      .finally(() => {
+      } finally {
         if (active) {
           setIsLoading(false);
         }
-      });
+      }
+    })();
 
     return () => {
       active = false;
@@ -674,7 +726,18 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
           hadDisconnectRef.current
         ) {
           hadDisconnectRef.current = false;
-          void retryRuntimeRecoveryRef.current?.();
+          const now = Date.now();
+
+          if (
+            !recoveryInFlightRef.current &&
+            now - lastSocketRecoveryAtRef.current >= SOCKET_RECOVERY_MIN_INTERVAL_MS
+          ) {
+            lastSocketRecoveryAtRef.current = now;
+            recoveryInFlightRef.current = true;
+            void retryRuntimeRecoveryRef.current?.().finally(() => {
+              recoveryInFlightRef.current = false;
+            });
+          }
         }
       },
     );
@@ -790,13 +853,112 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
     [],
   );
 
-  const confirmBuildingMapPlacement = useCallback(async () => {
-    const session = buildingMapPlacementSession;
-    if (session === null || session.candidate === null || !session.canPlace || isBusyRef.current) {
+  const setBuildingMapPlacementRegion = useCallback((regionId: string) => {
+    setBuildingMapPlacementSession((current) => {
+      if (current === null) {
+        return null;
+      }
+
+      return withBuildingMapPlacementRegion(current, regionId);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (buildingMapPlacementSession === null || navigation.screen !== 'world') {
       return;
     }
 
-    const { buildingTypeId, name, candidate } = session;
+    if (navigation.entitySelection.kind !== 'region') {
+      return;
+    }
+
+    const regionId = navigation.entitySelection.id;
+    if (buildingMapPlacementSession.regionId !== regionId) {
+      setBuildingMapPlacementRegion(regionId);
+    }
+  }, [
+    buildingMapPlacementSession,
+    navigation.entitySelection,
+    navigation.screen,
+    setBuildingMapPlacementRegion,
+  ]);
+
+  useEffect(() => {
+    const session = buildingMapPlacementSession;
+    if (
+      session === null ||
+      session.candidate === null ||
+      session.regionId === null ||
+      !session.canPlace
+    ) {
+      return;
+    }
+
+    let cancelled = false;
+
+    void validateBuildingPlacement({
+      buildingTypeId: session.buildingTypeId,
+      regionId: session.regionId,
+      x: session.candidate.x,
+      y: session.candidate.y,
+    })
+      .then((result) => {
+        if (cancelled) {
+          return;
+        }
+
+        setBuildingMapPlacementSession((current) => {
+          if (current === null) {
+            return null;
+          }
+
+          return withBuildingMapPlacementValidation(current, {
+            valid: result.valid,
+            reason: result.reason,
+          });
+        });
+      })
+      .catch(() => {
+        if (cancelled) {
+          return;
+        }
+
+        setBuildingMapPlacementSession((current) => {
+          if (current === null) {
+            return null;
+          }
+
+          return withBuildingMapPlacementValidation(current, {
+            valid: false,
+            reason: 'Platzierung konnte nicht geprüft werden.',
+          });
+        });
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    buildingMapPlacementSession?.buildingTypeId,
+    buildingMapPlacementSession?.candidate,
+    buildingMapPlacementSession?.canPlace,
+    buildingMapPlacementSession?.regionId,
+  ]);
+
+  const confirmBuildingMapPlacement = useCallback(async () => {
+    const session = buildingMapPlacementSession;
+    if (
+      session === null ||
+      session.candidate === null ||
+      session.regionId === null ||
+      !session.canPlace ||
+      session.validation?.valid !== true ||
+      isBusyRef.current
+    ) {
+      return;
+    }
+
+    const { buildingTypeId, name, candidate, regionId } = session;
 
     await runCommand(
       async () => {
@@ -805,6 +967,7 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
           name,
           x: candidate.x,
           y: candidate.y,
+          regionId,
         });
         setBuildingMapPlacementSession(null);
       },
@@ -812,19 +975,6 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
       { commandId: 'construction.placeBuilding' },
     );
   }, [buildingMapPlacementSession, runCommand]);
-
-  useEffect(() => {
-    const previousScreen = navigationScreenRef.current;
-    navigationScreenRef.current = navigation.screen;
-
-    if (
-      buildingMapPlacementSession !== null &&
-      previousScreen === 'world' &&
-      navigation.screen !== 'world'
-    ) {
-      setBuildingMapPlacementSession(null);
-    }
-  }, [buildingMapPlacementSession, navigation.screen]);
 
   const navigateToScreen = useCallback(
     (screen: PrimaryScreenId) => {
@@ -935,6 +1085,7 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
       buildingMapPlacementSession,
       startBuildingMapPlacement,
       setBuildingMapPlacementCandidate,
+      setBuildingMapPlacementRegion,
       confirmBuildingMapPlacement,
       cancelBuildingMapPlacement,
     }),
@@ -975,6 +1126,7 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
       buildingMapPlacementSession,
       startBuildingMapPlacement,
       setBuildingMapPlacementCandidate,
+      setBuildingMapPlacementRegion,
       confirmBuildingMapPlacement,
       cancelBuildingMapPlacement,
     ],

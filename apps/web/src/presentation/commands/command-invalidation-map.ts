@@ -7,6 +7,15 @@ const DASHBOARD_AND_BUILDINGS = Object.freeze([
   'screen.executive-buildings',
 ] as const);
 
+const DASHBOARD_BUILDINGS_AND_WORLD_MAP = Object.freeze([
+  'workspace.dashboard',
+  'screen.buildings',
+  'screen.executive-buildings',
+  'screen.world-map',
+  'screen.world-overlay',
+  'screen.world-inspector',
+] as const);
+
 const DASHBOARD_AND_PRODUCTION = Object.freeze([
   'workspace.dashboard',
   'screen.production',
@@ -43,7 +52,7 @@ const FULL_SESSION_REFRESH = Object.freeze([
 /** Authoritative invalidation scopes per UI command. */
 export const COMMAND_INVALIDATION_SCOPES: Readonly<Record<string, readonly string[]>> = Object.freeze({
   'company.newGame': FULL_SESSION_REFRESH,
-  'construction.placeBuilding': DASHBOARD_AND_BUILDINGS,
+  'construction.placeBuilding': DASHBOARD_BUILDINGS_AND_WORLD_MAP,
   'production.start': DASHBOARD_AND_PRODUCTION,
   'research.start': DASHBOARD_AND_RESEARCH,
   'employees.hire': DASHBOARD_ONLY,
@@ -78,7 +87,7 @@ export const COMMAND_REGISTRY: readonly CommandDefinition[] = Object.freeze([
     id: 'construction.placeBuilding',
     group: 'Construction',
     label: 'Gebäude platzieren',
-    invalidateScopes: DASHBOARD_AND_BUILDINGS,
+    invalidateScopes: DASHBOARD_BUILDINGS_AND_WORLD_MAP,
   },
   {
     id: 'production.start',

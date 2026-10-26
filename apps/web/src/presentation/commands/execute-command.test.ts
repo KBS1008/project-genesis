@@ -62,4 +62,32 @@ describe('executePresentationCommand', () => {
     expect(result.error).toBeInstanceOf(PresentationCommandError);
     expect(result.error?.recoverable).toBe(true);
   });
+
+  it('returns success when the action succeeds but workspace refresh fails recoverably', async () => {
+    const refreshWorkspaceScopes = vi.fn(async () => {
+      throw new Error('Der Spielserver ist momentan nicht erreichbar.');
+    });
+    const invalidateScreenScopes = vi.fn();
+
+    const result = await executePresentationCommand(
+      async () => undefined,
+      {
+        commandId: 'construction.placeBuilding',
+        generation: 1,
+        isCurrentGeneration: () => true,
+        refreshWorkspaceScopes,
+        invalidateScreenScopes,
+      },
+    );
+
+    expect(result.status).toBe('success');
+    expect(result.staleRefreshError?.message).toContain('nicht erreichbar');
+    expect(invalidateScreenScopes).toHaveBeenCalledWith([
+      'screen.buildings',
+      'screen.executive-buildings',
+      'screen.world-map',
+      'screen.world-overlay',
+      'screen.world-inspector',
+    ]);
+  });
 });

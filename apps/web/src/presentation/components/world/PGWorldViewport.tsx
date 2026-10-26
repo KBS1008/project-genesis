@@ -1,7 +1,7 @@
 'use client';
 
-import type { PointerEvent, RefObject, WheelEvent } from 'react';
-import type { WorldCameraState } from '@/presentation/hooks/world-camera-math';
+import { useCallback, type PointerEvent, type RefObject, type WheelEvent } from 'react';
+import type { WorldBounds, WorldCameraState } from '@/presentation/hooks/world-camera-math';
 import { PGWorldCanvas } from '@/presentation/components/world/PGWorldCanvas';
 import { resolveScenicPresentationContext } from '@/presentation/adapters/mappers/world-scenic-visual-projection';
 import type { WorldScenicPresentationProfile } from '@/presentation/adapters/mappers/world-scenic-presentation-profile';
@@ -20,6 +20,7 @@ export function PGWorldViewport({
   layers,
   camera,
   viewportRef,
+  bindViewportElement,
   onSelectRegion,
   onSelectBuilding,
   selectedBuildingId = null,
@@ -33,6 +34,9 @@ export function PGWorldViewport({
   suppressMapEntitySelection = false,
   placementPreviewMarker = null,
   scenicPresentationProfile = null,
+  regionFocusRegionId = null,
+  regionPresentationBounds = null,
+  isDragging = false,
 }: {
   readonly map: WorldMapViewData;
   readonly overlays: WorldOverlayViewData;
@@ -40,6 +44,7 @@ export function PGWorldViewport({
   readonly layers: Readonly<Record<string, boolean>>;
   readonly camera: WorldCameraState;
   readonly viewportRef: RefObject<HTMLDivElement | null>;
+  readonly bindViewportElement?: (node: HTMLDivElement | null) => void;
   readonly onSelectRegion: (regionId: string) => void;
   readonly onSelectBuilding?: (buildingId: string) => void;
   readonly selectedBuildingId?: string | null;
@@ -53,11 +58,21 @@ export function PGWorldViewport({
   readonly suppressMapEntitySelection?: boolean;
   readonly placementPreviewMarker?: WorldBuildingMarkerViewData | null;
   readonly scenicPresentationProfile?: WorldScenicPresentationProfile | null;
+  readonly regionFocusRegionId?: string | null;
+  readonly regionPresentationBounds?: WorldBounds | null;
+  readonly isDragging?: boolean;
 }) {
   const width = canvasWidth ?? map.columns * map.cellSize;
   const height = canvasHeight ?? map.rows * map.cellSize;
+  const regionFocusActive = regionFocusRegionId !== null;
+  const regionClipStyle =
+    regionPresentationBounds !== null && !regionFocusActive
+      ? {
+          clipPath: `inset(${regionPresentationBounds.minY}px ${width - regionPresentationBounds.maxX}px ${height - regionPresentationBounds.maxY}px ${regionPresentationBounds.minX}px)`,
+        }
+      : undefined;
   const scenicPresentationContext =
-    scenicPresentationProfile !== null
+    scenicPresentationProfile !== null && !regionFocusActive
       ? resolveScenicPresentationContext(
           scenicPresentationProfile,
           width,
@@ -66,13 +81,23 @@ export function PGWorldViewport({
         )
       : null;
 
+  const mergeViewportRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      bindViewportElement?.(node);
+      viewportRef.current = node;
+    },
+    [bindViewportElement, viewportRef],
+  );
+
   return (
     <div
-      ref={viewportRef}
+      ref={mergeViewportRef}
       className={`pg-world-viewport${buildingPlacementMode ? ' is-building-placement' : ''}${
-        scenicPresentationProfile !== null ? ' is-scenic-integration' : ''
-      }`}
-      onWheel={onWheel}
+        scenicPresentationProfile !== null && !regionFocusActive ? ' is-scenic-integration' : ''
+      }${regionFocusActive ? ' is-region-focus is-region-focus-isolated' : ''}${isDragging ? ' is-dragging' : ''}`}
+      onWheel={(event) => {
+        onWheel(event);
+      }}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
@@ -91,9 +116,10 @@ export function PGWorldViewport({
           style={{
             width,
             height,
+            ...regionClipStyle,
           }}
         >
-          {scenicPresentationContext !== null ? (
+          {scenicPresentationContext !== null && !regionFocusActive ? (
             <PGWorldScenicBackgroundLayer
               profile={scenicPresentationContext.profile}
               layout={scenicPresentationContext.layout}
@@ -114,6 +140,8 @@ export function PGWorldViewport({
             suppressMapEntitySelection={suppressMapEntitySelection}
             placementPreviewMarker={placementPreviewMarker}
             scenicPresentationContext={scenicPresentationContext}
+            regionFocusRegionId={regionFocusRegionId}
+            regionFocusBounds={regionFocusActive ? regionPresentationBounds : null}
           />
         </div>
       </div>

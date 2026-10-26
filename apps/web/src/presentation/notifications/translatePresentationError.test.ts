@@ -1,16 +1,18 @@
 import { describe, expect, it } from 'vitest';
-import { translatePresentationError } from '@/presentation/notifications/translatePresentationError';
+import { translatePresentationError } from './translatePresentationError';
 
 describe('translatePresentationError', () => {
-  it('returns Error messages when present', () => {
-    expect(translatePresentationError(new Error('Nicht genug Kapital.'))).toBe(
-      'Nicht genug Kapital.',
-    );
+  it('maps JSON parse failures to a German unreachable-server message', () => {
+    expect(
+      translatePresentationError(
+        new Error(`Unexpected token 'I', "Internal S"... is not valid JSON`),
+      ),
+    ).toBe('Der Spielserver ist momentan nicht erreichbar.');
   });
 
-  it('falls back to a generic message for unknown values', () => {
-    expect(translatePresentationError(undefined)).toBe(
-      'Ein unerwarteter Fehler ist aufgetreten.',
+  it('maps fetch network failures to a German unreachable-server message', () => {
+    expect(translatePresentationError(new Error('Failed to fetch'))).toBe(
+      'Der Spielserver ist momentan nicht erreichbar.',
     );
   });
 });

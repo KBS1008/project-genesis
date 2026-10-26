@@ -23,9 +23,9 @@ type LabelOffsetSpec = Readonly<{
 const LABEL_OFFSET_BY_REGION_ID: Readonly<Record<string, LabelOffsetSpec>> = Object.freeze({
   region_north: Object.freeze({
     dxFactor: 0,
-    dyFactor: -0.11,
+    dyFactor: -0.125,
     textAnchor: 'middle',
-    titleDyFactor: -0.02,
+    titleDyFactor: -0.028,
     subtitleDyFactor: 0.028,
   }),
   region_default: Object.freeze({

@@ -8,6 +8,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
+import { isDuplicateNotification } from './notification-deduplication';
 import {
   createNotificationId,
   defaultDismissMs,
@@ -34,22 +35,33 @@ export function NotificationProvider({ children }: { readonly children: ReactNod
 
   const showNotification = useCallback(
     ({ message, tone = 'info', dismissMs, eventLogId }: ShowNotificationInput) => {
-      const id = createNotificationId();
       const resolvedDismissMs = dismissMs === undefined ? defaultDismissMs(tone) : dismissMs;
 
-      setNotifications((current) => [
-        ...current,
-        {
-          id,
-          message,
-          tone,
-          createdAt: Date.now(),
-          dismissMs: resolvedDismissMs,
-          ...(eventLogId !== undefined ? { eventLogId } : {}),
-        },
-      ]);
+      let createdId = '';
 
-      return id;
+      setNotifications((current) => {
+        if (isDuplicateNotification(current, { message, tone })) {
+          createdId = current.find((entry) => entry.message === message && entry.tone === tone)?.id ?? '';
+          return current;
+        }
+
+        const id = createNotificationId();
+        createdId = id;
+
+        return [
+          ...current,
+          {
+            id,
+            message,
+            tone,
+            createdAt: Date.now(),
+            dismissMs: resolvedDismissMs,
+            ...(eventLogId !== undefined ? { eventLogId } : {}),
+          },
+        ];
+      });
+
+      return createdId;
     },
     [],
   );

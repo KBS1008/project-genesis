@@ -364,6 +364,50 @@ type ApiErrorResponse = {
   readonly error: string;
 };
 
+const SERVER_UNREACHABLE_MESSAGE =
+  'Der Spielserver ist momentan nicht erreichbar.';
+const GENERIC_BUILD_FAILURE_MESSAGE =
+  'Das Gebäude konnte nicht gebaut werden. Bitte versuche es erneut.';
+
+function isJsonContentType(contentType: string | null): boolean {
+  return (contentType ?? '').toLowerCase().includes('application/json');
+}
+
+async function readShellApiPayload<T>(
+  response: Response,
+): Promise<ApiSuccessResponse<T> | ApiErrorResponse> {
+  const contentType = response.headers.get('content-type');
+
+  if (!isJsonContentType(contentType)) {
+    const excerpt = (await response.text()).trim().slice(0, 160);
+
+    if (
+      !response.ok &&
+      (response.status >= 500 ||
+        excerpt.startsWith('Internal Server Error') ||
+        excerpt.length === 0)
+    ) {
+      throw new Error(SERVER_UNREACHABLE_MESSAGE);
+    }
+
+    if (!response.ok) {
+      throw new Error(
+        excerpt.length > 0 ? excerpt : GENERIC_BUILD_FAILURE_MESSAGE,
+      );
+    }
+
+    throw new Error(SERVER_UNREACHABLE_MESSAGE);
+  }
+
+  try {
+    return (await response.json()) as ApiSuccessResponse<T> | ApiErrorResponse;
+  } catch {
+    throw new Error(
+      'Der Spielserver hat eine ungültige Antwort gesendet. Bitte versuche es erneut.',
+    );
+  }
+}
+
 /** Calls a JSON API route and unwraps the browser shell envelope. */
 export async function callApi<T>(path: string, options?: RequestInit): Promise<T> {
   const response = await fetch(path, {
@@ -371,10 +415,10 @@ export async function callApi<T>(path: string, options?: RequestInit): Promise<T
     ...options,
   });
 
-  const payload = (await response.json()) as ApiSuccessResponse<T> | ApiErrorResponse;
+  const payload = await readShellApiPayload<T>(response);
 
   if (!response.ok || payload.ok === false) {
-    throw new Error(payload.ok === false ? payload.error : 'Request failed.');
+    throw new Error(payload.ok === false ? payload.error : GENERIC_BUILD_FAILURE_MESSAGE);
   }
 
   return payload.data;

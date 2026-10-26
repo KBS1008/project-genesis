@@ -7,6 +7,20 @@ export type PlaceBuildingRequest = {
   readonly name: string;
   readonly x: number;
   readonly y: number;
+  readonly regionId?: string;
+};
+
+export type ValidateBuildingPlacementRequest = {
+  readonly buildingTypeId: string;
+  readonly regionId: string;
+  readonly x: number;
+  readonly y: number;
+};
+
+export type ValidateBuildingPlacementResponse = {
+  readonly valid: boolean;
+  readonly reason: string | null;
+  readonly geometryVersion: number;
 };
 
 export type StartProductionRequest = {
@@ -21,6 +35,16 @@ export type StartResearchRequest = {
 /** Places a building for the active company. */
 export function placeBuilding(request: PlaceBuildingRequest): Promise<void> {
   return callApi<void>('/api/buildings/place', {
+    method: 'POST',
+    body: JSON.stringify(request),
+  });
+}
+
+/** Authoritative regional placement preview validation (no mutation). */
+export function validateBuildingPlacement(
+  request: ValidateBuildingPlacementRequest,
+): Promise<ValidateBuildingPlacementResponse> {
+  return callApi<ValidateBuildingPlacementResponse>('/api/buildings/validate-placement', {
     method: 'POST',
     body: JSON.stringify(request),
   });

@@ -25,6 +25,7 @@ import type { ApplicationContext } from '../bootstrap/ApplicationContext.js';
 import type { PlaceBuildingCommand } from '../commands/PlaceBuildingCommand.js';
 import { createRegionalModifierResolver } from '../services/createRegionalModifierResolver.js';
 import { resolveBuildingRegionId } from '../services/BuildingRegionPlacement.js';
+import { EvaluateRegionalBuildingPlacement } from '../services/EvaluateRegionalBuildingPlacement.js';
 
 /** Dependencies required by {@link PlaceBuildingUseCase}. */
 export type PlaceBuildingUseCaseDependencies = Pick<
@@ -174,6 +175,23 @@ export class PlaceBuildingUseCase {
 
     if (!regionIdResult.ok) {
       return Result.fail(regionIdResult.error);
+    }
+
+    const placementEvaluation = new EvaluateRegionalBuildingPlacement({
+      buildingRepository: this.#buildingRepository,
+      gameContent: this.#gameContent,
+    }).evaluate({
+      regionId: regionIdResult.value,
+      buildingTypeId: buildingTypeId.value,
+      anchorX: command.x,
+      anchorY: command.y,
+      companyId: companyId.value,
+    });
+
+    if (!placementEvaluation.valid) {
+      return Result.fail(
+        new ValidationError(placementEvaluation.reason ?? 'Platzierung ungültig.'),
+      );
     }
 
     const regionalModifiers = this.#resolveRegionalModifiers(regionIdResult.value.value);

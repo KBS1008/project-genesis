@@ -7,6 +7,8 @@ import type { WorldBuildingMarkerViewData } from '@/presentation/adapters/view-d
 
 const MARKER: WorldBuildingMarkerViewData = Object.freeze({
   id: 'building_005',
+  domainX: 12,
+  domainY: 7,
   buildingTypeId: 'sawmill',
   regionId: 'region_default',
   label: 'Sägewerk',

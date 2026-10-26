@@ -235,6 +235,101 @@ describe('GameSession', () => {
     }
   });
 
+  it('does not reuse building ids after a rejected startNewGame call', async () => {
+    const session = await createSession();
+    session.startNewGame('First Corp');
+
+    const first = session.placeBuilding({
+      buildingTypeId: 'sawmill',
+      name: 'First Sawmill',
+      x: 0,
+      y: 0,
+    });
+
+    expect(first.ok).toBe(true);
+
+    if (!first.ok) {
+      return;
+    }
+
+    expect(first.value).toBe('building_005');
+
+    const rejected = session.startNewGame('Second Corp');
+    expect(rejected.ok).toBe(false);
+
+    const second = session.placeBuilding({
+      buildingTypeId: 'sawmill',
+      name: 'Second Sawmill',
+      x: 5,
+      y: 5,
+    });
+
+    expect(second.ok).toBe(true);
+
+    if (second.ok) {
+      expect(second.value).toBe('building_006');
+    }
+  });
+
+  it('allocates a new building id after save, reload, and repeat placement', async () => {
+    const tempDirectory = await mkdtemp(path.join(tmpdir(), 'genesis-building-id-seq-'));
+    const savePath = path.join(tempDirectory, 'repeat-placement.json');
+
+    try {
+      const session = await createSession(savePath);
+      session.startNewGame('Repeat Placement Corp');
+
+      const first = session.placeBuilding({
+        buildingTypeId: 'sawmill',
+        name: 'First Sawmill',
+        x: 0,
+        y: 0,
+      });
+
+      expect(first.ok).toBe(true);
+
+      if (!first.ok) {
+        return;
+      }
+
+      expect(first.value).toBe('building_005');
+
+      const immediateSecond = session.placeBuilding({
+        buildingTypeId: 'sawmill',
+        name: 'Immediate Second Sawmill',
+        x: 5,
+        y: 5,
+      });
+
+      if (!immediateSecond.ok) {
+        throw new Error(`immediate second: ${immediateSecond.error.message}`);
+      }
+
+      expect(immediateSecond.value).toBe('building_006');
+
+      const saveResult = await session.saveGame();
+      expect(saveResult.ok).toBe(true);
+
+      const loadResult = await session.loadGame();
+      expect(loadResult.ok).toBe(true);
+
+      const secondAfterReload = session.placeBuilding({
+        buildingTypeId: 'sawmill',
+        name: 'Second Sawmill',
+        x: 20,
+        y: 20,
+      });
+
+      if (!secondAfterReload.ok) {
+        throw new Error(secondAfterReload.error.message);
+      }
+
+      expect(secondAfterReload.value).toBe('building_007');
+    } finally {
+      await rm(tempDirectory, { recursive: true, force: true });
+    }
+  });
+
   it('persists and restores a browser session snapshot', async () => {
     const tempDirectory = await mkdtemp(path.join(tmpdir(), 'genesis-browser-save-'));
     const savePath = path.join(tempDirectory, 'browser-session.json');

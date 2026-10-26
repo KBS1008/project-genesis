@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import {
   mapWorldOverlayViewData,
   mapWorldRegionInspectorViewData,
@@ -38,6 +38,7 @@ export function WorldScreen() {
     isBusy,
     buildingMapPlacementSession,
     setBuildingMapPlacementCandidate,
+    setBuildingMapPlacementRegion,
     confirmBuildingMapPlacement,
     cancelBuildingMapPlacement,
   } = useGameWorkspace();
@@ -46,6 +47,21 @@ export function WorldScreen() {
   const selectedBuildingId =
     navigation.entitySelection.kind === 'building' ? navigation.entitySelection.id : null;
   const labels = companyViewData.labels;
+
+  useEffect(() => {
+    if (buildingMapPlacementSession === null || selectedRegionId === null) {
+      return;
+    }
+
+    if (buildingMapPlacementSession.regionId !== selectedRegionId) {
+      setBuildingMapPlacementRegion(selectedRegionId);
+    }
+  }, [
+    buildingMapPlacementSession,
+    selectedRegionId,
+    setBuildingMapPlacementRegion,
+  ]);
+
   const mapQuery = useScreenQuery(
     'world-map',
     () => fetchWorldMap().then((map) => mapWorldMapViewData(map, regions)),
@@ -165,6 +181,9 @@ export function WorldScreen() {
           onCancelBuildingMapPlacement={cancelBuildingMapPlacement}
           onSelectRegion={(regionId) => {
             selectEntity({ kind: 'region', id: regionId });
+            if (buildingMapPlacementSession !== null) {
+              setBuildingMapPlacementRegion(regionId);
+            }
           }}
           onSelectBuilding={(buildingId) => {
             navigateToTarget(buildProductionBuildingNavigationTarget(buildingId));

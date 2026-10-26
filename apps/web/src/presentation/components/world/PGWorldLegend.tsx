@@ -7,9 +7,11 @@ import type { WorldLayerViewData } from '@/presentation/adapters/view-data/world
 export function PGWorldLegend({
   layers,
   biomeEntries,
+  compact = false,
 }: {
   readonly layers: readonly WorldLayerViewData[];
   readonly biomeEntries: readonly WorldBiomeLegendEntry[];
+  readonly compact?: boolean;
 }) {
   const activeLayers = layers.filter((layer) => layer.enabled);
 
@@ -17,9 +19,8 @@ export function PGWorldLegend({
     return null;
   }
 
-  return (
-    <aside className="pg-world-legend" aria-label="Kartenlegende">
-      <h4 className="pg-world-legend-title">Legende</h4>
+  const legendBody = (
+    <>
       {biomeEntries.length > 0 ? (
         <>
           <p className="pg-world-legend-group-label">Biome</p>
@@ -48,6 +49,22 @@ export function PGWorldLegend({
           </ul>
         </>
       ) : null}
+    </>
+  );
+
+  if (compact) {
+    return (
+      <details className="pg-world-legend pg-world-legend--compact">
+        <summary className="pg-world-legend-title">Legende</summary>
+        {legendBody}
+      </details>
+    );
+  }
+
+  return (
+    <aside className="pg-world-legend" aria-label="Kartenlegende">
+      <h4 className="pg-world-legend-title">Legende</h4>
+      {legendBody}
     </aside>
   );
 }

@@ -53,6 +53,9 @@ export type WorldBuildingMarkerViewData = {
   readonly label: string;
   readonly statusLabel: string;
   readonly clusterSize: number;
+  /** Authoritative region-local placement grid (domain). */
+  readonly domainX: number;
+  readonly domainY: number;
   readonly x: number;
   readonly y: number;
 };

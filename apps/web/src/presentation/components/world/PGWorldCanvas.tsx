@@ -21,6 +21,9 @@ import {
 } from '@/presentation/adapters/mappers/world-scenic-visual-projection';
 import { buildWorldRoutePath } from '@/presentation/components/world/world-route-geometry';
 import { PGWorldBuildingMarker } from '@/presentation/components/world/PGWorldBuildingMarker';
+import { filterBuildingMarkersForRegionFocus } from '@/presentation/hooks/world-map-view-mode';
+import type { WorldBounds } from '@/presentation/hooks/world-camera-math';
+import { resolveRegionGridWorldBounds } from '@/presentation/hooks/world-region-presentation-bounds';
 
 function regionCenter(region: WorldMapViewData['regions'][number], cellSize: number) {
   return {
@@ -66,6 +69,8 @@ export function PGWorldCanvas({
   suppressMapEntitySelection = false,
   placementPreviewMarker = null,
   scenicPresentationContext = null,
+  regionFocusRegionId = null,
+  regionFocusBounds = null,
 }: {
   readonly map: WorldMapViewData;
   readonly overlays: WorldOverlayViewData;
@@ -79,6 +84,10 @@ export function PGWorldCanvas({
   readonly suppressMapEntitySelection?: boolean;
   readonly placementPreviewMarker?: WorldBuildingMarkerViewData | null;
   readonly scenicPresentationContext?: ScenicPresentationContext | null;
+  /** When set, only this region's building markers are shown (presentation filter). */
+  readonly regionFocusRegionId?: string | null;
+  /** When region focus uses a cropped canvas, shift world coordinates into local SVG space. */
+  readonly regionFocusBounds?: WorldBounds | null;
 }) {
   const { cellSize, columns, rows, regions, connections } = map;
   const width = canvasWidth ?? columns * cellSize;
@@ -105,8 +114,19 @@ export function PGWorldCanvas({
     return anchor ?? regionCenter(region, cellSize);
   };
   const metricsByRegion = new Map(overlays.regionMetrics.map((metric) => [metric.regionId, metric]));
+  const regionFocusActive = regionFocusRegionId !== null;
+  const regionFocusLayerTransform =
+    regionFocusActive && regionFocusBounds !== null
+      ? `translate(${-regionFocusBounds.minX} ${-regionFocusBounds.minY})`
+      : undefined;
+
   const buildingMarkers = useMemo(() => {
-    const markers = [...overlays.buildingMarkers];
+    const filtered = filterBuildingMarkersForRegionFocus(
+      overlays.buildingMarkers,
+      regionFocusActive ? 'region_focus' : 'overview',
+      regionFocusRegionId,
+    );
+    const markers = [...filtered];
 
     if (selectedBuildingId !== null) {
       markers.sort((left, right) => {
@@ -123,7 +143,7 @@ export function PGWorldCanvas({
     }
 
     return markers;
-  }, [overlays.buildingMarkers, selectedBuildingId]);
+  }, [overlays.buildingMarkers, regionFocusActive, regionFocusRegionId, selectedBuildingId]);
 
   const renderMarkerAt = (marker: WorldBuildingMarkerViewData) => {
     if (scenicPresentationContext === null) {
@@ -144,7 +164,8 @@ export function PGWorldCanvas({
     >
       <WorldBiomePatternDefs />
 
-      {layers.grid ? (
+      <g className="pg-world-layer-root" transform={regionFocusLayerTransform}>
+      {layers.grid && !regionFocusActive ? (
         <g className="pg-world-layer-grid" aria-hidden="true">
           {Array.from({ length: columns + 1 }, (_, index) => (
             <line
@@ -167,7 +188,7 @@ export function PGWorldCanvas({
         </g>
       ) : null}
 
-      {layers.resources && !scenicActive
+      {layers.resources && !scenicActive && !regionFocusActive
         ? regions.map((region) => {
             const metric = metricsByRegion.get(region.id);
             const intensity = metric?.resourceIntensity ?? 0;
@@ -191,7 +212,7 @@ export function PGWorldCanvas({
           })
         : null}
 
-      {layers.connections
+      {layers.connections && !regionFocusActive
         ? connections.map((connection) => {
             const from = regionById.get(connection.fromRegionId);
             const to = regionById.get(connection.toRegionId);
@@ -237,7 +258,7 @@ export function PGWorldCanvas({
           })
         : null}
 
-      {layers.regions && scenicActive
+      {layers.regions && scenicActive && !regionFocusActive
         ? scenicRegions.map((entry) => {
             const region = regionById.get(entry.regionId);
             if (region === undefined) {
@@ -245,6 +266,7 @@ export function PGWorldCanvas({
             }
 
             const isSelected = selectedRegionId === region.id;
+            const isDimmed = false;
             const labelLayout =
               scenicPresentationContext !== null
                 ? resolveScenicRegionLabelLayout(
@@ -256,7 +278,10 @@ export function PGWorldCanvas({
                 : null;
 
             return (
-              <g key={`scenic-region-${region.id}`} className="pg-world-scenic-region">
+              <g
+                key={`scenic-region-${region.id}`}
+                className={`pg-world-scenic-region${isSelected ? ' is-selected' : ''}${isDimmed ? ' is-region-focus-dimmed' : ''}`}
+              >
                 <circle
                   className={`pg-world-scenic-region-hit${isSelected ? ' is-selected' : ''}`}
                   cx={entry.anchor.x}
@@ -265,8 +290,17 @@ export function PGWorldCanvas({
                   fill="transparent"
                   role="button"
                   tabIndex={0}
+                  data-region-id={region.id}
+                  focusable="true"
                   aria-label={`Region ${region.name}, ${region.biomeLabel}`}
                   aria-pressed={isSelected}
+                  onPointerDown={
+                    suppressMapEntitySelection
+                      ? undefined
+                      : (event) => {
+                          event.stopPropagation();
+                        }
+                  }
                   onClick={
                     suppressMapEntitySelection
                       ? undefined
@@ -295,14 +329,16 @@ export function PGWorldCanvas({
                     >
                       {region.name}
                     </text>
-                    <text
-                      className="pg-world-scenic-region-label-sub"
-                      x={labelLayout.subtitleX}
-                      y={labelLayout.subtitleY}
-                      textAnchor={labelLayout.textAnchor}
-                    >
-                      {region.biomeLabel}
-                    </text>
+                    {isSelected ? (
+                      <text
+                        className="pg-world-scenic-region-label-sub"
+                        x={labelLayout.subtitleX}
+                        y={labelLayout.subtitleY}
+                        textAnchor={labelLayout.textAnchor}
+                      >
+                        {region.biomeLabel}
+                      </text>
+                    ) : null}
                   </g>
                 ) : null}
               </g>
@@ -310,26 +346,56 @@ export function PGWorldCanvas({
           })
         : null}
 
-      {layers.regions && !scenicActive
-        ? regions.map((region) => {
+      {layers.regions && (scenicActive === false || regionFocusActive)
+        ? regions
+            .filter((region) => !regionFocusActive || region.id === regionFocusRegionId)
+            .map((region) => {
             const isSelected = selectedRegionId === region.id;
+            const isDimmed = false;
             const surfaceClass = worldBiomeSurfaceClass(region.biomeCategory);
             const patternId = worldBiomePatternId(region.biomeCategory);
+            const focusPresentationBounds =
+              regionFocusActive && region.id === regionFocusRegionId
+                ? resolveRegionGridWorldBounds(region, cellSize, 24)
+                : null;
+            const rectX =
+              focusPresentationBounds !== null
+                ? focusPresentationBounds.minX + 4
+                : region.mapX * cellSize + 4;
+            const rectY =
+              focusPresentationBounds !== null
+                ? focusPresentationBounds.minY + 4
+                : region.mapY * cellSize + 4;
+            const rectWidth =
+              focusPresentationBounds !== null
+                ? focusPresentationBounds.maxX - focusPresentationBounds.minX - 8
+                : cellSize - 8;
+            const rectHeight =
+              focusPresentationBounds !== null
+                ? focusPresentationBounds.maxY - focusPresentationBounds.minY - 8
+                : cellSize - 8;
 
             return (
               <rect
                 key={region.id}
-                className={`pg-world-region ${surfaceClass}${isSelected ? ' is-selected' : ''}`}
-                x={region.mapX * cellSize + 4}
-                y={region.mapY * cellSize + 4}
-                width={cellSize - 8}
-                height={cellSize - 8}
+                className={`pg-world-region ${surfaceClass}${isSelected ? ' is-selected' : ''}${isDimmed ? ' is-region-focus-dimmed' : ''}`}
+                x={rectX}
+                y={rectY}
+                width={rectWidth}
+                height={rectHeight}
                 rx={10}
                 fill={`url(#${patternId})`}
                 role="button"
                 tabIndex={0}
                 aria-label={`Region ${region.name}, ${region.biomeLabel}`}
                 aria-pressed={isSelected}
+                onPointerDown={
+                  suppressMapEntitySelection || regionFocusActive
+                    ? undefined
+                    : (event) => {
+                        event.stopPropagation();
+                      }
+                }
                 onClick={
                   suppressMapEntitySelection
                     ? undefined
@@ -363,7 +429,7 @@ export function PGWorldCanvas({
           ))
         : null}
 
-      {layers.buildings && placementPreviewMarker !== null ? (
+      {placementPreviewMarker !== null ? (
         <PGWorldBuildingMarker
           marker={renderMarkerAt(placementPreviewMarker)}
           isSelected={false}
@@ -372,7 +438,9 @@ export function PGWorldCanvas({
       ) : null}
 
       {layers.presence
-        ? regions.map((region) => {
+        ? regions
+            .filter((region) => !regionFocusActive || region.id === regionFocusRegionId)
+            .map((region) => {
             const metric = metricsByRegion.get(region.id);
             if (metric === undefined || metric.buildingCount === 0) {
               return null;
@@ -414,7 +482,7 @@ export function PGWorldCanvas({
           })
         : null}
 
-      {layers.selection && selectedRegionId !== null
+      {layers.selection && selectedRegionId !== null && !regionFocusActive
         ? (() => {
             const region = regionById.get(selectedRegionId);
             if (region === undefined) {
@@ -478,6 +546,7 @@ export function PGWorldCanvas({
             </g>
           ))
         : null}
+      </g>
     </svg>
   );
 }

@@ -73,6 +73,7 @@ export function createGameWorkspaceMock(
     buildingMapPlacementSession: null,
     startBuildingMapPlacement: vi.fn(),
     setBuildingMapPlacementCandidate: vi.fn(),
+    setBuildingMapPlacementRegion: vi.fn(),
     confirmBuildingMapPlacement: vi.fn(),
     cancelBuildingMapPlacement: vi.fn(),
     ...overrides,

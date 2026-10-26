@@ -10,6 +10,14 @@ export function translatePresentationError(error: unknown): string {
   if (error instanceof Error) {
     const message = error.message.trim();
 
+    if (/failed to fetch/i.test(message) || /networkerror/i.test(message)) {
+      return 'Der Spielserver ist momentan nicht erreichbar.';
+    }
+
+    if (message.includes('is not valid JSON')) {
+      return 'Der Spielserver ist momentan nicht erreichbar.';
+    }
+
     if (message.length > 0) {
       return message;
     }

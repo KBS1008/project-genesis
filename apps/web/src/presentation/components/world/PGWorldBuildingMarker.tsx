@@ -82,6 +82,12 @@ export function PGWorldBuildingMarker({
         x={0}
         y={0}
         fill="transparent"
+        onClick={onClick}
+        onPointerDown={(event) => {
+          if (!isPreview) {
+            event.stopPropagation();
+          }
+        }}
       />
       {compactUrl !== null ? (
         <>

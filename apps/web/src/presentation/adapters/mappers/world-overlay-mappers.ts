@@ -145,6 +145,8 @@ export function mapWorldOverlayViewData(
           label: building.name,
           statusLabel: building.status,
           clusterSize: regionBuildings.length,
+          domainX: building.x,
+          domainY: building.y,
           x,
           y,
         }),

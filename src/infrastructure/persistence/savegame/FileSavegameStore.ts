@@ -4,7 +4,7 @@
  * Persists savegame snapshots as JSON files on disk.
  */
 
-import { mkdir, readFile, readdir, stat, writeFile } from 'node:fs/promises';
+import { chmod, mkdir, readFile, readdir, rename, stat, unlink, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import type { SavegameStore } from '../../../application/ports/SavegameStore.js';
 import type { GameSaveSnapshotV3 } from '../../../application/persistence/GameSaveSnapshotV3.js';
@@ -27,8 +27,16 @@ export class FileSavegameStore implements SavegameStore {
     snapshot: GameSaveSnapshotV3,
   ): Promise<Result<void, PersistenceError>> {
     try {
-      await mkdir(path.dirname(filePath), { recursive: true });
-      await writeFile(filePath, `${JSON.stringify(snapshot, null, 2)}\n`, 'utf8');
+      const directory = path.dirname(filePath);
+      await mkdir(directory, { recursive: true });
+      const payload = `${JSON.stringify(snapshot, null, 2)}\n`;
+      const tempPath = path.join(
+        directory,
+        `.${path.basename(filePath)}.${process.pid}.${Date.now()}.tmp`,
+      );
+
+      await writeFile(tempPath, payload, { encoding: 'utf8', mode: 0o666 });
+      await replaceSavegameFile(tempPath, filePath);
       return Result.ok(undefined);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown file write error.';
@@ -120,6 +128,53 @@ export class FileSavegameStore implements SavegameStore {
       );
     }
   }
+}
+
+async function replaceSavegameFile(tempPath: string, filePath: string): Promise<void> {
+  try {
+    await rename(tempPath, filePath);
+    return;
+  } catch (error) {
+    if (!isPermissionOrExistsConflict(error)) {
+      throw error;
+    }
+  }
+
+  try {
+    await chmod(filePath, 0o666);
+  } catch {
+    // Destination may not exist yet.
+  }
+
+  try {
+    await unlink(filePath);
+  } catch (unlinkError) {
+    if (!isMissingFileError(unlinkError)) {
+      throw unlinkError;
+    }
+  }
+
+  await rename(tempPath, filePath);
+}
+
+function isPermissionOrExistsConflict(error: unknown): boolean {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'code' in error &&
+    ((error as { code?: string }).code === 'EPERM' ||
+      (error as { code?: string }).code === 'EEXIST' ||
+      (error as { code?: string }).code === 'EBUSY')
+  );
+}
+
+function isMissingFileError(error: unknown): boolean {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'code' in error &&
+    (error as { code?: string }).code === 'ENOENT'
+  );
 }
 
 function isMissingDirectoryError(error: unknown): boolean {

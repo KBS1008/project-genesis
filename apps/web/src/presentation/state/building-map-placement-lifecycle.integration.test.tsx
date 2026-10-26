@@ -109,11 +109,22 @@ vi.mock('@/presentation/adapters/api/query-client', async (importOriginal) => {
   return {
     ...actual,
     fetchEventLog: vi.fn(async () => Object.freeze([])),
+    fetchSessionStatus: vi.fn(async () =>
+      Object.freeze({ hasActiveSession: true, savePath: '' }),
+    ),
   };
 });
 
+vi.mock('@/presentation/adapters/api/session-client', () => ({
+  loadGame: vi.fn(async () => undefined),
+  saveGame: vi.fn(async () => undefined),
+}));
+
 vi.mock('@/presentation/adapters/api/gameplay-client', () => ({
   placeBuilding: vi.fn(),
+  validateBuildingPlacement: vi.fn(async () =>
+    Object.freeze({ valid: true, reason: null, geometryVersion: 1 }),
+  ),
 }));
 
 const PLACEMENT_START = Object.freeze({
@@ -214,11 +225,14 @@ describe('building map placement lifecycle (GameWorkspaceProvider)', () => {
 
     act(() => {
       result.current.startBuildingMapPlacement(PLACEMENT_START);
+      result.current.setBuildingMapPlacementRegion('region_default');
       result.current.setBuildingMapPlacementCandidate(CANDIDATE_P1);
     });
     rerender();
 
-    expect(result.current.buildingMapPlacementSession?.candidate).toEqual(CANDIDATE_P1);
+    await waitFor(() => {
+      expect(result.current.buildingMapPlacementSession?.validation?.valid).toBe(true);
+    });
 
     await act(async () => {
       await result.current.confirmBuildingMapPlacement();
@@ -231,12 +245,14 @@ describe('building map placement lifecycle (GameWorkspaceProvider)', () => {
       name: 'Sägewerk',
       x: CANDIDATE_P1.x,
       y: CANDIDATE_P1.y,
+      regionId: 'region_default',
     });
     expect(Object.keys(placeBuildingMock.mock.calls[0]?.[0] ?? {})).toEqual([
       'buildingTypeId',
       'name',
       'x',
       'y',
+      'regionId',
     ]);
 
     await waitFor(() => {
@@ -257,9 +273,14 @@ describe('building map placement lifecycle (GameWorkspaceProvider)', () => {
 
     act(() => {
       result.current.startBuildingMapPlacement(PLACEMENT_START);
+      result.current.setBuildingMapPlacementRegion('region_default');
       result.current.setBuildingMapPlacementCandidate(CANDIDATE_P1);
     });
     rerender();
+
+    await waitFor(() => {
+      expect(result.current.buildingMapPlacementSession?.validation?.valid).toBe(true);
+    });
 
     await act(async () => {
       await result.current.confirmBuildingMapPlacement();
@@ -295,7 +316,7 @@ describe('building map placement lifecycle (GameWorkspaceProvider)', () => {
     expect(result.current.navigation.screen).toBe('buildings');
   });
 
-  it('clears session when navigating away from World without placement mutation', async () => {
+  it('keeps placement session when navigating away from World and back', async () => {
     const { result, rerender } = renderHook(() => useGameWorkspace(), {
       wrapper: createWrapper(),
     });
@@ -304,6 +325,7 @@ describe('building map placement lifecycle (GameWorkspaceProvider)', () => {
 
     act(() => {
       result.current.startBuildingMapPlacement(PLACEMENT_START);
+      result.current.setBuildingMapPlacementRegion('region_default');
       result.current.setBuildingMapPlacementCandidate(CANDIDATE_P1);
     });
     rerender();
@@ -314,14 +336,16 @@ describe('building map placement lifecycle (GameWorkspaceProvider)', () => {
     rerender();
 
     expect(placeBuildingMock).not.toHaveBeenCalled();
-    expect(result.current.buildingMapPlacementSession).toBeNull();
+    expect(result.current.buildingMapPlacementSession).not.toBeNull();
+    expect(result.current.buildingMapPlacementSession?.candidate).toEqual(CANDIDATE_P1);
 
     act(() => {
       result.current.navigateToScreen('world');
     });
     rerender();
 
-    expect(result.current.buildingMapPlacementSession).toBeNull();
+    expect(result.current.buildingMapPlacementSession).not.toBeNull();
+    expect(result.current.buildingMapPlacementSession?.candidate).toEqual(CANDIDATE_P1);
     expect(result.current.navigation.screen).toBe('world');
   });
 });

@@ -9,13 +9,43 @@ export type WorldCameraState = {
 export const WORLD_CAMERA_MIN_SCALE = 0.45;
 export const WORLD_CAMERA_MAX_SCALE = 2.5;
 export const WORLD_CAMERA_ZOOM_STEP = 0.15;
+/** Closer framing for grid region focus (presentation). */
+export const WORLD_CAMERA_GRID_REGION_FOCUS_SCALE = 1.65;
+/** Closer framing for scenic plate region focus (world overview often uses upscale fit). */
+export const WORLD_CAMERA_SCENIC_REGION_FOCUS_SCALE = 2.15;
 
-export function clampWorldScale(scale: number): number {
-  return Math.min(WORLD_CAMERA_MAX_SCALE, Math.max(WORLD_CAMERA_MIN_SCALE, scale));
+export function clampWorldScale(
+  scale: number,
+  maxScale = WORLD_CAMERA_MAX_SCALE,
+  minScale = WORLD_CAMERA_MIN_SCALE,
+): number {
+  return Math.min(maxScale, Math.max(minScale, scale));
 }
 
-export function zoomWorldScale(scale: number, delta: number): number {
-  return clampWorldScale(scale + delta);
+/** Upper scale for presentation-only region-focus bounds fit (grid cell + padding). */
+export const WORLD_CAMERA_REGION_FOCUS_MAX_SCALE = 5;
+
+export type WorldCameraScaleLimits = Readonly<{
+  readonly min: number;
+  readonly max: number;
+}>;
+
+export const WORLD_CAMERA_OVERVIEW_SCALE_LIMITS: WorldCameraScaleLimits = Object.freeze({
+  min: WORLD_CAMERA_MIN_SCALE,
+  max: WORLD_CAMERA_MAX_SCALE,
+});
+
+export const WORLD_CAMERA_REGION_FOCUS_SCALE_LIMITS: WorldCameraScaleLimits = Object.freeze({
+  min: WORLD_CAMERA_MIN_SCALE,
+  max: WORLD_CAMERA_REGION_FOCUS_MAX_SCALE,
+});
+
+export function zoomWorldScale(
+  scale: number,
+  delta: number,
+  limits: WorldCameraScaleLimits = WORLD_CAMERA_OVERVIEW_SCALE_LIMITS,
+): number {
+  return clampWorldScale(scale + delta, limits.max, limits.min);
 }
 
 export type WorldBounds = {
@@ -51,15 +81,17 @@ export function fitWorldCamera(
   viewportWidth: number,
   viewportHeight: number,
   padding = 24,
-  options?: { readonly allowUpscale?: boolean },
+  options?: { readonly allowUpscale?: boolean; readonly maxScale?: number },
 ): WorldCameraState {
   const contentWidth = bounds.maxX - bounds.minX;
   const contentHeight = bounds.maxY - bounds.minY;
   const scaleX = (viewportWidth - padding * 2) / contentWidth;
   const scaleY = (viewportHeight - padding * 2) / contentHeight;
   const fittedScale = Math.min(scaleX, scaleY);
+  const maxScale = options?.maxScale ?? WORLD_CAMERA_MAX_SCALE;
   const scale = clampWorldScale(
     options?.allowUpscale === true ? fittedScale : Math.min(fittedScale, 1),
+    maxScale,
   );
 
   const translateX = (viewportWidth - contentWidth * scale) / 2 - bounds.minX * scale;
@@ -90,11 +122,12 @@ export function fitRegionCamera(
   viewportHeight: number,
   cellSize: number = WORLD_MAP_CELL_SIZE,
   _padding = 48,
+  targetScale: number = WORLD_CAMERA_GRID_REGION_FOCUS_SCALE,
 ): WorldCameraState {
   const centerX = region.mapX * cellSize + cellSize / 2;
   const centerY = region.mapY * cellSize + cellSize / 2;
 
-  return fitRegionCameraAtWorldCenter(centerX, centerY, viewportWidth, viewportHeight);
+  return fitRegionCameraAtWorldCenter(centerX, centerY, viewportWidth, viewportHeight, targetScale);
 }
 
 export function panWorldCamera(
@@ -106,5 +139,67 @@ export function panWorldCamera(
     scale: camera.scale,
     translateX: camera.translateX + deltaX,
     translateY: camera.translateY + deltaY,
+  });
+}
+
+/** Zoom while keeping the world point under (localX, localY) stable in viewport space. */
+export function zoomWorldCameraAtViewportPoint(
+  camera: WorldCameraState,
+  localX: number,
+  localY: number,
+  deltaScale: number,
+  limits: WorldCameraScaleLimits = WORLD_CAMERA_OVERVIEW_SCALE_LIMITS,
+): WorldCameraState {
+  const nextScale = zoomWorldScale(camera.scale, deltaScale, limits);
+  if (nextScale === camera.scale) {
+    return camera;
+  }
+
+  const worldX = (localX - camera.translateX) / camera.scale;
+  const worldY = (localY - camera.translateY) / camera.scale;
+
+  return Object.freeze({
+    scale: nextScale,
+    translateX: localX - worldX * nextScale,
+    translateY: localY - worldY * nextScale,
+  });
+}
+
+/** Keep transformed world content reachable inside the viewport (presentation clamp). */
+export function clampWorldCameraTranslation(
+  camera: WorldCameraState,
+  bounds: WorldBounds,
+  viewportWidth: number,
+  viewportHeight: number,
+  padding = 24,
+): WorldCameraState {
+  const contentWidth = bounds.maxX - bounds.minX;
+  const contentHeight = bounds.maxY - bounds.minY;
+  const scaledWidth = contentWidth * camera.scale;
+  const scaledHeight = contentHeight * camera.scale;
+
+  let translateX = camera.translateX;
+  let translateY = camera.translateY;
+
+  if (scaledWidth <= viewportWidth - padding * 2) {
+    translateX = (viewportWidth - scaledWidth) / 2 - bounds.minX * camera.scale;
+  } else {
+    const minTx = viewportWidth - padding - camera.scale * bounds.maxX;
+    const maxTx = padding - camera.scale * bounds.minX;
+    translateX = Math.min(maxTx, Math.max(minTx, translateX));
+  }
+
+  if (scaledHeight <= viewportHeight - padding * 2) {
+    translateY = (viewportHeight - scaledHeight) / 2 - bounds.minY * camera.scale;
+  } else {
+    const minTy = viewportHeight - padding - camera.scale * bounds.maxY;
+    const maxTy = padding - camera.scale * bounds.minY;
+    translateY = Math.min(maxTy, Math.max(minTy, translateY));
+  }
+
+  return Object.freeze({
+    scale: camera.scale,
+    translateX,
+    translateY,
   });
 }

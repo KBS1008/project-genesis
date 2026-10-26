@@ -73,4 +73,50 @@ describe('PGWorldViewport scenic integration', () => {
     expect(stack?.children[0]).toHaveClass('pg-world-scenic-background-layer');
     expect(stack?.children[1]?.classList.contains('pg-world-canvas')).toBe(true);
   });
+
+  it('does not render scenic layer in selected-region focus even when profile is set', () => {
+    const { container } = render(
+      <PGWorldViewport
+        map={MAP}
+        overlays={EMPTY_WORLD_OVERLAY}
+        selectedRegionId="region_default"
+        regionFocusRegionId="region_default"
+        layers={Object.freeze({ regions: true })}
+        camera={CAMERA}
+        viewportRef={{ current: null }}
+        onSelectRegion={vi.fn()}
+        onWheel={vi.fn()}
+        onPointerDown={vi.fn()}
+        onPointerMove={vi.fn()}
+        onPointerUp={vi.fn()}
+        scenicPresentationProfile={WORLD_SCENIC_PRESENTATION_PROFILE_MAP_WORLD_DEFAULT}
+      />,
+    );
+
+    expect(container.querySelector('.pg-world-scenic-background-layer')).toBeNull();
+    expect(container.querySelector('.pg-world-viewport.is-scenic-integration')).toBeNull();
+  });
+
+  it('renders scenic background in world overview when profile is set and region focus is inactive', () => {
+    const { container } = render(
+      <PGWorldViewport
+        map={MAP}
+        overlays={EMPTY_WORLD_OVERLAY}
+        selectedRegionId={null}
+        regionFocusRegionId={null}
+        layers={Object.freeze({ regions: true })}
+        camera={CAMERA}
+        viewportRef={{ current: null }}
+        onSelectRegion={vi.fn()}
+        onWheel={vi.fn()}
+        onPointerDown={vi.fn()}
+        onPointerMove={vi.fn()}
+        onPointerUp={vi.fn()}
+        scenicPresentationProfile={WORLD_SCENIC_PRESENTATION_PROFILE_MAP_WORLD_DEFAULT}
+      />,
+    );
+
+    expect(container.querySelector('.pg-world-scenic-background-layer')).not.toBeNull();
+    expect(container.querySelector('.pg-world-viewport.is-scenic-integration')).not.toBeNull();
+  });
 });

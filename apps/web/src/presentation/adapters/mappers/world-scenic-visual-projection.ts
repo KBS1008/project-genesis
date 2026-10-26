@@ -13,7 +13,7 @@ import type {
 import type { WorldMapRegionCellViewData } from '@/presentation/adapters/view-data/world-view-data';
 
 /** Presentation-only hit radius around each scenic region anchor (world logical units). */
-export const SCENIC_REGION_HIT_RADIUS_FACTOR = 0.085;
+export const SCENIC_REGION_HIT_RADIUS_FACTOR = 0.072;
 
 /** Scales in-cell logical offsets to scenic footprint around anchor. */
 export const SCENIC_REGION_VISUAL_SCALE_FACTOR = 0.42;

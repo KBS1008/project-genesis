@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import { existsSync, renameSync, unlinkSync } from 'node:fs';
 import { type INestApplication } from '@nestjs/common';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import { Test } from '@nestjs/testing';
@@ -6,8 +7,35 @@ import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { AppModule } from '../app.module.js';
 import { ApiExceptionFilter } from '../common/api-exception.filter.js';
+import { resolveProjectPaths } from '../config/project-paths.js';
+import { resolveSavegameFilePath } from '../config/savegame-path-resolver.js';
 import { STARTING_MONEY } from '../../../../src/domain/finance/FinanceConstants.js';
 import { NEW_GAME_STARTER_BUILDINGS } from '../../../../src/application/new-game/NewGameSetupConstants.js';
+
+const { projectRoot, savePath: browserSessionPath } = resolveProjectPaths(import.meta.url);
+const browserSessionVitestBackupPath = `${browserSessionPath}.vitest-isolation-backup`;
+
+function isolateBrowserSessionSaveForVitest(): void {
+  if (existsSync(browserSessionVitestBackupPath)) {
+    throw new Error(
+      `Stale vitest browser session backup exists at ${browserSessionVitestBackupPath}. Remove it manually.`,
+    );
+  }
+
+  if (existsSync(browserSessionPath)) {
+    renameSync(browserSessionPath, browserSessionVitestBackupPath);
+  }
+}
+
+function restoreBrowserSessionSaveAfterVitest(): void {
+  if (existsSync(browserSessionPath)) {
+    unlinkSync(browserSessionPath);
+  }
+
+  if (existsSync(browserSessionVitestBackupPath)) {
+    renameSync(browserSessionVitestBackupPath, browserSessionPath);
+  }
+}
 
 function normalizeSavePath(filePath: string): string {
   return filePath.replace(/\\/g, '/');
@@ -17,6 +45,8 @@ describe('GameController (NestJS)', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
+    isolateBrowserSessionSaveForVitest();
+
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
@@ -28,6 +58,7 @@ describe('GameController (NestJS)', () => {
 
   afterAll(async () => {
     await app.close();
+    restoreBrowserSessionSaveAfterVitest();
   });
 
   it('GET /api/dashboard returns an empty session snapshot', async () => {
@@ -212,7 +243,9 @@ describe('GameController (NestJS)', () => {
 
     expect(saveResponse.status).toBe(200);
     expect(saveResponse.body.ok).toBe(true);
-    expect(saveResponse.body.data).toBe(savePath);
+    expect(normalizeSavePath(saveResponse.body.data)).toBe(
+      normalizeSavePath(resolveSavegameFilePath(projectRoot, savePath)),
+    );
 
     await request(app.getHttpServer()).post('/api/simulation/tick').send({ count: 5 });
 
@@ -237,7 +270,9 @@ describe('GameController (NestJS)', () => {
     expect(savesResponse.status).toBe(200);
     expect(
       savesResponse.body.data.some(
-        (save: { filePath: string }) => normalizeSavePath(save.filePath) === savePath,
+        (save: { filePath: string }) =>
+          normalizeSavePath(save.filePath) ===
+          normalizeSavePath(resolveSavegameFilePath(projectRoot, savePath)),
       ),
     ).toBe(true);
   });
