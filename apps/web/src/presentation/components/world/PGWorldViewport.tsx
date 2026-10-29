@@ -142,6 +142,7 @@ export function PGWorldViewport({
             scenicPresentationContext={scenicPresentationContext}
             regionFocusRegionId={regionFocusRegionId}
             regionFocusBounds={regionFocusActive ? regionPresentationBounds : null}
+            viewportScale={camera.scale}
           />
         </div>
       </div>

@@ -1,6 +1,14 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState, type PointerEvent } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type PointerEvent,
+  type ReactNode,
+} from 'react';
 import {
   COMPANY_PLACEMENT_DEFAULT_REGION_ID,
   projectDomainPlacementPosition,
@@ -66,8 +74,10 @@ export function PGWorldWorkspace({
   overlays,
   selectedRegionId,
   inspector,
+  inspectorPanel,
   onSelectRegion,
   onSelectBuilding,
+  onClearBuildingSelection,
   onClearSelection,
   selectedBuildingId = null,
   inspectorSectionActions,
@@ -84,8 +94,10 @@ export function PGWorldWorkspace({
   readonly selectedRegionId: string | null;
   readonly selectedBuildingId?: string | null;
   readonly inspector: WorldInspectorViewData | null;
+  readonly inspectorPanel?: ReactNode;
   readonly onSelectRegion: (regionId: string) => void;
   readonly onSelectBuilding?: (buildingId: string) => void;
+  readonly onClearBuildingSelection?: () => void;
   readonly onClearSelection?: () => void;
   readonly inspectorSectionActions?: Readonly<Record<string, { readonly actionLabel: string; readonly onAction: () => void }>>;
   readonly buildingMapPlacementSession?: BuildingMapPlacementSession | null;
@@ -310,13 +322,20 @@ export function PGWorldWorkspace({
   const handleBackToWorldOverview = useCallback(() => {
     setMapViewMode('overview');
     regionCameraFocusRef.current = null;
+    onClearBuildingSelection?.();
     onClearSelection?.();
     if (placementMode) {
       onPickBuildingMapPlacementCandidate?.(null);
     }
     fitWorld();
     overviewCameraRef.current = null;
-  }, [fitWorld, onClearSelection, onPickBuildingMapPlacementCandidate, placementMode]);
+  }, [
+    fitWorld,
+    onClearBuildingSelection,
+    onClearSelection,
+    onPickBuildingMapPlacementCandidate,
+    placementMode,
+  ]);
 
   useEffect(() => {
     if (placementMode) {
@@ -460,6 +479,14 @@ export function PGWorldWorkspace({
     [map.regions],
   );
 
+  const activeTransportRouteCount = useMemo(() => {
+    if (!isLayerEnabled('transport') || !isLayerEnabled('connections')) {
+      return null;
+    }
+
+    return overlays.transportFlows.length;
+  }, [isLayerEnabled, overlays.transportFlows]);
+
   const layerState = useMemo(
     () =>
       Object.freeze({
@@ -497,17 +524,20 @@ export function PGWorldWorkspace({
   return (
     <PGWorkspaceFrame
       inspector={
-        placementMode ? null : (
-          <PGWorldInspector
-            inspector={inspector}
-            sectionActions={inspectorSectionActions}
-            onClose={
-              onClearSelection !== undefined && selectedRegionId !== null
-                ? handleBackToWorldOverview
-                : undefined
-            }
-          />
-        )
+        inspectorPanel ??
+        (placementMode
+          ? null
+          : (
+              <PGWorldInspector
+                inspector={inspector}
+                sectionActions={inspectorSectionActions}
+                onClose={
+                  onClearSelection !== undefined && selectedRegionId !== null
+                    ? handleBackToWorldOverview
+                    : undefined
+                }
+              />
+            ))
       }
     >
       <div className="pg-world-workspace pg-world-with-assets pg-world-with-assets--map-focus">
@@ -519,7 +549,12 @@ export function PGWorldWorkspace({
               {world.regionCountLabel} Regionen · {world.cityCountLabel} Städte · {map.mapName}
             </p>
           </div>
-          <PGWorldLegend compact layers={layers} biomeEntries={biomeLegendEntries} />
+          <PGWorldLegend
+            compact
+            layers={layers}
+            biomeEntries={biomeLegendEntries}
+            activeTransportRouteCount={activeTransportRouteCount}
+          />
         </header>
 
         {placementMode && buildingMapPlacementSession !== null ? (
@@ -614,7 +649,7 @@ export function PGWorldWorkspace({
         <div className="pg-world-layout pg-world-layout--map-focus">
           <div className="pg-world-map-column">
             <div
-              className={`pg-world-map-stage${regionFocusRegionId !== null ? ' is-region-landscape-map' : ''}`}
+              className={`pg-world-map-stage${regionFocusRegionId !== null ? ' is-region-landscape-map' : ''}${scenicPresentationContext !== null && regionFocusRegionId === null ? ' is-scenic-world-stage' : ''}`}
             >
               {regionFocusRegionId !== null && selectedRegionName !== null ? (
                 <PGRegionMapView
@@ -623,6 +658,7 @@ export function PGWorldWorkspace({
                   buildingMarkers={regionMapBuildingMarkers}
                   selectedBuildingId={selectedBuildingId}
                   onSelectBuilding={onSelectBuilding}
+                  onClearBuildingSelection={onClearBuildingSelection}
                   placementSession={placementMode ? buildingMapPlacementSession : null}
                   onPickPlacementCandidate={
                     placementMode ? onPickBuildingMapPlacementCandidate : undefined
@@ -671,7 +707,9 @@ export function PGWorldWorkspace({
           </div>
 
           <details className="pg-world-layer-panel-shell pg-world-layer-panel-shell--compact" aria-label="Ebenen">
-            <summary className="pg-widget-title">Ebenen</summary>
+            <summary className="pg-widget-title" tabIndex={0}>
+              Ebenen
+            </summary>
             <PGWorldLayerManager layers={layers} onToggleLayer={toggleLayer} />
           </details>
         </div>

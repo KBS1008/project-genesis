@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   mapWorldOverlayViewData,
   mapWorldRegionInspectorViewData,
@@ -16,7 +16,8 @@ import {
 } from '@/presentation/adapters/api/query-client';
 import { fetchWorldMap } from '@/presentation/adapters/api/world-client';
 import { EMPTY_WORLD_OVERLAY } from '@/presentation/adapters/view-data/world-view-data';
-import { PGWorldWorkspace } from '@/presentation/components/world';
+import { PGWorldBuildingInspector, PGWorldWorkspace } from '@/presentation/components/world';
+import { buildWorldMapBuildingInspectorDetail } from '@/presentation/components/world/map-world-building-selection';
 import {
   buildProductionBuildingNavigationTarget,
 } from '@/presentation/navigation/entity-navigation';
@@ -44,9 +45,12 @@ export function WorldScreen() {
   } = useGameWorkspace();
   const selectedRegionId =
     navigation.entitySelection.kind === 'region' ? navigation.entitySelection.id : null;
-  const selectedBuildingId =
-    navigation.entitySelection.kind === 'building' ? navigation.entitySelection.id : null;
+  const [selectedMapBuildingId, setSelectedMapBuildingId] = useState<string | null>(null);
   const labels = companyViewData.labels;
+
+  useEffect(() => {
+    setSelectedMapBuildingId(null);
+  }, [selectedRegionId]);
 
   useEffect(() => {
     if (buildingMapPlacementSession === null || selectedRegionId === null) {
@@ -95,6 +99,92 @@ export function WorldScreen() {
     viewData.session.hasGame && mapQuery.data !== null,
     { debounceMs: TICK_QUERY_DEBOUNCE_MS },
   );
+
+  const overlayData = overlayQuery.data ?? EMPTY_WORLD_OVERLAY;
+
+  useEffect(() => {
+    if (selectedMapBuildingId === null) {
+      return;
+    }
+
+    const stillPresent = overlayData.buildingMarkers.some(
+      (marker) => marker.id === selectedMapBuildingId,
+    );
+    if (!stillPresent) {
+      setSelectedMapBuildingId(null);
+    }
+  }, [overlayData.buildingMarkers, selectedMapBuildingId]);
+
+  useEffect(() => {
+    if (selectedMapBuildingId === null) {
+      return;
+    }
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setSelectedMapBuildingId(null);
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, [selectedMapBuildingId]);
+
+  const selectedMapBuildingMarker = useMemo(() => {
+    if (selectedMapBuildingId === null) {
+      return undefined;
+    }
+
+    return overlayData.buildingMarkers.find((marker) => marker.id === selectedMapBuildingId);
+  }, [overlayData.buildingMarkers, selectedMapBuildingId]);
+
+  const selectedRegionName = useMemo(() => {
+    if (selectedRegionId === null) {
+      return null;
+    }
+
+    return mapQuery.data?.regions.find((region) => region.id === selectedRegionId)?.name ?? null;
+  }, [mapQuery.data?.regions, selectedRegionId]);
+
+  const mapBuildingInspectorDetail = useMemo(() => {
+    if (selectedMapBuildingId === null) {
+      return null;
+    }
+
+    return buildWorldMapBuildingInspectorDetail(
+      selectedMapBuildingId,
+      companyViewData.detail.buildings.get(selectedMapBuildingId),
+      selectedMapBuildingMarker,
+      selectedRegionName,
+    );
+  }, [
+    companyViewData.detail.buildings,
+    selectedMapBuildingId,
+    selectedMapBuildingMarker,
+    selectedRegionName,
+  ]);
+
+  const mapBuildingInspectorPanel = useMemo(() => {
+    if (selectedMapBuildingId === null || mapBuildingInspectorDetail === null) {
+      return undefined;
+    }
+
+    return (
+      <PGWorldBuildingInspector
+        buildingId={selectedMapBuildingId}
+        detail={mapBuildingInspectorDetail}
+        onClose={() => {
+          setSelectedMapBuildingId(null);
+        }}
+        onOpenProduction={() => {
+          navigateToTarget(buildProductionBuildingNavigationTarget(selectedMapBuildingId));
+        }}
+      />
+    );
+  }, [mapBuildingInspectorDetail, navigateToTarget, selectedMapBuildingId]);
 
   const loadRegionInspector = useCallback(async () => {
     if (selectedRegionId === null) {
@@ -166,10 +256,11 @@ export function WorldScreen() {
         <PGWorldWorkspace
           world={viewData.world}
           map={mapQuery.data}
-          overlays={overlayQuery.data ?? EMPTY_WORLD_OVERLAY}
+          overlays={overlayData}
           selectedRegionId={selectedRegionId}
-          selectedBuildingId={selectedBuildingId}
+          selectedBuildingId={selectedMapBuildingId}
           inspector={inspectorQuery.data}
+          inspectorPanel={mapBuildingInspectorPanel}
           inspectorSectionActions={inspectorSectionActions}
           buildingMapPlacementSession={buildingMapPlacementSession}
           buildingTypeLabel={labels.building}
@@ -186,7 +277,10 @@ export function WorldScreen() {
             }
           }}
           onSelectBuilding={(buildingId) => {
-            navigateToTarget(buildProductionBuildingNavigationTarget(buildingId));
+            setSelectedMapBuildingId(buildingId);
+          }}
+          onClearBuildingSelection={() => {
+            setSelectedMapBuildingId(null);
           }}
           onClearSelection={clearEntitySelection}
         />

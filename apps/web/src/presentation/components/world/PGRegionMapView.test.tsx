@@ -88,6 +88,91 @@ describe('PGRegionMapView', () => {
     );
   });
 
+  function loadRegionMapStage() {
+    const stage = document.querySelector('.pg-world-region-map-view-stage');
+    expect(stage).not.toBeNull();
+    stage!.getBoundingClientRect = () =>
+      ({
+        width: 1114,
+        height: 743,
+        top: 100,
+        left: 50,
+        right: 1164,
+        bottom: 843,
+        x: 50,
+        y: 100,
+        toJSON: () => ({}),
+      }) as DOMRect;
+    const image = document.querySelector('.pg-world-region-map-view-image');
+    Object.defineProperty(image, 'naturalWidth', { value: 1536, configurable: true });
+    Object.defineProperty(image, 'naturalHeight', { value: 1024, configurable: true });
+    fireEvent.load(image!);
+    return stage!;
+  }
+
+  it('keeps building markers interactive during placement (Slice 2F-B)', () => {
+    const css = readFileSync(regionMapCssPath, 'utf8');
+    expect(css).toMatch(
+      /\.pg-world-region-map-view-stage\.is-placement-active \.pg-world-region-map-building-marker[\s\S]*?pointer-events:\s*auto/,
+    );
+  });
+
+  it('selects an existing marker during placement without terrain placement pick', () => {
+    const onPick = vi.fn();
+    const onSelect = vi.fn();
+    render(
+      <PGRegionMapView
+        regionId="region_default"
+        regionName="Central Basin"
+        buildingMarkers={MARKERS}
+        placementSession={Object.freeze({
+          buildingTypeId: 'warehouse',
+          name: 'Lager',
+          canPlace: true,
+          candidate: null,
+          validation: null,
+          regionId: 'region_default',
+        })}
+        onPickPlacementCandidate={onPick}
+        onSelectBuilding={onSelect}
+      />,
+    );
+
+    loadRegionMapStage();
+    fireEvent.click(screen.getByRole('button', { name: 'Gebäude Firmenzentrale' }));
+    expect(onSelect).toHaveBeenCalledWith('building_001');
+    expect(onPick).not.toHaveBeenCalled();
+  });
+
+  it('does not invoke placement pick on marker pointerdown during placement (Slice 2F-B priority)', () => {
+    const onPick = vi.fn();
+    const onSelect = vi.fn();
+    render(
+      <PGRegionMapView
+        regionId="region_default"
+        regionName="Central Basin"
+        buildingMarkers={MARKERS}
+        placementSession={Object.freeze({
+          buildingTypeId: 'warehouse',
+          name: 'Lager',
+          canPlace: true,
+          candidate: null,
+          validation: null,
+          regionId: 'region_default',
+        })}
+        onPickPlacementCandidate={onPick}
+        onSelectBuilding={onSelect}
+      />,
+    );
+
+    loadRegionMapStage();
+    const marker = screen.getByRole('button', { name: 'Gebäude Firmenzentrale' });
+    fireEvent.pointerDown(marker, { clientX: 200, clientY: 200 });
+    fireEvent.click(marker);
+    expect(onPick).not.toHaveBeenCalled();
+    expect(onSelect).toHaveBeenCalledWith('building_001');
+  });
+
   it('forwards preview clicks to placement pick without hitting building markers', () => {
     const onPick = vi.fn();
     render(

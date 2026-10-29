@@ -24,7 +24,9 @@ export function PGWorldLayerManager({
             <label>
               <input
                 type="checkbox"
+                tabIndex={0}
                 checked={layer.enabled}
+                aria-checked={layer.enabled}
                 onChange={() => {
                   onToggleLayer(layer.id);
                 }}
@@ -46,7 +48,9 @@ export function PGWorldLayerManager({
             <label>
               <input
                 type="checkbox"
+                tabIndex={0}
                 checked={layer.enabled}
+                aria-checked={layer.enabled}
                 onChange={() => {
                   onToggleLayer(layer.id);
                 }}

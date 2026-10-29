@@ -27,6 +27,17 @@ function connectionKey(fromRegionId: string, toRegionId: string): string {
   return `${fromRegionId}->${toRegionId}`;
 }
 
+function operationsSectionEntries(
+  items: readonly { readonly label: string; readonly value: string }[],
+  emptyHint: string,
+): readonly { readonly label: string; readonly value: string }[] {
+  if (items.length === 0) {
+    return Object.freeze([Object.freeze({ label: 'Status', value: emptyHint })]);
+  }
+
+  return Object.freeze(items);
+}
+
 function sumRegionalResources(details: readonly RegionDetailsDto[]): Map<string, number> {
   const totals = new Map<string, number>();
 
@@ -269,41 +280,35 @@ export function mapWorldRegionInspectorViewData(
     Object.freeze({
       id: 'buildings',
       title: 'Unternehmensgebäude',
-      entries:
-        operations.buildings.length === 0
-          ? Object.freeze([])
-          : Object.freeze(
-              operations.buildings.map((building) =>
-                Object.freeze({
-                  label: building.name,
-                  value: `${building.typeLabel} · ${building.statusLabel}`,
-                }),
-              ),
-            ),
+      entries: operationsSectionEntries(
+        operations.buildings.map((building) =>
+          Object.freeze({
+            label: building.name,
+            value: `${building.typeLabel} · ${building.statusLabel}`,
+          }),
+        ),
+        'Keine Unternehmensgebäude in dieser Region.',
+      ),
     }),
     Object.freeze({
       id: 'production',
       title: 'Produktion',
-      entries:
-        operations.productionJobs.length === 0
-          ? Object.freeze([])
-          : Object.freeze(
-              operations.productionJobs.map((job) =>
-                Object.freeze({ label: job.recipeLabel, value: job.statusLabel }),
-              ),
-            ),
+      entries: operationsSectionEntries(
+        operations.productionJobs.map((job) =>
+          Object.freeze({ label: job.recipeLabel, value: job.statusLabel }),
+        ),
+        'Keine Produktionsaufträge in dieser Region.',
+      ),
     }),
     Object.freeze({
       id: 'transport',
       title: 'Transport',
-      entries:
-        operations.transports.length === 0
-          ? Object.freeze([])
-          : Object.freeze(
-              operations.transports.map((transport) =>
-                Object.freeze({ label: transport.label, value: transport.statusLabel }),
-              ),
-            ),
+      entries: operationsSectionEntries(
+        operations.transports.map((transport) =>
+          Object.freeze({ label: transport.label, value: transport.statusLabel }),
+        ),
+        'Keine aktiven oder zugeordneten Transporte für diese Region.',
+      ),
     }),
   ];
 

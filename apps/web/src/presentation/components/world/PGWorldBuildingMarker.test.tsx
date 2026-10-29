@@ -51,4 +51,22 @@ describe('PGWorldBuildingMarker', () => {
 
     expect(container.querySelector('[data-building-id="building_005"]')).not.toBeNull();
   });
+
+  it('applies scenic grounding presentation without changing hit target geometry', () => {
+    const { container } = render(
+      <svg>
+        <PGWorldBuildingMarker
+          marker={MARKER}
+          isSelected={false}
+          onSelect={vi.fn()}
+          scenicGroundingPresentation
+        />
+      </svg>,
+    );
+
+    expect(container.querySelector('.pg-world-building-marker--scenic-grounding')).not.toBeNull();
+    expect(container.querySelector('.pg-world-building-marker-scenic-stack')).not.toBeNull();
+    const hit = container.querySelector('rect.pg-world-building-marker-hit');
+    expect(hit?.getAttribute('width')).toBeTruthy();
+  });
 });

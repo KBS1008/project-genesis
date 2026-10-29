@@ -69,8 +69,9 @@ export function PGMiniMap({
   const bounds = resolveMinimapBounds(map, scenicPresentationContext);
   const mapWidth = bounds.maxX - bounds.minX;
   const mapHeight = bounds.maxY - bounds.minY;
-  const miniWidth = 160;
-  const miniHeight = 120;
+  /** Compact overview (Slice 5): smaller than main map, within spec guidance ~120–160px width. */
+  const miniWidth = 148;
+  const miniHeight = 100;
   const scale = Math.min(miniWidth / mapWidth, miniHeight / mapHeight);
 
   const viewportElement = viewportRef.current;
@@ -171,7 +172,7 @@ export function PGMiniMap({
                 scale,
                 scenicPresentationContext,
               );
-              const radius = Math.max(3, map.cellSize * scale * 0.12);
+              const radius = Math.max(2.25, map.cellSize * scale * 0.085);
 
               return (
                 <circle

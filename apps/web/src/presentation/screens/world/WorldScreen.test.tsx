@@ -74,18 +74,22 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
     selectEntity: vi.fn(),
     clearEntitySelection: vi.fn(),
     navigateToTarget,
+    buildingMapPlacementSession: null,
     regions: [{ id: 'region_001', name: 'Heimatregion' }],
     companyViewData: {
       labels: {
         building: (id: string) => id,
         recipe: (id: string) => id,
       },
+      detail: {
+        buildings: new Map(),
+      },
     },
   }),
 }));
 
 describe('WorldScreen', () => {
-  it('navigates to production with building context when a map marker is selected', async () => {
+  it('does not navigate away when a map marker is selected', async () => {
     const user = userEvent.setup();
     navigateToTarget.mockClear();
 
@@ -93,9 +97,6 @@ describe('WorldScreen', () => {
 
     await user.click(screen.getByRole('button', { name: 'Select building marker' }));
 
-    expect(navigateToTarget).toHaveBeenCalledWith({
-      screen: 'production',
-      entitySelection: { kind: 'building', id: 'building_005' },
-    });
+    expect(navigateToTarget).not.toHaveBeenCalled();
   });
 });

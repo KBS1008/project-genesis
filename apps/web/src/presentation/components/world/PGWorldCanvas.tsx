@@ -20,10 +20,19 @@ import {
   resolveScenicRegionHitRadius,
 } from '@/presentation/adapters/mappers/world-scenic-visual-projection';
 import { buildWorldRoutePath } from '@/presentation/components/world/world-route-geometry';
+import {
+  isWorldTransportRouteActive,
+  worldTransportRouteMidpoint,
+} from '@/presentation/components/world/world-transport-route-presentation';
 import { PGWorldBuildingMarker } from '@/presentation/components/world/PGWorldBuildingMarker';
 import { filterBuildingMarkersForRegionFocus } from '@/presentation/hooks/world-map-view-mode';
 import type { WorldBounds } from '@/presentation/hooks/world-camera-math';
 import { resolveRegionGridWorldBounds } from '@/presentation/hooks/world-region-presentation-bounds';
+import {
+  resolveScenicRegionLabelInverseScale,
+  shouldRenderScenicRegionLabel,
+} from '@/presentation/components/world/world-scenic-region-label-scale';
+import { resolveScenicBuildingMarkerPresentationScale } from '@/presentation/components/world/world-scenic-building-marker-scale';
 
 function regionCenter(region: WorldMapViewData['regions'][number], cellSize: number) {
   return {
@@ -51,6 +60,9 @@ function WorldBiomePatternDefs() {
       <pattern id="pg-world-biome-pattern-unknown" width="8" height="8" patternUnits="userSpaceOnUse">
         <rect width="8" height="8" className="pg-world-biome-pattern-base-unknown" />
       </pattern>
+      <filter id="pg-world-scenic-route-shadow" x="-10%" y="-10%" width="120%" height="120%">
+        <feDropShadow dx="0" dy="1.5" stdDeviation="2" floodColor="#3d2914" floodOpacity="0.28" />
+      </filter>
     </defs>
   );
 }
@@ -71,6 +83,7 @@ export function PGWorldCanvas({
   scenicPresentationContext = null,
   regionFocusRegionId = null,
   regionFocusBounds = null,
+  viewportScale = 1,
 }: {
   readonly map: WorldMapViewData;
   readonly overlays: WorldOverlayViewData;
@@ -88,11 +101,17 @@ export function PGWorldCanvas({
   readonly regionFocusRegionId?: string | null;
   /** When region focus uses a cropped canvas, shift world coordinates into local SVG space. */
   readonly regionFocusBounds?: WorldBounds | null;
+  /** Camera scale from the viewport transform; used to keep scenic labels at a bounded screen size. */
+  readonly viewportScale?: number;
 }) {
   const { cellSize, columns, rows, regions, connections } = map;
   const width = canvasWidth ?? columns * cellSize;
   const height = canvasHeight ?? rows * cellSize;
   const scenicActive = scenicPresentationContext !== null;
+  const scenicLabelInverseScale = resolveScenicRegionLabelInverseScale(viewportScale);
+  const scenicBuildingPresentationScale = scenicActive
+    ? resolveScenicBuildingMarkerPresentationScale(viewportScale)
+    : 1;
 
   const regionById = new Map(regions.map((region) => [region.id, region]));
   const scenicRegions = useMemo(() => {
@@ -188,7 +207,7 @@ export function PGWorldCanvas({
         </g>
       ) : null}
 
-      {layers.resources && !scenicActive && !regionFocusActive
+      {layers.resources && !regionFocusActive
         ? regions.map((region) => {
             const metric = metricsByRegion.get(region.id);
             const intensity = metric?.resourceIntensity ?? 0;
@@ -227,15 +246,17 @@ export function PGWorldCanvas({
                 entry.fromRegionId === connection.fromRegionId &&
                 entry.toRegionId === connection.toRegionId,
             );
-            const isTransportLayer = layers.transport;
-            const strokeWidth =
-              scenicActive
-                ? isTransportLayer && flow !== undefined
-                  ? 1.25 + flow.intensity * 2.5
-                  : 1.25
-                : isTransportLayer && flow !== undefined
-                  ? 2 + flow.intensity * 4
-                  : 2;
+            const routeActive = isWorldTransportRouteActive(
+              { connections: layers.connections, transport: layers.transport },
+              flow,
+            );
+            const strokeWidth = scenicActive
+              ? routeActive
+                ? 1.35 + (flow?.intensity ?? 0) * 2.75
+                : 1.15
+              : routeActive
+                ? 2.25 + (flow?.intensity ?? 0) * 3.5
+                : 1.75;
             const connectionKey = `${connection.fromRegionId}-${connection.toRegionId}`;
             const routePath = buildWorldRoutePath(
               fromCenter.x,
@@ -244,16 +265,45 @@ export function PGWorldCanvas({
               toCenter.y,
               connectionKey,
             );
+            const midpoint = worldTransportRouteMidpoint(fromCenter, toCenter);
+            const endpointRadius = scenicActive ? 3.5 : 4.5;
 
             return (
-              <path
+              <g
                 key={connectionKey}
-                className={`pg-world-route${isTransportLayer && flow !== undefined ? ' pg-world-route-active' : ''}`}
-                d={routePath}
-                fill="none"
-                strokeWidth={strokeWidth}
+                className={`pg-world-route-group${routeActive ? ' is-active' : ''}`}
                 aria-hidden="true"
-              />
+                filter={routeActive && scenicActive ? 'url(#pg-world-scenic-route-shadow)' : undefined}
+              >
+                <path
+                  className={`pg-world-route${routeActive ? ' pg-world-route-active' : ''}`}
+                  d={routePath}
+                  fill="none"
+                  strokeWidth={strokeWidth}
+                />
+                {routeActive ? (
+                  <>
+                    <circle
+                      className="pg-world-route-endpoint pg-world-route-endpoint--origin"
+                      cx={fromCenter.x}
+                      cy={fromCenter.y}
+                      r={endpointRadius}
+                    />
+                    <circle
+                      className="pg-world-route-endpoint pg-world-route-endpoint--destination"
+                      cx={toCenter.x}
+                      cy={toCenter.y}
+                      r={endpointRadius}
+                    />
+                    <circle
+                      className="pg-world-route-flow-indicator"
+                      cx={midpoint.x}
+                      cy={midpoint.y}
+                      r={scenicActive ? 2.5 : 3}
+                    />
+                  </>
+                ) : null}
+              </g>
             );
           })
         : null}
@@ -267,20 +317,11 @@ export function PGWorldCanvas({
 
             const isSelected = selectedRegionId === region.id;
             const isDimmed = false;
-            const labelLayout =
-              scenicPresentationContext !== null
-                ? resolveScenicRegionLabelLayout(
-                    region.id,
-                    entry.anchor,
-                    scenicPresentationContext.layout,
-                    { title: region.name, subtitle: region.biomeLabel },
-                  )
-                : null;
 
             return (
               <g
                 key={`scenic-region-${region.id}`}
-                className={`pg-world-scenic-region${isSelected ? ' is-selected' : ''}${isDimmed ? ' is-region-focus-dimmed' : ''}`}
+                className={`pg-world-scenic-region pg-world-scenic-region--${region.biomeCategory.toLowerCase()}${isSelected ? ' is-selected' : ''}${isDimmed ? ' is-region-focus-dimmed' : ''}`}
               >
                 <circle
                   className={`pg-world-scenic-region-hit${isSelected ? ' is-selected' : ''}`}
@@ -319,28 +360,6 @@ export function PGWorldCanvas({
                         }
                   }
                 />
-                {layers.labels && labelLayout !== null ? (
-                  <g className="pg-world-scenic-region-label-group" aria-hidden="true">
-                    <text
-                      className="pg-world-scenic-region-label"
-                      x={labelLayout.titleX}
-                      y={labelLayout.titleY}
-                      textAnchor={labelLayout.textAnchor}
-                    >
-                      {region.name}
-                    </text>
-                    {isSelected ? (
-                      <text
-                        className="pg-world-scenic-region-label-sub"
-                        x={labelLayout.subtitleX}
-                        y={labelLayout.subtitleY}
-                        textAnchor={labelLayout.textAnchor}
-                      >
-                        {region.biomeLabel}
-                      </text>
-                    ) : null}
-                  </g>
-                ) : null}
               </g>
             );
           })
@@ -425,6 +444,8 @@ export function PGWorldCanvas({
               marker={renderMarkerAt(marker)}
               isSelected={selectedBuildingId === marker.id}
               onSelect={suppressMapEntitySelection ? undefined : onSelectBuilding}
+              scenicPresentationScale={scenicActive ? scenicBuildingPresentationScale : undefined}
+              scenicGroundingPresentation={scenicActive}
             />
           ))
         : null}
@@ -434,7 +455,65 @@ export function PGWorldCanvas({
           marker={renderMarkerAt(placementPreviewMarker)}
           isSelected={false}
           isPreview
+          scenicPresentationScale={scenicActive ? scenicBuildingPresentationScale : undefined}
+          scenicGroundingPresentation={scenicActive}
         />
+      ) : null}
+
+      {layers.labels && scenicActive && !regionFocusActive ? (
+        <g className="pg-world-layer-scenic-labels" aria-hidden="true">
+          {scenicRegions.map((entry) => {
+            const region = regionById.get(entry.regionId);
+            if (region === undefined || scenicPresentationContext === null) {
+              return null;
+            }
+
+            const isSelected = selectedRegionId === region.id;
+            const labelLayout = resolveScenicRegionLabelLayout(
+              region.id,
+              entry.anchor,
+              scenicPresentationContext.layout,
+              { title: region.name, subtitle: region.biomeLabel },
+            );
+
+            if (!shouldRenderScenicRegionLabel(isSelected, viewportScale, true)) {
+              return null;
+            }
+
+            const labelScale = isSelected ? scenicLabelInverseScale * 1.08 : scenicLabelInverseScale;
+
+            return (
+              <g
+                key={`scenic-label-${region.id}`}
+                className={`pg-world-scenic-region${isSelected ? ' is-selected' : ''}`}
+              >
+                <g
+                  className="pg-world-scenic-region-label-group"
+                  transform={`translate(${labelLayout.titleX} ${labelLayout.titleY}) scale(${labelScale}) translate(${-labelLayout.titleX} ${-labelLayout.titleY})`}
+                >
+                  <text
+                    className="pg-world-scenic-region-label"
+                    x={labelLayout.titleX}
+                    y={labelLayout.titleY}
+                    textAnchor={labelLayout.textAnchor}
+                  >
+                    {region.name}
+                  </text>
+                  {isSelected ? (
+                    <text
+                      className="pg-world-scenic-region-label-sub"
+                      x={labelLayout.subtitleX}
+                      y={labelLayout.subtitleY}
+                      textAnchor={labelLayout.textAnchor}
+                    >
+                      {region.biomeLabel}
+                    </text>
+                  ) : null}
+                </g>
+              </g>
+            );
+          })}
+        </g>
       ) : null}
 
       {layers.presence

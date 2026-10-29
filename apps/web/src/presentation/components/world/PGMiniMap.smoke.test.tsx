@@ -84,6 +84,7 @@ describe('PGMiniMap smoke', () => {
     expect(container.querySelector('.pg-world-minimap-viewport')).toBeTruthy();
     expect(container.querySelector('svg[data-scenic-minimap="0"]')).toBeTruthy();
     expect(container.querySelectorAll('rect.pg-world-minimap-region')).toHaveLength(4);
+    expect(container.querySelector('svg.pg-world-minimap-svg')).toHaveAttribute('viewBox', '0 0 148 100');
   });
 
   it('uses scenic anchors and circle markers when scenic context is provided', () => {

@@ -8,10 +8,13 @@ export function PGWorldLegend({
   layers,
   biomeEntries,
   compact = false,
+  activeTransportRouteCount = null,
 }: {
   readonly layers: readonly WorldLayerViewData[];
   readonly biomeEntries: readonly WorldBiomeLegendEntry[];
   readonly compact?: boolean;
+  /** When transport layer is enabled, number of active inter-region routes (Slice 6). */
+  readonly activeTransportRouteCount?: number | null;
 }) {
   const activeLayers = layers.filter((layer) => layer.enabled);
 
@@ -44,6 +47,16 @@ export function PGWorldLegend({
               <li key={layer.id}>
                 <span className={`pg-world-legend-swatch pg-world-legend-swatch-${layer.id}`} />
                 {layer.label}
+                {layer.id === 'transport' &&
+                layer.enabled &&
+                activeTransportRouteCount !== null &&
+                activeTransportRouteCount > 0 ? (
+                  <span className="pg-world-legend-meta">
+                    {' '}
+                    · {activeTransportRouteCount}{' '}
+                    {activeTransportRouteCount === 1 ? 'Route aktiv' : 'Routen aktiv'}
+                  </span>
+                ) : null}
               </li>
             ))}
           </ul>

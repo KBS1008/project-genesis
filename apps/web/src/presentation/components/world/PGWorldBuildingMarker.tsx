@@ -6,12 +6,20 @@ import {
   resolveWorldBuildingMarkerCompactUrl,
   resolveWorldBuildingMarkerVisualSpec,
 } from '@/presentation/components/world/world-building-marker-visual';
+import {
+  resolveScenicBuildingContactShadowLayout,
+  SCENIC_BUILDING_GROUNDING_VISUAL_STACK_OFFSET_Y,
+} from '@/presentation/components/world/world-scenic-building-grounding';
 
 type PGWorldBuildingMarkerProps = {
   readonly marker: WorldBuildingMarkerViewData;
   readonly isSelected: boolean;
   readonly isPreview?: boolean;
   readonly onSelect?: (buildingId: string) => void;
+  /** Counter-scale for scenic viewport zoom (presentation-only). */
+  readonly scenicPresentationScale?: number;
+  /** Scenic-only grounding stack (shadow/anchor); does not move hit targets or world coords. */
+  readonly scenicGroundingPresentation?: boolean;
 };
 
 /** World map building marker using sealed ICON-003 compact assets (WBM-001). */
@@ -20,6 +28,8 @@ export function PGWorldBuildingMarker({
   isSelected,
   isPreview = false,
   onSelect,
+  scenicPresentationScale = 1,
+  scenicGroundingPresentation = false,
 }: PGWorldBuildingMarkerProps) {
   const spec = resolveWorldBuildingMarkerVisualSpec(marker.buildingTypeId, marker.clusterSize);
   const [imageFailed, setImageFailed] = useState(false);
@@ -33,6 +43,54 @@ export function PGWorldBuildingMarker({
   const imageY = halfHit - glyphHeight / 2;
   const silhouetteRadius = (Math.max(glyphWidth, glyphHeight) / 2) * 0.92;
   const selectionRingRadius = silhouetteRadius + (isSelected ? 6 : 0);
+  const presentationScale =
+    Number.isFinite(scenicPresentationScale) && scenicPresentationScale > 0 ? scenicPresentationScale : 1;
+  const rootTransform =
+    presentationScale === 1
+      ? `translate(${marker.x - halfHit} ${marker.y - halfHit})`
+      : `translate(${marker.x} ${marker.y}) scale(${presentationScale}) translate(${-halfHit} ${-halfHit})`;
+
+  const contactShadow = scenicGroundingPresentation
+    ? resolveScenicBuildingContactShadowLayout(halfHit, silhouetteRadius)
+    : Object.freeze({
+        cx: halfHit,
+        cy: halfHit + silhouetteRadius * 0.45,
+        rx: silhouetteRadius * 0.9,
+        ry: silhouetteRadius * 0.28,
+      });
+
+  const markerArtwork = compactUrl !== null ? (
+    <>
+      <ellipse
+        className="pg-world-building-marker-shadow"
+        cx={contactShadow.cx}
+        cy={contactShadow.cy}
+        rx={contactShadow.rx}
+        ry={contactShadow.ry}
+        aria-hidden="true"
+      />
+      <circle
+        className="pg-world-building-marker-ground"
+        cx={halfHit}
+        cy={halfHit}
+        r={silhouetteRadius * (scenicGroundingPresentation ? 0.88 : 1)}
+        aria-hidden="true"
+      />
+      <image
+        className="pg-world-building-marker-glyph"
+        href={compactUrl}
+        x={imageX}
+        y={imageY}
+        width={glyphWidth}
+        height={glyphHeight}
+        onError={() => {
+          setImageFailed(true);
+        }}
+      />
+    </>
+  ) : (
+    <circle className="pg-world-building-marker-fallback" cx={halfHit} cy={halfHit} r={6} />
+  );
 
   const activate = () => {
     if (isPreview) {
@@ -65,8 +123,8 @@ export function PGWorldBuildingMarker({
 
   return (
     <g
-      className={`pg-world-building-marker${isSelected ? ' is-selected' : ''}${isPreview ? ' is-preview' : ''}`}
-      transform={`translate(${marker.x - halfHit} ${marker.y - halfHit})`}
+      className={`pg-world-building-marker${isSelected ? ' is-selected' : ''}${isPreview ? ' is-preview' : ''}${scenicGroundingPresentation ? ' pg-world-building-marker--scenic-grounding' : ''}`}
+      transform={rootTransform}
       role={isPreview ? 'img' : 'button'}
       tabIndex={isPreview ? undefined : 0}
       aria-label={isPreview ? `Vorschau ${marker.label}` : `Gebäude ${marker.label}`}
@@ -89,42 +147,15 @@ export function PGWorldBuildingMarker({
           }
         }}
       />
-      {compactUrl !== null ? (
-        <>
-          <ellipse
-            className="pg-world-building-marker-shadow"
-            cx={halfHit}
-            cy={halfHit + silhouetteRadius * 0.45}
-            rx={silhouetteRadius * 0.9}
-            ry={silhouetteRadius * 0.28}
-            aria-hidden="true"
-          />
-          <circle
-            className="pg-world-building-marker-ground"
-            cx={halfHit}
-            cy={halfHit}
-            r={silhouetteRadius}
-            aria-hidden="true"
-          />
-          <image
-            className="pg-world-building-marker-glyph"
-            href={compactUrl}
-            x={imageX}
-            y={imageY}
-            width={glyphWidth}
-            height={glyphHeight}
-            onError={() => {
-              setImageFailed(true);
-            }}
-          />
-        </>
+      {scenicGroundingPresentation && compactUrl !== null ? (
+        <g
+          className="pg-world-building-marker-scenic-stack"
+          transform={`translate(0 ${SCENIC_BUILDING_GROUNDING_VISUAL_STACK_OFFSET_Y})`}
+        >
+          {markerArtwork}
+        </g>
       ) : (
-        <circle
-          className="pg-world-building-marker-fallback"
-          cx={halfHit}
-          cy={halfHit}
-          r={6}
-        />
+        markerArtwork
       )}
       {isSelected ? (
         <circle

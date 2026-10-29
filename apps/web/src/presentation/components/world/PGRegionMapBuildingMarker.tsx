@@ -63,6 +63,9 @@ export function PGRegionMapBuildingMarker({
       data-building-type-id={marker.buildingTypeId}
       data-building-status={marker.statusLabel}
       onClick={onClick}
+      onPointerDown={(event) => {
+        event.stopPropagation();
+      }}
       onKeyDown={onKeyDown}
     >
       {artworkUrl !== null ? (

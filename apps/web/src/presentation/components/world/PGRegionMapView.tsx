@@ -19,6 +19,7 @@ type PGRegionMapViewProps = {
   readonly buildingMarkers: readonly WorldBuildingMarkerViewData[];
   readonly selectedBuildingId?: string | null;
   readonly onSelectBuilding?: (buildingId: string) => void;
+  readonly onClearBuildingSelection?: () => void;
   readonly placementSession?: BuildingMapPlacementSession | null;
   readonly placementFootprint?: { readonly width: number; readonly height: number };
   readonly onPickPlacementCandidate?: (candidate: { readonly x: number; readonly y: number } | null) => void;
@@ -31,6 +32,7 @@ export function PGRegionMapView({
   buildingMarkers,
   selectedBuildingId = null,
   onSelectBuilding,
+  onClearBuildingSelection,
   placementSession = null,
   placementFootprint = Object.freeze({ width: 2, height: 2 }),
   onPickPlacementCandidate,
@@ -197,6 +199,12 @@ export function PGRegionMapView({
         return;
       }
 
+      const target = event.target as HTMLElement;
+      if (target.closest('.pg-world-region-map-building-marker')) {
+        setHoverCandidate(null);
+        return;
+      }
+
       const domain = domainFromPointer(event);
       if (domain === null) {
         return;
@@ -209,9 +217,25 @@ export function PGRegionMapView({
 
   const handleStagePointerDown = useCallback(
     (event: React.PointerEvent<HTMLDivElement>) => {
-      pickPlacementAtPointer(event);
+      const target = event.target as HTMLElement;
+      const onBuildingMarker = target.closest('.pg-world-region-map-building-marker') !== null;
+
+      if (placementActive) {
+        if (onBuildingMarker) {
+          setHoverCandidate(null);
+          return;
+        }
+        pickPlacementAtPointer(event);
+        return;
+      }
+
+      if (onBuildingMarker) {
+        return;
+      }
+
+      onClearBuildingSelection?.();
     },
-    [pickPlacementAtPointer],
+    [onClearBuildingSelection, pickPlacementAtPointer, placementActive],
   );
 
   const handlePreviewPointerDown = useCallback(
@@ -253,7 +277,7 @@ export function PGRegionMapView({
           ref={stageRef}
           className={`pg-world-region-map-view-stage${placementActive ? ' is-placement-active' : ''}`}
           onPointerMove={placementActive ? handleStagePointerMove : undefined}
-          onPointerDown={placementActive ? handleStagePointerDown : undefined}
+          onPointerDown={handleStagePointerDown}
         >
           <img
             className="pg-world-region-map-view-image"
@@ -277,7 +301,7 @@ export function PGRegionMapView({
                       isSelected={selectedBuildingId === marker.id}
                       leftPx={leftPx}
                       topPx={topPx}
-                      onSelect={placementActive ? undefined : onSelectBuilding}
+                      onSelect={onSelectBuilding}
                     />
                   ))}
                 </div>

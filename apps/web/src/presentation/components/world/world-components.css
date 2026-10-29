@@ -270,8 +270,8 @@
 }
 
 .pg-world-region-map-view-stage.is-placement-active .pg-world-region-map-building-marker {
-  pointer-events: none;
-  cursor: crosshair;
+  pointer-events: auto;
+  cursor: pointer;
 }
 
 .pg-world-region-map-placement-preview.is-hover {
@@ -310,8 +310,8 @@
   right: var(--space-sm);
   bottom: var(--space-sm);
   z-index: 3;
-  width: min(13.75rem, 38vw);
-  max-width: 15rem;
+  width: min(9.5rem, 34vw);
+  max-width: 10.5rem;
   pointer-events: none;
 }
 
@@ -630,9 +630,9 @@
 
 .pg-world-scenic-region-hit {
   cursor: pointer;
-  stroke: color-mix(in srgb, var(--accent) 14%, transparent);
-  stroke-width: 1;
-  fill: color-mix(in srgb, var(--accent) 3%, transparent);
+  stroke: color-mix(in srgb, var(--accent) 8%, transparent);
+  stroke-width: 0.75;
+  fill: color-mix(in srgb, var(--accent) 2%, transparent);
 }
 
 .pg-world-scenic-region-hit.is-selected {
@@ -696,7 +696,7 @@
 }
 
 .pg-world-scenic-region:not(.is-selected) .pg-world-scenic-region-label-group {
-  opacity: 0.94;
+  opacity: 0.9;
 }
 
 .pg-world-scenic-region-label-group {
@@ -704,25 +704,45 @@
 }
 
 .pg-world-scenic-region-label {
-  font-size: clamp(0.45rem, 0.29vw + 0.4rem, 0.55rem);
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  fill: color-mix(in srgb, var(--fg) 80%, var(--bg));
-  stroke: none;
-  filter: drop-shadow(0 1px 1px color-mix(in srgb, var(--bg) 62%, transparent));
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  fill: #f3e8d0;
+  stroke: #2a1810;
+  stroke-width: 1px;
+  paint-order: stroke fill;
+  filter: drop-shadow(0 1px 2px color-mix(in srgb, #1a120c 45%, transparent));
 }
 
 .pg-world-scenic-region.is-selected .pg-world-scenic-region-label {
-  font-weight: 600;
-  fill: color-mix(in srgb, var(--fg) 90%, var(--bg));
+  font-size: 17px;
+  font-weight: 700;
+  fill: #faf0dc;
+  stroke: #24180f;
+  stroke-width: 1.1px;
 }
 
 .pg-world-scenic-region-label-sub {
-  font-size: clamp(0.4rem, 0.23vw + 0.36rem, 0.48rem);
-  fill: color-mix(in srgb, var(--muted) 82%, var(--bg));
-  stroke: none;
-  opacity: 0.88;
-  filter: drop-shadow(0 1px 1px color-mix(in srgb, var(--bg) 65%, transparent));
+  font-size: 13px;
+  fill: #e8dcc4;
+  stroke: #2a1810;
+  stroke-width: 0.85px;
+  paint-order: stroke fill;
+  opacity: 0.92;
+}
+
+@media (max-width: 480px) {
+  .pg-world-scenic-region-label {
+    font-size: 13px;
+  }
+
+  .pg-world-scenic-region.is-selected .pg-world-scenic-region-label {
+    font-size: 15px;
+  }
+
+  .pg-world-scenic-region-label-sub {
+    font-size: 11.5px;
+  }
 }
 
 .pg-world-viewport.is-scenic-integration .pg-world-building-marker-ground {
@@ -745,6 +765,58 @@
 
 .pg-world-canvas.is-scenic-calibrated .pg-world-route {
   opacity: 0.55;
+}
+
+.pg-world-canvas.is-scenic-calibrated .pg-world-route-active {
+  stroke: color-mix(in srgb, #b87333 68%, var(--accent));
+  opacity: 0.92;
+  filter: drop-shadow(0 1px 2px color-mix(in srgb, #3d2914 28%, transparent));
+}
+
+.pg-world-route-group.is-active {
+  pointer-events: none;
+}
+
+.pg-world-route-endpoint {
+  fill: color-mix(in srgb, #c47a2c 75%, var(--accent));
+  stroke: color-mix(in srgb, var(--bg) 55%, transparent);
+  stroke-width: 1;
+}
+
+.pg-world-route-endpoint--destination {
+  fill: color-mix(in srgb, #8b5a2b 70%, var(--accent));
+}
+
+.pg-world-route-flow-indicator {
+  fill: color-mix(in srgb, var(--accent) 80%, #f4e4c8);
+  stroke: none;
+  opacity: 0.95;
+}
+
+.pg-world-canvas.is-scenic-calibrated .pg-world-resource-heat {
+  opacity: 0.12;
+}
+
+.pg-world-legend-meta {
+  font-size: var(--text-caption);
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.pg-world-layer-panel-shell summary:focus-visible,
+.pg-world-layer-panel .pg-world-layer-item input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.pg-world-workspace .pg-inspector-section:nth-of-type(n + 4) {
+  border-top: 1px solid color-mix(in srgb, var(--border) 85%, transparent);
+  padding-top: var(--space-xs);
+  margin-top: var(--space-xs);
+}
+
+.pg-world-workspace .pg-inspector-section-title {
+  letter-spacing: 0.02em;
 }
 
 .pg-world-scenic-integration-banner {
@@ -840,8 +912,9 @@
 }
 
 .pg-world-route-active {
-  stroke: var(--accent);
+  stroke: color-mix(in srgb, #c47a2c 62%, var(--accent));
   opacity: 1;
+  filter: drop-shadow(0 1px 1px color-mix(in srgb, var(--text) 18%, transparent));
 }
 
 .pg-world-connection {
@@ -907,11 +980,12 @@
 }
 
 .pg-world-minimap {
-  border: 1px solid color-mix(in srgb, var(--border) 85%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
   border-radius: var(--radius-sm);
-  background: color-mix(in srgb, var(--bg-elevated) 92%, transparent);
-  padding: 0.25rem 0.35rem 0.35rem;
-  backdrop-filter: blur(6px);
+  background: color-mix(in srgb, var(--bg-elevated) 88%, transparent);
+  padding: 0.2rem 0.3rem 0.3rem;
+  backdrop-filter: blur(5px);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--bg) 35%, transparent);
 }
 
 .pg-world-minimap.is-region-context .pg-world-minimap-viewport {
@@ -924,12 +998,13 @@
 }
 
 .pg-world-minimap-title {
-  margin: 0 0 0.15rem;
-  font-size: 0.65rem;
+  margin: 0 0 0.1rem;
+  font-size: 0.6rem;
   font-weight: 500;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: color-mix(in srgb, var(--muted) 90%, var(--fg));
+  color: color-mix(in srgb, var(--muted) 92%, var(--fg));
+  opacity: 0.9;
 }
 
 .pg-world-minimap-svg {
@@ -991,15 +1066,15 @@
 
 @media (max-width: 48rem) {
   .pg-world-minimap-dock {
-    width: min(8.75rem, 34vw);
-    max-width: 9.5rem;
+    width: min(7.75rem, 32vw);
+    max-width: 8.75rem;
   }
 }
 
 @media (min-width: 64rem) {
   .pg-world-minimap-dock {
-    width: min(14rem, 22vw);
-    max-width: 15rem;
+    width: min(12.5rem, 16vw);
+    max-width: 13.75rem;
   }
 }
 
@@ -1150,7 +1225,8 @@
 }
 
 .pg-world-legend-swatch-transport {
-  background: color-mix(in srgb, var(--accent) 65%, var(--border));
+  background: color-mix(in srgb, #c47a2c 58%, var(--accent));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, #3d2914 22%, transparent);
 }
 
 .pg-world-legend-swatch-presence {
@@ -1290,7 +1366,12 @@
   }
 
   .pg-world-with-assets--map-focus .pg-world-minimap-dock {
-    display: none;
+    display: block;
+    right: var(--space-xs);
+    bottom: var(--space-xs);
+    width: min(7.25rem, 30vw);
+    max-width: 8.5rem;
+    z-index: 4;
   }
 
   .pg-workspace-frame-with-inspector:has(.pg-world-with-assets--map-focus) .pg-workspace-frame-inspector {
@@ -1319,5 +1400,112 @@
   .pg-world-header .pg-world-legend {
     width: 100%;
     max-width: none;
+  }
+}
+
+/* —— Post-V1 scenic map visual enhancement (OPTION B convergence) —— */
+
+.pg-world-map-stage.is-scenic-world-stage {
+  position: relative;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, #c4a574 22%, var(--border)),
+    0 12px 40px color-mix(in srgb, #1a120c 28%, transparent);
+}
+
+.pg-world-map-stage.is-scenic-world-stage::after {
+  content: '';
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: radial-gradient(
+    ellipse 85% 75% at 50% 45%,
+    transparent 50%,
+    color-mix(in srgb, #2a1810 16%, transparent) 100%
+  );
+}
+
+.pg-world-viewport.is-scenic-integration {
+  border-radius: calc(var(--radius-md) - 2px);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, #f4e4c8 12%, transparent);
+}
+
+.pg-world-scenic-region--forest .pg-world-scenic-region-hit:not(.is-selected) {
+  fill: color-mix(in srgb, #3d6b4a 8%, transparent);
+  stroke: color-mix(in srgb, #4a7c59 35%, transparent);
+}
+
+.pg-world-scenic-region--coastal .pg-world-scenic-region-hit:not(.is-selected) {
+  fill: color-mix(in srgb, #4a7a9a 7%, transparent);
+  stroke: color-mix(in srgb, #5a8fad 32%, transparent);
+}
+
+.pg-world-scenic-region--plains .pg-world-scenic-region-hit:not(.is-selected),
+.pg-world-scenic-region--temperate .pg-world-scenic-region-hit:not(.is-selected) {
+  fill: color-mix(in srgb, #8b7355 6%, transparent);
+  stroke: color-mix(in srgb, #a68962 28%, transparent);
+}
+
+.pg-world-scenic-region-label {
+  paint-order: stroke fill;
+  stroke: #24180f;
+  stroke-width: 1px;
+}
+
+.pg-world-layer-scenic-labels {
+  pointer-events: none;
+}
+
+.pg-world-viewport.is-scenic-integration .pg-world-building-marker-ground {
+  filter: drop-shadow(0 3px 4px color-mix(in srgb, #2a1810 42%, transparent));
+}
+
+.pg-world-viewport.is-scenic-integration .pg-world-building-marker-glyph {
+  filter: drop-shadow(0 2px 3px color-mix(in srgb, #1a120c 55%, transparent))
+    drop-shadow(0 0 1px color-mix(in srgb, #f4e4c8 40%, transparent));
+}
+
+.pg-world-viewport.is-scenic-integration .pg-world-building-marker-shadow {
+  fill: color-mix(in srgb, #1a120c 42%, transparent);
+}
+
+.pg-world-building-marker--scenic-grounding .pg-world-building-marker-ground {
+  fill: color-mix(in srgb, #2a1810 14%, transparent);
+  stroke: color-mix(in srgb, #3d2914 22%, transparent);
+  stroke-width: 0.85;
+  opacity: 0.85;
+}
+
+.pg-world-building-marker--scenic-grounding .pg-world-building-marker-shadow {
+  fill: color-mix(in srgb, #1a120c 48%, transparent);
+  opacity: 0.92;
+}
+
+.pg-world-building-marker--scenic-grounding .pg-world-building-marker-glyph {
+  filter: drop-shadow(1.5px 2.5px 1px color-mix(in srgb, #1a120c 50%, transparent))
+    drop-shadow(0 0 1px color-mix(in srgb, #f4e4c8 28%, transparent));
+}
+
+.pg-world-with-assets .pg-world-legend,
+.pg-world-with-assets .pg-world-layer-panel-shell,
+.pg-world-with-assets .pg-world-region-focus-bar {
+  box-shadow: 0 2px 8px color-mix(in srgb, #1a120c 12%, transparent);
+  border-color: color-mix(in srgb, #c4a574 18%, var(--border));
+}
+
+.pg-world-workspace .pg-inspector-panel {
+  box-shadow: 0 4px 16px color-mix(in srgb, #1a120c 14%, transparent);
+  border: 1px solid color-mix(in srgb, #c4a574 15%, var(--border));
+}
+
+.pg-world-route-group.is-active .pg-world-route-active {
+  stroke: color-mix(in srgb, #d4924a 55%, #b87333);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pg-world-map-stage.is-scenic-world-stage::after {
+    opacity: 0.85;
   }
 }
