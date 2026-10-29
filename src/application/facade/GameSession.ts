@@ -199,8 +199,18 @@ export class GameSession {
   }
 
   /** Starts a fresh company with starter infrastructure and resources. */
-  startNewGame(name = 'Genesis Industries'): Result<void, ValidationError> {
-    const startResult = this.#startNewGame.execute({
+  async startNewGame(name = 'Genesis Industries'): Promise<Result<void, ValidationError>> {
+    const bootstrapResult = await bootstrapApplication({
+      gameContentRoot: this.#gameContentRoot,
+    });
+
+    if (!bootstrapResult.ok) {
+      return Result.fail(new ValidationError(bootstrapResult.error.message));
+    }
+
+    const candidateContext = bootstrapResult.value;
+    const candidateStartNewGame = new StartNewGameUseCase(candidateContext);
+    const startResult = candidateStartNewGame.execute({
       companyId: DEFAULT_COMPANY_ID,
       name,
       ownerId: DEFAULT_PLAYER_ID,
@@ -210,6 +220,12 @@ export class GameSession {
       return Result.fail(startResult.error);
     }
 
+    this.#replaceContext(candidateContext);
+    this.#finalizeNewGameSession(name);
+    return Result.ok(undefined);
+  }
+
+  #finalizeNewGameSession(name: string): void {
     this.#buildingSequence = NEW_GAME_STARTER_BUILDINGS.length;
     this.#productionSequence = 0;
     this.#researchSequence = 0;
@@ -221,7 +237,6 @@ export class GameSession {
     this.#loggedCompletedProductionJobIds.clear();
     this.#recordTickSnapshot();
     this.#recordPlayerEvent('SESSION', `Neues Spiel gestartet: ${name}.`);
-    return Result.ok(undefined);
   }
 
   /** Returns the aggregated dashboard snapshot for the active company. */

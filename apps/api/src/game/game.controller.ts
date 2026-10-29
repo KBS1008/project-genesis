@@ -238,9 +238,9 @@ export class GameController {
   /** Starts a new single-player browser session. */
   @Post('session/new')
   @HttpCode(200)
-  startNewGame(@Body() body: NewGameDto | undefined) {
+  async startNewGame(@Body() body: NewGameDto | undefined) {
     const result = toApiSuccess(
-      unwrapResult(this.gameSessionService.getSession().startNewGame(body?.name)),
+      unwrapResult(await this.gameSessionService.getSession().startNewGame(body?.name)),
     );
     this.#notifyDashboardRefresh();
     return result;

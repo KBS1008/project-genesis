@@ -1,7 +1,13 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { mkdtemp, rm } from 'node:fs/promises';
+import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { ContentLoadError } from '../../content/errors/ContentLoadError.js';
+import { ValidationError } from '../../common/errors/ValidationError.js';
+import { Result } from '../../common/result/Result.js';
+import * as bootstrapModule from '../bootstrap/bootstrapApplication.js';
+import { StartNewGameUseCase } from '../use-cases/StartNewGameUseCase.js';
 import { GameSession } from './GameSession.js';
 import { STARTING_MONEY } from '../../domain/finance/FinanceConstants.js';
 import { NEW_GAME_STARTER_BUILDINGS } from '../new-game/NewGameSetupConstants.js';
@@ -55,7 +61,7 @@ describe('GameSession', () => {
       expect(emptyDashboard.value.milestones.length).toBeGreaterThan(0);
     }
 
-    const startResult = session.startNewGame('Browser Test Corp');
+    const startResult = await session.startNewGame('Browser Test Corp');
 
     expect(startResult.ok).toBe(true);
 
@@ -90,7 +96,7 @@ describe('GameSession', () => {
   it('places a building and advances simulation ticks', async () => {
     const session = await createSession();
 
-    session.startNewGame('Construction Test Corp');
+    await session.startNewGame('Construction Test Corp');
 
     const placeResult = session.placeBuilding({
       buildingTypeId: 'sawmill',
@@ -120,7 +126,7 @@ describe('GameSession', () => {
 
   it('starts production after construction completes', async () => {
     const session = await createSession();
-    session.startNewGame('Production Test Corp');
+    await session.startNewGame('Production Test Corp');
 
     const placeResult = session.placeBuilding({
       buildingTypeId: 'sawmill',
@@ -157,7 +163,7 @@ describe('GameSession', () => {
 
   it('buys wood on the market and advances the simulation', async () => {
     const session = await createSession();
-    session.startNewGame('Market Buy Corp');
+    await session.startNewGame('Market Buy Corp');
 
     const sellResult = session.sellResource({ resourceId: 'wood', amount: 5 });
 
@@ -195,7 +201,7 @@ describe('GameSession', () => {
 
   it('advances multiple simulation ticks in one request', async () => {
     const session = await createSession();
-    session.startNewGame('Batch Tick Corp');
+    await session.startNewGame('Batch Tick Corp');
 
     const tickResult = session.tick(10);
 
@@ -212,7 +218,7 @@ describe('GameSession', () => {
 
   it('records tick history for dashboard charts', async () => {
     const session = await createSession();
-    session.startNewGame('History Test Corp');
+    await session.startNewGame('History Test Corp');
 
     const initialHistory = session.getTickHistory();
 
@@ -235,9 +241,26 @@ describe('GameSession', () => {
     }
   });
 
-  it('does not reuse building ids after a rejected startNewGame call', async () => {
+  it('starts a second new game after an active game without company id collision', async () => {
     const session = await createSession();
-    session.startNewGame('First Corp');
+    const first = await session.startNewGame('First Corp');
+    expect(first.ok).toBe(true);
+
+    const second = await session.startNewGame('BVB 09');
+    expect(second.ok).toBe(true);
+
+    const company = session.getCompany();
+    expect(company.ok).toBe(true);
+
+    if (company.ok && company.value !== null) {
+      expect(company.value.name).toBe('BVB 09');
+      expect(company.value.id).toBe('company_001');
+    }
+  });
+
+  it('resets building id sequence after starting a new game on an active session', async () => {
+    const session = await createSession();
+    await session.startNewGame('First Corp');
 
     const first = session.placeBuilding({
       buildingTypeId: 'sawmill',
@@ -254,8 +277,7 @@ describe('GameSession', () => {
 
     expect(first.value).toBe('building_005');
 
-    const rejected = session.startNewGame('Second Corp');
-    expect(rejected.ok).toBe(false);
+    await session.startNewGame('Second Corp');
 
     const second = session.placeBuilding({
       buildingTypeId: 'sawmill',
@@ -267,8 +289,72 @@ describe('GameSession', () => {
     expect(second.ok).toBe(true);
 
     if (second.ok) {
-      expect(second.value).toBe('building_006');
+      expect(second.value).toBe('building_005');
     }
+  });
+
+  it('does not write to the configured save path when starting a new game', async () => {
+    const tempDirectory = await mkdtemp(path.join(tmpdir(), 'genesis-new-game-save-'));
+    const savePath = path.join(tempDirectory, 'browser-session.json');
+    const marker = '{"marker":"preserve-on-new-game"}';
+
+    try {
+      await writeFile(savePath, marker, 'utf8');
+      const session = await createSession(savePath);
+      await session.startNewGame('First Corp');
+      await session.startNewGame('Second Corp');
+
+      const onDisk = await readFile(savePath, 'utf8');
+      expect(onDisk).toBe(marker);
+    } finally {
+      await rm(tempDirectory, { recursive: true, force: true });
+    }
+  });
+
+  it('preserves the active session when fresh bootstrap fails', async () => {
+    const session = await createSession();
+    await session.startNewGame('First Corp');
+
+    const bootstrapSpy = vi
+      .spyOn(bootstrapModule, 'bootstrapApplication')
+      .mockResolvedValueOnce(Result.fail(new ContentLoadError('bootstrap failed for test')));
+
+    const failed = await session.startNewGame('Second Corp');
+    expect(failed.ok).toBe(false);
+
+    const company = session.getCompany();
+    expect(company.ok).toBe(true);
+
+    if (company.ok && company.value !== null) {
+      expect(company.value.name).toBe('First Corp');
+    }
+
+    bootstrapSpy.mockRestore();
+  });
+
+  it('preserves the active session when candidate new-game initialization fails', async () => {
+    const session = await createSession();
+    await session.startNewGame('First Corp');
+
+    const executeSpy = vi
+      .spyOn(StartNewGameUseCase.prototype, 'execute')
+      .mockReturnValueOnce(Result.fail(new ValidationError('init failed for test')));
+
+    const failed = await session.startNewGame('Second Corp');
+    expect(failed.ok).toBe(false);
+
+    const company = session.getCompany();
+    expect(company.ok).toBe(true);
+
+    if (company.ok && company.value !== null) {
+      expect(company.value.name).toBe('First Corp');
+    }
+
+    executeSpy.mockRestore();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   it('allocates a new building id after save, reload, and repeat placement', async () => {
@@ -277,7 +363,7 @@ describe('GameSession', () => {
 
     try {
       const session = await createSession(savePath);
-      session.startNewGame('Repeat Placement Corp');
+      await session.startNewGame('Repeat Placement Corp');
 
       const first = session.placeBuilding({
         buildingTypeId: 'sawmill',
@@ -336,7 +422,7 @@ describe('GameSession', () => {
 
     try {
       const session = await createSession(savePath);
-      session.startNewGame('Save Test Corp');
+      await session.startNewGame('Save Test Corp');
 
       const placeResult = session.placeBuilding({
         buildingTypeId: 'sawmill',
@@ -393,7 +479,7 @@ describe('GameSession', () => {
   it('exposes hired and assigned employees on the dashboard', async () => {
     const session = await createSession();
 
-    session.startNewGame('Employee Dashboard Corp');
+    await session.startNewGame('Employee Dashboard Corp');
 
     const placeResult = session.placeBuilding({
       buildingTypeId: 'sawmill',
@@ -463,7 +549,7 @@ describe('GameSession', () => {
 
   it('records production completion in the player event log with entity linkage', async () => {
     const session = await createSession();
-    session.startNewGame('Production Completion Corp');
+    await session.startNewGame('Production Completion Corp');
 
     const placeResult = session.placeBuilding({
       buildingTypeId: 'sawmill',
@@ -556,7 +642,7 @@ describe('GameSession', () => {
 
   it('includes recipe catalog on dashboard for production UI surfaces', async () => {
     const session = await createSession();
-    session.startNewGame('Recipe Catalog Corp');
+    await session.startNewGame('Recipe Catalog Corp');
 
     const dashboardResult = session.getDashboard();
 
@@ -574,7 +660,7 @@ describe('GameSession', () => {
 
   it('exposes stalled workforce state for running jobs without assigned workers', async () => {
     const session = await createSession();
-    session.startNewGame('Production Stall Corp');
+    await session.startNewGame('Production Stall Corp');
 
     const placeResult = session.placeBuilding({
       buildingTypeId: 'sawmill',
@@ -613,7 +699,7 @@ describe('GameSession', () => {
 
   it('exposes stalled energy state when company energy deficit blocks running jobs', async () => {
     const session = await createSession();
-    session.startNewGame('Production Energy Stall Corp');
+    await session.startNewGame('Production Energy Stall Corp');
 
     const placeProductionSawmill = session.placeBuilding({
       buildingTypeId: 'sawmill',
