@@ -250,6 +250,55 @@
   min-width: 0;
 }
 
+.pg-energy-reserve-kpi {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.pg-energy-kpi-breakdown {
+  display: grid;
+  gap: 0.2rem;
+  margin: var(--space-xs) 0 0;
+  padding: 0;
+}
+
+.pg-energy-kpi-breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  font-size: 0.8125rem;
+}
+
+.pg-energy-kpi-breakdown-row dt {
+  margin: 0;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.pg-energy-kpi-breakdown-row dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.pg-energy-kpi-breakdown-reserve-deficit {
+  color: var(--danger, #c0392b);
+  font-weight: 600;
+}
+
+.pg-energy-kpi-formula {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+.pg-energy-kpi-consumption-hint {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
 .pg-executive-toolbar {
   display: flex;
   flex-wrap: wrap;

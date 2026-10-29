@@ -159,6 +159,18 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
           inputLabels: ['wood × 10'],
           outputLabels: ['planks × 20'],
           buildingTypeLabels: ['Sägewerk'],
+          inputAvailability: [
+            {
+              resourceId: 'wood',
+              resourceLabel: 'wood',
+              requiredQuantity: 10,
+              availableQuantity: 10,
+              requiredLabel: '10',
+              availableLabel: '10',
+              statusLabel: 'Ausreichend',
+              isSufficient: true,
+            },
+          ],
         },
       ],
       detail: {
@@ -330,5 +342,22 @@ describe('ProductionScreen', () => {
       screen: 'company',
       entitySelection: { kind: 'warehouse', id: 'building_005' },
     });
+  });
+
+  it('shows recipe input availability table when a catalog recipe is selected', async () => {
+    workspaceState.setNavigation({ screen: 'production', entitySelection: { kind: 'none' } });
+    const user = userEvent.setup();
+    render(<ProductionScreen />);
+
+    await user.click(screen.getByRole('button', { name: /Bretter herstellen/ }));
+
+    const inputTable = document.querySelector('.pg-recipe-input-availability-table');
+    expect(inputTable).not.toBeNull();
+    const table = within(inputTable as HTMLElement);
+    expect(table.getByRole('columnheader', { name: 'Rohstoff' })).toBeInTheDocument();
+    expect(table.getByRole('columnheader', { name: 'Benötigt' })).toBeInTheDocument();
+    expect(table.getByRole('columnheader', { name: 'Verfügbar' })).toBeInTheDocument();
+    expect(table.getByRole('columnheader', { name: 'Status' })).toBeInTheDocument();
+    expect(table.getByRole('row', { name: /wood 10 10 Ausreichend/i })).toBeInTheDocument();
   });
 });

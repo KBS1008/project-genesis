@@ -26,6 +26,10 @@ import { formatMissingMilestoneReason } from './player-facing-milestone-label.js
 import { formatMissingTechnologyReason } from './player-facing-technology-label.js';
 import { formatMissingResourceInputReason } from './player-facing-resource-label.js';
 import {
+  computeRecipeInputAvailability,
+  type RecipeInputAvailabilityInventoryContext,
+} from './production-recipe-input-availability.js';
+import {
   formatApproximatePlayerFacingCycleDuration,
   formatPlayerFacingCycleCount,
   formatPlayerFacingCycleIntervalEvery,
@@ -92,13 +96,20 @@ export class GameSessionDashboardBuilder {
   }
 
   /** Returns enabled recipe definitions for read-only production UI surfaces. */
-  readRecipeCatalog(): readonly RecipeCatalogEntryReadModel[] {
+  readRecipeCatalog(
+    inventoryContext?: RecipeInputAvailabilityInventoryContext | null,
+  ): readonly RecipeCatalogEntryReadModel[] {
     return Object.freeze(
       this.#context.gameContent.recipes
         .getAll()
         .filter((recipe) => recipe.enabled)
-        .map((recipe) =>
-          Object.freeze({
+        .map((recipe) => {
+          const inputAvailability =
+            inventoryContext === undefined || inventoryContext === null
+              ? Object.freeze([])
+              : computeRecipeInputAvailability(recipe.inputs, inventoryContext);
+
+          return Object.freeze({
             id: recipe.id,
             name: recipe.name,
             durationTicks: recipe.duration,
@@ -114,8 +125,9 @@ export class GameSessionDashboardBuilder {
               ),
             ),
             buildingTypeIds: Object.freeze([...recipe.buildingTypes]),
-          }),
-        ),
+            inputAvailability,
+          });
+        }),
     );
   }
 
@@ -615,18 +627,13 @@ export class GameSessionDashboardBuilder {
             reason = 'Teilweise am Standort — Rest kommt aus dem Lagerhaus per Transport.';
           } else {
             canStart = false;
+            const availabilityRows = computeRecipeInputAvailability(recipe.inputs, {
+              inventory: input.inventory,
+              warehouseStorage: input.warehouseStorage,
+            });
             const missingInput = recipe.inputs.find((recipeInput) => {
-              const onSite =
-                input.inventory.items.find((item) => item.resourceId === recipeInput.resource)
-                  ?.available ?? 0;
-              const inWarehouse = input.warehouseStorage.reduce(
-                (total, storage) =>
-                  total +
-                  (storage.items.find((item) => item.resourceId === recipeInput.resource)
-                    ?.available ?? 0),
-                0,
-              );
-              return onSite + inWarehouse < recipeInput.amount;
+              const row = availabilityRows.find((entry) => entry.resourceId === recipeInput.resource);
+              return row !== undefined && !row.isSufficient;
             });
 
             if (missingInput !== undefined) {

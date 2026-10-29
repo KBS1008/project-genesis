@@ -38,7 +38,7 @@ export function buildOperationsKpiCards(kpis: KpiStripViewData): readonly Operat
     },
     {
       id: 'energy',
-      label: 'Energie-Reserve',
+      label: 'Energiereserve',
       value: kpis.energyReserveLabel,
       trend: kpis.energyTrend,
       variant: kpis.energyHasDeficit ? 'danger' : 'success',

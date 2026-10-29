@@ -17,6 +17,7 @@ import {
   type EmployeeRowViewData,
   type EntityCatalogViewData,
   type EntityDetailViewData,
+  type EnergyKpiPresentationViewData,
   type FinanceTransactionRowViewData,
   type InventoryItemRowViewData,
   type KpiStripViewData,
@@ -190,6 +191,33 @@ function mapKpiStrip(
         ? `${kpis.activeContractCount} aktiv · ${formatPlayerCycleIntervalEvery(kpis.taxIntervalTicks)}`
         : `Steuer ${formatPlayerCycleIntervalEvery(kpis.taxIntervalTicks)}`,
     taxIntervalTicks: kpis.taxIntervalTicks,
+  });
+}
+
+function mapEnergyKpiPresentation(
+  dashboard: GameSessionDashboard,
+  chartPoints: readonly TickMetricsSnapshot[],
+): EnergyKpiPresentationViewData | null {
+  const energy = dashboard.energy;
+
+  if (energy === null) {
+    return null;
+  }
+
+  const trend =
+    energy.hasDeficit
+      ? trendLabel('down', 'Defizit')
+      : trendFromHistory(chartPoints, 'energyReserve', 'Stabil');
+
+  return Object.freeze({
+    reserveLabel: formatEnergy(energy.reserve),
+    generationLabel: formatEnergy(energy.generation),
+    consumptionLabel: formatEnergy(energy.consumption),
+    trend,
+    hasDeficit: energy.hasDeficit,
+    formulaExplanation: 'Reserve = Erzeugung − Verbrauch',
+    consumptionExplanation:
+      'Der Verbrauch umfasst aktive Gebäude und laufende Produktionsaufträge.',
   });
 }
 
@@ -750,6 +778,20 @@ function mapRecipeCatalog(
         buildingTypeLabels: Object.freeze(
           entry.buildingTypeIds.map((buildingTypeId) => labels.building(buildingTypeId)),
         ),
+        inputAvailability: Object.freeze(
+          entry.inputAvailability.map((row) =>
+            Object.freeze({
+              resourceId: row.resourceId,
+              resourceLabel: labels.resource(row.resourceId),
+              requiredQuantity: row.requiredQuantity,
+              availableQuantity: row.availableQuantity,
+              requiredLabel: formatNumber(row.requiredQuantity),
+              availableLabel: formatNumber(row.availableQuantity),
+              statusLabel: row.isSufficient ? 'Ausreichend' : 'Nicht ausreichend',
+              isSufficient: row.isSufficient,
+            }),
+          ),
+        ),
       }),
     ),
   );
@@ -908,5 +950,6 @@ export function buildCompanyDashboardViewData(
     chartPoints: mapChartPoints(chartPoints),
     marketPrices: mapMarketPrices(dashboard, labels),
     detail: mapCompanyDetail(dashboard, labels),
+    energyKpiPresentation: mapEnergyKpiPresentation(dashboard, chartPoints),
   });
 }

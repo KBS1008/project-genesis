@@ -55,6 +55,7 @@ describe('operations dashboard components', () => {
     const { container } = render(
       <OperationsKpiStrip
         cards={buildOperationsKpiCards(SAMPLE_KPIS)}
+        energyPresentation={null}
         onSelectFinance={() => {}}
         onSelectLogistics={() => {}}
       />,
@@ -89,6 +90,7 @@ describe('operations dashboard components', () => {
     render(
       <OperationsKpiStrip
         cards={buildOperationsKpiCards(SAMPLE_KPIS)}
+        energyPresentation={null}
         onSelectFinance={onSelectFinance}
         onSelectLogistics={onSelectLogistics}
       />,

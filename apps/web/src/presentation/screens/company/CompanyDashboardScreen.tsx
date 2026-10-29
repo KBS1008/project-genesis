@@ -329,6 +329,7 @@ export function CompanyDashboardScreen({
           {hasGame && operationsKpiCards !== null ? (
             <OperationsKpiStrip
               cards={operationsKpiCards}
+              energyPresentation={companyViewData.energyKpiPresentation}
               onSelectFinance={selectFinanceDetail}
               onSelectLogistics={selectLogisticsDetail}
             />

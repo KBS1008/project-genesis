@@ -143,6 +143,14 @@ export type PlaceBuildingHint = {
   readonly prerequisiteNavigation: PlaceBuildingPrerequisiteNavigation | null;
 };
 
+/** Per-input availability for production UI (P2-PC-S1). */
+export type RecipeInputAvailabilityReadModel = {
+  readonly resourceId: string;
+  readonly requiredQuantity: number;
+  readonly availableQuantity: number;
+  readonly isSufficient: boolean;
+};
+
 /** Read-only recipe catalog entry for production UI (content snapshot). */
 export type RecipeCatalogEntryReadModel = {
   readonly id: string;
@@ -152,6 +160,7 @@ export type RecipeCatalogEntryReadModel = {
   readonly inputs: readonly { readonly resourceId: string; readonly amount: number }[];
   readonly outputs: readonly { readonly resourceId: string; readonly amount: number }[];
   readonly buildingTypeIds: readonly string[];
+  readonly inputAvailability: readonly RecipeInputAvailabilityReadModel[];
 };
 
 /** Hint for starting production on a building. */

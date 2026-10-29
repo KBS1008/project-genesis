@@ -47,6 +47,13 @@ describe('company-operations-view-mappers', () => {
     expect(cards.find((card) => card.id === 'transport')?.isActive).toBe(true);
   });
 
+  it('labels the energy KPI as Energiereserve', () => {
+    const cards = buildOperationsKpiCards(SAMPLE_KPIS);
+
+    expect(cards.find((card) => card.id === 'energy')?.label).toBe('Energiereserve');
+    expect(cards.find((card) => card.id === 'energy')?.value).toBe('120');
+  });
+
   it('buildOperationsOverviewCards marks transport card as logistics action', () => {
     const cards = buildOperationsOverviewCards({
       cards: Object.freeze([

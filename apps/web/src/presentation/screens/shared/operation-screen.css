@@ -333,3 +333,38 @@
   background: var(--accent);
   border-radius: var(--radius-full);
 }
+
+.pg-recipe-input-availability-wrap {
+  overflow-x: auto;
+  margin-bottom: var(--space-sm);
+}
+
+.pg-recipe-input-availability-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.pg-recipe-input-availability-table th,
+.pg-recipe-input-availability-table td {
+  padding: 0.45rem 0.5rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.pg-recipe-input-availability-table thead th {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.pg-recipe-input-availability-table tbody th[scope='row'] {
+  font-weight: 500;
+}
+
+.pg-recipe-input-status-sufficient {
+  color: var(--success, #2d8a4e);
+}
+
+.pg-recipe-input-status-insufficient {
+  color: var(--danger, #c0392b);
+}

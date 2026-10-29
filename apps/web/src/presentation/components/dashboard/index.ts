@@ -1,4 +1,5 @@
 export { PGKpiCard, type PGKpiCardVariant } from './PGKpiCard';
+export { PGEnergyReserveKpiCard } from './PGEnergyReserveKpiCard';
 export { PGStatusPanel, type PGStatusPanelItem } from './PGStatusPanel';
 export { PGNotificationCenter, type PGNotificationItem } from './PGNotificationCenter';
 export { PGFinanceWidget, type PGFinanceRow } from './PGFinanceWidget';

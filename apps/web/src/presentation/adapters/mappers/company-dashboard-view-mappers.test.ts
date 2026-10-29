@@ -119,9 +119,17 @@ describe('company-dashboard-view-mappers', () => {
           name: 'Bretter',
           durationTicks: 60,
           energyPerTick: 0.2,
-          inputs: [],
-          outputs: [],
+          inputs: [{ resourceId: 'wood', amount: 10 }],
+          outputs: [{ resourceId: 'planks', amount: 20 }],
           buildingTypeIds: ['sawmill'],
+          inputAvailability: [
+            {
+              resourceId: 'wood',
+              requiredQuantity: 10,
+              availableQuantity: 3,
+              isSufficient: false,
+            },
+          ],
         },
       ],
     };
@@ -129,6 +137,71 @@ describe('company-dashboard-view-mappers', () => {
     const viewData = buildCompanyDashboardViewData(dashboard, []);
     expect(viewData.recipeCatalog[0]?.durationLabel).toBe('60 Zyklen');
     expect(viewData.recipeCatalog[0]?.energyLabel).toBe('0,2 / Zyklus');
+    expect(viewData.recipeCatalog[0]?.inputAvailability).toEqual([
+      expect.objectContaining({
+        resourceId: 'wood',
+        requiredLabel: '10',
+        availableLabel: '3',
+        statusLabel: 'Nicht ausreichend',
+        isSufficient: false,
+      }),
+    ]);
+  });
+
+  it('maps energy KPI presentation from dashboard energy read model', () => {
+    const dashboard: GameSessionDashboard = {
+      ...createDashboardFixture(),
+      kpis: {
+        ...createDashboardFixture().kpis!,
+        energyReserve: 45.6,
+        energyHasDeficit: false,
+      },
+      energy: {
+        generation: 80,
+        consumption: 34.4,
+        reserve: 45.6,
+        hasDeficit: false,
+        usesBaselineGrid: false,
+      },
+    };
+
+    const viewData = buildCompanyDashboardViewData(dashboard, []);
+
+    expect(viewData.energyKpiPresentation).toEqual(
+      expect.objectContaining({
+        reserveLabel: '45.6 MW',
+        generationLabel: '80.0 MW',
+        consumptionLabel: '34.4 MW',
+        formulaExplanation: 'Reserve = Erzeugung − Verbrauch',
+        trend: expect.stringContaining('Stabil'),
+        hasDeficit: false,
+      }),
+    );
+    expect(viewData.kpis?.energyReserveLabel).toBe('45.6 MW');
+  });
+
+  it('maps negative energy reserve with deficit trend', () => {
+    const dashboard: GameSessionDashboard = {
+      ...createDashboardFixture(),
+      kpis: {
+        ...createDashboardFixture().kpis!,
+        energyReserve: -2,
+        energyHasDeficit: true,
+      },
+      energy: {
+        generation: 10,
+        consumption: 12,
+        reserve: -2,
+        hasDeficit: true,
+        usesBaselineGrid: true,
+      },
+    };
+
+    const viewData = buildCompanyDashboardViewData(dashboard, []);
+
+    expect(viewData.energyKpiPresentation?.reserveLabel).toBe('-2.0 MW');
+    expect(viewData.energyKpiPresentation?.hasDeficit).toBe(true);
+    expect(viewData.energyKpiPresentation?.trend).toContain('Defizit');
   });
 
   it('exposes player-facing cycle terminology on dashboard header and transport rows', () => {

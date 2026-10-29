@@ -84,6 +84,7 @@ function createDashboardFixture(): CompanyDashboardViewData {
     warehouseStorage: [],
     chartPoints: [],
     marketPrices: [],
+    energyKpiPresentation: null,
     detail: {
       hasFinance: true,
       hasLogistics: true,
@@ -137,6 +138,7 @@ describe('buildExecutiveDashboardViewData', () => {
     expect(dashboard.companySummary).toBe('2 Gebäude · Zyklus 42');
     expect(dashboard.playerSummary).toBe('player_001');
     expect(dashboard.kpiCards.length).toBeGreaterThan(0);
+    expect(dashboard.kpiCards.find((card) => card.id === 'energy')?.label).toBe('Energiereserve');
     expect(dashboard.kpiCards[0]?.placeholder).toBe('{{availableCash}}');
     expect(dashboard.notifications).toEqual(notifications);
     expect(dashboard.reportActions).toHaveLength(4);

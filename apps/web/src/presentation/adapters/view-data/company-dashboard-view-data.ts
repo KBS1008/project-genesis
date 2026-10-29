@@ -53,6 +53,17 @@ export type KpiStripViewData = {
   readonly taxIntervalTicks: number;
 };
 
+/** Company energy KPI breakdown (ENERGY-RESERVE-KPI-CLARITY-S1). */
+export type EnergyKpiPresentationViewData = {
+  readonly reserveLabel: string;
+  readonly generationLabel: string;
+  readonly consumptionLabel: string;
+  readonly trend: string;
+  readonly hasDeficit: boolean;
+  readonly formulaExplanation: string;
+  readonly consumptionExplanation: string;
+};
+
 export type OverviewCardViewData = {
   readonly label: string;
   readonly value: string;
@@ -193,6 +204,17 @@ export type ProductionHintViewData = {
   readonly reason: string | null;
 };
 
+export type RecipeInputAvailabilityViewData = {
+  readonly resourceId: string;
+  readonly resourceLabel: string;
+  readonly requiredQuantity: number;
+  readonly availableQuantity: number;
+  readonly requiredLabel: string;
+  readonly availableLabel: string;
+  readonly statusLabel: string;
+  readonly isSufficient: boolean;
+};
+
 export type RecipeCatalogEntryViewData = {
   readonly id: string;
   readonly name: string;
@@ -201,6 +223,7 @@ export type RecipeCatalogEntryViewData = {
   readonly inputLabels: readonly string[];
   readonly outputLabels: readonly string[];
   readonly buildingTypeLabels: readonly string[];
+  readonly inputAvailability: readonly RecipeInputAvailabilityViewData[];
 };
 
 export type ResearchHintViewData = {
@@ -356,6 +379,7 @@ export type CompanyDashboardViewData = {
   readonly chartPoints: readonly TickMetricsViewData[];
   readonly marketPrices: readonly MarketPriceChartViewData[];
   readonly detail: CompanyDetailViewData;
+  readonly energyKpiPresentation: EnergyKpiPresentationViewData | null;
 };
 
 export const EMPTY_COMPANY_DASHBOARD_VIEW_DATA: CompanyDashboardViewData = Object.freeze({
@@ -409,6 +433,7 @@ export const EMPTY_COMPANY_DASHBOARD_VIEW_DATA: CompanyDashboardViewData = Objec
   warehouseStorage: Object.freeze([]),
   chartPoints: Object.freeze([]),
   marketPrices: Object.freeze([]),
+  energyKpiPresentation: null,
   detail: Object.freeze({
     hasFinance: false,
     hasLogistics: false,

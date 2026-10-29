@@ -7,6 +7,7 @@ import { fetchBuildingList } from '@/presentation/adapters/api/query-client';
 import {
   PGCompanyWidget,
   PGFinanceWidget,
+  PGEnergyReserveKpiCard,
   PGKpiCard,
   PGNotificationCenter,
   PGProductionWidget,
@@ -187,17 +188,25 @@ export function ExecutiveDashboardScreen({
             {dashboard.kpiCards.length > 0 ? (
               <section aria-label="Kernkennzahlen">
                 <div className="pg-kpi-grid">
-                  {dashboard.kpiCards.map((card) => (
-                    <PGKpiCard
-                      key={card.id}
-                      label={card.label}
-                      value={card.value}
-                      hint={card.hint}
-                      trend={card.trend}
-                      variant={card.variant}
-                      placeholder={card.placeholder}
-                    />
-                  ))}
+                  {dashboard.kpiCards.map((card) =>
+                    card.id === 'energy' && companyViewData.energyKpiPresentation !== null ? (
+                      <PGEnergyReserveKpiCard
+                        key={card.id}
+                        presentation={companyViewData.energyKpiPresentation}
+                        variant={card.variant}
+                      />
+                    ) : (
+                      <PGKpiCard
+                        key={card.id}
+                        label={card.label}
+                        value={card.value}
+                        hint={card.hint}
+                        trend={card.trend}
+                        variant={card.variant}
+                        placeholder={card.placeholder}
+                      />
+                    ),
+                  )}
                 </div>
               </section>
             ) : null}

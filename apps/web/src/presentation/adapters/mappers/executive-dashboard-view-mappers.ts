@@ -52,7 +52,7 @@ function buildKpiCards(companyViewData: CompanyDashboardViewData): readonly Exec
     },
     {
       id: 'energy',
-      label: 'Energie',
+      label: 'Energiereserve',
       value: kpis.energyReserveLabel,
       hint: kpis.energyTrend,
       variant: kpis.energyHasDeficit ? 'danger' : 'success',

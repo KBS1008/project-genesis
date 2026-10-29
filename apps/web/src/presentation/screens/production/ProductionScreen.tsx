@@ -430,13 +430,48 @@ export function ProductionScreen() {
             <p className="pg-operation-hint-copy">
               <strong>Eingaben</strong>
             </p>
-            <ul className="pg-summary-list">
-              {selectedRecipeDetail.inputLabels.map((label) => (
-                <li key={label}>
-                  <span>{label}</span>
-                </li>
-              ))}
-            </ul>
+            {selectedRecipeDetail.inputAvailability.length > 0 ? (
+              <div className="pg-recipe-input-availability-wrap">
+                <table className="pg-recipe-input-availability-table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Rohstoff</th>
+                      <th scope="col">Benötigt</th>
+                      <th scope="col">Verfügbar</th>
+                      <th scope="col">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {selectedRecipeDetail.inputAvailability.map((row) => (
+                      <tr key={row.resourceId}>
+                        <th scope="row">{row.resourceLabel}</th>
+                        <td>{row.requiredLabel}</td>
+                        <td>{row.availableLabel}</td>
+                        <td>
+                          <span
+                            className={
+                              row.isSufficient
+                                ? 'pg-recipe-input-status-sufficient'
+                                : 'pg-recipe-input-status-insufficient'
+                            }
+                          >
+                            {row.statusLabel}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <ul className="pg-summary-list">
+                {selectedRecipeDetail.inputLabels.map((label) => (
+                  <li key={label}>
+                    <span>{label}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
             <p className="pg-operation-hint-copy">
               <strong>Ausgaben</strong>
             </p>
