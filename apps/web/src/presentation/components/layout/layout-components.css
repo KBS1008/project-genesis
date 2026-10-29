@@ -71,6 +71,19 @@
   font-size: var(--text-small);
 }
 
+.pg-inspector-body {
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.pg-inspector-identity-actions {
+  margin-top: var(--space-sm);
+}
+
+.pg-inspector-identity-actions .pg-inspector-footer-actions {
+  margin-top: 0;
+}
+
 .pg-inspector-list {
   margin: var(--space-md) 0 0;
   display: grid;
@@ -149,6 +162,13 @@
 
 .pg-inspector-footer {
   margin-top: var(--space-md);
+}
+
+.pg-inspector-footer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
 }
 
 .pg-inspector-related .kv-value-success {

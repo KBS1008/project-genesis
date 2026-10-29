@@ -38,6 +38,14 @@ vi.mock('@/presentation/hooks/useScreenQuery', () => ({
       };
     }
 
+    if (key.startsWith('world-building-inspector-production-jobs')) {
+      return {
+        data: [],
+        isLoading: false,
+        errorMessage: null,
+      };
+    }
+
     return {
       data: null,
       isLoading: false,
@@ -74,6 +82,7 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
     selectEntity: vi.fn(),
     clearEntitySelection: vi.fn(),
     navigateToTarget,
+    navigateProductionWorkforcePersonnel: vi.fn(),
     buildingMapPlacementSession: null,
     regions: [{ id: 'region_001', name: 'Heimatregion' }],
     companyViewData: {
@@ -81,6 +90,7 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
         building: (id: string) => id,
         recipe: (id: string) => id,
       },
+      hints: { production: [] },
       detail: {
         buildings: new Map(),
       },

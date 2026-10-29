@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, type ReactNode } from 'react';
+import { Fragment, useEffect, useRef, type ReactNode } from 'react';
 import { Button } from '@/presentation/primitives/Button';
 import { EmptyState } from '@/presentation/primitives/EmptyState';
 
@@ -32,6 +32,8 @@ export function PGInspectorPanel({
   entries,
   sections,
   footer,
+  identityActions,
+  scrollResetKey,
   relatedTitle,
   relatedItems,
   onRelatedItemClick,
@@ -44,6 +46,10 @@ export function PGInspectorPanel({
   readonly entries?: readonly PGInspectorEntry[];
   readonly sections?: readonly PGInspectorSection[];
   readonly footer?: ReactNode;
+  /** Rendered directly beneath building identity, before detail entries (GCL-S1 above-fold actions). */
+  readonly identityActions?: ReactNode;
+  /** When this value changes, the inspector body scrolls to top (e.g. selected building id). */
+  readonly scrollResetKey?: string;
   readonly relatedTitle?: string;
   readonly relatedItems?: readonly PGInspectorRelatedItem[];
   readonly onRelatedItemClick?: (item: PGInspectorRelatedItem) => void;
@@ -53,7 +59,27 @@ export function PGInspectorPanel({
 }) {
   const hasFocusContent = title !== undefined && entries !== undefined && entries.length > 0;
   const hasSections = sections !== undefined && sections.length > 0;
-  const hasContent = hasFocusContent || hasSections || footer !== undefined;
+  const hasContent =
+    hasFocusContent || hasSections || footer !== undefined || identityActions !== undefined;
+
+  const bodyRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (scrollResetKey === undefined) {
+      return;
+    }
+
+    const body = bodyRef.current;
+    if (body === null) {
+      return;
+    }
+
+    if (typeof body.scrollTo === 'function') {
+      body.scrollTo({ top: 0 });
+    } else {
+      body.scrollTop = 0;
+    }
+  }, [scrollResetKey]);
 
   return (
     <aside className="pg-inspector-panel" aria-label="Inspektor">
@@ -69,13 +95,16 @@ export function PGInspectorPanel({
       {!hasContent ? (
         <EmptyState title={emptyTitle} hint={emptyHint} />
       ) : (
-        <div className="pg-inspector-body">
+        <div className="pg-inspector-body" ref={bodyRef}>
           {hasFocusContent ? (
             <>
               <div>
                 <h3 className="pg-inspector-entity-title">{title}</h3>
                 {subtitle !== undefined ? <p className="pg-inspector-subtitle">{subtitle}</p> : null}
               </div>
+              {identityActions !== undefined ? (
+                <div className="pg-inspector-identity-actions">{identityActions}</div>
+              ) : null}
               <dl className="pg-inspector-list">
                 {entries.map((entry) => (
                   <Fragment key={entry.label}>

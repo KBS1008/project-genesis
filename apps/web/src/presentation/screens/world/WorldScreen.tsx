@@ -18,7 +18,10 @@ import { fetchWorldMap } from '@/presentation/adapters/api/world-client';
 import { EMPTY_WORLD_OVERLAY } from '@/presentation/adapters/view-data/world-view-data';
 import { PGWorldBuildingInspector, PGWorldWorkspace } from '@/presentation/components/world';
 import { buildWorldMapBuildingInspectorDetail } from '@/presentation/components/world/map-world-building-selection';
+import { buildWorldBuildingInspectorNavigationViewData } from '@/presentation/components/world/world-building-inspector-navigation';
+import { buildWorldBuildingInspectorProductionViewData } from '@/presentation/components/world/world-building-inspector-production';
 import {
+  buildBuildingNavigationTarget,
   buildProductionBuildingNavigationTarget,
 } from '@/presentation/navigation/entity-navigation';
 import { useScreenQuery, TICK_QUERY_DEBOUNCE_MS } from '@/presentation/hooks/useScreenQuery';
@@ -42,6 +45,7 @@ export function WorldScreen() {
     setBuildingMapPlacementRegion,
     confirmBuildingMapPlacement,
     cancelBuildingMapPlacement,
+    navigateProductionWorkforcePersonnel,
   } = useGameWorkspace();
   const selectedRegionId =
     navigation.entitySelection.kind === 'region' ? navigation.entitySelection.id : null;
@@ -101,6 +105,15 @@ export function WorldScreen() {
   );
 
   const overlayData = overlayQuery.data ?? EMPTY_WORLD_OVERLAY;
+
+  const productionJobsQuery = useScreenQuery(
+    'world-building-inspector-production-jobs',
+    () => fetchProductionJobs(),
+    viewData.session.hasGame,
+    { debounceMs: TICK_QUERY_DEBOUNCE_MS },
+  );
+
+  const productionJobs = productionJobsQuery.data ?? [];
 
   useEffect(() => {
     if (selectedMapBuildingId === null) {
@@ -167,8 +180,48 @@ export function WorldScreen() {
     selectedRegionName,
   ]);
 
-  const mapBuildingInspectorPanel = useMemo(() => {
+  const mapBuildingInspectorProduction = useMemo(() => {
+    if (selectedMapBuildingId === null) {
+      return null;
+    }
+
+    return buildWorldBuildingInspectorProductionViewData(
+      selectedMapBuildingId,
+      productionJobs,
+      companyViewData.hints?.production ?? [],
+      labels,
+    );
+  }, [
+    companyViewData.hints?.production,
+    labels,
+    productionJobs,
+    selectedMapBuildingId,
+  ]);
+
+  const mapBuildingInspectorNavigation = useMemo(() => {
     if (selectedMapBuildingId === null || mapBuildingInspectorDetail === null) {
+      return null;
+    }
+
+    return buildWorldBuildingInspectorNavigationViewData(
+      selectedMapBuildingId,
+      productionJobs,
+      companyViewData.hints?.production ?? [],
+      true,
+    );
+  }, [
+    companyViewData.hints?.production,
+    mapBuildingInspectorDetail,
+    productionJobs,
+    selectedMapBuildingId,
+  ]);
+
+  const mapBuildingInspectorPanel = useMemo(() => {
+    if (
+      selectedMapBuildingId === null ||
+      mapBuildingInspectorDetail === null ||
+      mapBuildingInspectorNavigation === null
+    ) {
       return undefined;
     }
 
@@ -176,15 +229,38 @@ export function WorldScreen() {
       <PGWorldBuildingInspector
         buildingId={selectedMapBuildingId}
         detail={mapBuildingInspectorDetail}
+        production={mapBuildingInspectorProduction}
+        navigation={mapBuildingInspectorNavigation}
         onClose={() => {
           setSelectedMapBuildingId(null);
         }}
-        onOpenProduction={() => {
-          navigateToTarget(buildProductionBuildingNavigationTarget(selectedMapBuildingId));
+        onOpenBuilding={() => {
+          navigateToTarget(buildBuildingNavigationTarget(selectedMapBuildingId));
         }}
+        onOpenProduction={
+          mapBuildingInspectorNavigation.showOpenProduction
+            ? () => {
+                navigateToTarget(buildProductionBuildingNavigationTarget(selectedMapBuildingId));
+              }
+            : undefined
+        }
+        onManageWorkforce={
+          mapBuildingInspectorNavigation.showManageWorkforce
+            ? () => {
+                navigateProductionWorkforcePersonnel(selectedMapBuildingId);
+              }
+            : undefined
+        }
       />
     );
-  }, [mapBuildingInspectorDetail, navigateToTarget, selectedMapBuildingId]);
+  }, [
+    mapBuildingInspectorDetail,
+    mapBuildingInspectorNavigation,
+    mapBuildingInspectorProduction,
+    navigateProductionWorkforcePersonnel,
+    navigateToTarget,
+    selectedMapBuildingId,
+  ]);
 
   const loadRegionInspector = useCallback(async () => {
     if (selectedRegionId === null) {
