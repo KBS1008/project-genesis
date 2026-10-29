@@ -171,6 +171,13 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
               isSufficient: true,
             },
           ],
+          inputOrigin: [
+            {
+              resourceId: 'wood',
+              resourceLabel: 'Holz',
+              producers: [],
+            },
+          ],
           outputUsage: [
             {
               resourceId: 'planks',
@@ -187,6 +194,48 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
           ],
         },
         {
+          id: 'recipe_machine_parts',
+          name: 'Maschinenteile fertigen',
+          durationLabel: '75 Zyklen',
+          energyLabel: '0,24 / Zyklus',
+          inputLabels: ['Stahl × 3'],
+          outputLabels: ['Maschinenteile × 2'],
+          buildingTypeLabels: ['Maschinenwerkstatt'],
+          inputAvailability: [
+            {
+              resourceId: 'steel',
+              resourceLabel: 'Stahl',
+              requiredQuantity: 3,
+              availableQuantity: 0,
+              requiredLabel: '3',
+              availableLabel: '0',
+              statusLabel: 'Nicht ausreichend',
+              isSufficient: false,
+            },
+          ],
+          inputOrigin: [
+            {
+              resourceId: 'steel',
+              resourceLabel: 'Stahl',
+              producers: [
+                {
+                  recipeId: 'recipe_steel',
+                  recipeLabel: 'Stahl schmelzen',
+                  buildingTypeLabels: ['Hochofen'],
+                  lineLabel: 'Stahl schmelzen — Hochofen',
+                },
+              ],
+            },
+          ],
+          outputUsage: [
+            {
+              resourceId: 'machine_parts',
+              resourceLabel: 'Maschinenteile',
+              consumers: [],
+            },
+          ],
+        },
+        {
           id: 'recipe_steel',
           name: 'Stahl schmelzen',
           durationLabel: '120 Zyklen',
@@ -195,6 +244,13 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
           outputLabels: ['Stahl × 3'],
           buildingTypeLabels: ['Hochofen'],
           inputAvailability: [],
+          inputOrigin: [
+            {
+              resourceId: 'iron_ore',
+              resourceLabel: 'Eisenerz',
+              producers: [],
+            },
+          ],
           outputUsage: [
             {
               resourceId: 'steel',
@@ -202,6 +258,49 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
               consumers: [],
             },
           ],
+        },
+        {
+          id: 'recipe_consumer_goods',
+          name: 'Konsumgüter herstellen',
+          durationLabel: '90 Zyklen',
+          energyLabel: '0,22 / Zyklus',
+          inputLabels: ['advanced_electronics × 2', 'planks × 5'],
+          outputLabels: ['consumer_goods × 3'],
+          buildingTypeLabels: ['Konsumgüterwerk'],
+          inputAvailability: [],
+          inputOrigin: [
+            {
+              resourceId: 'advanced_electronics',
+              resourceLabel: 'Elektronik',
+              producers: [
+                {
+                  recipeId: 'recipe_advanced_electronics',
+                  recipeLabel: 'Advanced Elektronik produzieren',
+                  buildingTypeLabels: ['Elektronikfabrik'],
+                  lineLabel: 'Advanced Elektronik produzieren — Elektronikfabrik',
+                },
+              ],
+            },
+            {
+              resourceId: 'planks',
+              resourceLabel: 'Bretter',
+              producers: [
+                {
+                  recipeId: 'recipe_planks',
+                  recipeLabel: 'Bretter herstellen',
+                  buildingTypeLabels: ['Sägewerk'],
+                  lineLabel: 'Bretter herstellen — Sägewerk',
+                },
+                {
+                  recipeId: 'recipe_advanced_planks',
+                  recipeLabel: 'Advanced Plank Production',
+                  buildingTypeLabels: ['Sägewerk'],
+                  lineLabel: 'Advanced Plank Production — Sägewerk',
+                },
+              ],
+            },
+          ],
+          outputUsage: [{ resourceId: 'consumer_goods', resourceLabel: 'Konsumgüter', consumers: [] }],
         },
       ],
       detail: {
@@ -439,5 +538,76 @@ describe('ProductionScreen', () => {
         'Keine weitere Verwendung in den derzeit bekannten Produktionsrezepten.',
       ),
     ).toBeNull();
+  });
+
+  it('shows Herstellbar durch between Eingaben and Ausgaben with disclaimer', async () => {
+    workspaceState.setNavigation({ screen: 'production', entitySelection: { kind: 'none' } });
+    const user = userEvent.setup();
+    render(<ProductionScreen />);
+
+    await user.click(screen.getByRole('button', { name: /Bretter herstellen/ }));
+
+    expect(screen.getByText('Herstellbar durch')).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'Die Anzeige zeigt bekannte Herstellungsrezepte, unabhängig von Freischaltung oder Verfügbarkeit.',
+      ),
+    ).toBeInTheDocument();
+
+    const eingaben = screen.getByText('Eingaben');
+    const herstellbar = screen.getByText('Herstellbar durch');
+    const ausgaben = screen.getByText('Ausgaben');
+
+    expect(
+      eingaben.compareDocumentPosition(herstellbar) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      herstellbar.compareDocumentPosition(ausgaben) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+
+  it('shows upstream steel producer for machine parts recipe', async () => {
+    workspaceState.setNavigation({ screen: 'production', entitySelection: { kind: 'none' } });
+    const user = userEvent.setup();
+    render(<ProductionScreen />);
+
+    await user.click(screen.getByRole('button', { name: /Maschinenteile fertigen/ }));
+
+    expect(screen.getByText('Stahl schmelzen — Hochofen')).toBeInTheDocument();
+  });
+
+  it('shows multiple upstream producers for planks input', async () => {
+    workspaceState.setNavigation({ screen: 'production', entitySelection: { kind: 'none' } });
+    const user = userEvent.setup();
+    render(<ProductionScreen />);
+
+    await user.click(screen.getByRole('button', { name: /Konsumgüter herstellen/ }));
+
+    expect(screen.getByText('Bretter herstellen — Sägewerk')).toBeInTheDocument();
+    expect(screen.getByText('Advanced Plank Production — Sägewerk')).toBeInTheDocument();
+  });
+
+  it('shows empty origin copy for inputs without catalog producers', async () => {
+    workspaceState.setNavigation({ screen: 'production', entitySelection: { kind: 'none' } });
+    const user = userEvent.setup();
+    render(<ProductionScreen />);
+
+    await user.click(screen.getByRole('button', { name: /Bretter herstellen/ }));
+
+    expect(
+      screen.getByText('Kein Herstellungsrezept im bekannten Rezeptkatalog.'),
+    ).toBeInTheDocument();
+  });
+
+  it('preserves Eingaben availability and Weiterverwendung when Herstellbar durch is shown', async () => {
+    workspaceState.setNavigation({ screen: 'production', entitySelection: { kind: 'none' } });
+    const user = userEvent.setup();
+    render(<ProductionScreen />);
+
+    await user.click(screen.getByRole('button', { name: /Bretter herstellen/ }));
+
+    expect(document.querySelector('.pg-recipe-input-availability-table')).not.toBeNull();
+    expect(screen.getByText('Ausgaben')).toBeInTheDocument();
+    expect(screen.getByText('Weiterverwendung')).toBeInTheDocument();
   });
 });

@@ -12,6 +12,7 @@ import type { InventoryReadModel } from '../read-models/InventoryReadModel.js';
 import type { MarketPriceReadModel } from '../read-models/MarketPriceReadModel.js';
 import type { WarehouseStorageReadModel } from '../read-models/WarehouseStorageReadModel.js';
 import type { EconomyReadModel } from '../read-models/EconomyReadModel.js';
+import type { RecipeInputOriginReadModel } from './production-recipe-input-origin.js';
 import type { RecipeOutputUsageReadModel } from './production-recipe-output-usage.js';
 
 /** Milestone catalog entry with completion state for the UI shell. */
@@ -162,6 +163,7 @@ export type RecipeCatalogEntryReadModel = {
   readonly outputs: readonly { readonly resourceId: string; readonly amount: number }[];
   readonly buildingTypeIds: readonly string[];
   readonly inputAvailability: readonly RecipeInputAvailabilityReadModel[];
+  readonly inputOrigin: readonly RecipeInputOriginReadModel[];
   readonly outputUsage: readonly RecipeOutputUsageReadModel[];
 };
 

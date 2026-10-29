@@ -130,6 +130,12 @@ describe('company-dashboard-view-mappers', () => {
               isSufficient: false,
             },
           ],
+          inputOrigin: [
+            {
+              resourceId: 'wood',
+              producers: [],
+            },
+          ],
           outputUsage: [
             {
               resourceId: 'planks',
@@ -168,6 +174,53 @@ describe('company-dashboard-view-mappers', () => {
             lineLabel: expect.stringContaining('Konsumgüter herstellen'),
           }),
         ],
+      }),
+    );
+    expect(viewData.recipeCatalog[0]?.inputOrigin[0]).toEqual(
+      expect.objectContaining({
+        resourceId: 'wood',
+        producers: [],
+      }),
+    );
+  });
+
+  it('maps input origin producers with recipe and building labels', () => {
+    const dashboard: GameSessionDashboard = {
+      ...createDashboardFixture(),
+      recipeCatalog: [
+        {
+          id: 'recipe_machine_parts',
+          name: 'Maschinenteile',
+          durationTicks: 75,
+          energyPerTick: 0.24,
+          inputs: [{ resourceId: 'steel', amount: 3 }],
+          outputs: [{ resourceId: 'machine_parts', amount: 2 }],
+          buildingTypeIds: ['machine_shop'],
+          inputAvailability: [],
+          inputOrigin: [
+            {
+              resourceId: 'steel',
+              producers: [
+                {
+                  recipeId: 'recipe_steel',
+                  recipeName: 'Stahl schmelzen',
+                  buildingTypeIds: ['smelter'],
+                },
+              ],
+            },
+          ],
+          outputUsage: [],
+        },
+      ],
+    };
+
+    const viewData = buildCompanyDashboardViewData(dashboard, []);
+
+    expect(viewData.recipeCatalog[0]?.inputOrigin[0]?.producers[0]).toEqual(
+      expect.objectContaining({
+        recipeId: 'recipe_steel',
+        recipeLabel: 'Stahl schmelzen',
+        lineLabel: expect.stringContaining('Stahl schmelzen'),
       }),
     );
   });

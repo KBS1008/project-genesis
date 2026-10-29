@@ -472,6 +472,41 @@ export function ProductionScreen() {
                 ))}
               </ul>
             )}
+            {selectedRecipeDetail.inputOrigin.length > 0 ? (
+              <>
+                <p className="pg-operation-hint-copy">
+                  <strong>Herstellbar durch</strong>
+                </p>
+                <p className="pg-recipe-input-origin-disclaimer">
+                  Die Anzeige zeigt bekannte Herstellungsrezepte, unabhängig von Freischaltung
+                  oder Verfügbarkeit.
+                </p>
+                <div className="pg-recipe-output-usage-groups">
+                  {selectedRecipeDetail.inputOrigin.map((originRow) => (
+                    <section
+                      key={originRow.resourceId}
+                      className="pg-recipe-output-usage-group"
+                      aria-label={`Herstellbar durch ${originRow.resourceLabel}`}
+                    >
+                      <p className="pg-recipe-output-usage-heading">{originRow.resourceLabel}</p>
+                      {originRow.producers.length === 0 ? (
+                        <p className="pg-recipe-input-origin-empty">
+                          Kein Herstellungsrezept im bekannten Rezeptkatalog.
+                        </p>
+                      ) : (
+                        <ul className="pg-summary-list">
+                          {originRow.producers.map((producer) => (
+                            <li key={producer.recipeId}>
+                              <span>{producer.lineLabel}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </section>
+                  ))}
+                </div>
+              </>
+            ) : null}
             <p className="pg-operation-hint-copy">
               <strong>Ausgaben</strong>
             </p>

@@ -316,6 +316,17 @@ export type RecipeInputAvailabilityReadModel = {
   readonly isSufficient: boolean;
 };
 
+export type RecipeInputOriginProducerReadModel = {
+  readonly recipeId: string;
+  readonly recipeName: string;
+  readonly buildingTypeIds: readonly string[];
+};
+
+export type RecipeInputOriginReadModel = {
+  readonly resourceId: string;
+  readonly producers: readonly RecipeInputOriginProducerReadModel[];
+};
+
 export type RecipeOutputUsageConsumerReadModel = {
   readonly recipeId: string;
   readonly recipeName: string;
@@ -336,6 +347,7 @@ export type RecipeCatalogEntryReadModel = {
   readonly outputs: readonly { readonly resourceId: string; readonly amount: number }[];
   readonly buildingTypeIds: readonly string[];
   readonly inputAvailability: readonly RecipeInputAvailabilityReadModel[];
+  readonly inputOrigin: readonly RecipeInputOriginReadModel[];
   readonly outputUsage: readonly RecipeOutputUsageReadModel[];
 };
 

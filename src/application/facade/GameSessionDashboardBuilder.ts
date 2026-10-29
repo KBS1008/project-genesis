@@ -33,6 +33,7 @@ import {
   computeRecipeOutputUsage,
   type RecipeCatalogDependencyEntry,
 } from './production-recipe-output-usage.js';
+import { computeRecipeInputOrigin } from './production-recipe-input-origin.js';
 import {
   formatApproximatePlayerFacingCycleDuration,
   formatPlayerFacingCycleCount,
@@ -136,19 +137,22 @@ export class GameSessionDashboardBuilder {
           ),
         );
 
+        const inputs = Object.freeze(
+          recipe.inputs.map((entry) =>
+            Object.freeze({ resourceId: entry.resource, amount: entry.amount }),
+          ),
+        );
+
         return Object.freeze({
           id: recipe.id,
           name: recipe.name,
           durationTicks: recipe.duration,
           energyPerTick: recipe.duration > 0 ? recipe.energy / recipe.duration : 0,
-          inputs: Object.freeze(
-            recipe.inputs.map((entry) =>
-              Object.freeze({ resourceId: entry.resource, amount: entry.amount }),
-            ),
-          ),
+          inputs,
           outputs,
           buildingTypeIds: Object.freeze([...recipe.buildingTypes]),
           inputAvailability,
+          inputOrigin: computeRecipeInputOrigin(inputs, dependencyCatalog),
           outputUsage: computeRecipeOutputUsage(outputs, dependencyCatalog),
         });
       }),

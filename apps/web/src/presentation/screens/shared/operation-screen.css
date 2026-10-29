@@ -387,3 +387,15 @@
   font-size: 0.875rem;
   font-weight: 600;
 }
+
+.pg-recipe-input-origin-disclaimer {
+  margin: 0 0 var(--space-sm);
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+.pg-recipe-input-origin-empty {
+  margin: 0 0 var(--space-sm);
+  font-size: 0.875rem;
+  color: var(--muted);
+}

@@ -792,6 +792,34 @@ function mapRecipeCatalog(
             }),
           ),
         ),
+        inputOrigin: Object.freeze(
+          entry.inputOrigin.map((originRow) =>
+            Object.freeze({
+              resourceId: originRow.resourceId,
+              resourceLabel: labels.resource(originRow.resourceId),
+              producers: Object.freeze(
+                originRow.producers.map((producer) => {
+                  const buildingTypeLabels = Object.freeze(
+                    producer.buildingTypeIds.map((buildingTypeId) =>
+                      labels.building(buildingTypeId),
+                    ),
+                  );
+                  const lineLabel =
+                    buildingTypeLabels.length > 0
+                      ? `${producer.recipeName} — ${buildingTypeLabels.join(', ')}`
+                      : producer.recipeName;
+
+                  return Object.freeze({
+                    recipeId: producer.recipeId,
+                    recipeLabel: producer.recipeName,
+                    buildingTypeLabels,
+                    lineLabel,
+                  });
+                }),
+              ),
+            }),
+          ),
+        ),
         outputUsage: Object.freeze(
           entry.outputUsage.map((usageRow) =>
             Object.freeze({
