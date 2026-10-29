@@ -171,6 +171,37 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
               isSufficient: true,
             },
           ],
+          outputUsage: [
+            {
+              resourceId: 'planks',
+              resourceLabel: 'Bretter',
+              consumers: [
+                {
+                  recipeId: 'recipe_consumer_goods',
+                  recipeLabel: 'Konsumgüter herstellen',
+                  buildingTypeLabels: ['Konsumgüterwerk'],
+                  lineLabel: 'Konsumgüter herstellen — Konsumgüterwerk',
+                },
+              ],
+            },
+          ],
+        },
+        {
+          id: 'recipe_steel',
+          name: 'Stahl schmelzen',
+          durationLabel: '120 Zyklen',
+          energyLabel: '0,50 / Zyklus',
+          inputLabels: ['Eisenerz × 5'],
+          outputLabels: ['Stahl × 3'],
+          buildingTypeLabels: ['Hochofen'],
+          inputAvailability: [],
+          outputUsage: [
+            {
+              resourceId: 'steel',
+              resourceLabel: 'Stahl',
+              consumers: [],
+            },
+          ],
         },
       ],
       detail: {
@@ -359,5 +390,54 @@ describe('ProductionScreen', () => {
     expect(table.getByRole('columnheader', { name: 'Verfügbar' })).toBeInTheDocument();
     expect(table.getByRole('columnheader', { name: 'Status' })).toBeInTheDocument();
     expect(table.getByRole('row', { name: /wood 10 10 Ausreichend/i })).toBeInTheDocument();
+  });
+
+  it('shows Weiterverwendung consumers beneath Ausgaben for the selected recipe', async () => {
+    workspaceState.setNavigation({ screen: 'production', entitySelection: { kind: 'none' } });
+    const user = userEvent.setup();
+    render(<ProductionScreen />);
+
+    await user.click(screen.getByRole('button', { name: /Bretter herstellen/ }));
+
+    expect(screen.getByText('Weiterverwendung')).toBeInTheDocument();
+    expect(screen.getByText(/Bretter wird benötigt für:/)).toBeInTheDocument();
+    expect(
+      screen.getByText('Konsumgüter herstellen — Konsumgüterwerk'),
+    ).toBeInTheDocument();
+  });
+
+  it('shows empty Weiterverwendung copy when no downstream recipes consume outputs', async () => {
+    workspaceState.setNavigation({ screen: 'production', entitySelection: { kind: 'none' } });
+    const user = userEvent.setup();
+    render(<ProductionScreen />);
+
+    await user.click(screen.getByRole('button', { name: /Stahl schmelzen/ }));
+
+    expect(
+      screen.getByText(
+        'Keine weitere Verwendung in den derzeit bekannten Produktionsrezepten.',
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it('updates Weiterverwendung when switching catalog recipes', async () => {
+    workspaceState.setNavigation({ screen: 'production', entitySelection: { kind: 'none' } });
+    const user = userEvent.setup();
+    render(<ProductionScreen />);
+
+    await user.click(screen.getByRole('button', { name: /Stahl schmelzen/ }));
+    expect(
+      screen.getByText(
+        'Keine weitere Verwendung in den derzeit bekannten Produktionsrezepten.',
+      ),
+    ).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: /Bretter herstellen/ }));
+    expect(screen.getByText(/Bretter wird benötigt für:/)).toBeInTheDocument();
+    expect(
+      screen.queryByText(
+        'Keine weitere Verwendung in den derzeit bekannten Produktionsrezepten.',
+      ),
+    ).toBeNull();
   });
 });

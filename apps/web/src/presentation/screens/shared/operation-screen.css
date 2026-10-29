@@ -368,3 +368,22 @@
 .pg-recipe-input-status-insufficient {
   color: var(--danger, #c0392b);
 }
+
+.pg-recipe-output-usage-empty {
+  margin: 0 0 var(--space-sm);
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.pg-recipe-output-usage-groups {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.pg-recipe-output-usage-heading {
+  margin: 0 0 var(--space-xs);
+  font-size: 0.875rem;
+  font-weight: 600;
+}

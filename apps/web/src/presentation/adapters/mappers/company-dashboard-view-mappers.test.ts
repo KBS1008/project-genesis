@@ -130,6 +130,18 @@ describe('company-dashboard-view-mappers', () => {
               isSufficient: false,
             },
           ],
+          outputUsage: [
+            {
+              resourceId: 'planks',
+              consumers: [
+                {
+                  recipeId: 'recipe_consumer_goods',
+                  recipeName: 'Konsumgüter herstellen',
+                  buildingTypeIds: ['consumer_goods_plant'],
+                },
+              ],
+            },
+          ],
         },
       ],
     };
@@ -146,6 +158,18 @@ describe('company-dashboard-view-mappers', () => {
         isSufficient: false,
       }),
     ]);
+    expect(viewData.recipeCatalog[0]?.outputUsage[0]).toEqual(
+      expect.objectContaining({
+        resourceId: 'planks',
+        consumers: [
+          expect.objectContaining({
+            recipeId: 'recipe_consumer_goods',
+            recipeLabel: 'Konsumgüter herstellen',
+            lineLabel: expect.stringContaining('Konsumgüter herstellen'),
+          }),
+        ],
+      }),
+    );
   });
 
   it('maps energy KPI presentation from dashboard energy read model', () => {

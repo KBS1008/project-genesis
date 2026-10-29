@@ -30,6 +30,10 @@ import {
   type RecipeInputAvailabilityInventoryContext,
 } from './production-recipe-input-availability.js';
 import {
+  computeRecipeOutputUsage,
+  type RecipeCatalogDependencyEntry,
+} from './production-recipe-output-usage.js';
+import {
   formatApproximatePlayerFacingCycleDuration,
   formatPlayerFacingCycleCount,
   formatPlayerFacingCycleIntervalEvery,
@@ -99,35 +103,55 @@ export class GameSessionDashboardBuilder {
   readRecipeCatalog(
     inventoryContext?: RecipeInputAvailabilityInventoryContext | null,
   ): readonly RecipeCatalogEntryReadModel[] {
-    return Object.freeze(
-      this.#context.gameContent.recipes
-        .getAll()
-        .filter((recipe) => recipe.enabled)
-        .map((recipe) => {
-          const inputAvailability =
-            inventoryContext === undefined || inventoryContext === null
-              ? Object.freeze([])
-              : computeRecipeInputAvailability(recipe.inputs, inventoryContext);
+    const enabledRecipes = this.#context.gameContent.recipes
+      .getAll()
+      .filter((recipe) => recipe.enabled);
 
-          return Object.freeze({
-            id: recipe.id,
-            name: recipe.name,
-            durationTicks: recipe.duration,
-            energyPerTick: recipe.duration > 0 ? recipe.energy / recipe.duration : 0,
-            inputs: Object.freeze(
-              recipe.inputs.map((entry) =>
-                Object.freeze({ resourceId: entry.resource, amount: entry.amount }),
-              ),
-            ),
-            outputs: Object.freeze(
-              recipe.outputs.map((entry) =>
-                Object.freeze({ resourceId: entry.resource, amount: entry.amount }),
-              ),
-            ),
-            buildingTypeIds: Object.freeze([...recipe.buildingTypes]),
-            inputAvailability,
-          });
+    const dependencyCatalog: readonly RecipeCatalogDependencyEntry[] = Object.freeze(
+      enabledRecipes.map((recipe) =>
+        Object.freeze({
+          id: recipe.id,
+          name: recipe.name,
+          inputs: Object.freeze(
+            recipe.inputs.map((entry) => Object.freeze({ resourceId: entry.resource })),
+          ),
+          outputs: Object.freeze(
+            recipe.outputs.map((entry) => Object.freeze({ resourceId: entry.resource })),
+          ),
+          buildingTypeIds: Object.freeze([...recipe.buildingTypes]),
         }),
+      ),
+    );
+
+    return Object.freeze(
+      enabledRecipes.map((recipe) => {
+        const inputAvailability =
+          inventoryContext === undefined || inventoryContext === null
+            ? Object.freeze([])
+            : computeRecipeInputAvailability(recipe.inputs, inventoryContext);
+
+        const outputs = Object.freeze(
+          recipe.outputs.map((entry) =>
+            Object.freeze({ resourceId: entry.resource, amount: entry.amount }),
+          ),
+        );
+
+        return Object.freeze({
+          id: recipe.id,
+          name: recipe.name,
+          durationTicks: recipe.duration,
+          energyPerTick: recipe.duration > 0 ? recipe.energy / recipe.duration : 0,
+          inputs: Object.freeze(
+            recipe.inputs.map((entry) =>
+              Object.freeze({ resourceId: entry.resource, amount: entry.amount }),
+            ),
+          ),
+          outputs,
+          buildingTypeIds: Object.freeze([...recipe.buildingTypes]),
+          inputAvailability,
+          outputUsage: computeRecipeOutputUsage(outputs, dependencyCatalog),
+        });
+      }),
     );
   }
 

@@ -215,6 +215,19 @@ export type RecipeInputAvailabilityViewData = {
   readonly isSufficient: boolean;
 };
 
+export type RecipeOutputUsageConsumerViewData = {
+  readonly recipeId: string;
+  readonly recipeLabel: string;
+  readonly buildingTypeLabels: readonly string[];
+  readonly lineLabel: string;
+};
+
+export type RecipeOutputUsageViewData = {
+  readonly resourceId: string;
+  readonly resourceLabel: string;
+  readonly consumers: readonly RecipeOutputUsageConsumerViewData[];
+};
+
 export type RecipeCatalogEntryViewData = {
   readonly id: string;
   readonly name: string;
@@ -224,6 +237,7 @@ export type RecipeCatalogEntryViewData = {
   readonly outputLabels: readonly string[];
   readonly buildingTypeLabels: readonly string[];
   readonly inputAvailability: readonly RecipeInputAvailabilityViewData[];
+  readonly outputUsage: readonly RecipeOutputUsageViewData[];
 };
 
 export type ResearchHintViewData = {

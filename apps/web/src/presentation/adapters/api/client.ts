@@ -316,6 +316,17 @@ export type RecipeInputAvailabilityReadModel = {
   readonly isSufficient: boolean;
 };
 
+export type RecipeOutputUsageConsumerReadModel = {
+  readonly recipeId: string;
+  readonly recipeName: string;
+  readonly buildingTypeIds: readonly string[];
+};
+
+export type RecipeOutputUsageReadModel = {
+  readonly resourceId: string;
+  readonly consumers: readonly RecipeOutputUsageConsumerReadModel[];
+};
+
 export type RecipeCatalogEntryReadModel = {
   readonly id: string;
   readonly name: string;
@@ -325,6 +336,7 @@ export type RecipeCatalogEntryReadModel = {
   readonly outputs: readonly { readonly resourceId: string; readonly amount: number }[];
   readonly buildingTypeIds: readonly string[];
   readonly inputAvailability: readonly RecipeInputAvailabilityReadModel[];
+  readonly outputUsage: readonly RecipeOutputUsageReadModel[];
 };
 
 export type GameSessionContentNames = {

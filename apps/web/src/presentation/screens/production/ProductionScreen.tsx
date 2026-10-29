@@ -482,6 +482,40 @@ export function ProductionScreen() {
                 </li>
               ))}
             </ul>
+            <p className="pg-operation-hint-copy">
+              <strong>Weiterverwendung</strong>
+            </p>
+            {selectedRecipeDetail.outputUsage.length === 0 ||
+            selectedRecipeDetail.outputUsage.every(
+              (usageRow) => usageRow.consumers.length === 0,
+            ) ? (
+              <p className="pg-recipe-output-usage-empty">
+                Keine weitere Verwendung in den derzeit bekannten Produktionsrezepten.
+              </p>
+            ) : (
+              <div className="pg-recipe-output-usage-groups">
+                {selectedRecipeDetail.outputUsage.map((usageRow) =>
+                  usageRow.consumers.length === 0 ? null : (
+                    <section
+                      key={usageRow.resourceId}
+                      className="pg-recipe-output-usage-group"
+                      aria-label={`Weiterverwendung ${usageRow.resourceLabel}`}
+                    >
+                      <p className="pg-recipe-output-usage-heading">
+                        {usageRow.resourceLabel} wird benötigt für:
+                      </p>
+                      <ul className="pg-summary-list">
+                        {usageRow.consumers.map((consumer) => (
+                          <li key={consumer.recipeId}>
+                            <span>{consumer.lineLabel}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </section>
+                  ),
+                )}
+              </div>
+            )}
           </Card>
         ) : (
           <EmptyState
