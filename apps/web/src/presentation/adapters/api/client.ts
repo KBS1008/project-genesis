@@ -314,6 +314,7 @@ export type RecipeInputAvailabilityReadModel = {
   readonly requiredQuantity: number;
   readonly onSiteAvailable: number;
   readonly warehouseAvailable: number;
+  readonly inTransitQuantity: number;
   readonly availableQuantity: number;
   readonly isSufficient: boolean;
 };

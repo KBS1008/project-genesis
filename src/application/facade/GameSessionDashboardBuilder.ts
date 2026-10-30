@@ -26,6 +26,9 @@ import { formatMissingMilestoneReason } from './player-facing-milestone-label.js
 import { formatMissingTechnologyReason } from './player-facing-technology-label.js';
 import { formatMissingResourceInputReason } from './player-facing-resource-label.js';
 import {
+  attachRecipeInputInTransitQuantities,
+} from './production-recipe-input-in-transit.js';
+import {
   computeRecipeInputAvailability,
   type RecipeInputAvailabilityInventoryContext,
 } from './production-recipe-input-availability.js';
@@ -103,6 +106,7 @@ export class GameSessionDashboardBuilder {
   /** Returns enabled recipe definitions for read-only production UI surfaces. */
   readRecipeCatalog(
     inventoryContext?: RecipeInputAvailabilityInventoryContext | null,
+    transportOrders: readonly TransportOrderSessionReadModel[] = Object.freeze([]),
   ): readonly RecipeCatalogEntryReadModel[] {
     const enabledRecipes = this.#context.gameContent.recipes
       .getAll()
@@ -126,10 +130,18 @@ export class GameSessionDashboardBuilder {
 
     return Object.freeze(
       enabledRecipes.map((recipe) => {
-        const inputAvailability =
+        const inputAvailabilityBase =
           inventoryContext === undefined || inventoryContext === null
             ? Object.freeze([])
             : computeRecipeInputAvailability(recipe.inputs, inventoryContext);
+        const inputAvailability =
+          inventoryContext === undefined || inventoryContext === null
+            ? inputAvailabilityBase
+            : attachRecipeInputInTransitQuantities(
+                recipe.id,
+                inputAvailabilityBase,
+                transportOrders,
+              );
 
         const outputs = Object.freeze(
           recipe.outputs.map((entry) =>

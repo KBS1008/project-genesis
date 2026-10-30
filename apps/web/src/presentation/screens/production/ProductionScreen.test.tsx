@@ -166,10 +166,12 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
               requiredQuantity: 10,
               onSiteAvailable: 3,
               warehouseAvailable: 12,
+              inTransitQuantity: 0,
               availableQuantity: 15,
               requiredLabel: '10',
               onSiteLabel: '3',
               warehouseLabel: '12',
+              inTransitLabel: '0',
               availableLabel: '15',
               statusLabel: 'Ausreichend',
               isSufficient: true,
@@ -212,10 +214,12 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
               requiredQuantity: 3,
               onSiteAvailable: 0,
               warehouseAvailable: 1,
+              inTransitQuantity: 8,
               availableQuantity: 1,
               requiredLabel: '3',
               onSiteLabel: '0',
               warehouseLabel: '1',
+              inTransitLabel: '8',
               availableLabel: '1',
               statusLabel: 'Nicht ausreichend',
               isSufficient: false,
@@ -498,20 +502,25 @@ describe('ProductionScreen', () => {
       'Benötigt',
       'Standort',
       'Lager',
+      'Unterwegs',
       'Verfügbar',
       'Status',
     ]);
-    expect(table.getByRole('columnheader', { name: 'Standort' })).toBeInTheDocument();
-    expect(table.getByRole('columnheader', { name: 'Lager' })).toBeInTheDocument();
-    expect(table.getByRole('row', { name: /wood 10 3 12 15 Ausreichend/i })).toBeInTheDocument();
+    expect(table.getByRole('columnheader', { name: 'Unterwegs' })).toBeInTheDocument();
+    expect(table.getByRole('row', { name: /wood 10 3 12 0 15 Ausreichend/i })).toBeInTheDocument();
     expect(
       screen.getByText(
         'Lagerbestände müssen gegebenenfalls automatisch zum Produktionsstandort transportiert werden.',
       ),
     ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'Unterwegs zeigt laufende Transporte für dieses Rezept. Diese Mengen sind noch nicht in „Verfügbar“ enthalten.',
+      ),
+    ).toBeInTheDocument();
   });
 
-  it('shows split and warehouse-only supply columns for selected recipes', async () => {
+  it('shows in-transit quantity without changing Verfügbar or Status', async () => {
     workspaceState.setNavigation({ screen: 'production', entitySelection: { kind: 'none' } });
     const user = userEvent.setup();
     render(<ProductionScreen />);
@@ -521,7 +530,7 @@ describe('ProductionScreen', () => {
     const inputTable = document.querySelector('.pg-recipe-input-availability-table');
     expect(inputTable).not.toBeNull();
     const table = within(inputTable as HTMLElement);
-    expect(table.getByRole('row', { name: /Stahl 3 0 1 1 Nicht ausreichend/i })).toBeInTheDocument();
+    expect(table.getByRole('row', { name: /Stahl 3 0 1 8 1 Nicht ausreichend/i })).toBeInTheDocument();
   });
 
   it('shows Weiterverwendung consumers beneath Ausgaben for the selected recipe', async () => {

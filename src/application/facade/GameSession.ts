@@ -357,10 +357,13 @@ export class GameSession {
       kpis,
       economy,
       hints: this.#dashboardBuilder.readHints(hintInput),
-      recipeCatalog: this.#dashboardBuilder.readRecipeCatalog({
-        inventory: inventoryResult.value,
-        warehouseStorage,
-      }),
+      recipeCatalog: this.#dashboardBuilder.readRecipeCatalog(
+        {
+          inventory: inventoryResult.value,
+          warehouseStorage,
+        },
+        transportOrders,
+      ),
       tutorial: this.#dashboardBuilder.readTutorialProgress({
         hasCompany: true,
         buildings: buildingsResult.value,

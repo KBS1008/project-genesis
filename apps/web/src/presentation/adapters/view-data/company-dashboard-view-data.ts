@@ -210,10 +210,12 @@ export type RecipeInputAvailabilityViewData = {
   readonly requiredQuantity: number;
   readonly onSiteAvailable: number;
   readonly warehouseAvailable: number;
+  readonly inTransitQuantity: number;
   readonly availableQuantity: number;
   readonly requiredLabel: string;
   readonly onSiteLabel: string;
   readonly warehouseLabel: string;
+  readonly inTransitLabel: string;
   readonly availableLabel: string;
   readonly statusLabel: string;
   readonly isSufficient: boolean;
