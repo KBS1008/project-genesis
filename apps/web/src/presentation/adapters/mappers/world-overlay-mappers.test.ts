@@ -65,6 +65,7 @@ describe('world-overlay-mappers', () => {
           recipeName: 'Bretter',
           durationTicks: 4,
           routeId: null,
+          waitingReason: null,
         },
       ],
       [
@@ -189,6 +190,7 @@ describe('world-overlay-mappers', () => {
           recipeName: 'Bretter',
           durationTicks: 4,
           routeId: null,
+          waitingReason: null,
         },
       ],
       [

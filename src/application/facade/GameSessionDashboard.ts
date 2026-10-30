@@ -63,6 +63,15 @@ export type EmployeeSessionReadModel = {
   readonly assignedBuildingName: string | null;
 };
 
+/** Read-only waiting reason for transport detail (P3-LS-S3). */
+export type TransportOrderWaitingReasonReadModel =
+  | Readonly<{
+      readonly code: 'CAPACITY_EXHAUSTED';
+      readonly routeActiveTransportCount: number;
+      readonly routeThroughputCapacity: number;
+    }>
+  | Readonly<{ readonly code: 'AWAITING_DISPATCH' }>;
+
 /** Transport order summary for the browser dashboard. */
 export type TransportOrderSessionReadModel = {
   readonly id: string;
@@ -79,6 +88,7 @@ export type TransportOrderSessionReadModel = {
   readonly recipeName: string | null;
   readonly durationTicks: number;
   readonly routeId: string | null;
+  readonly waitingReason: TransportOrderWaitingReasonReadModel | null;
 };
 
 /** Content id/name pair for UI labels. */

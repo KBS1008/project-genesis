@@ -118,6 +118,7 @@ describe('workspace-view-mappers', () => {
         recipeName: null,
         durationTicks: 5,
         routeId: 'route_1',
+        waitingReason: null,
       }),
       Object.freeze({
         id: 'transport_active',
@@ -134,6 +135,7 @@ describe('workspace-view-mappers', () => {
         recipeName: 'Bretter',
         durationTicks: 5,
         routeId: 'route_1',
+        waitingReason: null,
       }),
       Object.freeze({
         id: 'transport_done',
@@ -150,6 +152,7 @@ describe('workspace-view-mappers', () => {
         recipeName: null,
         durationTicks: 5,
         routeId: 'route_1',
+        waitingReason: null,
       }),
       Object.freeze({
         id: 'transport_cancel',
@@ -166,6 +169,7 @@ describe('workspace-view-mappers', () => {
         recipeName: null,
         durationTicks: 5,
         routeId: 'route_1',
+        waitingReason: null,
       }),
     ]);
 

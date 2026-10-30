@@ -102,6 +102,14 @@ export type EmployeeSessionReadModel = {
   readonly assignedBuildingName: string | null;
 };
 
+export type TransportOrderWaitingReasonReadModel =
+  | Readonly<{
+      readonly code: 'CAPACITY_EXHAUSTED';
+      readonly routeActiveTransportCount: number;
+      readonly routeThroughputCapacity: number;
+    }>
+  | Readonly<{ readonly code: 'AWAITING_DISPATCH' }>;
+
 export type TransportOrderSessionReadModel = {
   readonly id: string;
   readonly resourceId: string;
@@ -117,6 +125,7 @@ export type TransportOrderSessionReadModel = {
   readonly recipeName: string | null;
   readonly durationTicks: number;
   readonly routeId: string | null;
+  readonly waitingReason: TransportOrderWaitingReasonReadModel | null;
 };
 
 export type WarehouseStorageItemReadModel = {

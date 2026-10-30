@@ -48,6 +48,7 @@ function createDashboardFixture(): GameSessionDashboard {
         recipeName: 'Bretter',
         durationTicks: 4,
         routeId: null,
+        waitingReason: null,
       },
     ],
     marketPrices: [],
@@ -410,5 +411,94 @@ describe('company-dashboard-view-mappers', () => {
     expect(detail).not.toBeNull();
     expect(detail?.entries.find(([label]) => label === 'Status')?.[1]).toBe('Abgeschlossen');
     expect(detail?.entries.find(([label]) => label === 'Job-ID')?.[1]).toBe('research_finished');
+  });
+
+  it('shows Wartegrund for WAITING transport with saturated route capacity', () => {
+    const dashboard: GameSessionDashboard = {
+      ...createDashboardFixture(),
+      transportOrders: [
+        {
+          id: 'transport_waiting',
+          resourceId: 'wood',
+          amount: 10,
+          status: 'WAITING',
+          progress: 0,
+          sourceBuildingId: 'warehouse',
+          sourceBuildingName: 'Lager',
+          destinationBuildingId: 'sawmill',
+          destinationBuildingName: 'Sägewerk',
+          productionJobId: 'job_001',
+          recipeId: 'recipe_planks',
+          recipeName: 'Bretter',
+          durationTicks: 4,
+          routeId: 'route_storage_to_production',
+          waitingReason: {
+            code: 'CAPACITY_EXHAUSTED',
+            routeActiveTransportCount: 2,
+            routeThroughputCapacity: 2,
+          },
+        },
+      ],
+    };
+
+    const detail = buildCompanyDashboardViewData(dashboard, []).detail.transportOrders.get(
+      'transport_waiting',
+    );
+
+    expect(detail?.entries.find(([label]) => label === 'Wartegrund')?.[1]).toBe(
+      'Routenkapazität ausgelastet (2 von 2 Transporten aktiv auf dieser Route).',
+    );
+  });
+
+  it('shows neutral Wartegrund for WAITING transport with available capacity', () => {
+    const dashboard: GameSessionDashboard = {
+      ...createDashboardFixture(),
+      transportOrders: [
+        {
+          id: 'transport_waiting',
+          resourceId: 'wood',
+          amount: 10,
+          status: 'WAITING',
+          progress: 0,
+          sourceBuildingId: 'warehouse',
+          sourceBuildingName: 'Lager',
+          destinationBuildingId: 'sawmill',
+          destinationBuildingName: 'Sägewerk',
+          productionJobId: 'job_001',
+          recipeId: 'recipe_planks',
+          recipeName: 'Bretter',
+          durationTicks: 4,
+          routeId: 'route_storage_to_production',
+          waitingReason: { code: 'AWAITING_DISPATCH' },
+        },
+      ],
+    };
+
+    const detail = buildCompanyDashboardViewData(dashboard, []).detail.transportOrders.get(
+      'transport_waiting',
+    );
+
+    expect(detail?.entries.find(([label]) => label === 'Wartegrund')?.[1]).toBe(
+      'Wartet auf Ausführung in der Transportwarteschlange.',
+    );
+  });
+
+  it('does not show Wartegrund for IN_PROGRESS transport detail', () => {
+    const dashboard: GameSessionDashboard = {
+      ...createDashboardFixture(),
+      transportOrders: [
+        {
+          ...createDashboardFixture().transportOrders[0]!,
+          status: 'IN_PROGRESS',
+          waitingReason: null,
+        },
+      ],
+    };
+
+    const detail = buildCompanyDashboardViewData(dashboard, []).detail.transportOrders.get(
+      'transport_001',
+    );
+
+    expect(detail?.entries.some(([label]) => label === 'Wartegrund')).toBe(false);
   });
 });

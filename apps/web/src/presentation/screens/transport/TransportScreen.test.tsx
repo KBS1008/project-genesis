@@ -78,6 +78,28 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
               ],
             },
           ],
+          [
+            'transport_002',
+            {
+              title: '5× Erz',
+              subtitle: 'Transport & Logistik',
+              entries: [
+                ['Status', 'Warteschlange'],
+                [
+                  'Wartegrund',
+                  'Routenkapazität ausgelastet (2 von 2 Transporten aktiv auf dieser Route).',
+                ],
+              ],
+            },
+          ],
+          [
+            'transport_003',
+            {
+              title: '3× Kohle',
+              subtitle: 'Transport & Logistik',
+              entries: [['Status', 'Abgeschlossen']],
+            },
+          ],
         ]),
       },
     },
@@ -150,5 +172,34 @@ describe('TransportScreen', () => {
     render(<TransportScreen />);
 
     expect(screen.getByText('Route-ID')).toBeInTheDocument();
+  });
+
+  it('shows Wartegrund for selected WAITING transport with saturated route', () => {
+    navigationState.entitySelection = { kind: 'transport', id: 'transport_002' };
+
+    render(<TransportScreen />);
+
+    expect(screen.getByText('Wartegrund')).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'Routenkapazität ausgelastet (2 von 2 Transporten aktiv auf dieser Route).',
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it('does not show Wartegrund for selected IN_PROGRESS transport', () => {
+    navigationState.entitySelection = { kind: 'transport', id: 'transport_001' };
+
+    render(<TransportScreen />);
+
+    expect(screen.queryByText('Wartegrund')).not.toBeInTheDocument();
+  });
+
+  it('does not show Wartegrund for selected COMPLETED transport', () => {
+    navigationState.entitySelection = { kind: 'transport', id: 'transport_003' };
+
+    render(<TransportScreen />);
+
+    expect(screen.queryByText('Wartegrund')).not.toBeInTheDocument();
   });
 });

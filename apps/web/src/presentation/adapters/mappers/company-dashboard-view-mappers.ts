@@ -46,6 +46,7 @@ import {
   formatTransactionAmount,
   formatTransactionType,
   formatTransportStatus,
+  formatTransportWaitingReason,
   toPlayerFacingCurrencySymbol,
   transactionDirectionClass,
   trendFromHistory,
@@ -517,6 +518,7 @@ function mapCompanyDetail(
   }
 
   for (const order of dashboard.transportOrders ?? []) {
+    const waitingReasonLabel = formatTransportWaitingReason(order.waitingReason ?? null);
     transportDetails.set(
       order.id,
       Object.freeze({
@@ -530,6 +532,7 @@ function mapCompanyDetail(
           kv('Quelle', order.sourceBuildingName),
           kv('Ziel', order.destinationBuildingName),
           kv('Status', formatTransportStatus(order.status)),
+          ...(waitingReasonLabel !== null ? [kv('Wartegrund', waitingReasonLabel)] : []),
           kv('Route-ID', order.routeId ?? '—'),
           kv('Dauer', formatPlayerDuration(order.durationTicks)),
           kv('Fortschritt', formatProgress(order.progress)),

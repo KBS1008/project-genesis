@@ -111,6 +111,29 @@ export function formatTransportStatus(status: string): string {
   return status;
 }
 
+/** German detail copy for transport waiting reason (P3-LS-S3). */
+export function formatTransportWaitingReason(
+  reason:
+    | Readonly<{
+        readonly code: 'CAPACITY_EXHAUSTED';
+        readonly routeActiveTransportCount: number;
+        readonly routeThroughputCapacity: number;
+      }>
+    | Readonly<{ readonly code: 'AWAITING_DISPATCH' }>
+    | null
+    | undefined,
+): string | null {
+  if (reason === null || reason === undefined) {
+    return null;
+  }
+
+  if (reason.code === 'AWAITING_DISPATCH') {
+    return 'Wartet auf Ausführung in der Transportwarteschlange.';
+  }
+
+  return `Routenkapazität ausgelastet (${reason.routeActiveTransportCount} von ${reason.routeThroughputCapacity} Transporten aktiv auf dieser Route).`;
+}
+
 /** Player-facing labels for {@link ResearchJobStatus} domain values. */
 export function formatResearchStatus(status: string): string {
   if (status === 'WAITING') {

@@ -55,6 +55,12 @@ import type {
   EmployeeSessionReadModel,
 } from './GameSessionDashboard.js';
 import { GameSessionDashboardBuilder } from './GameSessionDashboardBuilder.js';
+import {
+  buildTransportThroughputSnapshots,
+  deriveTransportOrderWaitingReason,
+  resolveTransportRouteThroughputCapacity,
+  toTransportOrderWaitingReasonReadModel,
+} from './transport-order-waiting-reason.js';
 import type { DashboardTickHistory, TickHistoryQuery } from '../read-models/TickMetricsSnapshot.js';
 import type { WorldOverviewReadModel } from '../read-models/WorldOverviewReadModel.js';
 import type { RegionDetailsReadModel } from '../read-models/RegionDetailsReadModel.js';
@@ -1242,12 +1248,34 @@ export class GameSession {
     const recipeByJobId = new Map(
       productionJobs.map((job) => [job.id, { recipeId: job.recipeId }]),
     );
+    const domainOrders = this.#context.transportOrderRepository.findByCompanyId(companyIdResult.value);
+    const throughputSnapshots = buildTransportThroughputSnapshots(
+      domainOrders.map((order) =>
+        Object.freeze({
+          routeId: order.getRouteId(),
+          status: order.getStatus(),
+          createdAt: order.getCreatedAt(),
+        }),
+      ),
+    );
+    const transportRoutes = this.#context.gameContent.transportRoutes;
 
     return Object.freeze(
-      this.#context.transportOrderRepository.findByCompanyId(companyIdResult.value).map((order) => {
+      domainOrders.map((order) => {
         const recipeId = recipeByJobId.get(order.getProductionJobId())?.recipeId ?? null;
         const recipe =
           recipeId === null ? undefined : this.#context.gameContent.recipes.get(recipeId);
+        const routeThroughputCapacity = resolveTransportRouteThroughputCapacity(
+          order.getRouteId(),
+          transportRoutes,
+        );
+        const waitingReason = toTransportOrderWaitingReasonReadModel(
+          deriveTransportOrderWaitingReason(
+            { status: order.getStatus(), routeId: order.getRouteId() },
+            throughputSnapshots,
+            routeThroughputCapacity,
+          ),
+        );
 
         return Object.freeze({
           id: order.getId().value,
@@ -1268,6 +1296,7 @@ export class GameSession {
           recipeName: recipe?.name ?? null,
           durationTicks: order.getDuration(),
           routeId: order.getRouteId(),
+          waitingReason,
         });
       }),
     );
