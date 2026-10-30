@@ -743,17 +743,44 @@ function mapCompanyDetail(
   });
 }
 
+function formatMilestoneRequiredByDisplay(
+  labels: readonly string[],
+  overflowCount: number,
+): string {
+  if (labels.length === 0 && overflowCount === 0) {
+    return 'Keine direkten Abhängigkeiten in den Inhaltsdaten.';
+  }
+
+  const parts = [...labels];
+
+  if (overflowCount > 0) {
+    parts.push(`… und ${overflowCount} weitere`);
+  }
+
+  return parts.join('; ');
+}
+
 function mapMilestoneRows(dashboard: GameSessionDashboard): readonly MilestoneRowViewData[] {
   const completedSet = new Set(dashboard.completedMilestones);
 
   return Object.freeze(
-    dashboard.milestones.map((entry) =>
-      Object.freeze({
+    dashboard.milestones.map((entry) => {
+      const requiredByLabels = Object.freeze([...entry.requiredByLabels]);
+      const requiredByOverflowCount = entry.requiredByOverflowCount;
+
+      return Object.freeze({
         id: entry.id,
         displayName: entry.name,
         completed: entry.completed || completedSet.has(entry.id),
-      }),
-    ),
+        criteriaSummary: entry.criteriaSummary,
+        requiredByLabels,
+        requiredByOverflowCount,
+        requiredByDisplayLabel: formatMilestoneRequiredByDisplay(
+          requiredByLabels,
+          requiredByOverflowCount,
+        ),
+      });
+    }),
   );
 }
 

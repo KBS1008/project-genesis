@@ -55,6 +55,7 @@ import type {
   EmployeeSessionReadModel,
 } from './GameSessionDashboard.js';
 import { GameSessionDashboardBuilder } from './GameSessionDashboardBuilder.js';
+import { projectMilestoneCatalogProgression } from './milestone-catalog-progression-projection.js';
 import {
   buildTransportThroughputSnapshots,
   deriveTransportOrderWaitingReason,
@@ -1192,14 +1193,27 @@ export class GameSession {
   }
 
   #readMilestoneCatalog(completedSet: ReadonlySet<string>): readonly MilestoneCatalogEntry[] {
+    const { gameContent } = this.#context;
+
     return Object.freeze(
-      this.#context.gameContent.milestones.getAll().map((milestone) =>
-        Object.freeze({
+      gameContent.milestones.getAll().map((milestone) => {
+        const projection = projectMilestoneCatalogProgression({
+          milestone,
+          milestones: gameContent.milestones,
+          buildingTypes: gameContent.buildingTypes,
+          recipes: gameContent.recipes,
+          technologies: gameContent.technologies,
+        });
+
+        return Object.freeze({
           id: milestone.id,
           name: milestone.name,
           completed: completedSet.has(milestone.id),
-        }),
-      ),
+          criteriaSummary: projection.criteriaSummary,
+          requiredByLabels: projection.requiredByLabels,
+          requiredByOverflowCount: projection.requiredByOverflowCount,
+        });
+      }),
     );
   }
 

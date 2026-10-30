@@ -8,6 +8,7 @@ import {
   mapOperationsEmployeeRows,
   mapOperationsFinanceLedgerRows,
   mapOperationsMarketRows,
+  mapOperationsMilestoneRows,
   mapOperationsProductionJobs,
   mapOperationsSiteInventoryRows,
   mapOperationsTransportOrders,
@@ -336,5 +337,24 @@ describe('company-operations-table-mappers', () => {
     render(createElement(Fragment, null, detail?.cells[0]));
     expect(screen.getByText('Unbekannt')).toBeTruthy();
     expect(screen.queryByRole('presentation', { hidden: true })).toBeNull();
+  });
+
+  it('mapOperationsMilestoneRows includes Voraussetzung and Benötigt für cells', () => {
+    const rows = mapOperationsMilestoneRows([
+      {
+        id: 'first_production',
+        displayName: 'First Production',
+        completed: false,
+        criteriaSummary: 'Schließen Sie 1 Produktionsauftrag ab.',
+        requiredByLabels: Object.freeze(['Gebäude: Schmelze']),
+        requiredByOverflowCount: 0,
+        requiredByDisplayLabel: 'Gebäude: Schmelze',
+      },
+    ]);
+
+    expect(rows[0]?.cells[3]).toBe('Ausstehend');
+    expect(rows[0]?.cells[4]).toBe('Schließen Sie 1 Produktionsauftrag ab.');
+    expect(rows[0]?.cells[5]).toBe('Gebäude: Schmelze');
+    expect(rows[0]?.searchText).toContain('Schmelze');
   });
 });

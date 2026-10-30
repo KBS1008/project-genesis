@@ -516,6 +516,89 @@
   outline-offset: var(--focus-ring-offset);
 }
 
+/* Milestone widget: stacked cards for narrow operations dashboard columns (P4-PU-S3). */
+.pg-milestones-widget .pg-milestone-progress-panel {
+  display: grid;
+  gap: var(--space-sm);
+  min-width: 0;
+}
+
+.pg-milestone-progress-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-sm);
+  min-width: 0;
+}
+
+.pg-milestone-progress-item {
+  min-width: 0;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-elevated);
+}
+
+.pg-milestone-progress-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  min-width: 0;
+  margin-bottom: var(--space-sm);
+}
+
+.pg-milestone-progress-medallion {
+  flex-shrink: 0;
+}
+
+.pg-milestone-progress-heading {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.pg-milestone-progress-name {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  white-space: normal;
+}
+
+.pg-milestone-progress-status {
+  font-size: var(--text-small);
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.pg-milestone-progress-status.is-completed {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.pg-milestone-progress-details {
+  margin: 0;
+  display: grid;
+  gap: var(--space-sm);
+  min-width: 0;
+}
+
+.pg-milestone-progress-detail dt {
+  margin: 0;
+  font-size: var(--text-small);
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.pg-milestone-progress-detail dd {
+  margin: 0.25rem 0 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  line-height: 1.45;
+}
+
 .pg-widget-warning {
   border-color: var(--border-warning-subtle);
 }

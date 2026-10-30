@@ -70,6 +70,9 @@ export type MilestoneCatalogEntry = {
   readonly id: string;
   readonly name: string;
   readonly completed: boolean;
+  readonly criteriaSummary: string;
+  readonly requiredByLabels: readonly string[];
+  readonly requiredByOverflowCount: number;
 };
 
 export type ProductionJobSessionReadModel = {

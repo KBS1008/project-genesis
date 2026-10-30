@@ -110,6 +110,10 @@ export type MilestoneRowViewData = {
   readonly id: string;
   readonly displayName: string;
   readonly completed: boolean;
+  readonly criteriaSummary: string;
+  readonly requiredByLabels: readonly string[];
+  readonly requiredByOverflowCount: number;
+  readonly requiredByDisplayLabel: string;
 };
 
 export type ContractRowViewData = {

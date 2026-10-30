@@ -59,6 +59,7 @@ describe('GameSession', () => {
     if (emptyDashboard.ok) {
       expect(emptyDashboard.value.company).toBeNull();
       expect(emptyDashboard.value.milestones.length).toBeGreaterThan(0);
+      expect(emptyDashboard.value.milestones[0]?.criteriaSummary.length).toBeGreaterThan(0);
     }
 
     const startResult = await session.startNewGame('Browser Test Corp');

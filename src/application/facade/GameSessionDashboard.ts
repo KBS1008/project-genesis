@@ -20,6 +20,11 @@ export type MilestoneCatalogEntry = {
   readonly id: string;
   readonly name: string;
   readonly completed: boolean;
+  /** German summary of the milestone trigger (read-only). */
+  readonly criteriaSummary: string;
+  /** Content that directly lists this milestone in requiredMilestones (bounded). */
+  readonly requiredByLabels: readonly string[];
+  readonly requiredByOverflowCount: number;
 };
 
 /** Presentation-level production operational state (derived from domain status + runtime constraints). */

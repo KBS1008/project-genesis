@@ -356,16 +356,46 @@ describe('company-dashboard-view-mappers', () => {
     const dashboard: GameSessionDashboard = {
       ...createDashboardFixture(),
       milestones: [
-        { id: 'first_production', name: 'Erste Produktion', completed: true },
-        { id: 'first_steel', name: 'Erster Stahl', completed: false },
+        {
+          id: 'first_production',
+          name: 'Erste Produktion',
+          completed: true,
+          criteriaSummary: 'Schließen Sie 1 Produktionsauftrag ab.',
+          requiredByLabels: Object.freeze(['Gebäude: Schmelze']),
+          requiredByOverflowCount: 0,
+        },
+        {
+          id: 'first_steel',
+          name: 'Erster Stahl',
+          completed: false,
+          criteriaSummary: 'Schließen Sie 1 Produktionsauftrag für „Stahl“ ab.',
+          requiredByLabels: Object.freeze([]),
+          requiredByOverflowCount: 0,
+        },
       ],
       completedMilestones: ['first_production'],
     };
 
     const viewData = buildCompanyDashboardViewData(dashboard, []);
     expect(viewData.milestones).toEqual([
-      { id: 'first_production', displayName: 'Erste Produktion', completed: true },
-      { id: 'first_steel', displayName: 'Erster Stahl', completed: false },
+      {
+        id: 'first_production',
+        displayName: 'Erste Produktion',
+        completed: true,
+        criteriaSummary: 'Schließen Sie 1 Produktionsauftrag ab.',
+        requiredByLabels: Object.freeze(['Gebäude: Schmelze']),
+        requiredByOverflowCount: 0,
+        requiredByDisplayLabel: 'Gebäude: Schmelze',
+      },
+      {
+        id: 'first_steel',
+        displayName: 'Erster Stahl',
+        completed: false,
+        criteriaSummary: 'Schließen Sie 1 Produktionsauftrag für „Stahl“ ab.',
+        requiredByLabels: Object.freeze([]),
+        requiredByOverflowCount: 0,
+        requiredByDisplayLabel: 'Keine direkten Abhängigkeiten in den Inhaltsdaten.',
+      },
     ]);
   });
 

@@ -163,8 +163,15 @@ export function mapOperationsMilestoneRows(
           />,
           milestone.displayName,
           statusLabel,
+          milestone.criteriaSummary,
+          milestone.requiredByDisplayLabel,
         ]),
-        searchText: joinSearchParts([milestone.displayName, statusLabel]),
+        searchText: joinSearchParts([
+          milestone.displayName,
+          statusLabel,
+          milestone.criteriaSummary,
+          milestone.requiredByDisplayLabel,
+        ]),
       });
     }),
   );
