@@ -437,6 +437,8 @@ export function ProductionScreen() {
                     <tr>
                       <th scope="col">Rohstoff</th>
                       <th scope="col">Benötigt</th>
+                      <th scope="col">Standort</th>
+                      <th scope="col">Lager</th>
                       <th scope="col">Verfügbar</th>
                       <th scope="col">Status</th>
                     </tr>
@@ -446,6 +448,8 @@ export function ProductionScreen() {
                       <tr key={row.resourceId}>
                         <th scope="row">{row.resourceLabel}</th>
                         <td>{row.requiredLabel}</td>
+                        <td>{row.onSiteLabel}</td>
+                        <td>{row.warehouseLabel}</td>
                         <td>{row.availableLabel}</td>
                         <td>
                           <span
@@ -462,6 +466,10 @@ export function ProductionScreen() {
                     ))}
                   </tbody>
                 </table>
+                <p className="pg-recipe-input-supply-hint">
+                  Lagerbestände müssen gegebenenfalls automatisch zum Produktionsstandort transportiert
+                  werden.
+                </p>
               </div>
             ) : (
               <ul className="pg-summary-list">

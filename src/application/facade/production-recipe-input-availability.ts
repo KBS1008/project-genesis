@@ -11,6 +11,8 @@ import type { WarehouseStorageReadModel } from '../read-models/WarehouseStorageR
 export type RecipeInputAvailabilityReadModel = {
   readonly resourceId: string;
   readonly requiredQuantity: number;
+  readonly onSiteAvailable: number;
+  readonly warehouseAvailable: number;
   readonly availableQuantity: number;
   readonly isSufficient: boolean;
 };
@@ -58,6 +60,8 @@ export function computeRecipeInputAvailability(
       return Object.freeze({
         resourceId: input.resource,
         requiredQuantity,
+        onSiteAvailable: onSite,
+        warehouseAvailable: inWarehouse,
         availableQuantity,
         isSufficient: availableQuantity >= requiredQuantity,
       });

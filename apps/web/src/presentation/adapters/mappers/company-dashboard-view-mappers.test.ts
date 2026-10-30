@@ -126,6 +126,8 @@ describe('company-dashboard-view-mappers', () => {
             {
               resourceId: 'wood',
               requiredQuantity: 10,
+              onSiteAvailable: 1,
+              warehouseAvailable: 2,
               availableQuantity: 3,
               isSufficient: false,
             },
@@ -159,7 +161,12 @@ describe('company-dashboard-view-mappers', () => {
       expect.objectContaining({
         resourceId: 'wood',
         requiredLabel: '10',
+        onSiteLabel: '1',
+        warehouseLabel: '2',
         availableLabel: '3',
+        onSiteAvailable: 1,
+        warehouseAvailable: 2,
+        availableQuantity: 3,
         statusLabel: 'Nicht ausreichend',
         isSufficient: false,
       }),

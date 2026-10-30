@@ -164,9 +164,13 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
               resourceId: 'wood',
               resourceLabel: 'wood',
               requiredQuantity: 10,
-              availableQuantity: 10,
+              onSiteAvailable: 3,
+              warehouseAvailable: 12,
+              availableQuantity: 15,
               requiredLabel: '10',
-              availableLabel: '10',
+              onSiteLabel: '3',
+              warehouseLabel: '12',
+              availableLabel: '15',
               statusLabel: 'Ausreichend',
               isSufficient: true,
             },
@@ -206,9 +210,13 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
               resourceId: 'steel',
               resourceLabel: 'Stahl',
               requiredQuantity: 3,
-              availableQuantity: 0,
+              onSiteAvailable: 0,
+              warehouseAvailable: 1,
+              availableQuantity: 1,
               requiredLabel: '3',
-              availableLabel: '0',
+              onSiteLabel: '0',
+              warehouseLabel: '1',
+              availableLabel: '1',
               statusLabel: 'Nicht ausreichend',
               isSufficient: false,
             },
@@ -484,11 +492,36 @@ describe('ProductionScreen', () => {
     const inputTable = document.querySelector('.pg-recipe-input-availability-table');
     expect(inputTable).not.toBeNull();
     const table = within(inputTable as HTMLElement);
-    expect(table.getByRole('columnheader', { name: 'Rohstoff' })).toBeInTheDocument();
-    expect(table.getByRole('columnheader', { name: 'Benötigt' })).toBeInTheDocument();
-    expect(table.getByRole('columnheader', { name: 'Verfügbar' })).toBeInTheDocument();
-    expect(table.getByRole('columnheader', { name: 'Status' })).toBeInTheDocument();
-    expect(table.getByRole('row', { name: /wood 10 10 Ausreichend/i })).toBeInTheDocument();
+    const headers = Array.from(table.getAllByRole('columnheader')).map((cell) => cell.textContent);
+    expect(headers).toEqual([
+      'Rohstoff',
+      'Benötigt',
+      'Standort',
+      'Lager',
+      'Verfügbar',
+      'Status',
+    ]);
+    expect(table.getByRole('columnheader', { name: 'Standort' })).toBeInTheDocument();
+    expect(table.getByRole('columnheader', { name: 'Lager' })).toBeInTheDocument();
+    expect(table.getByRole('row', { name: /wood 10 3 12 15 Ausreichend/i })).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'Lagerbestände müssen gegebenenfalls automatisch zum Produktionsstandort transportiert werden.',
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it('shows split and warehouse-only supply columns for selected recipes', async () => {
+    workspaceState.setNavigation({ screen: 'production', entitySelection: { kind: 'none' } });
+    const user = userEvent.setup();
+    render(<ProductionScreen />);
+
+    await user.click(screen.getByRole('button', { name: /Maschinenteile fertigen/ }));
+
+    const inputTable = document.querySelector('.pg-recipe-input-availability-table');
+    expect(inputTable).not.toBeNull();
+    const table = within(inputTable as HTMLElement);
+    expect(table.getByRole('row', { name: /Stahl 3 0 1 1 Nicht ausreichend/i })).toBeInTheDocument();
   });
 
   it('shows Weiterverwendung consumers beneath Ausgaben for the selected recipe', async () => {

@@ -312,6 +312,8 @@ export type TutorialProgressReadModel = {
 export type RecipeInputAvailabilityReadModel = {
   readonly resourceId: string;
   readonly requiredQuantity: number;
+  readonly onSiteAvailable: number;
+  readonly warehouseAvailable: number;
   readonly availableQuantity: number;
   readonly isSufficient: boolean;
 };

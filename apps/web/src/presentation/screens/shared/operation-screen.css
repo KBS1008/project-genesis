@@ -369,6 +369,13 @@
   color: var(--danger, #c0392b);
 }
 
+.pg-recipe-input-supply-hint {
+  margin: var(--space-xs) 0 0;
+  font-size: 0.8125rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
 .pg-recipe-output-usage-empty {
   margin: 0 0 var(--space-sm);
   font-size: 0.875rem;
