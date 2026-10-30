@@ -38,6 +38,10 @@ import {
 } from './production-recipe-output-usage.js';
 import { computeRecipeInputOrigin } from './production-recipe-input-origin.js';
 import {
+  evaluateRecipeCatalogProgressionEligibility,
+  type RecipeCatalogProgressionContext,
+} from './recipe-catalog-progression-eligibility.js';
+import {
   formatApproximatePlayerFacingCycleDuration,
   formatPlayerFacingCycleCount,
   formatPlayerFacingCycleIntervalEvery,
@@ -107,6 +111,10 @@ export class GameSessionDashboardBuilder {
   readRecipeCatalog(
     inventoryContext?: RecipeInputAvailabilityInventoryContext | null,
     transportOrders: readonly TransportOrderSessionReadModel[] = Object.freeze([]),
+    progressionContext: RecipeCatalogProgressionContext = Object.freeze({
+      completedMilestones: new Set<string>(),
+      completedResearch: new Set<string>(),
+    }),
   ): readonly RecipeCatalogEntryReadModel[] {
     const enabledRecipes = this.#context.gameContent.recipes
       .getAll()
@@ -155,6 +163,15 @@ export class GameSessionDashboardBuilder {
           ),
         );
 
+        const progression = evaluateRecipeCatalogProgressionEligibility({
+          requiredMilestones: recipe.requiredMilestones,
+          requiredResearch: recipe.requiredResearch,
+          completedMilestones: progressionContext.completedMilestones,
+          completedResearch: progressionContext.completedResearch,
+          milestones: this.#context.gameContent.milestones,
+          technologies: this.#context.gameContent.technologies,
+        });
+
         return Object.freeze({
           id: recipe.id,
           name: recipe.name,
@@ -166,6 +183,8 @@ export class GameSessionDashboardBuilder {
           inputAvailability,
           inputOrigin: computeRecipeInputOrigin(inputs, dependencyCatalog),
           outputUsage: computeRecipeOutputUsage(outputs, dependencyCatalog),
+          progressionEligible: progression.progressionEligible,
+          progressionBlockerReason: progression.progressionBlockerReason,
         });
       }),
     );

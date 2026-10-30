@@ -198,6 +198,8 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
               ],
             },
           ],
+          progressionEligible: true,
+          progressionBlockerReason: null,
         },
         {
           id: 'recipe_machine_parts',
@@ -246,6 +248,8 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
               consumers: [],
             },
           ],
+          progressionEligible: false,
+          progressionBlockerReason: 'Meilenstein „Erster Stahl“ fehlt.',
         },
         {
           id: 'recipe_steel',
@@ -270,6 +274,8 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
               consumers: [],
             },
           ],
+          progressionEligible: true,
+          progressionBlockerReason: null,
         },
         {
           id: 'recipe_consumer_goods',
@@ -313,6 +319,8 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
             },
           ],
           outputUsage: [{ resourceId: 'consumer_goods', resourceLabel: 'Konsumgüter', consumers: [] }],
+          progressionEligible: false,
+          progressionBlockerReason: 'Meilenstein „Erste Advanced Elektronik“ fehlt.',
         },
       ],
       detail: {
@@ -651,5 +659,51 @@ describe('ProductionScreen', () => {
     expect(document.querySelector('.pg-recipe-input-availability-table')).not.toBeNull();
     expect(screen.getByText('Ausgaben')).toBeInTheDocument();
     expect(screen.getByText('Weiterverwendung')).toBeInTheDocument();
+  });
+
+  it('shows progression lock in the recipe catalog for gated recipes', () => {
+    workspaceState.setNavigation({ screen: 'production', entitySelection: { kind: 'none' } });
+    render(<ProductionScreen />);
+
+    expect(
+      screen.getByText(/Gesperrt — Meilenstein „Erster Stahl“ fehlt\./),
+    ).toBeInTheDocument();
+  });
+
+  it('shows progression blocker in detail when a locked recipe is selected', async () => {
+    workspaceState.setNavigation({ screen: 'production', entitySelection: { kind: 'none' } });
+    const user = userEvent.setup();
+    render(<ProductionScreen />);
+
+    await user.click(screen.getByRole('button', { name: /Maschinenteile fertigen/ }));
+
+    expect(
+      screen.getAllByText('Gesperrt — Meilenstein „Erster Stahl“ fehlt.').length,
+    ).toBeGreaterThanOrEqual(1);
+  });
+
+  it('does not show a progression blocker in detail for an unlocked starter recipe', async () => {
+    workspaceState.setNavigation({ screen: 'production', entitySelection: { kind: 'none' } });
+    const user = userEvent.setup();
+    render(<ProductionScreen />);
+
+    await user.click(screen.getByRole('button', { name: /Bretter herstellen/ }));
+
+    const detailList = screen.getByText('Dauer').closest('ul');
+    expect(detailList?.textContent ?? '').not.toContain('Gesperrt');
+  });
+
+  it('keeps a locked recipe selectable and shows prerequisite near empty start options', async () => {
+    workspaceState.setNavigation({ screen: 'production', entitySelection: { kind: 'none' } });
+    const user = userEvent.setup();
+    render(<ProductionScreen />);
+
+    await user.click(screen.getByRole('button', { name: /Maschinenteile fertigen/ }));
+
+    expect(screen.getByRole('button', { name: /Maschinenteile fertigen/ })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    expect(screen.getAllByText('Meilenstein „Erster Stahl“ fehlt.').length).toBeGreaterThan(0);
   });
 });

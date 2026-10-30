@@ -178,6 +178,10 @@ export type RecipeCatalogEntryReadModel = {
   readonly inputAvailability: readonly RecipeInputAvailabilityReadModel[];
   readonly inputOrigin: readonly RecipeInputOriginReadModel[];
   readonly outputUsage: readonly RecipeOutputUsageReadModel[];
+  /** True when all milestone and research prerequisites are satisfied (P4-PU-S2). */
+  readonly progressionEligible: boolean;
+  /** German explanation when {@link progressionEligible} is false; otherwise null. */
+  readonly progressionBlockerReason: string | null;
 };
 
 /** Hint for starting production on a building. */

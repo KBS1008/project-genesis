@@ -152,6 +152,8 @@ describe('company-dashboard-view-mappers', () => {
               ],
             },
           ],
+          progressionEligible: true,
+          progressionBlockerReason: null,
         },
       ],
     };
@@ -221,6 +223,8 @@ describe('company-dashboard-view-mappers', () => {
             },
           ],
           outputUsage: [],
+          progressionEligible: false,
+          progressionBlockerReason: 'Meilenstein „Erster Stahl“ fehlt.',
         },
       ],
     };
@@ -234,6 +238,51 @@ describe('company-dashboard-view-mappers', () => {
         lineLabel: expect.stringContaining('Stahl schmelzen'),
       }),
     );
+  });
+
+  it('maps recipe catalog progression eligibility to view-data', () => {
+    const dashboard: GameSessionDashboard = {
+      ...createDashboardFixture(),
+      recipeCatalog: [
+        {
+          id: 'recipe_steel',
+          name: 'Stahl',
+          durationTicks: 120,
+          energyPerTick: 0.5,
+          inputs: [],
+          outputs: [],
+          buildingTypeIds: ['smelter'],
+          inputAvailability: [],
+          inputOrigin: [],
+          outputUsage: [],
+          progressionEligible: false,
+          progressionBlockerReason: 'Meilenstein „First Production“ fehlt.',
+        },
+        {
+          id: 'recipe_planks',
+          name: 'Bretter',
+          durationTicks: 60,
+          energyPerTick: 0.2,
+          inputs: [],
+          outputs: [],
+          buildingTypeIds: ['sawmill'],
+          inputAvailability: [],
+          inputOrigin: [],
+          outputUsage: [],
+          progressionEligible: true,
+          progressionBlockerReason: null,
+        },
+      ],
+    };
+
+    const viewData = buildCompanyDashboardViewData(dashboard, []);
+    const steel = viewData.recipeCatalog.find((entry) => entry.id === 'recipe_steel');
+    const planks = viewData.recipeCatalog.find((entry) => entry.id === 'recipe_planks');
+
+    expect(steel?.progressionEligible).toBe(false);
+    expect(steel?.progressionBlockerReason).toBe('Meilenstein „First Production“ fehlt.');
+    expect(planks?.progressionEligible).toBe(true);
+    expect(planks?.progressionBlockerReason).toBeNull();
   });
 
   it('maps energy KPI presentation from dashboard energy read model', () => {

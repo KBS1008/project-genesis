@@ -361,6 +361,8 @@ export type RecipeCatalogEntryReadModel = {
   readonly inputAvailability: readonly RecipeInputAvailabilityReadModel[];
   readonly inputOrigin: readonly RecipeInputOriginReadModel[];
   readonly outputUsage: readonly RecipeOutputUsageReadModel[];
+  readonly progressionEligible: boolean;
+  readonly progressionBlockerReason: string | null;
 };
 
 export type GameSessionContentNames = {

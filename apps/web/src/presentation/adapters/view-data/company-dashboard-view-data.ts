@@ -258,6 +258,8 @@ export type RecipeCatalogEntryViewData = {
   readonly inputAvailability: readonly RecipeInputAvailabilityViewData[];
   readonly inputOrigin: readonly RecipeInputOriginViewData[];
   readonly outputUsage: readonly RecipeOutputUsageViewData[];
+  readonly progressionEligible: boolean;
+  readonly progressionBlockerReason: string | null;
 };
 
 export type ResearchHintViewData = {

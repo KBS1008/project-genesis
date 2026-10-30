@@ -857,6 +857,8 @@ function mapRecipeCatalog(
             }),
           ),
         ),
+        progressionEligible: entry.progressionEligible,
+        progressionBlockerReason: entry.progressionBlockerReason,
       }),
     ),
   );

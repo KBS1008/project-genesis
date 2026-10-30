@@ -369,6 +369,10 @@ export class GameSession {
           warehouseStorage,
         },
         transportOrders,
+        {
+          completedMilestones: completedSet,
+          completedResearch: new Set(completedResearch),
+        },
       ),
       tutorial: this.#dashboardBuilder.readTutorialProgress({
         hasCompany: true,

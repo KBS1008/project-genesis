@@ -404,6 +404,14 @@ export function ProductionScreen() {
                   <span className="pg-production-recipe-button-text">
                     <strong>{recipe.name}</strong>
                     <span>{recipe.durationLabel} · {recipe.energyLabel}</span>
+                    {recipe.progressionEligible ? null : (
+                      <span>
+                        Gesperrt
+                        {recipe.progressionBlockerReason !== null
+                          ? ` — ${recipe.progressionBlockerReason}`
+                          : ''}
+                      </span>
+                    )}
                   </span>
                 </button>
               ))}
@@ -426,6 +434,15 @@ export function ProductionScreen() {
                 <span>Gebäudetypen</span>
                 <strong>{selectedRecipeDetail.buildingTypeLabels.join(', ')}</strong>
               </li>
+              {!selectedRecipeDetail.progressionEligible &&
+              selectedRecipeDetail.progressionBlockerReason !== null ? (
+                <li>
+                  <span>Fortschritt</span>
+                  <strong>
+                    Gesperrt — {selectedRecipeDetail.progressionBlockerReason}
+                  </strong>
+                </li>
+              ) : null}
             </ul>
             <p className="pg-operation-hint-copy">
               <strong>Eingaben</strong>
@@ -602,7 +619,15 @@ export function ProductionScreen() {
 
         <Card title="Produktion starten">
           {recipeHintsForSelection.length === 0 ? (
-            <EmptyState
+            <>
+              {selectedRecipeDetail !== null &&
+              !selectedRecipeDetail.progressionEligible &&
+              selectedRecipeDetail.progressionBlockerReason !== null ? (
+                <p className="pg-operation-hint-copy">
+                  {selectedRecipeDetail.progressionBlockerReason}
+                </p>
+              ) : null}
+              <EmptyState
               title="Keine Produktionsoptionen"
               hint={
                 selectedRecipeId === null
@@ -612,6 +637,7 @@ export function ProductionScreen() {
                   : 'Für dieses Rezept sind keine Gebäude startbereit.'
               }
             />
+            </>
           ) : (
             <div className="pg-operation-hint-list">
               {recipeHintsForSelection.map((hint) => (

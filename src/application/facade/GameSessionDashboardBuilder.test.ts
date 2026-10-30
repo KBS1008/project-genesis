@@ -492,3 +492,154 @@ describe('GameSessionDashboardBuilder player-facing cycle hint copy', () => {
     expect(JSON.stringify(tutorial?.steps)).not.toMatch(/\bTicks?\b/);
   });
 });
+
+describe('GameSessionDashboardBuilder recipe catalog progression', () => {
+  async function createBuilder() {
+    const bootstrapResult = await bootstrapApplication({
+      gameContentRoot,
+      strictContent: true,
+    });
+
+    expect(bootstrapResult.ok).toBe(true);
+
+    if (!bootstrapResult.ok) {
+      throw new Error(bootstrapResult.error.message);
+    }
+
+    const context = bootstrapResult.value;
+    return new GameSessionDashboardBuilder(
+      context,
+      new EnergyBalanceService({
+        buildingRepository: context.buildingRepository,
+        productionJobRepository: context.productionJobRepository,
+        gameContent: context.gameContent,
+      }),
+    );
+  }
+
+  function findCatalogEntry(
+    catalog: ReturnType<GameSessionDashboardBuilder['readRecipeCatalog']>,
+    recipeId: string,
+  ) {
+    const entry = catalog.find((item) => item.id === recipeId);
+    expect(entry).toBeDefined();
+    return entry!;
+  }
+
+  it('marks recipe_planks progression-eligible at new-game progression state', async () => {
+    const builder = await createBuilder();
+    const catalog = builder.readRecipeCatalog(null, Object.freeze([]), {
+      completedMilestones: new Set(),
+      completedResearch: new Set(),
+    });
+    const planks = findCatalogEntry(catalog, 'recipe_planks');
+
+    expect(planks.progressionEligible).toBe(true);
+    expect(planks.progressionBlockerReason).toBeNull();
+  });
+
+  it('blocks recipe_advanced_planks until first_production with German milestone copy', async () => {
+    const builder = await createBuilder();
+    const emptyProgression = {
+      completedMilestones: new Set<string>(),
+      completedResearch: new Set<string>(),
+    };
+    const locked = findCatalogEntry(
+      builder.readRecipeCatalog(null, Object.freeze([]), emptyProgression),
+      'recipe_advanced_planks',
+    );
+
+    expect(locked.progressionEligible).toBe(false);
+    expect(locked.progressionBlockerReason).toBe('Meilenstein „First Production“ fehlt.');
+
+    const milestoneComplete = findCatalogEntry(
+      builder.readRecipeCatalog(null, Object.freeze([]), {
+        completedMilestones: new Set(['first_production']),
+        completedResearch: new Set(),
+      }),
+      'recipe_advanced_planks',
+    );
+
+    expect(milestoneComplete.progressionEligible).toBe(false);
+    expect(milestoneComplete.progressionBlockerReason).toMatch(/^Forschung „/);
+  });
+
+  it('treats recipe_steel as progression-eligible at new game (building gate is separate)', async () => {
+    const builder = await createBuilder();
+    const steel = findCatalogEntry(
+      builder.readRecipeCatalog(null, Object.freeze([]), {
+        completedMilestones: new Set(),
+        completedResearch: new Set(),
+      }),
+      'recipe_steel',
+    );
+
+    expect(steel.progressionEligible).toBe(true);
+    expect(steel.progressionBlockerReason).toBeNull();
+  });
+
+  it('requires both milestone and research for recipe_advanced_planks', async () => {
+    const builder = await createBuilder();
+    const milestoneOnly = {
+      completedMilestones: new Set(['first_production']),
+      completedResearch: new Set<string>(),
+    };
+    const researchMissing = findCatalogEntry(
+      builder.readRecipeCatalog(null, Object.freeze([]), milestoneOnly),
+      'recipe_advanced_planks',
+    );
+
+    expect(researchMissing.progressionEligible).toBe(false);
+    expect(researchMissing.progressionBlockerReason).toMatch(/^Forschung „/);
+
+    const bothComplete = findCatalogEntry(
+      builder.readRecipeCatalog(null, Object.freeze([]), {
+        completedMilestones: new Set(['first_production']),
+        completedResearch: new Set(['basic_woodworking']),
+      }),
+      'recipe_advanced_planks',
+    );
+
+    expect(bothComplete.progressionEligible).toBe(true);
+    expect(bothComplete.progressionBlockerReason).toBeNull();
+  });
+
+  it('blocks recipe_machine_parts for missing milestone and research independently', async () => {
+    const builder = await createBuilder();
+    const newGame = {
+      completedMilestones: new Set<string>(),
+      completedResearch: new Set<string>(),
+    };
+
+    expect(
+      findCatalogEntry(builder.readRecipeCatalog(null, Object.freeze([]), newGame), 'recipe_machine_parts')
+        .progressionBlockerReason,
+    ).toBe('Meilenstein „Erster Stahl“ fehlt.');
+
+    const milestoneOnly = {
+      completedMilestones: new Set(['first_steel']),
+      completedResearch: new Set<string>(),
+    };
+    const researchBlocked = findCatalogEntry(
+      builder.readRecipeCatalog(null, Object.freeze([]), milestoneOnly),
+      'recipe_machine_parts',
+    );
+
+    expect(researchBlocked.progressionEligible).toBe(false);
+    expect(researchBlocked.progressionBlockerReason).toBe(
+      'Forschung „Fortgeschrittene Metallurgie“ fehlt.',
+    );
+  });
+
+  it('exposes progression blockers without any production buildings', async () => {
+    const builder = await createBuilder();
+    const catalog = builder.readRecipeCatalog(null, Object.freeze([]), {
+      completedMilestones: new Set(),
+      completedResearch: new Set(),
+    });
+
+    expect(findCatalogEntry(catalog, 'recipe_advanced_planks').progressionEligible).toBe(false);
+    expect(findCatalogEntry(catalog, 'recipe_planks').progressionEligible).toBe(true);
+    expect(findCatalogEntry(catalog, 'recipe_steel').progressionEligible).toBe(true);
+  });
+});
