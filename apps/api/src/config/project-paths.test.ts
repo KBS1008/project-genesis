@@ -17,6 +17,7 @@ describe('project-paths', () => {
     const paths = resolveProjectPaths(import.meta.url);
 
     expect(existsSync(paths.gameContentRoot)).toBe(true);
-    expect(paths.savePath).toMatch(/saves[\\/]browser-session\.json$/);
+    expect(paths.savePath).toBe(path.join(paths.projectRoot, 'saves', 'browser-session.json'));
+    expect(paths.acceptanceSaveIsolation).toBe(false);
   });
 });

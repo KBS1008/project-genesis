@@ -7,12 +7,20 @@
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { PROJECT_GENESIS_SAVE_PATH_ENV, resolveConfiguredSavePath } from './save-path-config.js';
 
 /** Repository paths required by the NestJS API layer. */
 export type ProjectPaths = {
   readonly projectRoot: string;
   readonly gameContentRoot: string;
   readonly savePath: string;
+  /** True when {@link PROJECT_GENESIS_SAVE_PATH_ENV} supplied a valid acceptance save file. */
+  readonly acceptanceSaveIsolation: boolean;
+};
+
+export type ResolveProjectPathsOptions = {
+  /** When set, overrides `process.env.PROJECT_GENESIS_SAVE_PATH` (for tests). */
+  readonly projectGenesisSavePath?: string | undefined;
 };
 
 /**
@@ -39,13 +47,24 @@ export function findProjectRoot(startDirectory: string): string {
 /**
  * Resolves deterministic paths relative to the monorepo root.
  */
-export function resolveProjectPaths(currentModuleUrl: string): ProjectPaths {
+export function resolveProjectPaths(
+  currentModuleUrl: string,
+  options?: ResolveProjectPathsOptions,
+): ProjectPaths {
   const currentDirectory = path.dirname(fileURLToPath(currentModuleUrl));
   const projectRoot = findProjectRoot(currentDirectory);
+
+  const configuredSavePath =
+    options !== undefined && 'projectGenesisSavePath' in options
+      ? options.projectGenesisSavePath
+      : process.env[PROJECT_GENESIS_SAVE_PATH_ENV];
+
+  const saveResolution = resolveConfiguredSavePath(projectRoot, configuredSavePath);
 
   return {
     projectRoot,
     gameContentRoot: path.join(projectRoot, 'game-content'),
-    savePath: path.join(projectRoot, 'saves', 'browser-session.json'),
+    savePath: saveResolution.savePath,
+    acceptanceSaveIsolation: saveResolution.mode === 'acceptance',
   };
 }
