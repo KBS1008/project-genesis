@@ -127,7 +127,9 @@ export class GameController {
       requestedCount: input.requestedCount,
       admissionOutcome: input.admissionOutcome,
       reservation: input.reservation,
-      simulationCompletion: input.simulationCompletion,
+      ...(input.simulationCompletion !== undefined
+        ? { simulationCompletion: input.simulationCompletion }
+        : {}),
       originHeader: headers.originHeader,
       refererHeader: headers.refererHeader,
     });
