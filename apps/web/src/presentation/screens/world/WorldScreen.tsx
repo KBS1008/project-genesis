@@ -205,8 +205,8 @@ export function WorldScreen() {
 
     return buildWorldBuildingInspectorNavigationViewData(
       selectedMapBuildingId,
-      productionJobs,
       companyViewData.hints?.production ?? [],
+      productionJobs,
       true,
     );
   }, [

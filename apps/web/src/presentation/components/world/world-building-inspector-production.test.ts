@@ -20,6 +20,7 @@ function job(
     progress: 42,
     awaitingTransport: false,
     operationalState: 'RUNNING',
+    activeTransportCount: 0,
     ...partial,
   });
 }
