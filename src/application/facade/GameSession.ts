@@ -42,6 +42,8 @@ import path from 'node:path';
 import { createCompanyId } from '../../domain/company/Company.js';
 import type { CompanyId } from '../../domain/company/CompanyId.js';
 import { ProductionJobStatus } from '../../domain/production/ProductionJobStatus.js';
+import { ResearchJobStatus } from '../../domain/research/ResearchJobStatus.js';
+import { resolvePlayerFacingTechnologyName } from './player-facing-technology-label.js';
 import type { ProductionJob } from '../../domain/production/ProductionJob.js';
 import { TransportOrderStatus } from '../../domain/transport/TransportOrderStatus.js';
 import type { BuildingReadModel } from '../read-models/BuildingReadModel.js';
@@ -173,6 +175,7 @@ export class GameSession {
   #employeeSequence = 0;
   readonly #loggedCompletedTransportIds = new Set<string>();
   readonly #loggedCompletedProductionJobIds = new Set<string>();
+  readonly #loggedCompletedResearchJobIds = new Set<string>();
 
   private constructor(context: ApplicationContext, gameContentRoot: string, savePath: string) {
     this.#context = context;
@@ -242,6 +245,7 @@ export class GameSession {
     this.#context.playerEventLogService.clear(DEFAULT_COMPANY_ID);
     this.#loggedCompletedTransportIds.clear();
     this.#loggedCompletedProductionJobIds.clear();
+    this.#loggedCompletedResearchJobIds.clear();
     this.#recordTickSnapshot();
     this.#recordPlayerEvent('SESSION', `Neues Spiel gestartet: ${name}.`);
   }
@@ -375,6 +379,10 @@ export class GameSession {
           completedResearch: new Set(completedResearch),
         },
       ),
+      completedTechnologyUnlockOutcomes: this.#dashboardBuilder.readCompletedTechnologyUnlockOutcomes({
+        completedMilestones: completedSet,
+        completedResearch: new Set(completedResearch),
+      }),
       tutorial: this.#dashboardBuilder.readTutorialProgress({
         hasCompany: true,
         buildings: buildingsResult.value,
@@ -604,11 +612,6 @@ export class GameSession {
       this.#recordTickSnapshot();
     }
 
-    this.#recordPlayerEvent(
-      'SIMULATION',
-      count === 1 ? 'Simulation um einen Tick fortgeschritten.' : `Simulation um ${count} Ticks fortgeschritten.`,
-    );
-
     return Result.ok(undefined);
   }
 
@@ -619,7 +622,6 @@ export class GameSession {
     }
 
     this.#context.simulationEngine.pause();
-    this.#recordPlayerEvent('SIMULATION', 'Simulation pausiert.');
     return Result.ok(undefined);
   }
 
@@ -630,7 +632,6 @@ export class GameSession {
     }
 
     this.#context.simulationEngine.resume();
-    this.#recordPlayerEvent('SIMULATION', 'Simulation fortgesetzt.');
     return Result.ok(undefined);
   }
 
@@ -642,13 +643,7 @@ export class GameSession {
       );
     }
 
-    const result = this.#context.simulationEngine.setTickDuration(tickDuration);
-
-    if (result.ok) {
-      this.#recordPlayerEvent('SIMULATION', `Simulationsgeschwindigkeit auf ×${tickDuration} gesetzt.`);
-    }
-
-    return result;
+    return this.#context.simulationEngine.setTickDuration(tickDuration);
   }
 
   /** Executes exactly one tick, even while the simulation is paused. */
@@ -680,7 +675,6 @@ export class GameSession {
       engine.pause();
     }
 
-    this.#recordPlayerEvent('SIMULATION', 'Simulationsschritt ausgeführt.');
     return Result.ok(undefined);
   }
 
@@ -945,6 +939,7 @@ export class GameSession {
     this.#context.playerEventLogService.clear(this.#activeCompanyId);
     this.#loggedCompletedTransportIds.clear();
     this.#loggedCompletedProductionJobIds.clear();
+    this.#loggedCompletedResearchJobIds.clear();
 
     if (
       this.#activeCompanyId !== undefined &&
@@ -963,6 +958,8 @@ export class GameSession {
         );
         this.#seedLoggedCompletedProductionJobs(productionJobs);
       }
+
+      this.#seedLoggedCompletedResearchJobs(this.#readResearchJobs(this.#activeCompanyId));
 
       this.#recordPlayerEvent('SESSION', `Spielstand geladen: ${targetPath}.`);
     }
@@ -1138,6 +1135,7 @@ export class GameSession {
 
     this.#recordCompletedTransportEvents(transportOrders);
     this.#recordCompletedProductionEvents(productionJobs);
+    this.#recordCompletedResearchEvents(this.#readResearchJobs(companyId));
 
     this.#context.tickHistoryService.record(
       this.#dashboardBuilder.captureTickMetrics({
@@ -1189,6 +1187,7 @@ export class GameSession {
       hints: emptyHints,
       tutorial: null,
       recipeCatalog: this.#dashboardBuilder.readRecipeCatalog(),
+      completedTechnologyUnlockOutcomes: Object.freeze([]),
     };
   }
 
@@ -1495,6 +1494,40 @@ export class GameSession {
       this.#recordPlayerEvent(
         'TRANSPORT',
         `Transport abgeschlossen: ${order.sourceBuildingName} → ${order.destinationBuildingName}.`,
+      );
+    }
+  }
+
+  #seedLoggedCompletedResearchJobs(jobs: readonly ResearchJobSessionReadModel[]): void {
+    for (const job of jobs) {
+      if (job.status === ResearchJobStatus.FINISHED) {
+        this.#loggedCompletedResearchJobIds.add(job.id);
+      }
+    }
+  }
+
+  #recordCompletedResearchEvents(jobs: readonly ResearchJobSessionReadModel[]): void {
+    for (const job of jobs) {
+      if (job.status !== ResearchJobStatus.FINISHED) {
+        continue;
+      }
+
+      if (this.#loggedCompletedResearchJobIds.has(job.id)) {
+        continue;
+      }
+
+      this.#loggedCompletedResearchJobIds.add(job.id);
+      const technologyLabel = resolvePlayerFacingTechnologyName(
+        job.technologyId,
+        this.#context.gameContent.technologies,
+      );
+
+      this.#recordPlayerEvent(
+        'RESEARCH',
+        `Forschung abgeschlossen: ${technologyLabel}.`,
+        'INFO',
+        job.id,
+        'research',
       );
     }
   }

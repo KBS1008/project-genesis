@@ -25,8 +25,10 @@ import {
   type MilestoneRowViewData,
   type OverviewStripViewData,
   type ProductionJobRowViewData,
+  type CompletedResearchUnlockViewData,
   type RecipeCatalogEntryViewData,
   type ResearchJobRowViewData,
+  type TechnologyUnlockOutcomeViewData,
   type SidebarHintsViewData,
   type TickMetricsViewData,
   type TransportOrderRowViewData,
@@ -106,6 +108,7 @@ function mapBuildingRow(
   return Object.freeze({
     id: building.id,
     name: building.name,
+    buildingTypeId: building.buildingTypeId,
     buildingTypeLabel: labels.building(building.buildingTypeId),
     statusLabel: building.status,
     positionLabel: `${building.x}, ${building.y}`,
@@ -805,6 +808,7 @@ function mapRecipeCatalog(
             (output) => `${labels.resource(output.resourceId)} × ${output.amount}`,
           ),
         ),
+        buildingTypeIds: Object.freeze([...entry.buildingTypeIds]),
         buildingTypeLabels: Object.freeze(
           entry.buildingTypeIds.map((buildingTypeId) => labels.building(buildingTypeId)),
         ),
@@ -886,6 +890,36 @@ function mapRecipeCatalog(
         ),
         progressionEligible: entry.progressionEligible,
         progressionBlockerReason: entry.progressionBlockerReason,
+      }),
+    ),
+  );
+}
+
+function mapTechnologyUnlockOutcome(
+  outcome: GameSessionDashboard['completedTechnologyUnlockOutcomes'][number]['outcomes'][number],
+): TechnologyUnlockOutcomeViewData {
+  const kindLabel = outcome.kind === 'recipe' ? 'Rezept' : 'Gebäude';
+
+  return Object.freeze({
+    contentId: outcome.contentId,
+    name: outcome.name,
+    kind: outcome.kind,
+    kindLabel,
+    progressionEligible: outcome.progressionEligible,
+    statusLabel: outcome.progressionEligible ? 'Verfügbar' : 'Weitere Voraussetzungen',
+    progressionBlockerReason: outcome.progressionBlockerReason,
+  });
+}
+
+function mapCompletedResearchUnlocks(
+  dashboard: GameSessionDashboard,
+): readonly CompletedResearchUnlockViewData[] {
+  return Object.freeze(
+    dashboard.completedTechnologyUnlockOutcomes.map((entry) =>
+      Object.freeze({
+        technologyId: entry.technologyId,
+        name: entry.technologyName,
+        outcomes: Object.freeze(entry.outcomes.map((outcome) => mapTechnologyUnlockOutcome(outcome))),
       }),
     ),
   );
@@ -1035,6 +1069,7 @@ export function buildCompanyDashboardViewData(
     completedResearchLabels: Object.freeze(
       dashboard.completedResearch.map((technologyId) => labels.technology(technologyId)),
     ),
+    completedResearchUnlocks: mapCompletedResearchUnlocks(dashboard),
     recipeCatalog: mapRecipeCatalog(dashboard, labels),
     researchJobs,
     transportOrders,

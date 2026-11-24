@@ -14,6 +14,15 @@ import type { WarehouseStorageReadModel } from '../read-models/WarehouseStorageR
 import type { EconomyReadModel } from '../read-models/EconomyReadModel.js';
 import type { RecipeInputOriginReadModel } from './production-recipe-input-origin.js';
 import type { RecipeOutputUsageReadModel } from './production-recipe-output-usage.js';
+import type {
+  CompletedTechnologyUnlockOutcomesReadModel,
+  TechnologyUnlockOutcomeReadModel,
+} from './technology-unlock-outcome-projection.js';
+
+export type {
+  CompletedTechnologyUnlockOutcomesReadModel,
+  TechnologyUnlockOutcomeReadModel,
+};
 
 /** Milestone catalog entry with completion state for the UI shell. */
 export type MilestoneCatalogEntry = {
@@ -299,4 +308,5 @@ export type GameSessionDashboard = {
   readonly hints: GameSessionDashboardHints;
   readonly tutorial: TutorialProgressReadModel | null;
   readonly recipeCatalog: readonly RecipeCatalogEntryReadModel[];
+  readonly completedTechnologyUnlockOutcomes: readonly CompletedTechnologyUnlockOutcomesReadModel[];
 };

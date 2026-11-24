@@ -42,6 +42,10 @@ import {
   type RecipeCatalogProgressionContext,
 } from './recipe-catalog-progression-eligibility.js';
 import {
+  projectTechnologyUnlockOutcomes,
+  type CompletedTechnologyUnlockOutcomesReadModel,
+} from './technology-unlock-outcome-projection.js';
+import {
   formatApproximatePlayerFacingCycleDuration,
   formatPlayerFacingCycleCount,
   formatPlayerFacingCycleIntervalEvery,
@@ -188,6 +192,21 @@ export class GameSessionDashboardBuilder {
         });
       }),
     );
+  }
+
+  /** Lists recipe/building outcomes for each completed technology (read-only). */
+  readCompletedTechnologyUnlockOutcomes(
+    progressionContext: RecipeCatalogProgressionContext,
+  ): readonly CompletedTechnologyUnlockOutcomesReadModel[] {
+    const { gameContent } = this.#context;
+
+    return projectTechnologyUnlockOutcomes({
+      progressionContext,
+      recipes: gameContent.recipes,
+      buildingTypes: gameContent.buildingTypes,
+      milestones: gameContent.milestones,
+      technologies: gameContent.technologies,
+    });
   }
 
   /** Returns localized display names for all enabled content entries. */

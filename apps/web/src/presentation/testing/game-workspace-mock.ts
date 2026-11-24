@@ -60,6 +60,7 @@ export function createGameWorkspaceMock(
     navigatePlaceBuildingPrerequisite: vi.fn(),
     navigateProductionWorkforcePersonnel: vi.fn(),
     navigateTutorialStep: vi.fn(),
+    navigateBuildingCatalogFocus: vi.fn(),
     buildingCatalogFocusBuildingTypeId: null,
     clearBuildingCatalogFocus: vi.fn(),
     researchCatalogFocusTechnologyId: null,

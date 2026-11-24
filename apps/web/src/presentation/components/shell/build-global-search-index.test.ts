@@ -22,6 +22,7 @@ describe('buildGlobalSearchIndex', () => {
           {
             id: 'building-1',
             name: 'Werk Nord',
+            buildingTypeId: 'factory',
             buildingTypeLabel: 'Fabrik',
             statusLabel: 'Aktiv',
             positionLabel: '12, 8',

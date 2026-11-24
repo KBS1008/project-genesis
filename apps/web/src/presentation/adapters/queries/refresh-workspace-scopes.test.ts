@@ -91,6 +91,7 @@ describe('refreshWorkspaceScopes', () => {
       },
       tutorial: null,
       recipeCatalog: [],
+      completedTechnologyUnlockOutcomes: [],
       notifications: [],
     });
     fetchDashboardHistory.mockResolvedValue({ points: [] });

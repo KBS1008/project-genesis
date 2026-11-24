@@ -110,6 +110,7 @@ export type GameWorkspaceContextValue = {
   ) => void;
   readonly navigateProductionWorkforcePersonnel: (buildingId: string) => void;
   readonly navigateTutorialStep: (stepId: string) => void;
+  readonly navigateBuildingCatalogFocus: (buildingTypeId: string) => void;
   readonly buildingCatalogFocusBuildingTypeId: string | null;
   readonly clearBuildingCatalogFocus: () => void;
   readonly researchCatalogFocusTechnologyId: string | null;
@@ -790,6 +791,14 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
     [navigateToTarget],
   );
 
+  const navigateBuildingCatalogFocus = useCallback(
+    (buildingTypeId: string) => {
+      setBuildingCatalogFocusBuildingTypeId(buildingTypeId);
+      navigateToTarget({ screen: 'buildings', entitySelection: { kind: 'none' } });
+    },
+    [navigateToTarget],
+  );
+
   const navigateTutorialStep = useCallback(
     (stepId: string) => {
       const dashboard = sessionDashboardRef.current;
@@ -1072,6 +1081,7 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
       navigatePlaceBuildingPrerequisite,
       navigateProductionWorkforcePersonnel,
       navigateTutorialStep,
+      navigateBuildingCatalogFocus,
       buildingCatalogFocusBuildingTypeId,
       clearBuildingCatalogFocus,
       researchCatalogFocusTechnologyId,
@@ -1113,6 +1123,7 @@ export function GameWorkspaceProvider({ children }: { readonly children: ReactNo
       navigatePlaceBuildingPrerequisite,
       navigateProductionWorkforcePersonnel,
       navigateTutorialStep,
+      navigateBuildingCatalogFocus,
       buildingCatalogFocusBuildingTypeId,
       clearBuildingCatalogFocus,
       researchCatalogFocusTechnologyId,
