@@ -19,6 +19,7 @@ import type { ProductionHintViewData } from '@/presentation/adapters/view-data/c
 import type { RecipeCatalogEntryViewData } from '@/presentation/adapters/view-data/company-dashboard-view-data';
 import { useScreenQuery, TICK_QUERY_DEBOUNCE_MS } from '@/presentation/hooks/useScreenQuery';
 import { buildWarehouseNavigationTarget } from '@/presentation/navigation/entity-navigation';
+import { resolveProductionRecipeBuildingGap } from '@/presentation/navigation/production-recipe-building-gap';
 import { PRODUCTION_WORKFORCE_PERSONNEL_NAVIGATION_LABEL } from '@/presentation/navigation/production-workforce-personnel-navigation';
 import { Button } from '@/presentation/primitives/Button';
 import { Card } from '@/presentation/primitives/Card';
@@ -47,6 +48,7 @@ export function ProductionScreen() {
     clearEntitySelection,
     navigateToTarget,
     navigateProductionWorkforcePersonnel,
+    navigateBuildingCatalogFocus,
   } = useGameWorkspace();
   const [selectedRecipeId, setSelectedRecipeId] = useState<string | null>(null);
   const selectedJobId =
@@ -148,6 +150,30 @@ export function ProductionScreen() {
     selectedRecipeId === null
       ? scopedProductionHints
       : scopedProductionHints.filter((hint) => hint.recipeId === selectedRecipeId);
+  const recipeProductionHintCount = useMemo(() => {
+    if (selectedRecipeId === null) {
+      return productionHints.length;
+    }
+
+    return productionHints.filter((hint) => hint.recipeId === selectedRecipeId).length;
+  }, [productionHints, selectedRecipeId]);
+  const placedBuildingTypeIds = useMemo(
+    () => new Set(companyViewData.buildings.map((building) => building.buildingTypeId)),
+    [companyViewData.buildings],
+  );
+  const selectedRecipeBuildingGap = useMemo(() => {
+    if (selectedRecipeDetail === null) {
+      return null;
+    }
+
+    return resolveProductionRecipeBuildingGap({
+      progressionEligible: selectedRecipeDetail.progressionEligible,
+      buildingTypeIds: selectedRecipeDetail.buildingTypeIds,
+      buildingTypeLabels: selectedRecipeDetail.buildingTypeLabels,
+      recipeProductionHintCount,
+      placedBuildingTypeIds,
+    });
+  }, [placedBuildingTypeIds, recipeProductionHintCount, selectedRecipeDetail]);
 
   const startJob = (hint: ProductionHintViewData) => {
     if (!hint.canStart || isBusy) {
@@ -627,16 +653,34 @@ export function ProductionScreen() {
                   {selectedRecipeDetail.progressionBlockerReason}
                 </p>
               ) : null}
-              <EmptyState
-              title="Keine Produktionsoptionen"
-              hint={
-                selectedRecipeId === null
-                  ? isBuildingFilterActive
-                    ? 'Für diesen Standort sind derzeit keine Rezepte startbar.'
-                    : 'Es sind derzeit keine Rezepte an Gebäuden startbar.'
-                  : 'Für dieses Rezept sind keine Gebäude startbereit.'
-              }
-            />
+              {selectedRecipeBuildingGap !== null ? (
+                <div className="pg-operation-hint-copy" role="status">
+                  <strong>Nächster Schritt</strong>
+                  <span>
+                    Für dieses Rezept wird ein passendes Gebäude benötigt:{' '}
+                    {selectedRecipeBuildingGap.buildingTypeLabel}.
+                  </span>
+                  <Button
+                    variant="secondary"
+                    onClick={() => {
+                      navigateBuildingCatalogFocus(selectedRecipeBuildingGap.buildingTypeId);
+                    }}
+                  >
+                    Gebäudekatalog öffnen
+                  </Button>
+                </div>
+              ) : (
+                <EmptyState
+                  title="Keine Produktionsoptionen"
+                  hint={
+                    selectedRecipeId === null
+                      ? isBuildingFilterActive
+                        ? 'Für diesen Standort sind derzeit keine Rezepte startbar.'
+                        : 'Es sind derzeit keine Rezepte an Gebäuden startbar.'
+                      : 'Für dieses Rezept sind keine Gebäude startbereit.'
+                  }
+                />
+              )}
             </>
           ) : (
             <div className="pg-operation-hint-list">

@@ -89,10 +89,41 @@ function createDashboardFixture(): GameSessionDashboard {
     },
     tutorial: null,
     recipeCatalog: [],
+    completedTechnologyUnlockOutcomes: [],
   };
 }
 
 describe('company-dashboard-view-mappers', () => {
+  it('maps completed technology unlock outcomes with German status labels', () => {
+    const dashboard = createDashboardFixture();
+    const withUnlocks: GameSessionDashboard = {
+      ...dashboard,
+      completedResearch: ['basic_woodworking'],
+      completedTechnologyUnlockOutcomes: [
+        {
+          technologyId: 'basic_woodworking',
+          technologyName: 'Basic Woodworking',
+          outcomes: [
+            {
+              contentId: 'recipe_advanced_planks',
+              name: 'Advanced Plank Production',
+              kind: 'recipe',
+              progressionEligible: false,
+              progressionBlockerReason: 'Meilenstein „First Production“ fehlt.',
+            },
+          ],
+        },
+      ],
+    };
+
+    const viewData = buildCompanyDashboardViewData(withUnlocks, []);
+    const unlock = viewData.completedResearchUnlocks[0];
+
+    expect(unlock?.name).toBe('Basic Woodworking');
+    expect(unlock?.outcomes[0]?.statusLabel).toBe('Weitere Voraussetzungen');
+    expect(unlock?.outcomes[0]?.kindLabel).toBe('Rezept');
+  });
+
   it('uses empty-state route labels instead of visible fallback copy', () => {
     const viewData = buildCompanyDashboardViewData(createDashboardFixture(), []);
     const transportDetail = viewData.detail.transportOrders.get('transport_001');

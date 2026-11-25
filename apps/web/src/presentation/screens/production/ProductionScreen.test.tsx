@@ -13,6 +13,7 @@ const workspaceState = vi.hoisted(() => {
   const clearEntitySelection = vi.fn();
   const navigateToTarget = vi.fn();
   const navigateProductionWorkforcePersonnel = vi.fn();
+  const navigateBuildingCatalogFocus = vi.fn();
   let navigation: NavigationState = {
     screen: 'production',
     entitySelection: { kind: 'none' },
@@ -24,6 +25,7 @@ const workspaceState = vi.hoisted(() => {
     clearEntitySelection,
     navigateToTarget,
     navigateProductionWorkforcePersonnel,
+    navigateBuildingCatalogFocus,
     getNavigation: () => navigation,
     setNavigation: (value: NavigationState) => {
       navigation = value;
@@ -101,6 +103,7 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
         {
           id: 'building_005',
           name: 'Sägewerk Nord',
+          buildingTypeId: 'sawmill',
           buildingTypeLabel: 'Sägewerk',
           statusLabel: 'ACTIVE',
           positionLabel: '2, 2',
@@ -112,6 +115,7 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
         {
           id: 'building_006',
           name: 'Sägewerk Süd',
+          buildingTypeId: 'sawmill',
           buildingTypeLabel: 'Sägewerk',
           statusLabel: 'ACTIVE',
           positionLabel: '4, 4',
@@ -158,6 +162,7 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
           energyLabel: '0,20 / Zyklus',
           inputLabels: ['wood × 10'],
           outputLabels: ['planks × 20'],
+          buildingTypeIds: ['sawmill'],
           buildingTypeLabels: ['Sägewerk'],
           inputAvailability: [
             {
@@ -208,6 +213,7 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
           energyLabel: '0,24 / Zyklus',
           inputLabels: ['Stahl × 3'],
           outputLabels: ['Maschinenteile × 2'],
+          buildingTypeIds: ['machine_shop'],
           buildingTypeLabels: ['Maschinenwerkstatt'],
           inputAvailability: [
             {
@@ -258,6 +264,7 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
           energyLabel: '0,50 / Zyklus',
           inputLabels: ['Eisenerz × 5'],
           outputLabels: ['Stahl × 3'],
+          buildingTypeIds: ['smelter'],
           buildingTypeLabels: ['Hochofen'],
           inputAvailability: [],
           inputOrigin: [
@@ -284,6 +291,7 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
           energyLabel: '0,22 / Zyklus',
           inputLabels: ['advanced_electronics × 2', 'planks × 5'],
           outputLabels: ['consumer_goods × 3'],
+          buildingTypeIds: ['consumer_goods_plant'],
           buildingTypeLabels: ['Konsumgüterwerk'],
           inputAvailability: [],
           inputOrigin: [
@@ -346,6 +354,7 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
     clearEntitySelection: workspaceState.clearEntitySelection,
     navigateToTarget: workspaceState.navigateToTarget,
     navigateProductionWorkforcePersonnel: workspaceState.navigateProductionWorkforcePersonnel,
+    navigateBuildingCatalogFocus: workspaceState.navigateBuildingCatalogFocus,
   }),
 }));
 

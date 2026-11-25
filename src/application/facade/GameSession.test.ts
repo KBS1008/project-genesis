@@ -49,6 +49,71 @@ function readTotalWoodQuantity(dashboard: {
   return onSiteWood + warehouseWood;
 }
 
+const RESEARCH_COMPLETION_MESSAGE_PREFIX = 'Forschung abgeschlossen:';
+const BASIC_WOODWORKING_DISPLAY_NAME = 'Basic Woodworking';
+const CORPORATE_MANAGEMENT_DISPLAY_NAME = 'Unternehmensfuehrung';
+
+function readResearchCompletionEvents(session: GameSession) {
+  const eventLogResult = session.getEventLog(50, 'RESEARCH');
+
+  expect(eventLogResult.ok).toBe(true);
+
+  if (!eventLogResult.ok) {
+    throw new Error(eventLogResult.error.message);
+  }
+
+  return eventLogResult.value.filter((entry) =>
+    entry.message.startsWith(RESEARCH_COMPLETION_MESSAGE_PREFIX),
+  );
+}
+
+async function unlockProfit100Milestone(session: GameSession): Promise<void> {
+  for (let attempt = 0; attempt < 200; attempt += 1) {
+    const dashboardResult = session.getDashboard();
+
+    if (
+      dashboardResult.ok &&
+      dashboardResult.value.completedMilestones.includes('profit_100')
+    ) {
+      return;
+    }
+
+    const sellResult = session.sellResource({ resourceId: 'wood', amount: 10 });
+
+    if (!sellResult.ok) {
+      const buyResult = session.buyResource({ resourceId: 'wood', amount: 20 });
+      expect(buyResult.ok).toBe(true);
+    }
+
+    session.tick(1);
+  }
+
+  throw new Error('profit_100 milestone was not reached in time.');
+}
+
+function tickUntilResearchJobFinished(
+  session: GameSession,
+  jobId: string,
+  tickBudget = 120,
+): void {
+  for (let index = 0; index < tickBudget; index += 1) {
+    const jobsResult = session.listResearchJobs();
+
+    if (jobsResult.ok) {
+      const job = jobsResult.value.find((entry) => entry.id === jobId);
+
+      if (job?.status === 'FINISHED') {
+        return;
+      }
+    }
+
+    const tickResult = session.tick(1);
+    expect(tickResult.ok).toBe(true);
+  }
+
+  throw new Error(`Research job "${jobId}" did not reach FINISHED within ${tickBudget} ticks.`);
+}
+
 describe('GameSession', () => {
   it('starts a new game and returns a dashboard snapshot', async () => {
     const session = await createSession();
@@ -214,6 +279,94 @@ describe('GameSession', () => {
 
     if (dashboardResult.ok) {
       expect(dashboardResult.value.tickNumber).toBe(11);
+    }
+  });
+
+  it('does not append routine tick-advance events to the player event log', async () => {
+    const session = await createSession();
+    await session.startNewGame('Tick Log Corp');
+
+    expect(session.tick(1).ok).toBe(true);
+    expect(session.tick(1).ok).toBe(true);
+    expect(session.tick(10).ok).toBe(true);
+
+    const dashboardResult = session.getDashboard();
+
+    expect(dashboardResult.ok).toBe(true);
+
+    if (dashboardResult.ok) {
+      expect(dashboardResult.value.tickNumber).toBe(13);
+    }
+
+    const simulationLog = session.getEventLog(50, 'SIMULATION');
+
+    expect(simulationLog.ok).toBe(true);
+
+    if (simulationLog.ok) {
+      expect(
+        simulationLog.value.some((entry) => entry.message.includes('fortgeschritten')),
+      ).toBe(false);
+    }
+  });
+
+  it('does not append routine simulation-control confirmations to the player event log', async () => {
+    const session = await createSession();
+    await session.startNewGame('Control Log Corp');
+
+    expect(session.pauseSimulation().ok).toBe(true);
+
+    const pausedStatus = session.getSimulationStatus();
+
+    expect(pausedStatus.ok).toBe(true);
+
+    if (pausedStatus.ok) {
+      expect(pausedStatus.value.isPaused).toBe(true);
+    }
+
+    expect(session.resumeSimulation().ok).toBe(true);
+
+    const runningStatus = session.getSimulationStatus();
+
+    expect(runningStatus.ok).toBe(true);
+
+    if (runningStatus.ok) {
+      expect(runningStatus.value.isPaused).toBe(false);
+    }
+
+    expect(session.setSimulationSpeed(2).ok).toBe(true);
+
+    const speedStatus = session.getSimulationStatus();
+
+    expect(speedStatus.ok).toBe(true);
+
+    if (speedStatus.ok) {
+      expect(speedStatus.value.tickDuration).toBe(2);
+    }
+
+    const tickBeforeStep = session.getDashboard();
+
+    expect(session.stepSimulation().ok).toBe(true);
+
+    const tickAfterStep = session.getDashboard();
+
+    expect(tickBeforeStep.ok).toBe(true);
+    expect(tickAfterStep.ok).toBe(true);
+
+    if (tickBeforeStep.ok && tickAfterStep.ok) {
+      expect(tickAfterStep.value.tickNumber).toBeGreaterThan(tickBeforeStep.value.tickNumber);
+    }
+
+    const simulationLog = session.getEventLog(50, 'SIMULATION');
+
+    expect(simulationLog.ok).toBe(true);
+
+    if (simulationLog.ok) {
+      const messages = simulationLog.value.map((entry) => entry.message);
+
+      expect(messages).not.toContain('Simulation pausiert.');
+      expect(messages).not.toContain('Simulation fortgesetzt.');
+      expect(messages.some((message) => message.includes('Simulationsgeschwindigkeit'))).toBe(false);
+      expect(messages).not.toContain('Simulationsschritt ausgeführt.');
     }
   });
 
@@ -765,6 +918,172 @@ describe('GameSession', () => {
       expect(job?.status).toBe('RUNNING');
       expect(job?.operationalState).toBe('STALLED_ENERGY');
       expect(job?.progress).toBe(0);
+    }
+  });
+
+  it('records exactly one research completion player event with RESEARCH category (S2-R1)', async () => {
+    const session = await createSession();
+    await session.startNewGame('Research Completion Corp');
+    await unlockProfit100Milestone(session);
+
+    const startResult = session.startResearch({ technologyId: 'basic_woodworking' });
+
+    expect(startResult.ok).toBe(true);
+
+    if (!startResult.ok) {
+      return;
+    }
+
+    const jobId = startResult.value;
+    tickUntilResearchJobFinished(session, jobId);
+
+    const jobsResult = session.listResearchJobs();
+
+    expect(jobsResult.ok).toBe(true);
+
+    if (jobsResult.ok) {
+      expect(jobsResult.value.find((entry) => entry.id === jobId)?.status).toBe('FINISHED');
+    }
+
+    const completionEvents = readResearchCompletionEvents(session);
+
+    expect(completionEvents).toHaveLength(1);
+    expect(completionEvents[0]?.category).toBe('RESEARCH');
+    expect(completionEvents[0]?.message).toBe(
+      `${RESEARCH_COMPLETION_MESSAGE_PREFIX} ${BASIC_WOODWORKING_DISPLAY_NAME}.`,
+    );
+    expect(completionEvents[0]?.entityId).toBe(jobId);
+    expect(completionEvents[0]?.entityType).toBe('research');
+
+    const duplicateTickResult = session.tick(5);
+
+    expect(duplicateTickResult.ok).toBe(true);
+
+    expect(readResearchCompletionEvents(session)).toHaveLength(1);
+  });
+
+  it('does not emit research completion events for in-progress research jobs (S2-NR3)', async () => {
+    const session = await createSession();
+    await session.startNewGame('Research In Progress Corp');
+    await unlockProfit100Milestone(session);
+
+    const startResult = session.startResearch({ technologyId: 'basic_woodworking' });
+
+    expect(startResult.ok).toBe(true);
+
+    if (!startResult.ok) {
+      return;
+    }
+
+    const jobId = startResult.value;
+    const jobsBeforeTicks = session.listResearchJobs();
+
+    expect(jobsBeforeTicks.ok).toBe(true);
+
+    if (jobsBeforeTicks.ok) {
+      const activeJob = jobsBeforeTicks.value.find((entry) => entry.id === jobId);
+      expect(activeJob?.status === 'RUNNING' || activeJob?.status === 'WAITING').toBe(true);
+      expect(activeJob?.status).not.toBe('FINISHED');
+    }
+
+    expect(readResearchCompletionEvents(session)).toHaveLength(0);
+
+    for (let index = 0; index < 20; index += 1) {
+      const jobsResult = session.listResearchJobs();
+
+      if (!jobsResult.ok) {
+        throw new Error(jobsResult.error.message);
+      }
+
+      const job = jobsResult.value.find((entry) => entry.id === jobId);
+
+      if (job?.status === 'FINISHED') {
+        break;
+      }
+
+      expect(job?.status === 'RUNNING' || job?.status === 'WAITING').toBe(true);
+      expect(readResearchCompletionEvents(session)).toHaveLength(0);
+
+      const tickResult = session.tick(1);
+      expect(tickResult.ok).toBe(true);
+    }
+
+    const jobsNearCompletion = session.listResearchJobs();
+
+    if (jobsNearCompletion.ok) {
+      const job = jobsNearCompletion.value.find((entry) => entry.id === jobId);
+
+      if (job?.status !== 'FINISHED') {
+        expect(readResearchCompletionEvents(session)).toHaveLength(0);
+      }
+    }
+  });
+
+  it('does not re-log completed research after save and load, and logs new completions once (S2-R1 reload)', async () => {
+    const tempDirectory = await mkdtemp(path.join(tmpdir(), 'genesis-research-save-'));
+    const savePath = path.join(tempDirectory, 'research-completion-reload.json');
+
+    try {
+      const session = await createSession(savePath);
+      await session.startNewGame('Research Reload Corp');
+      await unlockProfit100Milestone(session);
+
+      const firstResearch = session.startResearch({ technologyId: 'basic_woodworking' });
+
+      expect(firstResearch.ok).toBe(true);
+
+      if (!firstResearch.ok) {
+        return;
+      }
+
+      const firstJobId = firstResearch.value;
+      tickUntilResearchJobFinished(session, firstJobId);
+
+      expect(readResearchCompletionEvents(session)).toHaveLength(1);
+
+      const saveResult = await session.saveGame();
+      expect(saveResult.ok).toBe(true);
+
+      const reloadedSession = await createSession(savePath);
+      const loadResult = await reloadedSession.loadGame();
+
+      expect(loadResult.ok).toBe(true);
+      expect(readResearchCompletionEvents(reloadedSession)).toHaveLength(0);
+
+      const tickAfterLoad = reloadedSession.tick(10);
+      expect(tickAfterLoad.ok).toBe(true);
+      expect(readResearchCompletionEvents(reloadedSession)).toHaveLength(0);
+
+      const secondResearch = reloadedSession.startResearch({
+        technologyId: 'corporate_management',
+      });
+
+      expect(secondResearch.ok).toBe(true);
+
+      if (!secondResearch.ok) {
+        return;
+      }
+
+      const secondJobId = secondResearch.value;
+      tickUntilResearchJobFinished(reloadedSession, secondJobId, 150);
+
+      const completionEvents = readResearchCompletionEvents(reloadedSession);
+
+      expect(completionEvents).toHaveLength(1);
+      expect(completionEvents[0]?.entityId).toBe(secondJobId);
+      expect(completionEvents[0]?.entityType).toBe('research');
+      expect(completionEvents[0]?.message).toBe(
+        `${RESEARCH_COMPLETION_MESSAGE_PREFIX} ${CORPORATE_MANAGEMENT_DISPLAY_NAME}.`,
+      );
+      expect(
+        completionEvents.some((entry) => entry.entityId === firstJobId),
+      ).toBe(false);
+
+      const duplicateTick = reloadedSession.tick(3);
+      expect(duplicateTick.ok).toBe(true);
+      expect(readResearchCompletionEvents(reloadedSession)).toHaveLength(1);
+    } finally {
+      await rm(tempDirectory, { recursive: true, force: true });
     }
   });
 });

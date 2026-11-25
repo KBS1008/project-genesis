@@ -92,14 +92,35 @@ export function ResearchScreen() {
     >
       <div className="pg-operation-screen">
         <Card title="Abgeschlossene Forschung">
-          {companyViewData.completedResearchLabels.length === 0 ? (
+          {companyViewData.completedResearchUnlocks.length === 0 ? (
             <EmptyState title="Noch keine Technologien" hint="Starten Sie ein Forschungsprojekt." />
           ) : (
             <ul className="pg-summary-list">
-              {companyViewData.completedResearchLabels.map((label) => (
-                <li key={label}>
-                  <span>{label}</span>
-                  <strong>Abgeschlossen</strong>
+              {companyViewData.completedResearchUnlocks.map((completed) => (
+                <li key={completed.technologyId}>
+                  <div className="pg-operation-hint-copy">
+                    <span>{completed.name}</span>
+                    <strong>Abgeschlossen</strong>
+                  </div>
+                  {completed.outcomes.length > 0 ? (
+                    <ul
+                      className="pg-operation-detail-list"
+                      aria-label={`Freischaltungen für ${completed.name}`}
+                    >
+                      {completed.outcomes.map((outcome) => (
+                        <li key={`${completed.technologyId}:${outcome.contentId}`}>
+                          <span>
+                            {outcome.kindLabel}: {outcome.name}
+                          </span>
+                          <strong>
+                            {outcome.progressionEligible
+                              ? outcome.statusLabel
+                              : `${outcome.statusLabel}${outcome.progressionBlockerReason !== null ? ` — ${outcome.progressionBlockerReason}` : ''}`}
+                          </strong>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
                 </li>
               ))}
             </ul>

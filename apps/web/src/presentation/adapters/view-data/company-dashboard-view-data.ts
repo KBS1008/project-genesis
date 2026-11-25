@@ -77,6 +77,7 @@ export type OverviewStripViewData = {
 export type BuildingRowViewData = {
   readonly id: string;
   readonly name: string;
+  readonly buildingTypeId: string;
   readonly buildingTypeLabel: string;
   readonly statusLabel: string;
   readonly positionLabel: string;
@@ -258,6 +259,7 @@ export type RecipeCatalogEntryViewData = {
   readonly energyLabel: string;
   readonly inputLabels: readonly string[];
   readonly outputLabels: readonly string[];
+  readonly buildingTypeIds: readonly string[];
   readonly buildingTypeLabels: readonly string[];
   readonly inputAvailability: readonly RecipeInputAvailabilityViewData[];
   readonly inputOrigin: readonly RecipeInputOriginViewData[];
@@ -271,6 +273,22 @@ export type ResearchHintViewData = {
   readonly name: string;
   readonly canStart: boolean;
   readonly reason: string | null;
+};
+
+export type TechnologyUnlockOutcomeViewData = {
+  readonly contentId: string;
+  readonly name: string;
+  readonly kind: 'recipe' | 'building';
+  readonly kindLabel: string;
+  readonly progressionEligible: boolean;
+  readonly statusLabel: string;
+  readonly progressionBlockerReason: string | null;
+};
+
+export type CompletedResearchUnlockViewData = {
+  readonly technologyId: string;
+  readonly name: string;
+  readonly outcomes: readonly TechnologyUnlockOutcomeViewData[];
 };
 
 export type MarketHintViewData = {
@@ -410,6 +428,7 @@ export type CompanyDashboardViewData = {
   readonly economy: EconomySectionViewData | null;
   readonly productionJobs: readonly ProductionJobRowViewData[];
   readonly completedResearchLabels: readonly string[];
+  readonly completedResearchUnlocks: readonly CompletedResearchUnlockViewData[];
   readonly recipeCatalog: readonly RecipeCatalogEntryViewData[];
   readonly researchJobs: readonly ResearchJobRowViewData[];
   readonly transportOrders: readonly TransportOrderRowViewData[];
@@ -465,6 +484,7 @@ export const EMPTY_COMPANY_DASHBOARD_VIEW_DATA: CompanyDashboardViewData = Objec
   economy: null,
   productionJobs: Object.freeze([]),
   completedResearchLabels: Object.freeze([]),
+  completedResearchUnlocks: Object.freeze([]),
   recipeCatalog: Object.freeze([]),
   researchJobs: Object.freeze([]),
   transportOrders: Object.freeze([]),

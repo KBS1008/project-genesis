@@ -353,6 +353,20 @@ export type RecipeOutputUsageReadModel = {
   readonly consumers: readonly RecipeOutputUsageConsumerReadModel[];
 };
 
+export type TechnologyUnlockOutcomeReadModel = {
+  readonly contentId: string;
+  readonly name: string;
+  readonly kind: 'recipe' | 'building';
+  readonly progressionEligible: boolean;
+  readonly progressionBlockerReason: string | null;
+};
+
+export type CompletedTechnologyUnlockOutcomesReadModel = {
+  readonly technologyId: string;
+  readonly technologyName: string;
+  readonly outcomes: readonly TechnologyUnlockOutcomeReadModel[];
+};
+
 export type RecipeCatalogEntryReadModel = {
   readonly id: string;
   readonly name: string;
@@ -401,6 +415,7 @@ export type GameSessionDashboard = {
   readonly hints: GameSessionDashboardHints;
   readonly tutorial: TutorialProgressReadModel | null;
   readonly recipeCatalog: readonly RecipeCatalogEntryReadModel[];
+  readonly completedTechnologyUnlockOutcomes: readonly CompletedTechnologyUnlockOutcomesReadModel[];
 };
 
 type ApiSuccessResponse<T> = {

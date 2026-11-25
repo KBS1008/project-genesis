@@ -643,3 +643,52 @@ describe('GameSessionDashboardBuilder recipe catalog progression', () => {
     expect(findCatalogEntry(catalog, 'recipe_steel').progressionEligible).toBe(true);
   });
 });
+
+describe('GameSessionDashboardBuilder completed technology unlock outcomes', () => {
+  it('exposes recipe unlock outcomes on the dashboard builder surface', async () => {
+    const bootstrapResult = await bootstrapApplication({
+      gameContentRoot,
+      strictContent: true,
+    });
+
+    expect(bootstrapResult.ok).toBe(true);
+
+    if (!bootstrapResult.ok) {
+      return;
+    }
+
+    const context = bootstrapResult.value;
+    const builder = new GameSessionDashboardBuilder(
+      context,
+      new EnergyBalanceService({
+        buildingRepository: context.buildingRepository,
+        productionJobRepository: context.productionJobRepository,
+        gameContent: context.gameContent,
+      }),
+    );
+
+    const blocked = builder.readCompletedTechnologyUnlockOutcomes({
+      completedMilestones: new Set(),
+      completedResearch: new Set(['basic_woodworking']),
+    });
+
+    const woodworking = blocked.find((entry) => entry.technologyId === 'basic_woodworking');
+    const advancedPlanks = woodworking?.outcomes.find(
+      (outcome) => outcome.contentId === 'recipe_advanced_planks',
+    );
+
+    expect(advancedPlanks?.progressionEligible).toBe(false);
+
+    const available = builder.readCompletedTechnologyUnlockOutcomes({
+      completedMilestones: new Set(['first_production']),
+      completedResearch: new Set(['basic_woodworking']),
+    });
+
+    const availableWoodworking = available.find((entry) => entry.technologyId === 'basic_woodworking');
+    const availableRecipe = availableWoodworking?.outcomes.find(
+      (outcome) => outcome.contentId === 'recipe_advanced_planks',
+    );
+
+    expect(availableRecipe?.progressionEligible).toBe(true);
+  });
+});

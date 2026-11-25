@@ -23,6 +23,23 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
     },
     companyViewData: {
       completedResearchLabels: [],
+      completedResearchUnlocks: [
+        {
+          technologyId: 'basic_woodworking',
+          name: 'Basic Woodworking',
+          outcomes: [
+            {
+              contentId: 'recipe_advanced_planks',
+              name: 'Advanced Plank Production',
+              kind: 'recipe',
+              kindLabel: 'Rezept',
+              progressionEligible: false,
+              statusLabel: 'Weitere Voraussetzungen',
+              progressionBlockerReason: 'Meilenstein „First Production“ fehlt.',
+            },
+          ],
+        },
+      ],
       labels: {
         resource: (id: string) => id,
         building: (id: string) => id,
@@ -54,11 +71,25 @@ vi.mock('@/presentation/state/GameWorkspaceProvider', () => ({
 }));
 
 describe('ResearchScreen', () => {
+  it('renders completed research unlock outcomes without marking blocked recipes available', () => {
+    render(<ResearchScreen />);
+
+    expect(screen.getByLabelText('Freischaltungen für Basic Woodworking')).toHaveTextContent(
+      'Advanced Plank Production',
+    );
+    expect(screen.getByLabelText('Freischaltungen für Basic Woodworking')).toHaveTextContent(
+      'Weitere Voraussetzungen — Meilenstein „First Production“ fehlt.',
+    );
+    expect(screen.queryByText(/^Verfügbar$/)).not.toBeInTheDocument();
+  });
+
   it('renders research catalog with prerequisite messaging', () => {
     render(<ResearchScreen />);
 
     expect(screen.getByText('Forschungskatalog')).toBeInTheDocument();
-    expect(screen.getByText('Basic Woodworking')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Forschungskatalog' }).parentElement).toHaveTextContent(
+      'Basic Woodworking',
+    );
     expect(screen.getByText('Meilenstein „Steady Sales“ fehlt.')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Forschung starten' })).toBeDisabled();
   });

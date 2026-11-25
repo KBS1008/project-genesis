@@ -71,6 +71,7 @@ function createDashboardFixture(): CompanyDashboardViewData {
     },
     tutorial: null,
     recipeCatalog: [],
+    completedResearchUnlocks: [],
     buildings: [],
     employees: [],
     milestones: [],
